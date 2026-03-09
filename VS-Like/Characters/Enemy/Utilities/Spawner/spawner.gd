@@ -1,120 +1,117 @@
 extends Node2D
 ## spawner.gd
 ##
-## Handles all spawning: enemies, elite enemies, circle patterns, food drops,
-## AND players (new in multiplayer).
+## Handles spawning of enemies AND players.
 ##
-## IMPORTANT: Enemy spawning only runs on the SERVER.
-## Clients do nothing here — they receive enemy positions via the
-## MultiplayerSynchronizer attached to each enemy node.
+## ── ENEMY SPAWNING ────────────────────────────────────────────────────────────
+## Only the server spawns enemies, but enemies need to EXIST on all peers so
+## that clients can see them and weapon hit-detection works client-side.
 ##
-## Player spawning also happens here: when a peer connects (or when the server
-## itself starts), we instantiate a Player scene, set its multiplayer_authority
-## to that peer's id, and add it to the scene.  Because every peer has the
-## Spawner in their scene tree, the add_child call needs to be replicated to
-## all peers — we do this with an RPC.
+## We solve this with Godot's MultiplayerSpawner node:
+##   - You tell it which node to watch and which scenes are allowed.
+##   - When the SERVER calls add_child() for a registered scene in that node,
+##     MultiplayerSpawner automatically tells all connected clients to create
+##     the same node with the same initialization data.
+##   - When the server destroys a node (queue_free), clients auto-destroy theirs.
+##
+## This means we don't need manual "please spawn this enemy" RPCs — the
+## MultiplayerSpawner handles it under the hood.
+##
+## ── PLAYER SPAWNING ───────────────────────────────────────────────────────────
+## When a peer connects, the server broadcasts an RPC to create a Player node
+## on ALL peers.  Each peer sets the correct multiplayer_authority on that node
+## so only the owning peer processes input for it.
 
-# ── preloads ──────────────────────────────────────────────────────────────────
-const DROP_SCENE:    PackedScene = preload("res://VS-Like/Characters/Enemy/Utilities/Drop/drop.tscn")
-const RES_FOOD:      ResDropFood = preload("res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Food/res_food.tres")
-const ENEMY_SCENE:   PackedScene = preload("res://VS-Like/Characters/Enemy/enemy.tscn")
-const PLAYER_SCENE:  PackedScene = preload("res://VS-Like/Characters/Player/player.tscn")
+const DROP_SCENE:   PackedScene = preload("res://VS-Like/Characters/Enemy/Utilities/Drop/drop.tscn")
+const RES_FOOD:     ResDropFood = preload("res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Food/res_food.tres")
+const ENEMY_SCENE:  PackedScene = preload("res://VS-Like/Characters/Enemy/enemy.tscn")
+const PLAYER_SCENE: PackedScene = preload("res://VS-Like/Characters/Player/player.tscn")
 
-# ── constants ─────────────────────────────────────────────────────────────────
 const MIN_SPAWN_RADIUS: int = 400
 const MAX_ENEMIES:      int = 300
 
-# ── exports ───────────────────────────────────────────────────────────────────
-## Drag the starting enemy resource(s) here in the Godot editor.
-## (Zombie, Bat, Cyclops are unlocked progressively by _add_enemy_type.)
 @export var all_res_enemy: Array[ResEnemy]
-
-# ── node references ───────────────────────────────────────────────────────────
 @onready var spawn_timer: Timer = $SpawnTimer
 
-# ── state ─────────────────────────────────────────────────────────────────────
 var enemies_count: int = 0 : set = _set_enemies_count
 var minutes: int        : set = _set_minutes
 var seconds: int        : set = _set_seconds
 
-## Counter used to give each enemy a unique id. Starts at 0, increments each
-## spawn.  Only the server assigns ids (clients never spawn enemies).
-var _next_enemy_id: int = 0
+var _next_enemy_id:        int = 0
+var _spawn_position_index: int = 0
 
-## Player spawn positions, indexed by join order.
-## First joiner (the host) spawns at index 0, etc.
 const PLAYER_SPAWN_POSITIONS: Array = [
 	Vector2(0, 0),
 	Vector2(200, 0),
 	Vector2(-200, 0),
 	Vector2(0, 200),
 ]
-var _spawn_position_index: int = 0
+
+## The MultiplayerSpawner that replicates enemy nodes to all clients.
+## Created programmatically in _ready() so we don't need to modify the .tscn.
+var _enemy_spawner: MultiplayerSpawner
 
 
-# ── ready ─────────────────────────────────────────────────────────────────────
 func _ready() -> void:
-	# Both server and clients run _ready, but we only wire up Network signals
-	# and start spawning on the server.
+	# ── set up MultiplayerSpawner for enemies ─────────────────────────────────
+	# This node watches THIS spawner for add_child calls involving enemy.tscn.
+	# When the server adds an enemy, all clients automatically get a copy.
+	_enemy_spawner = MultiplayerSpawner.new()
+	_enemy_spawner.name = "EnemySpawner"
+
+	# spawn_path: which node's children to replicate. We use our own node.
+	# NodePath(".") means "this node (the Spawner)".
+	_enemy_spawner.spawn_path = NodePath(".")
+
+	# Register enemy.tscn as a scene that MultiplayerSpawner is allowed to spawn.
+	_enemy_spawner.add_spawnable_scene("res://VS-Like/Characters/Enemy/enemy.tscn")
+
+	# spawn_function: a Callable that receives the data dict and returns a
+	# configured Enemy node. Called on BOTH server and clients when spawning.
+	_enemy_spawner.spawn_function = _create_enemy_from_data
+
+	add_child(_enemy_spawner)
+
+	# ── server-only setup ─────────────────────────────────────────────────────
 	if not multiplayer.is_server():
 		return
 
-	# Listen for peers connecting / disconnecting so we can spawn / remove
-	# their player nodes.
 	Network.player_joined.connect(_on_player_joined)
 	Network.player_left.connect(_on_player_left)
 
-	# Spawn the host's own player immediately (the server's peer_id is always 1).
+	# Spawn the host's own player immediately.
 	_spawn_player_for_peer(1)
 
 
 # ── player spawning ───────────────────────────────────────────────────────────
 
-## Called on the server when any peer (including the host, peer_id 1) connects.
 func _on_player_joined(peer_id: int) -> void:
 	_spawn_player_for_peer(peer_id)
 
 
-## Called on the server when a peer disconnects.
 func _on_player_left(peer_id: int) -> void:
-	# Tell all peers to remove that player's node.
 	_remove_player.rpc(peer_id)
 
 
-## Server-side: instantiate a player and tell ALL peers (including self) to
-## add it to their scene with the correct authority.
 func _spawn_player_for_peer(peer_id: int) -> void:
-	# Pick a spawn position, cycling through the list if more players join.
 	var pos: Vector2 = PLAYER_SPAWN_POSITIONS[
 		_spawn_position_index % PLAYER_SPAWN_POSITIONS.size()
 	]
 	_spawn_position_index += 1
-
-	# RPC to every peer (including the server itself via call_local) so they
-	# all create the same player node with the right authority set.
 	_create_player_node.rpc(peer_id, pos)
 
 
-## Runs on EVERY peer (server + all clients).
-## Creates the player node, names it by peer_id so RPCs can route to it,
-## and sets authority so only the owning peer processes input.
+## Runs on ALL peers. Creates the player node with the correct authority so
+## only the owning peer processes input, while everyone can see the character.
 @rpc("authority", "call_local", "reliable")
 func _create_player_node(peer_id: int, spawn_pos: Vector2) -> void:
 	var player: Player = PLAYER_SCENE.instantiate()
-
-	# The node name MUST be deterministic and identical on all peers.
-	# Godot uses it internally to route RPCs to the right node.
-	player.name = "Player_%d" % peer_id
-
-	# set_multiplayer_authority tells Godot which peer "owns" this node.
-	# The owner is the only one that processes input and sends sync updates.
+	player.name                  = "Player_%d" % peer_id
 	player.set_multiplayer_authority(peer_id)
-
-	player.global_position = spawn_pos
+	player.global_position       = spawn_pos
 	add_child(player)
 
 
-## Runs on EVERY peer — removes a disconnected player's node.
 @rpc("authority", "call_local", "reliable")
 func _remove_player(peer_id: int) -> void:
 	var node := get_node_or_null("Player_%d" % peer_id)
@@ -125,12 +122,9 @@ func _remove_player(peer_id: int) -> void:
 # ── enemy spawning (SERVER ONLY) ──────────────────────────────────────────────
 
 func _spawn_single_enemy(is_elite: bool = false) -> void:
-	# Pick a random position near whichever player is closest to the world
-	# center — or just the first available player.
 	var ref_player := _get_reference_player()
 	if ref_player == null:
 		return
-
 	var spawn_pos: Vector2 = _get_random_spawn_pos(ref_player.global_position, MIN_SPAWN_RADIUS)
 	_create_enemy(spawn_pos, _get_enemy(), is_elite)
 
@@ -139,33 +133,54 @@ func _spawn_circle_pattern(enemies_to_spawn: int) -> void:
 	var ref_player := _get_reference_player()
 	if ref_player == null:
 		return
-
-	var player_pos:  Vector2 = ref_player.global_position
-	var angle_step:  float   = TAU / enemies_to_spawn
-
+	var player_pos: Vector2 = ref_player.global_position
+	var angle_step: float   = TAU / enemies_to_spawn
 	for i in range(enemies_to_spawn):
 		var angle:     float   = i * angle_step
 		var spawn_pos: Vector2 = player_pos + Vector2(cos(angle), sin(angle)) * MIN_SPAWN_RADIUS
 		_create_enemy(spawn_pos, all_res_enemy[0])
 
 
+## Spawn an enemy via MultiplayerSpawner.
+## The spawner calls _create_enemy_from_data() on BOTH server and all clients,
+## then adds the returned node as a child.  When the server later calls
+## queue_free() on the enemy, all client copies are also removed automatically.
 func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = false) -> void:
-	var enemy: Enemy = ENEMY_SCENE.instantiate()
-	enemy.res_enemy       = res_enemy
-	enemy.is_elite        = is_elite
-	enemy.global_position = spawn_pos
-	enemy.enemy_id        = _next_enemy_id
-	_next_enemy_id       += 1
+	var eid := _next_enemy_id
+	_next_enemy_id += 1
 
+	# Pack initialization data into a dictionary.
+	# resource_path gives us a stable string to re-load the resource on clients.
+	var data := {
+		"res_path": res_enemy.resource_path,
+		"pos":      spawn_pos,
+		"is_elite": is_elite,
+		"eid":      eid,
+	}
+
+	# spawn() adds the node to this spawner and replicates it to all clients.
+	var enemy: Enemy = _enemy_spawner.spawn(data)
+
+	# Connect the died signal so we can track the enemy count on the server.
 	enemy.died.connect(enemy_died)
-	add_child(enemy)
 	enemies_count += 1
+
+
+## Called by MultiplayerSpawner on EVERY peer to create and initialize an enemy.
+## Must return a Node — the spawner adds it to the scene tree.
+func _create_enemy_from_data(data: Dictionary) -> Node:
+	var enemy: Enemy       = ENEMY_SCENE.instantiate()
+	enemy.res_enemy        = load(data["res_path"]) as ResEnemy
+	enemy.is_elite         = data["is_elite"]
+	enemy.global_position  = data["pos"]
+	enemy.enemy_id         = data["eid"]
+	# Deterministic name = same on server and all clients, required for RPC routing.
+	enemy.name             = "Enemy_%d" % data["eid"]
+	return enemy
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────
 
-## Returns any available player to use as a spawn-position reference.
-## Prefers the first player in the dictionary.
 func _get_reference_player() -> Player:
 	if Global.players.is_empty():
 		return null
@@ -199,7 +214,7 @@ func _add_enemy_type(minute: int) -> void:
 			spawn_timer.wait_time = 0.35
 
 
-# ── setters (update debug UI labels) ─────────────────────────────────────────
+# ── setters ───────────────────────────────────────────────────────────────────
 
 func _set_enemies_count(value: int) -> void:
 	enemies_count = value
@@ -242,8 +257,7 @@ func _on_pattern_timer_timeout() -> void:
 	if not multiplayer.is_server():
 		return
 	if enemies_count < MAX_ENEMIES:
-		var to_spawn := min(40, MAX_ENEMIES - enemies_count)
-		_spawn_circle_pattern(to_spawn)
+		_spawn_circle_pattern(min(40, MAX_ENEMIES - enemies_count))
 
 
 func _on_elite_timer_timeout() -> void:
@@ -255,17 +269,13 @@ func _on_elite_timer_timeout() -> void:
 func _on_food_timer_timeout() -> void:
 	if not multiplayer.is_server():
 		return
-
 	var ref_player := _get_reference_player()
 	if ref_player == null:
 		return
-
 	var spawn_pos: Vector2 = _get_random_spawn_pos(
-		ref_player.global_position,
-		randi_range(MIN_SPAWN_RADIUS, 600)
+		ref_player.global_position, randi_range(MIN_SPAWN_RADIUS, 600)
 	)
-
-	var food: Drop  = DROP_SCENE.instantiate()
+	var food: Drop       = DROP_SCENE.instantiate()
 	food.resource        = RES_FOOD
 	food.global_position = spawn_pos
 	add_child(food)

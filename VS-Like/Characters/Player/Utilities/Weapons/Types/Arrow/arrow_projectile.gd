@@ -45,7 +45,7 @@ func _on_body_entered(body: Node2D) -> void:
 	var final_damage := damage * shooter.extra_damage
 
 	# Immediate visual feedback — floating text on all peers.
-	body._show_floating_text_all.rpc(round(final_damage))
+	body.show_floating_text.rpc(round(final_damage))
 
 	# Report to server for validation + health deduction.
 	body.report_hit.rpc_id(1, final_damage)

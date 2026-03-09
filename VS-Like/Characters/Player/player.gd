@@ -134,25 +134,31 @@ func _handle_movement() -> void:
 
 # ── health ────────────────────────────────────────────────────────────────────
 ## Called by the server to deal damage to this player.
-## We use an RPC so the server can call this on any peer's machine.
 ##
-## @rpc arguments explained:
-##   "authority"  — only the node's multiplayer_authority can call this RPC.
-##                  For the player node, authority = the server (we set it
-##                  server-side in spawner.gd).  So only the server can hurt
-##                  the player — clients cannot fake damage to themselves.
-##   "call_local" — also run the function on the machine that made the call
-##                  (the server), not just send it to remote peers.
-##   "reliable"   — use TCP-like guaranteed delivery (important for damage).
-@rpc("authority", "call_local", "reliable")
+## @rpc arguments:
+##   "any_peer"   — we need this (not "authority") because the SERVER calls
+##                  hurt() on player nodes it doesn't own.  "authority" would
+##                  only allow the owning client to call it — backwards from
+##                  what we want.
+##   "call_local" — also run on the caller (the server), which matters when
+##                  the server's own player takes damage.
+##   "reliable"   — guaranteed delivery; important for damage events.
+@rpc("any_peer", "call_local", "reliable")
 func hurt(dmg: float) -> void:
-	# Only the local player needs their health visually updated.
-	# Remote players' health bars aren't shown on our screen.
-	if not is_multiplayer_authority():
-		return
+	# Security: only accept damage calls that originated from the server.
+	# get_remote_sender_id() returns 0 when the function is called locally
+	# (i.e. the server calling hurt() on its own machine), and 1 when a
+	# remote peer sends it.  We reject anything from peer_id > 1 (clients).
+	var sender := multiplayer.get_remote_sender_id()
+	if sender != 0 and sender != 1:
+		return  # A client tried to damage a player directly — ignore it.
 
 	health -= dmg
-	if health <= 0:
+
+	# Only the owning client reloads the scene on death.
+	# Everyone's copy of this player node runs hurt(), but only the machine
+	# that actually controls this character needs to react to death.
+	if health <= 0 and is_multiplayer_authority():
 		get_tree().call_deferred("change_scene_to_file", "res://VS-Like/Maps/Woods/woods_map.tscn")
 
 

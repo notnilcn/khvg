@@ -52,7 +52,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 
 	var final_damage := damage * local_player.extra_damage
 
-	body._show_floating_text_all.rpc(round(final_damage))
+	body.show_floating_text.rpc(round(final_damage))
 	body.report_hit.rpc_id(1, final_damage)
 
 

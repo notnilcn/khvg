@@ -56,7 +56,7 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	var final_damage := damage * local_player.extra_damage
 
 	# Show floating text on ALL peers immediately (pure visual, zero latency).
-	body._show_floating_text_all.rpc(round(final_damage))
+	body.show_floating_text.rpc(round(final_damage))
 
 	# Tell the server (peer 1) to validate and apply the damage.
 	body.report_hit.rpc_id(1, final_damage)
