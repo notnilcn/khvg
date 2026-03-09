@@ -1,0 +1,47 @@
+[gd_scene load_steps=4 format=3 uid="uid://p27kdpmtdbpy"]
+
+[ext_resource type="Script" uid="uid://b270ddb5sjx6r" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/bible_weapon.gd" id="1_3ldgo"]
+[ext_resource type="Texture2D" uid="uid://csh7sd42pj004" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/bible_sprite.tres" id="2_3ldgo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nqfp1"]
+
+[node name="BibleWeapon" type="Node2D"]
+visible = false
+script = ExtResource("1_3ldgo")
+
+[node name="FirstBible" type="Area2D" parent="."]
+position = Vector2(64, 0)
+collision_layer = 0
+collision_mask = 4
+
+[node name="Sprite2D" type="Sprite2D" parent="FirstBible"]
+texture = ExtResource("2_3ldgo")
+
+[node name="FirstCollShape" type="CollisionShape2D" parent="FirstBible"]
+unique_name_in_owner = true
+shape = SubResource("CircleShape2D_nqfp1")
+disabled = true
+
+[node name="SecondBible" type="Area2D" parent="."]
+visible = false
+position = Vector2(-64, 0)
+collision_layer = 0
+collision_mask = 4
+
+[node name="Sprite2D" type="Sprite2D" parent="SecondBible"]
+texture = ExtResource("2_3ldgo")
+
+[node name="SecondCollShape" type="CollisionShape2D" parent="SecondBible"]
+unique_name_in_owner = true
+shape = SubResource("CircleShape2D_nqfp1")
+disabled = true
+
+[node name="DurationTimer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[connection signal="fire" from="." to="." method="_on_fire"]
+[connection signal="upgraded" from="." to="." method="_on_upgraded"]
+[connection signal="body_entered" from="FirstBible" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="SecondBible" to="." method="_on_area_2d_body_entered"]
+[connection signal="timeout" from="DurationTimer" to="." method="_on_duration_timer_timeout"]

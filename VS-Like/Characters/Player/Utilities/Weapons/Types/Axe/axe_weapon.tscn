@@ -1,0 +1,51 @@
+[gd_scene load_steps=4 format=3 uid="uid://nvgtnmgk5qcj"]
+
+[ext_resource type="Texture2D" uid="uid://tkywoo4oh2bn" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/axe_sprite.tres" id="1_ejsji"]
+[ext_resource type="Script" uid="uid://c2r6i1r526y1c" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/axe_weapon.gd" id="1_m2j1n"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_m2j1n"]
+radius = 7.0
+height = 50.0
+
+[node name="AxeWeapon" type="Node2D"]
+visible = false
+script = ExtResource("1_m2j1n")
+fire_rate = 2.0
+attach_to_rotation = true
+
+[node name="FirstAxe" type="Area2D" parent="."]
+position = Vector2(16, -16)
+collision_layer = 0
+collision_mask = 4
+
+[node name="Sprite2D" type="Sprite2D" parent="FirstAxe"]
+texture = ExtResource("1_ejsji")
+offset = Vector2(8, -8)
+flip_h = true
+
+[node name="FirstCollShape" type="CollisionShape2D" parent="FirstAxe"]
+rotation = 0.785398
+shape = SubResource("CapsuleShape2D_m2j1n")
+disabled = true
+
+[node name="SecondAxe" type="Area2D" parent="."]
+visible = false
+position = Vector2(-16, 16)
+scale = Vector2(-1, -1)
+collision_layer = 0
+collision_mask = 4
+
+[node name="Sprite2D" type="Sprite2D" parent="SecondAxe"]
+texture = ExtResource("1_ejsji")
+offset = Vector2(8, -8)
+flip_h = true
+
+[node name="SecondCollShape" type="CollisionShape2D" parent="SecondAxe"]
+rotation = 0.785398
+shape = SubResource("CapsuleShape2D_m2j1n")
+disabled = true
+
+[connection signal="fire" from="." to="." method="_on_fire"]
+[connection signal="upgraded" from="." to="." method="_on_upgraded"]
+[connection signal="body_entered" from="FirstAxe" to="." method="_on_area_2d_body_entered"]
+[connection signal="body_entered" from="SecondAxe" to="." method="_on_area_2d_body_entered"]

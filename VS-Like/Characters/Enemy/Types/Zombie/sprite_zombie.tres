@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" load_steps=2 format=3 uid="uid://qu2hqqom5t3r"]
+
+[ext_resource type="Texture2D" uid="uid://cfsuakq54n73o" path="res://VS-Like/Sprites/32rogues-0.5.0/32rogues/monsters.png" id="1_3y45h"]
+
+[resource]
+atlas = ExtResource("1_3y45h")
+region = Rect2(128, 128, 32, 32)

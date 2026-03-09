@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ResWeapon" load_steps=4 format=3 uid="uid://bqqm6feyuyt7c"]
+
+[ext_resource type="Script" uid="uid://bjoxslpmu8tnm" path="res://VS-Like/Characters/Player/Utilities/Weapons/res_weapon.gd" id="1_rw1lj"]
+[ext_resource type="Texture2D" uid="uid://di7gakkx63k5n" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/ring_sprite.tres" id="2_1cfj7"]
+[ext_resource type="PackedScene" uid="uid://b1x824m35l0jk" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/ring_weapon.tscn" id="3_58l2r"]
+
+[resource]
+script = ExtResource("1_rw1lj")
+weapon_scene = ExtResource("3_58l2r")
+weapon_name = "RING"
+weapon_description = "25% EXTRA DAMAGE"
+sprite = ExtResource("2_1cfj7")
+damage = 10.0
+fire_rate = 1.0
+attach_to_rotation = false
+is_passive = true
+upgrade_description_2 = "12.5% EXTRA DAMAGE"
+upgrade_description_3 = "12.5% EXTRA DAMAGE"
+metadata/_custom_type_script = "uid://bjoxslpmu8tnm"

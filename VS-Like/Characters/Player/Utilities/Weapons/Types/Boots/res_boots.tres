@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ResWeapon" load_steps=4 format=3 uid="uid://baev58ir4xw6f"]
+
+[ext_resource type="Script" uid="uid://bjoxslpmu8tnm" path="res://VS-Like/Characters/Player/Utilities/Weapons/res_weapon.gd" id="1_3apvx"]
+[ext_resource type="Texture2D" uid="uid://dcmqhuq8vjnc4" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Boots/boots_sprite.tres" id="2_3v5f4"]
+[ext_resource type="PackedScene" uid="uid://crmaho7bwt1j" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Boots/boots_weapon.tscn" id="3_kxaha"]
+
+[resource]
+script = ExtResource("1_3apvx")
+weapon_scene = ExtResource("3_kxaha")
+weapon_name = "BOOTS"
+weapon_description = "12.5% EXTRA MOVEMENT SPEED"
+sprite = ExtResource("2_3v5f4")
+damage = 10.0
+fire_rate = 1.0
+attach_to_rotation = false
+is_passive = true
+upgrade_description_2 = "12.5% EXTRA MOVEMENT SPEED"
+upgrade_description_3 = "12.5% EXTRA MOVEMENT SPEED"
+metadata/_custom_type_script = "uid://bjoxslpmu8tnm"

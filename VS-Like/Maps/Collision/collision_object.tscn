@@ -1,0 +1,18 @@
+[gd_scene load_steps=2 format=3 uid="uid://cvq678m1t1i00"]
+
+[ext_resource type="Script" uid="uid://bxsainjb86axg" path="res://VS-Like/Maps/Collision/collision_object.gd" id="1_24fh5"]
+
+[node name="CollisionObject" type="StaticBody2D"]
+collision_mask = 0
+script = ExtResource("1_24fh5")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-15, -15, 30, 30)
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ResEnemy" load_steps=3 format=3 uid="uid://dkulrjp707t7g"]
+
+[ext_resource type="Script" uid="uid://cgrsxh8314hlg" path="res://VS-Like/Characters/Enemy/Types/res_enemy.gd" id="1_yw3xa"]
+[ext_resource type="Texture2D" uid="uid://d22j2tgqr64hs" path="res://VS-Like/Characters/Enemy/Types/Cyclops/sprite_cyclops.tres" id="2_77a4p"]
+
+[resource]
+script = ExtResource("1_yw3xa")
+enemy_name = "Cyclops"
+sprite = ExtResource("2_77a4p")
+radius = 7.0
+health = 30
+speed = 35
+damage = 5
+metadata/_custom_type_script = "uid://cgrsxh8314hlg"

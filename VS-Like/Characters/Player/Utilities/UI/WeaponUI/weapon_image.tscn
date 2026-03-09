@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://cq3xaoaumbpoh"]
+
+[ext_resource type="Texture2D" uid="uid://tkywoo4oh2bn" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/axe_sprite.tres" id="1_6jwdd"]
+[ext_resource type="Script" uid="uid://5nyv7t2ca22n" path="res://VS-Like/Characters/Player/Utilities/UI/WeaponUI/weapon_image.gd" id="1_j8pap"]
+
+[node name="WeaponImage" type="MarginContainer"]
+offset_right = 40.0
+offset_bottom = 41.0
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+script = ExtResource("1_j8pap")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="WeaponTexture" type="TextureRect" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+texture = ExtResource("1_6jwdd")
+stretch_mode = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Level1" type="ColorRect" parent="VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Level2" type="ColorRect" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(1, 1, 1, 0.215686)
+
+[node name="Level3" type="ColorRect" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+size_flags_horizontal = 3
+color = Color(1, 1, 1, 0.215686)

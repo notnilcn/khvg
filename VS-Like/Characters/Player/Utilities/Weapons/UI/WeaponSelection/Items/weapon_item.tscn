@@ -1,0 +1,56 @@
+[gd_scene load_steps=3 format=3 uid="uid://b1wqwvty1e2tj"]
+
+[ext_resource type="Script" uid="uid://0glv1mjhjdfb" path="res://VS-Like/Characters/Player/Utilities/Weapons/UI/WeaponSelection/Items/weapon_item.gd" id="1_w2jks"]
+[ext_resource type="Texture2D" uid="uid://c485wyli86t43" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Food/sprite_food.tres" id="2_1nyc6"]
+
+[node name="WeaponItem" type="Button"]
+custom_minimum_size = Vector2(192, 56)
+offset_right = 192.0
+offset_bottom = 56.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_w2jks")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+
+[node name="Image" type="TextureRect" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("2_1nyc6")
+stretch_mode = 3
+
+[node name="TextContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="NameLabel" type="Label" parent="MarginContainer/HBoxContainer/TextContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "FOOD"
+
+[node name="DescLabel" type="Label" parent="MarginContainer/HBoxContainer/TextContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 8
+text = "+20 HEAL"
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

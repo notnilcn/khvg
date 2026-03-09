@@ -1,0 +1,92 @@
+[gd_scene load_steps=14 format=3 uid="uid://dmehgodydmmh8"]
+
+[ext_resource type="Script" uid="uid://h78wx168xg6k" path="res://VS-Like/Characters/Player/player.gd" id="1_1h1xi"]
+[ext_resource type="Resource" uid="uid://cwkok3we1g2wj" path="res://VS-Like/Characters/Player/Types/Dwarf/res_dwarf.tres" id="2_0fte0"]
+[ext_resource type="Texture2D" uid="uid://dja5rrfynttv5" path="res://VS-Like/Characters/Player/Types/Dwarf/tex_dwarf.tres" id="3_hvppb"]
+[ext_resource type="PackedScene" uid="uid://djtlam2adq2n7" path="res://VS-Like/Characters/Player/Utilities/Weapons/UI/WeaponSelection/weapon_selection.tscn" id="4_1eh3f"]
+[ext_resource type="PackedScene" uid="uid://ylm3n7gg46ep" path="res://VS-Like/Characters/Player/Utilities/UI/HealthbarUI/health_bar.tscn" id="4_l4u65"]
+[ext_resource type="PackedScene" uid="uid://bendo7yc3uen7" path="res://VS-Like/Characters/Player/Utilities/Hurtbox/hurtbox.tscn" id="5_l4u65"]
+[ext_resource type="PackedScene" uid="uid://bgwah0k2f5td8" path="res://VS-Like/Characters/Player/Utilities/DropDetection/drops_detection.tscn" id="6_bj8pa"]
+[ext_resource type="PackedScene" uid="uid://cwneuivvape0f" path="res://VS-Like/Characters/Player/Utilities/UI/WeaponUI/weapons_container_ui.tscn" id="7_0fte0"]
+[ext_resource type="PackedScene" uid="uid://cmxyfw4upvh5a" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest_ui.tscn" id="9_hvppb"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1h1xi"]
+radius = 7.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kfbvp"]
+radius = 150.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kfbvp"]
+bg_color = Color(0.188235, 0.188235, 0.188235, 0.352941)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1eh3f"]
+bg_color = Color(0, 0.592157, 1, 1)
+
+[node name="Player" type="CharacterBody2D"]
+z_index = 1
+collision_layer = 2
+script = ExtResource("1_1h1xi")
+resource = ExtResource("2_0fte0")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -8)
+texture = ExtResource("3_hvppb")
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_1h1xi")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="HealthBar" parent="." instance=ExtResource("4_l4u65")]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = -24.0
+
+[node name="Hurtbox" parent="." instance=ExtResource("5_l4u65")]
+
+[node name="DropsDetection" parent="." instance=ExtResource("6_bj8pa")]
+
+[node name="EnemyDetection" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyDetection"]
+shape = SubResource("CircleShape2D_kfbvp")
+debug_color = Color(0.889277, 0.249172, 0.540243, 0.42)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 25
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/MarginContainer"]
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="HUD/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_kfbvp")
+theme_override_styles/fill = SubResource("StyleBoxFlat_1eh3f")
+show_percentage = false
+
+[node name="WeaponsContainerUI" parent="HUD/MarginContainer/VBoxContainer" instance=ExtResource("7_0fte0")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="WeaponSelection" parent="HUD" instance=ExtResource("4_1eh3f")]
+unique_name_in_owner = true
+
+[node name="ChestUI" parent="HUD" instance=ExtResource("9_hvppb")]
+unique_name_in_owner = true

@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://cjsl7cj235n87"]
+
+[ext_resource type="PackedScene" uid="uid://cvq678m1t1i00" path="res://VS-Like/Maps/Collision/collision_object.tscn" id="1_dwp1t"]
+[ext_resource type="Texture2D" uid="uid://ce7ln4h6jnrqp" path="res://VS-Like/Maps/Collision/Tree/sprite_tree.tres" id="2_t8qpj"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dwp1t"]
+size = Vector2(32, 32)
+
+[node name="Tree" instance=ExtResource("1_dwp1t")]
+
+[node name="VisibleOnScreenNotifier2D" parent="." index="0"]
+rect = Rect2(-15, -30, 30, 60)
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="2"]
+texture = ExtResource("2_t8qpj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." index="3"]
+position = Vector2(0, 16)
+shape = SubResource("RectangleShape2D_dwp1t")

@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=3 uid="uid://cc8ve06aj8q7x"]
+
+[ext_resource type="Script" uid="uid://cmkjgnl8lcycd" path="res://VS-Like/Characters/Enemy/Utilities/Spawner/spawner.gd" id="1_0r1kx"]
+[ext_resource type="Script" uid="uid://cgrsxh8314hlg" path="res://VS-Like/Characters/Enemy/Types/res_enemy.gd" id="2_gm4r7"]
+[ext_resource type="Resource" uid="uid://bpm351c5xe65k" path="res://VS-Like/Characters/Enemy/Types/Globlin/res_goblin.tres" id="3_4if38"]
+
+[node name="Spawner" type="Node2D"]
+script = ExtResource("1_0r1kx")
+all_res_enemy = Array[ExtResource("2_gm4r7")]([ExtResource("3_4if38")])
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+
+[node name="SpawnTimer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+
+[node name="PatternTimer" type="Timer" parent="."]
+wait_time = 70.0
+autostart = true
+
+[node name="EliteTimer" type="Timer" parent="."]
+wait_time = 100.0
+autostart = true
+
+[node name="FoodTimer" type="Timer" parent="."]
+wait_time = 60.0
+autostart = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+
+[node name="EnemiesCountLabel" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_font_sizes/font_size = 8
+text = "ENEMIES: 000"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CanvasLayer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Minutes" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "00"
+
+[node name="Label" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = ":"
+
+[node name="Seconds" type="Label" parent="CanvasLayer/MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "00"
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
+[connection signal="timeout" from="PatternTimer" to="." method="_on_pattern_timer_timeout"]
+[connection signal="timeout" from="EliteTimer" to="." method="_on_elite_timer_timeout"]
+[connection signal="timeout" from="FoodTimer" to="." method="_on_food_timer_timeout"]
