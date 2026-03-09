@@ -5,7 +5,7 @@ const MIN_RADIUS: int = 350
 @onready var timer: Timer = $Timer
 
 func reposition_object():
-	var rand_position: Vector2 = _get_random_spawn_pos(Global.player.global_position)
+	var rand_position: Vector2 = _get_random_spawn_pos(Global.get_local_player().global_position)
 	global_position = rand_position
 
 # GET A RANDOM POSITION AROUND THE PLAYER

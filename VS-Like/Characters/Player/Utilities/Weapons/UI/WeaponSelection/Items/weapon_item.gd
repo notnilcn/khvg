@@ -13,7 +13,7 @@ func _set_res_weapon(res_wpn: ResWeapon):
 	image.texture = res_weapon.sprite
 	name_label.text = res_weapon.weapon_name
 	
-	for weapon in Global.player.weapons:
+	for weapon in Global.get_local_player().weapons:
 		if weapon.resource == res_weapon:
 			match weapon.upgrade_level:
 				1:
@@ -29,4 +29,4 @@ func _on_pressed() -> void:
 	if res_weapon:
 		Global.add_weapon(res_weapon)
 	else:
-		Global.player.health += 20
+		Global.get_local_player().health += 20

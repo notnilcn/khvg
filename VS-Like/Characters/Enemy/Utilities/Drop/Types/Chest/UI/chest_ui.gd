@@ -16,7 +16,7 @@ func select_weapons():
 	var av_res_weapons: Array[ResWeapon] = Global.get_available_weapons()
 	if av_res_weapons.is_empty():
 		create_img(FOOD_IMAGE)
-		Global.player.health += 20
+		Global.get_local_player().health += 20
 	else:
 		var amount_to_show: int = clampi(av_res_weapons.size(), 1, 3)
 		var rand_value: int = randi_range(1, amount_to_show)
