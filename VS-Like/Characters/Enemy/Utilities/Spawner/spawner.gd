@@ -100,9 +100,23 @@ func _ready() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _request_player_spawn() -> void:
 	# This runs on the SERVER.
-	var peer_id := multiplayer.get_remote_sender_id()
-	print("Spawner: server received spawn request from peer ", peer_id)
-	_spawn_player_for_peer(peer_id)
+	var new_peer_id := multiplayer.get_remote_sender_id()
+	print("Spawner: server received spawn request from peer ", new_peer_id)
+
+	# ── catch-up: send all already-existing players to the new client ─────────
+	# The host's player (and anyone else already in the game) was spawned
+	# before this client connected, so the client missed those RPCs entirely.
+	# We send them now, targeting only the new client via rpc_id.
+	#
+	# rpc_id(new_peer_id, ...) sends to ONE specific peer — does NOT run
+	# locally on the server (no risk of duplicating nodes the server already has).
+	for existing_peer_id: int in Global.players.keys():
+		var existing_player: Player = Global.players[existing_peer_id]
+		print("Spawner: sending existing player %d to new peer %d" % [existing_peer_id, new_peer_id])
+		_create_player_node.rpc_id(new_peer_id, existing_peer_id, existing_player.global_position)
+
+	# ── now spawn the new player for EVERYONE (broadcast) ─────────────────────
+	_spawn_player_for_peer(new_peer_id)
 
 
 func _on_player_left(peer_id: int) -> void:
@@ -122,6 +136,10 @@ func _spawn_player_for_peer(peer_id: int) -> void:
 ## only the owning peer processes input, while everyone can see the character.
 @rpc("authority", "call_local", "reliable")
 func _create_player_node(peer_id: int, spawn_pos: Vector2) -> void:
+	# Guard: if this peer already has a node for this player, skip.
+	# This can happen if the catch-up RPC and the broadcast RPC both arrive.
+	if get_node_or_null("Player_%d" % peer_id) != null:
+		return
 	var player: Player = PLAYER_SCENE.instantiate()
 	player.name                  = "Player_%d" % peer_id
 	player.set_multiplayer_authority(peer_id)
