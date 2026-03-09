@@ -72,20 +72,36 @@ func _ready() -> void:
 
 	add_child(_enemy_spawner)
 
-	# ── server-only setup ─────────────────────────────────────────────────────
-	if not multiplayer.is_server():
-		return
+	# ── server setup ─────────────────────────────────────────────────────────
+	if multiplayer.is_server():
+		# Server spawns its own player now, while it's in the scene.
+		# Clients will request their own spawn via RPC once THEY are in the scene.
+		# This avoids a timing bug: if the server spawned the client's player on
+		# peer_connected (which fires during the WebSocket handshake), the client's
+		# scene wouldn't have loaded yet and the spawn RPC would be silently dropped.
+		_spawn_player_for_peer(1)
 
-	Network.player_joined.connect(_on_player_joined)
-	Network.player_left.connect(_on_player_left)
-
-	# Spawn the host's own player immediately.
-	_spawn_player_for_peer(1)
+		# Still need to know when peers disconnect so we can clean up their player.
+		Network.player_left.connect(_on_player_left)
+	else:
+		# Client-side: tell the server we are in the scene and ready to be spawned.
+		# rpc_id(1, ...) sends to peer 1 (the server) specifically.
+		print("Spawner: client ready, requesting player spawn from server")
+		_request_player_spawn.rpc_id(1)
 
 
 # ── player spawning ───────────────────────────────────────────────────────────
 
-func _on_player_joined(peer_id: int) -> void:
+## Client calls this on the server once the client's game scene is fully loaded.
+## The server then spawns a player node for that client on all peers.
+##
+## @rpc("any_peer")  — clients (non-servers) need to call this.
+## @rpc("call_remote") — runs only on the server, not on the calling client.
+@rpc("any_peer", "call_remote", "reliable")
+func _request_player_spawn() -> void:
+	# This runs on the SERVER.
+	var peer_id := multiplayer.get_remote_sender_id()
+	print("Spawner: server received spawn request from peer ", peer_id)
 	_spawn_player_for_peer(peer_id)
 
 
@@ -98,6 +114,7 @@ func _spawn_player_for_peer(peer_id: int) -> void:
 		_spawn_position_index % PLAYER_SPAWN_POSITIONS.size()
 	]
 	_spawn_position_index += 1
+	print("Spawner: spawning player for peer ", peer_id, " at ", pos)
 	_create_player_node.rpc(peer_id, pos)
 
 

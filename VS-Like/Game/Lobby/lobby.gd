@@ -29,10 +29,15 @@ func _ready() -> void:
 func _on_host_button_pressed() -> void:
 	_set_ui_enabled(false)
 	status_label.text = "Starting server..."
-	Network.start_server()
 
-	# The server loads the game immediately. Clients will load it too once
-	# they connect and receive the RPC from spawner.gd.
+	# start_server() returns false if the port is unavailable (e.g. another
+	# instance already claimed it, or a firewall is blocking it).
+	if not Network.start_server():
+		status_label.text = "Failed to start server.  Is another instance already hosting?"
+		_set_ui_enabled(true)
+		return
+
+	# Server loads the game immediately. Clients load it after connecting.
 	_load_game()
 
 

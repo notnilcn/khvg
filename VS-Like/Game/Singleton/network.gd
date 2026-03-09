@@ -39,12 +39,13 @@ var is_active: bool = false
 
 ## Call this to host a game. The host also plays (listen-server model).
 ## `port` is the TCP port clients will connect to.
-func start_server(port: int = DEFAULT_PORT) -> void:
+## Returns true on success, false if the port couldn't be opened.
+func start_server(port: int = DEFAULT_PORT) -> bool:
 	var peer := WebSocketMultiplayerPeer.new()
 	var err := peer.create_server(port)
 	if err != OK:
 		push_error("Network: failed to create server on port %d (error %d)" % [port, err])
-		return
+		return false
 
 	# Hand the peer to Godot's multiplayer system.
 	multiplayer.multiplayer_peer = peer
@@ -57,6 +58,7 @@ func start_server(port: int = DEFAULT_PORT) -> void:
 
 	is_active = true
 	print("Network: server listening on port ", port)
+	return true
 
 
 ## Call this to join an existing game.
