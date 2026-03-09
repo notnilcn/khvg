@@ -103,6 +103,12 @@ func _setup_sync() -> void:
 
 	sync.replication_config = config
 
+	# CRITICAL: tell the synchronizer which peer is the authority (sender).
+	# Without this line it defaults to authority=1 (the server), meaning only
+	# the server ever broadcasts position — even for players owned by clients.
+	# Each player's sync node must mirror that player's multiplayer_authority.
+	sync.set_multiplayer_authority(get_multiplayer_authority())
+
 	# By default MultiplayerSynchronizer replicates 60 times per second.
 	# For a fast-moving game you may want to lower this to reduce bandwidth.
 	# sync.replication_interval = 1.0 / 20.0  # 20 Hz example

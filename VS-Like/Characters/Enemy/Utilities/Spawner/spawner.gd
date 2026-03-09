@@ -39,6 +39,7 @@ var seconds: int        : set = _set_seconds
 
 var _next_enemy_id:        int = 0
 var _spawn_position_index: int = 0
+var _initialized:          bool = false
 
 const PLAYER_SPAWN_POSITIONS: Array = [
 	Vector2(0, 0),
@@ -53,6 +54,11 @@ var _enemy_spawner: MultiplayerSpawner
 
 
 func _ready() -> void:
+	# Guard against _ready() being called a second time (e.g. scene reload quirk).
+	if _initialized:
+		return
+	_initialized = true
+
 	# ── set up MultiplayerSpawner for enemies ─────────────────────────────────
 	# This node watches THIS spawner for add_child calls involving enemy.tscn.
 	# When the server adds an enemy, all clients automatically get a copy.
