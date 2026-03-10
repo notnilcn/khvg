@@ -15,6 +15,11 @@ class_name Enemy
 
 signal died
 
+## Emitted from die() so the parent Spawner can broadcast despawn to all peers.
+## Only meaningful on the server (die() is server-only), but declared here so
+## the signal exists on every peer's Enemy instance without error.
+signal request_despawn(eid: int)
+
 const DROP_SCENE:          PackedScene = preload("res://VS-Like/Characters/Enemy/Utilities/Drop/drop.tscn")
 const FLOATING_TEXT_SCENE: PackedScene = preload("res://VS-Like/Game/UI/FloatingText/floating_text.tscn")
 
@@ -72,9 +77,15 @@ func _ready() -> void:
 
 func _setup_sync() -> void:
 	var sync   := MultiplayerSynchronizer.new()
+	# Fixed name so the node path is identical on server and clients.
+	# MultiplayerSynchronizer matches data to nodes by full path — if the name
+	# differs between peers the sync packets are silently dropped.
+	sync.name  = "Sync"
 	var config := SceneReplicationConfig.new()
 	config.add_property(NodePath(":position"))
 	sync.replication_config = config
+	# Authority defaults to 1 (server) which is correct — only the server runs
+	# enemy AI and sends position, all clients just receive.
 	add_child(sync)
 
 
@@ -182,15 +193,15 @@ func show_floating_text(dmg: int) -> void:
 
 
 func die() -> void:
-	# Drop spawning is server-only. The server removes the enemy node via
-	# queue_free(), and MultiplayerSpawner automatically removes it from all
-	# clients — no need for an explicit "die" RPC.
-	if is_elite:
-		spawn_drop()
-	elif randf() > 0.25:
+	# Spawn drop on the server before removing the node.
+	if is_elite or randf() > 0.25:
 		spawn_drop()
 
-	queue_free()
+	# Emit the signal so the parent Spawner broadcasts _rpc_despawn_enemy to
+	# every peer.  The RPC (with call_local) will call queue_free() on this
+	# node on ALL peers — no need to call queue_free() here directly.
+	# (die() is only called on the server, so this always reaches the Spawner.)
+	request_despawn.emit(enemy_id)
 
 
 func spawn_drop() -> void:

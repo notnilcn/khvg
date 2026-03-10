@@ -50,15 +50,11 @@ func _ready() -> void:
 	var my_peer_id := get_multiplayer_authority()
 	Global.players[my_peer_id] = self
 
-	# Add a MultiplayerSynchronizer child so Godot automatically replicates
-	# this player's position (and sprite scale for the flip animation) to all
-	# peers every network tick.
-	#
-	# How it works:
-	#   - The peer that IS the authority sends position updates.
-	#   - All other peers receive them and update this node's position silently.
-	#   - We don't have to write any send/receive code — Godot handles it.
-	_setup_sync()
+	# No MultiplayerSynchronizer here — we broadcast position via _sync_state RPC
+	# in _physics_process instead.  Reason: MultiplayerSynchronizer only starts
+	# sending to peers that are connected at the time the sync node is created.
+	# A host player created before any client connects would never sync its position
+	# to clients that join later.  Explicit RPCs have no such timing restriction.
 
 	await get_tree().process_frame
 	_init_player()
@@ -92,50 +88,38 @@ func _init_player() -> void:
 		weapons_container_ui.add_weapon(weapon)
 
 
-## Adds a MultiplayerSynchronizer that keeps position + sprite flip in sync
-## across all peers without us writing any manual send/receive code.
-func _setup_sync() -> void:
-	var sync   := MultiplayerSynchronizer.new()
-	# CRITICAL: give the synchronizer a fixed, deterministic name.
-	# Godot matches MultiplayerSynchronizer nodes across peers by their node path.
-	# If the name is auto-generated it can differ between server and client
-	# (e.g. "MultiplayerSynchronizer" vs "MultiplayerSynchronizer2") and Godot
-	# silently drops all sync packets because it can't find the matching node.
-	sync.name  = "Sync"
-	var config := SceneReplicationConfig.new()
-
-	# Sync the player's world position (CharacterBody2D.position).
-	config.add_property(NodePath(":position"))
-
-	# Sync the sprite's horizontal scale so the flip-left/right animation
-	# is visible to other players too.
-	config.add_property(NodePath("Sprite2D:scale"))
-
-	sync.replication_config = config
-
-	# CRITICAL: tell the synchronizer which peer is the authority (sender).
-	# Without this line it defaults to authority=1 (the server), meaning only
-	# the server ever broadcasts position — even for players owned by clients.
-	# Each player's sync node must mirror that player's multiplayer_authority.
-	sync.set_multiplayer_authority(get_multiplayer_authority())
-
-	# By default MultiplayerSynchronizer replicates 60 times per second.
-	# For a fast-moving game you may want to lower this to reduce bandwidth.
-	# sync.replication_interval = 1.0 / 20.0  # 20 Hz example
-
-	add_child(sync)
-
-
 # ── physics ───────────────────────────────────────────────────────────────────
 func _physics_process(_delta: float) -> void:
 	# IMPORTANT: only the authoritative peer (the player's owner) processes
-	# keyboard input.  On everyone else's machine this player's position is
-	# silently updated by the MultiplayerSynchronizer above — no input needed.
+	# keyboard input and broadcasts its state.  On all other machines this
+	# function returns early — state arrives via the _sync_state RPC below.
 	if not is_multiplayer_authority():
 		return
 
 	_handle_movement()
 	move_and_slide()
+
+	# Broadcast our world position and sprite direction to every other peer.
+	# "unreliable_ordered" means packets can be dropped (fine for positions —
+	# the next packet will correct it) and out-of-order packets are discarded
+	# (we only care about the most recent position, not old ones).
+	_sync_state.rpc(global_position, sprite_2d.scale.x)
+
+
+## Receive a position broadcast from the peer that owns this player node.
+##
+## @rpc("any_peer")    — any connected peer can broadcast its own state.
+## @rpc("call_remote") — does NOT run on the sender itself (they already know
+##                       their own position from local physics).
+## @rpc("unreliable_ordered") — low-latency, latest packet wins.
+@rpc("any_peer", "call_remote", "unreliable_ordered")
+func _sync_state(pos: Vector2, scale_x: float) -> void:
+	# Security: ignore packets whose sender is not this node's owner.
+	# e.g. a malicious client cannot puppet another player's position.
+	if multiplayer.get_remote_sender_id() != get_multiplayer_authority():
+		return
+	global_position  = pos
+	sprite_2d.scale.x = scale_x
 
 
 func _handle_movement() -> void:

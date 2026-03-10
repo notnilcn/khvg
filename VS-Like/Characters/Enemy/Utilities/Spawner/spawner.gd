@@ -41,16 +41,17 @@ var _next_enemy_id:        int = 0
 var _spawn_position_index: int = 0
 var _initialized:          bool = false
 
+# Tracks spawn-data for every live enemy on the SERVER.
+# Used to send a catch-up list to clients that join after enemies already exist.
+# Entries are removed when the enemy is despawned via _rpc_despawn_enemy.
+var _active_enemy_data: Array[Dictionary] = []
+
 const PLAYER_SPAWN_POSITIONS: Array = [
 	Vector2(0, 0),
 	Vector2(200, 0),
 	Vector2(-200, 0),
 	Vector2(0, 200),
 ]
-
-## The MultiplayerSpawner that replicates enemy nodes to all clients.
-## Created programmatically in _ready() so we don't need to modify the .tscn.
-var _enemy_spawner: MultiplayerSpawner
 
 
 func _ready() -> void:
@@ -59,41 +60,55 @@ func _ready() -> void:
 		return
 	_initialized = true
 
-	# ── set up MultiplayerSpawner for enemies ─────────────────────────────────
-	# This node watches THIS spawner for add_child calls involving enemy.tscn.
-	# When the server adds an enemy, all clients automatically get a copy.
-	_enemy_spawner = MultiplayerSpawner.new()
-	_enemy_spawner.name = "EnemySpawner"
-
-	# spawn_path: which node's children to replicate. We use our own node.
-	# NodePath(".") means "this node (the Spawner)".
-	_enemy_spawner.spawn_path = NodePath(".")
-
-	# Register enemy.tscn as a scene that MultiplayerSpawner is allowed to spawn.
-	_enemy_spawner.add_spawnable_scene("res://VS-Like/Characters/Enemy/enemy.tscn")
-
-	# spawn_function: a Callable that receives the data dict and returns a
-	# configured Enemy node. Called on BOTH server and clients when spawning.
-	_enemy_spawner.spawn_function = _create_enemy_from_data
-
-	add_child(_enemy_spawner)
-
 	# ── server setup ─────────────────────────────────────────────────────────
 	if multiplayer.is_server():
-		# Server spawns its own player now, while it's in the scene.
-		# Clients will request their own spawn via RPC once THEY are in the scene.
-		# This avoids a timing bug: if the server spawned the client's player on
-		# peer_connected (which fires during the WebSocket handshake), the client's
-		# scene wouldn't have loaded yet and the spawn RPC would be silently dropped.
+		# Spawn the host's own player now that the scene is loaded.
+		# Clients request their spawn via RPC (see the else-branch below).
 		_spawn_player_for_peer(1)
 
-		# Still need to know when peers disconnect so we can clean up their player.
+		# If any clients were ALREADY connected before this _ready() ran
+		# (happens when the host dies and the scene reloads while a client
+		# is still in the game), notify those clients to clean up stale nodes
+		# and re-join the fresh scene.
+		for peer_id in multiplayer.get_peers():
+			_notify_scene_reload.rpc_id(peer_id)
+
+		# Clean up player nodes when a peer disconnects.
 		Network.player_left.connect(_on_player_left)
 	else:
 		# Client-side: tell the server we are in the scene and ready to be spawned.
-		# rpc_id(1, ...) sends to peer 1 (the server) specifically.
+		# rpc_id(1, ...) sends ONLY to peer 1 (the server).
 		print("Spawner: client ready, requesting player spawn from server")
 		_request_player_spawn.rpc_id(1)
+
+
+# ── scene reload notification ─────────────────────────────────────────────────
+
+## Sent by the server to already-connected clients when the server scene reloads
+## (e.g. the host died and respawned).  The client removes all stale player nodes
+## from the previous game session and re-requests a fresh spawn.
+##
+## @rpc("authority")    — only the server sends this.
+## @rpc("call_remote")  — only clients run it (server handles its own state).
+@rpc("authority", "call_remote", "reliable")
+func _notify_scene_reload() -> void:
+	print("Spawner: server scene reloaded — clearing stale nodes and rejoining")
+
+	# Remove every player node we were tracking from the old session.
+	for peer_id: int in Global.players.keys():
+		var player: Player = Global.players[peer_id]
+		if is_instance_valid(player):
+			player.queue_free()
+	Global.players.clear()
+
+	# Also remove any enemy nodes that still exist under this spawner from the
+	# previous session (they're now orphaned on the client's side).
+	for child in get_children():
+		if child is Enemy:
+			child.queue_free()
+
+	# Re-join the server's fresh game session.
+	_request_player_spawn.rpc_id(1)
 
 
 # ── player spawning ───────────────────────────────────────────────────────────
@@ -113,9 +128,6 @@ func _request_player_spawn() -> void:
 	# The host's player (and anyone else already in the game) was spawned
 	# before this client connected, so the client missed those RPCs entirely.
 	# We send them now, targeting only the new client via rpc_id.
-	#
-	# rpc_id(new_peer_id, ...) sends to ONE specific peer — does NOT run
-	# locally on the server (no risk of duplicating nodes the server already has).
 	for existing_peer_id: int in Global.players.keys():
 		var existing_player: Player = Global.players[existing_peer_id]
 		print("Spawner: sending existing player %d to new peer %d" % [existing_peer_id, new_peer_id])
@@ -123,6 +135,15 @@ func _request_player_spawn() -> void:
 
 	# ── now spawn the new player for EVERYONE (broadcast) ─────────────────────
 	_spawn_player_for_peer(new_peer_id)
+
+	# ── catch-up: send all currently-alive enemies to the new client ──────────
+	# MultiplayerSpawner's built-in catch-up fires at peer_connected time —
+	# BEFORE the client's game scene is loaded, so those packets are dropped.
+	# We solve this by tracking enemy data ourselves and manually replaying it
+	# when we know the client's scene is ready (i.e. right now).
+	print("Spawner: sending %d existing enemies to peer %d" % [_active_enemy_data.size(), new_peer_id])
+	for data: Dictionary in _active_enemy_data:
+		_rpc_spawn_enemy.rpc_id(new_peer_id, data)
 
 
 func _on_player_left(peer_id: int) -> void:
@@ -160,7 +181,7 @@ func _remove_player(peer_id: int) -> void:
 		node.queue_free()
 
 
-# ── enemy spawning (SERVER ONLY) ──────────────────────────────────────────────
+# ── enemy spawning ────────────────────────────────────────────────────────────
 
 func _spawn_single_enemy(is_elite: bool = false) -> void:
 	var ref_player := _get_reference_player()
@@ -182,16 +203,16 @@ func _spawn_circle_pattern(enemies_to_spawn: int) -> void:
 		_create_enemy(spawn_pos, all_res_enemy[0])
 
 
-## Spawn an enemy via MultiplayerSpawner.
-## The spawner calls _create_enemy_from_data() on BOTH server and all clients,
-## then adds the returned node as a child.  When the server later calls
-## queue_free() on the enemy, all client copies are also removed automatically.
+## SERVER ONLY: spawn an enemy and replicate it to all connected clients.
+##
+## We no longer use MultiplayerSpawner because its built-in late-join catch-up
+## fires at peer_connected time — before the client's game scene exists — so
+## the packets are silently dropped.  Instead we use an explicit RPC that only
+## fires when we KNOW the client is ready (see _request_player_spawn).
 func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = false) -> void:
 	var eid := _next_enemy_id
 	_next_enemy_id += 1
 
-	# Pack initialization data into a dictionary.
-	# resource_path gives us a stable string to re-load the resource on clients.
 	var data := {
 		"res_path": res_enemy.resource_path,
 		"pos":      spawn_pos,
@@ -199,23 +220,76 @@ func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = fal
 		"eid":      eid,
 	}
 
-	# spawn() adds the node to this spawner and replicates it to all clients.
-	var enemy: Enemy = _enemy_spawner.spawn(data)
+	# Track for late-join catch-up (sent inside _request_player_spawn).
+	_active_enemy_data.append(data)
 
-	# Connect the died signal so we can track the enemy count on the server.
-	enemy.died.connect(enemy_died)
-	enemies_count += 1
+	# Broadcast to server (call_local) and all currently-connected clients.
+	_rpc_spawn_enemy.rpc(data)
 
 
-## Called by MultiplayerSpawner on EVERY peer to create and initialize an enemy.
-## Must return a Node — the spawner adds it to the scene tree.
-func _create_enemy_from_data(data: Dictionary) -> Node:
+## Runs on ALL peers (server via call_local, clients via network).
+## Creates, names, and adds the enemy node to this spawner.
+##
+## @rpc("authority")   — only the server sends this.
+## @rpc("call_local")  — also runs on the server immediately (no extra step needed).
+## @rpc("reliable")    — enemy appearance must not be lost.
+@rpc("authority", "call_local", "reliable")
+func _rpc_spawn_enemy(data: Dictionary) -> void:
 	var enemy: Enemy       = ENEMY_SCENE.instantiate()
 	enemy.res_enemy        = load(data["res_path"]) as ResEnemy
 	enemy.is_elite         = data["is_elite"]
 	enemy.global_position  = data["pos"]
 	enemy.enemy_id         = data["eid"]
-	# Deterministic name = same on server and all clients, required for RPC routing.
+	# Deterministic name required so _rpc_despawn_enemy can find it by name on
+	# all peers, and so the MultiplayerSynchronizer path is the same everywhere.
+	enemy.name             = "Enemy_%d" % data["eid"]
+
+	add_child(enemy)
+
+	# Server-only bookkeeping: count enemies and wire up the despawn callback.
+	if multiplayer.is_server():
+		enemies_count += 1
+		enemy.died.connect(enemy_died)
+		# When the enemy calls die(), it emits request_despawn so we can
+		# broadcast the removal to all peers (see _rpc_despawn_enemy below).
+		enemy.request_despawn.connect(_on_enemy_request_despawn)
+
+
+## Called on the server when an enemy's die() method fires.
+## Broadcasts removal to ALL peers so every machine frees the node.
+func _on_enemy_request_despawn(eid: int) -> void:
+	_rpc_despawn_enemy.rpc(eid)
+
+
+## Runs on ALL peers (server via call_local, clients via network).
+## Finds the enemy node by name and frees it.
+##
+## @rpc("authority")   — only the server sends this.
+## @rpc("call_local")  — also frees it on the server.
+## @rpc("reliable")    — enemy removal must not be lost.
+@rpc("authority", "call_local", "reliable")
+func _rpc_despawn_enemy(eid: int) -> void:
+	if multiplayer.is_server():
+		# Remove from the catch-up list so late-joining clients don't get a
+		# ghost entry for an enemy that's already dead.
+		_active_enemy_data = _active_enemy_data.filter(
+			func(d: Dictionary) -> bool: return d["eid"] != eid
+		)
+
+	var enemy := get_node_or_null("Enemy_%d" % eid)
+	if enemy:
+		enemy.queue_free()
+
+
+## Creates and configures an enemy from spawn data.  Called from _rpc_spawn_enemy.
+## Kept as a separate helper so _request_player_spawn can reuse the same logic.
+## (Previously this was the MultiplayerSpawner's spawn_function callback.)
+func _create_enemy_from_data(data: Dictionary) -> Enemy:
+	var enemy: Enemy       = ENEMY_SCENE.instantiate()
+	enemy.res_enemy        = load(data["res_path"]) as ResEnemy
+	enemy.is_elite         = data["is_elite"]
+	enemy.global_position  = data["pos"]
+	enemy.enemy_id         = data["eid"]
 	enemy.name             = "Enemy_%d" % data["eid"]
 	return enemy
 
