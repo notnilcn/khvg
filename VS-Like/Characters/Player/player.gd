@@ -19,6 +19,7 @@ class_name Player
 @export var resource: ResPlayer
 
 @onready var sprite_2d:      Sprite2D     = $Sprite2D
+@onready var camera_2d:      Camera2D     = $Camera2D
 @onready var enemy_detection: Area2D      = $EnemyDetection
 
 # HUD — only shown / updated on THIS machine's local player
@@ -69,9 +70,12 @@ func _init_player() -> void:
 	speed              = resource.max_speed
 	health             = max_health
 
-	# Only the local player needs their HUD visible.
-	# Other players' HUD nodes exist in the scene but we hide them.
+	# Only the local player needs their HUD visible, and only the local player's
+	# Camera2D should be active.  Every spawned player has a Camera2D child
+	# (it's in the .tscn), so we must explicitly disable it for remote players —
+	# otherwise the last-spawned player's camera becomes the active one.
 	var is_local := is_multiplayer_authority()
+	camera_2d.enabled            = is_local
 	health_bar.visible           = is_local
 	progress_bar.visible         = is_local
 	weapons_container_ui.visible = is_local
@@ -92,6 +96,12 @@ func _init_player() -> void:
 ## across all peers without us writing any manual send/receive code.
 func _setup_sync() -> void:
 	var sync   := MultiplayerSynchronizer.new()
+	# CRITICAL: give the synchronizer a fixed, deterministic name.
+	# Godot matches MultiplayerSynchronizer nodes across peers by their node path.
+	# If the name is auto-generated it can differ between server and client
+	# (e.g. "MultiplayerSynchronizer" vs "MultiplayerSynchronizer2") and Godot
+	# silently drops all sync packets because it can't find the matching node.
+	sync.name  = "Sync"
 	var config := SceneReplicationConfig.new()
 
 	# Sync the player's world position (CharacterBody2D.position).
