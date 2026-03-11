@@ -76,14 +76,22 @@ func _init_player() -> void:
 	progress_bar.visible         = is_local
 	weapons_container_ui.visible = is_local
 
+	# Always create the starting weapon — on every machine, for every player.
+	# This makes the swing animation visible to all players, not just the owner.
+	#
+	# is_owner_weapon = true  → fire timer fires normally; weapon reports hits;
+	#                           fire event is broadcast via _rpc_fire to others.
+	# is_owner_weapon = false → fire timer ticks but does nothing; animation is
+	#                           triggered by _rpc_fire arriving from the owner.
+	var weapon: Weapon    = resource.res_weapon.weapon_scene.instantiate()
+	weapon.resource       = resource.res_weapon
+	weapon.is_owner_weapon = is_local  # must be set BEFORE add_child triggers _ready
+	if weapon.attach_to_rotation:
+		sprite_2d.add_child(weapon)
+	else:
+		add_child(weapon)
+
 	if is_local:
-		# Give the local player their starting weapon.
-		var weapon: Weapon = resource.res_weapon.weapon_scene.instantiate()
-		weapon.resource = resource.res_weapon
-		if weapon.attach_to_rotation:
-			sprite_2d.add_child(weapon)
-		else:
-			add_child(weapon)
 		weapons.append(weapon)
 		weapons_container_ui.add_weapon(weapon)
 

@@ -41,7 +41,10 @@ func _on_duration_timer_timeout() -> void:
 
 ## BIBLE DAMAGE — fired when the rotating Area2D enters an enemy body.
 func _on_area_2d_body_entered(body: Node2D) -> void:
-	if not body is Enemy:
+	# Resolve Enemy from body — on clients body is the StaticBody2D "Hitbox"
+	# child, not the Enemy directly (see enemy._setup_client_hitbox).
+	var enemy := _get_enemy_from_body(body)
+	if enemy == null:
 		return
 
 	var local_player := Global.get_local_player()
@@ -52,8 +55,16 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 
 	var final_damage := damage * local_player.extra_damage
 
-	body.show_floating_text.rpc(round(final_damage))
-	body.report_hit.rpc_id(1, final_damage)
+	enemy.show_floating_text.rpc(round(final_damage))
+	enemy.report_hit.rpc_id(1, final_damage, resource.fire_rate)
+
+
+func _get_enemy_from_body(body: Node2D) -> Enemy:
+	if body is Enemy:
+		return body as Enemy
+	if body.get_parent() is Enemy:
+		return body.get_parent() as Enemy
+	return null
 
 
 func _belongs_to_local_player(local_player: Player) -> bool:

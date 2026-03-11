@@ -40,6 +40,7 @@ func _on_fire() -> void:
 	for i in projectile_count:
 		var projectile: ArrowProjectile = PROJECTILE_SCENE.instantiate()
 		projectile.damage        = damage
+		projectile.fire_rate     = resource.fire_rate  # forwarded to server for timing check
 		projectile.owner_peer_id = multiplayer.get_unique_id()
 
 		var projectile_angle  := start_angle + (i * spread_angle * deg_to_rad(1))

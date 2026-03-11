@@ -8,8 +8,9 @@ class_name ArrowProjectile
 
 @export var speed: int = 700
 
-var direction: Vector2
-var damage:    float
+var direction:    Vector2
+var damage:       float
+var fire_rate:    float = 1.0   # set by arrow_weapon.gd; passed to server in report_hit
 
 # Which player fired this projectile — stored so we can read extra_damage
 # without depending on Global.get_local_player() (which may be a different
@@ -27,27 +28,34 @@ func _physics_process(delta: float) -> void:
 
 ## PROJECTILE IMPACT
 func _on_body_entered(body: Node2D) -> void:
-	if not body is Enemy:
+	# On clients the body is the enemy's StaticBody2D "Hitbox" child.
+	# On the server the body IS the Enemy (PhysicsServer2D linked via instance_id).
+	var enemy := _get_enemy_from_body(body)
+	if enemy == null:
+		queue_free()
 		return
 
-	# Look up the player who owns this projectile.
 	var shooter: Player = Global.players.get(owner_peer_id, null)
 	if shooter == null:
 		queue_free()
 		return
 
-	# Only the owning client should report hits — if we're on a different
-	# machine viewing this projectile, do nothing (the owner handles it).
+	# Only the owning client reports hits.
 	if owner_peer_id != multiplayer.get_unique_id():
 		queue_free()
 		return
 
 	var final_damage := damage * shooter.extra_damage
 
-	# Immediate visual feedback — floating text on all peers.
-	body.show_floating_text.rpc(round(final_damage))
-
-	# Report to server for validation + health deduction.
-	body.report_hit.rpc_id(1, final_damage)
+	enemy.show_floating_text.rpc(round(final_damage))
+	enemy.report_hit.rpc_id(1, final_damage, fire_rate)
 
 	queue_free()
+
+
+func _get_enemy_from_body(body: Node2D) -> Enemy:
+	if body is Enemy:
+		return body as Enemy
+	if body.get_parent() is Enemy:
+		return body.get_parent() as Enemy
+	return null

@@ -44,6 +44,17 @@ var enemy_id:    int  = -1
 var direction: Vector2
 var target:    Node2D
 
+# ── hit-timing validation (SERVER ONLY) ───────────────────────────────────────
+# Maps peer_id → timestamp of the last hit the server accepted from that peer.
+# Used to reject hits that arrive faster than the weapon's claimed fire_rate.
+var _last_hit_times: Dictionary = {}
+
+# Server accepts a hit if at least this fraction of the claimed fire_rate has
+# elapsed since the last accepted hit.  0.7 gives 30% latency headroom.
+const HIT_TIMING_TOLERANCE: float = 0.7
+# Floor on the client-supplied fire_rate to prevent "0 cooldown" spoofing.
+const MIN_FIRE_RATE: float         = 0.05
+
 
 func _ready() -> void:
 	# ── visual setup (runs on ALL peers) ─────────────────────────────────────
@@ -66,13 +77,40 @@ func _ready() -> void:
 	# this actually has nodes to sync between.
 	_setup_sync()
 
-	# ── physics setup (SERVER ONLY) ──────────────────────────────────────────
-	# Clients don't simulate physics — they just follow synced positions.
-	if not multiplayer.is_server():
-		return
+	# ── physics setup ────────────────────────────────────────────────────────
+	if multiplayer.is_server():
+		# Server runs AI physics via PhysicsServer2D (fast, handles 300 enemies).
+		_setup_physics()
+		target = _get_nearest_player()
+	else:
+		# Clients have no PhysicsServer2D body.  We add a lightweight StaticBody2D
+		# so weapon Area2Ds can detect this enemy for client-side hit reporting.
+		# Without this, _on_area_2d_body_entered never fires on clients and the
+		# client can never deal damage.
+		_setup_client_hitbox()
 
-	_setup_physics()
-	target = _get_nearest_player()
+
+## Creates a physics body on the CLIENT that weapons can detect for hit testing.
+##
+## The server uses PhysicsServer2D (linked via body_attach_object_instance_id so
+## the weapon callback receives the Enemy node directly).  On clients that body
+## doesn't exist, so weapon Area2Ds see nothing.  This StaticBody2D fills that gap.
+##
+## When a weapon detects this body, body_entered passes the StaticBody2D node —
+## NOT the Enemy.  Weapon scripts call _get_enemy_from_body() to get the Enemy.
+func _setup_client_hitbox() -> void:
+	var body              := StaticBody2D.new()
+	body.name              = "Hitbox"
+	# Same collision layer as the server's PhysicsServer2D body so weapon
+	# Area2Ds (which scan layer 3) can detect it.
+	body.collision_layer   = 0b0100  # Layer 3 = Enemy
+	body.collision_mask    = 0       # Don't need to sense anything outward
+	var shape_node         := CollisionShape2D.new()
+	var circle             := CircleShape2D.new()
+	circle.radius          = res_enemy.radius
+	shape_node.shape       = circle
+	body.add_child(shape_node)
+	add_child(body)
 
 
 func _setup_sync() -> void:
@@ -149,24 +187,42 @@ func _move_character() -> void:
 ## @rpc("call_remote") — runs only on the receiver (the server), not the sender.
 ##   The sending client's immediate visual feedback (floating text) is already
 ##   triggered directly in the weapon script before this RPC is even sent.
+## Called by the client when one of their weapons overlaps this enemy locally.
+##
+## @param damage_amount  Client-computed final damage (base × extra_damage multiplier).
+## @param fire_rate      The firing weapon's fire_rate from its ResWeapon resource.
+##                       Server uses this to verify the hit isn't arriving too fast.
 @rpc("any_peer", "call_remote", "reliable")
-func report_hit(damage_amount: float) -> void:
-	# This body only runs on the server.
+func report_hit(damage_amount: float, fire_rate: float) -> void:
+	# Everything below runs on the SERVER only.
 
-	# ── sanity check 1: plausible damage? ────────────────────────────────────
+	# ── check 1: plausible damage ─────────────────────────────────────────────
 	if damage_amount <= 0 or damage_amount > 500:
 		return
 
-	# ── sanity check 2: was the caller close enough? ─────────────────────────
 	var caller_id     := multiplayer.get_remote_sender_id()
 	var caller_player := Global.players.get(caller_id, null) as Player
 	if caller_player == null:
 		return
 
-	# HIT_VALIDATION_RANGE is generous — it accommodates normal network lag.
-	# Only truly impossible hits (teleporting, speedhacking) get rejected.
+	# ── check 2: was the caller in weapon range? ──────────────────────────────
+	# HIT_VALIDATION_RANGE is deliberately generous to absorb lag.
+	# It only rejects truly impossible distances (teleport/speedhack).
 	if global_position.distance_to(caller_player.global_position) > Network.HIT_VALIDATION_RANGE:
 		return
+
+	# ── check 3: timing — is this hit arriving fast enough to be legit? ───────
+	# We floor the client-supplied fire_rate at MIN_FIRE_RATE to prevent a
+	# hacked client from claiming "my weapon fires every 0 seconds".
+	# We also apply HIT_TIMING_TOLERANCE (0.7) so a hit that arrives slightly
+	# early due to latency isn't rejected — only truly impossible double-taps are.
+	var effective_rate: float = maxf(fire_rate, MIN_FIRE_RATE)
+	var now:            float = Time.get_ticks_msec() * 0.001
+	var last_time:      float = _last_hit_times.get(caller_id, -INF)
+	if (now - last_time) < effective_rate * HIT_TIMING_TOLERANCE:
+		return  # Too soon — reject this hit
+
+	_last_hit_times[caller_id] = now
 
 	# ── apply damage ─────────────────────────────────────────────────────────
 	hurt(damage_amount)

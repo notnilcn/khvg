@@ -40,13 +40,16 @@ func _on_fire() -> void:
 func _on_area_2d_body_entered(body: Node2D) -> void:
 	if not visible:
 		return
-	if not body is Enemy:
+
+	# On the SERVER the body IS the Enemy (PhysicsServer2D body is linked to it
+	# via body_attach_object_instance_id).  On CLIENTS the body is the Enemy's
+	# StaticBody2D child "Hitbox" (created by _setup_client_hitbox in enemy.gd).
+	var enemy := _get_enemy_from_body(body)
+	if enemy == null:
 		return
 
-	# Only the LOCAL player's weapons should report hits.
-	# Every peer has copies of ALL players' nodes in their scene tree (for
-	# display), but only the owning peer should fire the RPC.
-	# We check this by seeing if our parent chain leads to the local player.
+	# Only the LOCAL player's weapons report hits.  Every peer has copies of all
+	# players' weapon nodes (for the swing animation), but only the owner fires RPCs.
 	var local_player := Global.get_local_player()
 	if local_player == null:
 		return
@@ -55,11 +58,23 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 
 	var final_damage := damage * local_player.extra_damage
 
-	# Show floating text on ALL peers immediately (pure visual, zero latency).
-	body.show_floating_text.rpc(round(final_damage))
+	# Immediate visual feedback on ALL peers — no server round-trip needed.
+	enemy.show_floating_text.rpc(round(final_damage))
 
-	# Tell the server (peer 1) to validate and apply the damage.
-	body.report_hit.rpc_id(1, final_damage)
+	# Ask the server to validate and apply the damage.
+	# We pass resource.fire_rate so the server can verify the hit isn't arriving
+	# faster than the weapon is capable of firing.
+	enemy.report_hit.rpc_id(1, final_damage, resource.fire_rate)
+
+
+## Returns the Enemy node from a physics body, regardless of whether the body IS
+## the Enemy (server path) or a StaticBody2D child of the Enemy (client path).
+func _get_enemy_from_body(body: Node2D) -> Enemy:
+	if body is Enemy:
+		return body as Enemy
+	if body.get_parent() is Enemy:
+		return body.get_parent() as Enemy
+	return null
 
 
 ## Returns true if this weapon node is a descendant of the given player node.
