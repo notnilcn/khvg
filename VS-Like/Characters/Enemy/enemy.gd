@@ -201,12 +201,6 @@ func report_hit(damage_amount: float, fire_rate: float) -> void:
 		return
 
 	var caller_id := multiplayer.get_remote_sender_id()
-	# get_remote_sender_id() returns 0 when the function is called directly
-	# (not over the network).  That happens when the SERVER (host) is the attacker —
-	# it calls report_hit() locally instead of sending an RPC to itself.
-	# Map 0 → 1 so the rest of the validation can find the host's Player node.
-	if caller_id == 0:
-		caller_id = 1
 
 	var caller_player := Global.players.get(caller_id, null) as Player
 	if caller_player == null:

@@ -62,9 +62,7 @@ func _ready() -> void:
 
 	# ── server setup ─────────────────────────────────────────────────────────
 	if multiplayer.is_server():
-		# Spawn the host's own player now that the scene is loaded.
-		# Clients request their spawn via RPC (see the else-branch below).
-		_spawn_player_for_peer(1)
+		# Dedicated server — no player node for peer 1.
 
 		# If any clients were ALREADY connected before this _ready() ran
 		# (happens when the host dies and the scene reloads while a client
