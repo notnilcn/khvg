@@ -261,6 +261,21 @@ func _on_enemy_request_despawn(eid: int) -> void:
 	_rpc_despawn_enemy.rpc(eid)
 
 
+## SERVER ONLY helper called by enemy.spawn_drop().
+## Broadcasts a drop spawn to ALL peers so every player can collect it
+## independently on their own machine (each gets XP / heal / chest).
+##
+## Drops are lightweight Area2D nodes — having one copy per client is fine.
+## Each peer's copy is collected independently and freed locally on pickup.
+@rpc("authority", "call_local", "reliable")
+func _rpc_spawn_drop(res_path: String, pos: Vector2) -> void:
+	var drop: Drop       = DROP_SCENE.instantiate()
+	drop.resource        = load(res_path) as ResDrop
+	drop.global_position = pos
+	# Add to the map scene root (same parent as the original single-player code).
+	get_tree().current_scene.call_deferred("add_child", drop)
+
+
 ## Runs on ALL peers (server via call_local, clients via network).
 ## Finds the enemy node by name and frees it.
 ##

@@ -200,7 +200,14 @@ func report_hit(damage_amount: float, fire_rate: float) -> void:
 	if damage_amount <= 0 or damage_amount > 500:
 		return
 
-	var caller_id     := multiplayer.get_remote_sender_id()
+	var caller_id := multiplayer.get_remote_sender_id()
+	# get_remote_sender_id() returns 0 when the function is called directly
+	# (not over the network).  That happens when the SERVER (host) is the attacker —
+	# it calls report_hit() locally instead of sending an RPC to itself.
+	# Map 0 → 1 so the rest of the validation can find the host's Player node.
+	if caller_id == 0:
+		caller_id = 1
+
 	var caller_player := Global.players.get(caller_id, null) as Player
 	if caller_player == null:
 		return
@@ -261,10 +268,11 @@ func die() -> void:
 
 
 func spawn_drop() -> void:
-	var drop: Drop       = DROP_SCENE.instantiate()
-	drop.resource        = res_drop
-	drop.global_position = global_position
-	get_tree().current_scene.call_deferred("add_child", drop)
+	# Broadcast to ALL peers via the parent Spawner so every client gets their
+	# own local copy of the drop to collect.  Previously this called add_child
+	# only on the server, so clients could never pick up XP / food / chests.
+	# die() is server-only, so get_parent() is always the Spawner node here.
+	get_parent()._rpc_spawn_drop.rpc(res_drop.resource_path, global_position)
 
 
 # ── helpers ───────────────────────────────────────────────────────────────────

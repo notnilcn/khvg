@@ -56,7 +56,10 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	var final_damage := damage * local_player.extra_damage
 
 	enemy.show_floating_text.rpc(round(final_damage))
-	enemy.report_hit.rpc_id(1, final_damage, resource.fire_rate)
+	if multiplayer.is_server():
+		enemy.report_hit(final_damage, resource.fire_rate)
+	else:
+		enemy.report_hit.rpc_id(1, final_damage, resource.fire_rate)
 
 
 func _get_enemy_from_body(body: Node2D) -> Enemy:

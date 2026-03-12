@@ -62,9 +62,14 @@ func _on_area_2d_body_entered(body: Node2D) -> void:
 	enemy.show_floating_text.rpc(round(final_damage))
 
 	# Ask the server to validate and apply the damage.
-	# We pass resource.fire_rate so the server can verify the hit isn't arriving
-	# faster than the weapon is capable of firing.
-	enemy.report_hit.rpc_id(1, final_damage, resource.fire_rate)
+	# When WE are the server (host player), calling rpc_id(1, ...) with
+	# "call_remote" would send to ourselves but then be suppressed (call_remote
+	# skips the sender).  So the server calls report_hit() directly; everyone
+	# else sends it as an RPC to peer 1.
+	if multiplayer.is_server():
+		enemy.report_hit(final_damage, resource.fire_rate)
+	else:
+		enemy.report_hit.rpc_id(1, final_damage, resource.fire_rate)
 
 
 ## Returns the Enemy node from a physics body, regardless of whether the body IS

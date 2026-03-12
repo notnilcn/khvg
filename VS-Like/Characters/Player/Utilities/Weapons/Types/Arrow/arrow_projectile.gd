@@ -48,7 +48,10 @@ func _on_body_entered(body: Node2D) -> void:
 	var final_damage := damage * shooter.extra_damage
 
 	enemy.show_floating_text.rpc(round(final_damage))
-	enemy.report_hit.rpc_id(1, final_damage, fire_rate)
+	if multiplayer.is_server():
+		enemy.report_hit(final_damage, fire_rate)
+	else:
+		enemy.report_hit.rpc_id(1, final_damage, fire_rate)
 
 	queue_free()
 
