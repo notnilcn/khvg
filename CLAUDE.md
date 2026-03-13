@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a **Vampire Survivors-style roguelike game** built in **Godot 4.4.1**. It's a fully functional template with auto-attacking mechanics, enemy waves, and weapon progression systems. Exported to Web/HTML5.
+This is a **bullet-hell MMO roguelike** built in **Godot 4.4.1**, targeting RotMG-scale multiplayer (85+ players, 850+ enemies, 2000+ bullets per realm). Combat is dodge-focused: enemies fire telegraphed parametric bullet patterns, players evade. Exported to Web/HTML5.
+
+The codebase currently contains a Vampire Survivors-style template (auto-attacking, enemy waves, weapon progression) that is being rearchitected toward the above vision. Treat existing systems as a starting point, not the target design.
 
 ## Running and Developing
 
@@ -61,6 +63,60 @@ Health bar, XP bar, weapons container (equipped weapons), weapon selection menu 
 - Window: 1280×720 (2× scale)
 - Texture filter: Nearest neighbor (pixel-perfect)
 - Renderer: GL Compatibility
+
+## Target Architecture (not yet implemented — priority order)
+
+### Networking Model
+- **Listen-server / dedicated server** via WebSocket (required for HTML5 export)
+- **Hybrid authority:** client-authoritative player movement, server-authoritative damage and hit detection
+- **Tick-rate by entity type:**
+  - Players: 20Hz positional sync
+  - Enemies: 10Hz (client interpolates between ticks)
+  - Bullets: spawn/destroy events only — no positional sync (see Bullet System below)
+- **Batched state packets:** one world-state packet per tick per client replacing all per-entity MultiplayerSynchronizers and individual position RPCs
+
+### Area of Interest (AoI)
+Server only sends entities within each client's viewport + margin. Critical for scale — without this, broadcasting 850 enemy positions to 85 players every tick is unacceptable bandwidth. Underpins everything; implement first.
+
+### Spatial Grid
+Server maintains a uniform spatial hash grid for:
+- AoI queries (which entities are near player X?)
+- Enemy target selection
+- Bullet hit detection (only check bullets against players in the same cell)
+
+Replaces the current O(N×M) per-frame brute-force targeting.
+
+### Bullet System (parametric patterns)
+Bullets are **not scene nodes on the server** and **not synced as positions**. Instead:
+- Server defines `BulletPattern` types, each with a `get_position(bullet_index, elapsed_time) -> Vector2` function
+- On fire: server sends a small spawn event (pattern_id + params) to clients in AoI
+- Client reconstructs bullet positions locally using the same deterministic function — no further sync needed
+- Server evaluates the same function each tick for swept CCD hit detection
+- Patterns outlive the enemy that fired them (enemy death does not cancel in-flight patterns)
+- No homing bullets. All patterns are fully parametric (aim direction at fire time is baked into the spawn event as a parameter)
+- Client pools visual-only bullet nodes; server tracks patterns as lightweight data structs (no nodes)
+
+### Hit Detection
+- **Enemy bullets → player:** server-computed. Each tick the server evaluates pattern functions and runs swept CCD (line segment vs circle) against player hitboxes using the spatial grid.
+- **Player attacks → enemy:** client-reports, server validates (existing hybrid model — keep, but tighten damage validation so server checks claimed damage against actual weapon stats).
+
+### Entity Pooling
+- Pre-allocate max enemy visual nodes and max bullet visual nodes on clients at scene load
+- Avoids per-frame `Node.new()` / `queue_free()` and GC hitches at 2000+ bullets
+- Server-side: enemies use `PhysicsServer2D` directly (already done); bullets are plain data structs
+
+### Lag Detection (dead man's switch)
+- Client sends a dedicated heartbeat packet every ~250ms
+- Server tracks `last_heartbeat[peer_id]`; if gap exceeds ~750ms, marks player `is_lagging = true`
+- If player dies while `is_lagging`: respawn at spawn point instead of death
+- When lag clears: server sends "respawn at position X" event; client resets health + position
+- Clean disconnects (WebSocket close event) handled separately — no heartbeat needed for those
+
+### Known Issues in Current Codebase (fix before shipping)
+- **Client can fake damage:** `report_hit()` accepts client-supplied damage amount with no validation against actual weapon stats. Server must look up attacker's weapon and compare.
+- **No WebSocket heartbeat:** connections silently die after ~10min idle. Add ping every 30s.
+- **No position validation:** server doesn't reject teleport-speed movement updates.
+- **Late-join race condition:** player respawn during another client's join sequence can result in the joining client missing the respawned player.
 
 ## Key Docs
 
