@@ -1,6 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://cc8ve06aj8q7x"]
+[gd_scene format=3 uid="uid://cc8ve06aj8q7x"]
 
-[ext_resource type="Script" uid="uid://cmkjgnl8lcycd" path="res://VS-Like/Characters/Enemy/Utilities/Spawner/spawner.gd" id="1_0r1kx"]
+[ext_resource type="Script" uid="uid://cmkjgnl8lcycd" path="res://VS-Like/Game/World/spawner.gd" id="1_0r1kx"]
 [ext_resource type="Script" uid="uid://cgrsxh8314hlg" path="res://VS-Like/Characters/Enemy/Types/res_enemy.gd" id="2_gm4r7"]
 [ext_resource type="Resource" uid="uid://bpm351c5xe65k" path="res://VS-Like/Characters/Enemy/Types/Globlin/res_goblin.tres" id="3_4if38"]
 

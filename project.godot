@@ -20,9 +20,7 @@ config/features=PackedStringArray("4.6", "GL Compatibility")
 
 [autoload]
 
-; Global holds shared state: weapon resources, player registry.
 Global="*res://VS-Like/Game/Singleton/global.gd"
-; Network manages the WebSocket server/client connection.
 Network="*res://VS-Like/Game/Singleton/network.gd"
 
 [display]

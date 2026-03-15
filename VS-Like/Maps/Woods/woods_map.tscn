@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=4 uid="uid://cpora7evfy6h8"]
+[gd_scene format=4 uid="uid://cpora7evfy6h8"]
 
 [ext_resource type="TileSet" uid="uid://bsc5pfemmakgs" path="res://VS-Like/Maps/Woods/ts_woods.tres" id="1_isstg"]
 [ext_resource type="PackedScene" uid="uid://cjsl7cj235n87" path="res://VS-Like/Maps/Collision/Tree/tree.tscn" id="2_b80j3"]
-[ext_resource type="PackedScene" uid="uid://cc8ve06aj8q7x" path="res://VS-Like/Characters/Enemy/Utilities/Spawner/spawner.tscn" id="3_gx3ls"]
+[ext_resource type="PackedScene" uid="uid://cc8ve06aj8q7x" path="res://VS-Like/Game/World/spawner.tscn" id="3_gx3ls"]
 
 [node name="WoodsMap" type="Node2D"]
 

@@ -93,7 +93,6 @@ Bullets are **not scene nodes on the server** and **not synced as positions**. I
 - Client reconstructs bullet positions locally using the same deterministic function — no further sync needed
 - Server evaluates the same function each tick for swept CCD hit detection
 - Patterns outlive the enemy that fired them (enemy death does not cancel in-flight patterns)
-- No homing bullets. All patterns are fully parametric (aim direction at fire time is baked into the spawn event as a parameter)
 - Client pools visual-only bullet nodes; server tracks patterns as lightweight data structs (no nodes)
 
 ### Hit Detection
