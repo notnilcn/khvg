@@ -83,3 +83,10 @@ func _rpc_fire() -> void:
 func upgrade_weapon():
 	upgrade_level += 1
 	upgraded.emit()
+
+
+## Called before this weapon is removed from a player.
+## Override in passive weapon subclasses to reverse any stat bonuses that were
+## applied in _ready() / _on_upgraded() so the player's stats stay accurate.
+func remove_passive_effects(_player: Player) -> void:
+	pass

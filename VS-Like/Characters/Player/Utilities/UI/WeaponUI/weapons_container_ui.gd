@@ -26,6 +26,14 @@ func add_weapon(weapon: Weapon):
 		# Add to Current Weapons Array
 		curr_weapons.append(weapon_image)
 
+## REMOVE WEAPON
+func remove_weapon(weapon: Weapon) -> void:
+	for i in range(curr_weapons.size()):
+		if curr_weapons[i].resource == weapon.resource:
+			curr_weapons[i].queue_free()
+			curr_weapons.remove_at(i)
+			return
+
 # LEVEL UP WEAPON
 func update_weapon(weapon: Weapon):
 	if weapon && weapon.resource:

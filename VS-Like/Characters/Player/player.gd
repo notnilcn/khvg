@@ -192,6 +192,38 @@ func _set_points(new_points: float) -> void:
 	progress_bar.value = points
 
 
+# ── chat command RPCs ─────────────────────────────────────────────────────────
+## Called by the server (via rpc_id) to give this player a weapon.
+## Only executes on the peer that owns this player node.
+@rpc("any_peer", "call_remote", "reliable")
+func rpc_give_weapon(res_path: String) -> void:
+	if multiplayer.get_remote_sender_id() not in [0, 1]:
+		return  # reject calls from clients
+	if not is_multiplayer_authority():
+		return  # only the owning peer applies this
+	var res := load(res_path) as ResWeapon
+	if res:
+		Global.add_weapon(res)
+
+
+## Called by the server (via rpc_id) to remove a weapon from this player.
+## Only executes on the peer that owns this player node.
+@rpc("any_peer", "call_remote", "reliable")
+func rpc_remove_weapon(res_path: String) -> void:
+	if multiplayer.get_remote_sender_id() not in [0, 1]:
+		return  # reject calls from clients
+	if not is_multiplayer_authority():
+		return  # only the owning peer applies this
+	for i in range(weapons.size()):
+		var wpn := weapons[i]
+		if wpn.resource.resource_path == res_path:
+			wpn.remove_passive_effects(self)
+			weapons_container_ui.remove_weapon(wpn)
+			weapons.remove_at(i)
+			wpn.queue_free()
+			return
+
+
 # ── cleanup ───────────────────────────────────────────────────────────────────
 func _exit_tree() -> void:
 	# Remove from global registry when the node is destroyed.

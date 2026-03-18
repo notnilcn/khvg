@@ -30,16 +30,29 @@ const PLAYER_SCENE: PackedScene = preload("res://VS-Like/Characters/Player/playe
 const MIN_SPAWN_RADIUS: int = 400
 const MAX_ENEMIES:      int = 300
 
+# Maps friendly command names to ResWeapon resource paths.
+const WEAPON_RES_PATHS: Dictionary = {
+	"axe":       "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/res_axe.tres",
+	"arrow":     "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/res_arrow.tres",
+	"bible":     "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/res_bible.tres",
+	"boots":     "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Boots/res_boots.tres",
+	"parchment": "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Parchment/res_parchment.tres",
+	"ring":      "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/res_ring.tres",
+}
+
 @export var all_res_enemy: Array[ResEnemy]
-@onready var spawn_timer: Timer = $SpawnTimer
+@onready var spawn_timer: Timer         = $SpawnTimer
+@onready var _vbox:       VBoxContainer = $"CanvasLayer/MarginContainer/VBoxContainer"
 
-var enemies_count: int = 0 : set = _set_enemies_count
-var minutes: int        : set = _set_minutes
-var seconds: int        : set = _set_seconds
+var enemies_count:    int  = 0    : set = _set_enemies_count
+var minutes:          int        : set = _set_minutes
+var seconds:          int        : set = _set_seconds
+var spawning_enabled: bool = true
 
-var _next_enemy_id:        int = 0
-var _spawn_position_index: int = 0
+var _next_enemy_id:        int  = 0
+var _spawn_position_index: int  = 0
 var _initialized:          bool = false
+var _chat_feedback:        Label
 
 # Tracks spawn-data for every live enemy on the SERVER.
 # Used to send a catch-up list to clients that join after enemies already exist.
@@ -78,6 +91,148 @@ func _ready() -> void:
 		# rpc_id(1, ...) sends ONLY to peer 1 (the server).
 		print("Spawner: client ready, requesting player spawn from server")
 		_request_player_spawn.rpc_id(1)
+
+	_setup_chat_console()
+
+
+# ── chat console ──────────────────────────────────────────────────────────────
+
+func _setup_chat_console() -> void:
+	_chat_feedback = Label.new()
+	_chat_feedback.add_theme_font_size_override("font_size", 8)
+	_vbox.add_child(_chat_feedback)
+
+	var input := LineEdit.new()
+	input.placeholder_text = "/command"
+	input.add_theme_font_size_override("font_size", 8)
+	input.text_submitted.connect(_on_command_submitted)
+	_vbox.add_child(input)
+
+
+func _on_command_submitted(raw: String) -> void:
+	var text := raw.strip_edges()
+	# Clear the input field regardless of whether the command is valid.
+	# The LineEdit emits text_submitted before the field is cleared, so we
+	# grab it via get_node lookup using the signal's implicit owner reference.
+	# Easier: just find the LineEdit child we added last.
+	var input := _vbox.get_child(_vbox.get_child_count() - 1) as LineEdit
+	if input:
+		input.clear()
+
+	if text.is_empty():
+		return
+	_parse_command(text)
+
+
+func _parse_command(cmd: String) -> void:
+	var parts := cmd.split(" ", false)
+	match parts[0].to_lower():
+		"/spawner":
+			_cmd_spawner(parts.slice(1))
+		"/give":
+			_cmd_give(parts.slice(1))
+		"/remove":
+			_cmd_remove(parts.slice(1))
+		_:
+			_show_feedback("Unknown command. Try /spawner, /give, /remove")
+
+
+## /spawner on|off — server only
+func _cmd_spawner(args: Array) -> void:
+	if not multiplayer.is_server():
+		_show_feedback("Only the server can toggle spawning")
+		return
+	if args.is_empty():
+		_show_feedback("Usage: /spawner on|off")
+		return
+	match args[0].to_lower():
+		"on":
+			spawning_enabled = true
+			_show_feedback("Enemy spawning enabled")
+		"off":
+			spawning_enabled = false
+			_show_feedback("Enemy spawning disabled")
+		_:
+			_show_feedback("Usage: /spawner on|off")
+
+
+## /give <weapon> [peer_id] — give a weapon to self or another peer
+func _cmd_give(args: Array) -> void:
+	if args.is_empty():
+		_show_feedback("Usage: /give <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
+		return
+
+	var name := args[0].to_lower()
+	if not WEAPON_RES_PATHS.has(name):
+		_show_feedback("Unknown weapon '%s'. Options: %s" % [name, ", ".join(WEAPON_RES_PATHS.keys())])
+		return
+
+	var res_path: String = WEAPON_RES_PATHS[name]
+
+	# Optional second argument: target peer_id
+	if args.size() >= 2:
+		if not multiplayer.is_server():
+			_show_feedback("Only the server can give weapons to other players")
+			return
+		var peer_id := int(args[1])
+		var target := Global.players.get(peer_id, null) as Player
+		if target == null:
+			_show_feedback("No player found with peer_id %d" % peer_id)
+			return
+		target.rpc_give_weapon.rpc_id(peer_id, res_path)
+		_show_feedback("Gave %s to peer %d" % [name, peer_id])
+	else:
+		# Give to self — call directly on the local player node.
+		var local := Global.get_local_player()
+		if local == null:
+			_show_feedback("No local player found")
+			return
+		local.rpc_give_weapon(res_path)
+		_show_feedback("Gave %s to yourself" % name)
+
+
+## /remove <weapon> [peer_id] — remove a weapon from self or another peer
+func _cmd_remove(args: Array) -> void:
+	if args.is_empty():
+		_show_feedback("Usage: /remove <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
+		return
+
+	var name := args[0].to_lower()
+	if not WEAPON_RES_PATHS.has(name):
+		_show_feedback("Unknown weapon '%s'. Options: %s" % [name, ", ".join(WEAPON_RES_PATHS.keys())])
+		return
+
+	var res_path: String = WEAPON_RES_PATHS[name]
+
+	if args.size() >= 2:
+		if not multiplayer.is_server():
+			_show_feedback("Only the server can remove weapons from other players")
+			return
+		var peer_id := int(args[1])
+		var target := Global.players.get(peer_id, null) as Player
+		if target == null:
+			_show_feedback("No player found with peer_id %d" % peer_id)
+			return
+		target.rpc_remove_weapon.rpc_id(peer_id, res_path)
+		_show_feedback("Removed %s from peer %d" % [name, peer_id])
+	else:
+		var local := Global.get_local_player()
+		if local == null:
+			_show_feedback("No local player found")
+			return
+		local.rpc_remove_weapon(res_path)
+		_show_feedback("Removed %s from yourself" % name)
+
+
+func _show_feedback(msg: String) -> void:
+	if _chat_feedback == null:
+		return
+	_chat_feedback.text = msg
+	get_tree().create_timer(3.0).timeout.connect(
+		func() -> void:
+			if is_instance_valid(_chat_feedback):
+				_chat_feedback.text = ""
+	)
 
 
 # ── scene reload notification ─────────────────────────────────────────────────
@@ -375,21 +530,21 @@ func _on_timer_timeout() -> void:
 
 
 func _on_spawn_timer_timeout() -> void:
-	if not multiplayer.is_server():
+	if not multiplayer.is_server() or not spawning_enabled:
 		return
 	if enemies_count < MAX_ENEMIES:
 		_spawn_single_enemy()
 
 
 func _on_pattern_timer_timeout() -> void:
-	if not multiplayer.is_server():
+	if not multiplayer.is_server() or not spawning_enabled:
 		return
 	if enemies_count < MAX_ENEMIES:
 		_spawn_circle_pattern(min(40, MAX_ENEMIES - enemies_count))
 
 
 func _on_elite_timer_timeout() -> void:
-	if not multiplayer.is_server():
+	if not multiplayer.is_server() or not spawning_enabled:
 		return
 	_spawn_single_enemy(true)
 
