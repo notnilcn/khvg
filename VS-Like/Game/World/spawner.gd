@@ -221,24 +221,17 @@ func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = fal
 	# Track for late-join catch-up (sent inside _request_player_spawn).
 	_active_enemy_data.append(data)
 
-	# Spawn locally on the server, then broadcast to all currently-connected clients.
-	# We call the function directly instead of using call_local so that the catch-up
-	# path (_rpc_spawn_enemy.rpc_id) never re-runs this on the server and creates
-	# duplicate ghost enemies.
-	_rpc_spawn_enemy(data)
+	# Broadcast to server (call_local) and all currently-connected clients.
 	_rpc_spawn_enemy.rpc(data)
 
 
-## Runs on ALL peers. Called directly on the server, and via RPC on clients.
+## Runs on ALL peers (server via call_local, clients via network).
 ## Creates, names, and adds the enemy node to this spawner.
 ##
-## @rpc("authority")    — only the server sends this.
-## @rpc("call_remote")  — RPC only runs on the receiver (client), never back on the
-##                        server. The server calls this function directly in
-##                        _create_enemy instead, so catch-up rpc_id calls don't
-##                        accidentally re-run this locally and create ghost enemies.
-## @rpc("reliable")     — enemy appearance must not be lost.
-@rpc("authority", "call_remote", "reliable")
+## @rpc("authority")   — only the server sends this.
+## @rpc("call_local")  — also runs on the server immediately (no extra step needed).
+## @rpc("reliable")    — enemy appearance must not be lost.
+@rpc("authority", "call_local", "reliable")
 func _rpc_spawn_enemy(data: Dictionary) -> void:
 	var enemy: Enemy       = ENEMY_SCENE.instantiate()
 	enemy.res_enemy        = load(data["res_path"]) as ResEnemy
