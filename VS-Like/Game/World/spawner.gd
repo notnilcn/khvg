@@ -145,7 +145,7 @@ func _cmd_spawner(args: Array) -> void:
 	if args.is_empty():
 		_show_feedback("Usage: /spawner on|off")
 		return
-	match args[0].to_lower():
+	match (args[0] as String).to_lower():
 		"on":
 			spawning_enabled = true
 			_show_feedback("Enemy spawning enabled")
@@ -162,25 +162,25 @@ func _cmd_give(args: Array) -> void:
 		_show_feedback("Usage: /give <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
 		return
 
-	var name := args[0].to_lower()
-	if not WEAPON_RES_PATHS.has(name):
-		_show_feedback("Unknown weapon '%s'. Options: %s" % [name, ", ".join(WEAPON_RES_PATHS.keys())])
+	var weapon_name: String = (args[0] as String).to_lower()
+	if not WEAPON_RES_PATHS.has(weapon_name):
+		_show_feedback("Unknown weapon '%s'. Options: %s" % [weapon_name, ", ".join(WEAPON_RES_PATHS.keys())])
 		return
 
-	var res_path: String = WEAPON_RES_PATHS[name]
+	var res_path: String = WEAPON_RES_PATHS[weapon_name]
 
 	# Optional second argument: target peer_id
 	if args.size() >= 2:
 		if not multiplayer.is_server():
 			_show_feedback("Only the server can give weapons to other players")
 			return
-		var peer_id := int(args[1])
+		var peer_id: int = int(args[1] as String)
 		var target := Global.players.get(peer_id, null) as Player
 		if target == null:
 			_show_feedback("No player found with peer_id %d" % peer_id)
 			return
 		target.rpc_give_weapon.rpc_id(peer_id, res_path)
-		_show_feedback("Gave %s to peer %d" % [name, peer_id])
+		_show_feedback("Gave %s to peer %d" % [weapon_name, peer_id])
 	else:
 		# Give to self — call directly on the local player node.
 		var local := Global.get_local_player()
@@ -188,7 +188,7 @@ func _cmd_give(args: Array) -> void:
 			_show_feedback("No local player found")
 			return
 		local.rpc_give_weapon(res_path)
-		_show_feedback("Gave %s to yourself" % name)
+		_show_feedback("Gave %s to yourself" % weapon_name)
 
 
 ## /remove <weapon> [peer_id] — remove a weapon from self or another peer
@@ -197,31 +197,31 @@ func _cmd_remove(args: Array) -> void:
 		_show_feedback("Usage: /remove <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
 		return
 
-	var name := args[0].to_lower()
-	if not WEAPON_RES_PATHS.has(name):
-		_show_feedback("Unknown weapon '%s'. Options: %s" % [name, ", ".join(WEAPON_RES_PATHS.keys())])
+	var weapon_name: String = (args[0] as String).to_lower()
+	if not WEAPON_RES_PATHS.has(weapon_name):
+		_show_feedback("Unknown weapon '%s'. Options: %s" % [weapon_name, ", ".join(WEAPON_RES_PATHS.keys())])
 		return
 
-	var res_path: String = WEAPON_RES_PATHS[name]
+	var res_path: String = WEAPON_RES_PATHS[weapon_name]
 
 	if args.size() >= 2:
 		if not multiplayer.is_server():
 			_show_feedback("Only the server can remove weapons from other players")
 			return
-		var peer_id := int(args[1])
+		var peer_id: int = int(args[1] as String)
 		var target := Global.players.get(peer_id, null) as Player
 		if target == null:
 			_show_feedback("No player found with peer_id %d" % peer_id)
 			return
 		target.rpc_remove_weapon.rpc_id(peer_id, res_path)
-		_show_feedback("Removed %s from peer %d" % [name, peer_id])
+		_show_feedback("Removed %s from peer %d" % [weapon_name, peer_id])
 	else:
 		var local := Global.get_local_player()
 		if local == null:
 			_show_feedback("No local player found")
 			return
 		local.rpc_remove_weapon(res_path)
-		_show_feedback("Removed %s from yourself" % name)
+		_show_feedback("Removed %s from yourself" % weapon_name)
 
 
 func _show_feedback(msg: String) -> void:
