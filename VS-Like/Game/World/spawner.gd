@@ -54,6 +54,11 @@ var _spawn_position_index: int  = 0
 var _initialized:          bool = false
 var _chat_feedback:        Label
 
+# Admin management — server-side only.
+# The host (peer_id == 1) is always implicitly admin.
+# Only the host can grant or revoke admin; admins cannot promote others.
+var _admins: Array[int] = []
+
 # Tracks spawn-data for every live enemy on the SERVER.
 # Used to send a catch-up list to clients that join after enemies already exist.
 # Entries are removed when the enemy is despawned via _rpc_despawn_enemy.
@@ -126,102 +131,160 @@ func _on_command_submitted(raw: String) -> void:
 
 func _parse_command(cmd: String) -> void:
 	var parts := cmd.split(" ", false)
-	match parts[0].to_lower():
-		"/spawner":
-			_cmd_spawner(parts.slice(1))
-		"/give":
-			_cmd_give(parts.slice(1))
-		"/remove":
-			_cmd_remove(parts.slice(1))
+	var verb: String = (parts[0] as String).to_lower()
+	var args: Array  = parts.slice(1)
+	match verb:
+		"/spawner", "/give", "/remove", "/admin", "/unadmin":
+			# Route all admin commands through the server so it can validate
+			# permissions.  If we ARE the server, execute directly.
+			if multiplayer.get_unique_id() == 1:
+				_execute_admin_cmd(1, verb, args)
+			else:
+				_rpc_admin_cmd.rpc_id(1, verb, args)
 		_:
-			_show_feedback("Unknown command. Try /spawner, /give, /remove")
+			_show_feedback("Unknown command. Try /spawner, /give, /remove, /admin, /unadmin")
 
 
-## /spawner on|off — server only
-func _cmd_spawner(args: Array) -> void:
-	if not multiplayer.is_server():
-		_show_feedback("Only the server can toggle spawning")
+## Client → server RPC for admin commands.  The server validates admin status
+## before executing; clients cannot bypass this by calling _execute_admin_cmd
+## directly because that function only runs server-side.
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_admin_cmd(verb: String, args: Array) -> void:
+	_execute_admin_cmd(multiplayer.get_remote_sender_id(), verb, args)
+
+
+## Server → client RPC to deliver command feedback.
+@rpc("authority", "call_remote", "reliable")
+func _rpc_feedback(msg: String) -> void:
+	_show_feedback(msg)
+
+
+## Sends feedback to the given peer (or locally if peer_id == 1).
+func _send_feedback(peer_id: int, msg: String) -> void:
+	if peer_id == 1:
+		_show_feedback(msg)
+	else:
+		_rpc_feedback.rpc_id(peer_id, msg)
+
+
+## Returns true if the given peer_id has admin privileges.
+func _is_admin(peer_id: int) -> bool:
+	return peer_id == 1 or peer_id in _admins
+
+
+## Validates admin status then dispatches to the appropriate command handler.
+## Always runs on the server.
+func _execute_admin_cmd(sender: int, verb: String, args: Array) -> void:
+	if not _is_admin(sender):
+		_send_feedback(sender, "Permission denied: you are not an admin")
 		return
+	match verb:
+		"/spawner": _cmd_spawner(sender, args)
+		"/give":    _cmd_give(sender, args)
+		"/remove":  _cmd_remove(sender, args)
+		"/admin":   _cmd_admin(sender, args)
+		"/unadmin": _cmd_unadmin(sender, args)
+
+
+## /spawner on|off
+func _cmd_spawner(sender: int, args: Array) -> void:
 	if args.is_empty():
-		_show_feedback("Usage: /spawner on|off")
+		_send_feedback(sender, "Usage: /spawner on|off")
 		return
 	match (args[0] as String).to_lower():
 		"on":
 			spawning_enabled = true
-			_show_feedback("Enemy spawning enabled")
+			_send_feedback(sender, "Enemy spawning enabled")
 		"off":
 			spawning_enabled = false
-			_show_feedback("Enemy spawning disabled")
+			_send_feedback(sender, "Enemy spawning disabled")
 		_:
-			_show_feedback("Usage: /spawner on|off")
+			_send_feedback(sender, "Usage: /spawner on|off")
 
 
 ## /give <weapon> [peer_id] — give a weapon to self or another peer
-func _cmd_give(args: Array) -> void:
+func _cmd_give(sender: int, args: Array) -> void:
 	if args.is_empty():
-		_show_feedback("Usage: /give <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
+		_send_feedback(sender, "Usage: /give <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
 		return
 
 	var weapon_name: String = (args[0] as String).to_lower()
 	if not WEAPON_RES_PATHS.has(weapon_name):
-		_show_feedback("Unknown weapon '%s'. Options: %s" % [weapon_name, ", ".join(WEAPON_RES_PATHS.keys())])
+		_send_feedback(sender, "Unknown weapon '%s'. Options: %s" % [weapon_name, ", ".join(WEAPON_RES_PATHS.keys())])
 		return
 
-	var res_path: String = WEAPON_RES_PATHS[weapon_name]
-
-	# Optional second argument: target peer_id
-	if args.size() >= 2:
-		if not multiplayer.is_server():
-			_show_feedback("Only the server can give weapons to other players")
-			return
-		var peer_id: int = int(args[1] as String)
-		var target := Global.players.get(peer_id, null) as Player
-		if target == null:
-			_show_feedback("No player found with peer_id %d" % peer_id)
-			return
-		target.rpc_give_weapon.rpc_id(peer_id, res_path)
-		_show_feedback("Gave %s to peer %d" % [weapon_name, peer_id])
-	else:
-		# Give to self — call directly on the local player node.
-		var local := Global.get_local_player()
-		if local == null:
-			_show_feedback("No local player found")
-			return
-		local.rpc_give_weapon(res_path)
-		_show_feedback("Gave %s to yourself" % weapon_name)
+	var res_path: String  = WEAPON_RES_PATHS[weapon_name]
+	var target_id: int    = int(args[1] as String) if args.size() >= 2 else sender
+	var target := Global.players.get(target_id, null) as Player
+	if target == null:
+		_send_feedback(sender, "No player found with peer_id %d" % target_id)
+		return
+	target.rpc_give_weapon.rpc_id(target_id, res_path)
+	_send_feedback(sender, "Gave %s to peer %d" % [weapon_name, target_id])
 
 
 ## /remove <weapon> [peer_id] — remove a weapon from self or another peer
-func _cmd_remove(args: Array) -> void:
+func _cmd_remove(sender: int, args: Array) -> void:
 	if args.is_empty():
-		_show_feedback("Usage: /remove <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
+		_send_feedback(sender, "Usage: /remove <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
 		return
 
 	var weapon_name: String = (args[0] as String).to_lower()
 	if not WEAPON_RES_PATHS.has(weapon_name):
-		_show_feedback("Unknown weapon '%s'. Options: %s" % [weapon_name, ", ".join(WEAPON_RES_PATHS.keys())])
+		_send_feedback(sender, "Unknown weapon '%s'. Options: %s" % [weapon_name, ", ".join(WEAPON_RES_PATHS.keys())])
 		return
 
 	var res_path: String = WEAPON_RES_PATHS[weapon_name]
+	var target_id: int   = int(args[1] as String) if args.size() >= 2 else sender
+	var target := Global.players.get(target_id, null) as Player
+	if target == null:
+		_send_feedback(sender, "No player found with peer_id %d" % target_id)
+		return
+	target.rpc_remove_weapon.rpc_id(target_id, res_path)
+	_send_feedback(sender, "Removed %s from peer %d" % [weapon_name, target_id])
 
-	if args.size() >= 2:
-		if not multiplayer.is_server():
-			_show_feedback("Only the server can remove weapons from other players")
-			return
-		var peer_id: int = int(args[1] as String)
-		var target := Global.players.get(peer_id, null) as Player
-		if target == null:
-			_show_feedback("No player found with peer_id %d" % peer_id)
-			return
-		target.rpc_remove_weapon.rpc_id(peer_id, res_path)
-		_show_feedback("Removed %s from peer %d" % [weapon_name, peer_id])
-	else:
-		var local := Global.get_local_player()
-		if local == null:
-			_show_feedback("No local player found")
-			return
-		local.rpc_remove_weapon(res_path)
-		_show_feedback("Removed %s from yourself" % weapon_name)
+
+## /admin <peer_id> — host only: grant admin to a connected player
+func _cmd_admin(sender: int, args: Array) -> void:
+	if sender != 1:
+		_send_feedback(sender, "Only the host can grant admin")
+		return
+	if args.is_empty():
+		_send_feedback(sender, "Usage: /admin <peer_id>")
+		return
+	var target_id: int = int(args[0] as String)
+	if target_id == 1:
+		_send_feedback(sender, "The host is always admin")
+		return
+	if not Global.players.has(target_id):
+		_send_feedback(sender, "No player found with peer_id %d" % target_id)
+		return
+	if target_id in _admins:
+		_send_feedback(sender, "Peer %d is already an admin" % target_id)
+		return
+	_admins.append(target_id)
+	_send_feedback(sender, "Granted admin to peer %d" % target_id)
+	_send_feedback(target_id, "You have been granted admin privileges")
+
+
+## /unadmin <peer_id> — host only: revoke admin from a player
+func _cmd_unadmin(sender: int, args: Array) -> void:
+	if sender != 1:
+		_send_feedback(sender, "Only the host can revoke admin")
+		return
+	if args.is_empty():
+		_send_feedback(sender, "Usage: /unadmin <peer_id>")
+		return
+	var target_id: int = int(args[0] as String)
+	if target_id == 1:
+		_send_feedback(sender, "Cannot remove admin from the host")
+		return
+	if not target_id in _admins:
+		_send_feedback(sender, "Peer %d is not an admin" % target_id)
+		return
+	_admins.erase(target_id)
+	_send_feedback(sender, "Revoked admin from peer %d" % target_id)
+	_send_feedback(target_id, "Your admin privileges have been revoked")
 
 
 func _show_feedback(msg: String) -> void:
@@ -301,6 +364,7 @@ func _request_player_spawn() -> void:
 
 func _on_player_left(peer_id: int) -> void:
 	_remove_player.rpc(peer_id)
+	_admins.erase(peer_id)
 
 
 func _spawn_player_for_peer(peer_id: int) -> void:
