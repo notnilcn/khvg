@@ -27,8 +27,9 @@ const RES_FOOD:     ResDropFood = preload("res://VS-Like/Characters/Enemy/Utilit
 const ENEMY_SCENE:  PackedScene = preload("res://VS-Like/Characters/Enemy/enemy.tscn")
 const PLAYER_SCENE: PackedScene = preload("res://VS-Like/Characters/Player/player.tscn")
 
-const MIN_SPAWN_RADIUS: int = 400
-const MAX_ENEMIES:      int = 300
+const MIN_SPAWN_RADIUS: int    = 400
+const MAX_ENEMIES:      int    = 300
+const DUMMY_ENEMY_RES:  String = "res://VS-Like/Characters/Enemy/Types/Dummy/res_dummy.tres"
 
 # Maps friendly command names to ResWeapon resource paths.
 const WEAPON_RES_PATHS: Dictionary = {
@@ -330,19 +331,17 @@ func _cmd_setpass(sender: int, args: Array) -> void:
 		_send_feedback(sender, "Admin password set")
 
 
-## /spawn [x y] — spawn an immortal enemy at the given world position (default 0,0)
+## /spawn [x y] — spawn a stationary immortal dummy at the given world position (default 0,0)
 func _cmd_spawn(sender: int, args: Array) -> void:
-	if all_res_enemy.is_empty():
-		_send_feedback(sender, "No enemy types loaded yet")
-		return
-	var pos := Vector2.ZERO
 	if args.size() == 1:
 		_send_feedback(sender, "Usage: /spawn [x y]")
 		return
+	var pos := Vector2.ZERO
 	if args.size() >= 2:
 		pos = Vector2(float(args[0] as String), float(args[1] as String))
-	_create_enemy(pos, all_res_enemy[0], false, true)
-	_send_feedback(sender, "Spawned immortal enemy at (%d, %d)" % [int(pos.x), int(pos.y)])
+	var res := load(DUMMY_ENEMY_RES) as ResEnemy
+	_create_enemy(pos, res, false, true)
+	_send_feedback(sender, "Spawned dummy at (%d, %d)" % [int(pos.x), int(pos.y)])
 
 
 ## /adminpass <password> — any player: claim admin if the password matches
