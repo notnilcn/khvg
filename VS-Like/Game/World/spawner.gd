@@ -59,6 +59,10 @@ var _chat_feedback:        Label
 # Only the host can grant or revoke admin; admins cannot promote others.
 var _admins: Array[int] = []
 
+# Admin password — server-side only.  Empty string means disabled.
+# Set with /setpass before players join; players claim admin with /adminpass.
+var _admin_password: String = ""
+
 # Tracks spawn-data for every live enemy on the SERVER.
 # Used to send a catch-up list to clients that join after enemies already exist.
 # Entries are removed when the enemy is despawned via _rpc_despawn_enemy.
@@ -108,10 +112,24 @@ func _setup_chat_console() -> void:
 	_vbox.add_child(_chat_feedback)
 
 	var input := LineEdit.new()
-	input.placeholder_text = "/command"
+	input.placeholder_text = "press T to chat"
 	input.add_theme_font_size_override("font_size", 8)
 	input.text_submitted.connect(_on_command_submitted)
+	# Release game focus when the field is done so movement keys work again.
+	input.text_submitted.connect(func(_s: String) -> void: input.release_focus())
 	_vbox.add_child(input)
+
+
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not (event is InputEventKey) or not event.pressed or event.echo:
+		return
+	var ev := event as InputEventKey
+	var input := _vbox.get_child(_vbox.get_child_count() - 1) as LineEdit
+	if input == null or input.has_focus():
+		return
+	if ev.keycode == KEY_T:
+		input.grab_focus()
+		get_viewport().set_input_as_handled()
 
 
 func _on_command_submitted(raw: String) -> void:
@@ -134,15 +152,22 @@ func _parse_command(cmd: String) -> void:
 	var verb: String = (parts[0] as String).to_lower()
 	var args: Array  = parts.slice(1)
 	match verb:
-		"/spawner", "/give", "/remove", "/admin", "/unadmin":
+		"/spawner", "/give", "/remove", "/admin", "/unadmin", "/setpass":
 			# Route all admin commands through the server so it can validate
 			# permissions.  If we ARE the server, execute directly.
 			if multiplayer.get_unique_id() == 1:
 				_execute_admin_cmd(1, verb, args)
 			else:
 				_rpc_admin_cmd.rpc_id(1, verb, args)
+		"/adminpass":
+			# Anyone can attempt this — the server validates the password.
+			var password: String = args[0] as String if not args.is_empty() else ""
+			if multiplayer.get_unique_id() == 1:
+				_try_admin_password(1, password)
+			else:
+				_rpc_try_admin_password.rpc_id(1, password)
 		_:
-			_show_feedback("Unknown command. Try /spawner, /give, /remove, /admin, /unadmin")
+			_show_feedback("Unknown command. Try /spawner, /give, /remove, /admin, /unadmin, /setpass, /adminpass")
 
 
 ## Client → server RPC for admin commands.  The server validates admin status
@@ -184,6 +209,7 @@ func _execute_admin_cmd(sender: int, verb: String, args: Array) -> void:
 		"/remove":  _cmd_remove(sender, args)
 		"/admin":   _cmd_admin(sender, args)
 		"/unadmin": _cmd_unadmin(sender, args)
+		"/setpass": _cmd_setpass(sender, args)
 
 
 ## /spawner on|off
@@ -285,6 +311,41 @@ func _cmd_unadmin(sender: int, args: Array) -> void:
 	_admins.erase(target_id)
 	_send_feedback(sender, "Revoked admin from peer %d" % target_id)
 	_send_feedback(target_id, "Your admin privileges have been revoked")
+
+
+## /setpass [password] — host only: set (or clear) the admin password
+func _cmd_setpass(sender: int, args: Array) -> void:
+	if sender != 1:
+		_send_feedback(sender, "Only the host can set the admin password")
+		return
+	if args.is_empty():
+		_admin_password = ""
+		_send_feedback(sender, "Admin password cleared")
+	else:
+		_admin_password = args[0] as String
+		_send_feedback(sender, "Admin password set")
+
+
+## /adminpass <password> — any player: claim admin if the password matches
+## Separate RPC so non-admins can reach the server without going through
+## _execute_admin_cmd (which would block them at the _is_admin() check).
+@rpc("any_peer", "call_remote", "reliable")
+func _rpc_try_admin_password(password: String) -> void:
+	_try_admin_password(multiplayer.get_remote_sender_id(), password)
+
+
+func _try_admin_password(sender: int, password: String) -> void:
+	if _admin_password.is_empty():
+		_send_feedback(sender, "No admin password is set")
+		return
+	if password != _admin_password:
+		_send_feedback(sender, "Incorrect password")
+		return
+	if _is_admin(sender):
+		_send_feedback(sender, "You are already an admin")
+		return
+	_admins.append(sender)
+	_send_feedback(sender, "Admin granted")
 
 
 func _show_feedback(msg: String) -> void:
