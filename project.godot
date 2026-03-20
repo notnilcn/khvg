@@ -22,6 +22,7 @@ config/features=PackedStringArray("4.6", "GL Compatibility")
 
 Global="*res://VS-Like/Game/Singleton/global.gd"
 Network="*res://VS-Like/Game/Singleton/network.gd"
+BulletManager="*res://VS-Like/Bullets/bullet_manager.gd"
 
 [display]
 

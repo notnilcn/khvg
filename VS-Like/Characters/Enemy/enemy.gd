@@ -45,6 +45,9 @@ var enemy_id:    int  = -1
 var direction: Vector2
 var target:    Node2D
 
+# ── bullet firing (SERVER ONLY) ───────────────────────────────────────────────
+var _bullet_cooldown: float = 0.0
+
 # ── hit-timing validation (SERVER ONLY) ───────────────────────────────────────
 # Maps peer_id → timestamp of the last hit the server accepted from that peer.
 # Used to reject hits that arrive faster than the weapon's claimed fire_rate.
@@ -157,6 +160,7 @@ func _process(_delta: float) -> void:
 		return
 
 	_move_character()
+	_tick_bullet_fire(_delta)
 
 	# Read back the position the physics server calculated and apply it to
 	# the Sprite2D node (so the MultiplayerSynchronizer picks it up).
@@ -171,6 +175,22 @@ func _process(_delta: float) -> void:
 	# Despawn if no player is nearby (prevents runaway world growth).
 	if _distance_to_nearest_player() >= 600:
 		queue_free()
+
+
+func _tick_bullet_fire(delta: float) -> void:
+	if res_enemy.bullet_damage <= 0.0 or target == null:
+		return
+	_bullet_cooldown -= delta
+	if _bullet_cooldown > 0.0:
+		return
+	_bullet_cooldown = res_enemy.bullet_fire_interval
+	var dir := global_position.direction_to(target.global_position)
+	BulletManager.server_spawn_linear(
+		global_position,
+		dir,
+		res_enemy.bullet_speed,
+		res_enemy.bullet_damage,
+	)
 
 
 func _move_character() -> void:

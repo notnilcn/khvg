@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://csaps1xbk2y3z"]
+
+[ext_resource type="Script" uid="uid://csap1xbk2y3z4" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/sine_arrow_projectile.gd" id="1_sap"]
+[ext_resource type="Texture2D" uid="uid://7am01f5vb4oh" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/arrow_sprite.tres" id="2_sap"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sap"]
+radius = 7.0
+
+[node name="SineArrowProjectile" type="Area2D"]
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("1_sap")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 2.35619
+texture = ExtResource("2_sap")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_sap")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

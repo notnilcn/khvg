@@ -33,12 +33,13 @@ const DUMMY_ENEMY_RES:  String = "res://VS-Like/Characters/Enemy/Types/Dummy/res
 
 # Maps friendly command names to ResWeapon resource paths.
 const WEAPON_RES_PATHS: Dictionary = {
-	"axe":       "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/res_axe.tres",
-	"arrow":     "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/res_arrow.tres",
-	"bible":     "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/res_bible.tres",
-	"boots":     "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Boots/res_boots.tres",
-	"parchment": "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Parchment/res_parchment.tres",
-	"ring":      "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/res_ring.tres",
+	"axe":      "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/res_axe.tres",
+	"arrow":    "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/res_arrow.tres",
+	"bible":    "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/res_bible.tres",
+	"boots":    "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Boots/res_boots.tres",
+	"parchment":"res://VS-Like/Characters/Player/Utilities/Weapons/Types/Parchment/res_parchment.tres",
+	"ring":     "res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/res_ring.tres",
+	"sinebow":  "res://VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/res_sine_arrow.tres",
 }
 
 @export var all_res_enemy: Array[ResEnemy]
