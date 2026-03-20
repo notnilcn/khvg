@@ -1,0 +1,284 @@
+{
+  "main": {
+    "id": "15a45aff831cb792",
+    "type": "split",
+    "children": [
+      {
+        "id": "abae2523b41f405c",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "9fb510d3efc6e2cc",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "001 Godot basics/001 Things in godot.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "001 Things in godot"
+            }
+          },
+          {
+            "id": "fe9a372ed016151d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "001 Godot basics/001 Things in godot.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "001 Things in godot"
+            }
+          },
+          {
+            "id": "4abf73cd4086de48",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "002 Game Code/000 Singleton/000 General Singleton notes.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "000 General Singleton notes"
+            }
+          },
+          {
+            "id": "69ad16b230b6bcc5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "002 Game Code/000 Upon opening the game & clicking Host Game or Join Game.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "000 Upon opening the game & clicking Host Game or Join Game"
+            }
+          }
+        ],
+        "currentTab": 3
+      },
+      {
+        "id": "cb819d946f7ea7c2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "475929116d077226",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e477ce2a7ee50ca8",
+    "type": "split",
+    "children": [
+      {
+        "id": "60295ae74ccca3a5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "36d2cbf7b3428edb",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "fea61d50228efe41",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "45352fcac311136f",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "864956d8c91bf053",
+    "type": "split",
+    "children": [
+      {
+        "id": "119849e6b3d40d2e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d443099b5b39383a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "001 Godot basics/002 Godot Multiplayer.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for 002 Godot Multiplayer"
+            }
+          },
+          {
+            "id": "569fbfbefa2358b4",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "001 Godot basics/002 Godot Multiplayer.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from 002 Godot Multiplayer"
+            }
+          },
+          {
+            "id": "8995e6b097e410e2",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "901e7d9cb4e9c075",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "275fbc11eaaf798e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "001 Godot basics/002 Godot Multiplayer.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of 002 Godot Multiplayer"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "69ad16b230b6bcc5",
+  "lastOpenFiles": [
+    "002 Game Code/000 Singleton/000 General Singleton notes.md",
+    "002 Game Code/000 Upon opening the game & clicking Host Game or Join Game.md",
+    "Gameplay/Possible stories/Forest.md",
+    "Gameplay/Possible stories",
+    "002 Game Code/000 Singleton/network.gd.md",
+    "desktop.ini",
+    "002 Game Code/000 Singleton/global.gd.md",
+    "002 Game Code/001 Multiplayer/Sequence of functions.md",
+    "[network.gd].md",
+    "[[network.gd]].md",
+    "002 Game Code/001 Important Node Trees/Player/Player.gd.md",
+    "002 Game Code/000 Singleton",
+    "Gameplay/Reasons to play the game/Group Coordination.md",
+    "001 Godot basics/001 Things in godot.md",
+    "001 Godot basics/002 Godot Multiplayer.md",
+    "Untitled.base",
+    "002 Game Code/001 Important Node Trees/Player/res_player.gd.md",
+    "002 Game Code/002 Important Node Trees/Player/Untitled.md",
+    "002 Game Code/001 Important Node Trees/Player",
+    "Untitled",
+    "Gameplay/Classes/Tank/Tank classes & notes.md",
+    "Gameplay/Classes/Support/Support classes & notes (1).md",
+    "Gameplay/Classes/DPS/DPS classes & notes.md",
+    "Gameplay/Classes/Scout/Scout classes & notes.md",
+    "Gameplay/Classes/Support/Support Classes & notes.md",
+    "Gameplay/Classes/DPS/DPS classes.md",
+    "002 Game Code/002 Important Node Trees/Player.gd.md",
+    "Gameplay/Classes/Tank/General notes.md",
+    "Untitled.md",
+    "Gameplay/Classes/Support/General notes.md",
+    "Gameplay/Classes/DPS/General notes.md",
+    "Gameplay/Classes/Scout/General notes.md",
+    "Gameplay/Reasons to play the game",
+    "Gameplay/Classes/Tank",
+    "Gameplay/Classes/Support",
+    "Gameplay/Classes/Scout"
+  ]
+}
