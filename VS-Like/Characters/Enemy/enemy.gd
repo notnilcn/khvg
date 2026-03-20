@@ -38,6 +38,7 @@ var speed:       int
 var damage:      float
 var res_drop:    ResDrop
 var is_elite:    bool = false
+var immortal:    bool = false
 var enemy_id:    int  = -1
 
 # ── movement (SERVER ONLY) ────────────────────────────────────────────────────
@@ -231,9 +232,10 @@ func report_hit(damage_amount: float, fire_rate: float) -> void:
 
 func hurt(dmg: float) -> void:
 	# Runs on server only (called directly, not via RPC).
-	curr_health -= dmg
 	audio_player_2d.play()
-
+	if immortal:
+		return
+	curr_health -= dmg
 	if curr_health <= 0:
 		die()
 

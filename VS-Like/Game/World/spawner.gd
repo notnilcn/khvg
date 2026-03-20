@@ -117,6 +117,9 @@ func _setup_chat_console() -> void:
 	input.text_submitted.connect(_on_command_submitted)
 	# Release game focus when the field is done so movement keys work again.
 	input.text_submitted.connect(func(_s: String) -> void: input.release_focus())
+	# After any focus loss (Enter, Escape, click-away), clear all GUI focus so
+	# _unhandled_key_input can receive the next T keypress.
+	input.focus_exited.connect(func() -> void: get_viewport().gui_release_focus())
 	_vbox.add_child(input)
 
 
@@ -152,7 +155,7 @@ func _parse_command(cmd: String) -> void:
 	var verb: String = (parts[0] as String).to_lower()
 	var args: Array  = parts.slice(1)
 	match verb:
-		"/spawner", "/give", "/remove", "/admin", "/unadmin", "/setpass":
+		"/spawner", "/give", "/remove", "/admin", "/unadmin", "/setpass", "/spawn":
 			# Route all admin commands through the server so it can validate
 			# permissions.  If we ARE the server, execute directly.
 			if multiplayer.get_unique_id() == 1:
@@ -167,7 +170,7 @@ func _parse_command(cmd: String) -> void:
 			else:
 				_rpc_try_admin_password.rpc_id(1, password)
 		_:
-			_show_feedback("Unknown command. Try /spawner, /give, /remove, /admin, /unadmin, /setpass, /adminpass")
+			_show_feedback("Unknown command. Try /spawner, /give, /remove, /spawn, /admin, /unadmin, /setpass, /adminpass")
 
 
 ## Client → server RPC for admin commands.  The server validates admin status
@@ -210,6 +213,7 @@ func _execute_admin_cmd(sender: int, verb: String, args: Array) -> void:
 		"/admin":   _cmd_admin(sender, args)
 		"/unadmin": _cmd_unadmin(sender, args)
 		"/setpass": _cmd_setpass(sender, args)
+		"/spawn":   _cmd_spawn(sender, args)
 
 
 ## /spawner on|off
@@ -324,6 +328,21 @@ func _cmd_setpass(sender: int, args: Array) -> void:
 	else:
 		_admin_password = args[0] as String
 		_send_feedback(sender, "Admin password set")
+
+
+## /spawn [x y] — spawn an immortal enemy at the given world position (default 0,0)
+func _cmd_spawn(sender: int, args: Array) -> void:
+	if all_res_enemy.is_empty():
+		_send_feedback(sender, "No enemy types loaded yet")
+		return
+	var pos := Vector2.ZERO
+	if args.size() == 1:
+		_send_feedback(sender, "Usage: /spawn [x y]")
+		return
+	if args.size() >= 2:
+		pos = Vector2(float(args[0] as String), float(args[1] as String))
+	_create_enemy(pos, all_res_enemy[0], false, true)
+	_send_feedback(sender, "Spawned immortal enemy at (%d, %d)" % [int(pos.x), int(pos.y)])
 
 
 ## /adminpass <password> — any player: claim admin if the password matches
@@ -487,7 +506,7 @@ func _spawn_circle_pattern(enemies_to_spawn: int) -> void:
 ## fires at peer_connected time — before the client's game scene exists — so
 ## the packets are silently dropped.  Instead we use an explicit RPC that only
 ## fires when we KNOW the client is ready (see _request_player_spawn).
-func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = false) -> void:
+func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = false, immortal: bool = false) -> void:
 	var eid := _next_enemy_id
 	_next_enemy_id += 1
 
@@ -495,6 +514,7 @@ func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = fal
 		"res_path": res_enemy.resource_path,
 		"pos":      spawn_pos,
 		"is_elite": is_elite,
+		"immortal": immortal,
 		"eid":      eid,
 	}
 
@@ -516,6 +536,7 @@ func _rpc_spawn_enemy(data: Dictionary) -> void:
 	var enemy: Enemy       = ENEMY_SCENE.instantiate()
 	enemy.res_enemy        = load(data["res_path"]) as ResEnemy
 	enemy.is_elite         = data["is_elite"]
+	enemy.immortal         = data.get("immortal", false)
 	enemy.global_position  = data["pos"]
 	enemy.enemy_id         = data["eid"]
 	# Deterministic name required so _rpc_despawn_enemy can find it by name on
@@ -581,6 +602,7 @@ func _create_enemy_from_data(data: Dictionary) -> Enemy:
 	var enemy: Enemy       = ENEMY_SCENE.instantiate()
 	enemy.res_enemy        = load(data["res_path"]) as ResEnemy
 	enemy.is_elite         = data["is_elite"]
+	enemy.immortal         = data.get("immortal", false)
 	enemy.global_position  = data["pos"]
 	enemy.enemy_id         = data["eid"]
 	enemy.name             = "Enemy_%d" % data["eid"]
