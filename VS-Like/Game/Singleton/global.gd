@@ -74,7 +74,8 @@ func add_weapon(res_wpn: ResWeapon) -> void:
 
 	# Otherwise instantiate a fresh weapon scene and attach it to the player.
 	var weapon: Weapon = res_wpn.weapon_scene.instantiate()
-	weapon.resource = res_wpn
+	weapon.resource        = res_wpn
+	weapon.is_owner_weapon = true  # add_weapon() always runs on the owning peer
 
 	# Weapons with `attach_to_rotation` are parented to the Sprite2D so they
 	# rotate when the player flips direction.  Others sit directly on the
