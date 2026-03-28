@@ -1,0 +1,2 @@
+Make the cost scale with the server costs and the number of subscribers.
+As in, if the server cost per month is 500 and there are 500 players who are subscribed to this automatic daily login, then the subscription cost would be $1. Obviously this should be capped.
