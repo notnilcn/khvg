@@ -50,7 +50,7 @@
             }
           },
           {
-            "id": "7cd9dc5ac118b659",
+            "id": "69ad16b230b6bcc5",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -65,6 +65,22 @@
           }
         ],
         "currentTab": 3
+      },
+      {
+        "id": "cb819d946f7ea7c2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "475929116d077226",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
       }
     ],
     "direction": "vertical"
@@ -226,36 +242,11 @@
       "bases:Create new base": false
     }
   },
-  "active": "36d2cbf7b3428edb",
+  "active": "69ad16b230b6bcc5",
   "lastOpenFiles": [
-    "Gameplay/Classes/Tank/Tank classes & notes.md",
-    "001 Godot basics/Types of nodes",
+    "002 Game Code/001 Multiplayer/000 Opening the game & clicking Host Game or Join Game.md",
     "002 Game Code/000 Singleton/000 General Singleton notes.md",
-    "Gameplay/Dungeons & bosses/Bosses",
-    "Gameplay/Dungeons & bosses/Dungeons",
-    "Gameplay/General Gameplay Loop/001 On Spawn.md",
-    "Gameplay/General Gameplay Loop/000 On account creation.md",
-    "Gameplay/Possible stories/Destroyed world.md",
-    "Gameplay/General Gameplay Loop",
-    "Gameplay/Monetisation/Cosmetic Gacha.md",
-    "Gameplay/Monetisation/Subscription to automatically collect daily login rewards.md",
     "Gameplay/Possible stories/Forest.md",
-    "Gameplay/Classes/Tank/High defense tank.md",
-    "Gameplay/Classes/Tank/00 Tank classes & notes.md",
-    "README.md",
-    "Gameplay/Dungeons & bosses/Fungal Cavern ripoff.md",
-    "Gameplay/Monetisation",
-    "Gameplay/General notes",
-    "Gameplay/Dungeons & bosses/Puppet Master's Theatre ripoff.md",
-    "Gameplay/Dungeons & bosses/Nest ripoff.md",
-    "Gameplay/Dungeons & bosses/Lost Halls ripoff.md",
-    "002 Game Code/001 Important Node Trees/Player/res_player.gd.md",
-    "Gameplay/Dungeons & bosses",
-    "Untitled.md",
-    "Untitled.base",
-    "001 Godot basics/001 Things in godot.md",
-    "002 Game Code/001 Important Node Trees/Player/Player.gd.md",
-    "002 Game Code/000 Upon opening the game & clicking Host Game or Join Game.md",
     "Gameplay/Possible stories",
     "002 Game Code/000 Singleton/network.gd.md",
     "desktop.ini",
@@ -263,6 +254,31 @@
     "002 Game Code/001 Multiplayer/Sequence of functions.md",
     "[network.gd].md",
     "[[network.gd]].md",
-    "Gameplay/Reasons to play the game/Group Coordination.md"
+    "002 Game Code/002 Important Node Trees/Player/Player.gd.md",
+    "002 Game Code/000 Singleton",
+    "Gameplay/Reasons to play the game/Group Coordination.md",
+    "001 Godot basics/001 Things in godot.md",
+    "001 Godot basics/002 Godot Multiplayer.md",
+    "Untitled.base",
+    "002 Game Code/002 Important Node Trees/Player/res_player.gd.md",
+    "002 Game Code/002 Important Node Trees/Player/Untitled.md",
+    "002 Game Code/002 Important Node Trees/Player",
+    "Untitled",
+    "Gameplay/Classes/Tank/Tank classes & notes.md",
+    "Gameplay/Classes/Support/Support classes & notes (1).md",
+    "Gameplay/Classes/DPS/DPS classes & notes.md",
+    "Gameplay/Classes/Scout/Scout classes & notes.md",
+    "Gameplay/Classes/Support/Support Classes & notes.md",
+    "Gameplay/Classes/DPS/DPS classes.md",
+    "002 Game Code/002 Important Node Trees/Player.gd.md",
+    "Gameplay/Classes/Tank/General notes.md",
+    "Untitled.md",
+    "Gameplay/Classes/Support/General notes.md",
+    "Gameplay/Classes/DPS/General notes.md",
+    "Gameplay/Classes/Scout/General notes.md",
+    "Gameplay/Reasons to play the game",
+    "Gameplay/Classes/Tank",
+    "Gameplay/Classes/Support",
+    "Gameplay/Classes/Scout"
   ]
 }
