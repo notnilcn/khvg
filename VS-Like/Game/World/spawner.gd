@@ -30,6 +30,7 @@ const PLAYER_SCENE: PackedScene = preload("res://VS-Like/Characters/Player/playe
 const MIN_SPAWN_RADIUS: int    = 400
 const MAX_ENEMIES:      int    = 300
 const DUMMY_ENEMY_RES:  String = "res://VS-Like/Characters/Enemy/Types/Dummy/res_dummy.tres"
+const GOBLIN_ENEMY_RES: String = "res://VS-Like/Characters/Enemy/Types/Goblin/res_goblin.tres"
 
 # Maps friendly command names to ResWeapon resource paths.
 const WEAPON_RES_PATHS: Dictionary = {
@@ -157,7 +158,7 @@ func _parse_command(cmd: String) -> void:
 	var verb: String = (parts[0] as String).to_lower()
 	var args: Array  = parts.slice(1)
 	match verb:
-		"/spawner", "/give", "/remove", "/admin", "/unadmin", "/setpass", "/spawn":
+		"/spawner", "/give", "/remove", "/admin", "/unadmin", "/setpass", "/spawn", "/chest":
 			# Route all admin commands through the server so it can validate
 			# permissions.  If we ARE the server, execute directly.
 			if multiplayer.get_unique_id() == 1:
@@ -172,7 +173,7 @@ func _parse_command(cmd: String) -> void:
 			else:
 				_rpc_try_admin_password.rpc_id(1, password)
 		_:
-			_show_feedback("Unknown command. Try /spawner, /give, /remove, /spawn, /admin, /unadmin, /setpass, /adminpass")
+			_show_feedback("Unknown command. Try /spawner, /give, /remove, /spawn, /chest, /admin, /unadmin, /setpass, /adminpass")
 
 
 ## Client → server RPC for admin commands.  The server validates admin status
@@ -216,6 +217,7 @@ func _execute_admin_cmd(sender: int, verb: String, args: Array) -> void:
 		"/unadmin": _cmd_unadmin(sender, args)
 		"/setpass": _cmd_setpass(sender, args)
 		"/spawn":   _cmd_spawn(sender, args)
+		"/chest":   _cmd_chest(sender, args)
 
 
 ## /spawner on|off
@@ -343,6 +345,30 @@ func _cmd_spawn(sender: int, args: Array) -> void:
 	var res := load(DUMMY_ENEMY_RES) as ResEnemy
 	_create_enemy(pos, res, false, true)
 	_send_feedback(sender, "Spawned dummy at (%d, %d)" % [int(pos.x), int(pos.y)])
+
+
+## /chest [x y] — spawn an elite enemy that is guaranteed to drop a chest when killed.
+## Uses a random enemy from the current pool, or a goblin if the pool is empty.
+## If no position is given, spawns near the first available player.
+func _cmd_chest(sender: int, args: Array) -> void:
+	if args.size() == 1:
+		_send_feedback(sender, "Usage: /chest [x y]")
+		return
+
+	var pos: Vector2
+	if args.size() >= 2:
+		pos = Vector2(float(args[0] as String), float(args[1] as String))
+	else:
+		var ref_player := _get_reference_player()
+		if ref_player == null:
+			_send_feedback(sender, "No players in the world to spawn near")
+			return
+		pos = _get_random_spawn_pos(ref_player.global_position, MIN_SPAWN_RADIUS)
+
+	# Prefer a random enemy from the current pool; fall back to goblin.
+	var res: ResEnemy = _get_enemy() if not all_res_enemy.is_empty() else load(GOBLIN_ENEMY_RES)
+	_create_enemy(pos, res, true)   # is_elite = true → always drops a chest
+	_send_feedback(sender, "Spawned elite enemy (chest drop) at (%d, %d)" % [int(pos.x), int(pos.y)])
 
 
 ## /adminpass <password> — any player: claim admin if the password matches
