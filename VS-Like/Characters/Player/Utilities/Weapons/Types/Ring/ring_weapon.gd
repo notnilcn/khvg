@@ -2,6 +2,8 @@ extends Weapon
 
 ## READY
 func _ready() -> void:
+	if not is_owner_weapon:
+		return
 	Global.get_local_player().extra_damage += 0.25 # Increment Player Damage
 
 

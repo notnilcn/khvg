@@ -12,6 +12,7 @@ weapon_name = "BIBLE"
 weapon_description = "REVOLVES AROUND YOU INFLICTING DAMAGE"
 sprite = ExtResource("2_mdcc1")
 audio = ExtResource("1_8yafa")
+item_type = 1
 damage = 12.0
 fire_rate = 7.0
 attach_to_rotation = false

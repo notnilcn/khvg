@@ -10,6 +10,7 @@ weapon_scene = ExtResource("3_58l2r")
 weapon_name = "RING"
 weapon_description = "25% EXTRA DAMAGE"
 sprite = ExtResource("2_1cfj7")
+item_type = 3
 damage = 10.0
 fire_rate = 1.0
 attach_to_rotation = false

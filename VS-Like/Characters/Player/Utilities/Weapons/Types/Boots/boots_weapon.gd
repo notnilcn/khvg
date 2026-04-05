@@ -2,6 +2,8 @@ extends Weapon
 
 ## READY
 func _ready() -> void:
+	if not is_owner_weapon:
+		return
 	Global.get_local_player().extra_speed += 0.125 # Increment Player Speed
 
 
