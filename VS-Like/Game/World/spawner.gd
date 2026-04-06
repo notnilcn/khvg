@@ -165,6 +165,10 @@ func _parse_command(cmd: String) -> void:
 				_execute_admin_cmd(1, verb, args)
 			else:
 				_rpc_admin_cmd.rpc_id(1, verb, args)
+		"/stats", "/inv":
+			# Read-only self-inspection — anyone can run these, no admin needed.
+			# Execute locally (no server round-trip required).
+			_cmd_selfinfo(verb)
 		"/adminpass":
 			# Anyone can attempt this — the server validates the password.
 			var password: String = args[0] as String if not args.is_empty() else ""
@@ -173,7 +177,7 @@ func _parse_command(cmd: String) -> void:
 			else:
 				_rpc_try_admin_password.rpc_id(1, password)
 		_:
-			_show_feedback("Unknown command. Try /spawner, /give, /remove, /spawn, /chest, /admin, /unadmin, /setpass, /adminpass")
+			_show_feedback("Unknown command. Try /stats, /inv, /spawner, /give, /remove, /spawn, /chest, /admin, /unadmin, /setpass, /adminpass")
 
 
 ## Client → server RPC for admin commands.  The server validates admin status
@@ -369,6 +373,48 @@ func _cmd_chest(sender: int, args: Array) -> void:
 	var res: ResEnemy = _get_enemy() if not all_res_enemy.is_empty() else load(GOBLIN_ENEMY_RES)
 	_create_enemy(pos, res, true)   # is_elite = true → always drops a chest
 	_send_feedback(sender, "Spawned elite enemy (chest drop) at (%d, %d)" % [int(pos.x), int(pos.y)])
+
+
+## /stats  — print your current RPG stats to the chat feedback label.
+## /inv    — print your equipped items and inventory to the chat feedback label.
+## Both run locally (no server round-trip; no admin required).
+func _cmd_selfinfo(verb: String) -> void:
+	var player := Global.get_local_player()
+	if player == null:
+		_show_feedback("No local player found")
+		return
+
+	var msg: String
+	match verb:
+		"/stats":
+			msg = (
+				"STR %d  WIS %d  DEX %d  DEF %d  VIT %d\n"
+				+ "HP %d/%d   Slots: %d acc"
+			) % [
+				player.strength, player.wisdom, player.dexterity,
+				player.defense,  player.vitality,
+				int(player.health), int(player.max_health),
+				player.get_accessory_slot_count(),
+			]
+		"/inv":
+			var wpn  := player.equipped_weapon.resource.weapon_name  if player.equipped_weapon  else "—"
+			var abl  := player.equipped_ability.resource.weapon_name if player.equipped_ability else "—"
+			var arm  := "—"
+			var accs : Array[String] = []
+			for acc in player.equipped_accessories:
+				accs.append(acc.resource.weapon_name)
+			var acc_str := ", ".join(accs) if not accs.is_empty() else "—"
+			var inv_names : Array[String] = []
+			for res in player.inventory:
+				inv_names.append(res.weapon_name)
+			var inv_str := ", ".join(inv_names) if not inv_names.is_empty() else "empty"
+			msg = (
+				"Wpn:%s  Abl:%s  Arm:%s  Acc:%s\nInv(%d/%d): %s"
+			) % [wpn, abl, arm, acc_str,
+				 player.inventory.size(), player.inventory_max, inv_str]
+		_:
+			return
+	_show_feedback(msg)
 
 
 ## /adminpass <password> — any player: claim admin if the password matches

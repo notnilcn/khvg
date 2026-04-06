@@ -49,6 +49,18 @@ func _ready() -> void:
 	_build_ui()
 
 
+## Close the panel when I is pressed while the inventory is open.
+## This must live here (not in player.gd) because the game is paused while the
+## panel is open, and the Player node is not PROCESS_MODE_WHEN_PAUSED.
+func _unhandled_key_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_I:
+			close()
+			get_viewport().set_input_as_handled()
+
+
 # ── build UI ──────────────────────────────────────────────────────────────────
 func _build_ui() -> void:
 	# ── dark overlay (click anywhere outside the panel to close) ──────────────
