@@ -6,9 +6,9 @@ class_name WeaponImage
 @onready var level_3: ColorRect = %Level3
 
 # Data
-var resource: ResWeapon : set = _set_resource
+var resource: ResItem : set = _set_resource
 var curr_weapon_level: int = 1 : set = _set_curr_weapon_level
-var _pending_resource: ResWeapon
+var _pending_resource: ResItem
 
 ## READY
 func _ready() -> void:
@@ -16,7 +16,7 @@ func _ready() -> void:
 		_update_weapon_texture(_pending_resource)
 
 ## SET WEAPON IMAGE USING THE RESOURCE
-func _set_resource(new_resource: ResWeapon):
+func _set_resource(new_resource: ResItem):
 	resource = new_resource
 	if !is_node_ready():
 		_pending_resource = new_resource
@@ -24,7 +24,7 @@ func _set_resource(new_resource: ResWeapon):
 		_update_weapon_texture(new_resource)
 
 ## ADD WEAPON SPRITE AS IMAGE
-func _update_weapon_texture(res: ResWeapon) -> void:
+func _update_weapon_texture(res: ResItem) -> void:
 	if res && weapon_texture:
 		weapon_texture.texture = res.sprite
 

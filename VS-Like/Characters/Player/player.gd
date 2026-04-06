@@ -54,8 +54,8 @@ var equipped_armor               = null  # placeholder — no armor class yet
 var equipped_accessories: Array[Weapon] = []
 
 # ── inventory (item resources, not live nodes) ────────────────────────────────
-var inventory:      Array[ResWeapon] = []
-var consumables:    Array[ResWeapon] = []
+var inventory:      Array[ResItem] = []
+var consumables:    Array[ResItem] = []
 var inventory_max:  int = 6    # expandable to 12 via purchasable backpack
 var consumables_max: int = 2   # expandable to 8 via purchasable backpack
 
@@ -205,7 +205,7 @@ func get_accessory_slot_count() -> int:
 # ── equipment helpers ─────────────────────────────────────────────────────────
 ## Instantiate a weapon scene and attach it to the player (for every peer so
 ## animations are visible, but only the owner fires it for real).
-func _instantiate_weapon_node(res_wpn: ResWeapon, is_owner: bool) -> Weapon:
+func _instantiate_weapon_node(res_wpn: ResItem, is_owner: bool) -> Weapon:
 	var weapon: Weapon = res_wpn.weapon_scene.instantiate()
 	weapon.resource        = res_wpn
 	weapon.is_owner_weapon = is_owner
@@ -217,44 +217,44 @@ func _instantiate_weapon_node(res_wpn: ResWeapon, is_owner: bool) -> Weapon:
 
 
 ## Put an already-instantiated weapon node into the correct equipment variable.
-func _assign_to_slot(weapon: Weapon, item_type: ResWeapon.ItemType) -> void:
+func _assign_to_slot(weapon: Weapon, item_type: ResItem.ItemType) -> void:
 	match item_type:
-		ResWeapon.ItemType.WEAPON:
+		ResItem.ItemType.WEAPON:
 			equipped_weapon = weapon
-		ResWeapon.ItemType.ABILITY:
+		ResItem.ItemType.ABILITY:
 			equipped_ability = weapon
-		ResWeapon.ItemType.ARMOR:
+		ResItem.ItemType.ARMOR:
 			equipped_armor = weapon
-		ResWeapon.ItemType.ACCESSORY:
+		ResItem.ItemType.ACCESSORY:
 			equipped_accessories.append(weapon)
 
 
 ## Equip an item resource (from inventory or directly from a chest).
 ## Returns true if the item was equipped, false if the slot was full.
-func equip_item(res_wpn: ResWeapon) -> bool:
+func equip_item(res_wpn: ResItem) -> bool:
 	if not is_multiplayer_authority():
 		return false
 
 	match res_wpn.item_type:
-		ResWeapon.ItemType.WEAPON:
+		ResItem.ItemType.WEAPON:
 			if equipped_weapon:
 				_unequip_to_inventory(equipped_weapon)
 			equipped_weapon = _instantiate_weapon_node(res_wpn, true)
 			weapons_container_ui.update_equipment(self)
 			return true
 
-		ResWeapon.ItemType.ABILITY:
+		ResItem.ItemType.ABILITY:
 			if equipped_ability:
 				_unequip_to_inventory(equipped_ability)
 			equipped_ability = _instantiate_weapon_node(res_wpn, true)
 			weapons_container_ui.update_equipment(self)
 			return true
 
-		ResWeapon.ItemType.ARMOR:
+		ResItem.ItemType.ARMOR:
 			# TODO: implement armor node class
 			return false
 
-		ResWeapon.ItemType.ACCESSORY:
+		ResItem.ItemType.ACCESSORY:
 			if equipped_accessories.size() < get_accessory_slot_count():
 				var acc := _instantiate_weapon_node(res_wpn, true)
 				equipped_accessories.append(acc)
@@ -276,7 +276,7 @@ func _unequip_to_inventory(weapon: Weapon) -> void:
 
 
 ## Add an item resource directly to inventory (returns false if full).
-func add_to_inventory(res_wpn: ResWeapon) -> bool:
+func add_to_inventory(res_wpn: ResItem) -> bool:
 	if inventory.size() < inventory_max:
 		inventory.append(res_wpn)
 		return true
@@ -284,7 +284,7 @@ func add_to_inventory(res_wpn: ResWeapon) -> bool:
 
 
 ## Add a consumable to the consumable slots (returns false if full).
-func add_consumable(res_wpn: ResWeapon) -> bool:
+func add_consumable(res_wpn: ResItem) -> bool:
 	if consumables.size() < consumables_max:
 		consumables.append(res_wpn)
 		return true
@@ -298,7 +298,7 @@ func rpc_give_weapon(res_path: String) -> void:
 		return
 	if not is_multiplayer_authority():
 		return
-	var res := load(res_path) as ResWeapon
+	var res := load(res_path) as ResItem
 	if res:
 		Global.pickup_item(res)
 

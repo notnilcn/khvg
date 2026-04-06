@@ -54,7 +54,9 @@ Admin chat commands (press T; requires admin except `/stats` and `/inv`):
 | `/adminpass <pw>` | Claim admin via password (any player) |
 
 **Item / Weapon System** (`VS-Like/Characters/Player/Utilities/Weapons/`)
-All loot items extend `ResWeapon`. The `item_type` enum determines the equipment slot:
+All loot items use the single `ResItem` resource class (`res_item.gd`). Fields are grouped by category; unused fields default to 0 and are ignored at runtime. `ResWeapon` (`res_weapon.gd`) is a backward-compatibility shim that `extends ResItem`.
+
+The `item_type` enum determines the equipment slot:
 
 | `ItemType` | Value | Slot | Examples |
 |-----------|-------|------|---------|
@@ -63,7 +65,7 @@ All loot items extend `ResWeapon`. The `item_type` enum determines the equipment
 | `ARMOR` | 2 | Armor | *(not yet implemented)* |
 | `ACCESSORY` | 3 | Accessory (×1–3) | Boots, Parchment, Ring |
 
-Passive accessories (`is_passive = true`) apply stat bonuses in their `_ready()` and reverse them in `remove_passive_effects()`. Both methods guard against `is_owner_weapon == false` so remote player copies never affect the local player's stats.
+**Passive stat bonuses** for accessories/armor are stored directly in the `.tres` file (`bonus_speed_mult`, `bonus_exp_mult`, `bonus_damage_mult`, `bonus_defense`, `bonus_max_health`) and applied by the generic `PassiveItemWeapon` base class. Adding a new accessory requires only a `.tres` file — no new GDScript. Boots/Parchment/Ring each have a one-line `.gd` that just `extends PassiveItemWeapon`.
 
 Weapons are obtained **only from chests** (dropped by elite enemies). Level-up no longer shows a weapon selection menu — it grants stats instead. The `WeaponSelection` scene has been removed.
 

@@ -337,13 +337,13 @@ func _refresh_stats() -> void:
 
 
 # ── slot visual helpers ───────────────────────────────────────────────────────
-func _set_slot(slot: Button, res: ResWeapon, placeholder: String) -> void:
+func _set_slot(slot: Button, res: ResItem, placeholder: String) -> void:
 	if slot == null:
 		return
 	if res != null and res.sprite != null:
 		slot.icon         = res.sprite
 		slot.text         = ""
-		slot.tooltip_text = res.weapon_name + "\n" + res.weapon_description
+		slot.tooltip_text = res.item_name + "\n" + res.item_description
 	else:
 		slot.icon         = null
 		slot.text         = placeholder
@@ -376,7 +376,7 @@ func _restore_slot_style(slot: Button) -> void:
 	slot.add_theme_stylebox_override("hover", sh)
 
 
-func _weapon_res(weapon: Weapon) -> ResWeapon:
+func _weapon_res(weapon: Weapon) -> ResItem:
 	return weapon.resource if weapon != null else null
 
 

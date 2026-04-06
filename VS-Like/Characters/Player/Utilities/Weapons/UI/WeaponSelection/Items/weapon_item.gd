@@ -1,32 +1,25 @@
 extends Button
 class_name WeaponItem
 
-@onready var image: TextureRect = %Image
-@onready var name_label: Label = %NameLabel
-@onready var desc_label: Label = %DescLabel
+## WeaponItem — legacy weapon-selection button.  The weapon-selection menu is no
+## longer used (weapons come from chests only), but this file is kept so the
+## .tscn that references it continues to parse without errors.
 
-var res_weapon: ResWeapon : set = _set_res_weapon
+@onready var image:      TextureRect = %Image
+@onready var name_label: Label       = %NameLabel
+@onready var desc_label: Label       = %DescLabel
 
-# Set Weapon Button using the Resource
-func _set_res_weapon(res_wpn: ResWeapon):
+var res_weapon: ResItem : set = _set_res_weapon
+
+func _set_res_weapon(res_wpn: ResItem) -> void:
 	res_weapon = res_wpn
-	image.texture = res_weapon.sprite
-	name_label.text = res_weapon.weapon_name
-	
-	for weapon in Global.get_local_player().weapons:
-		if weapon.resource == res_weapon:
-			match weapon.upgrade_level:
-				1:
-					desc_label.text = res_weapon.upgrade_description_2
-				2:
-					desc_label.text = res_weapon.upgrade_description_3
-			return
-	
-	desc_label.text = res_weapon.weapon_description
+	image.texture   = res_weapon.sprite
+	name_label.text = res_weapon.item_name
+	desc_label.text = res_weapon.item_description
 
-## ADD/UPGRADE WEAPON
+
 func _on_pressed() -> void:
 	if res_weapon:
-		Global.add_weapon(res_weapon)
+		Global.pickup_item(res_weapon)
 	else:
 		Global.get_local_player().health += 20

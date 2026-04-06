@@ -38,7 +38,7 @@ func _clear(container: HBoxContainer) -> void:
 		child.queue_free()
 
 
-func _add_image(container: HBoxContainer, res: ResWeapon) -> void:
+func _add_image(container: HBoxContainer, res: ResItem) -> void:
 	var img: WeaponImage = WEAPON_IMAGE_SCENE.instantiate()
 	img.resource = res
 	container.add_child(img)

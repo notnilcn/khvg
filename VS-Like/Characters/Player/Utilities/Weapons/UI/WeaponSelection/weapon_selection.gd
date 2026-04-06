@@ -16,7 +16,7 @@ func show_selection():
 
 # Add Weapon Buttons to Menu
 func set_items():
-	var av_res_weapons: Array[ResWeapon] = Global.get_available_weapons()
+	var av_res_weapons: Array[ResItem] = Global.get_available_weapons()
 	if av_res_weapons.is_empty():
 		create_item()
 	else:
@@ -27,7 +27,7 @@ func set_items():
 			create_item(av_res_weapons[i])
 
 # Create Weapon Buttons
-func create_item(res: ResWeapon = null):
+func create_item(res: ResItem = null):
 	var weapon_item: WeaponItem = WEAPON_ITEM_SCENE.instantiate()
 	items_container.add_child(weapon_item)
 	if res:
