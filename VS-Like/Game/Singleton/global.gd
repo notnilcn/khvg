@@ -1,19 +1,13 @@
 extends Node
 ## Global.gd — autoloaded singleton accessible from every script as "Global".
-##
-## Previously this held a single `player` variable. Now it holds a dictionary
-## of ALL connected players, keyed by their network peer_id.
-##
-## Why a dictionary?  In multiplayer each peer has a unique integer id.
-## Keying by that id lets any system quickly look up "which node belongs to
-## peer 42?" without searching an array.
 
-# ── weapon resources ─────────────────────────────────────────────────────────
-## All weapon types available in the game. Add new ResWeapon .tres files here
-## to make them appear in weapon selection menus.
-const RES_WEAPONS: Array[ResWeapon] = [
+# ── item registry ─────────────────────────────────────────────────────────────
+## All loot-able items in the game (weapons, abilities, accessories, armor).
+## Add new ResWeapon .tres files here to make them appear in chests.
+const RES_ITEMS: Array[ResWeapon] = [
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/res_axe.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/res_arrow.tres"),
+	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/res_sine_arrow.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/res_bible.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Boots/res_boots.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Parchment/res_parchment.tres"),
@@ -21,69 +15,60 @@ const RES_WEAPONS: Array[ResWeapon] = [
 ]
 
 # ── player registry ───────────────────────────────────────────────────────────
-## All active player nodes, keyed by their network peer_id (an integer).
-## peer_id 1 is always the server/host.  Client peer_ids are assigned by the
-## server and are integers > 1.
-##
-## Example:  Global.players[2]  →  the Player node belonging to peer 2.
+## All active player nodes, keyed by their network peer_id.
 var players: Dictionary = {}   # { peer_id: int  →  Player node }
 
 
 # ── local player helper ───────────────────────────────────────────────────────
-## Returns the Player node that THIS instance of the game is controlling.
-## Every machine in the game calls this to get "my" player.
-##
-## How it works: `multiplayer.get_unique_id()` returns the peer_id that the
-## server assigned to us.  We look that id up in the players dictionary.
-## Returns null if our player hasn't been spawned yet (e.g. during loading).
 func get_local_player() -> Player:
 	var my_id := multiplayer.get_unique_id()
 	return players.get(my_id, null)
 
 
-# ── weapon helpers ────────────────────────────────────────────────────────────
-## Returns weapon resources that the LOCAL player can still acquire or upgrade.
-## Fully-upgraded weapons (level 3) are excluded so they don't show up in menus.
-func get_available_weapons() -> Array[ResWeapon]:
-	var local_player := get_local_player()
-	if local_player == null:
-		return []
-
-	var av_res_weapons: Array[ResWeapon] = RES_WEAPONS.duplicate()
-
-	for wpn in local_player.weapons:
-		if av_res_weapons.has(wpn.resource) && wpn.upgrade_level == 3:
-			av_res_weapons.erase(wpn.resource)
-
-	return av_res_weapons
+# ── item helpers ──────────────────────────────────────────────────────────────
+## Returns all available items that can appear in chests.
+## Currently returns the full pool; filter here if desired (e.g. exclude items
+## the player already has both equipped and in a full inventory).
+func get_available_items() -> Array[ResWeapon]:
+	return RES_ITEMS.duplicate()
 
 
-## Gives the LOCAL player a weapon (or upgrades it if they already have it).
-## Also updates the weapon display in the player's HUD.
-func add_weapon(res_wpn: ResWeapon) -> void:
-	var local_player := get_local_player()
-	if local_player == null:
+## Pick up an item: equip it immediately if the relevant slot is empty,
+## otherwise send it to the player's inventory.  If the inventory is also full,
+## logs a warning and discards the item.
+func pickup_item(res_wpn: ResWeapon) -> void:
+	var player := get_local_player()
+	if player == null:
 		return
 
-	# If player already owns this weapon, upgrade it instead of adding again.
-	for weapon in local_player.weapons:
-		if weapon.resource == res_wpn:
-			weapon.upgrade_weapon()
-			local_player.weapons_container_ui.update_weapon(weapon)
-			return
-
-	# Otherwise instantiate a fresh weapon scene and attach it to the player.
-	var weapon: Weapon = res_wpn.weapon_scene.instantiate()
-	weapon.resource        = res_wpn
-	weapon.is_owner_weapon = true  # add_weapon() always runs on the owning peer
-
-	# Weapons with `attach_to_rotation` are parented to the Sprite2D so they
-	# rotate when the player flips direction.  Others sit directly on the
-	# Player node and rotate independently (e.g. arrow, bible).
-	if weapon.attach_to_rotation:
-		local_player.sprite_2d.call_deferred("add_child", weapon)
+	if _slot_is_empty(player, res_wpn):
+		player.equip_item(res_wpn)
 	else:
-		local_player.call_deferred("add_child", weapon)
+		if not player.add_to_inventory(res_wpn):
+			push_warning("Inventory full — could not pick up: " + res_wpn.weapon_name)
 
-	local_player.weapons.append(weapon)
-	local_player.weapons_container_ui.add_weapon(weapon)
+
+func _slot_is_empty(player: Player, res_wpn: ResWeapon) -> bool:
+	match res_wpn.item_type:
+		ResWeapon.ItemType.WEAPON:
+			return player.equipped_weapon == null
+		ResWeapon.ItemType.ABILITY:
+			return player.equipped_ability == null
+		ResWeapon.ItemType.ARMOR:
+			return player.equipped_armor == null
+		ResWeapon.ItemType.ACCESSORY:
+			return player.equipped_accessories.size() < player.get_accessory_slot_count()
+	return false
+
+
+# ── legacy alias ─────────────────────────────────────────────────────────────
+## Kept so any existing call sites (admin commands, etc.) still compile.
+## Prefer pickup_item() for new code.
+func add_weapon(res_wpn: ResWeapon) -> void:
+	pickup_item(res_wpn)
+
+
+## Legacy: returns items that are not yet equipped (used by nothing now that
+## weapon_selection is removed, but kept to avoid compile errors if referenced).
+func get_available_weapons() -> Array[ResWeapon]:
+	return get_available_items()

@@ -11,50 +11,67 @@ class_name Player
 ##   player_node.set_multiplayer_authority(peer_id)
 ## so peer 42's player only processes WASD on peer 42's machine.
 ## Everyone else just displays that player's replicated position.
-##
-## The MultiplayerSynchronizer node (added below in _ready) is what actually
-## sends position updates from the authoritative peer to all other peers.
 
 # ── exports / references ─────────────────────────────────────────────────────
 @export var resource: ResPlayer
 
-@onready var sprite_2d:      Sprite2D     = $Sprite2D
-@onready var camera_2d:      Camera2D     = $Camera2D
-@onready var enemy_detection: Area2D      = $EnemyDetection
+@onready var sprite_2d:       Sprite2D     = $Sprite2D
+@onready var camera_2d:       Camera2D     = $Camera2D
+@onready var enemy_detection: Area2D       = $EnemyDetection
 
 # HUD — only shown / updated on THIS machine's local player
 @onready var health_bar:           Healthbar         = $HealthBar
 @onready var progress_bar:         ProgressBar       = %ProgressBar
 @onready var weapons_container_ui: WeaponContainerUI = %WeaponsContainerUI
-@onready var weapon_selection:     WeaponSelectionUI = %WeaponSelection
 @onready var chest_ui:             ChestUI           = %ChestUI
+@onready var hud:                  CanvasLayer       = $HUD
 
-# ── data ──────────────────────────────────────────────────────────────────────
+# ── core stats ────────────────────────────────────────────────────────────────
 var max_health: float
 var speed:      float
 var health:     float : set = _set_health
 var points:     float = 0.0 : set = _set_points
-var weapons:    Array[Weapon] = []
 
-# Multipliers granted by passive weapons (Boots / Parchment / Ring)
+# ── RPG character stats ───────────────────────────────────────────────────────
+## Strength: scales weapon/ability damage output.
+var strength:  int = 0
+## Wisdom: scales ability effectiveness; also unlocks extra accessory slots.
+##   0–499  → 1 accessory slot
+##   500–999 → 2 accessory slots
+##   1000+   → 3 accessory slots
+var wisdom:    int = 0
+## Dexterity: scales movement speed and attack fire rate.
+var dexterity: int = 0
+## Defense: reduces incoming damage.
+var defense:   int = 0
+## Vitality: increases maximum health.
+var vitality:  int = 0
+
+# ── equipment slots (instantiated Weapon nodes in the scene tree) ─────────────
+var equipped_weapon:      Weapon = null
+var equipped_ability:     Weapon = null
+var equipped_armor               = null  # placeholder — no armor class yet
+var equipped_accessories: Array[Weapon] = []
+
+# ── inventory (item resources, not live nodes) ────────────────────────────────
+var inventory:      Array[ResWeapon] = []
+var consumables:    Array[ResWeapon] = []
+var inventory_max:  int = 6    # expandable to 12 via purchasable backpack
+var consumables_max: int = 2   # expandable to 8 via purchasable backpack
+
+# ── passive stat multipliers (modified by equipped accessories / abilities) ───
 var extra_exp:    float = 1.0
 var extra_damage: float = 1.0
 var extra_speed:  float = 1.0
 
+# ── inventory UI (programmatic, created at runtime for local player) ──────────
+var inventory_ui: InventoryUI = null
+
 
 # ── ready ─────────────────────────────────────────────────────────────────────
 func _ready() -> void:
-	# Register this node in the global players dictionary so any script can
-	# find it via  Global.players[peer_id].
-	# `get_multiplayer_authority()` returns the peer_id the server assigned us.
 	var my_peer_id := get_multiplayer_authority()
 	Global.players[my_peer_id] = self
-
-	# No MultiplayerSynchronizer here — we broadcast position via _sync_state RPC
-	# in _physics_process instead.  Reason: MultiplayerSynchronizer only starts
-	# sending to peers that are connected at the time the sync node is created.
-	# A host player created before any client connects would never sync its position
-	# to clients that join later.  Explicit RPCs have no such timing restriction.
 
 	await get_tree().process_frame
 	_init_player()
@@ -62,71 +79,56 @@ func _ready() -> void:
 
 func _init_player() -> void:
 	sprite_2d.texture = resource.sprite
-	max_health         = resource.max_health
-	speed              = resource.max_speed
-	health             = max_health
+	max_health = resource.max_health
+	speed      = resource.max_speed
+	health     = max_health
 
-	# Only the local player needs their HUD visible, and only the local player's
-	# Camera2D should be active.  Every spawned player has a Camera2D child
-	# (it's in the .tscn), so we must explicitly disable it for remote players —
-	# otherwise the last-spawned player's camera becomes the active one.
 	var is_local := is_multiplayer_authority()
 	camera_2d.enabled            = is_local
 	health_bar.visible           = is_local
 	progress_bar.visible         = is_local
 	weapons_container_ui.visible = is_local
 
-	# Always create the starting weapon — on every machine, for every player.
-	# This makes the swing animation visible to all players, not just the owner.
-	#
-	# is_owner_weapon = true  → fire timer fires normally; weapon reports hits;
-	#                           fire event is broadcast via _rpc_fire to others.
-	# is_owner_weapon = false → fire timer ticks but does nothing; animation is
-	#                           triggered by _rpc_fire arriving from the owner.
-	var weapon: Weapon    = resource.res_weapon.weapon_scene.instantiate()
-	weapon.resource       = resource.res_weapon
-	weapon.is_owner_weapon = is_local  # must be set BEFORE add_child triggers _ready
-	if weapon.attach_to_rotation:
-		sprite_2d.add_child(weapon)
-	else:
-		add_child(weapon)
+	# Instantiate the starting weapon on EVERY peer so all machines can show
+	# the swing animation.  Only the owner peer fires it for real.
+	var start_wpn := _instantiate_weapon_node(resource.res_weapon, is_local)
 
 	if is_local:
-		weapons.append(weapon)
-		weapons_container_ui.add_weapon(weapon)
+		# Slot the starting weapon into the correct equipment slot.
+		_assign_to_slot(start_wpn, resource.res_weapon.item_type)
+		weapons_container_ui.update_equipment(self)
+
+		# Create the inventory UI and attach it to the HUD canvas layer.
+		inventory_ui = InventoryUI.new()
+		hud.add_child(inventory_ui)
 
 
 # ── physics ───────────────────────────────────────────────────────────────────
 func _physics_process(_delta: float) -> void:
-	# IMPORTANT: only the authoritative peer (the player's owner) processes
-	# keyboard input and broadcasts its state.  On all other machines this
-	# function returns early — state arrives via the _sync_state RPC below.
 	if not is_multiplayer_authority():
 		return
 
 	_handle_movement()
 	move_and_slide()
-
-	# Broadcast our world position and sprite direction to every other peer.
-	# "unreliable_ordered" means packets can be dropped (fine for positions —
-	# the next packet will correct it) and out-of-order packets are discarded
-	# (we only care about the most recent position, not old ones).
 	_sync_state.rpc(global_position, sprite_2d.scale.x)
 
 
-## Receive a position broadcast from the peer that owns this player node.
-##
-## @rpc("any_peer")    — any connected peer can broadcast its own state.
-## @rpc("call_remote") — does NOT run on the sender itself (they already know
-##                       their own position from local physics).
-## @rpc("unreliable_ordered") — low-latency, latest packet wins.
+func _unhandled_input(event: InputEvent) -> void:
+	if not is_multiplayer_authority():
+		return
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_I and inventory_ui != null:
+			if inventory_ui.visible:
+				inventory_ui.close()
+			else:
+				inventory_ui.open(self)
+
+
 @rpc("any_peer", "call_remote", "unreliable_ordered")
 func _sync_state(pos: Vector2, scale_x: float) -> void:
-	# Security: ignore packets whose sender is not this node's owner.
-	# e.g. a malicious client cannot puppet another player's position.
 	if multiplayer.get_remote_sender_id() != get_multiplayer_authority():
 		return
-	global_position  = pos
+	global_position   = pos
 	sprite_2d.scale.x = scale_x
 
 
@@ -141,38 +143,20 @@ func _handle_movement() -> void:
 
 
 # ── health ────────────────────────────────────────────────────────────────────
-## Called by the server to deal damage to this player.
-##
-## @rpc arguments:
-##   "any_peer"   — we need this (not "authority") because the SERVER calls
-##                  hurt() on player nodes it doesn't own.  "authority" would
-##                  only allow the owning client to call it — backwards from
-##                  what we want.
-##   "call_local" — also run on the caller (the server), which matters when
-##                  the server's own player takes damage.
-##   "reliable"   — guaranteed delivery; important for damage events.
 @rpc("any_peer", "call_local", "reliable")
 func hurt(dmg: float) -> void:
-	# Security: only accept damage calls that originated from the server.
-	# get_remote_sender_id() returns 0 when the function is called locally
-	# (i.e. the server calling hurt() on its own machine), and 1 when a
-	# remote peer sends it.  We reject anything from peer_id > 1 (clients).
 	var sender := multiplayer.get_remote_sender_id()
 	if sender != 0 and sender != 1:
-		return  # A client tried to damage a player directly — ignore it.
+		return
 
 	health -= dmg
 
-	# Only the owning client reloads the scene on death.
-	# Everyone's copy of this player node runs hurt(), but only the machine
-	# that actually controls this character needs to react to death.
 	if health <= 0 and is_multiplayer_authority():
 		get_tree().call_deferred("change_scene_to_file", "res://VS-Like/Maps/Woods/woods_map.tscn")
 
 
 func _set_health(new_health: float) -> void:
 	health = clamp(new_health, 0, max_health)
-	# Guard: health_bar may not exist yet during _init_player on remote copies.
 	if health_bar and is_multiplayer_authority():
 		health_bar.value = health
 
@@ -185,47 +169,180 @@ func _set_points(new_points: float) -> void:
 	if new_points >= progress_bar.max_value:
 		points = 0
 		progress_bar.max_value += 100
-		weapon_selection.show_selection()
+		# Level up: no weapon selection anymore — gain a small stat bonus instead.
+		_on_level_up()
 	else:
 		points = new_points
 
 	progress_bar.value = points
 
 
+func _on_level_up() -> void:
+	# Placeholder: grant a small flat stat increase each level.
+	# This can be replaced with a stat-choice UI later.
+	strength  += 1
+	dexterity += 1
+	defense   += 1
+	vitality  += 1
+	max_health += 5.0
+	health = min(health + 5.0, max_health)
+
+	if inventory_ui and inventory_ui.visible:
+		inventory_ui.refresh()
+
+
+# ── accessory slot count ──────────────────────────────────────────────────────
+## Returns how many accessory slots the player currently has unlocked.
+## Scales with Wisdom:  0–499 → 1,  500–999 → 2,  1000+ → 3.
+func get_accessory_slot_count() -> int:
+	if wisdom >= 1000:
+		return 3
+	elif wisdom >= 500:
+		return 2
+	return 1
+
+
+# ── equipment helpers ─────────────────────────────────────────────────────────
+## Instantiate a weapon scene and attach it to the player (for every peer so
+## animations are visible, but only the owner fires it for real).
+func _instantiate_weapon_node(res_wpn: ResWeapon, is_owner: bool) -> Weapon:
+	var weapon: Weapon = res_wpn.weapon_scene.instantiate()
+	weapon.resource        = res_wpn
+	weapon.is_owner_weapon = is_owner
+	if res_wpn.attach_to_rotation:
+		sprite_2d.add_child(weapon)
+	else:
+		add_child(weapon)
+	return weapon
+
+
+## Put an already-instantiated weapon node into the correct equipment variable.
+func _assign_to_slot(weapon: Weapon, item_type: ResWeapon.ItemType) -> void:
+	match item_type:
+		ResWeapon.ItemType.WEAPON:
+			equipped_weapon = weapon
+		ResWeapon.ItemType.ABILITY:
+			equipped_ability = weapon
+		ResWeapon.ItemType.ARMOR:
+			equipped_armor = weapon
+		ResWeapon.ItemType.ACCESSORY:
+			equipped_accessories.append(weapon)
+
+
+## Equip an item resource (from inventory or directly from a chest).
+## Returns true if the item was equipped, false if the slot was full.
+func equip_item(res_wpn: ResWeapon) -> bool:
+	if not is_multiplayer_authority():
+		return false
+
+	match res_wpn.item_type:
+		ResWeapon.ItemType.WEAPON:
+			if equipped_weapon:
+				_unequip_to_inventory(equipped_weapon)
+			equipped_weapon = _instantiate_weapon_node(res_wpn, true)
+			weapons_container_ui.update_equipment(self)
+			return true
+
+		ResWeapon.ItemType.ABILITY:
+			if equipped_ability:
+				_unequip_to_inventory(equipped_ability)
+			equipped_ability = _instantiate_weapon_node(res_wpn, true)
+			weapons_container_ui.update_equipment(self)
+			return true
+
+		ResWeapon.ItemType.ARMOR:
+			# TODO: implement armor node class
+			return false
+
+		ResWeapon.ItemType.ACCESSORY:
+			if equipped_accessories.size() < get_accessory_slot_count():
+				var acc := _instantiate_weapon_node(res_wpn, true)
+				equipped_accessories.append(acc)
+				weapons_container_ui.update_equipment(self)
+				return true
+			return false
+
+	return false
+
+
+## Remove an equipped weapon node, sending it to inventory if possible.
+func _unequip_to_inventory(weapon: Weapon) -> void:
+	if weapon == null:
+		return
+	if inventory.size() < inventory_max:
+		inventory.append(weapon.resource)
+	weapon.remove_passive_effects(self)
+	weapon.queue_free()
+
+
+## Add an item resource directly to inventory (returns false if full).
+func add_to_inventory(res_wpn: ResWeapon) -> bool:
+	if inventory.size() < inventory_max:
+		inventory.append(res_wpn)
+		return true
+	return false
+
+
+## Add a consumable to the consumable slots (returns false if full).
+func add_consumable(res_wpn: ResWeapon) -> bool:
+	if consumables.size() < consumables_max:
+		consumables.append(res_wpn)
+		return true
+	return false
+
+
 # ── chat command RPCs ─────────────────────────────────────────────────────────
-## Called by the server (via rpc_id) to give this player a weapon.
-## Only executes on the peer that owns this player node.
 @rpc("any_peer", "call_remote", "reliable")
 func rpc_give_weapon(res_path: String) -> void:
 	if multiplayer.get_remote_sender_id() not in [0, 1]:
-		return  # reject calls from clients
+		return
 	if not is_multiplayer_authority():
-		return  # only the owning peer applies this
+		return
 	var res := load(res_path) as ResWeapon
 	if res:
-		Global.add_weapon(res)
+		Global.pickup_item(res)
 
 
-## Called by the server (via rpc_id) to remove a weapon from this player.
-## Only executes on the peer that owns this player node.
 @rpc("any_peer", "call_remote", "reliable")
 func rpc_remove_weapon(res_path: String) -> void:
 	if multiplayer.get_remote_sender_id() not in [0, 1]:
-		return  # reject calls from clients
+		return
 	if not is_multiplayer_authority():
-		return  # only the owning peer applies this
-	for i in range(weapons.size()):
-		var wpn := weapons[i]
-		if wpn.resource.resource_path == res_path:
-			wpn.remove_passive_effects(self)
-			weapons_container_ui.remove_weapon(wpn)
-			weapons.remove_at(i)
-			wpn.queue_free()
+		return
+
+	# Try to unequip from active equipment slots first.
+	for slot_weapon in [equipped_weapon, equipped_ability]:
+		if slot_weapon and slot_weapon.resource.resource_path == res_path:
+			_remove_equipped_slot(slot_weapon)
 			return
+
+	for i in range(equipped_accessories.size()):
+		if equipped_accessories[i].resource.resource_path == res_path:
+			var acc := equipped_accessories[i]
+			acc.remove_passive_effects(self)
+			acc.queue_free()
+			equipped_accessories.remove_at(i)
+			weapons_container_ui.update_equipment(self)
+			return
+
+	# Try inventory.
+	for i in range(inventory.size()):
+		if inventory[i].resource_path == res_path:
+			inventory.remove_at(i)
+			return
+
+
+func _remove_equipped_slot(weapon: Weapon) -> void:
+	weapon.remove_passive_effects(self)
+	weapon.queue_free()
+	if weapon == equipped_weapon:
+		equipped_weapon = null
+	elif weapon == equipped_ability:
+		equipped_ability = null
+	weapons_container_ui.update_equipment(self)
 
 
 # ── cleanup ───────────────────────────────────────────────────────────────────
 func _exit_tree() -> void:
-	# Remove from global registry when the node is destroyed.
 	var my_peer_id := get_multiplayer_authority()
 	Global.players.erase(my_peer_id)

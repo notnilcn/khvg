@@ -10,6 +10,7 @@ weapon_scene = ExtResource("3_ag1yg")
 weapon_name = "PARCHMENT"
 weapon_description = "12.5% EXTRA EXPERIENCE"
 sprite = ExtResource("2_ba5ra")
+item_type = 3
 damage = 10.0
 fire_rate = 1.0
 attach_to_rotation = false

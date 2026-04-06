@@ -30,6 +30,7 @@ const PLAYER_SCENE: PackedScene = preload("res://VS-Like/Characters/Player/playe
 const MIN_SPAWN_RADIUS: int    = 400
 const MAX_ENEMIES:      int    = 300
 const DUMMY_ENEMY_RES:  String = "res://VS-Like/Characters/Enemy/Types/Dummy/res_dummy.tres"
+const GOBLIN_ENEMY_RES: String = "res://VS-Like/Characters/Enemy/Types/Goblin/res_goblin.tres"
 
 # Maps friendly command names to ResWeapon resource paths.
 const WEAPON_RES_PATHS: Dictionary = {
@@ -157,13 +158,17 @@ func _parse_command(cmd: String) -> void:
 	var verb: String = (parts[0] as String).to_lower()
 	var args: Array  = parts.slice(1)
 	match verb:
-		"/spawner", "/give", "/remove", "/admin", "/unadmin", "/setpass", "/spawn":
+		"/spawner", "/give", "/remove", "/admin", "/unadmin", "/setpass", "/spawn", "/chest":
 			# Route all admin commands through the server so it can validate
 			# permissions.  If we ARE the server, execute directly.
 			if multiplayer.get_unique_id() == 1:
 				_execute_admin_cmd(1, verb, args)
 			else:
 				_rpc_admin_cmd.rpc_id(1, verb, args)
+		"/stats", "/inv":
+			# Read-only self-inspection — anyone can run these, no admin needed.
+			# Execute locally (no server round-trip required).
+			_cmd_selfinfo(verb)
 		"/adminpass":
 			# Anyone can attempt this — the server validates the password.
 			var password: String = args[0] as String if not args.is_empty() else ""
@@ -172,7 +177,7 @@ func _parse_command(cmd: String) -> void:
 			else:
 				_rpc_try_admin_password.rpc_id(1, password)
 		_:
-			_show_feedback("Unknown command. Try /spawner, /give, /remove, /spawn, /admin, /unadmin, /setpass, /adminpass")
+			_show_feedback("Unknown command. Try /stats, /inv, /spawner, /give, /remove, /spawn, /chest, /admin, /unadmin, /setpass, /adminpass")
 
 
 ## Client → server RPC for admin commands.  The server validates admin status
@@ -216,6 +221,7 @@ func _execute_admin_cmd(sender: int, verb: String, args: Array) -> void:
 		"/unadmin": _cmd_unadmin(sender, args)
 		"/setpass": _cmd_setpass(sender, args)
 		"/spawn":   _cmd_spawn(sender, args)
+		"/chest":   _cmd_chest(sender, args)
 
 
 ## /spawner on|off
@@ -343,6 +349,72 @@ func _cmd_spawn(sender: int, args: Array) -> void:
 	var res := load(DUMMY_ENEMY_RES) as ResEnemy
 	_create_enemy(pos, res, false, true)
 	_send_feedback(sender, "Spawned dummy at (%d, %d)" % [int(pos.x), int(pos.y)])
+
+
+## /chest [x y] — spawn an elite enemy that is guaranteed to drop a chest when killed.
+## Uses a random enemy from the current pool, or a goblin if the pool is empty.
+## If no position is given, spawns near the first available player.
+func _cmd_chest(sender: int, args: Array) -> void:
+	if args.size() == 1:
+		_send_feedback(sender, "Usage: /chest [x y]")
+		return
+
+	var pos: Vector2
+	if args.size() >= 2:
+		pos = Vector2(float(args[0] as String), float(args[1] as String))
+	else:
+		var ref_player := _get_reference_player()
+		if ref_player == null:
+			_send_feedback(sender, "No players in the world to spawn near")
+			return
+		pos = _get_random_spawn_pos(ref_player.global_position, MIN_SPAWN_RADIUS)
+
+	# Prefer a random enemy from the current pool; fall back to goblin.
+	var res: ResEnemy = _get_enemy() if not all_res_enemy.is_empty() else load(GOBLIN_ENEMY_RES)
+	_create_enemy(pos, res, true)   # is_elite = true → always drops a chest
+	_send_feedback(sender, "Spawned elite enemy (chest drop) at (%d, %d)" % [int(pos.x), int(pos.y)])
+
+
+## /stats  — print your current RPG stats to the chat feedback label.
+## /inv    — print your equipped items and inventory to the chat feedback label.
+## Both run locally (no server round-trip; no admin required).
+func _cmd_selfinfo(verb: String) -> void:
+	var player := Global.get_local_player()
+	if player == null:
+		_show_feedback("No local player found")
+		return
+
+	var msg: String
+	match verb:
+		"/stats":
+			msg = (
+				"STR %d  WIS %d  DEX %d  DEF %d  VIT %d\n"
+				+ "HP %d/%d   Slots: %d acc"
+			) % [
+				player.strength, player.wisdom, player.dexterity,
+				player.defense,  player.vitality,
+				int(player.health), int(player.max_health),
+				player.get_accessory_slot_count(),
+			]
+		"/inv":
+			var wpn  := player.equipped_weapon.resource.weapon_name  if player.equipped_weapon  else "—"
+			var abl  := player.equipped_ability.resource.weapon_name if player.equipped_ability else "—"
+			var arm  := "—"
+			var accs : Array[String] = []
+			for acc in player.equipped_accessories:
+				accs.append(acc.resource.weapon_name)
+			var acc_str := ", ".join(accs) if not accs.is_empty() else "—"
+			var inv_names : Array[String] = []
+			for res in player.inventory:
+				inv_names.append(res.weapon_name)
+			var inv_str := ", ".join(inv_names) if not inv_names.is_empty() else "empty"
+			msg = (
+				"Wpn:%s  Abl:%s  Arm:%s  Acc:%s\nInv(%d/%d): %s"
+			) % [wpn, abl, arm, acc_str,
+				 player.inventory.size(), player.inventory_max, inv_str]
+		_:
+			return
+	_show_feedback(msg)
 
 
 ## /adminpass <password> — any player: claim admin if the password matches

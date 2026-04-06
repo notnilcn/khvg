@@ -10,6 +10,7 @@ weapon_scene = ExtResource("3_kxaha")
 weapon_name = "BOOTS"
 weapon_description = "12.5% EXTRA MOVEMENT SPEED"
 sprite = ExtResource("2_3v5f4")
+item_type = 3
 damage = 10.0
 fire_rate = 1.0
 attach_to_rotation = false
