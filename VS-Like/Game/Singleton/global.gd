@@ -33,10 +33,15 @@ func get_available_items() -> Array[ResItem]:
 	return RES_ITEMS.duplicate()
 
 
-## Pick up an item: equip it immediately if the relevant slot is empty,
-## otherwise send it to the player's inventory.  If the inventory is also full,
-## logs a warning and discards the item.
-func pickup_item(res_wpn: ResItem) -> void:
+## Equips an item immediately if the relevant slot is empty, otherwise sends it
+## to the player's inventory.  If the inventory is also full, logs a warning and
+## discards the item.
+##
+## NOTE (future networking): this runs client-side and mutates player state
+## directly.  When client/server are split, the client should instead send a
+## pickup_request RPC; the server validates the pickup, updates authoritative
+## state, and replicates the result back.
+func pickup_item(res_wpn: ResWeapon) -> void:
 	var player := get_local_player()
 	if player == null:
 		return
@@ -47,8 +52,13 @@ func pickup_item(res_wpn: ResItem) -> void:
 		if not player.add_to_inventory(res_wpn):
 			push_warning("Inventory full — could not pick up: " + res_wpn.item_name)
 
-
-func _slot_is_empty(player: Player, res_wpn: ResItem) -> bool:
+## Returns true if the player has an open slot for the given item's type.
+## Each ItemType maps to a different slot or slot count:
+##   WEAPON    — single slot (equipped_weapon)
+##   ABILITY   — single slot (equipped_ability)
+##   ARMOR     — single slot (equipped_armor)
+##   ACCESSORY — up to get_accessory_slot_count() slots (equipped_accessories)
+func _slot_is_empty(player: Player, res_wpn: ResWeapon) -> bool:
 	match res_wpn.item_type:
 		ResItem.ItemType.WEAPON:
 			return player.equipped_weapon == null
