@@ -1,8 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://crmaho7bwt1j"]
 
-[ext_resource type="Script" uid="uid://dxn1eix7b37hl" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Boots/boots_weapon.gd" id="1_oiqer"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/passive_item_weapon.gd" id="1_oiqer"]
 
 [node name="BootsWeapon" type="Node2D"]
 script = ExtResource("1_oiqer")
-
-[connection signal="upgraded" from="." to="." method="_on_upgraded"]
