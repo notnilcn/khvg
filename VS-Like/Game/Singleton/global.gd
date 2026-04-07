@@ -3,8 +3,8 @@ extends Node
 
 # ── item registry ─────────────────────────────────────────────────────────────
 ## All loot-able items in the game (weapons, abilities, accessories, armor).
-## Add new ResWeapon .tres files here to make them appear in chests.
-const RES_ITEMS: Array[ResWeapon] = [
+## Add new ResItem .tres files here to make them appear in chests.
+const RES_ITEMS: Array[ResItem] = [
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/res_axe.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/res_arrow.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/res_sine_arrow.tres"),
@@ -29,7 +29,7 @@ func get_local_player() -> Player:
 ## Returns all available items that can appear in chests.
 ## Currently returns the full pool; filter here if desired (e.g. exclude items
 ## the player already has both equipped and in a full inventory).
-func get_available_items() -> Array[ResWeapon]:
+func get_available_items() -> Array[ResItem]:
 	return RES_ITEMS.duplicate()
 
 
@@ -50,7 +50,7 @@ func pickup_item(res_wpn: ResWeapon) -> void:
 		player.equip_item(res_wpn)
 	else:
 		if not player.add_to_inventory(res_wpn):
-			push_warning("Inventory full — could not pick up: " + res_wpn.weapon_name)
+			push_warning("Inventory full — could not pick up: " + res_wpn.item_name)
 
 ## Returns true if the player has an open slot for the given item's type.
 ## Each ItemType maps to a different slot or slot count:
@@ -60,13 +60,13 @@ func pickup_item(res_wpn: ResWeapon) -> void:
 ##   ACCESSORY — up to get_accessory_slot_count() slots (equipped_accessories)
 func _slot_is_empty(player: Player, res_wpn: ResWeapon) -> bool:
 	match res_wpn.item_type:
-		ResWeapon.ItemType.WEAPON:
+		ResItem.ItemType.WEAPON:
 			return player.equipped_weapon == null
-		ResWeapon.ItemType.ABILITY:
+		ResItem.ItemType.ABILITY:
 			return player.equipped_ability == null
-		ResWeapon.ItemType.ARMOR:
+		ResItem.ItemType.ARMOR:
 			return player.equipped_armor == null
-		ResWeapon.ItemType.ACCESSORY:
+		ResItem.ItemType.ACCESSORY:
 			return player.equipped_accessories.size() < player.get_accessory_slot_count()
 	return false
 
@@ -74,11 +74,11 @@ func _slot_is_empty(player: Player, res_wpn: ResWeapon) -> bool:
 # ── legacy alias ─────────────────────────────────────────────────────────────
 ## Kept so any existing call sites (admin commands, etc.) still compile.
 ## Prefer pickup_item() for new code.
-func add_weapon(res_wpn: ResWeapon) -> void:
+func add_weapon(res_wpn: ResItem) -> void:
 	pickup_item(res_wpn)
 
 
 ## Legacy: returns items that are not yet equipped (used by nothing now that
 ## weapon_selection is removed, but kept to avoid compile errors if referenced).
-func get_available_weapons() -> Array[ResWeapon]:
+func get_available_weapons() -> Array[ResItem]:
 	return get_available_items()

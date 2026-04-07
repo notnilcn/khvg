@@ -397,16 +397,16 @@ func _cmd_selfinfo(verb: String) -> void:
 				player.get_accessory_slot_count(),
 			]
 		"/inv":
-			var wpn  := player.equipped_weapon.resource.weapon_name  if player.equipped_weapon  else "—"
-			var abl  := player.equipped_ability.resource.weapon_name if player.equipped_ability else "—"
+			var wpn  := player.equipped_weapon.resource.item_name  if player.equipped_weapon  else "—"
+			var abl  := player.equipped_ability.resource.item_name if player.equipped_ability else "—"
 			var arm  := "—"
 			var accs : Array[String] = []
 			for acc in player.equipped_accessories:
-				accs.append(acc.resource.weapon_name)
+				accs.append(acc.resource.item_name)
 			var acc_str := ", ".join(accs) if not accs.is_empty() else "—"
 			var inv_names : Array[String] = []
 			for res in player.inventory:
-				inv_names.append(res.weapon_name)
+				inv_names.append(res.item_name)
 			var inv_str := ", ".join(inv_names) if not inv_names.is_empty() else "empty"
 			msg = (
 				"Wpn:%s  Abl:%s  Arm:%s  Acc:%s\nInv(%d/%d): %s"

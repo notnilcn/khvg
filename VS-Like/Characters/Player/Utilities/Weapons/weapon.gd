@@ -5,7 +5,7 @@ signal fire
 signal upgraded
 
 # Data
-var resource: ResWeapon : set = _set_resource
+var resource: ResItem : set = _set_resource
 var upgrade_level: int = 1
 
 # Stats
@@ -40,7 +40,7 @@ func _ready() -> void:
 		add_child(audio_player)
 
 # Set Custom Resource
-func _set_resource(res: ResWeapon) -> void:
+func _set_resource(res: ResItem) -> void:
 	resource = res
 	damage = resource.damage
 	fire_rate = resource.fire_rate

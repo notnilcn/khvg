@@ -1,21 +1,21 @@
-[gd_resource type="Resource" script_class="ResWeapon" load_steps=5 format=3 uid="uid://dsyuek6fdpbse"]
+[gd_resource type="Resource" script_class="ResItem" load_steps=5 format=3 uid="uid://dsyuek6fdpbse"]
 
 [ext_resource type="AudioStream" uid="uid://cbywfd0qaltag" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/arrow.wav" id="1_bt0b2"]
-[ext_resource type="Script" uid="uid://bjoxslpmu8tnm" path="res://VS-Like/Characters/Player/Utilities/Weapons/res_weapon.gd" id="1_kmphc"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/res_item.gd" id="1_kmphc"]
 [ext_resource type="Texture2D" uid="uid://7am01f5vb4oh" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/arrow_sprite.tres" id="2_eugjg"]
 [ext_resource type="PackedScene" uid="uid://b7wrdoql4oxrs" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/arrow_weapon.tscn" id="2_s4g33"]
 
 [resource]
 script = ExtResource("1_kmphc")
 weapon_scene = ExtResource("2_s4g33")
-weapon_name = "ARROW"
-weapon_description = "SHOOT ARROWS AT YOUR ENEMIES"
+item_name = "ARROW"
+item_description = "SHOOT ARROWS AT YOUR ENEMIES"
 sprite = ExtResource("2_eugjg")
 audio = ExtResource("1_bt0b2")
+item_type = 0
+is_passive = false
 damage = 7.0
 fire_rate = 1.0
 attach_to_rotation = false
-is_passive = false
 upgrade_description_2 = "+2 ADDITIONAL ARROWS TO YOUR SHOTS"
 upgrade_description_3 = "+2 ADDITIONAL ARROWS TO YOUR SHOTS"
-metadata/_custom_type_script = "uid://bjoxslpmu8tnm"

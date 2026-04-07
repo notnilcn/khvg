@@ -21,7 +21,7 @@ func open_chest() -> void:
 
 
 func _populate_items() -> void:
-	var pool: Array[ResWeapon] = Global.get_available_items()
+	var pool: Array[ResItem] = Global.get_available_items()
 
 	if pool.is_empty():
 		# Nothing to offer — heal the player as a fallback.
@@ -35,15 +35,15 @@ func _populate_items() -> void:
 		_create_item_button(pool[i])
 
 
-func _create_item_button(res: ResWeapon) -> void:
+func _create_item_button(res: ResItem) -> void:
 	var btn := Button.new()
 	btn.custom_minimum_size = Vector2(96, 112)
 	btn.icon                = res.sprite
 	btn.expand_icon         = true
-	btn.text                = res.weapon_name
+	btn.text                = res.item_name
 	btn.icon_alignment      = HORIZONTAL_ALIGNMENT_CENTER
 	btn.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
-	btn.tooltip_text        = res.weapon_description
+	btn.tooltip_text        = res.item_description
 	btn.pressed.connect(func() -> void: _on_item_chosen(res))
 	items_container.add_child(btn)
 
@@ -56,7 +56,7 @@ func _show_food_fallback() -> void:
 	Global.get_local_player().health += 20
 
 
-func _on_item_chosen(res: ResWeapon) -> void:
+func _on_item_chosen(res: ResItem) -> void:
 	Global.pickup_item(res)
 	close_chest()
 
