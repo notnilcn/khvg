@@ -1,0 +1,233 @@
+{
+  "main": {
+    "id": "15a45aff831cb792",
+    "type": "split",
+    "children": [
+      {
+        "id": "cb819d946f7ea7c2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "475929116d077226",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "e477ce2a7ee50ca8",
+    "type": "split",
+    "children": [
+      {
+        "id": "60295ae74ccca3a5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "36d2cbf7b3428edb",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "fea61d50228efe41",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "\"authority\"",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "45352fcac311136f",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "864956d8c91bf053",
+    "type": "split",
+    "children": [
+      {
+        "id": "119849e6b3d40d2e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "d443099b5b39383a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "001 Godot basics/002 Godot Multiplayer.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for 002 Godot Multiplayer"
+            }
+          },
+          {
+            "id": "569fbfbefa2358b4",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "001 Godot basics/002 Godot Multiplayer.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from 002 Godot Multiplayer"
+            }
+          },
+          {
+            "id": "8995e6b097e410e2",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "901e7d9cb4e9c075",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "275fbc11eaaf798e",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "001 Godot basics/002 Godot Multiplayer.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of 002 Godot Multiplayer"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "custom-sort:Toggle custom sorting": false,
+      "system3-relay:Relay": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "475929116d077226",
+  "lastOpenFiles": [
+    "g/VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest_ui.tscn",
+    "g/VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest_ui.gd.uid",
+    "g/VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest_ui.gd",
+    "g/VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest.wav",
+    "g/VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest.wav.import",
+    "g/VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/sine_arrow_weapon.tscn",
+    "g/VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/sine_arrow_weapon.gd.uid",
+    "g/VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/sine_arrow_weapon.gd",
+    "g/VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/sine_arrow_projectile.tscn",
+    "g/VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/sine_arrow_projectile.gd.uid",
+    "g/VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/sine_arrow_projectile.gd",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/tiles.png",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/rogues.png",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/monsters.png",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/items.png",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/items-palette-swaps.png",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/autotiles.png",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/animated-tiles.png",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/animals.png",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/32rogues-palette.png",
+    "g/g_notes/Gameplay/Classes/Tank/Tank classes & notes.md",
+    "g/g_notes/Gameplay/Classes/Tank/00 Tank classes & notes.md",
+    "g/g_notes/Gameplay/Classes/Tank/High defense tank.md",
+    "g/g_notes/Gameplay/Classes/Scout/Scout classes & notes.md",
+    "g/g_notes/Gameplay/Classes/Support/Support classes & notes (1).md",
+    "g/g_notes/Gameplay/Classes/DPS/DPS classes & notes.md",
+    "g/g_notes/002 Game Code/001 Important Node Trees/Player/res_player.gd.md",
+    "g/g_notes/002 Game Code/001 Important Node Trees/Player/Player.gd.md",
+    "g/g_notes/002 Game Code/002 Important Node Trees/Player/res_player.gd.md",
+    "g/g_notes/002 Game Code/002 Important Node Trees/Player/Player.gd.md",
+    "g/VS-Like/Sprites/Drops/Points-10.png",
+    "g/g_notes/Gameplay/Reasons to play the game/Group Coordination.md",
+    "g/g_notes/Gameplay/Reasons to play the game/Build specialisation.md",
+    "g/g_notes/Gameplay/Possible stories/Forest.md",
+    "g/g_notes/Gameplay/Possible stories/Destroyed world.md",
+    "g/g_notes/Gameplay/Monetisation/Subscription to automatically collect daily login rewards.md",
+    "g/g_notes/Gameplay/Monetisation/Cosmetic Gacha.md",
+    "g/g_notes/Gameplay/Dungeons & bosses/Puppet Master's Theatre ripoff.md",
+    "g/g_notes/Gameplay/General Gameplay Loop/001 On Spawn.md",
+    "g/g_notes/Gameplay/General Gameplay Loop/000 On account creation.md",
+    "g/g_notes/Gameplay/Dungeons & bosses/Nest ripoff.md",
+    "g/g_notes/Gameplay/Dungeons & bosses/Lost Halls ripoff.md",
+    "g/g_notes/Gameplay/Dungeons & bosses/Fungal Cavern ripoff.md",
+    "g/g_notes/002 Game Code/001 Multiplayer/000 Opening the game & clicking Host Game or Join Game.md",
+    "g/g_notes/002 Game Code/000 Singleton/000 General Singleton notes.md",
+    "g/g_notes/002 Game Code/000 Singleton/network.gd.md"
+  ]
+}
