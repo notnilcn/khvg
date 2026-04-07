@@ -1,0 +1,1 @@
+All dungeons and bosses should be solo-able. If a dungeon/boss has a swarm mechanic for health tanks, it should scale off of the number of players that are in the dungeon (if there's only 1, it should be easily manageable).
