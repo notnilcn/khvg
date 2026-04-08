@@ -2,7 +2,32 @@
   "release": {
     "channel": "stable"
   },
-  "sharedFolders": [],
+  "sharedFolders": [
+    {
+      "path": "g",
+      "guid": "0c592ea7-b3e8-4cbb-bca1-80b9a5a65e25",
+      "relay": "d269c1bc-8386-4e6a-80fb-34548ecf2f25",
+      "sync": {
+        "images": true,
+        "audio": true,
+        "videos": true,
+        "pdfs": true,
+        "otherTypes": false
+      }
+    },
+    {
+      "path": "Notes",
+      "guid": "e170a516-f787-4bf3-b2e4-4dd3d7df47c6",
+      "relay": "d269c1bc-8386-4e6a-80fb-34548ecf2f25",
+      "sync": {
+        "images": true,
+        "audio": true,
+        "videos": true,
+        "pdfs": true,
+        "otherTypes": false
+      }
+    }
+  ],
   "endpoints": {},
   "enableDocumentStatus": false,
   "enableNewLinkFormat": false,
@@ -27,5 +52,8 @@
   "enableDocumentServer": true,
   "enableMicrosoftLogin": true,
   "enableGitHubLogin": true,
-  "enableOIDCLogin": true
+  "enableOIDCLogin": true,
+  "login": {
+    "provider": "google"
+  }
 }
