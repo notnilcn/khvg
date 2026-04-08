@@ -1,9 +1,10 @@
 extends Node
-## Global.gd — autoloaded singleton accessible from every script as "Global".
+# Overall Description
+"""Global.gd — autoloaded singleton accessible from every script as "Global"."""
+# item registry
+"""Preloads All loot-able items in the game (weapons, abilities, accessories, armor).
+Add new ResItem .tres files here to make them appear in chests.""" # ```
 
-# ── item registry ─────────────────────────────────────────────────────────────
-## All loot-able items in the game (weapons, abilities, accessories, armor).
-## Add new ResItem .tres files here to make them appear in chests.
 const RES_ITEMS: Array[ResItem] = [
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/res_axe.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/res_arrow.tres"),
@@ -13,52 +14,50 @@ const RES_ITEMS: Array[ResItem] = [
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Parchment/res_parchment.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/res_ring.tres"),
 ]
+ # ```
 
-# ── player registry ───────────────────────────────────────────────────────────
-## All active player nodes, keyed by their network peer_id.
-var players: Dictionary = {}   # { peer_id: int  →  Player node }
+# Player Helper functions and variables
+"""Dictionary containing all active player nodes, keyed by their network peer_id.
+The reason why this is in the singleton is because this is an mmo, so you're always going to be able to see other players where ever you go.""" # ```
 
+var players: Dictionary = {}   # { peer_id: int  →  Player node 
+ # ```
+ 
+"""get_local_player()
+The reason for this function is because of the way things are set up.
+""" # ```
 
-# ── local player helper ───────────────────────────────────────────────────────
 func get_local_player() -> Player:
 	var my_id := multiplayer.get_unique_id()
 	return players.get(my_id, null)
+ # ```
 
+# item helpers
+"""get_available_items()
+Returns all available items that can appear in chests.
+Currently returns the full pool; filter here if desired (e.g. exclude items the player already has both equipped and in a full inventory).""" # ```
 
-# ── item helpers ──────────────────────────────────────────────────────────────
-## Returns all available items that can appear in chests.
-## Currently returns the full pool; filter here if desired (e.g. exclude items
-## the player already has both equipped and in a full inventory).
 func get_available_items() -> Array[ResItem]:
 	return RES_ITEMS.duplicate()
+ # ```
+""" pickup_item(res_itm: ResItem)
+Pick up an item: equip it immediately if the relevant slot is empty, otherwise send it to the player's inventory.  If the inventory is also full, logs a warning and discards the item.""" # ```
 
-
-## Equips an item immediately if the relevant slot is empty, otherwise sends it
-## to the player's inventory.  If the inventory is also full, logs a warning and
-## discards the item.
-##
-## NOTE (future networking): this runs client-side and mutates player state
-## directly.  When client/server are split, the client should instead send a
-## pickup_request RPC; the server validates the pickup, updates authoritative
-## state, and replicates the result back.
-func pickup_item(res_wpn: ResWeapon) -> void:
+func pickup_item(res_itm: ResItem) -> void:
 	var player := get_local_player()
 	if player == null:
 		return
 
-	if _slot_is_empty(player, res_wpn):
-		player.equip_item(res_wpn)
+	if _slot_is_empty(player, res_itm):
+		player.equip_item(res_itm)
 	else:
-		if not player.add_to_inventory(res_wpn):
-			push_warning("Inventory full — could not pick up: " + res_wpn.item_name)
+		if not player.add_to_inventory(res_itm):
+			push_warning("Inventory full — could not pick up: " + res_itm.item_name) 
+ # ```
+"""`_slot_is_empty()`
+"""# ```
 
-## Returns true if the player has an open slot for the given item's type.
-## Each ItemType maps to a different slot or slot count:
-##   WEAPON    — single slot (equipped_weapon)
-##   ABILITY   — single slot (equipped_ability)
-##   ARMOR     — single slot (equipped_armor)
-##   ACCESSORY — up to get_accessory_slot_count() slots (equipped_accessories)
-func _slot_is_empty(player: Player, res_wpn: ResWeapon) -> bool:
+func _slot_is_empty(player: Player, res_wpn: ResItem) -> bool:
 	match res_wpn.item_type:
 		ResItem.ItemType.WEAPON:
 			return player.equipped_weapon == null
@@ -69,16 +68,4 @@ func _slot_is_empty(player: Player, res_wpn: ResWeapon) -> bool:
 		ResItem.ItemType.ACCESSORY:
 			return player.equipped_accessories.size() < player.get_accessory_slot_count()
 	return false
-
-
-# ── legacy alias ─────────────────────────────────────────────────────────────
-## Kept so any existing call sites (admin commands, etc.) still compile.
-## Prefer pickup_item() for new code.
-func add_weapon(res_wpn: ResItem) -> void:
-	pickup_item(res_wpn)
-
-
-## Legacy: returns items that are not yet equipped (used by nothing now that
-## weapon_selection is removed, but kept to avoid compile errors if referenced).
-func get_available_weapons() -> Array[ResItem]:
-	return get_available_items()
+ # ```
