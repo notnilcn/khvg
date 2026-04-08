@@ -1,3 +1,0 @@
-Subclasses:
-- Melee (Paladin)
-

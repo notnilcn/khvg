@@ -3,7 +3,7 @@ extends Node
 
 # ── item registry ─────────────────────────────────────────────────────────────
 ## All loot-able items in the game (weapons, abilities, accessories, armor).
-## Add new ResItem .tres files here to make them appear in chests.
+## Add new ResItem .tres files here to make them appear in chests. ```
 const RES_ITEMS: Array[ResItem] = [
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/res_axe.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/res_arrow.tres"),
@@ -13,7 +13,10 @@ const RES_ITEMS: Array[ResItem] = [
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Parchment/res_parchment.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/res_ring.tres"),
 ]
-
+# ```
+"""
+Test comment.
+"""
 # ── player registry ───────────────────────────────────────────────────────────
 ## All active player nodes, keyed by their network peer_id.
 var players: Dictionary = {}   # { peer_id: int  →  Player node }
@@ -33,15 +36,10 @@ func get_available_items() -> Array[ResItem]:
 	return RES_ITEMS.duplicate()
 
 
-## Equips an item immediately if the relevant slot is empty, otherwise sends it
-## to the player's inventory.  If the inventory is also full, logs a warning and
-## discards the item.
-##
-## NOTE (future networking): this runs client-side and mutates player state
-## directly.  When client/server are split, the client should instead send a
-## pickup_request RPC; the server validates the pickup, updates authoritative
-## state, and replicates the result back.
-func pickup_item(res_wpn: ResWeapon) -> void:
+## Pick up an item: equip it immediately if the relevant slot is empty,
+## otherwise send it to the player's inventory.  If the inventory is also full,
+## logs a warning and discards the item.
+func pickup_item(res_wpn: ResItem) -> void:
 	var player := get_local_player()
 	if player == null:
 		return
@@ -52,13 +50,8 @@ func pickup_item(res_wpn: ResWeapon) -> void:
 		if not player.add_to_inventory(res_wpn):
 			push_warning("Inventory full — could not pick up: " + res_wpn.item_name)
 
-## Returns true if the player has an open slot for the given item's type.
-## Each ItemType maps to a different slot or slot count:
-##   WEAPON    — single slot (equipped_weapon)
-##   ABILITY   — single slot (equipped_ability)
-##   ARMOR     — single slot (equipped_armor)
-##   ACCESSORY — up to get_accessory_slot_count() slots (equipped_accessories)
-func _slot_is_empty(player: Player, res_wpn: ResWeapon) -> bool:
+
+func _slot_is_empty(player: Player, res_wpn: ResItem) -> bool:
 	match res_wpn.item_type:
 		ResItem.ItemType.WEAPON:
 			return player.equipped_weapon == null

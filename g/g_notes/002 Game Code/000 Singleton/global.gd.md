@@ -1,1 +1,0 @@
-VS-Like\Game\Singleton\global.gd
