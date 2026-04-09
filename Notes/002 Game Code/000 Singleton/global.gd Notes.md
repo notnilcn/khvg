@@ -1,0 +1,13 @@
+VS-Like\Game\Singleton\global.gd
+
+![Singleton TLDR](<000 General Singleton notes#Singleton TLDR\>)
+
+# Purpose of this Node
+The purpose of this node is to provide universal helper functions and to instantiate universal variables.
+Currently, the only universal things are players and items.
+
+![# Player Helper variables and functions](<global.gd## Player Helper variables and functions\>)
+
+
+
+![# Item Helper variables and functions](<global.gd## Item Helper variables and functions\>)

@@ -1,12 +1,23 @@
 extends Control
-## lobby.gd
-##
-## Connection screen shown before the game starts.
-## All UI nodes are created in code here so we don't depend on the .tscn file
-## having perfect formatting — a hand-written .tscn is easy to get wrong.
+# Overall Description
+"""lobby.gd — The first scene that is loaded into the game when you double click project.godot.
+This is where you can choose to either "Host Game" or "Join Game".
+Connection screen shown before the game starts. All UI nodes are created in code here so we don't depend on the .tscn file having perfect formatting — a hand-written .tscn is easy to get wrong.
+"""
 
-# References set up in _ready() below.
+# UI
+#### `_ready() -> void`
+"""The `_ready()` function is a special godot function that automatically runs when all of the nodes' children are added to the scene. Google it if you're curious.
+The point of this function here is to layout the lobby ui. You don't really need to know the godot-specific syntax and functions for creating a ui it's just a bunch of random ass functions.
+This doesn't define what the functions actually do, it just lays out the ui and what the ui connects to.
+"""
+"""
+```
+"""
+var center: CenterContainer
 var status_label: Label
+var title: Label
+var vbox: VBoxContainer
 var ip_input:     LineEdit
 var host_button:  Button
 var join_button:  Button
@@ -17,17 +28,17 @@ func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 
 	# Center everything on screen.
-	var center := CenterContainer.new()
+	center = CenterContainer.new()
 	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(center)
 
 	# Vertical stack of widgets.
-	var vbox := VBoxContainer.new()
+	vbox = VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 14)
 	center.add_child(vbox)
 
 	# Title
-	var title := Label.new()
+	title = Label.new()
 	title.text = "Bullet Hell MMO"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_font_size_override("font_size", 24)
@@ -60,10 +71,17 @@ func _ready() -> void:
 	# Listen for connection results from the Network singleton.
 	Network.connected_to_server.connect(_on_connected)
 	Network.connection_failed.connect(_on_connection_failed)
+"""
+```
+"""
 
 
-# ── button handlers ───────────────────────────────────────────────────────────
-
+#### `_on_host_pressed() -> void`
+"""Defines what happens the the "Host Game" button is pressed.
+"""
+"""
+```
+"""
 func _on_host_pressed() -> void:
 	_set_ui_enabled(false)
 	status_label.text = "Starting server on port %d..." % Network.DEFAULT_PORT
@@ -77,8 +95,16 @@ func _on_host_pressed() -> void:
 	# Server loads the game scene immediately.
 	# Clients will join after connecting and then load the scene themselves.
 	_load_game()
+"""
+```
+"""
 
-
+#### `_on_join_pressed() -> void`
+"""Defines what happens the the "Join Game" button is pressed.
+"""
+"""
+```
+"""
 func _on_join_pressed() -> void:
 	var address := ip_input.text.strip_edges()
 	if address.is_empty():
@@ -90,10 +116,17 @@ func _on_join_pressed() -> void:
 	Network.join_server(address)
 
 	# _on_connected() or _on_connection_failed() fires when the result is known.
+"""
+```
+"""
 
-
-# ── network callbacks ─────────────────────────────────────────────────────────
-
+# network callbacks
+#### `_on_connected() -> void`
+"""
+"""
+"""
+```
+"""
 func _on_connected() -> void:
 	status_label.text = "Connected!  Loading game..."
 	_load_game()
@@ -102,15 +135,33 @@ func _on_connected() -> void:
 func _on_connection_failed() -> void:
 	status_label.text = "Could not connect.  Check the IP address and try again."
 	_set_ui_enabled(true)
+"""
+```
+"""
 
-
-# ── helpers ───────────────────────────────────────────────────────────────────
-
+# helpers
+#### `_load_game() -> void`
+"""Defines 
+"""
+"""
+```
+"""
 func _load_game() -> void:
 	get_tree().change_scene_to_file("res://VS-Like/Maps/Woods/woods_map.tscn")
+"""
+```
+"""
 
-
+#### `_set_ui_enabled(enabled: bool) -> void`
+"""Defines 
+"""
+"""
+```
+"""
 func _set_ui_enabled(enabled: bool) -> void:
 	host_button.disabled = not enabled
 	join_button.disabled  = not enabled
 	ip_input.editable     = enabled
+"""
+```
+"""

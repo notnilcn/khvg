@@ -1,6 +1,7 @@
 [
-  "system3-relay",
-  "gdscript-comments",
   "custom-sort",
-  "obsidian-custom-file-extensions-plugin"
+  "system3-relay",
+  "triple-quote-blocks",
+  "obsidian-custom-file-extensions-plugin",
+  "gdscript-syntax-highlighting"
 ]

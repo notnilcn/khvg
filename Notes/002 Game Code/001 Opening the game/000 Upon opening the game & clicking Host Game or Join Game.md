@@ -1,8 +1,8 @@
 **When you open the game**:
 1. You launch the game (F5 or exported binary)
 2. The Godot engine starts, reads `project.godot`
-3. Engine loads `lobby.tscn` as the root scene — no code triggers this, it's the engine doing it directly
-4. `lobby.gd` is attached to the root node of that scene, so `lobby._ready()` fires automatically as part of scene initialization
+3. Engine loads [`lobby.tscn`](lobby.tscn) as the root scene — no code triggers this, it's the engine doing it directly 
+4. [`lobby.gd`](<lobby.gd>) is attached to the root node of that scene, so `lobby._ready()` fires automatically as part of scene initialization
 
 ---
 
@@ -54,4 +54,4 @@ Note: the host gets **no player node**. The comment on line 65 says "Dedicated 
 
 **On the joining client only, for each existing enemy (catch-up):**
 
-18. `Spawner._rpc_spawn_enemy(data)` — once per live enemy received from step 14
+18. `Spawner._rpc_spawn_enemy(data)` — once per live enemy received from step 14enemy(data)` — once per live enemy received from step 14
