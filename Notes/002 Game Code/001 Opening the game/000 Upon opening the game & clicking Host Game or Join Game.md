@@ -1,24 +1,24 @@
-**When you open the game**:
+# **When you open the game**:
 1. You launch the game (F5 or exported binary)
 2. The Godot engine starts, reads `project.godot`
 3. Engine loads [`lobby.tscn`](lobby.tscn) as the root scene — no code triggers this, it's the engine doing it directly 
 4. [`lobby.gd`](<lobby.gd>) is attached to the root node of that scene, so `lobby._ready()` fires automatically as part of scene initialization
 
 ---
-
-**When the host clicks "Host Game":**
-1. `lobby._on_host_pressed()`
-2. `lobby._set_ui_enabled(false)`
-	- Disables lobby ui
-3. `Network.start_server()` — creates `WebSocketMultiplayerPeer`, calls `peer.create_server()`, assigns it to `multiplayer.multiplayer_peer`, connects `peer_connected` → `_on_peer_connected` and `peer_disconnected` → `_on_peer_disconnected`
-	- peer = WebSocketMultiplayerPeer.new() just creates a new variable of that type.
-	- peer.create_server(port) creates a server. You don't really need to know much beyond that.
-	- the multiplayer variable/attribute is part of the MultiplayerAPI class, which is a parent of the node class.
-4. `lobby._load_game()`
-	- This is in the lobby.on_host_pressed() function
-5. `get_tree().change_scene_to_file("woods_map.tscn")` — Godot loads the scene
-	- stc
-6. `Spawner._ready()` — `is_server()` is true, `for peer_id in multiplayer.get_peers(): _notify_scene_reload.rpc_id(peer_id)`. connects [[network.gd|Network]].player_left → `_on_player_left`
+# **When you click "Host Game":**
+1. [`lobby._on_host_pressed()`](<lobby.gd#`_on_host_pressed()`>)
+	1. [`lobby._set_ui_enabled(false)`](<lobby.gd#`_set_ui_enabled(enabled)`>)
+		- Disables lobby ui
+	2. [`Network.start_server()`](<network.gd#`start_server(port)`>)
+		- creates [`WebSocketMultiplayerPeer`](<network.gd#`start_server(port)`>) via peer = WebSocketMultiplayerPeer.new()
+		- calls [`peer.create_server()`](<network.gd#`start_server(port)`>), assigns it to [`multiplayer.multiplayer_peer`](<network.gd#`start_server(port)`>). You don't need to understand this.
+		- connects [`multiplayer.peer_connected`](<network.gd#`start_server(port)`>) → [`_on_peer_connected`](<network.gd#`start_server(port)`>).
+			- connecting [`multiplayer.peer_connected`](<network.gd#`start_server(port)`>) → [`_on_peer_connected`](<network.gd#`start_server(port)`>) just connects the multiplayer API to the [`player_joined`](<network.gd#`player_joined()`>) signal.
+		- connects [`multiplayer.peer_disconnected`](<network.gd#`start_server(port)`>) → [`_on_peer_disconnected`](<network.gd#`start_server(port)`>).
+			- connecting [`multiplayer.peer_disconnected`](<network.gd#`start_server(port)`>) → [`_on_peer_disconnected`](<network.gd#`start_server(port)`>) just connects the multiplayer API to the [`player_left`](<network.gd#`player_left()`>) signal.
+	3. [`lobby._load_game()`](<lobby.gd#`_load_game()`>)
+		1. `get_tree().change_scene_to_file("woods_map.tscn")` — Godot loads the woods_map scene
+2. `Spawner._ready()` — `is_server()` is true, `for peer_id in multiplayer.get_peers(): _notify_scene_reload.rpc_id(peer_id)`. connects Network.player_left → `_on_player_left`
 	- 
 Note: the host gets **no player node**. The comment on line 65 says "Dedicated server — no player node for peer 1", which contradicts `network.gd`'s doc comment saying it's a listen-server. That looks like an unresolved gap.
 
@@ -26,17 +26,23 @@ Note: the host gets **no player node**. The comment on line 65 says "Dedicated 
 
 **When a client clicks "Join Game":**
 
-1. `lobby._on_join_pressed()`
-2. `lobby._set_ui_enabled(false)`
-	- Disable lobby ui. The reason why we do this is because connecting to the server might take a while, so we want to disable the join server button while they're loading in.
-3. `Network.join_server(address)` — creates `WebSocketMultiplayerPeer`, calls `peer.create_client(url)`, assigns to `multiplayer.multiplayer_peer`, connects `connected_to_server` → `_on_connected_to_server`, `connection_failed` → `_on_connection_failed`, `server_disconnected` → `_on_server_disconnected`
-	- 
-4. _[WebSocket handshake — async, no code runs]_
-5. `Network._on_connected_to_server()` — emits `Network.connected_to_server`
-6. `lobby._on_connected()` — receives that signal
-7. `lobby._load_game()`
-8. `get_tree().change_scene_to_file("woods_map.tscn")` — Godot loads the scene
-9. `Spawner._ready()` — `is_server()` is false, calls `_request_player_spawn.rpc_id(1)`
+1. [`lobby._on_join_pressed()`](<lobby.gd#`_on_join_pressed()`>)
+	1. [`lobby._set_ui_enabled(false)`](<lobby.gd#`_set_ui_enabled(enabled)`>)
+		- Disables lobby ui.
+	2. [`Network.join_server()`](<network.gd#`join_server(address, port)`>)
+		- creates a new `WebSocketMultiplayerPeer` and assigns it to `peer`
+		- calls `peer.create_client(url)`
+			- This is a low-level Godot Multiplayer api. You don't really need to know how it works.
+		- assigns the `WebSocketMultiplayerPeer` to `multiplayer.multiplayer_peer`
+		- connects `connected_to_server` → `_on_connected_to_server`
+		- connects `connection_failed` → `_on_connection_failed`
+		- connects `server_disconnected` → `_on_server_disconnected`
+	3. `_[WebSocket handshake — async, no code runs]_`
+	4. `Network._on_connected_to_server()` — emits `Network.connected_to_server`
+	5. `lobby._on_connected()` — receives that signal
+	6. `lobby._load_game()`
+	7. `get_tree().change_scene_to_file("woods_map.tscn")` — Godot loads the scene
+	8. `Spawner._ready()` — `is_server()` is false, calls `_request_player_spawn.rpc_id(1)`
 
 **On the server, handling the RPC:**
 

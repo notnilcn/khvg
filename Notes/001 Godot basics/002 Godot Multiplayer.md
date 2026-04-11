@@ -1,7 +1,9 @@
 Every player runs a copy of the game, including the server. Everyone has access to the same functions.
 
 # peer_id
-When players connect to a server, they're assigned a peer_id via some internal websocket function that you don't need to know about. The host server has a peer_id of 1 and every other player has a peer_id greater than 1.
+When players connect to a server, they're assigned a peer_id via some internal websocket function that you don't need to know about. The host server has a peer_id of 1 and every other player has a peer_id greater than 
+
+1.
 
 # rpc(mode,transfer_mode,call_local)
 ## mode: "authority" or "any_peer"

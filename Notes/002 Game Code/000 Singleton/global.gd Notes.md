@@ -1,5 +1,4 @@
-VS-Like\Game\Singleton\global.gd
-
+Network.gd is in the Singleton folder:
 ![Singleton TLDR](<000 General Singleton notes#Singleton TLDR\>)
 
 # Purpose of this Node

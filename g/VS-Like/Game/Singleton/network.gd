@@ -6,7 +6,8 @@ Godot's multiplayer system is built around a "MultiplayerPeer" object. Think of 
 
 We use WebSocketMultiplayerPeer because the game exports to HTML5. Regular ENet (UDP) doesn't work in browsers; WebSockets do."""
 # signals
-#### `player_joined(peer_id: int)`
+ ## ![signals](<001 Things in godot#Signals>)
+#### `player_joined()`
 """Emitted on the server when a new client finishes connecting.
 """
 """
@@ -17,7 +18,7 @@ signal player_joined(peer_id: int)
 ```
 """
 
-#### `player_left(peer_id: int)`
+#### `player_left()`
 """Emitted on the server when a client disconnects.
 """ 
 """
@@ -87,7 +88,7 @@ var is_active: bool = false
 """
 
 # public API
-#### `start_server(port: int = DEFAULT_PORT) -> bool`
+#### `start_server(port)`
 """Call this to host a game. The host also plays (listen-server model).
 `port` is the TCP port clients will connect to.
 Returns true on success, false if the port couldn't be opened."""
@@ -117,7 +118,7 @@ func start_server(port: int = DEFAULT_PORT) -> bool:
 ```
 """
 
-#### `join_server(address: String, port: int = DEFAULT_PORT) -> void`
+#### `join_server(address, port)`
 """Call this to join an existing game.
 `address` is the server's IP or hostname (no protocol prefix needed here)."""
 """
@@ -146,7 +147,7 @@ func join_server(address: String, port: int = DEFAULT_PORT) -> void:
 ```
 """
 
-#### `disconnect_from_game() -> void`
+#### `disconnect_from_game()`
 """Disconnect and clean up. Safe to call even if not connected.
 """
 """
@@ -162,7 +163,7 @@ func disconnect_from_game() -> void:
 """
 
 # helpers
-#### `is_server() -> bool`
+#### `is_server()`
 """True if this instance is running as the server (peer_id == 1).
 """
 """
@@ -174,7 +175,7 @@ func is_server() -> bool:
 ```
 """
 
-#### `get_peer_id() -> int`
+#### `get_peer_id()`
 """This peer's unique network id. On the server this is 1.
 On clients this is whatever the server assigned them (some integer > 1)."""
 """
@@ -187,7 +188,7 @@ func get_peer_id() -> int:
 """
 
 # private callbacks
-#### `_on_peer_connected(peer_id: int) -> void`
+#### `_on_peer_connected(peer_id)`
 """
 """
 """
@@ -201,7 +202,7 @@ func _on_peer_connected(peer_id: int) -> void:
 ```
 """
 
-#### `_on_peer_disconnected(peer_id: int) -> void`
+#### `_on_peer_disconnected(peer_id)`
 """
 """
 """
@@ -215,7 +216,7 @@ func _on_peer_disconnected(peer_id: int) -> void:
 ```
 """
 
-#### `_on_connected_to_server() -> void`
+#### `_on_connected_to_server()`
 """
 """
 """
@@ -229,7 +230,7 @@ func _on_connected_to_server() -> void:
 ```
 """
 
-#### `_on_connection_failed() -> void`
+#### `_on_connection_failed()`
 """
 """
 """
@@ -243,7 +244,7 @@ func _on_connection_failed() -> void:
 ```
 """
 
-#### `_on_server_disconnected() -> void`
+#### `_on_server_disconnected()`
 """
 """
 """

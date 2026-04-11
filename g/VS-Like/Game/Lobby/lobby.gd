@@ -6,7 +6,7 @@ Connection screen shown before the game starts. All UI nodes are created in code
 """
 
 # UI
-#### `_ready() -> void`
+#### `_ready()`
 """The `_ready()` function is a special godot function that automatically runs when all of the nodes' children are added to the scene. Google it if you're curious.
 The point of this function here is to layout the lobby ui. You don't really need to know the godot-specific syntax and functions for creating a ui it's just a bunch of random ass functions.
 This doesn't define what the functions actually do, it just lays out the ui and what the ui connects to.
@@ -76,7 +76,7 @@ func _ready() -> void:
 """
 
 
-#### `_on_host_pressed() -> void`
+#### `_on_host_pressed()`
 """Defines what happens the the "Host Game" button is pressed.
 """
 """
@@ -99,7 +99,7 @@ func _on_host_pressed() -> void:
 ```
 """
 
-#### `_on_join_pressed() -> void`
+#### `_on_join_pressed()`
 """Defines what happens the the "Join Game" button is pressed.
 """
 """
@@ -121,7 +121,7 @@ func _on_join_pressed() -> void:
 """
 
 # network callbacks
-#### `_on_connected() -> void`
+#### `_on_connected()`
 """
 """
 """
@@ -140,7 +140,7 @@ func _on_connection_failed() -> void:
 """
 
 # helpers
-#### `_load_game() -> void`
+#### `_load_game()`
 """Defines 
 """
 """
@@ -152,7 +152,7 @@ func _load_game() -> void:
 ```
 """
 
-#### `_set_ui_enabled(enabled: bool) -> void`
+#### `_set_ui_enabled(enabled)`
 """Defines 
 """
 """
