@@ -112,6 +112,7 @@
         "state": {
           "type": "backlink",
           "state": {
+            "file": "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game.md",
             "collapseAll": false,
             "extraContext": false,
             "sortOrder": "alphabetical",
@@ -169,7 +170,9 @@
   },
   "active": "5165c07a27560cf8",
   "lastOpenFiles": [
-    "g/CLAUDE.md",
-    "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game.md"
+    "g/VS-Like/Game/World/spawner.gd",
+    "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game.md",
+    "g/VS-Like/Maps/Woods/woods_map.tscn",
+    "g/CLAUDE.md"
   ]
 }

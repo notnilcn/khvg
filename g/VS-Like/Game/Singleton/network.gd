@@ -97,19 +97,22 @@ Returns true on success, false if the port couldn't be opened."""
 """
 func start_server(port: int = DEFAULT_PORT) -> bool:
 	var peer := WebSocketMultiplayerPeer.new()
+	
+	# Specify that the websocket peer is a server and return error if error.
 	var err := peer.create_server(port)
 	if err != OK:
 		push_error("Network: failed to create server on port %d (error %d)" % [port, err])
 		return false
 
-	# Hand the peer to Godot's multiplayer system.
+	# Hand the server to Godot's multiplayer system.
 	multiplayer.multiplayer_peer = peer
 
-	# Wire up signals so we know when clients come and go.
+	# Define which signals to emit whenever a client interracts with the server so we know when clients come and go.
 	# In Godot 4, peer_id 1 is ALWAYS the server. When the server connects
 	# a client, that client gets a unique integer peer_id > 1.
 	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+
 
 	is_active = true
 	print("Network: server listening on port ", port)
@@ -128,14 +131,18 @@ func join_server(address: String, port: int = DEFAULT_PORT) -> void:
 	var peer := WebSocketMultiplayerPeer.new()
 	# WebSocket URLs must start with ws:// (or wss:// for TLS).
 	var url := "ws://%s:%d" % [address, port]
+	
+	# Specify that the websocket peer is a client and return error if unable to connect.
 	var err := peer.create_client(url)
 	if err != OK:
 		push_error("Network: failed to connect to %s (error %d)" % [url, err])
 		connection_failed.emit()
 		return
 
+	# Hand the server to Godot's multiplayer system.
 	multiplayer.multiplayer_peer = peer
 
+	# Define which signals to emit whenever the client interracts with the server.
 	# These fire on the CLIENT when the handshake with the server completes.
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.connection_failed.connect(_on_connection_failed)

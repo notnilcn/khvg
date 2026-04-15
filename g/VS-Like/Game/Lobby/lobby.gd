@@ -130,8 +130,16 @@ func _on_join_pressed() -> void:
 func _on_connected() -> void:
 	status_label.text = "Connected!  Loading game..."
 	_load_game()
+"""
+```
+"""
 
-
+#### `_on_connection_failed()`
+"""
+"""
+"""
+```
+"""
 func _on_connection_failed() -> void:
 	status_label.text = "Could not connect.  Check the IP address and try again."
 	_set_ui_enabled(true)
