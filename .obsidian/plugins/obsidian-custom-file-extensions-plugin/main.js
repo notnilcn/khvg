@@ -362,7 +362,8 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
     // --- Patch 1: computeFileMetadataAsync ---
     const originalCompute = proto.computeFileMetadataAsync;
     proto._cfe_originalCompute = originalCompute;
-    proto.computeFileMetadataAsync = function(file) {
+    const pluginInstance = this;
+    proto.computeFileMetadataAsync = async function(file) {
       if (
         file &&
         file.extension !== "md" &&
@@ -371,10 +372,14 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
         const realExt = file.extension;
         file.extension = "md";
         try {
-          return originalCompute.call(this, file);
+          await originalCompute.call(this, file);
         } finally {
           file.extension = realExt;
         }
+        // After the standard indexer runs, inject any ^block-ids that appear
+        // inside fenced code blocks (the markdown parser strips these normally).
+        await pluginInstance._injectFencedBlockIds(file);
+        return;
       }
       return originalCompute.call(this, file);
     };
@@ -409,6 +414,71 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
     };
 
     proto._cfe_patched = true;
+  }
+
+  // -------------------------------------------------------------------------
+  // _injectFencedBlockIds
+  //
+  // After computeFileMetadataAsync runs, the markdown parser has already
+  // stripped any ^block-ids that appear inside fenced code blocks. This
+  // method re-scans the raw file content for lines matching:
+  //
+  //   <anything>  # ^some-id        (at end of line, with a space before #)
+  //
+  // ...that are inside a fenced block (between ``` lines), and injects them
+  // directly into metadataCache under the file's hash key.
+  //
+  // This is safe to call multiple times — it merges rather than replaces, so
+  // outside-fence ^ids registered by the standard indexer are preserved.
+  // -------------------------------------------------------------------------
+  async _injectFencedBlockIds(file) {
+    const fc = this.app.metadataCache.fileCache;
+    const mc = this.app.metadataCache.metadataCache;
+
+    const fileEntry = fc[file.path];
+    if (!fileEntry?.hash) return;
+    const hash = fileEntry.hash;
+    if (!mc[hash]) return;
+
+    const content = await this.app.vault.read(file);
+    const lines = content.split('\n');
+
+    const fencedBlockIds = {};
+    let insideFence = false;
+    let offset = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      // Toggle fence state on any line that starts with ```
+      if (line.trimStart().startsWith('```')) {
+        insideFence = !insideFence;
+        offset += line.length + 1;
+        continue;
+      }
+
+      if (insideFence) {
+        // Match: any content, then whitespace + # ^identifier at end of line
+        const match = line.match(/\s#\s\^([\w-]+)\s*$/);
+        if (match) {
+          const id = match[1];
+          fencedBlockIds[id] = {
+            id: id,
+            position: {
+              start: { line: i, col: 0,           offset: offset },
+              end:   { line: i, col: line.length,  offset: offset + line.length }
+            }
+          };
+        }
+      }
+
+      offset += line.length + 1;
+    }
+
+    if (Object.keys(fencedBlockIds).length > 0) {
+      // Merge: preserve any outside-fence blocks the standard indexer found
+      mc[hash].blocks = Object.assign({}, mc[hash].blocks ?? {}, fencedBlockIds);
+    }
   }
 
   // -------------------------------------------------------------------------

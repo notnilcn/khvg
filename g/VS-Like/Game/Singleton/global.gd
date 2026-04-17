@@ -6,21 +6,17 @@ extends Node
 # Player Helper variables and functions
 #### `players`
 """Dictionary containing all active player nodes, keyed by their network peer_id.
-The reason why this is in the singleton is because players are going to be able to see other players where ever they are.""" 
-"""
- ```
-"""
+The reason why this is in the singleton is because players are going to be able to see other players where ever they are.
+```gdscript """
 var players: Dictionary = {}   # { peer_id: int  →  Player node 
-"""
- ```
-"""
-
-#### `get_local_player() -> `[`Player`](<player.gd>)
-"""Returns the peer_id of the current player.
-The reason for this function is because of the way godot multiplayer is set up. The client and the server run the same code, so there needs to be a function that identifies the current player.""" 
 """
 ```
 """
+
+#### `get_local_player()`
+"""Returns the peer_id of the current player.
+The reason for this function is because of the way godot multiplayer is set up. The client and the server run the same code, so there needs to be a function that identifies the current player.
+```gdscript """
 func get_local_player() -> Player:
 	var my_id := multiplayer.get_unique_id()
 	return players.get(my_id, null)
@@ -28,15 +24,14 @@ func get_local_player() -> Player:
 ```
 """
 
-
 # Item Helper variables and functions
-#### `RES_ITEMS`
+#### `RES_ITEMS`""""""
 """Array containing all loot-able items in the game (weapons, abilities, accessories, armor).
 Add new ResItem .tres files here to make them appear in chests.
-The reason why this is in the singleton is because players are always going to be able to drop and pickup their items wherever they are."""
-"""
-```
-"""
+The reason why this is in the singleton is because players are always going to be able to drop and pickup their items wherever they are.
+
+Actually I take that back because the enemy.gd nodes don't need to have access to these functions. Or maybe they do. Enemies that can pick up items sounds interesting.
+```gdscript """
 const RES_ITEMS: Array[ResItem] = [
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/res_axe.tres"),
 	preload("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/res_arrow.tres"),
@@ -52,10 +47,8 @@ const RES_ITEMS: Array[ResItem] = [
 
 #### `get_available_items() -> Array[`[`ResItem`](<res_item.gd>)`]`
 """Returns all available items that can appear in chests.
-Currently returns the full pool; filter here if desired (e.g. exclude items the player already has both equipped and in a full inventory)."""
-"""
-```
-"""
+Currently returns the full pool; filter here if desired (e.g. exclude items the player already has both equipped and in a full inventory).
+```gdscript """
 func get_available_items() -> Array[ResItem]:
 	return RES_ITEMS.duplicate()
 """
@@ -64,10 +57,8 @@ func get_available_items() -> Array[ResItem]:
 
 #### pickup_item(res_itm: [`ResItem`](<res_item.gd>))
 """Pick up an item
-Equip it immediately if the relevant slot is empty, otherwise send it to the player's inventory.  If the inventory is also full, logs a warning and discards the item."""
-"""
-```
-"""
+Equip it immediately if the relevant slot is empty, otherwise send it to the player's inventory.  If the inventory is also full, logs a warning and discards the item.
+```gdscript """
 func pickup_item(res_itm: ResItem) -> void:
 	var player := get_local_player()
 	if player == null:
@@ -83,8 +74,7 @@ func pickup_item(res_itm: ResItem) -> void:
 
 """`_slot_is_empty()`"""
 """
-```
-"""
+```gdscript """
 func _slot_is_empty(player: Player, res_wpn: ResItem) -> bool:
 	match res_wpn.item_type:
 		ResItem.ItemType.WEAPON:

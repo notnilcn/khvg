@@ -3,28 +3,22 @@ extends Node2D
 # Overall Description
 """Handles spawning of enemies AND players.
 ## ENEMY SPAWNING
-Only the server spawns enemies, but enemies need to EXIST on all peers so
-that clients can see them and weapon hit-detection works client-side.
-We solve this with Godot's MultiplayerSpawner node:
+Only the server spawns enemies, but enemies need to EXIST on all peers so that clients can see them and weapon hit-detection works client-side. We solve this with Godot's MultiplayerSpawner node:
 - You tell it which node to watch and which scenes are allowed.
 - When the SERVER calls add_child() for a registered scene in that node, MultiplayerSpawner automatically tells all connected clients to create the same node with the same initialization data.
 - When the server destroys a node (queue_free), clients auto-destroy theirs.
-This means we don't need manual "please spawn this enemy" RPCs — the
-MultiplayerSpawner handles it under the hood.
+This means we don't need manual "please spawn this enemy" RPCs — the MultiplayerSpawner handles it under the hood.
 ## PLAYER SPAWNING
-When a peer connects, the server broadcasts an RPC to create a Player node on ALL peers.  Each peer sets the correct multiplayer_authority on that node so only the owning peer processes input for it.
+When a peer connects, the server broadcasts an RPC to create a Player node on ALL peers. Each peer sets the correct multiplayer_authority on that node so only the owning peer processes input for it.
 """
 
 # Preloading and initializing
-"""Preloads and initializes
-"""
-"""
-```
-"""
+""" Preloads and initializes
+```gdscript """
 const DROP_SCENE:   PackedScene = preload("res://VS-Like/Characters/Enemy/Utilities/Drop/drop.tscn")
 const RES_FOOD:     ResDropFood = preload("res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Food/res_food.tres")
 const ENEMY_SCENE:  PackedScene = preload("res://VS-Like/Characters/Enemy/enemy.tscn")
-const PLAYER_SCENE: PackedScene = preload("res://VS-Like/Characters/Player/player.tscn")
+const PLAYER_SCENE: PackedScene = preload("res://VS-Like/Characters/Player/player.tscn") # ^2
 
 const MIN_SPAWN_RADIUS: int    = 400
 const MAX_ENEMIES:      int    = 300
@@ -56,11 +50,11 @@ var _spawn_position_index: int  = 0
 var _initialized:          bool = false
 var _chat_feedback:        Label
 
-
 # Array of every live enemy on the SERVER.
 # Used to send a catch-up list to clients that join after enemies already exist.
-# Entries are removed when the enemy is despawned via _rpc_despawn_enemy.
+# Entries are removed when the enemy is despawned via `_rpc_despawn_enemy`.
 var _active_enemy_data: Array[Dictionary] = []
+
 
 const PLAYER_SPAWN_POSITIONS: Array = [
 	Vector2(0, 0),
@@ -71,13 +65,11 @@ const PLAYER_SPAWN_POSITIONS: Array = [
 """
 ```
 """
+
 ## Admin management.
 """The host (peer_id == 1) is always implicitly admin. Only the host can grant or revoke admin; admins cannot promote others.
 Empty admin_password string means disabled. Set with /setpass before players join; players claim admin with /adminpass.
-"""
-"""
-```
-"""
+```gdscript """
 var _admins: Array[int] = []
 var _admin_password: String = ""
 """
@@ -86,10 +78,7 @@ var _admin_password: String = ""
 
 # `_ready()`
 """The `_ready()` function is a special godot function that automatically runs when all of the nodes' children are added to the scene. Google it if you're curious.
-"""
-"""
-```
-"""
+```gdscript """
 func _ready() -> void:
 	# Guard against _ready() being called a second time (e.g. scene reload quirk).
 	if _initialized:
@@ -123,8 +112,7 @@ func _ready() -> void:
 ## Player chat
 #### `_setup_chat_console()`
 """
-```
-"""
+```gdscript """
 func _setup_chat_console() -> void:
 	_chat_feedback = Label.new()
 	_chat_feedback.add_theme_font_size_override("font_size", 8)
@@ -146,8 +134,7 @@ func _setup_chat_console() -> void:
 
 #### `_unhandled_key_input(event`
 """
-```
-"""
+```gdscript """
 func _unhandled_key_input(event: InputEvent) -> void:
 	if not (event is InputEventKey) or not event.pressed or event.echo:
 		return
@@ -164,8 +151,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 #### `_on_command_submitted(raw)`
 """
-```
-"""
+```gdscript """
 func _on_command_submitted(raw: String) -> void:
 	var text := raw.strip_edges()
 	# Clear the input field regardless of whether the command is valid.
@@ -185,8 +171,7 @@ func _on_command_submitted(raw: String) -> void:
 
 #### `_parse_command(cmd)`
 """
-```
-"""
+```gdscript """
 func _parse_command(cmd: String) -> void:
 	var parts := cmd.split(" ", false)
 	var verb: String = (parts[0] as String).to_lower()
@@ -218,11 +203,10 @@ func _parse_command(cmd: String) -> void:
 
 #### `_cmd_selfinfo(verb)`
 """
-```
-"""
-## /stats  — print your current RPG stats to the chat feedback label.
-## /inv    — print your equipped items and inventory to the chat feedback label.
-## Both run locally (no server round-trip; no admin required).
+/stats  — print your current RPG stats to the chat feedback label.
+/inv    — print your equipped items and inventory to the chat feedback label.
+Both run locally (no server round-trip; no admin required).
+```gdscript """
 func _cmd_selfinfo(verb: String) -> void:
 	var player := Global.get_local_player()
 	if player == null:
@@ -265,12 +249,10 @@ func _cmd_selfinfo(verb: String) -> void:
 """
 
 #### `_rpc_try_admin_password(password)`
-"""
-```
-"""
-## /adminpass <password> — any player: claim admin if the password matches
-## Separate RPC so non-admins can reach the server without going through
-## _execute_admin_cmd (which would block them at the _is_admin() check).
+"""/adminpass [password] — any player: claim admin if the password matches
+Separate RPC so non-admins can reach the server without going through
+`_execute_admin_cmd` (which would block them at the `_is_admin()` check).
+```gdscript """
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_try_admin_password(password: String) -> void:
 	_try_admin_password(multiplayer.get_remote_sender_id(), password)
@@ -294,8 +276,7 @@ func _try_admin_password(sender: int, password: String) -> void:
 
 #### `_show_feedback(msg)`
 """
-```
-"""
+```gdscript """
 func _show_feedback(msg: String) -> void:
 	if _chat_feedback == null:
 		return
@@ -315,8 +296,7 @@ func _show_feedback(msg: String) -> void:
 """The server validates admin status before executing; clients cannot bypass this by calling `_execute_admin_cmd` directly because that function only runs server-side.
 """
 """
-```
-"""
+```gdscript """
 @rpc("any_peer", "call_remote", "reliable")
 func _rpc_admin_cmd(verb: String, args: Array) -> void:
 	_execute_admin_cmd(multiplayer.get_remote_sender_id(), verb, args)
@@ -325,10 +305,8 @@ func _rpc_admin_cmd(verb: String, args: Array) -> void:
 """
 
 #### `_rpc_feedback(msg)`
-"""
-```
-"""
-## Server → client RPC to deliver command feedback.
+"""Server → client RPC to deliver command feedback.
+```gdscript """
 @rpc("authority", "call_remote", "reliable")
 func _rpc_feedback(msg: String) -> void:
 	_show_feedback(msg)
@@ -337,10 +315,8 @@ func _rpc_feedback(msg: String) -> void:
 """
 
 #### `_send_feedback(peer_id, msg)`
-"""
-```
-"""
-## Sends feedback to the given peer (or locally if peer_id == 1).
+"""Sends feedback to the given peer (or locally if peer_id == 1).
+```gdscript """
 func _send_feedback(peer_id: int, msg: String) -> void:
 	if peer_id == 1:
 		_show_feedback(msg)
@@ -351,10 +327,8 @@ func _send_feedback(peer_id: int, msg: String) -> void:
 """
 
 #### `_is_admin(peer_id)`
-"""
-```
-"""
-## Returns true if the given peer_id has admin privileges.
+"""Returns true if the given peer_id has admin privileges.
+```gdscript """
 func _is_admin(peer_id: int) -> bool:
 	return peer_id == 1 or peer_id in _admins
 """
@@ -362,11 +336,9 @@ func _is_admin(peer_id: int) -> bool:
 """
 
 #### `_execute_admin_cmd(sender)`
-"""
-```
-"""
-## Validates admin status then dispatches to the appropriate command handler.
-## Always runs on the server.
+"""Validates admin status then dispatches to the appropriate command handler.
+Always runs on the server.
+```gdscript """
 func _execute_admin_cmd(sender: int, verb: String, args: Array) -> void:
 	if not _is_admin(sender):
 		_send_feedback(sender, "Permission denied: you are not an admin")
@@ -385,10 +357,8 @@ func _execute_admin_cmd(sender: int, verb: String, args: Array) -> void:
 """
 
 #### `_cmd_spawner(sender, args)`
-"""
-```
-"""
-## /spawner on|off
+"""/spawner on|off
+```gdscript """
 func _cmd_spawner(sender: int, args: Array) -> void:
 	if args.is_empty():
 		_send_feedback(sender, "Usage: /spawner on|off")
@@ -407,10 +377,8 @@ func _cmd_spawner(sender: int, args: Array) -> void:
 """
 
 #### `_cmd_give(sender, args)`
-"""
-```
-"""
-## /give <weapon> [peer_id] — give a weapon to self or another peer
+"""/give [weapon] [peer_id] — give a weapon to self or another peer
+```gdscript """
 func _cmd_give(sender: int, args: Array) -> void:
 	if args.is_empty():
 		_send_feedback(sender, "Usage: /give <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
@@ -434,10 +402,8 @@ func _cmd_give(sender: int, args: Array) -> void:
 """
 
 #### `_cmd_remove(sender, args)`
-"""
-```
-"""
-## /remove <weapon> [peer_id] — remove a weapon from self or another peer
+"""/remove [weapon] [peer_id] — remove a weapon from self or another peer
+```gdscript """
 func _cmd_remove(sender: int, args: Array) -> void:
 	if args.is_empty():
 		_send_feedback(sender, "Usage: /remove <weapon> [peer_id]\nWeapons: " + ", ".join(WEAPON_RES_PATHS.keys()))
@@ -461,10 +427,8 @@ func _cmd_remove(sender: int, args: Array) -> void:
 """
 
 #### `_cmd_admin(sender, args`
-"""
-```
-"""
-## /admin <peer_id> — host only: grant admin to a connected player
+"""/admin [peer_id] — host only: grant admin to a connected player
+```gdscript """
 func _cmd_admin(sender: int, args: Array) -> void:
 	if sender != 1:
 		_send_feedback(sender, "Only the host can grant admin")
@@ -490,10 +454,8 @@ func _cmd_admin(sender: int, args: Array) -> void:
 """
 
 #### `_cmd_unadmin(sender, args)`
-"""
-```
-"""
-## /unadmin <peer_id> — host only: revoke admin from a player
+"""/unadmin [peer_id] — host only: revoke admin from a player
+```gdscript """
 func _cmd_unadmin(sender: int, args: Array) -> void:
 	if sender != 1:
 		_send_feedback(sender, "Only the host can revoke admin")
@@ -516,10 +478,8 @@ func _cmd_unadmin(sender: int, args: Array) -> void:
 """
 
 #### `_cmd_setpass(sender, args)`
-"""
-```
-"""
-## /setpass [password] — host only: set (or clear) the admin password
+"""/setpass [password] — host only: set (or clear) the admin password
+```gdscript """
 func _cmd_setpass(sender: int, args: Array) -> void:
 	if sender != 1:
 		_send_feedback(sender, "Only the host can set the admin password")
@@ -535,10 +495,8 @@ func _cmd_setpass(sender: int, args: Array) -> void:
 """
 
 #### `_cmd_spawn(sender, args)`
-"""
-```
-"""
-## /spawn [x y] — spawn a stationary immortal dummy at the given world position (default 0,0)
+"""/spawn [x y] — spawn a stationary immortal dummy at the given world position (default 0,0)
+```gdscript """
 func _cmd_spawn(sender: int, args: Array) -> void:
 	if args.size() == 1:
 		_send_feedback(sender, "Usage: /spawn [x y]")
@@ -554,12 +512,10 @@ func _cmd_spawn(sender: int, args: Array) -> void:
 """
 
 #### `_cmd_chest(sender, args)`
-"""
-```
-"""
-## /chest [x y] — spawn an elite enemy that is guaranteed to drop a chest when killed.
-## Uses a random enemy from the current pool, or a goblin if the pool is empty.
-## If no position is given, spawns near the first available player.
+"""/chest [x y] — spawn an elite enemy that is guaranteed to drop a chest when killed.
+Uses a random enemy from the current pool, or a goblin if the pool is empty.
+If no position is given, spawns near the first available player.
+```gdscript """
 func _cmd_chest(sender: int, args: Array) -> void:
 	if args.size() == 1:
 		_send_feedback(sender, "Usage: /chest [x y]")
@@ -586,10 +542,7 @@ func _cmd_chest(sender: int, args: Array) -> void:
 # RPCs
 #### `_notify_scene_reload()`
 """Sent by the server to already-connected clients when the server scene reloads (e.g. the host died and respawned).  The client removes all stale player nodes from the previous game session and re-requests a fresh spawn. @rpc("authority")    — only the server sends this. @rpc("call_remote")  — only clients run it (server handles its own state).
-"""
-"""
-```
-"""
+```gdscript """
 @rpc("authority", "call_remote", "reliable")
 func _notify_scene_reload() -> void:
 	print("Spawner: server scene reloaded — clearing stale nodes and rejoining")
@@ -615,10 +568,7 @@ func _notify_scene_reload() -> void:
 
 #### `_request_player_spawn()`
 """Client calls this to the server once the client's game scene is fully loaded. The server then spawns a player node for that client on all peers. @rpc("any_peer")  — clients (non-servers) need to call this. @rpc("call_remote") — runs only on the server, not on the calling client.
-"""
-"""
-```
-"""
+```gdscript """
 @rpc("any_peer", "call_remote", "reliable")
 func _request_player_spawn() -> void:
 	# This runs on the SERVER.
@@ -651,10 +601,7 @@ func _request_player_spawn() -> void:
 
 #### `_on_player_left(peer_id)`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _on_player_left(peer_id: int) -> void:
 	_remove_player.rpc(peer_id)
 	_admins.erase(peer_id)
@@ -664,10 +611,7 @@ func _on_player_left(peer_id: int) -> void:
 
 #### `_spawn_player_for_peer(peer_id)`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _spawn_player_for_peer(peer_id: int) -> void:
 	var pos: Vector2 = PLAYER_SPAWN_POSITIONS[
 		_spawn_position_index % PLAYER_SPAWN_POSITIONS.size()
@@ -682,10 +626,7 @@ func _spawn_player_for_peer(peer_id: int) -> void:
 
 #### `_create_player_node(peer_id, spawn_pos)`
 """Runs on ALL peers. Creates the player node with the correct authority so only the owning peer processes input, while everyone can see the character.
-"""
-"""
-```
-"""
+```gdscript """
 @rpc("authority", "call_local", "reliable")
 func _create_player_node(peer_id: int, spawn_pos: Vector2) -> void:
 	# Guard: if this peer already has a node for this player, skip.
@@ -703,10 +644,7 @@ func _create_player_node(peer_id: int, spawn_pos: Vector2) -> void:
 
 #### `_remove_player(peer_id)`
 """
-"""
-"""
-```
-"""
+```gdscript """
 @rpc("authority", "call_local", "reliable")
 func _remove_player(peer_id: int) -> void:
 	var node := get_node_or_null("Player_%d" % peer_id)
@@ -720,8 +658,7 @@ func _remove_player(peer_id: int) -> void:
 
 #### `_spawn_single_enemy(is_elite)`
 """
-```
-"""
+```gdscript """
 func _spawn_single_enemy(is_elite: bool = false) -> void:
 	var ref_player := _get_reference_player()
 	if ref_player == null:
@@ -747,11 +684,9 @@ func _spawn_circle_pattern(enemies_to_spawn: int) -> void:
 ## SERVER ONLY: spawn an enemy and replicate it to all connected clients.
 """We no longer use MultiplayerSpawner because its built-in late-join catch-up fires at peer_connected time — before the client's game scene exists — so the packets are silently dropped.  Instead we use an explicit RPC that only fires when we KNOW the client is ready (see _request_player_spawn).
 """
-
 #### `_create_enemy(spawn_pos,res_enemy,is_elite,immortal)`
 """
-```
-"""
+```gdscript """
 func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = false, immortal: bool = false) -> void:
 	var eid := _next_enemy_id
 	_next_enemy_id += 1
@@ -773,12 +708,16 @@ func _create_enemy(spawn_pos: Vector2, res_enemy: ResEnemy, is_elite: bool = fal
 ```
 """
 
-## Runs on ALL peers (server via call_local, clients via network).
-## Creates, names, and adds the enemy node to this spawner.
-##
-## @rpc("authority")   — only the server sends this.
-## @rpc("call_local")  — also runs on the server immediately (no extra step needed).
-## @rpc("reliable")    — enemy appearance must not be lost.
+# Sync
+
+"""Runs on ALL peers (server via call_local, clients via network). Creates, names, and adds the enemy node to this spawner.
+@rpc("authority")   — only the server sends this.
+@rpc("call_local")  — also runs on the server immediately (no extra step needed).
+@rpc("reliable")    — enemy appearance must not be lost.
+"""
+#### `_rpc_spawn_enemy(data)`
+"""
+```gdscript """
 @rpc("authority", "call_local", "reliable")
 func _rpc_spawn_enemy(data: Dictionary) -> void:
 	var enemy: Enemy       = ENEMY_SCENE.instantiate()
@@ -800,20 +739,22 @@ func _rpc_spawn_enemy(data: Dictionary) -> void:
 		# When the enemy calls die(), it emits request_despawn so we can
 		# broadcast the removal to all peers (see _rpc_despawn_enemy below).
 		enemy.request_despawn.connect(_on_enemy_request_despawn)
+"""
+```
+"""
 
-
-## Called on the server when an enemy's die() method fires.
-## Broadcasts removal to ALL peers so every machine frees the node.
+#### `_on_enemy_request_despawn(eid)`
+"""Called on the server when an enemy's die() method fires. Broadcasts removal to ALL peers so every machine frees the node.
+```gdscript """
 func _on_enemy_request_despawn(eid: int) -> void:
 	_rpc_despawn_enemy.rpc(eid)
+"""
+```
+"""
 
-
-## SERVER ONLY helper called by enemy.spawn_drop().
-## Broadcasts a drop spawn to ALL peers so every player can collect it
-## independently on their own machine (each gets XP / heal / chest).
-##
-## Drops are lightweight Area2D nodes — having one copy per client is fine.
-## Each peer's copy is collected independently and freed locally on pickup.
+#### `_rpc_spawn_drop(res_path,pos)`
+"""SERVER ONLY helper called by enemy.spawn_drop(). Broadcasts a drop spawn to ALL peers so every player can collect it independently on their own machine (each gets XP / heal / chest). Drops are lightweight Area2D nodes — having one copy per client is fine. Each peer's copy is collected independently and freed locally on pickup.
+```gdscript """
 @rpc("authority", "call_local", "reliable")
 func _rpc_spawn_drop(res_path: String, pos: Vector2) -> void:
 	var drop: Drop       = DROP_SCENE.instantiate()
@@ -821,14 +762,16 @@ func _rpc_spawn_drop(res_path: String, pos: Vector2) -> void:
 	drop.global_position = pos
 	# Add to the map scene root (same parent as the original single-player code).
 	get_tree().current_scene.call_deferred("add_child", drop)
+"""
+```
+"""
 
-
-## Runs on ALL peers (server via call_local, clients via network).
-## Finds the enemy node by name and frees it.
-##
-## @rpc("authority")   — only the server sends this.
-## @rpc("call_local")  — also frees it on the server.
-## @rpc("reliable")    — enemy removal must not be lost.
+#### `_rpc_despawn_enemy(eid)`
+"""Runs on ALL peers (server via call_local, clients via network). Finds the enemy node by name and frees it.
+@rpc("authority")   — only the server sends this.
+@rpc("call_local")  — also frees it on the server.
+@rpc("reliable")    — enemy removal must not be lost.
+```gdscript """
 @rpc("authority", "call_local", "reliable")
 func _rpc_despawn_enemy(eid: int) -> void:
 	if multiplayer.is_server():
@@ -841,11 +784,15 @@ func _rpc_despawn_enemy(eid: int) -> void:
 	var enemy := get_node_or_null("Enemy_%d" % eid)
 	if enemy:
 		enemy.queue_free()
+"""
+```
+"""
 
-
-## Creates and configures an enemy from spawn data.  Called from _rpc_spawn_enemy.
-## Kept as a separate helper so _request_player_spawn can reuse the same logic.
-## (Previously this was the MultiplayerSpawner's spawn_function callback.)
+#### `_create_enemy_from_data(data)`
+"""Creates and configures an enemy from spawn data.  Called from `_rpc_spawn_enemy`.
+Kept as a separate helper so `_request_player_spawn` can reuse the same logic.
+(Previously this was the MultiplayerSpawner's `spawn_function` callback.)
+```gdscript """
 func _create_enemy_from_data(data: Dictionary) -> Enemy:
 	var enemy: Enemy       = ENEMY_SCENE.instantiate()
 	enemy.res_enemy        = load(data["res_path"]) as ResEnemy
@@ -855,15 +802,14 @@ func _create_enemy_from_data(data: Dictionary) -> Enemy:
 	enemy.enemy_id         = data["eid"]
 	enemy.name             = "Enemy_%d" % data["eid"]
 	return enemy
-
+"""
+```
+"""
 
 # helpers
 #### `_get_reference_player()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _get_reference_player() -> Player:
 	if Global.players.is_empty():
 		return null
@@ -874,10 +820,7 @@ func _get_reference_player() -> Player:
 
 #### `_get_random_spawn_pos(global_pos, radius_distance)`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _get_random_spawn_pos(global_pos: Vector2, radius_distance: int) -> Vector2:
 	var angle    := randf() * TAU
 	var distance := radius_distance + randf() * 100
@@ -888,22 +831,16 @@ func _get_random_spawn_pos(global_pos: Vector2, radius_distance: int) -> Vector2
 
 #### `_get_enemy()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _get_enemy() -> ResEnemy:
 	return all_res_enemy.pick_random()
 """
 ```
 """
 
-#### enemy_died()
+#### `enemy_died()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func enemy_died() -> void:
 	enemies_count -= 1
 """
@@ -912,8 +849,7 @@ func enemy_died() -> void:
 
 #### `_add_enemy_type(minute)`
 """
-```
-"""
+```gdscript """
 func _add_enemy_type(minute: int) -> void:
 	match minute:
 		1:
@@ -932,10 +868,7 @@ func _add_enemy_type(minute: int) -> void:
 # setters
 #### `_set_enemies_count(value)`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _set_enemies_count(value: int) -> void:
 	enemies_count = value
 	%EnemiesCountLabel.text = "ENEMIES: " + str(value)
@@ -945,10 +878,7 @@ func _set_enemies_count(value: int) -> void:
 
 #### `_set_minutes(value)`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _set_minutes(value: int) -> void:
 	minutes = value
 	if multiplayer.is_server():
@@ -960,10 +890,7 @@ func _set_minutes(value: int) -> void:
 
 #### `_set_seconds(value)`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _set_seconds(value: int) -> void:
 	seconds = value
 	if seconds >= 60:
@@ -976,10 +903,7 @@ func _set_seconds(value: int) -> void:
 
 #### `_set_digits(n)`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _set_digits(n: int) -> String:
 	return ("0" if str(abs(n)).length() == 1 else "") + str(n)
 """
@@ -990,10 +914,7 @@ func _set_digits(n: int) -> String:
 
 #### `func _on_timer_timeout()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _on_timer_timeout() -> void:
 	seconds += 1
 """
@@ -1003,10 +924,7 @@ func _on_timer_timeout() -> void:
 
 #### `func _on_spawn_timer_timeout()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _on_spawn_timer_timeout() -> void:
 	if not multiplayer.is_server() or not spawning_enabled:
 		return
@@ -1019,10 +937,7 @@ func _on_spawn_timer_timeout() -> void:
 
 #### `func _on_pattern_timer_timeout()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _on_pattern_timer_timeout() -> void:
 	if not multiplayer.is_server() or not spawning_enabled:
 		return
@@ -1035,10 +950,7 @@ func _on_pattern_timer_timeout() -> void:
 
 #### `func _on_elite_timer_timeout()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _on_elite_timer_timeout() -> void:
 	if not multiplayer.is_server() or not spawning_enabled:
 		return
@@ -1050,10 +962,7 @@ func _on_elite_timer_timeout() -> void:
 
 #### `func _on_food_timer_timeout()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _on_food_timer_timeout() -> void:
 	if not multiplayer.is_server():
 		return
@@ -1070,5 +979,3 @@ func _on_food_timer_timeout() -> void:
 """
 ```
 """
-
-

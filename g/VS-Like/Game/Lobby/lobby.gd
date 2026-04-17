@@ -12,8 +12,7 @@ The point of this function here is to layout the lobby ui. You don't really need
 This doesn't define what the functions actually do, it just lays out the ui and what the ui connects to.
 """
 """
-```
-"""
+```gdscript """
 var center: CenterContainer
 var status_label: Label
 var title: Label
@@ -80,8 +79,7 @@ func _ready() -> void:
 """Defines what happens the the "Host Game" button is pressed.
 """
 """
-```
-"""
+```gdscript """
 func _on_host_pressed() -> void:
 	_set_ui_enabled(false)
 	status_label.text = "Starting server on port %d..." % Network.DEFAULT_PORT
@@ -103,8 +101,7 @@ func _on_host_pressed() -> void:
 """Defines what happens the the "Join Game" button is pressed.
 """
 """
-```
-"""
+```gdscript """
 func _on_join_pressed() -> void:
 	var address := ip_input.text.strip_edges()
 	if address.is_empty():
@@ -125,8 +122,7 @@ func _on_join_pressed() -> void:
 """
 """
 """
-```
-"""
+```gdscript """
 func _on_connected() -> void:
 	status_label.text = "Connected!  Loading game..."
 	_load_game()
@@ -138,8 +134,7 @@ func _on_connected() -> void:
 """
 """
 """
-```
-"""
+```gdscript """
 func _on_connection_failed() -> void:
 	status_label.text = "Could not connect.  Check the IP address and try again."
 	_set_ui_enabled(true)
@@ -152,8 +147,7 @@ func _on_connection_failed() -> void:
 """Defines 
 """
 """
-```
-"""
+```gdscript """
 func _load_game() -> void:
 	get_tree().change_scene_to_file("res://VS-Like/Maps/Woods/woods_map.tscn")
 """
@@ -164,8 +158,7 @@ func _load_game() -> void:
 """Defines 
 """
 """
-```
-"""
+```gdscript """
 func _set_ui_enabled(enabled: bool) -> void:
 	host_button.disabled = not enabled
 	join_button.disabled  = not enabled

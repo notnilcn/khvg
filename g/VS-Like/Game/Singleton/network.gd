@@ -4,15 +4,13 @@ extends Node
 """Network.gd — autoloaded singleton that owns the WebSocket connection.
 Godot's multiplayer system is built around a "MultiplayerPeer" object. Think of it like a socket: you create a server-flavoured one or a client-flavoured one, hand it to `multiplayer.multiplayer_peer`, and from that point on Godot routes all @rpc calls and MultiplayerSynchronizer updates through it automatically.
 
-We use WebSocketMultiplayerPeer because the game exports to HTML5. Regular ENet (UDP) doesn't work in browsers; WebSockets do."""
+We use WebSocketMultiplayerPeer because the game exports to HTML5. Regular ENet (UDP) doesn't work in browsers; WebSockets do.
+"""
 # signals
  ## ![signals](<001 Things in godot#Signals>)
 #### `player_joined()`
 """Emitted on the server when a new client finishes connecting.
-"""
-"""
-```
-"""
+```gdscript """
 signal player_joined(peer_id: int)
 """
 ```
@@ -20,10 +18,7 @@ signal player_joined(peer_id: int)
 
 #### `player_left()`
 """Emitted on the server when a client disconnects.
-""" 
-"""
-```
-"""
+```gdscript """
 signal player_left(peer_id: int)
 """
 ```
@@ -31,10 +26,7 @@ signal player_left(peer_id: int)
 
 #### `connected_to_server()`
 """Emitted everywhere once our own connection is established.
-"""
-"""
-```
-"""
+```gdscript """
 signal connected_to_server()
 """
 ```
@@ -42,10 +34,7 @@ signal connected_to_server()
 
 #### `connection_failed()`
 """Emitted on a client if the connection to the server fails or drops.
-""" 
-"""
-```
-"""
+```gdscript """
 signal connection_failed()
 """
 ```
@@ -54,10 +43,7 @@ signal connection_failed()
 # constants
 #### `DEFAULT_PORT`
 """Port used for both hosting and joining. Change here to change everywhere.
-""" 
-"""
-```
-"""
+```gdscript """
 const DEFAULT_PORT: int = 9999
 """
 ```
@@ -65,11 +51,9 @@ const DEFAULT_PORT: int = 9999
 
 #### `HIT_VALIDATION_RANGE`
 """How generous we are when validating hit distance server-side.
- A client reports "I hit enemy X". The server checks whether the enemy was within this many
- units of that client's player at the time. Larger = more forgiving of lag; smaller = harder to cheat."""
-"""
-```
-"""
+A client reports "I hit enemy X". The server checks whether the enemy was within this many
+units of that client's player at the time. Larger = more forgiving of lag; smaller = harder to cheat.
+```gdscript """
 const HIT_VALIDATION_RANGE: float = 350.0
 """
 ```
@@ -78,10 +62,7 @@ const HIT_VALIDATION_RANGE: float = 350.0
 # states
 #### `is_active`
 """True once start_server() or join_server() has been called.
-"""
-"""
-```
-"""
+```gdscript """
 var is_active: bool = false
 """
 ```
@@ -89,12 +70,11 @@ var is_active: bool = false
 
 # public API
 #### `start_server(port)`
-"""Call this to host a game. The host also plays (listen-server model).
+""" Call this to host a game. The host also plays (listen-server model).
 `port` is the TCP port clients will connect to.
-Returns true on success, false if the port couldn't be opened."""
-"""
-```
-"""
+Returns true on success, false if the port couldnt be opened.
+```gdscript """
+
 func start_server(port: int = DEFAULT_PORT) -> bool:
 	var peer := WebSocketMultiplayerPeer.new()
 	
@@ -123,10 +103,8 @@ func start_server(port: int = DEFAULT_PORT) -> bool:
 
 #### `join_server(address, port)`
 """Call this to join an existing game.
-`address` is the server's IP or hostname (no protocol prefix needed here)."""
-"""
-```
-"""
+`address` is the server's IP or hostname (no protocol prefix needed here).
+```gdscript """
 func join_server(address: String, port: int = DEFAULT_PORT) -> void:
 	var peer := WebSocketMultiplayerPeer.new()
 	# WebSocket URLs must start with ws:// (or wss:// for TLS).
@@ -156,10 +134,7 @@ func join_server(address: String, port: int = DEFAULT_PORT) -> void:
 
 #### `disconnect_from_game()`
 """Disconnect and clean up. Safe to call even if not connected.
-"""
-"""
-```
-"""
+```gdscript """
 func disconnect_from_game() -> void:
 	if multiplayer.multiplayer_peer:
 		multiplayer.multiplayer_peer.close()
@@ -172,10 +147,7 @@ func disconnect_from_game() -> void:
 # helpers
 #### `is_server()`
 """True if this instance is running as the server (peer_id == 1).
-"""
-"""
-```
-"""
+```gdscript """
 func is_server() -> bool:
 	return multiplayer.is_server()
 """
@@ -184,10 +156,8 @@ func is_server() -> bool:
 
 #### `get_peer_id()`
 """This peer's unique network id. On the server this is 1.
-On clients this is whatever the server assigned them (some integer > 1)."""
-"""
-```
-"""
+On clients this is whatever the server assigned them (some integer > 1).
+```gdscript """
 func get_peer_id() -> int:
 	return multiplayer.get_unique_id()
 """
@@ -196,13 +166,9 @@ func get_peer_id() -> int:
 
 # private callbacks
 #### `_on_peer_connected(peer_id)`
-"""
-"""
-"""
-```
-"""
+"""Only fires on the SERVER.
+```gdscript """
 func _on_peer_connected(peer_id: int) -> void:
-	# Only fires on the SERVER.
 	print("Network: peer connected — id ", peer_id)
 	player_joined.emit(peer_id)
 """
@@ -210,13 +176,9 @@ func _on_peer_connected(peer_id: int) -> void:
 """
 
 #### `_on_peer_disconnected(peer_id)`
-"""
-"""
-"""
-```
-"""
+"""Only fires on the SERVER.
+```gdscript """
 func _on_peer_disconnected(peer_id: int) -> void:
-	# Only fires on the SERVER.
 	print("Network: peer disconnected — id ", peer_id)
 	player_left.emit(peer_id)
 """
@@ -224,13 +186,9 @@ func _on_peer_disconnected(peer_id: int) -> void:
 """
 
 #### `_on_connected_to_server()`
-"""
-"""
-"""
-```
-"""
+"""Fires on the CLIENT once the WebSocket handshake succeeds.
+```gdscript """
 func _on_connected_to_server() -> void:
-	# Fires on the CLIENT once the WebSocket handshake succeeds.
 	print("Network: connected to server, our peer_id = ", get_peer_id())
 	connected_to_server.emit()
 """
@@ -239,10 +197,7 @@ func _on_connected_to_server() -> void:
 
 #### `_on_connection_failed()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _on_connection_failed() -> void:
 	print("Network: connection failed")
 	connection_failed.emit()
@@ -253,10 +208,7 @@ func _on_connection_failed() -> void:
 
 #### `_on_server_disconnected()`
 """
-"""
-"""
-```
-"""
+```gdscript """
 func _on_server_disconnected() -> void:
 	print("Network: server disconnected")
 	is_active = false

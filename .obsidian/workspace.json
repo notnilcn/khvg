@@ -22,7 +22,7 @@
             }
           },
           {
-            "id": "9253eaeec6fd2a31",
+            "id": "da05ca9130341bda",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -35,7 +35,8 @@
               "title": "spawner"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -199,25 +200,26 @@
       "system3-relay:Relay": false
     }
   },
-  "active": "d86289722d0fccaa",
+  "active": "da05ca9130341bda",
   "lastOpenFiles": [
-    "g/VS-Like/Game/World/spawner.gd",
-    "Notes/001 Godot basics/002 Godot Multiplayer.md",
     "Notes/002 Game Code/001 Opening the game/001 Spawning into a server.md",
+    "g/VS-Like/Game/World/spawner.gd",
+    "g/VS-Like/Game/World/spawner.tscn",
     "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game.md",
-    "g/VS-Like/Game/Lobby/lobby.gd",
-    "g/VS-Like/Game/Singleton/network.gd",
-    "todo.md",
-    "g/VS-Like/Game/Lobby/lobby.tscn27760563.tmp",
-    "g/project.godot6507242.tmp",
     "g/VS-Like/Game/Singleton/global.gd",
+    "g/VS-Like/Game/Singleton/network.gd",
+    "Notes/002 Game Code/001 Opening the game/Untitled.md",
+    "g/VS-Like/Game/Lobby/lobby.tscn34691881601.tmp",
+    "g/VS-Like/Characters/Enemy/enemy.gd",
+    "g/VS-Like/Game/Lobby/lobby.gd",
     "g/VS-Like/Maps/Woods/woods_map.tscn",
-    "g/VS-Like/Game/Lobby/lobby.tscn100394361798.tmp",
-    "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game (conflict 2026-04-13-19-10-19).md",
-    "g/project.godot4608426.tmp",
-    "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game..md",
-    "g/project.godot7411948.tmp",
     "Notes/002 Game Code/000 Singleton/global.gd Notes.md",
+    "g/VS-Like/Game/Lobby/lobby.tscn11594097.tmp",
+    "g/project.godot6587498.tmp",
+    "Notes/001 Godot basics/002 Godot Multiplayer.md",
+    "todo.md",
+    "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game (conflict 2026-04-13-19-10-19).md",
+    "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game..md",
     "Notes/002 Game Code/000 Singleton/network.gd Notes.md",
     "Notes/002 Game Code/000 Singleton/000 General Singleton notes.md",
     "network.gd^1.md",
@@ -244,7 +246,6 @@
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/autotiles.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/items-palette-swaps.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/animated-tiles.png",
-    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/32rogues-palette.png",
-    "g/g/g_notes/002 Game Code/001 Multiplayer/000 Opening the game & clicking Host Game or Join Game.md"
+    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/32rogues-palette.png"
   ]
 }
