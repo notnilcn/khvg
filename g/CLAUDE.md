@@ -102,6 +102,57 @@ Health bar, XP bar, weapons container (shows currently equipped items by slot), 
 - Texture filter: Nearest neighbor (pixel-perfect)
 - Renderer: GL Compatibility
 
+## Scale Target
+
+- **Player cap:** 2048–4096 players per server (powers of 2, not yet decided)
+- **Realm sharding:** ~85 players per realm → ~48 realms at 4096 cap; each realm is independent
+- **Single-node is fine** at this scale — horizontal scaling escape hatch is spinning up additional server instances with shared persistence, not built-in clustering
+- **Estimated server cost** at 4096 players: ~$300–500/month (financially sound at any reasonable monetization)
+
+## SpacetimeDB Evaluation (decided: defer, revisit if persistent world is added)
+
+SpacetimeDB is a relational database that is also a server: tables + reducers, clients subscribe to row subsets, scheduled reducers act as game ticks. Evaluated as a backend option.
+
+**Why it doesn't fit the pure bullet-hell case:**
+- Bullets, player movement, and enemy movement don't need to be stored in a persistent table — they're transient simulation state
+- Godot's `PhysicsServer2D` and parametric bullet math already handle physics better than manual reducer arithmetic
+- No official Godot SDK; integration would require a custom GDNative/GDExtension layer
+- Adding SpacetimeDB for purely ephemeral state adds infrastructure complexity with no benefit
+
+**Why it becomes compelling if a persistent interactive world is added (BitCraft-style):**
+- Buildings, terrain edits, player-owned structures, crafting state — this is exactly what SpacetimeDB's persistent tables are good at
+- Live-update model: reducer logic changes deploy without disconnecting clients; only table schema changes (type changes, column removal) require a new client build
+- The parametric bullet system is SpacetimeDB-friendly since bullets need only a spawn event — no per-tick position writes to the DB
+
+**Decision:** Keep architecture SpacetimeDB-compatible (don't design against it), but don't integrate it until/unless a persistent world is added. The bullet-hell core runs fine on Godot's listen-server model.
+
+## Hex Grid (future — not yet implemented)
+
+Planned as a BitCraft-style dual coordinate system. Two grids coexist independently:
+
+**Continuous grid** — player/enemy/bullet positions as `Vector2`. Unchanged from current. All physics, movement, and bullet hit detection operate here.
+
+**Hex grid** — buildings and terrain as axial coordinates `(q, r)` integers. Pointy-top hex math:
+```
+x = R * sqrt(3) * (q + r/2)
+y = R * 1.5 * r
+```
+Storage: `Dictionary<(int q, int r), CellData>` — O(1) lookup by cell. Hex size `R` must be chosen once and never changed (changing it invalidates all stored coordinates).
+
+**Architectural rules to follow when implementing:**
+- The two grids never mix in hit detection. Bullets stay in `Vector2`. Immunity zones (shelter mechanic) convert once at zone-enter/exit to set `player.IsInImmunityZone = true` — not checked per-bullet per-tick.
+- The hex grid and the spatial hash grid (for AoI/hit detection) are different things at different granularities. Don't conflate them.
+- If SpacetimeDB is ever added, clients subscribe to hex chunks for building data separately from entity AoI. Size hex chunks so one chunk ≈ one AoI radius.
+- Bullets pass through all objects including player-built structures. Shelter is implemented as **immunity zones** (damage immunity flag), not physical collision — this preserves parametric bullet correctness.
+
+**Scope note:** The hex math itself is trivial (two conversion functions, one afternoon). The systems on top — crafting, resource nodes, persistence, griefing prevention, destruction — are months of work. To future-proof without committing: pick hex size `R`, write the two conversion functions, stop there.
+
+## C# Conversion (deferred)
+
+32 of 33 core files were translated from GDScript to C# and committed to `claude/evaluate-spacetimedb-backend-CiPQN`. The original `.gd` files are untouched; the project still runs on GDScript. `Spawner.cs` was not written before the conversion was deferred.
+
+The `.tscn`/`.tres` files and `project.godot` autoload paths still point to `.gd` files. To activate the C# versions: switch Godot to the .NET build, update autoload paths in `project.godot`, update `script` references in `.tscn` files. The project already has a `[dotnet]` section in `project.godot` with `assembly_name="VampireSurvivorsTemplate"`.
+
 ## Target Architecture (not yet implemented — priority order)
 
 ### Networking Model
