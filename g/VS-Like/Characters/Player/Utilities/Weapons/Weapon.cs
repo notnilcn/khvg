@@ -66,7 +66,7 @@ public partial class Weapon : Node2D
 
         EmitSignal(SignalName.Fire);
 
-        if (Multiplayer.HasMultiplayerPeer())
+        if (Multiplayer.HasMultiplayerPeer() && IsReplicated)
             Rpc(nameof(_RpcFire));
     }
 

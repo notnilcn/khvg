@@ -101,6 +101,7 @@ public partial class Player : CharacterBody2D
         _weaponsContainerUi.Visible     = isLocal;
 
         var startWpn = _InstantiateWeaponNode(CharacterData.ResWeapon, isLocal);
+        startWpn.IsReplicated = true; // Created on all peers via _InitPlayer, safe to broadcast _RpcFire.
 
         if (isLocal)
         {
