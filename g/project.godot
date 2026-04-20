@@ -16,13 +16,13 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="VampireSurvivorsTemplate"
 run/main_scene="res://VS-Like/Game/Lobby/lobby.tscn"
-config/features=PackedStringArray("4.6", "GL Compatibility")
+config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
 
 [autoload]
 
-Global="*res://VS-Like/Game/Singleton/global.gd"
-Network="*res://VS-Like/Game/Singleton/network.gd"
-BulletManager="*res://VS-Like/Bullets/bullet_manager.gd"
+Global="*res://VS-Like/Game/Singleton/Global.cs"
+Network="*res://VS-Like/Game/Singleton/Network.cs"
+BulletManager="*res://VS-Like/Bullets/BulletManager.cs"
 
 [display]
 
@@ -35,6 +35,10 @@ window/stretch/mode="canvas_items"
 [dotnet]
 
 project/assembly_name="VampireSurvivorsTemplate"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/copy_all_errors/plugin.cfg")
 
 [input]
 

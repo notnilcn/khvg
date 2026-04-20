@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://csaws1xbk2y3z"]
 
-[ext_resource type="Script" uid="uid://csaw1xbk2y3z4" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/sine_arrow_weapon.gd" id="1_saw"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/SineArrow/SineArrowWeapon.cs" id="1_saw"]
 
 [node name="SineArrowWeapon" type="Node2D"]
 script = ExtResource("1_saw")

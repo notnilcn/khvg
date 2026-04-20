@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cq3xaoaumbpoh"]
 
 [ext_resource type="Texture2D" uid="uid://tkywoo4oh2bn" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Axe/axe_sprite.tres" id="1_6jwdd"]
-[ext_resource type="Script" uid="uid://5nyv7t2ca22n" path="res://VS-Like/Characters/Player/Utilities/UI/WeaponUI/weapon_image.gd" id="1_j8pap"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/UI/WeaponUI/WeaponImage.cs" id="1_j8pap"]
 
 [node name="WeaponImage" type="MarginContainer"]
 offset_right = 40.0

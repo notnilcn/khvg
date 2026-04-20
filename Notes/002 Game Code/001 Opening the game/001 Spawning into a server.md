@@ -9,14 +9,8 @@
 6. The server receives the rpc packet and runs the [`_request_player_spawn()`](<spawner.gd#`_request_player_spawn()`>) function on the server's local spawner.gd node.
 	1. `for existing_peer_id: int in`[`Global.players.keys():`](<global.gd#`players`>)
 		1. [`_create_player_node`](<spawner.gd#`_create_player_node(peer_id, spawn_pos)`>)`.rpc_id(new_peer_id, existing_peer_id,`[`Global.players`](<global.gd#`players`>)`[existing_peer_id].global_position)`
-			| [`_create_player_node`](<spawner.gd#`_create_player_node(peer_id, spawn_pos)`>) instantiates a player using `var player: Player = PLAYER_SCENE.instantiate()`
-			| 
 	2. `_spawn_player_for_peer(new_peer_id)`
-			| The server broadcasts to everyone in the current game to spawn a new player for the player who just joined.
 	3. `for data: Dictionary in `[`_active_enemy_data`](<spawner.gd#`_active_enemy_data`>)`:`
 		1. [`_rpc_spawn_enemy`](<spawner.gd#`_rpc_spawn_enemy(data)`>)`.rpc_id(new_peer_id, data)`
-			| The server broadcasts every enemy that has spawned to the player who has just joined.
 
-[[spawner.gd#^1]]
 
-[[spawner.gd#^2]]

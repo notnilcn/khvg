@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ResItem" load_steps=5 format=3 uid="uid://5gtdx5alfxxk"]
 
 [ext_resource type="AudioStream" uid="uid://dgqnlfvccodyc" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/bible.wav" id="1_8yafa"]
-[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/res_item.gd" id="1_iyyxi"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/ResItem.cs" id="1_iyyxi"]
 [ext_resource type="Texture2D" uid="uid://csh7sd42pj004" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/bible_sprite.tres" id="2_mdcc1"]
 [ext_resource type="PackedScene" uid="uid://p27kdpmtdbpy" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/bible_weapon.tscn" id="3_5tkei"]
 

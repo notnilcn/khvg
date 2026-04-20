@@ -22,6 +22,9 @@ public partial class Weapon : Node2D
     private AudioStreamPlayer _audioPlayer;
 
     public bool IsOwnerWeapon { get; set; } = false;
+    // True only for the starting weapon — created on all peers by _InitPlayer so _RpcFire is safe to broadcast.
+    // Chest-equipped weapons exist only on the owning peer; broadcasting _RpcFire for them breaks the scene path cache.
+    public bool IsReplicated  { get; set; } = false;
 
     public override void _Ready()
     {

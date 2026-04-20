@@ -1,9 +1,8 @@
 [gd_resource type="Resource" script_class="ResDropChest" load_steps=3 format=3 uid="uid://cln1w5ggay4k6"]
 
-[ext_resource type="Script" uid="uid://huuwmk10avts" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/res_chest.gd" id="1_i3sec"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/ResDropChest.cs" id="1_i3sec"]
 [ext_resource type="Texture2D" uid="uid://c0dv87fxv56st" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/sprite_chest.tres" id="2_83fgk"]
 
 [resource]
 script = ExtResource("1_i3sec")
 sprite = ExtResource("2_83fgk")
-metadata/_custom_type_script = "uid://huuwmk10avts"

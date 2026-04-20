@@ -1,12 +1,9 @@
 [gd_scene format=3 uid="uid://cc8ve06aj8q7x"]
 
-[ext_resource type="Script" uid="uid://cmkjgnl8lcycd" path="res://VS-Like/Game/World/spawner.gd" id="1_0r1kx"]
-[ext_resource type="Script" uid="uid://cgrsxh8314hlg" path="res://VS-Like/Characters/Enemy/Types/res_enemy.gd" id="2_gm4r7"]
-[ext_resource type="Resource" uid="uid://bpm351c5xe65k" path="res://VS-Like/Characters/Enemy/Types/Globlin/res_goblin.tres" id="3_4if38"]
+[ext_resource type="Script" path="res://VS-Like/Game/World/Spawner.cs" id="1_0r1kx"]
 
 [node name="Spawner" type="Node2D"]
 script = ExtResource("1_0r1kx")
-all_res_enemy = Array[ExtResource("2_gm4r7")]([ExtResource("3_4if38")])
 
 [node name="Timer" type="Timer" parent="."]
 autostart = true
@@ -70,8 +67,8 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "00"
 
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
-[connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
-[connection signal="timeout" from="PatternTimer" to="." method="_on_pattern_timer_timeout"]
-[connection signal="timeout" from="EliteTimer" to="." method="_on_elite_timer_timeout"]
-[connection signal="timeout" from="FoodTimer" to="." method="_on_food_timer_timeout"]
+[connection signal="timeout" from="Timer" to="." method="_OnTimerTimeout"]
+[connection signal="timeout" from="SpawnTimer" to="." method="_OnSpawnTimerTimeout"]
+[connection signal="timeout" from="PatternTimer" to="." method="_OnPatternTimerTimeout"]
+[connection signal="timeout" from="EliteTimer" to="." method="_OnEliteTimerTimeout"]
+[connection signal="timeout" from="FoodTimer" to="." method="_OnFoodTimerTimeout"]

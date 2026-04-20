@@ -1,9 +1,7 @@
 [gd_scene load_steps=2 format=3 uid="uid://b7wrdoql4oxrs"]
 
-[ext_resource type="Script" uid="uid://biku0xdkn6j67" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/arrow_weapon.gd" id="1_udiiu"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/ArrowWeapon.cs" id="1_udiiu"]
 
 [node name="ArrowWeapon" type="Node2D"]
 script = ExtResource("1_udiiu")
 
-[connection signal="fire" from="." to="." method="_on_fire"]
-[connection signal="upgraded" from="." to="." method="_on_upgraded"]

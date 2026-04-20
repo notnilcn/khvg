@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs cat *)",
+      "Bash(\" | head -20)",
+      "Bash(grep -v \"^#\\\\|^\\\\\"\\\\\"\\\\\"\\\\|```\" | head -20)"
+    ]
+  }
+}

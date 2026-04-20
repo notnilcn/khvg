@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://pam4qgibtl2a"]
 
 [ext_resource type="Texture2D" uid="uid://d22j2tgqr64hs" path="res://VS-Like/Characters/Enemy/Types/Cyclops/sprite_cyclops.tres" id="1_mqsvk"]
-[ext_resource type="Script" uid="uid://cu5mcm67wvikn" path="res://VS-Like/Characters/Enemy/enemy.gd" id="2_mqsvk"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Enemy/Enemy.cs" id="2_mqsvk"]
 [ext_resource type="AudioStream" uid="uid://0deaur6uw5ol" path="res://VS-Like/Characters/Enemy/Utilities/Audio/hit.wav" id="3_tt0nn"]
 
 [node name="Enemy" type="Sprite2D"]

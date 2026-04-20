@@ -9,4 +9,17 @@ public partial class ResPlayer : Resource
     [Export] public float MaxHealth { get; set; } = 100.0f;
     [Export] public float MaxSpeed { get; set; } = 100.0f;
     [Export] public ResItem ResWeapon { get; set; }
+
+    public override bool _Set(StringName property, Variant value)
+    {
+        switch (property.ToString())
+        {
+            case "player_name":  PlayerName = value.AsString();        return true;
+            case "sprite":       Sprite     = value.As<Texture2D>();   return true;
+            case "max_health":   MaxHealth  = value.AsSingle();        return true;
+            case "max_speed":    MaxSpeed   = value.AsSingle();        return true;
+            case "res_weapon":   ResWeapon  = value.As<ResItem>();     return true;
+        }
+        return base._Set(property, value);
+    }
 }

@@ -39,7 +39,7 @@ public partial class ChestUI : Control
             (pool[i], pool[j]) = (pool[j], pool[i]);
         }
 
-        int count = Mathf.Mini(pool.Length, 3);
+        int count = Mathf.Min(pool.Length, 3);
         for (int i = 0; i < count; i++)
             _CreateItemButton(pool[i]);
     }

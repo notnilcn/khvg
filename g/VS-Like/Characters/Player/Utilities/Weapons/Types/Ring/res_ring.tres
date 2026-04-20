@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ResItem" load_steps=4 format=3 uid="uid://bqqm6feyuyt7c"]
 
-[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/res_item.gd" id="1_rw1lj"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/ResItem.cs" id="1_rw1lj"]
 [ext_resource type="Texture2D" uid="uid://di7gakkx63k5n" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/ring_sprite.tres" id="2_1cfj7"]
 [ext_resource type="PackedScene" uid="uid://b1x824m35l0jk" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/ring_weapon.tscn" id="3_58l2r"]
 

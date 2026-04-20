@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://p27kdpmtdbpy"]
 
-[ext_resource type="Script" uid="uid://b270ddb5sjx6r" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/bible_weapon.gd" id="1_3ldgo"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/BibleWeapon.cs" id="1_3ldgo"]
 [ext_resource type="Texture2D" uid="uid://csh7sd42pj004" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Bible/bible_sprite.tres" id="2_3ldgo"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_nqfp1"]
@@ -40,8 +40,6 @@ disabled = true
 wait_time = 5.0
 one_shot = true
 
-[connection signal="fire" from="." to="." method="_on_fire"]
-[connection signal="upgraded" from="." to="." method="_on_upgraded"]
-[connection signal="body_entered" from="FirstBible" to="." method="_on_area_2d_body_entered"]
-[connection signal="body_entered" from="SecondBible" to="." method="_on_area_2d_body_entered"]
-[connection signal="timeout" from="DurationTimer" to="." method="_on_duration_timer_timeout"]
+[connection signal="body_entered" from="FirstBible" to="." method="_OnAreaBodyEntered"]
+[connection signal="body_entered" from="SecondBible" to="." method="_OnAreaBodyEntered"]
+[connection signal="timeout" from="DurationTimer" to="." method="_OnDurationTimerTimeout"]

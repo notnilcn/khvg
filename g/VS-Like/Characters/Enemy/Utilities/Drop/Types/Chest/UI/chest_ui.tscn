@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://cmxyfw4upvh5a"]
 
 [ext_resource type="Texture2D" uid="uid://gm3aof52wir0" path="res://VS-Like/Sprites/32rogues-0.5.0/32rogues/tiles.png" id="1_k830w"]
-[ext_resource type="Script" uid="uid://botb62qdfcj54" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest_ui.gd" id="1_mdjva"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/ChestUI.cs" id="1_mdjva"]
 [ext_resource type="AudioStream" uid="uid://dgrphatfef8t4" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest.wav" id="3_mdjva"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ybobg"]
@@ -76,4 +76,4 @@ text = "DONE"
 [node name="AudioPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("3_mdjva")
 
-[connection signal="pressed" from="MarginContainer/Panel/MarginContainer/VBoxContainer/DoneButton" to="." method="_on_done_button_pressed"]
+[connection signal="pressed" from="MarginContainer/Panel/MarginContainer/VBoxContainer/DoneButton" to="." method="_OnDoneButtonPressed"]

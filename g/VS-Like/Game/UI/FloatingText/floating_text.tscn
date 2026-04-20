@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://5qofy68g7bkj"]
 
-[ext_resource type="Script" uid="uid://bic8wgsrl84mm" path="res://VS-Like/Game/UI/FloatingText/floating_text.gd" id="1_n4gen"]
+[ext_resource type="Script" path="res://VS-Like/Game/UI/FloatingText/FloatingText.cs" id="1_n4gen"]
 
 [node name="FloatingText" type="Label"]
 z_index = 2

@@ -7,6 +7,16 @@ public partial class FloatingText : Label
 
     public int FloatingNumber { get; set; } = 55;
 
+    public override bool _Set(StringName property, Variant value)
+    {
+        if (property.ToString() == "colors")
+        {
+            Colors = value.As<Dictionary<string, Color>>();
+            return true;
+        }
+        return base._Set(property, value);
+    }
+
     public override async void _Ready()
     {
         _SetColor();
@@ -22,6 +32,8 @@ public partial class FloatingText : Label
 
     private void _SetColor()
     {
+        if (Colors == null || Colors.Count == 0)
+            return;
         if (FloatingNumber >= 18)
             AddThemeColorOverride("font_color", Colors["Very High"]);
         else if (FloatingNumber >= 14)

@@ -17,13 +17,14 @@
       "json",
       "html",
       "gd",
-      "tscn"
+      "tscn",
+      "cs",
+      ""
     ]
   },
   "configIsValid": true,
   "errors": {
-    "": "Could not register extension: '' to view type: markdown.  is already registered to markdown.",
-    "ts": "Could not register extension: 'ts' to view type: markdown. ts is already registered to markdown."
+    "": "Could not register extension: '' to view type: markdown.  is already registered to markdown."
   },
   "allowMdOverride": false,
   "mobileSettings": {

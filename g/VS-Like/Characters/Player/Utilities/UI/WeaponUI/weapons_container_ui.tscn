@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cwneuivvape0f"]
 
-[ext_resource type="Script" uid="uid://c0d66shpepkr7" path="res://VS-Like/Characters/Player/Utilities/UI/WeaponUI/weapons_container_ui.gd" id="1_sgofa"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/UI/WeaponUI/WeaponContainerUI.cs" id="1_sgofa"]
 
 [node name="WeaponsContainerUI" type="VBoxContainer"]
 offset_right = 40.0

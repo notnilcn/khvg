@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://dt5dfd43kwe18"]
 
-[ext_resource type="Script" uid="uid://boh3hpuc7vn6t" path="res://VS-Like/Characters/Enemy/Utilities/Drop/drop.gd" id="1_tptq8"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Drop.cs" id="1_tptq8"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0uiv8"]
 radius = 16.0
@@ -20,5 +20,5 @@ shape = SubResource("CircleShape2D_0uiv8")
 [node name="Timer" type="Timer" parent="."]
 wait_time = 10.0
 
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="body_entered" from="." to="." method="_OnBodyEntered"]
+[connection signal="timeout" from="Timer" to="." method="_OnTimerTimeout"]

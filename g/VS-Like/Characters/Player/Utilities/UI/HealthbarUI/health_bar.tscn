@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://ylm3n7gg46ep"]
 
-[ext_resource type="Script" uid="uid://c15ifcgr6mq0i" path="res://VS-Like/Characters/Player/Utilities/UI/HealthbarUI/health_bar.gd" id="1_83745"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/UI/HealthbarUI/Healthbar.cs" id="1_83745"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_akllt"]
 bg_color = Color(0.133333, 0.133333, 0.133333, 0.352941)
@@ -22,5 +22,5 @@ script = ExtResource("1_83745")
 wait_time = 2.0
 one_shot = true
 
-[connection signal="value_changed" from="." to="." method="_on_value_changed"]
-[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="value_changed" from="." to="." method="_OnValueChanged"]
+[connection signal="timeout" from="Timer" to="." method="_OnTimerTimeout"]

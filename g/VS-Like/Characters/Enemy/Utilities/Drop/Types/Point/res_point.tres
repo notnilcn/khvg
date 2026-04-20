@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ResDropPoint" load_steps=4 format=3 uid="uid://bncdc5hhqr1w3"]
 
 [ext_resource type="AudioStream" uid="uid://cb41ceun0jlsg" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Point/points.wav" id="1_1po05"]
-[ext_resource type="Script" uid="uid://bxjjjtv7o3sxd" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Point/res_point.gd" id="1_iow6i"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Point/ResDropPoint.cs" id="1_iow6i"]
 [ext_resource type="Texture2D" uid="uid://cx2v16fal4ca4" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Point/sprite_point.tres" id="3_1po05"]
 
 [resource]
@@ -9,4 +9,3 @@ script = ExtResource("1_iow6i")
 sprite = ExtResource("3_1po05")
 audio = ExtResource("1_1po05")
 can_attract = true
-metadata/_custom_type_script = "uid://bxjjjtv7o3sxd"

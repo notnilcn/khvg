@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="ResItem" load_steps=5 format=3 uid="uid://dsyuek6fdpbse"]
 
 [ext_resource type="AudioStream" uid="uid://cbywfd0qaltag" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/arrow.wav" id="1_bt0b2"]
-[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/res_item.gd" id="1_kmphc"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Utilities/Weapons/ResItem.cs" id="1_kmphc"]
 [ext_resource type="Texture2D" uid="uid://7am01f5vb4oh" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/arrow_sprite.tres" id="2_eugjg"]
 [ext_resource type="PackedScene" uid="uid://b7wrdoql4oxrs" path="res://VS-Like/Characters/Player/Utilities/Weapons/Types/Arrow/arrow_weapon.tscn" id="2_s4g33"]
 

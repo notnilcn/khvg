@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://dmehgodydmmh8"]
 
-[ext_resource type="Script" uid="uid://h78wx168xg6k" path="res://VS-Like/Characters/Player/player.gd" id="1_1h1xi"]
+[ext_resource type="Script" path="res://VS-Like/Characters/Player/Player.cs" id="1_1h1xi"]
 [ext_resource type="Resource" uid="uid://cwkok3we1g2wj" path="res://VS-Like/Characters/Player/Types/Dwarf/res_dwarf.tres" id="2_0fte0"]
 [ext_resource type="Texture2D" uid="uid://dja5rrfynttv5" path="res://VS-Like/Characters/Player/Types/Dwarf/tex_dwarf.tres" id="3_hvppb"]
 [ext_resource type="PackedScene" uid="uid://ylm3n7gg46ep" path="res://VS-Like/Characters/Player/Utilities/UI/HealthbarUI/health_bar.tscn" id="4_l4u65"]
@@ -25,7 +25,7 @@ bg_color = Color(0, 0.592157, 1, 1)
 z_index = 1
 collision_layer = 2
 script = ExtResource("1_1h1xi")
-resource = ExtResource("2_0fte0")
+character_data = ExtResource("2_0fte0")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -8)

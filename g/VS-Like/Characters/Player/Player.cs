@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public partial class Player : CharacterBody2D
 {
-    [Export] public ResPlayer Resource { get; set; }
+    [Export] public ResPlayer CharacterData { get; set; }
 
     private Sprite2D _sprite2D;
     private Camera2D _camera2D;
@@ -53,10 +53,21 @@ public partial class Player : CharacterBody2D
 
     public InventoryUI InventoryUi { get; private set; } = null;
 
+    public override bool _Set(StringName property, Variant value)
+    {
+        if (property.ToString() == "character_data")
+        {
+            CharacterData = value.As<ResPlayer>();
+            return true;
+        }
+        return base._Set(property, value);
+    }
+
     public override async void _Ready()
     {
         _sprite2D         = GetNode<Sprite2D>("Sprite2D");
         _camera2D         = GetNode<Camera2D>("Camera2D");
+        _camera2D.Enabled = false; // Prevent camera snap for non-authority peers; _InitPlayer() re-enables for local player.
         _enemyDetection   = GetNode<Area2D>("EnemyDetection");
         _healthBar        = GetNode<Healthbar>("HealthBar");
         _progressBar      = GetNode<ProgressBar>("%ProgressBar");
@@ -73,9 +84,14 @@ public partial class Player : CharacterBody2D
 
     private void _InitPlayer()
     {
-        _sprite2D.Texture = Resource.Sprite;
-        MaxHealth = Resource.MaxHealth;
-        Speed     = Resource.MaxSpeed;
+        if (CharacterData == null)
+        {
+            GD.PushError($"Player {Name}: CharacterData export is null — check player.tscn character_data field.");
+            return;
+        }
+        _sprite2D.Texture = CharacterData.Sprite;
+        MaxHealth = CharacterData.MaxHealth;
+        Speed     = CharacterData.MaxSpeed;
         Health    = MaxHealth;
 
         bool isLocal = IsMultiplayerAuthority();
@@ -84,11 +100,11 @@ public partial class Player : CharacterBody2D
         _progressBar.Visible            = isLocal;
         _weaponsContainerUi.Visible     = isLocal;
 
-        var startWpn = _InstantiateWeaponNode(Resource.ResWeapon, isLocal);
+        var startWpn = _InstantiateWeaponNode(CharacterData.ResWeapon, isLocal);
 
         if (isLocal)
         {
-            _AssignToSlot(startWpn, Resource.ResWeapon.ItemTypeValue);
+            _AssignToSlot(startWpn, CharacterData.ResWeapon.ItemTypeValue);
             _weaponsContainerUi.UpdateEquipment(this);
 
             InventoryUi = new InventoryUI();
