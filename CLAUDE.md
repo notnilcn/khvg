@@ -10,10 +10,11 @@ The codebase currently contains a Vampire Survivors-style template (auto-attacki
 
 ## Running and Developing
 
-- **Engine:** Godot 4.4.1 — open `project.godot` in the editor to develop
+- **Engine:** Godot 4.6.1 mono (`Godot_v4.6.1-stable_mono_win64.exe`) — the mono build is required for C# and SpacetimeDB
 - **Run game:** Press F5 in Godot editor (main scene: `VS-Like/Maps/woods_map.tscn`)
 - **Export:** Web/HTML5 preset configured in `export_presets.cfg`
 - **No build system** — Godot handles compilation internally
+- **⚠️ NuGet warning:** Never use **Project → Tools → C# → Create C# solution** — it regenerates the `.csproj` from scratch and wipes the `SpacetimeDB.ClientSDK` package reference. The solution already exists. If the package reference is ever lost, run `dotnet add package SpacetimeDB.ClientSDK --version 2.1.0` from `g/` while Godot is closed.
 
 ## Architecture
 
@@ -105,53 +106,79 @@ Health bar, XP bar, weapons container (shows currently equipped items by slot), 
 ## Scale Target
 
 - **Player cap:** 2048–4096 players per server (powers of 2, not yet decided)
-- **Realm sharding:** ~85 players per realm → ~48 realms at 4096 cap; each realm is independent
+- **World design:** One large persistent map — no realm instancing. All players share the same tables. AoI via SpacetimeDB chunk subscriptions is what prevents clients from receiving every player's data.
 - **Single-node is fine** at this scale — horizontal scaling escape hatch is spinning up additional server instances with shared persistence, not built-in clustering
 - **Estimated server cost** at 4096 players: ~$300–500/month (financially sound at any reasonable monetization)
 
-## SpacetimeDB Backend (decided: implement on maincloud)
+## SpacetimeDB Backend
 
 SpacetimeDB is a relational database that is also a server: tables + reducers, clients subscribe to row subsets, scheduled reducers act as game ticks. Deployed on SpacetimeDB maincloud (registered via GitHub account).
 
-**Module language: C#.** The C# SDK lives in `spacetimedb/sdks/csharp/`. The SpacetimeDB source repo is cloned at `spacetimedb/` — this is reference material; the actual server runs on maincloud, not locally.
+**Database name:** `bmmo-0nzf1` on maincloud. Dashboard: `https://spacetimedb.com/@<username>/bmmo-0nzf1`
 
-**Key architectural decision: clients connect to SpacetimeDB only.** There is no separate Godot listen-server process for game logic. All server authority runs inside SpacetimeDB C# reducers. This trades operational simplicity (two processes) for implementation simplicity (AoI, fan-out, and persistence are handled by SpacetimeDB for free).
+**Module language: C#.** Server module lives at `bmmo/spacetimedb/Lib.cs`. Publish with `spacetime publish` from `bmmo/`. After publishing, regenerate client bindings with `spacetime generate --lang csharp --out-dir ./module_bindings --module-path ./spacetimedb` from `bmmo/`, then copy `bmmo/module_bindings/` to `g/SpacetimeDB/module_bindings/`.
 
-### Table Design
+**Key architectural decision: clients connect to SpacetimeDB only.** No separate Godot listen-server. All server authority runs inside SpacetimeDB C# reducers.
 
-| Table | Contents | Frequency |
-|-------|----------|-----------|
-| `PlayerAccount` | Identity, auth, persistent | On join/leave |
-| `CharacterData` | Stats, level, XP | On level-up, death |
-| `Inventory` | Equipped items, backpack | On item change |
-| `RealmMembership` | Which realm shard | On join/transfer |
-| `PlayerPosition` | Current x/y per player | 20Hz client writes |
-| `Enemy` | Enemy instances + authoritative position | 2Hz server writes |
-| `BulletPattern` | Parametric spawn events only — no per-tick positions | On fire |
+### What is implemented (working)
 
-### Reducer Design
+**Tables in `bmmo/spacetimedb/Lib.cs`:**
 
-| Reducer | Trigger | Does |
-|---------|---------|------|
-| `PlayerMove` | Client call, 20Hz | Updates `PlayerPosition` row |
-| `PlayerJoin/Leave` | Connection events | Creates/cleans up account + realm rows |
-| `Spawner` | Scheduled | Creates `Enemy` rows near players |
-| `EnemyAI` | Scheduled 10Hz | Computes new enemy positions; writes to `Enemy` at ~2Hz — clients interpolate between snapshots |
-| `BulletHitCheck` | Scheduled 20Hz | Evaluates parametric bullet positions vs `PlayerPosition`, applies damage |
+| Table | Contents | Lifetime |
+|-------|----------|----------|
+| `PlayerAccount` | Identity, username, is_admin, created_at | Persistent |
+| `CharacterData` | Level, XP, HP, `RpgStats` (str/wis/dex/def/vit) | Persistent |
+| `PlayerInventory` | Equipment slots + backpack (12) + consumables (8) as string lists of item IDs | Persistent |
+| `PlayerPosition` | x, y, move_x, move_y, chunk_x, chunk_y | Session-only (deleted on disconnect) |
+| `MoveTickSchedule` | Internal — drives 20Hz movement tick | Permanent |
 
-### AoI
+**Reducers:**
+- `Init` — creates `MoveTickSchedule` (runs once on first publish)
+- `ClientConnected` — creates account/character/inventory rows for new players; inserts `PlayerPosition` for all players
+- `ClientDisconnected` — deletes `PlayerPosition`
+- `SetMoveInput(float moveX, float moveY)` — client calls on keypress/release to update direction
+- `PlayerMoveTick` — scheduled 20Hz; moves all players from their stored input; updates chunk coords
+- `SetUsername`, `SaveCharacterProgress`, `UpdateInventory` — persistence helpers
 
-Clients subscribe to SQL queries filtered by realm + spatial chunk range. SpacetimeDB fans out row diffs automatically — no custom broadcast code needed. Re-subscribe when crossing chunk boundaries.
+**Constants to keep in sync with Godot client:**
+- `PlayerSpeed = 100f` — must match player speed in Godot
+- `ChunkSize = 320f` — used for AoI subscription query bounds
 
-### Enemy Position Sync Strategy
+### What is NOT yet implemented
 
-`EnemyAI` runs at 10Hz but only writes `Enemy` positions to the DB at ~2Hz. Clients receive infrequent authoritative snapshots and fill gaps by running the same deterministic AI logic locally (snapshot interpolation). Since AI is deterministic given player positions (which all clients receive via subscription), drift is minimal and corrects silently on next snapshot.
+- `Enemy` table + `EnemyAI` reducer (10Hz, 2Hz writes)
+- `BulletPattern` table + `BulletHitCheck` reducer (20Hz)
+- `Spawner` reducer
+- Godot client: WASD → `SetMoveInput` wiring
+- Godot client: `PlayerPosition.OnInsert/OnUpdate/OnDelete` → spawn/move/remove sprites
+- AoI chunk subscriptions (currently using `SubscribeToAllTables()`)
 
-No persistent in-memory state exists between reducer calls — all simulation state must live in tables. The low-write-frequency approach works because clients have enough information to predict correctly.
+### Godot client setup
 
-### Bullet System
+- **`g/SpacetimeDB/SpacetimeDBManager.cs`** — autoload singleton; manages connection + `FrameTick()`; emits `ConnectedToServer`, `DisconnectedFromServer`, `SubscriptionReady` signals
+- **`g/SpacetimeDB/module_bindings/`** — generated C# bindings; do not edit manually
+- **`g/VampireSurvivorsTemplate.csproj`** — has `SpacetimeDB.ClientSDK 2.1.0` package reference
+- Registered in `project.godot` autoload as `SpacetimeDBManager`
 
-Identical to original parametric design. `EnemyAI` reducer writes a `BulletPattern` row (pattern_id, origin, spawn_time, params) when an enemy fires. Clients subscribe to `BulletPattern` and reconstruct bullet positions locally using the same deterministic function. Server (`BulletHitCheck` reducer) evaluates the same function for authoritative hit detection. No per-tick bullet position sync.
+### AoI (not yet wired)
+
+Clients will subscribe to chunk-range SQL queries instead of all tables:
+```sql
+SELECT * FROM player_position WHERE chunk_x BETWEEN @min AND @max AND chunk_y BETWEEN @min AND @max
+```
+Re-subscribe when the local player crosses a chunk boundary.
+
+### Enemy position sync strategy (not yet implemented)
+
+`EnemyAI` reducer runs at 10Hz but writes positions to DB at ~2Hz. Clients fill gaps by running the same deterministic AI locally (snapshot interpolation). Requires all clients to agree on player positions as inputs — guaranteed since player positions come from the same SpacetimeDB subscription.
+
+### Bullet system (not yet implemented)
+
+`EnemyAI` writes a `BulletPattern` row (pattern_id, origin, spawn_time, params) when an enemy fires. Clients reconstruct positions locally using deterministic parametric math. `BulletHitCheck` evaluates the same function server-side for authoritative hit detection. No per-tick position sync.
+
+### Local testing note
+
+Multiple instances on the same machine share the same identity (same `.bmmo_token` file). The second connect attempt by the same identity will fail to insert a duplicate `PlayerPosition` row. True multiplayer testing requires different machines or manually clearing the token file between instances.
 
 ## Hex Grid (future — not yet implemented)
 
@@ -173,14 +200,6 @@ Storage: `Dictionary<(int q, int r), CellData>` — O(1) lookup by cell. Hex siz
 - Bullets pass through all objects including player-built structures. Shelter is implemented as **immunity zones** (damage immunity flag), not physical collision — this preserves parametric bullet correctness.
 
 **Scope note:** The hex math itself is trivial (two conversion functions, one afternoon). The systems on top — crafting, resource nodes, persistence, griefing prevention, destruction — are months of work. To future-proof without committing: pick hex size `R`, write the two conversion functions, stop there.
-
-## C# Conversion (needed for SpacetimeDB integration)
-
-32 of 33 core files were translated from GDScript to C# and committed to `claude/evaluate-spacetimedb-backend-CiPQN`. The original `.gd` files are untouched; the project still runs on GDScript. `Spawner.cs` was not written.
-
-The `.tscn`/`.tres` files and `project.godot` autoload paths still point to `.gd` files. To activate the C# versions: switch Godot to the .NET build, update autoload paths in `project.godot`, update `script` references in `.tscn` files. The project already has a `[dotnet]` section in `project.godot` with `assembly_name="VampireSurvivorsTemplate"`.
-
-The SpacetimeDB C# client SDK (`spacetimedb/sdks/csharp/`) will be added to the Godot .NET project. The server module is a separate C# project initialized via `spacetime init --lang csharp`.
 
 ## Target Architecture (not yet implemented)
 

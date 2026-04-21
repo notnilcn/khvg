@@ -19,6 +19,8 @@ using System.Collections.Generic;
 // Each peer sets the correct multiplayer_authority on that node so only the owning peer
 // processes input for it.
 
+/*
+```c# */
 public partial class Spawner : Node2D
 {
     private static readonly PackedScene DropScene =
@@ -106,6 +108,9 @@ public partial class Spawner : Node2D
 
             // Clean up player nodes when a peer disconnects.
             Network.Instance.PlayerLeft += _OnPlayerLeft;
+
+            // Spawn the host's own player (peer 1 never calls _RequestPlayerSpawn).
+            _SpawnPlayerForPeer(1);
         }
         else
         {
@@ -115,6 +120,10 @@ public partial class Spawner : Node2D
         }
 
         _SetupChatConsole();
+
+        // Populate visuals for SpacetimeDB remote players that were already in the DB
+        // before this map scene loaded (their OnInsert fired while we were in the lobby).
+        StdbPlayerSync.Instance?.OnGameSceneLoaded();
     }
 
     // ── Chat console ─────────────────────────────────────────────────────────────
@@ -387,7 +396,10 @@ public partial class Spawner : Node2D
             _SendFeedback(sender, $"No player found with peer_id {targetId}");
             return;
         }
-        target.RpcId(targetId, nameof(Player.RpcGiveWeapon), resPath);
+        if (targetId == Multiplayer.GetUniqueId())
+            target.RpcGiveWeapon(resPath);
+        else
+            target.RpcId(targetId, nameof(Player.RpcGiveWeapon), resPath);
         _SendFeedback(sender, $"Gave {weaponName} to peer {targetId}");
     }
 
@@ -411,7 +423,10 @@ public partial class Spawner : Node2D
             _SendFeedback(sender, $"No player found with peer_id {targetId}");
             return;
         }
-        target.RpcId(targetId, nameof(Player.RpcRemoveWeapon), resPath);
+        if (targetId == Multiplayer.GetUniqueId())
+            target.RpcRemoveWeapon(resPath);
+        else
+            target.RpcId(targetId, nameof(Player.RpcRemoveWeapon), resPath);
         _SendFeedback(sender, $"Removed {weaponName} from peer {targetId}");
     }
 
@@ -886,3 +901,6 @@ public partial class Spawner : Node2D
         AddChild(food);
     }
 }
+/*
+```
+*/

@@ -155,6 +155,7 @@ public partial class Enemy : Sprite2D
             return;
 
         int callerId = Multiplayer.GetRemoteSenderId();
+        if (callerId == 0) callerId = Multiplayer.GetUniqueId(); // direct local call (server)
         if (!Global.Instance.Players.TryGetValue(callerId, out var callerPlayer))
             return;
 

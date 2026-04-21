@@ -1,5 +1,8 @@
 using Godot;
 
+
+/*
+```c# */
 public partial class Lobby : Control
 {
     private CenterContainer _center;
@@ -106,3 +109,6 @@ public partial class Lobby : Control
         _ipInput.Editable     = enabled;
     }
 }
+/*
+```
+*/

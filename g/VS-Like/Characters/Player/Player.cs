@@ -51,6 +51,8 @@ public partial class Player : CharacterBody2D
     public float ExtraDamage { get; set; } = 1.0f;
     public float ExtraSpeed  { get; set; } = 1.0f;
 
+    private Vector2? _lastSentMoveInput = null;
+
     public InventoryUI InventoryUi { get; private set; } = null;
 
     public override bool _Set(StringName property, Variant value)
@@ -152,6 +154,14 @@ public partial class Player : CharacterBody2D
     {
         var movementInput = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
         Velocity = movementInput * (Speed * ExtraSpeed);
+
+        if (_lastSentMoveInput == null || movementInput != _lastSentMoveInput.Value)
+        {
+            _lastSentMoveInput = movementInput;
+            var conn = SpacetimeDBManager.Instance.Conn;
+            GD.Print($"[Player] SetMoveInput({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
+            conn?.Reducers.SetMoveInput(movementInput.X, movementInput.Y);
+        }
 
         if (Velocity.X > 0)
             _sprite2D.Scale = new Vector2(1, _sprite2D.Scale.Y);

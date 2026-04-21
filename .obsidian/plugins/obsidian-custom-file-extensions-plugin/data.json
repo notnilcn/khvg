@@ -1,7 +1,6 @@
 {
   "types": {
     "markdown": [
-      "",
       "md",
       "txt",
       "js",
@@ -18,7 +17,8 @@
       "html",
       "gd",
       "tscn",
-      "tres"
+      "tres",
+      "cs"
     ]
   },
   "configIsValid": true,

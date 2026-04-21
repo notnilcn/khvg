@@ -23,6 +23,8 @@ config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
 Global="*res://VS-Like/Game/Singleton/Global.cs"
 Network="*res://VS-Like/Game/Singleton/Network.cs"
 BulletManager="*res://VS-Like/Bullets/BulletManager.cs"
+SpacetimeDBManager="*res://SpacetimeDB/SpacetimeDBManager.cs"
+StdbPlayerSync="*res://SpacetimeDB/StdbPlayerSync.cs"
 
 [display]
 
@@ -38,7 +40,7 @@ project/assembly_name="VampireSurvivorsTemplate"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/copy_all_errors/plugin.cfg")
+enabled=PackedStringArray()
 
 [input]
 

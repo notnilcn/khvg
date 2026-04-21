@@ -1,0 +1,10 @@
+{
+  "id": "forwardslash-asterisk-blocks",
+  "name": "Forwardslash Asterisk Blocks",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Renders text between forwardslash asterisk as styled blocks in live preview mode.",
+  "author": "Notnilc-N",
+  "authorUrl": "",
+  "isDesktopOnly": false
+}

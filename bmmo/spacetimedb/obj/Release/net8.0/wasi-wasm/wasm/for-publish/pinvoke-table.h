@@ -4,10 +4,14 @@ int bytes_sink_write (int,int,int);
 int bytes_source_read (int,int,int);
 int bytes_source_remaining_length (int,int);
 void console_log (int,int,int,int,int,int,int,int);
+int datastore_delete_by_index_scan_point_bsatn (int,int,int,int);
+int datastore_index_scan_point_bsatn (int,int,int,int);
 int datastore_insert_bsatn (int,int,int);
 int datastore_table_scan_bsatn (int,int);
+int datastore_update_bsatn (int,int,int,int);
 int get_jwt (int,int);
 void identity (int);
+int index_id_from_name (int,int,int);
 int row_iter_bsatn_advance (int,int,int);
 int row_iter_bsatn_close (int);
 int SystemNative_Close (int);
@@ -56,10 +60,14 @@ static PinvokeImport bindings_imports [] = {
 {"bytes_source_read", bytes_source_read}, // SpacetimeDB.Runtime
 {"bytes_source_remaining_length", bytes_source_remaining_length}, // SpacetimeDB.Runtime
 {"console_log", console_log}, // SpacetimeDB.Runtime
+{"datastore_delete_by_index_scan_point_bsatn", datastore_delete_by_index_scan_point_bsatn}, // SpacetimeDB.Runtime
+{"datastore_index_scan_point_bsatn", datastore_index_scan_point_bsatn}, // SpacetimeDB.Runtime
 {"datastore_insert_bsatn", datastore_insert_bsatn}, // SpacetimeDB.Runtime
 {"datastore_table_scan_bsatn", datastore_table_scan_bsatn}, // SpacetimeDB.Runtime
+{"datastore_update_bsatn", datastore_update_bsatn}, // SpacetimeDB.Runtime
 {"get_jwt", get_jwt}, // SpacetimeDB.Runtime
 {"identity", identity}, // SpacetimeDB.Runtime
+{"index_id_from_name", index_id_from_name}, // SpacetimeDB.Runtime
 {"row_iter_bsatn_advance", row_iter_bsatn_advance}, // SpacetimeDB.Runtime
 {"row_iter_bsatn_close", row_iter_bsatn_close}, // SpacetimeDB.Runtime
 {"table_id_from_name", table_id_from_name}, // SpacetimeDB.Runtime

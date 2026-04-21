@@ -1,0 +1,1264 @@
+╭─── Claude Code v2.1.94 ──────────────────────────────────────────────────────╮
+│                                                    │ Tips for getting        │
+│                Welcome back Clinton!               │ started                 │
+│                                                    │ Run /init to create a … │
+│                       ▐▛███▜▌                      │ ─────────────────────── │
+│                      ▝▜█████▛▘                     │ Recent activity         │
+│                        ▘▘ ▝▝                       │ 1h ago  I've enabaled … │
+│    Sonnet 4.6 · Claude Pro ·                       │ /resume for more        │
+│    clinton.nguyen2107@gmail.com's Organization     │                         │
+│ ~\Downloads\New folder\g\.obsidian\plugins\gdscri… │                         │
+╰──────────────────────────────────────────────────────────────────────────────╯
+
+❯ I want you to build  an obsidian plugin that works in live preview (editing)  
+  mode. It should detect text wrapped in triple quotes """text""" and render it 
+   as a styled block - similar to how backtick code blocks work natively.       
+  You'll have to write a main.js file, a manifest.json file, and a styles.css   
+  file.                                                                         
+
+  Listed 1 directory (ctrl+o to expand)
+
+● The directory is empty. Let me build the plugin. I'll use CodeMirror 6's
+  ViewPlugin and Decoration API — the correct approach for live preview in
+  Obsidian.
+
+● Write(manifest.json)
+  ⎿  Wrote 10 lines to manifest.json
+       1 {
+       2   "id": "gdscript-comments",
+       3   "name": "Triple Quote Blocks",
+       4   "version": "1.0.0",
+       5   "minAppVersion": "1.0.0",
+       6   "description": "Renders text wrapped in triple quotes (\"\"\"t
+         ext\"\"\") as styled blocks in live preview mode.",
+       7   "author": "Notnilc-N",
+       8   "authorUrl": "",
+       9   "isDesktopOnly": false
+      10 }
+
+● Write(styles.css)
+  ⎿  Wrote 19 lines to styles.css
+       1 .triple-quote-block {
+       2   display: block;
+       3   background-color: var(--background-secondary);
+       4   border-left: 4px solid var(--color-accent);
+       5   border-radius: 4px;
+       6   padding: 8px 14px;
+       7   margin: 4px 0;
+       8   font-family: var(--font-text);
+       9   font-size: var(--font-text-size);
+      10   color: var(--text-normal);
+     … +9 lines (ctrl+o to expand)
+
+● Write(main.js)
+  ⎿  Wrote 96 lines to main.js
+       1 'use strict';
+       2 
+       3 const { Plugin } = require('obsidian');
+       4 const { ViewPlugin, Decoration, DecorationSet, EditorView, Widge
+         tType } = require('@codemirror/view');
+       5 const { RangeSetBuilder } = require('@codemirror/state');
+       6 
+       7 // ── Widget rendered in place of the entire """...""" span ────
+         ──────────────────
+       8 class TripleQuoteWidget extends WidgetType {
+       9   constructor(content) {
+      10     super();
+     … +86 lines (ctrl+o to expand)
+
+● The plugin is ready. Here's what was built:
+
+  3 files created:
+
+  - manifest.json — plugin metadata Obsidian needs to load it
+  - styles.css — styles the rendered block (left accent border, secondary
+  background, matches your theme via CSS vars)
+  - main.js — the plugin logic
+
+  How it works:
+
+  The main.js uses CodeMirror 6's ViewPlugin + Decoration.replace() to scan the
+  document for """...""" patterns on every view update, then replaces the
+  matched range with a styled DOM widget in live preview. Key behavior:
+
+  - Cursor-aware: when your cursor is inside a triple-quote block, it falls back
+   to raw text so you can edit it normally — exactly like how Obsidian handles
+  bold/italic
+  - Multi-line: works across newlines since it scans the full doc string
+  - Theme-compatible: uses Obsidian's CSS variables so it adapts to light/dark
+  themes automatically
+
+  To enable it:
+  1. Go to Settings → Community Plugins → turn off Restricted mode if needed
+  2. Enable "Triple Quote Blocks" in the installed plugins list
+  3. Reload Obsidian if it doesn't appear (Ctrl+R)
+
+✻ Baked for 41s
+
+❯ The plugin works when triple quotes are on the same line, but they don't work 
+   when they're on different lines. I want """text""" to work and i want        
+
+● It looks like your message got cut off — what's the second syntax you want to
+  support? Something like:
+
+  """
+  text on
+  multiple lines
+  """
+
+  ?
+
+❯ yeah, you got it exactly right. I tried using shift+enter assuming it would   
+  insert a new line but it didn't.                                              
+
+● The issue is a CodeMirror 6 limitation: Decoration.replace without block: true
+   only works within a single line. Multi-line spans need block: true and their
+  range aligned to full line boundaries.
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(main.js)
+  ⎿  Added 31 lines, removed 7 lines
+       58          if (closeIdx === -1) break; // unclosed — stop
+       59  
+       60          const closeEnd = closeIdx + 3;
+       61 -        const content = text.slice(contentStart, closeIdx);   
+       61 +        const rawContent = text.slice(contentStart, closeIdx);
+       62  
+       63 +        // Strip exactly one leading and one trailing newline 
+          +so that:                                                      
+       64 +        //   """          becomes the same rendered output as 
+          +"""text"""                                                    
+       65 +        //   text                                             
+       66 +        //   """                                              
+       67 +        const content = rawContent.replace(/^\n/, '').replace(
+          +/\n$/, '');                                                   
+       68 +                                                              
+       69          // If the cursor is inside this match, skip rendering 
+           so the user can
+       70          // edit the raw text normally.
+       71          const cursorInside = cursorPos > openIdx && cursorPos 
+           < closeEnd;
+       72  
+       73          if (!cursorInside) {
+       68 -          // Replace the whole """...""" span with our styled 
+          -widget.                                                       
+       69 -          builder.add(                                        
+       70 -            openIdx,                                          
+       71 -            closeEnd,                                         
+       72 -            Decoration.replace({ widget: new TripleQuoteWidget
+          -(content) })                                                  
+       73 -          );                                                  
+       74 +          const isMultiLine = rawContent.includes('\n');      
+       75 +                                                              
+       76 +          if (isMultiLine) {                                  
+       77 +            // Multi-line: CM6 requires block:true and the ran
+          +ge must align to                                              
+       78 +            // full line boundaries (from start of opening lin
+          +e to end of                                                   
+       79 +            // closing line) for the replacement to render cor
+          +rectly.                                                       
+       80 +            const startLine = doc.lineAt(openIdx);            
+       81 +            const endLine = doc.lineAt(closeEnd);             
+       82 +            builder.add(                                      
+       83 +              startLine.from,                                 
+       84 +              endLine.to,                                     
+       85 +              Decoration.replace({                            
+       86 +                widget: new TripleQuoteWidget(content),       
+       87 +                block: true,                                  
+       88 +              })                                              
+       89 +            );                                                
+       90 +          } else {                                            
+       91 +            // Same-line: plain inline replacement, no block f
+          +lag needed.                                                   
+       92 +            builder.add(                                      
+       93 +              openIdx,                                        
+       94 +              closeEnd,                                       
+       95 +              Decoration.replace({ widget: new TripleQuoteWidg
+          +et(content) })                                                
+       96 +            );                                                
+       97 +          }                                                   
+       98          }
+       99  
+      100          searchFrom = closeEnd;
+
+● Also update the widget to use a div instead of span since block decorations
+  render at block level:
+
+● Update(main.js)
+  ⎿  Added 1 line, removed 1 line
+      12    }
+      13  
+      14    toDOM() {
+      15 -    const el = document.createElement('span');                 
+      15 +    const el = document.createElement('div');                  
+      16      el.className = 'triple-quote-block';
+      17      el.textContent = this.content;
+      18      return el;
+
+● Also update the CSS so the div renders consistently for both single-line and
+  multi-line cases:
+
+● Update(styles.css)
+  ⎿  Added 1 line, removed 1 line
+      1  .triple-quote-block {
+      2 -  display: block;                                               
+      2 +  display: inline-block; /* inline for same-line; block decorati
+        +ons wrap this anyway */                                         
+      3    background-color: var(--background-secondary);
+      4    border-left: 4px solid var(--color-accent);
+      5    border-radius: 4px;
+
+● Reload the plugin (Settings → Community Plugins → disable then re-enable, or
+  Ctrl+R to restart Obsidian). Both forms will now work:
+
+  """same line text"""
+
+  """
+  multi
+  line
+  text
+  """
+
+  The leading/trailing newlines in the multi-line form are stripped, so both
+  render identically. Use regular Enter (not Shift+Enter) to add lines inside
+  the block — Obsidian's Shift+Enter inserts a <br> soft break which is a
+  different character and won't affect the triple-quote detection.
+
+✻ Crunched for 1m 12s
+
+❯ I get the following error when I try to load a multi line triple quote block: 
+   app.js:1 RangeError: Block decorations may not be specified via plugins      
+      at e.point (app.js:1:354263)                                              
+      at e.spans (app.js:1:308567)                                              
+      at e.build (app.js:1:355404)                                              
+      at t.updateChildren (app.js:1:371534)                                     
+      at t.updateInner (app.js:1:370018)                                        
+      at new t (app.js:1:367750)                                                
+      at e.setState (app.js:1:472377)                                           
+      at t.set (app.js:1:2411382)                                               
+      at t.set (app.js:1:2873470)                                               
+      at t.setViewData (app.js:1:2889885)                                       
+
+● The error is a hard CM6 restriction: ViewPlugin cannot produce block
+  decorations at all. The fix is to switch to a StateField, which is allowed to.
+
+  Read 1 file (ctrl+o to expand)
+
+● Write(main.js)
+  ⎿  Added 69 lines, removed 74 lines
+      1  'use strict';
+      2  
+      3  const { Plugin } = require('obsidian');
+      4 -const { ViewPlugin, Decoration, DecorationSet, EditorView, Widge
+        -tType } = require('@codemirror/view');                          
+      5 -const { RangeSetBuilder } = require('@codemirror/state');       
+      4 +const { Decoration, EditorView, WidgetType } = require('@codemir
+        +ror/view');                                                     
+      5 +const { StateField, RangeSetBuilder } = require('@codemirror/sta
+        +te');                                                           
+      6  
+      7  // ── Widget rendered in place of the entire """...""" span ────
+         ──────────────────
+      8  class TripleQuoteWidget extends WidgetType {
+     ...
+       19    }
+       20  
+       21    ignoreEvent() {
+       22 -    // Let clicks through so the user can click to edit       
+       22      return false;
+       23    }
+       24  }
+       25  
+       27 -// ── CodeMirror ViewPlugin ──────────────────────────────────
+          -────────────────────                                          
+       28 -const tripleQuotePlugin = ViewPlugin.fromClass(               
+       29 -  class {                                                     
+       30 -    constructor(view) {                                       
+       31 -      this.decorations = this.buildDecorations(view);         
+       32 -    }                                                         
+       26 +// ── Decoration builder (works on EditorState, not EditorView
+          +) ─────────────────                                           
+       27 +function buildDecorations(state) {                            
+       28 +  const builder = new RangeSetBuilder();                      
+       29 +  const doc = state.doc;                                      
+       30 +  const text = doc.toString();                                
+       31 +  const cursorPos = state.selection.main.head;                
+       32  
+       34 -    update(update) {                                          
+       35 -      if (update.docChanged || update.viewportChanged || updat
+          -e.selectionSet) {                                             
+       36 -        this.decorations = this.buildDecorations(update.view);
+       37 -      }                                                       
+       38 -    }                                                         
+       33 +  const OPEN = '"""';                                         
+       34 +  let searchFrom = 0;                                         
+       35  
+       40 -    buildDecorations(view) {                                  
+       41 -      const builder = new RangeSetBuilder();                  
+       42 -      const doc = view.state.doc;                             
+       43 -      const text = doc.toString();                            
+       36 +  while (true) {                                              
+       37 +    const openIdx = text.indexOf(OPEN, searchFrom);           
+       38 +    if (openIdx === -1) break;                                
+       39  
+       45 -      // Track where the cursor is so we can fall back to plai
+          -n text for the                                                
+       46 -      // block the user is currently editing.                 
+       47 -      const cursorPos = view.state.selection.main.head;       
+       40 +    const contentStart = openIdx + 3;                         
+       41 +    const closeIdx = text.indexOf(OPEN, contentStart);        
+       42 +    if (closeIdx === -1) break; // unclosed — stop            
+       43  
+       49 -      const OPEN = '"""';                                     
+       50 -      let searchFrom = 0;                                     
+       44 +    const closeEnd = closeIdx + 3;                            
+       45 +    const rawContent = text.slice(contentStart, closeIdx);    
+       46  
+       52 -      while (true) {                                          
+       53 -        const openIdx = text.indexOf(OPEN, searchFrom);       
+       54 -        if (openIdx === -1) break;                            
+       47 +    // Strip exactly one leading and one trailing newline so t
+          +hat:                                                          
+       48 +    //   """          renders the same as  """text"""         
+       49 +    //   text                                                 
+       50 +    //   """                                                  
+       51 +    const content = rawContent.replace(/^\n/, '').replace(/\n$
+          +/, '');                                                       
+       52  
+       56 -        const contentStart = openIdx + 3;                     
+       57 -        const closeIdx = text.indexOf(OPEN, contentStart);    
+       58 -        if (closeIdx === -1) break; // unclosed — stop        
+       53 +    // If the cursor is inside this match, skip rendering so t
+          +he user can                                                   
+       54 +    // edit the raw text normally.                            
+       55 +    const cursorInside = cursorPos > openIdx && cursorPos < cl
+          +oseEnd;                                                       
+       56  
+       60 -        const closeEnd = closeIdx + 3;                        
+       61 -        const rawContent = text.slice(contentStart, closeIdx);
+       57 +    if (!cursorInside) {                                      
+       58 +      const isMultiLine = rawContent.includes('\n');          
+       59  
+       63 -        // Strip exactly one leading and one trailing newline 
+          -so that:                                                      
+       64 -        //   """          becomes the same rendered output as 
+          -"""text"""                                                    
+       65 -        //   text                                             
+       66 -        //   """                                              
+       67 -        const content = rawContent.replace(/^\n/, '').replace(
+          -/\n$/, '');                                                   
+       60 +      if (isMultiLine) {                                      
+       61 +        // Block decorations must cover full line ranges and r
+          +equire a                                                      
+       62 +        // StateField (not a ViewPlugin) — that's why we're he
+          +re.                                                           
+       63 +        const startLine = doc.lineAt(openIdx);                
+       64 +        const endLine = doc.lineAt(closeEnd);                 
+       65 +        builder.add(                                          
+       66 +          startLine.from,                                     
+       67 +          endLine.to,                                         
+       68 +          Decoration.replace({                                
+       69 +            widget: new TripleQuoteWidget(content),           
+       70 +            block: true,                                      
+       71 +          })                                                  
+       72 +        );                                                    
+       73 +      } else {                                                
+       74 +        builder.add(                                          
+       75 +          openIdx,                                            
+       76 +          closeEnd,                                           
+       77 +          Decoration.replace({ widget: new TripleQuoteWidget(c
+          +ontent) })                                                    
+       78 +        );                                                    
+       79 +      }                                                       
+       80 +    }                                                         
+       81  
+       69 -        // If the cursor is inside this match, skip rendering 
+          -so the user can                                               
+       70 -        // edit the raw text normally.                        
+       71 -        const cursorInside = cursorPos > openIdx && cursorPos 
+          -< closeEnd;                                                   
+       82 +    searchFrom = closeEnd;                                    
+       83 +  }                                                           
+       84  
+       73 -        if (!cursorInside) {                                  
+       74 -          const isMultiLine = rawContent.includes('\n');      
+       85 +  return builder.finish();                                    
+       86 +}                                                             
+       87  
+       76 -          if (isMultiLine) {                                  
+       77 -            // Multi-line: CM6 requires block:true and the ran
+          -ge must align to                                              
+       78 -            // full line boundaries (from start of opening lin
+          -e to end of                                                   
+       79 -            // closing line) for the replacement to render cor
+          -rectly.                                                       
+       80 -            const startLine = doc.lineAt(openIdx);            
+       81 -            const endLine = doc.lineAt(closeEnd);             
+       82 -            builder.add(                                      
+       83 -              startLine.from,                                 
+       84 -              endLine.to,                                     
+       85 -              Decoration.replace({                            
+       86 -                widget: new TripleQuoteWidget(content),       
+       87 -                block: true,                                  
+       88 -              })                                              
+       89 -            );                                                
+       90 -          } else {                                            
+       91 -            // Same-line: plain inline replacement, no block f
+          -lag needed.                                                   
+       92 -            builder.add(                                      
+       93 -              openIdx,                                        
+       94 -              closeEnd,                                       
+       95 -              Decoration.replace({ widget: new TripleQuoteWidg
+          -et(content) })                                                
+       96 -            );                                                
+       97 -          }                                                   
+       98 -        }                                                     
+       99 -                                                              
+      100 -        searchFrom = closeEnd;                                
+      101 -      }                                                       
+      102 -                                                              
+      103 -      return builder.finish();                                
+       88 +// ── StateField<DecorationSet> — the only CM6 type allowed to
+          + hold block decs ──                                           
+       89 +const tripleQuoteField = StateField.define({                  
+       90 +  create(state) {                                             
+       91 +    return buildDecorations(state);                           
+       92 +  },                                                          
+       93 +  update(decorations, tr) {                                   
+       94 +    // Rebuild whenever the document or selection changes.    
+       95 +    if (tr.docChanged || tr.selection) {                      
+       96 +      return buildDecorations(tr.state);                      
+       97      }
+       98 +    // Otherwise map existing decoration positions through any
+          + changes.                                                     
+       99 +    return decorations.map(tr.changes);                       
+      100    },
+      106 -  {                                                           
+      107 -    decorations: (instance) => instance.decorations,          
+      108 -  }                                                           
+      109 -);                                                            
+      101 +  provide(field) {                                            
+      102 +    return EditorView.decorations.from(field);                
+      103 +  },                                                          
+      104 +});                                                           
+      105  
+      106  // ── Plugin entry point ─────────────────────────────────────
+           ────────────────────
+      107  class TripleQuoteBlockPlugin extends Plugin {
+      108    async onload() {
+      114 -    this.registerEditorExtension(tripleQuotePlugin);          
+      109 +    this.registerEditorExtension(tripleQuoteField);           
+      110    }
+      111  
+      112    onunload() {}
+
+● The key change: ViewPlugin → StateField. CM6 enforces that block decorations
+  may only live in a StateField (because block-level changes affect layout in
+  ways that need to be coordinated at the state level, not the view level). The
+  logic is otherwise identical — StateField.update gets tr.docChanged and
+  tr.selection the same way ViewPlugin.update did.
+
+  Reload the plugin and both forms should now work without errors.
+
+❯ kind of a non-issue, but when I click on the triple quote block it doesn't    
+  move my keyboard cursor to the inside of that block. Is there any way you can 
+   fix this? Also, when my keyboard cursor is above the block and I pressed the 
+   down arrow, it skips over the block entirely. I want it to go into the       
+  block. Same as when my keyboard cursor is below the block and I press the up  
+  arrow. It works fine when I press the left or right arrow though.             
+● The root problem is using Decoration.replace on the whole block — that removes
+   the content from the editor's perspective, so the cursor has nowhere to land.
+   The fix is to stop replacing the content entirely and instead:
+
+  - Multi-line: use Decoration.line to style each line + Decoration.replace to
+  hide only the 3-char """ delimiters (content text stays in the document, so
+  arrow keys and clicks work normally)
+  - Single-line: use Decoration.replace to hide the delimiters + Decoration.mark
+   to style the content inline (same principle)
+
+● Write(main.js)
+  ⎿  Added 47 lines, removed 51 lines
+       1  'use strict';
+       2  
+       3  const { Plugin } = require('obsidian');
+       4 -const { Decoration, EditorView, WidgetType } = require('@codemi
+         -rror/view');                                                   
+       4 +const { Decoration, EditorView } = require('@codemirror/view');
+       5  const { StateField, RangeSetBuilder } = require('@codemirror/st
+          ate');
+       6  
+       7 -// ── Widget rendered in place of the entire """...""" span ───
+         -───────────────────                                            
+       8 -class TripleQuoteWidget extends WidgetType {                   
+       9 -  constructor(content) {                                       
+      10 -    super();                                                   
+      11 -    this.content = content;                                    
+      12 -  }                                                            
+      13 -                                                               
+      14 -  toDOM() {                                                    
+      15 -    const el = document.createElement('div');                  
+      16 -    el.className = 'triple-quote-block';                       
+      17 -    el.textContent = this.content;                             
+      18 -    return el;                                                 
+      19 -  }                                                            
+      20 -                                                               
+      21 -  ignoreEvent() {                                              
+      22 -    return false;                                              
+      23 -  }                                                            
+      24 -}                                                              
+      25 -                                                               
+      26 -// ── Decoration builder (works on EditorState, not EditorView)
+         - ─────────────────                                             
+       7 +// ── Decoration builder ──────────────────────────────────────
+         +───────────────────                                            
+       8  function buildDecorations(state) {
+       9    const builder = new RangeSetBuilder();
+      10    const doc = state.doc;
+     ...
+      24  
+      25      const closeEnd = closeIdx + 3;
+      26      const rawContent = text.slice(contentStart, closeIdx);
+      27 +    const isMultiLine = rawContent.includes('\n');             
+      28  
+      47 -    // Strip exactly one leading and one trailing newline so th
+         -at:                                                            
+      48 -    //   """          renders the same as  """text"""          
+      49 -    //   text                                                  
+      50 -    //   """                                                   
+      51 -    const content = rawContent.replace(/^\n/, '').replace(/\n$/
+         -, '');                                                         
+      52 -                                                               
+      53 -    // If the cursor is inside this match, skip rendering so th
+         -e user can                                                     
+      54 -    // edit the raw text normally.                             
+      29 +    // When the cursor is inside the block, remove all decorati
+         +ons so the user                                                
+      30 +    // sees and can edit the raw syntax (mirrors Obsidian's bol
+         +d/italic behaviour).                                           
+      31      const cursorInside = cursorPos > openIdx && cursorPos < clo
+          seEnd;
+      32  
+      33      if (!cursorInside) {
+      58 -      const isMultiLine = rawContent.includes('\n');           
+      59 -                                                               
+      34        if (isMultiLine) {
+      61 -        // Block decorations must cover full line ranges and re
+         -quire a                                                        
+      62 -        // StateField (not a ViewPlugin) — that's why we're her
+         -e.                                                             
+      63 -        const startLine = doc.lineAt(openIdx);                 
+      64 -        const endLine = doc.lineAt(closeEnd);                  
+      65 -        builder.add(                                           
+      66 -          startLine.from,                                      
+      67 -          endLine.to,                                          
+      68 -          Decoration.replace({                                 
+      69 -            widget: new TripleQuoteWidget(content),            
+      70 -            block: true,                                       
+      71 -          })                                                   
+      72 -        );                                                     
+      35 +        // Strategy: keep the content text in the document so t
+         +hat the cursor                                                 
+      36 +        // can navigate into and through the block naturally. O
+         +nly hide the                                                   
+      37 +        // three-character """ delimiters; style each line with
+         + Decoration.line.                                              
+      38 +        //                                                     
+      39 +        // Decoration.line is a point decoration (from == to ==
+         + line.from), so                                                
+      40 +        // it must be added BEFORE any range decoration at the 
+         +same position.                                                 
+      41 +                                                               
+      42 +        const openingLine = doc.lineAt(openIdx);               
+      43 +        const closingLine = doc.lineAt(closeIdx);              
+      44 +                                                               
+      45 +        // Opening """ line ─ style then hide the delimiter    
+      46 +        builder.add(openingLine.from, openingLine.from,        
+      47 +          Decoration.line({ class: 'triple-quote-open' }));    
+      48 +        builder.add(openIdx, openIdx + 3,                      
+      49 +          Decoration.replace({}));                             
+      50 +                                                               
+      51 +        // Content lines                                       
+      52 +        let pos = openingLine.to + 1; // step past the newline 
+         +after opening line                                             
+      53 +        while (pos <= closingLine.from) {                      
+      54 +          const line = doc.lineAt(pos);                        
+      55 +          if (line.number < closingLine.number) {              
+      56 +            builder.add(line.from, line.from,                  
+      57 +              Decoration.line({ class: 'triple-quote-content' }
+         +));                                                            
+      58 +          }                                                    
+      59 +          pos = line.to + 1;                                   
+      60 +        }                                                      
+      61 +                                                               
+      62 +        // Closing """ line ─ style THEN hide (ordering matters
+         + for equal from)                                               
+      63 +        builder.add(closingLine.from, closingLine.from,        
+      64 +          Decoration.line({ class: 'triple-quote-close' }));   
+      65 +        builder.add(closeIdx, closeIdx + 3,                    
+      66 +          Decoration.replace({}));                             
+      67 +                                                               
+      68        } else {
+      74 -        builder.add(                                           
+      75 -          openIdx,                                             
+      76 -          closeEnd,                                            
+      77 -          Decoration.replace({ widget: new TripleQuoteWidget(co
+         -ntent) })                                                      
+      78 -        );                                                     
+      69 +        // Single-line: hide both delimiters, mark the inner co
+         +ntent.                                                         
+      70 +        // All decorations are inline — no block flag, no Widge
+         +tType needed.                                                  
+      71 +        builder.add(openIdx, openIdx + 3, Decoration.replace({}
+         +));                                                            
+      72 +        if (closeIdx > openIdx + 3) {                          
+      73 +          builder.add(openIdx + 3, closeIdx,                   
+      74 +            Decoration.mark({ class: 'triple-quote-inline' }));
+      75 +        }                                                      
+      76 +        builder.add(closeIdx, closeIdx + 3, Decoration.replace(
+         +{}));                                                          
+      77        }
+      78      }
+      79  
+     ...
+       83    return builder.finish();
+       84  }
+       85  
+       88 -// ── StateField<DecorationSet> — the only CM6 type allowed to
+          - hold block decs ──                                           
+       86 +// ── StateField (required for Decoration.line — ViewPlugin ca
+          +nnot hold them) ───                                           
+       87  const tripleQuoteField = StateField.define({
+       88    create(state) {
+       89      return buildDecorations(state);
+       90    },
+       91    update(decorations, tr) {
+       94 -    // Rebuild whenever the document or selection changes.    
+       92      if (tr.docChanged || tr.selection) {
+       93        return buildDecorations(tr.state);
+       94      }
+       98 -    // Otherwise map existing decoration positions through any
+          - changes.                                                     
+       95      return decorations.map(tr.changes);
+       96    },
+       97    provide(field) {
+
+● Now update the CSS to match the new approach — line classes on .cm-line
+  elements instead of a single block widget:
+
+● Write(styles.css)
+  ⎿  Added 32 lines, removed 13 lines
+       1 -.triple-quote-block {                                          
+       2 -  display: inline-block; /* inline for same-line; block decorat
+         -ions wrap this anyway */                                       
+       1 +/* ── Single-line: the content between the hidden """ delimiter
+         +s ────────────── */                                            
+       2 +.triple-quote-inline {                                         
+       3    background-color: var(--background-secondary);
+       4 -  border-left: 4px solid var(--color-accent);                  
+       4    border-radius: 4px;
+       6 -  padding: 8px 14px;                                           
+       7 -  margin: 4px 0;                                               
+       8 -  font-family: var(--font-text);                               
+       9 -  font-size: var(--font-text-size);                            
+       5 +  padding: 2px 6px;                                            
+       6    color: var(--text-normal);
+      11 -  white-space: pre-wrap;                                       
+      12 -  word-break: break-word;                                      
+      13 -  line-height: var(--line-height-normal);                      
+       7  }
+       8  
+      16 -/* Hide the triple-quote delimiters themselves */              
+      17 -.triple-quote-hide {                                           
+      18 -  display: none;                                               
+       9 +/* ── Multi-line block: each role gets its own .cm-line class ─
+         +──────────────── */                                            
+      10 +                                                               
+      11 +/* The line that contained the opening """ — appears as a thin 
+         +top edge */                                                    
+      12 +.cm-line.triple-quote-open {                                   
+      13 +  background-color: var(--background-secondary);               
+      14 +  border-left: 4px solid var(--color-accent);                  
+      15 +  border-top: 1px solid var(--background-modifier-border);     
+      16 +  border-right: 1px solid var(--background-modifier-border);   
+      17 +  border-radius: 4px 4px 0 0;                                  
+      18 +  padding-left: 12px !important;                               
+      19  }
+      20 +                                                               
+      21 +/* Content lines */                                            
+      22 +.cm-line.triple-quote-content {                                
+      23 +  background-color: var(--background-secondary);               
+      24 +  border-left: 4px solid var(--color-accent);                  
+      25 +  border-right: 1px solid var(--background-modifier-border);   
+      26 +  padding-left: 12px !important;                               
+      27 +  color: var(--text-normal);                                   
+      28 +}                                                              
+      29 +                                                               
+      30 +/* The line that contained the closing """ — appears as a thin 
+         +bottom edge */                                                 
+      31 +.cm-line.triple-quote-close {                                  
+      32 +  background-color: var(--background-secondary);               
+      33 +  border-left: 4px solid var(--color-accent);                  
+      34 +  border-bottom: 1px solid var(--background-modifier-border);  
+      35 +  border-right: 1px solid var(--background-modifier-border);   
+      36 +  border-radius: 0 0 4px 4px;                                  
+      37 +  padding-left: 12px !important;                               
+      38 +}                                                              
+
+● Reload the plugin. Here's what changed and why it fixes both issues:
+
+  Click to place cursor — the content text is no longer replaced by a widget, so
+   a click maps to an actual document position naturally.
+
+  Up/down arrow navigation — same reason: the lines exist in the document, so
+  the cursor moves through them line by line. Only the """ delimiters (6 chars)
+  are hidden, not the content.
+
+  Visual appearance — the open/close lines look like thin strips (their only
+  content was """ which is now hidden), forming the top and bottom edges of the
+  box. Content lines get the background + left border.
+
+  Edit mode — clicking anywhere inside the block puts the cursor inside
+  [openIdx, closeEnd], which triggers the raw-text reveal so you can see and
+  edit the """ syntax directly, same as before.
+
+✻ Sautéed for 7m 14s
+
+❯ Works like a charm. But now I want to add another thing. Can you make it so   
+  that "# ```" works exactly the same as "```"? As in, the following syntax #   
+  ```                                                                           
+  code                                                                          
+  block                                                                         
+  # ``` should result in the exact same syntax as ```                           
+  code                                                                          
+  block                                                                         
+  ```.                                                                          
+
+  Read 1 file (ctrl+o to expand)
+
+● The key challenge here is that both detectors need to feed decorations into a
+  single RangeSetBuilder in document order. I'll collect all blocks first, sort
+  them, then emit decorations.
+
+● Write(main.js)
+  ⎿  Added 118 lines, removed 75 lines
+        4  const { Decoration, EditorView } = require('@codemirror/view')
+           ;
+        5  const { StateField, RangeSetBuilder } = require('@codemirror/s
+           tate');
+        6  
+        7 -// ── Decoration builder ─────────────────────────────────────
+          -────────────────────                                          
+        8 -function buildDecorations(state) {                            
+        9 -  const builder = new RangeSetBuilder();                      
+       10 -  const doc = state.doc;                                      
+       11 -  const text = doc.toString();                                
+       12 -  const cursorPos = state.selection.main.head;                
+        7 +// ── Block collectors ───────────────────────────────────────
+          +────────────────────                                          
+        8  
+        9 +// Find all """...""" spans in the raw text.                  
+       10 +function collectTripleQuoteBlocks(text) {                     
+       11 +  const blocks = [];                                          
+       12    const OPEN = '"""';
+       13    let searchFrom = 0;
+       16 -                                                              
+       14    while (true) {
+       15      const openIdx = text.indexOf(OPEN, searchFrom);
+       16      if (openIdx === -1) break;
+       20 -                                                              
+       21 -    const contentStart = openIdx + 3;                         
+       22 -    const closeIdx = text.indexOf(OPEN, contentStart);        
+       23 -    if (closeIdx === -1) break; // unclosed — stop            
+       24 -                                                              
+       17 +    const closeIdx = text.indexOf(OPEN, openIdx + 3);         
+       18 +    if (closeIdx === -1) break;                               
+       19      const closeEnd = closeIdx + 3;
+       26 -    const rawContent = text.slice(contentStart, closeIdx);    
+       27 -    const isMultiLine = rawContent.includes('\n');            
+       20 +    blocks.push({ type: 'triple-quote', from: openIdx, to: clo
+          +seEnd, openIdx, closeIdx });                                  
+       21 +    searchFrom = closeEnd;                                    
+       22 +  }                                                           
+       23 +  return blocks;                                              
+       24 +}                                                             
+       25  
+       29 -    // When the cursor is inside the block, remove all decorat
+          -ions so the user                                              
+       30 -    // sees and can edit the raw syntax (mirrors Obsidian's bo
+          -ld/italic behaviour).                                         
+       31 -    const cursorInside = cursorPos > openIdx && cursorPos < cl
+          -oseEnd;                                                       
+       26 +// Find all  # ```...# ```  fences (line-based).              
+       27 +// Opening line: starts with  # ```  optionally followed by a 
+          +language name.                                                
+       28 +// Closing line: exactly  # ```  (with optional trailing white
+          +space).                                                       
+       29 +const OPEN_FENCE  = /^# ```\w*\s*$/;                          
+       30 +const CLOSE_FENCE = /^# ```\s*$/;                             
+       31  
+       33 -    if (!cursorInside) {                                      
+       34 -      if (isMultiLine) {                                      
+       35 -        // Strategy: keep the content text in the document so 
+          -that the cursor                                               
+       36 -        // can navigate into and through the block naturally. 
+          -Only hide the                                                 
+       37 -        // three-character """ delimiters; style each line wit
+          -h Decoration.line.                                            
+       38 -        //                                                    
+       39 -        // Decoration.line is a point decoration (from == to =
+          -= line.from), so                                              
+       40 -        // it must be added BEFORE any range decoration at the
+          - same position.                                               
+       32 +function collectHashFenceBlocks(doc) {                        
+       33 +  const blocks = [];                                          
+       34 +  let openLine = null;                                        
+       35 +  for (let i = 1; i <= doc.lines; i++) {                      
+       36 +    const line = doc.line(i);                                 
+       37 +    if (!openLine) {                                          
+       38 +      if (OPEN_FENCE.test(line.text)) openLine = line;        
+       39 +    } else {                                                  
+       40 +      if (CLOSE_FENCE.test(line.text)) {                      
+       41 +        blocks.push({ type: 'hash-fence', from: openLine.from,
+          + to: line.to, openLine, closeLine: line });                   
+       42 +        openLine = null;                                      
+       43 +      }                                                       
+       44 +    }                                                         
+       45 +  }                                                           
+       46 +  return blocks;                                              
+       47 +}                                                             
+       48  
+       42 -        const openingLine = doc.lineAt(openIdx);              
+       43 -        const closingLine = doc.lineAt(closeIdx);             
+       49 +// ── Decoration emitters ────────────────────────────────────
+          +────────────────────                                          
+       50 +// Each function receives an already-open RangeSetBuilder and 
+          +appends to it.                                                
+       51 +// Caller guarantees decorations are added in document order. 
+       52  
+       45 -        // Opening """ line ─ style then hide the delimiter   
+       46 -        builder.add(openingLine.from, openingLine.from,       
+       47 -          Decoration.line({ class: 'triple-quote-open' }));   
+       48 -        builder.add(openIdx, openIdx + 3,                     
+       49 -          Decoration.replace({}));                            
+       53 +function emitTripleQuote(builder, doc, text, block) {         
+       54 +  const { openIdx, closeIdx } = block;                        
+       55 +  const rawContent = text.slice(openIdx + 3, closeIdx);       
+       56 +  const isMultiLine = rawContent.includes('\n');              
+       57  
+       51 -        // Content lines                                      
+       52 -        let pos = openingLine.to + 1; // step past the newline
+          - after opening line                                           
+       53 -        while (pos <= closingLine.from) {                     
+       54 -          const line = doc.lineAt(pos);                       
+       55 -          if (line.number < closingLine.number) {             
+       56 -            builder.add(line.from, line.from,                 
+       57 -              Decoration.line({ class: 'triple-quote-content' 
+          -}));                                                          
+       58 -          }                                                   
+       59 -          pos = line.to + 1;                                  
+       60 -        }                                                     
+       58 +  if (isMultiLine) {                                          
+       59 +    const openLine  = doc.lineAt(openIdx);                    
+       60 +    const closeLine = doc.lineAt(closeIdx);                   
+       61  
+       62 -        // Closing """ line ─ style THEN hide (ordering matter
+          -s for equal from)                                             
+       63 -        builder.add(closingLine.from, closingLine.from,       
+       64 -          Decoration.line({ class: 'triple-quote-close' }));  
+       65 -        builder.add(closeIdx, closeIdx + 3,                   
+       66 -          Decoration.replace({}));                            
+       62 +    // Point decoration (from==to) must come before any range 
+          +decoration at                                                 
+       63 +    // the same position — that's the order we add them in thr
+          +oughout.                                                      
+       64 +    builder.add(openLine.from, openLine.from, Decoration.line(
+          +{ class: 'triple-quote-open' }));                             
+       65 +    builder.add(openIdx, openIdx + 3, Decoration.replace({}));
+       66  
+       68 -      } else {                                                
+       69 -        // Single-line: hide both delimiters, mark the inner c
+          -ontent.                                                       
+       70 -        // All decorations are inline — no block flag, no Widg
+          -etType needed.                                                
+       71 -        builder.add(openIdx, openIdx + 3, Decoration.replace({
+          -}));                                                          
+       72 -        if (closeIdx > openIdx + 3) {                         
+       73 -          builder.add(openIdx + 3, closeIdx,                  
+       74 -            Decoration.mark({ class: 'triple-quote-inline' }))
+          -;                                                             
+       75 -        }                                                     
+       76 -        builder.add(closeIdx, closeIdx + 3, Decoration.replace
+          -({}));                                                        
+       67 +    let pos = openLine.to + 1;                                
+       68 +    while (pos <= closeLine.from) {                           
+       69 +      const line = doc.lineAt(pos);                           
+       70 +      if (line.number < closeLine.number) {                   
+       71 +        builder.add(line.from, line.from, Decoration.line({ cl
+          +ass: 'triple-quote-content' }));                              
+       72        }
+       73 +      pos = line.to + 1;                                      
+       74      }
+       75  
+       80 -    searchFrom = closeEnd;                                    
+       76 +    builder.add(closeLine.from, closeLine.from, Decoration.lin
+          +e({ class: 'triple-quote-close' }));                          
+       77 +    builder.add(closeIdx, closeIdx + 3, Decoration.replace({})
+          +);                                                            
+       78 +  } else {                                                    
+       79 +    builder.add(openIdx, openIdx + 3, Decoration.replace({}));
+       80 +    if (closeIdx > openIdx + 3) {                             
+       81 +      builder.add(openIdx + 3, closeIdx, Decoration.mark({ cla
+          +ss: 'triple-quote-inline' }));                                
+       82 +    }                                                         
+       83 +    builder.add(closeIdx, closeIdx + 3, Decoration.replace({})
+          +);                                                            
+       84    }
+       85 +}                                                             
+       86  
+       87 +function emitHashFence(builder, doc, block) {                 
+       88 +  const { openLine, closeLine } = block;                      
+       89 +                                                              
+       90 +  // Opening fence line: style it, then hide the "# ```" text.
+       91 +  builder.add(openLine.from, openLine.from, Decoration.line({ 
+          +class: 'hash-fence-open' }));                                 
+       92 +  builder.add(openLine.from, openLine.to, Decoration.replace({
+          +}));                                                          
+       93 +                                                              
+       94 +  // Content lines.                                           
+       95 +  let pos = openLine.to + 1;                                  
+       96 +  while (pos <= closeLine.from) {                             
+       97 +    const line = doc.lineAt(pos);                             
+       98 +    if (line.number < closeLine.number) {                     
+       99 +      builder.add(line.from, line.from, Decoration.line({ clas
+          +s: 'hash-fence-content' }));                                  
+      100 +    }                                                         
+      101 +    pos = line.to + 1;                                        
+      102 +  }                                                           
+      103 +                                                              
+      104 +  // Closing fence line: style it, then hide the "# ```" text.
+      105 +  builder.add(closeLine.from, closeLine.from, Decoration.line(
+          +{ class: 'hash-fence-close' }));                              
+      106 +  builder.add(closeLine.from, closeLine.to, Decoration.replace
+          +({}));                                                        
+      107 +}                                                             
+      108 +                                                              
+      109 +// ── Main builder ───────────────────────────────────────────
+          +────────────────────                                          
+      110 +                                                              
+      111 +function buildDecorations(state) {                            
+      112 +  const builder = new RangeSetBuilder();                      
+      113 +  const doc    = state.doc;                                   
+      114 +  const text   = doc.toString();                              
+      115 +  const cursor = state.selection.main.head;                   
+      116 +                                                              
+      117 +  // Collect blocks from both syntaxes, merge in document orde
+          +r.                                                            
+      118 +  const blocks = [                                            
+      119 +    ...collectTripleQuoteBlocks(text),                        
+      120 +    ...collectHashFenceBlocks(doc),                           
+      121 +  ].sort((a, b) => a.from - b.from);                          
+      122 +                                                              
+      123 +  for (const block of blocks) {                               
+      124 +    // If cursor is inside this block, skip all decorations so
+          + the raw syntax                                               
+      125 +    // is visible and editable (mirrors Obsidian's bold/italic
+          + behaviour).                                                  
+      126 +    if (cursor > block.from && cursor < block.to) continue;   
+      127 +                                                              
+      128 +    if (block.type === 'triple-quote') {                      
+      129 +      emitTripleQuote(builder, doc, text, block);             
+      130 +    } else {                                                  
+      131 +      emitHashFence(builder, doc, block);                     
+      132 +    }                                                         
+      133 +  }                                                           
+      134 +                                                              
+      135    return builder.finish();
+      136  }
+      137  
+       86 -// ── StateField (required for Decoration.line — ViewPlugin ca
+          -nnot hold them) ───                                           
+       87 -const tripleQuoteField = StateField.define({                  
+       88 -  create(state) {                                             
+       89 -    return buildDecorations(state);                           
+      138 +// ── StateField (Decoration.line requires StateField, not Vie
+          +wPlugin) ───────────                                          
+      139 +const decorationField = StateField.define({                   
+      140 +  create(state)     { return buildDecorations(state); },      
+      141 +  update(deco, tr)  {                                         
+      142 +    if (tr.docChanged || tr.selection) return buildDecorations
+          +(tr.state);                                                   
+      143 +    return deco.map(tr.changes);                              
+      144    },
+       91 -  update(decorations, tr) {                                   
+       92 -    if (tr.docChanged || tr.selection) {                      
+       93 -      return buildDecorations(tr.state);                      
+       94 -    }                                                         
+       95 -    return decorations.map(tr.changes);                       
+       96 -  },                                                          
+       97 -  provide(field) {                                            
+       98 -    return EditorView.decorations.from(field);                
+       99 -  },                                                          
+      145 +  provide(field)    { return EditorView.decorations.from(field
+          +); },                                                         
+      146  });
+      147  
+      148  // ── Plugin entry point ─────────────────────────────────────
+           ────────────────────
+      149  class TripleQuoteBlockPlugin extends Plugin {
+      104 -  async onload() {                                            
+      105 -    this.registerEditorExtension(tripleQuoteField);           
+      106 -  }                                                           
+      107 -                                                              
+      108 -  onunload() {}                                               
+      150 +  async onload()  { this.registerEditorExtension(decorationFie
+          +ld); }                                                        
+      151 +  onunload()      {}                                          
+      152  }
+      153  
+      154  module.exports = TripleQuoteBlockPlugin;
+
+● Now add the hash-fence CSS, styled to match Obsidian's native code block
+  appearance:
+
+  Read 1 file (ctrl+o to expand)
+
+● Update(styles.css)
+  ⎿  Added 27 lines
+      36    border-radius: 0 0 4px 4px;
+      37    padding-left: 12px !important;
+      38  }
+      39 +                                                               
+      40 +/* ── # ``` code fence block ──────────────────────────────────
+         +────────────────── */                                          
+      41 +/* Mirrors Obsidian's native code block appearance using the sa
+         +me CSS variables  */                                           
+      42 +                                                               
+      43 +.cm-line.hash-fence-open {                                     
+      44 +  background-color: var(--code-background);                    
+      45 +  border: 1px solid var(--background-modifier-border);         
+      46 +  border-bottom: none;                                         
+      47 +  border-radius: 4px 4px 0 0;                                  
+      48 +}                                                              
+      49 +                                                               
+      50 +.cm-line.hash-fence-content {                                  
+      51 +  background-color: var(--code-background);                    
+      52 +  border-left: 1px solid var(--background-modifier-border);    
+      53 +  border-right: 1px solid var(--background-modifier-border);   
+      54 +  font-family: var(--font-monospace);                          
+      55 +  font-size: var(--code-size);                                 
+      56 +  color: var(--code-normal);                                   
+      57 +  padding-left: 12px !important;                               
+      58 +}                                                              
+      59 +                                                               
+      60 +.cm-line.hash-fence-close {                                    
+      61 +  background-color: var(--code-background);                    
+      62 +  border: 1px solid var(--background-modifier-border);         
+      63 +  border-top: none;                                            
+      64 +  border-radius: 0 0 4px 4px;                                  
+      65 +}                                                              
+
+● Reload the plugin. Here's how the new syntax works:
+
+  # ```
+  code goes here
+  # ```
+
+  # ```gdscript
+  func foo():
+      pass
+  # ```
+
+  A few notes on the design:
+
+  - Language tags are supported on the opening fence (# ```gdscript, # 
+  ```python, etc.) and ignored on the close, matching standard markdown fence
+  rules. The tag is detected but not used for highlighting — that would require
+  a full language parser.
+  - Cursor-inside edit mode works identically to the triple-quote blocks — move
+  your cursor into the block and the raw # ```  syntax reappears.
+  - Arrow key / click navigation works for the same reason as before — content
+  lines are never replaced, only styled.
+  - Ordering — both block types are collected first, sorted by document
+  position, then decorations are emitted in one pass. This prevents
+  RangeSetBuilder ordering violations if the two syntaxes ever appear
+  interleaved.
+
+✻ Cooked for 2m 40s
+
+❯ I changed my mind. I want the syntax to be " # ```" instead of "# ```". The   
+  plugin code you gave was good though. It didn't have a copy code thing        
+  though.                                                                       
+
+● Two changes: regex update for the leading space, and add a CopyButtonWidget
+  placed at the end of the opening fence line. Let me update both files.
+
+  Read 1 file (ctrl+o to expand)
+
+● Two changes: update the regexes and add a CopyButton widget at the end of the
+  opening fence line.
+
+● Update(main.js)
+  ⎿  Added 26 lines, removed 1 line
+       1  'use strict';
+       2  
+       3  const { Plugin } = require('obsidian');
+       4 -const { Decoration, EditorView } = require('@codemirror/view');
+       4 +const { Decoration, EditorView, WidgetType } = require('@codemi
+         +rror/view');                                                   
+       5  const { StateField, RangeSetBuilder } = require('@codemirror/st
+          ate');
+       6  
+       7 +// ── Copy button widget ──────────────────────────────────────
+         +───────────────────                                            
+       8 +class CopyButton extends WidgetType {                          
+       9 +  constructor(content) {                                       
+      10 +    super();                                                   
+      11 +    this.content = content;                                    
+      12 +  }                                                            
+      13 +                                                               
+      14 +  toDOM() {                                                    
+      15 +    const btn = document.createElement('button');              
+      16 +    btn.className = 'hash-fence-copy-btn';                     
+      17 +    btn.textContent = 'Copy';                                  
+      18 +    btn.addEventListener('click', (e) => {                     
+      19 +      e.preventDefault();                                      
+      20 +      e.stopPropagation();                                     
+      21 +      navigator.clipboard.writeText(this.content).then(() => { 
+      22 +        btn.textContent = 'Copied!';                           
+      23 +        setTimeout(() => { btn.textContent = 'Copy'; }, 2000); 
+      24 +      });                                                      
+      25 +    });                                                        
+      26 +    return btn;                                                
+      27 +  }                                                            
+      28 +                                                               
+      29 +  ignoreEvent() { return false; }                              
+      30 +}                                                              
+      31 +                                                               
+      32  // ── Block collectors ────────────────────────────────────────
+          ───────────────────
+      33  
+      34  // Find all """...""" spans in the raw text.
+
+● Update(main.js)
+  ⎿  Added 5 lines, removed 5 lines
+      48    return blocks;
+      49  }
+      50  
+      51 -// Find all  # ```...# ```  fences (line-based).               
+      52 -// Opening line: starts with  # ```  optionally followed by a l
+         -anguage name.                                                  
+      53 -// Closing line: exactly  # ```  (with optional trailing whites
+         -pace).                                                         
+      54 -const OPEN_FENCE  = /^# ```\w*\s*$/;                           
+      55 -const CLOSE_FENCE = /^# ```\s*$/;                              
+      51 +// Find all  " # ```"..." # ```"  fences (line-based).         
+      52 +// Opening line: exactly " # ```" optionally followed by a lang
+         +uage name.                                                     
+      53 +// Closing line: exactly " # ```" (with optional trailing white
+         +space).                                                        
+      54 +const OPEN_FENCE  = /^ # ```\w*\s*$/;                          
+      55 +const CLOSE_FENCE = /^ # ```\s*$/;                             
+      56  
+      57  function collectHashFenceBlocks(doc) {
+      58    const blocks = [];
+
+● Now update emitHashFence to extract the content and attach the copy button:
+
+● Update(main.js)
+  ⎿  Added 13 lines, removed 2 lines
+      112  function emitHashFence(builder, doc, block) {
+      113    const { openLine, closeLine } = block;
+      114  
+      115 -  // Opening fence line: style it, then hide the "# ```" text.
+      115 +  // Extract the content between the fences for the copy butto
+          +n.                                                            
+      116 +  // openLine.to+1 = first char after opening fence's newline 
+          +(start of content).                                           
+      117 +  // closeLine.from = start of closing fence line; subtract 1 
+          +to exclude the                                                
+      118 +  // newline that precedes it, giving us content without a tra
+          +iling newline.                                                
+      119 +  const content = doc.sliceString(openLine.to + 1, closeLine.f
+          +rom - 1);                                                     
+      120 +                                                              
+      121 +  // Opening fence line: style it, hide the " # ```" text, add
+          + copy button.                                                 
+      122 +  // Point decorations (from==to) must be added before range d
+          +ecorations at                                                 
+      123 +  // the same position. The widget goes at openLine.to (end of
+          + the line,                                                    
+      124 +  // after the collapsed replace range) with side:1 so it rend
+          +ers after it.                                                 
+      125    builder.add(openLine.from, openLine.from, Decoration.line({ 
+           class: 'hash-fence-open' }));
+      126    builder.add(openLine.from, openLine.to, Decoration.replace({
+           }));
+      127 +  builder.add(openLine.to, openLine.to,                       
+      128 +    Decoration.widget({ widget: new CopyButton(content), side:
+          + 1 }));                                                       
+      129  
+      130    // Content lines.
+      131    let pos = openLine.to + 1;
+     ...
+      137      pos = line.to + 1;
+      138    }
+      139  
+      129 -  // Closing fence line: style it, then hide the "# ```" text.
+      140 +  // Closing fence line: style it, then hide the " # ```" text
+          +.                                                             
+      141    builder.add(closeLine.from, closeLine.from, Decoration.line(
+           { class: 'hash-fence-close' }));
+      142    builder.add(closeLine.from, closeLine.to, Decoration.replace
+           ({}));
+      143  }
+
+● Now add the copy button styles:
+
+● Update(styles.css)
+  ⎿  Added 22 lines
+      45    border: 1px solid var(--background-modifier-border);
+      46    border-bottom: none;
+      47    border-radius: 4px 4px 0 0;
+      48 +  position: relative; /* anchor for the absolutely-positioned c
+         +opy button */                                                  
+      49  }
+      50  
+      51 +.hash-fence-copy-btn {                                         
+      52 +  position: absolute;                                          
+      53 +  right: 8px;                                                  
+      54 +  top: 50%;                                                    
+      55 +  transform: translateY(-50%);                                 
+      56 +  padding: 2px 10px;                                           
+      57 +  font-size: 12px;                                             
+      58 +  line-height: 1.4;                                            
+      59 +  cursor: pointer;                                             
+      60 +  background: var(--interactive-normal);                       
+      61 +  border: 1px solid var(--background-modifier-border);         
+      62 +  border-radius: 4px;                                          
+      63 +  color: var(--text-muted);                                    
+      64 +  font-family: var(--font-interface);                          
+      65 +}                                                              
+      66 +                                                               
+      67 +.hash-fence-copy-btn:hover {                                   
+      68 +  background: var(--interactive-hover);                        
+      69 +  color: var(--text-normal);                                   
+      70 +}                                                              
+      71 +                                                               
+      72  .cm-line.hash-fence-content {
+      73    background-color: var(--code-background);
+      74    border-left: 1px solid var(--background-modifier-border);
+
+● Reload the plugin. Summary of what changed:
+
+  - Syntax: fences now require a leading space — # ``` (and  # ```gdscript,
+  etc.)
+  - Copy button: appears on the right side of the opening fence line. Clicking
+  it copies the content between the fences to the clipboard and briefly shows
+  "Copied!" before reverting. The button is absolutely positioned so it doesn't
+  affect text layout.
+
+  The content copied excludes the fence lines themselves — just the raw code
+  between them, with no trailing newline.
+
+✻ Baked for 4m 9s
