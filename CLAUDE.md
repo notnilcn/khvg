@@ -109,22 +109,49 @@ Health bar, XP bar, weapons container (shows currently equipped items by slot), 
 - **Single-node is fine** at this scale — horizontal scaling escape hatch is spinning up additional server instances with shared persistence, not built-in clustering
 - **Estimated server cost** at 4096 players: ~$300–500/month (financially sound at any reasonable monetization)
 
-## SpacetimeDB Evaluation (decided: defer, revisit if persistent world is added)
+## SpacetimeDB Backend (decided: implement on maincloud)
 
-SpacetimeDB is a relational database that is also a server: tables + reducers, clients subscribe to row subsets, scheduled reducers act as game ticks. Evaluated as a backend option.
+SpacetimeDB is a relational database that is also a server: tables + reducers, clients subscribe to row subsets, scheduled reducers act as game ticks. Deployed on SpacetimeDB maincloud (registered via GitHub account).
 
-**Why it doesn't fit the pure bullet-hell case:**
-- Bullets, player movement, and enemy movement don't need to be stored in a persistent table — they're transient simulation state
-- Godot's `PhysicsServer2D` and parametric bullet math already handle physics better than manual reducer arithmetic
-- No official Godot SDK; integration would require a custom GDNative/GDExtension layer
-- Adding SpacetimeDB for purely ephemeral state adds infrastructure complexity with no benefit
+**Module language: C#.** The C# SDK lives in `spacetimedb/sdks/csharp/`. The SpacetimeDB source repo is cloned at `spacetimedb/` — this is reference material; the actual server runs on maincloud, not locally.
 
-**Why it becomes compelling if a persistent interactive world is added (BitCraft-style):**
-- Buildings, terrain edits, player-owned structures, crafting state — this is exactly what SpacetimeDB's persistent tables are good at
-- Live-update model: reducer logic changes deploy without disconnecting clients; only table schema changes (type changes, column removal) require a new client build
-- The parametric bullet system is SpacetimeDB-friendly since bullets need only a spawn event — no per-tick position writes to the DB
+**Key architectural decision: clients connect to SpacetimeDB only.** There is no separate Godot listen-server process for game logic. All server authority runs inside SpacetimeDB C# reducers. This trades operational simplicity (two processes) for implementation simplicity (AoI, fan-out, and persistence are handled by SpacetimeDB for free).
 
-**Decision:** Keep architecture SpacetimeDB-compatible (don't design against it), but don't integrate it until/unless a persistent world is added. The bullet-hell core runs fine on Godot's listen-server model.
+### Table Design
+
+| Table | Contents | Frequency |
+|-------|----------|-----------|
+| `PlayerAccount` | Identity, auth, persistent | On join/leave |
+| `CharacterData` | Stats, level, XP | On level-up, death |
+| `Inventory` | Equipped items, backpack | On item change |
+| `RealmMembership` | Which realm shard | On join/transfer |
+| `PlayerPosition` | Current x/y per player | 20Hz client writes |
+| `Enemy` | Enemy instances + authoritative position | 2Hz server writes |
+| `BulletPattern` | Parametric spawn events only — no per-tick positions | On fire |
+
+### Reducer Design
+
+| Reducer | Trigger | Does |
+|---------|---------|------|
+| `PlayerMove` | Client call, 20Hz | Updates `PlayerPosition` row |
+| `PlayerJoin/Leave` | Connection events | Creates/cleans up account + realm rows |
+| `Spawner` | Scheduled | Creates `Enemy` rows near players |
+| `EnemyAI` | Scheduled 10Hz | Computes new enemy positions; writes to `Enemy` at ~2Hz — clients interpolate between snapshots |
+| `BulletHitCheck` | Scheduled 20Hz | Evaluates parametric bullet positions vs `PlayerPosition`, applies damage |
+
+### AoI
+
+Clients subscribe to SQL queries filtered by realm + spatial chunk range. SpacetimeDB fans out row diffs automatically — no custom broadcast code needed. Re-subscribe when crossing chunk boundaries.
+
+### Enemy Position Sync Strategy
+
+`EnemyAI` runs at 10Hz but only writes `Enemy` positions to the DB at ~2Hz. Clients receive infrequent authoritative snapshots and fill gaps by running the same deterministic AI logic locally (snapshot interpolation). Since AI is deterministic given player positions (which all clients receive via subscription), drift is minimal and corrects silently on next snapshot.
+
+No persistent in-memory state exists between reducer calls — all simulation state must live in tables. The low-write-frequency approach works because clients have enough information to predict correctly.
+
+### Bullet System
+
+Identical to original parametric design. `EnemyAI` reducer writes a `BulletPattern` row (pattern_id, origin, spawn_time, params) when an enemy fires. Clients subscribe to `BulletPattern` and reconstruct bullet positions locally using the same deterministic function. Server (`BulletHitCheck` reducer) evaluates the same function for authoritative hit detection. No per-tick bullet position sync.
 
 ## Hex Grid (future — not yet implemented)
 
@@ -147,62 +174,29 @@ Storage: `Dictionary<(int q, int r), CellData>` — O(1) lookup by cell. Hex siz
 
 **Scope note:** The hex math itself is trivial (two conversion functions, one afternoon). The systems on top — crafting, resource nodes, persistence, griefing prevention, destruction — are months of work. To future-proof without committing: pick hex size `R`, write the two conversion functions, stop there.
 
-## C# Conversion (deferred)
+## C# Conversion (needed for SpacetimeDB integration)
 
-32 of 33 core files were translated from GDScript to C# and committed to `claude/evaluate-spacetimedb-backend-CiPQN`. The original `.gd` files are untouched; the project still runs on GDScript. `Spawner.cs` was not written before the conversion was deferred.
+32 of 33 core files were translated from GDScript to C# and committed to `claude/evaluate-spacetimedb-backend-CiPQN`. The original `.gd` files are untouched; the project still runs on GDScript. `Spawner.cs` was not written.
 
 The `.tscn`/`.tres` files and `project.godot` autoload paths still point to `.gd` files. To activate the C# versions: switch Godot to the .NET build, update autoload paths in `project.godot`, update `script` references in `.tscn` files. The project already has a `[dotnet]` section in `project.godot` with `assembly_name="VampireSurvivorsTemplate"`.
 
-## Target Architecture (not yet implemented — priority order)
+The SpacetimeDB C# client SDK (`spacetimedb/sdks/csharp/`) will be added to the Godot .NET project. The server module is a separate C# project initialized via `spacetime init --lang csharp`.
 
-### Networking Model
-- **Listen-server / dedicated server** via WebSocket (required for HTML5 export)
-- **Hybrid authority:** client-authoritative player movement, server-authoritative damage and hit detection
-- **Tick-rate by entity type:**
-  - Players: 20Hz positional sync
-  - Enemies: 10Hz (client interpolates between ticks)
-  - Bullets: spawn/destroy events only — no positional sync (see Bullet System below)
-- **Batched state packets:** one world-state packet per tick per client replacing all per-entity MultiplayerSynchronizers and individual position RPCs
+## Target Architecture (not yet implemented)
 
-### Area of Interest (AoI)
-Server only sends entities within each client's viewport + margin. Critical for scale — without this, broadcasting 850 enemy positions to 85 players every tick is unacceptable bandwidth. Underpins everything; implement first.
-
-### Spatial Grid
-Server maintains a uniform spatial hash grid for:
-- AoI queries (which entities are near player X?)
-- Enemy target selection
-- Bullet hit detection (only check bullets against players in the same cell)
-
-Replaces the current O(N×M) per-frame brute-force targeting.
-
-### Bullet System (parametric patterns)
-Bullets are **not scene nodes on the server** and **not synced as positions**. Instead:
-- Server defines `BulletPattern` types, each with a `get_position(bullet_index, elapsed_time) -> Vector2` function
-- On fire: server sends a small spawn event (pattern_id + params) to clients in AoI
-- Client reconstructs bullet positions locally using the same deterministic function — no further sync needed
-- Server evaluates the same function each tick for swept CCD hit detection
-- Patterns outlive the enemy that fired them (enemy death does not cancel in-flight patterns)
-- Client pools visual-only bullet nodes; server tracks patterns as lightweight data structs (no nodes)
-
-### Hit Detection
-- **Enemy bullets → player:** server-computed. Each tick the server evaluates pattern functions and runs swept CCD (line segment vs circle) against player hitboxes using the spatial grid.
-- **Player attacks → enemy:** client-reports, server validates (existing hybrid model — keep, but tighten damage validation so server checks claimed damage against actual weapon stats).
+The networking model is SpacetimeDB maincloud — see SpacetimeDB Backend section above for the full design. Notes below cover client-side concerns that apply regardless of backend.
 
 ### Entity Pooling
 - Pre-allocate max enemy visual nodes and max bullet visual nodes on clients at scene load
 - Avoids per-frame `Node.new()` / `queue_free()` and GC hitches at 2000+ bullets
-- Server-side: enemies use `PhysicsServer2D` directly (already done); bullets are plain data structs
 
-### Lag Detection (dead man's switch)
-- Client sends a dedicated heartbeat packet every ~250ms
-- Server tracks `last_heartbeat[peer_id]`; if gap exceeds ~750ms, marks player `is_lagging = true`
-- If player dies while `is_lagging`: respawn at spawn point instead of death
-- When lag clears: server sends "respawn at position X" event; client resets health + position
-- Clean disconnects (WebSocket close event) handled separately — no heartbeat needed for those
+### Client-Side Simulation
+- Clients run deterministic enemy AI locally between 2Hz snapshots from SpacetimeDB
+- Clients reconstruct bullet positions locally from `BulletPattern` spawn events using parametric math
+- Both require the client and server to use identical algorithms and share the same inputs (player positions via subscription)
 
 ### Known Issues in Current Codebase (fix before shipping)
-- **Client can fake damage:** `report_hit()` accepts client-supplied damage amount with no validation against actual weapon stats. Server must look up attacker's weapon and compare.
-- **No WebSocket heartbeat:** connections silently die after ~10min idle. Add ping every 30s.
+- **Client can fake damage:** `report_hit()` accepts client-supplied damage amount with no validation against actual weapon stats. `BulletHitCheck` reducer must validate against actual weapon stats stored server-side.
 - **No position validation:** server doesn't reject teleport-speed movement updates.
 - **Late-join race condition:** player respawn during another client's join sequence can result in the joining client missing the respawned player.
 

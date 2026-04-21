@@ -1,7 +1,7 @@
 [
   "system3-relay",
-  "custom-sort",
   "gdscript-syntax-highlighting",
   "triple-quote-blocks",
+  "custom-sort",
   "obsidian-custom-file-extensions-plugin"
 ]

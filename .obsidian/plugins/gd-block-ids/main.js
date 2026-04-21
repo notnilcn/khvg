@@ -62,7 +62,7 @@ module.exports = class GdBlockIdsPlugin extends Plugin {
         // Matches: anything + whitespace + # ^identifier (at end of line)
         const match = line.match(/\s#\s\^([\w-]+)\s*$/);
         if (match) {
-          const id = match[1];
+          const id = match[1].toLowerCase();
           blockIds[id] = {
             id: id,
             position: {

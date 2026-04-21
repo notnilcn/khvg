@@ -11,6 +11,9 @@ MODIFIED:
   3. app.metadataCache.getCache: monkey-patched to replace the hardcoded
      "md" extension check, so heading lookups work for custom extensions,
      fixing [[note.gd#Heading]] link resolution.
+  4. _injectFencedBlockIds: on load and on file save, scans custom-extension
+     files for lines ending with blockid^some-id inside fenced code blocks and
+     injects them into the metadata cache, enabling [[note.gd#^some-id]] links.
 */
 
 var __defProp = Object.defineProperty;
@@ -332,6 +335,25 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
     // (sitting in fileCache with a real hash but no metadataCache entry,
     // or with hash: '' from before this plugin was installed).
     this._reindexCustomFiles();
+
+    // Inject fenced blockid^ids for all custom-extension files on load.
+    // We wait briefly to let the metadata cache finish its initial indexing
+    // pass before we try to write into it.
+    setTimeout(async () => {
+      const customExts = this._getCustomMarkdownExts();
+      for (const file of this.app.vault.getFiles()) {
+        if (customExts.has(file.extension)) {
+          await this._injectFencedBlockIds(file);
+        }
+      }
+    }, 3000);
+
+    // Re-inject whenever a custom-extension file is saved.
+    this._fencedBlockIdEventRef = this.app.vault.on('modify', async (file) => {
+      if (this._getCustomMarkdownExts().has(file.extension)) {
+        await this._injectFencedBlockIds(file);
+      }
+    });
   }
 
   // -------------------------------------------------------------------------
@@ -362,8 +384,7 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
     // --- Patch 1: computeFileMetadataAsync ---
     const originalCompute = proto.computeFileMetadataAsync;
     proto._cfe_originalCompute = originalCompute;
-    const pluginInstance = this;
-    proto.computeFileMetadataAsync = async function(file) {
+    proto.computeFileMetadataAsync = function(file) {
       if (
         file &&
         file.extension !== "md" &&
@@ -372,14 +393,10 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
         const realExt = file.extension;
         file.extension = "md";
         try {
-          await originalCompute.call(this, file);
+          return originalCompute.call(this, file);
         } finally {
           file.extension = realExt;
         }
-        // After the standard indexer runs, inject any ^block-ids that appear
-        // inside fenced code blocks (the markdown parser strips these normally).
-        await pluginInstance._injectFencedBlockIds(file);
-        return;
       }
       return originalCompute.call(this, file);
     };
@@ -414,71 +431,6 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
     };
 
     proto._cfe_patched = true;
-  }
-
-  // -------------------------------------------------------------------------
-  // _injectFencedBlockIds
-  //
-  // After computeFileMetadataAsync runs, the markdown parser has already
-  // stripped any ^block-ids that appear inside fenced code blocks. This
-  // method re-scans the raw file content for lines matching:
-  //
-  //   <anything>  # ^some-id        (at end of line, with a space before #)
-  //
-  // ...that are inside a fenced block (between ``` lines), and injects them
-  // directly into metadataCache under the file's hash key.
-  //
-  // This is safe to call multiple times — it merges rather than replaces, so
-  // outside-fence ^ids registered by the standard indexer are preserved.
-  // -------------------------------------------------------------------------
-  async _injectFencedBlockIds(file) {
-    const fc = this.app.metadataCache.fileCache;
-    const mc = this.app.metadataCache.metadataCache;
-
-    const fileEntry = fc[file.path];
-    if (!fileEntry?.hash) return;
-    const hash = fileEntry.hash;
-    if (!mc[hash]) return;
-
-    const content = await this.app.vault.read(file);
-    const lines = content.split('\n');
-
-    const fencedBlockIds = {};
-    let insideFence = false;
-    let offset = 0;
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-
-      // Toggle fence state on any line that starts with ```
-      if (line.trimStart().startsWith('```')) {
-        insideFence = !insideFence;
-        offset += line.length + 1;
-        continue;
-      }
-
-      if (insideFence) {
-        // Match: any content, then whitespace + # ^identifier at end of line
-        const match = line.match(/\s#\s\^([\w-]+)\s*$/);
-        if (match) {
-          const id = match[1];
-          fencedBlockIds[id] = {
-            id: id,
-            position: {
-              start: { line: i, col: 0,           offset: offset },
-              end:   { line: i, col: line.length,  offset: offset + line.length }
-            }
-          };
-        }
-      }
-
-      offset += line.length + 1;
-    }
-
-    if (Object.keys(fencedBlockIds).length > 0) {
-      // Merge: preserve any outside-fence blocks the standard indexer found
-      mc[hash].blocks = Object.assign({}, mc[hash].blocks ?? {}, fencedBlockIds);
-    }
   }
 
   // -------------------------------------------------------------------------
@@ -520,6 +472,83 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
     }
   }
 
+  // -------------------------------------------------------------------------
+  // _getCustomMarkdownExts
+  //
+  // Returns a Set of all file extensions that are registered as the "markdown"
+  // view type via this plugin (i.e. everything except "md" itself).
+  // -------------------------------------------------------------------------
+  _getCustomMarkdownExts() {
+    return new Set(
+      Object.entries(this.app.viewRegistry.typeByExtension)
+        .filter(([ext, type]) => type === "markdown" && ext !== "md")
+        .map(([ext]) => ext)
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // _injectFencedBlockIds
+  //
+  // Scans a file for lines ending with   blockid^some-id   that appear inside
+  // fenced code blocks (between ``` lines). These are invisible to Obsidian's
+  // markdown parser because it treats fenced block contents as literal code.
+  //
+  // Found IDs are injected directly into metadataCache under the file's hash
+  // key. IDs are lowercased to match Obsidian's own block-id normalisation.
+  // Merges with any existing blocks so outside-fence ^ids are preserved.
+  //
+  // Usage in your file:
+  //   var player: Player = PLAYER_SCENE.instantiate() # blockid^player-node
+  // Link from a note:
+  //   [[spawner.gd#^player-node]]
+  // -------------------------------------------------------------------------
+  async _injectFencedBlockIds(file) {
+    const fc = this.app.metadataCache.fileCache;
+    const mc = this.app.metadataCache.metadataCache;
+
+    const fileEntry = fc[file.path];
+    if (!fileEntry?.hash) return;
+    const hash = fileEntry.hash;
+    if (!mc[hash]) return;
+
+    const content = await this.app.vault.read(file);
+    const lines = content.split('\n');
+
+    const fencedBlockIds = {};
+    let insideFence = false;
+    let offset = 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+
+      if (line.trimStart().startsWith('```')) {
+        insideFence = !insideFence;
+        offset += line.length + 1;
+        continue;
+      }
+
+      if (insideFence) {
+        const match = line.match(/\^([\w-]+)\s*$/);
+        if (match) {
+          const id = match[1].toLowerCase();
+          fencedBlockIds[id] = {
+            id: id,
+            position: {
+              start: { line: i, col: 0,          offset: offset },
+              end:   { line: i, col: line.length, offset: offset + line.length }
+            }
+          };
+        }
+      }
+
+      offset += line.length + 1;
+    }
+
+    if (Object.keys(fencedBlockIds).length > 0) {
+      mc[hash].blocks = Object.assign({}, mc[hash].blocks ?? {}, fencedBlockIds);
+    }
+  }
+
   _buildFileContextMenuEditExtensionItem() {
     return this.app.workspace.on("file-menu", (menu, file) => {
       menu.addItem((item) => {
@@ -531,6 +560,9 @@ var CustomFileExtensions = class extends import_obsidian3.Plugin {
   onunload() {
     this._unpatchMetadataCache();
     this._unapply(this.settings);
+    if (this._fencedBlockIdEventRef) {
+      this.app.vault.offref(this._fencedBlockIdEventRef);
+    }
     try {
       this.registerExtensions([".md"], "markdown");
     } catch (e) {

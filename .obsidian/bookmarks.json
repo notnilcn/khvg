@@ -3,7 +3,40 @@
     {
       "type": "group",
       "ctime": 1775183678943,
-      "items": [],
+      "items": [
+        {
+          "type": "group",
+          "ctime": 1775615953330,
+          "items": [
+            {
+              "type": "group",
+              "ctime": 1776650184621,
+              "items": [],
+              "title": "001 Godot basics"
+            },
+            {
+              "type": "group",
+              "ctime": 1776650184621,
+              "items": [],
+              "title": "002 Game Code"
+            },
+            {
+              "type": "group",
+              "ctime": 1776650184621,
+              "items": [
+                {
+                  "type": "file",
+                  "ctime": 1776650189389,
+                  "path": "Notes/999 Random Game Design Notes/Overview.md",
+                  "subpath": "#^-"
+                }
+              ],
+              "title": "999 Random Game Design Notes"
+            }
+          ],
+          "title": "Notes"
+        }
+      ],
       "title": "sortspec"
     }
   ]

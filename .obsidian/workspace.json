@@ -8,20 +8,49 @@
         "type": "tabs",
         "children": [
           {
-            "id": "d86289722d0fccaa",
+            "id": "be8282958a33409f",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "g/VS-Like/Game/Singleton/Global.cs",
+                "file": "Notes/002 Game Code/001 Opening the game/001 Spawning into a server.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Global"
+              "title": "001 Spawning into a server"
+            }
+          },
+          {
+            "id": "c81dc2af53ae03f9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "000 Opening the game & then clicking Host Game or Join Game"
+            }
+          },
+          {
+            "id": "5b244605bdaf1e16",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "g/VS-Like/Game/World/spawner.gd",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "spawner"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -181,28 +210,38 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
-      "system3-relay:Relay": false,
-      "custom-sort:Toggle custom sorting": false
+      "custom-sort:Toggle custom sorting": false,
+      "system3-relay:Relay": false
     }
   },
-  "active": "d86289722d0fccaa",
+  "active": "c81dc2af53ae03f9",
   "lastOpenFiles": [
-    "g/project.godot3743027.tmp",
-    "2026-04-20-162130-this-session-is-being-continued-from-a-previous-c.txt",
-    "g/VS-Like/Game/UI/FloatingText/FloatingText.cs.tmp.37024.1776680116876",
-    "g/VS-Like/Game/World/Spawner.cs.tmp.37024.1776679647004",
-    "g/VS-Like/Characters/Player/Player.cs.tmp.37024.1776676193005",
-    "g/VS-Like/Characters/Player/player.tscn.tmp.37024.1776676179563",
-    "g/VS-Like/Characters/Player/Player.cs.tmp.37024.1776676175756",
-    "g/VS-Like/Characters/Player/Player.cs.tmp.37024.1776676162323",
-    "g/VS-Like/Game/Lobby/lobby.tscn72696684.tmp",
+    "Notes/002 Game Code/001 Opening the game/001 Spawning into a server.md",
+    "g/VS-Like/Game/World/spawner.gd",
+    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game.md",
+    "g/VS-Like/Characters/Player/player.gd",
+    "Notes/999 Random Game Design Notes/Overview.md",
     "g/addons (1)/copy_all_errors",
     "g/addons (1)",
-    "Notes/002 Game Code/001 Opening the game/001 Spawning into a server.md",
-    "Notes/999 Random Game Design Notes/Overview.md",
+    "g/addons/copy_all_errors",
+    "g/addons",
+    "g/new (1).godot/mono/temp/bin/Debug",
+    "g/new (1).godot/mono/temp/obj/Debug/refint",
+    "g/new (1).godot/mono/temp/obj/Debug/ref",
+    "g/new (1).godot/mono/temp/obj/Debug",
+    "Notes/999 Random Game Design Notes/Monetisation/Consumables.md",
+    "Notes/999 Random Game Design Notes/Monetisation/Consumables (1) (1).md",
+    "Notes/999 Random Game Design Notes/Monetisation/Consumables (2).md",
+    "Notes/999 Random Game Design Notes/Monetisation/Consumables (1).md",
+    "Notes/999 Random Game Design Notes/Monetisation/Consumables.md",
     "Notes/999 Random Game Design Notes/Monetisation/Consumables.md",
     "Notes/999 Random Game Design Notes/Classes/Tank/Abilities.md",
-    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game.md",
+    "Notes/999 Random Game Design Notes/Classes/Tank/00 Tank classes & notes.md",
+    "Notes/999 Random Game Design Notes/Classes/Tank/High defense tank.md",
+    "CLAUDE.md",
+    "Notes/002 Game Code/000 Singleton/000 General Singleton notes.md",
+    "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/monsters.png",
+    "Notes/002 Game Code/999 Important Classes and Node Trees/Characters/Player/Player.gd.md",
     "Notes/002 Game Code/001 Opening the game/Untitled.md",
     "Notes/002 Game Code/000 Singleton/global.gd Notes.md",
     "Notes/001 Godot basics/002 Godot Multiplayer.md",
@@ -210,28 +249,17 @@
     "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game (conflict 2026-04-13-19-10-19).md",
     "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game..md",
     "Notes/002 Game Code/000 Singleton/network.gd Notes.md",
-    "Notes/002 Game Code/000 Singleton/000 General Singleton notes.md",
     "network.gd^1.md",
     "Notes/001 Godot basics/001 Things in godot.md",
     "Notes/001 Godot basics/999 Stupid notes.md",
-    "Notes/999 Random Game Design Notes/Classes/Support/Support classes & notes.md",
-    "Notes/002 Game Code/999 Important Classes and Node Trees/Characters/Player/Player.gd.md",
-    "Notes/002 Game Code/999 Important Classes and Node Trees/Characters/Player/res_player.gd.md",
-    "Notes/002 Game Code/999 Important Classes and Node Trees/Game/World/spawner.gd and spawner.tscn.md",
-    "Notes/002 Game Code/001 Opening the game/000 Opening the game & clicking Host Game or Join Game.md",
-    "lobby..md",
-    "Untitled.md",
     "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/tiles.png",
-    "g/CLAUDE.md",
     "g/VS-Like/Sprites/Drops/Points-10.png",
-    "g/g/g_notes/Gameplay/Classes/Tank/Tank classes & notes.md",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/tiles.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/rogues.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/items.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/monsters.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/autotiles.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/items-palette-swaps.png",
-    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/animated-tiles.png",
-    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/32rogues-palette.png"
+    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/animated-tiles.png"
   ]
 }
