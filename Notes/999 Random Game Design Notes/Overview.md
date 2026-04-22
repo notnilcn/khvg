@@ -1,6 +1,6 @@
-# Genre & 
-Genre is bullet-hell mmo, with scope creep plans for sandbox building and crafting.
-In the beginning the game will be like Realm of the Mad God, but as it matures it will be like a combination between Realm of the Mad God and BitCraft.
+# Genre
+Genre is bullet-hell mmo (similar to Realm of the Mad God), with future plans for sandbox building and crafting (similar to BitCraft). The sandbox building and crafting aspect is only there because this game will be using a server backend called spacetimedb which lends itself well to that type of game. The sandbox building and crafting aspect is entirely shelved until the bullet-hell stuff is done because I want to steal the Realm of the Mad God player base as soon as possible (if you know anything about that game, you'll know that the player-base is desperate for a better game that's similar).
+
 
 
 

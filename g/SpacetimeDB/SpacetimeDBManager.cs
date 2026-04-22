@@ -71,11 +71,13 @@ public partial class SpacetimeDBManager : Node
         GD.Print($"[STDB] Connected. Identity: {identity}");
         AuthToken.SaveToken(token);
 
+        // Emit before subscribing so listeners can register table callbacks
+        // before initial OnInsert events arrive (mirrors blackholio GameManager pattern).
+        EmitSignal(SignalName.ConnectedToServer, identity.ToString());
+
         conn.SubscriptionBuilder()
             .OnApplied(OnSubscriptionApplied)
             .SubscribeToAllTables();
-
-        EmitSignal(SignalName.ConnectedToServer, identity.ToString());
     }
 
     private void OnConnectError(Exception e)

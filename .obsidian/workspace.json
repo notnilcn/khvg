@@ -13,34 +13,6 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "g/VS-Like/Game/Lobby/Lobby.cs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Lobby"
-            }
-          },
-          {
-            "id": "b824183c0aa1e2e0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "000 Opening the game & then clicking Host Game or Join Game"
-            }
-          },
-          {
-            "id": "e370a39f5c4b3af2",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
                 "file": "g/VS-Like/Game/World/Spawner.cs",
                 "mode": "source",
                 "source": false
@@ -49,8 +21,7 @@
               "title": "Spawner"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -214,22 +185,29 @@
       "custom-sort:Toggle custom sorting": false
     }
   },
-  "active": "e370a39f5c4b3af2",
+  "active": "be8282958a33409f",
   "lastOpenFiles": [
-    "g/project.godot4445937.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/StdbModule.wasm.tmp3c05db3",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/wasi_bundled_assemblies-7ef3800a.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_FJ6uUOKHryEUgpvQ_r_T1qZ6.o",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_T_eRfTC_bvDgC6vu_mkidq0m.o",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_POcZMyfUtlXHQ5aoR_pWHPqh.o",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_FBaqMrJQ3utW_p2vmlIqmQil.o",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_T_eRfTC_bvDgC6vu_mkidq0m-20e781c7.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_POcZMyfUtlXHQ5aoR_pWHPqh-559dfaea.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_FBaqMrJQ3utW_p2vmlIqmQil-ec3f88a3.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_FJ6uUOKHryEUgpvQ_r_T1qZ6-66c7f992.o.tmp",
-    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game.md",
+    "bmmo/module_bindings/Types/RpgStats.g.cs",
+    "bmmo/module_bindings/Types/PlayerPosition.g.cs",
+    "bmmo/module_bindings/Types/PlayerInventory.g.cs",
+    "bmmo/module_bindings/Types/PlayerAccount.g.cs",
+    "bmmo/module_bindings/Types/MoveTickSchedule.g.cs",
+    "bmmo/module_bindings/Types/CharacterData.g.cs",
+    "bmmo/module_bindings/Tables/PlayerPosition.g.cs",
+    "bmmo/module_bindings/Tables/PlayerInventory.g.cs",
+    "bmmo/module_bindings/Tables/PlayerAccount.g.cs",
+    "bmmo/module_bindings/Tables/CharacterData.g.cs",
+    "bmmo/module_bindings/Reducers/SetMoveInput.g.cs",
     "Notes/002 Game Code/001 Opening the game/001 Spawning into a server.md",
+    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game.md",
     "Notes/999 Random Game Design Notes/Overview.md",
+    "bholio/Blackholio/client-unity/Assets/TextMesh Pro/Sprites/EmojiOne.png",
+    "bholio/Blackholio/client-unity/Assets/UIUsernamePanel.png",
+    "bholio/Blackholio/client-unity/Assets/StarBackground.png",
+    "bholio/Blackholio/client-unity/Assets/RepeatingBackground.png",
+    "bholio/Notes/Chronological Execution Order.md",
+    "bholio/Blackholio/README.md",
+    "bholio/Blackholio/DEVELOP.md",
     "Notes/999 Random Game Design Notes/Monetisation/Consumables.md",
     "Notes/999 Random Game Design Notes/Monetisation/Consumables (1) (1).md",
     "Notes/999 Random Game Design Notes/Monetisation/Consumables (2).md",
@@ -250,17 +228,10 @@
     "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game (conflict 2026-04-13-19-10-19).md",
     "Notes/002 Game Code/001 Opening the game/000 Upon opening the game & clicking Host Game or Join Game..md",
     "Notes/002 Game Code/000 Singleton/network.gd Notes.md",
-    "network.gd^1.md",
-    "Notes/001 Godot basics/001 Things in godot.md",
-    "Notes/001 Godot basics/999 Stupid notes.md",
     "g/VS-Like/Sprites/32rogues-0.5.0/32rogues/tiles.png",
     "g/VS-Like/Sprites/Drops/Points-10.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/tiles.png",
     "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/rogues.png",
-    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/items.png",
-    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/monsters.png",
-    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/autotiles.png",
-    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/items-palette-swaps.png",
-    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/animated-tiles.png"
+    "g/g/VS-Like/Sprites/32rogues-0.5.0/32rogues/items.png"
   ]
 }

@@ -4,8 +4,10 @@ using SpacetimeDB.Types;
 using System.Collections.Generic;
 
 // Autoload singleton. Subscribes to PlayerPosition table updates and:
-//   - Spawns a visual node for each remote SpacetimeDB player
-//   - Moves those nodes as the server pushes 20 Hz position ticks
+//   - Spawns a visual node for each remote SpacetimeDB player (archer sprite)
+//   - Buffers position updates by DEBUG_DELAY_MS so the STDB archer is visibly
+//     behind the Godot-multiplayer dwarf, making both sync channels easy to compare
+//   - Lerps buffered nodes toward their delayed target each frame
 //   - Removes them when the player disconnects
 //
 // Call OnGameSceneLoaded() from Spawner._Ready() so players already in the DB
@@ -16,20 +18,35 @@ public partial class StdbPlayerSync : Node
 
     private const string GameScenePath = "res://VS-Like/Maps/Woods/woods_map.tscn";
 
+    // Archer sprite so STDB-synced ghosts are visually distinct from the local dwarf.
+    private const string RemoteTexturePath = "res://VS-Like/Characters/Player/Types/Archer/sprite_archer.tres";
+
+    // Artificial delay (ms) applied to every incoming position update.
+    // Set to 0 to disable. Makes it obvious the STDB path is working independently.
+    private const ulong DebugDelayMs = 1000;
+
     private readonly Dictionary<string, Node2D> _remoteNodes = new();
+    private readonly Dictionary<string, Vector2> _targetPositions = new();
+
+    // (applyAtMs, playerKey, worldPosition) — drained in _Process when applyAtMs <= now
+    private readonly Queue<(ulong ApplyAt, string Key, Vector2 Pos)> _pendingMoves = new();
 
     public override void _Ready()
     {
         Instance = this;
 
         var mgr = SpacetimeDBManager.Instance;
-        if (mgr.IsSubscriptionReady)
+        if (mgr.IsStdbConnected)
             _HookCallbacks();
         else
-            mgr.SubscriptionReady += _OnSubscriptionReady;
+            mgr.ConnectedToServer += _OnConnectedToServer;
     }
 
-    private void _OnSubscriptionReady() => _HookCallbacks();
+    private void _OnConnectedToServer(string _)
+    {
+        SpacetimeDBManager.Instance.ConnectedToServer -= _OnConnectedToServer;
+        _HookCallbacks();
+    }
 
     private void _HookCallbacks()
     {
@@ -40,8 +57,6 @@ public partial class StdbPlayerSync : Node
         GD.Print("[StdbSync] Hooked PlayerPosition callbacks");
     }
 
-    // Called by Spawner._Ready() so that players already present in the DB
-    // (whose OnInsert fired while we were in the lobby) get visual nodes now.
     public void OnGameSceneLoaded()
     {
         var conn = SpacetimeDBManager.Instance.Conn;
@@ -56,14 +71,30 @@ public partial class StdbPlayerSync : Node
         }
     }
 
+    // ── Per-frame: drain delay queue, then lerp ───────────────────────────────
+
+    public override void _Process(double delta)
+    {
+        ulong now = Time.GetTicksMsec();
+        while (_pendingMoves.TryPeek(out var next) && now >= next.ApplyAt)
+        {
+            _pendingMoves.Dequeue();
+            _targetPositions[next.Key] = next.Pos;
+        }
+
+        foreach (var (key, node) in _remoteNodes)
+        {
+            if (!GodotObject.IsInstanceValid(node)) continue;
+            if (!_targetPositions.TryGetValue(key, out var target)) continue;
+            node.GlobalPosition = node.GlobalPosition.Lerp(target, (float)delta * 10f);
+        }
+    }
+
     // ── Table callbacks ───────────────────────────────────────────────────────
 
     private void _OnInsert(EventContext ctx, PlayerPosition row)
     {
         if (_IsLocal(row.PlayerId)) return;
-
-        // Only add visual nodes while the game map is active.
-        // OnGameSceneLoaded() handles players that arrived before the map loaded.
         if (GetTree().CurrentScene?.SceneFilePath != GameScenePath) return;
 
         _SpawnRemote(row.PlayerId, row.X, row.Y);
@@ -77,14 +108,16 @@ public partial class StdbPlayerSync : Node
         if (!GodotObject.IsInstanceValid(node))
         {
             _remoteNodes.Remove(key);
+            _targetPositions.Remove(key);
             return;
         }
-        node.GlobalPosition = new Vector2(newRow.X, newRow.Y);
+        _pendingMoves.Enqueue((Time.GetTicksMsec() + DebugDelayMs, key, new Vector2(newRow.X, newRow.Y)));
     }
 
     private void _OnDelete(EventContext ctx, PlayerPosition row)
     {
         var key = row.PlayerId.ToString();
+        _targetPositions.Remove(key);
         if (!_remoteNodes.TryGetValue(key, out var node)) return;
         if (GodotObject.IsInstanceValid(node))
             node.QueueFree();
@@ -99,18 +132,23 @@ public partial class StdbPlayerSync : Node
         var scene = GetTree().CurrentScene;
         if (scene == null) return;
 
+        var pos = new Vector2(x, y);
+        var key = id.ToString();
+
         var node = new Node2D();
         node.Name = $"StdbRemote_{_Short(id)}";
-        node.GlobalPosition = new Vector2(x, y);
+        node.GlobalPosition = pos;
 
-        // Simple blue rectangle as a placeholder visual for remote players.
-        var poly = new Polygon2D();
-        poly.Color = new Color(0.2f, 0.55f, 1.0f, 0.85f);
-        poly.Polygon = new[] { new Vector2(-8, -12), new Vector2(8, -12), new Vector2(8, 12), new Vector2(-8, 12) };
-        node.AddChild(poly);
+        var texture = GD.Load<Texture2D>(RemoteTexturePath);
+        var sprite = new Sprite2D();
+        sprite.Texture = texture;
+        sprite.Position = new Vector2(0, -8);
+        sprite.FlipH = true;
+        node.AddChild(sprite);
 
         scene.AddChild(node);
-        _remoteNodes[id.ToString()] = node;
+        _remoteNodes[key] = node;
+        _targetPositions[key] = pos;
     }
 
     private bool _IsLocal(SpacetimeDB.Identity id)
@@ -127,7 +165,10 @@ public partial class StdbPlayerSync : Node
 
     public override void _ExitTree()
     {
-        var conn = SpacetimeDBManager.Instance?.Conn;
+        var mgr = SpacetimeDBManager.Instance;
+        if (mgr != null)
+            mgr.ConnectedToServer -= _OnConnectedToServer;
+        var conn = mgr?.Conn;
         if (conn == null) return;
         conn.Db.PlayerPosition.OnInsert -= _OnInsert;
         conn.Db.PlayerPosition.OnUpdate -= _OnUpdate;

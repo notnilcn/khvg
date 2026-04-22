@@ -184,6 +184,7 @@ public partial class Spawner : Node2D
             case "/setpass":
             case "/spawn":
             case "/chest":
+            case "/tickrate":
                 // Route all admin commands through the server so it can validate permissions.
                 if (Multiplayer.GetUniqueId() == 1)
                     _ExecuteAdminCmd(1, verb, args);
@@ -197,6 +198,10 @@ public partial class Spawner : Node2D
                 _CmdSelfinfo(verb);
                 break;
 
+            case "/stdbpos":
+                _CmdStdbPos();
+                break;
+
             case "/adminpass":
             {
                 string password = args.Length > 0 ? args[0] : "";
@@ -208,7 +213,7 @@ public partial class Spawner : Node2D
             }
 
             default:
-                _ShowFeedback("Unknown command. Try /stats, /inv, /spawner, /give, /remove, /spawn, /chest, /admin, /unadmin, /setpass, /adminpass");
+                _ShowFeedback("Unknown command. Try /stats, /inv, /stdbpos, /spawner, /give, /remove, /spawn, /chest, /admin, /unadmin, /setpass, /adminpass, /tickrate");
                 break;
         }
     }
@@ -259,6 +264,31 @@ public partial class Spawner : Node2D
                 return;
         }
         _ShowFeedback(msg);
+    }
+
+    // /stdbpos -- read this client's PlayerPosition row from the local STDB cache.
+    // No server round-trip: the SDK keeps a local copy of all subscribed rows.
+    private void _CmdStdbPos()
+    {
+        var conn = SpacetimeDBManager.Instance?.Conn;
+        if (conn == null)
+        {
+            _ShowFeedback("SpacetimeDB not connected");
+            return;
+        }
+        var localId = SpacetimeDBManager.Instance.LocalIdentity;
+        if (!localId.HasValue)
+        {
+            _ShowFeedback("No local STDB identity yet");
+            return;
+        }
+        var row = conn.Db.PlayerPosition.PlayerId.Find(localId.Value);
+        if (row is null)
+        {
+            _ShowFeedback("No PlayerPosition row found (not connected or not spawned)");
+            return;
+        }
+        _ShowFeedback($"STDB pos: ({row.X:F1}, {row.Y:F1})  move=({row.MoveX:F1},{row.MoveY:F1})  chunk=({row.ChunkX},{row.ChunkY})");
     }
 
     // /adminpass — any player: claim admin if the password matches.
@@ -341,14 +371,15 @@ public partial class Spawner : Node2D
         }
         switch (verb)
         {
-            case "/spawner": _CmdSpawner(sender, args); break;
-            case "/give":    _CmdGive(sender, args);    break;
-            case "/remove":  _CmdRemove(sender, args);  break;
-            case "/admin":   _CmdAdmin(sender, args);   break;
-            case "/unadmin": _CmdUnadmin(sender, args); break;
-            case "/setpass": _CmdSetpass(sender, args); break;
-            case "/spawn":   _CmdSpawn(sender, args);   break;
-            case "/chest":   _CmdChest(sender, args);   break;
+            case "/spawner":   _CmdSpawner(sender, args);   break;
+            case "/give":      _CmdGive(sender, args);      break;
+            case "/remove":    _CmdRemove(sender, args);    break;
+            case "/admin":     _CmdAdmin(sender, args);     break;
+            case "/unadmin":   _CmdUnadmin(sender, args);   break;
+            case "/setpass":   _CmdSetpass(sender, args);   break;
+            case "/spawn":     _CmdSpawn(sender, args);     break;
+            case "/chest":     _CmdChest(sender, args);     break;
+            case "/tickrate":  _CmdTickrate(sender, args);  break;
         }
     }
 
@@ -566,6 +597,31 @@ public partial class Spawner : Node2D
         ResEnemy res = AllResEnemy.Count > 0 ? _GetEnemy() : GD.Load<ResEnemy>(GoblinEnemyRes);
         _CreateEnemy(pos, res, isElite: true);
         _SendFeedback(sender, $"Spawned elite enemy (chest drop) at ({(int)pos.X}, {(int)pos.Y})");
+    }
+
+
+    // /tickrate <ms> -- set the SpacetimeDB movement tick interval in milliseconds.
+    // E.g. /tickrate 50 = 20 Hz (normal), /tickrate 1000 = 1 Hz (debug-slow).
+    private void _CmdTickrate(int sender, string[] args)
+    {
+        if (args.Length == 0 || !uint.TryParse(args[0], out uint ms))
+        {
+            _SendFeedback(sender, "Usage: /tickrate <ms>  (e.g. 50 = 20 Hz, 1000 = 1 Hz)");
+            return;
+        }
+        if (ms < 50 || ms > 60000)
+        {
+            _SendFeedback(sender, "Interval must be 50-60000 ms");
+            return;
+        }
+        var conn = SpacetimeDBManager.Instance?.Conn;
+        if (conn == null)
+        {
+            _SendFeedback(sender, "SpacetimeDB not connected");
+            return;
+        }
+        conn.Reducers.ResetSchedule(ms);
+        _SendFeedback(sender, $"Tick rate set to {ms} ms ({1000f / ms:F1} Hz)");
     }
 
     // ── RPCs ──────────────────────────────────────────────────────────────────────

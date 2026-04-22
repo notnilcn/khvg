@@ -622,6 +622,7 @@ namespace SpacetimeDB.Types
             var eventContext = (ReducerEventContext)context;
             return reducer switch
             {
+                Reducer.ResetSchedule args => Reducers.InvokeResetSchedule(eventContext, args),
                 Reducer.SaveCharacterProgress args => Reducers.InvokeSaveCharacterProgress(eventContext, args),
                 Reducer.SetMoveInput args => Reducers.InvokeSetMoveInput(eventContext, args),
                 Reducer.SetUsername args => Reducers.InvokeSetUsername(eventContext, args),

@@ -74,7 +74,7 @@ public partial struct PlayerPosition
     public int ChunkY;
 }
 
-/// Drives the 20 Hz player movement tick. One row inserted at Init; never deleted.
+/// Drives the 1 Hz player movement tick (slowed for debug). One row inserted at Init; never deleted.
 [SpacetimeDB.Table(Accessor = "MoveTickSchedule", Scheduled = "PlayerMoveTick")]
 public partial struct MoveTickSchedule
 {
@@ -96,8 +96,8 @@ public static partial class Module
     /// Units per second. Must match the player speed constant in Godot.
     private const float PlayerSpeed = 100f;
 
-    /// Seconds between movement ticks (1 / 20 Hz).
-    private const float TickDelta = 1f / 20f;
+    /// Seconds between movement ticks -- slowed to 1 Hz for debug visibility.
+    private const float TickDelta = 1f;
 
     /// World units per chunk side. Clients subscribe to chunk ranges for AoI.
     /// Must match the client constant used to compute subscription bounds.
@@ -120,8 +120,32 @@ public static partial class Module
         ctx.Db.MoveTickSchedule.Insert(new MoveTickSchedule
         {
             Id = 0,
-            ScheduledAt = new ScheduleAt.Interval(TimeSpan.FromMilliseconds(50)),
+            ScheduledAt = new ScheduleAt.Interval(TimeSpan.FromMilliseconds(1000)),
         });
+    }
+
+    /// Replaces the MoveTickSchedule row with a new interval so tick rate can be
+    /// changed at runtime without wiping account/character data.
+    /// Usage: /tickrate <ms> in the Godot admin chat, or via spacetime call.
+    [SpacetimeDB.Reducer]
+    public static void ResetSchedule(ReducerContext ctx, uint intervalMs)
+    {
+        if (intervalMs < 50)
+            throw new Exception("intervalMs must be >= 50 (20 Hz max)");
+        if (intervalMs > 60000)
+            throw new Exception("intervalMs must be <= 60000 (1-per-minute min)");
+
+        var toDelete = new System.Collections.Generic.List<ulong>();
+        foreach (var row in ctx.Db.MoveTickSchedule.Iter())
+            toDelete.Add(row.Id);
+        foreach (var id in toDelete)
+            ctx.Db.MoveTickSchedule.Id.Delete(id);
+
+        ctx.Db.MoveTickSchedule.Insert(new MoveTickSchedule
+        {
+            ScheduledAt = new ScheduleAt.Interval(TimeSpan.FromMilliseconds(intervalMs)),
+        });
+        Log.Info($"MoveTickSchedule reset to {intervalMs} ms interval.");
     }
 
     [SpacetimeDB.Reducer(ReducerKind.ClientConnected)]
@@ -202,7 +226,7 @@ public static partial class Module
         });
     }
 
-    /// 20 Hz tick. Moves every player according to their stored input direction.
+    /// 1 Hz debug tick. Moves every player according to their stored input direction.
     /// Wall collision is client-side only — server movement is physics-free for now.
     [SpacetimeDB.Reducer]
     public static void PlayerMoveTick(ReducerContext ctx, MoveTickSchedule schedule)
