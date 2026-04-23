@@ -64,8 +64,9 @@ This defines where all the buttons go and how the ui looks.
         Network.Instance.ConnectedToServer += _OnConnected;
         Network.Instance.ConnectionFailed  += _OnConnectionFailed;
     }
+/*
 ```
-
+*/
 
 /*
 # `_OnHostPressed()`
