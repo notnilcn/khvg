@@ -1,6 +1,6 @@
 # **When you open the game**:
 1. You launch the game (F5 or exported binary)
-2. The Godot engine starts, reads `project.godot`
+2. The Godot engine starts, reads `project.godot` 
 3. Engine loads [`lobby.tscn`](lobby.tscn) as the root scene — no code triggers this, it's the engine doing it directly 
 	1. [`lobby.gd`](<lobby.gd>) is attached to the root node of that scene, so `lobby._ready()` fires automatically as part of scene initialization
 ---
