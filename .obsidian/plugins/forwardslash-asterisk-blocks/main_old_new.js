@@ -181,10 +181,108 @@ const decorationField = StateField.define({
   provide(field)    { return EditorView.decorations.from(field); },
 });
 
+// ── Markdown post-processor ────────────────────────────────────────────────────
+// Mirrors the CM6 decoration logic for Reading Mode and ![[embed]] previews.
+// Called by Obsidian after it converts markdown to HTML, so we walk the
+// rendered DOM and apply the same classes the CM6 field applies in the editor.
+
+function processTripleQuotes(el) {
+  // Walk all text nodes inside el, find """...""" spans, and replace them
+  // with properly classed DOM nodes — mirroring emitTripleQuote().
+  //
+  // We collect text nodes first because replacing them while walking would
+  // invalidate the TreeWalker iterator.
+  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+  const textNodes = [];
+  let node;
+  while ((node = walker.nextNode())) textNodes.push(node);
+
+  for (const textNode of textNodes) {
+    const text = textNode.nodeValue;
+    if (!text.includes('"""')) continue;
+
+    const OPEN = '"""';
+    const parent = textNode.parentNode;
+    const frag = document.createDocumentFragment();
+    let searchFrom = 0;
+    let lastEnd = 0;
+    let found = false;
+
+    while (true) {
+      const openIdx = text.indexOf(OPEN, searchFrom);
+      if (openIdx === -1) break;
+      const closeIdx = text.indexOf(OPEN, openIdx + 3);
+      if (closeIdx === -1) break;
+
+      found = true;
+      const closeEnd = closeIdx + 3;
+      const rawContent = text.slice(openIdx + 3, closeIdx);
+      const isMultiLine = rawContent.includes('\n');
+
+      // Text before this block.
+      if (openIdx > lastEnd) {
+        frag.appendChild(document.createTextNode(text.slice(lastEnd, openIdx)));
+      }
+
+      if (isMultiLine) {
+        // Wrap the whole block in a div, split content into styled lines.
+        const lines = rawContent.split('\n');
+        const wrapper = document.createElement('div');
+        wrapper.className = 'triple-quote-block';
+
+        const openDiv = document.createElement('div');
+        openDiv.className = 'triple-quote-open';
+        wrapper.appendChild(openDiv);
+
+        for (const line of lines) {
+          const contentDiv = document.createElement('div');
+          contentDiv.className = 'triple-quote-content';
+          contentDiv.textContent = line;
+          wrapper.appendChild(contentDiv);
+        }
+
+        const closeDiv = document.createElement('div');
+        closeDiv.className = 'triple-quote-close';
+        wrapper.appendChild(closeDiv);
+
+        frag.appendChild(wrapper);
+      } else {
+        // Inline: wrap content in a span with the inline class.
+        const span = document.createElement('span');
+        span.className = 'triple-quote-inline';
+        span.textContent = rawContent;
+        frag.appendChild(span);
+      }
+
+      lastEnd = closeEnd;
+      searchFrom = closeEnd;
+    }
+
+    if (!found) continue;
+
+    // Remaining text after the last block.
+    if (lastEnd < text.length) {
+      frag.appendChild(document.createTextNode(text.slice(lastEnd)));
+    }
+
+    parent.replaceChild(frag, textNode);
+  }
+}
+
 // ── Plugin entry point ─────────────────────────────────────────────────────────
 class TripleQuoteBlockPlugin extends Plugin {
-  async onload()  { this.registerEditorExtension(decorationField); }
-  onunload()      {}
+  async onload() {
+    // CM6 extension: handles Live Preview editor rendering.
+    this.registerEditorExtension(decorationField);
+
+    // Post-processor: handles Reading Mode and ![[embed]] previews.
+    // MarkdownRenderer.render (used by embeds) produces static HTML and never
+    // runs CM6 extensions, so we need this separate path.
+    this.registerMarkdownPostProcessor((el) => {
+      processTripleQuotes(el);
+    });
+  }
+  onunload() {}
 }
 
 module.exports = TripleQuoteBlockPlugin;

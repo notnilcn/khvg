@@ -1,3 +1,6 @@
+/*
+Network code
+```c# */
 using Godot;
 
 public partial class Network : Node
@@ -18,7 +21,15 @@ public partial class Network : Node
     {
         Instance = this;
     }
+/*
+```
+*/
 
+
+
+/*
+# `StartServer(port)`
+```c# */
     public bool StartServer(int port = DefaultPort)
     {
         var peer = new WebSocketMultiplayerPeer();
@@ -37,7 +48,15 @@ public partial class Network : Node
         GD.Print("Network: server listening on port ", port);
         return true;
     }
+/*
+```
+*/
 
+
+
+/*
+
+```c# */
     public void JoinServer(string address, int port = DefaultPort)
     {
         var peer = new WebSocketMultiplayerPeer();
@@ -58,7 +77,15 @@ public partial class Network : Node
         IsActive = true;
         GD.Print("Network: connecting to ", url);
     }
+/*
+```
+*/
 
+
+
+/*
+
+```c# */
     public void DisconnectFromGame()
     {
         if (Multiplayer.MultiplayerPeer != null)
@@ -68,28 +95,66 @@ public partial class Network : Node
         }
         IsActive = false;
     }
+/*
+```
+*/
 
+
+
+/*
+
+```c# */
     public bool IsServer() => Multiplayer.IsServer();
     public int GetPeerId() => Multiplayer.GetUniqueId();
+/*
+```
+*/
 
+
+
+/*
+```
+*/
     private void _OnPeerConnected(long peerId)
     {
         GD.Print("Network: peer connected — id ", peerId);
         EmitSignal(SignalName.PlayerJoined, (int)peerId);
     }
+/*
+```
+*/
 
+
+/*
+
+```c# */
     private void _OnPeerDisconnected(long peerId)
     {
         GD.Print("Network: peer disconnected — id ", peerId);
         EmitSignal(SignalName.PlayerLeft, (int)peerId);
     }
+/*
+```
+*/
 
+
+/*
+
+```c# */
     private void _OnConnectedToServer()
     {
         GD.Print("Network: connected to server, our peer_id = ", GetPeerId());
         EmitSignal(SignalName.ConnectedToServer);
     }
+/*
+```
+*/
 
+
+
+/*
+
+```c# */
     private void _OnConnectionFailed()
     {
         GD.Print("Network: connection failed");
@@ -102,4 +167,7 @@ public partial class Network : Node
         GD.Print("Network: server disconnected");
         IsActive = false;
     }
+/*
+```
+*/
 }

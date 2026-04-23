@@ -1,8 +1,8 @@
+/*
+Lobby screen code.
+```c# */
 using Godot;
 
-
-/*
-```c# */
 public partial class Lobby : Control
 {
     private CenterContainer _center;
@@ -12,7 +12,16 @@ public partial class Lobby : Control
     private LineEdit _ipInput;
     private Button _hostButton;
     private Button _joinButton;
+/*
+```
+*/
 
+
+/*
+# `_Ready()`
+`_Ready()` is a special godot function that automatically fires when the node and all of its children are loaded into the scene.
+This defines where all the buttons go and how the ui looks.
+```c# */
     public override void _Ready()
     {
         SetAnchorsAndOffsetsPreset(LayoutPreset.FullRect);
@@ -55,7 +64,13 @@ public partial class Lobby : Control
         Network.Instance.ConnectedToServer += _OnConnected;
         Network.Instance.ConnectionFailed  += _OnConnectionFailed;
     }
+```
 
+
+/*
+# `_OnHostPressed()`
+This is kinda obvious
+```c# */
     private void _OnHostPressed()
     {
         _SetUiEnabled(false);
@@ -70,7 +85,14 @@ public partial class Lobby : Control
 
         _LoadGame();
     }
+/*
+```
+*/
 
+/*
+# `_OnJoinPressed()`
+This is kinda obvious
+```c# */
     private void _OnJoinPressed()
     {
         var address = _ipInput.Text.StripEdges();
@@ -84,31 +106,64 @@ public partial class Lobby : Control
         _statusLabel.Text = $"Connecting to {address}:{Network.DefaultPort} ...";
         Network.Instance.JoinServer(address);
     }
+/*
+```
+*/
 
+
+/*
+# `_OnConnected()`
+This is kinda obvious
+```c# */
     private void _OnConnected()
     {
         _statusLabel.Text = "Connected!  Loading game...";
         _LoadGame();
     }
+/*
+```
+*/
 
+
+
+/*
+# `_OnConnectionFailed()`
+This is kinda obvious
+```c# */
     private void _OnConnectionFailed()
     {
         _statusLabel.Text = "Could not connect.  Check the IP address and try again.";
         _SetUiEnabled(true);
     }
+/*
+```
+*/
 
+
+/*
+# `_LoadGame()`
+This is kinda obvious
+```c# */
     private void _LoadGame()
     {
         GetTree().ChangeSceneToFile("res://VS-Like/Maps/Woods/woods_map.tscn");
     }
+/*
+```
+*/
 
+
+/*
+# `_SetUiEnabled(enabled)`
+This is kinda obvious
+```c# */
     private void _SetUiEnabled(bool enabled)
     {
         _hostButton.Disabled = !enabled;
         _joinButton.Disabled  = !enabled;
         _ipInput.Editable     = enabled;
     }
-}
 /*
 ```
 */
+}

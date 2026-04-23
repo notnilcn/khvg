@@ -1,11 +1,15 @@
 using Godot;
 using System.Collections.Generic;
 
+/*
+# dwdwasdwwdasd 
+
+```c# */
 public partial class Global : Node
 {
-    public static Global Instance { get; private set; }
+    public static Global Instance { get; private set; } // ^1
 
-    public Dictionary<int, Player> Players { get; } = new();
+    public Dictionary<int, Player> Players { get; } = new(); // ^2
 
     public static readonly ResItem[] ResItems =
     {
@@ -57,3 +61,6 @@ public partial class Global : Node
         };
     }
 }
+/*
+```
+*/

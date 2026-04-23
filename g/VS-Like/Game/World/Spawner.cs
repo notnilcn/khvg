@@ -1,3 +1,6 @@
+/*
+Network code
+```c# */
 using Godot;
 using Godot.Collections;
 using System.Collections.Generic;
@@ -19,8 +22,7 @@ using System.Collections.Generic;
 // Each peer sets the correct multiplayer_authority on that node so only the owning peer
 // processes input for it.
 
-/*
-```c# */
+
 public partial class Spawner : Node2D
 {
     private static readonly PackedScene DropScene =
@@ -82,7 +84,14 @@ public partial class Spawner : Node2D
     // Empty _adminPassword string means disabled. Set with /setpass; players claim with /adminpass.
     private readonly List<int> _admins        = new();
     private          string    _adminPassword = "";
+/*
+```
+*/
 
+
+/*
+# `_Ready()`
+```c# */
     public override void _Ready()
     {
         // Guard against _Ready() being called a second time (e.g. scene reload quirk).
@@ -125,7 +134,15 @@ public partial class Spawner : Node2D
         // before this map scene loaded (their OnInsert fired while we were in the lobby).
         StdbPlayerSync.Instance?.OnGameSceneLoaded();
     }
+/*
+```
+*/
 
+
+
+/*
+# `_SetupChatConsole()`
+```c# */
     // ── Chat console ─────────────────────────────────────────────────────────────
 
     private void _SetupChatConsole()
@@ -142,7 +159,14 @@ public partial class Spawner : Node2D
         input.FocusExited   += () => GetViewport().GuiReleaseFocus();
         _vbox.AddChild(input);
     }
+/*
+```
+*/
 
+
+/*
+
+```c# */
     public override void _UnhandledKeyInput(InputEvent @event)
     {
         if (@event is not InputEventKey ev || !ev.Pressed || ev.Echo)
@@ -156,7 +180,14 @@ public partial class Spawner : Node2D
             GetViewport().SetInputAsHandled();
         }
     }
+/*
+```
+*/
 
+
+/*
+
+```c# */
     private void _OnCommandSubmitted(string raw)
     {
         string text  = raw.Trim();
@@ -167,7 +198,14 @@ public partial class Spawner : Node2D
             return;
         _ParseCommand(text);
     }
+/*
+```
+*/
 
+
+/*
+
+```c# */
     private void _ParseCommand(string cmd)
     {
         string[] parts = cmd.Split(' ', System.StringSplitOptions.RemoveEmptyEntries);
@@ -217,7 +255,15 @@ public partial class Spawner : Node2D
                 break;
         }
     }
+/*
+```
+*/
 
+
+
+/*
+
+```c# */
     // /stats — print RPG stats; /inv — print equipment and inventory. Both run locally, no admin needed.
     private void _CmdSelfinfo(string verb)
     {
@@ -265,7 +311,13 @@ public partial class Spawner : Node2D
         }
         _ShowFeedback(msg);
     }
+/*
+```
+*/
 
+/*
+
+```c# */
     // /stdbpos -- read this client's PlayerPosition row from the local STDB cache.
     // No server round-trip: the SDK keeps a local copy of all subscribed rows.
     private void _CmdStdbPos()
@@ -290,7 +342,13 @@ public partial class Spawner : Node2D
         }
         _ShowFeedback($"STDB pos: ({row.X:F1}, {row.Y:F1})  move=({row.MoveX:F1},{row.MoveY:F1})  chunk=({row.ChunkX},{row.ChunkY})");
     }
+/*
+```
+*/
 
+/*
+
+```c# */
     // /adminpass — any player: claim admin if the password matches.
     // Separate RPC so non-admins can reach the server without going through _RpcAdminCmd.
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
@@ -956,7 +1014,7 @@ public partial class Spawner : Node2D
         food.GlobalPosition = spawnPos;
         AddChild(food);
     }
-}
 /*
 ```
 */
+}

@@ -1,7 +1,5 @@
 [
   "system3-relay",
-  "gdscript-syntax-highlighting",
   "custom-sort",
-  "obsidian-custom-file-extensions-plugin",
-  "forwardslash-asterisk-blocks"
+  "obsidian-custom-file-extensions-plugin"
 ]

@@ -1,9 +1,0 @@
-{
-  "id": "gd-block-ids",
-  "name": "GD Block IDs",
-  "version": "1.0.0",
-  "minAppVersion": "0.15.0",
-  "description": "Enables ^block-id inside fenced code blocks in .gd files.",
-  "author": "you",
-  "isDesktopOnly": true
-}
