@@ -1,3 +1,6 @@
+/*
+Enemy code.
+```c# */
 using Godot;
 using System.Collections.Generic;
 
@@ -34,6 +37,14 @@ public partial class Enemy : Sprite2D
     private const float MinFireRate        = 0.05f;
     private readonly Dictionary<int, float> _lastHitTimes = new();
 
+/*
+```
+*/
+
+/*
+# `_Ready()`
+This is kinda obvious
+```c# */
     public override async void _Ready()
     {
         _audioPlayer2D = GetNode<AudioStreamPlayer2D>("AudioPlayer2D");
@@ -67,7 +78,14 @@ public partial class Enemy : Sprite2D
             _SetupClientHitbox();
         }
     }
+/*
+```
+*/
 
+/*
+# `_SetupClientHitbox()`
+This is kinda obvious
+```c# */
     private void _SetupClientHitbox()
     {
         var body              = new StaticBody2D();
@@ -81,7 +99,14 @@ public partial class Enemy : Sprite2D
         body.AddChild(shapeNode);
         AddChild(body);
     }
+/*
+```
+*/
 
+/*
+# `_SetupSync()`
+This is kinda obvious
+```c# */
     private void _SetupSync()
     {
         var sync   = new MultiplayerSynchronizer();
@@ -91,7 +116,14 @@ public partial class Enemy : Sprite2D
         sync.ReplicationConfig = config;
         AddChild(sync);
     }
+/*
+```
+*/
 
+/*
+# `_SetupPhysics()`
+This is kinda obvious
+```c# */
     private async System.Threading.Tasks.Task _SetupPhysics()
     {
         _object = PhysicsServer2D.BodyCreate();
@@ -110,7 +142,14 @@ public partial class Enemy : Sprite2D
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         PhysicsServer2D.BodyAttachObjectInstanceId(_object, GetInstanceId());
     }
+/*
+```
+*/
 
+/*
+# `_Process(delta)`
+This is kinda obvious
+```c# */
     public override void _Process(double delta)
     {
         if (!Multiplayer.IsServer())
@@ -127,7 +166,14 @@ public partial class Enemy : Sprite2D
         if (_DistanceToNearestPlayer() >= 600)
             QueueFree();
     }
+/*
+```
+*/
 
+/*
+# `_TickBulletFire(delta)`
+This is kinda obvious
+```c# */
     private void _TickBulletFire(float delta)
     {
         if (ResEnemy.BulletDamage <= 0.0f || _target == null)
@@ -139,7 +185,14 @@ public partial class Enemy : Sprite2D
         var dir = GlobalPosition.DirectionTo(_target.GlobalPosition);
         BulletManager.Instance.ServerSpawnLinear(GlobalPosition, dir, ResEnemy.BulletSpeed, ResEnemy.BulletDamage);
     }
+/*
+```
+*/
 
+/*
+# `_MoveCharacter()`
+This is kinda obvious
+```c# */
     private void _MoveCharacter()
     {
         if (_target == null) return;
@@ -147,7 +200,14 @@ public partial class Enemy : Sprite2D
         PhysicsServer2D.BodySetState(
             _object, PhysicsServer2D.BodyState.LinearVelocity, _direction * Speed);
     }
+/*
+```
+*/
 
+/*
+# `ReportHit(damageAmount, fireRate)`
+This is kinda obvious
+```c# */
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void ReportHit(float damageAmount, float fireRate)
     {
@@ -171,7 +231,14 @@ public partial class Enemy : Sprite2D
         _lastHitTimes[callerId] = now;
         Hurt(damageAmount);
     }
+/*
+```
+*/
 
+/*
+# `Hurt(dmg)`
+This is kinda obvious
+```c# */
     public void Hurt(float dmg)
     {
         _audioPlayer2D.Play();
@@ -180,7 +247,14 @@ public partial class Enemy : Sprite2D
         if (CurrHealth <= 0)
             Die();
     }
+/*
+```
+*/
 
+/*
+# `ShowFloatingText(dmg)`
+This is kinda obvious
+```c# */
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void ShowFloatingText(int dmg)
     {
@@ -189,19 +263,40 @@ public partial class Enemy : Sprite2D
         floatingText.FloatingNumber = dmg;
         GetTree().CurrentScene.CallDeferred("add_child", floatingText);
     }
+/*
+```
+*/
 
+/*
+# `Die`
+This is kinda obvious
+```c# */
     private void Die()
     {
         if (IsElite || GD.Randf() > 0.25f)
             SpawnDrop();
         EmitSignal(SignalName.RequestDespawn, EnemyId);
     }
+/*
+```
+*/
 
+/*
+# `SpawnDrop`
+This is kinda obvious
+```c# */
     public void SpawnDrop()
     {
         GetParent<Spawner>().Rpc(nameof(Spawner._RpcSpawnDrop), ResDrop.ResourcePath, GlobalPosition);
     }
+/*
+```
+*/
 
+/*
+# `_GetNearestPlayer()`
+This is kinda obvious
+```c# */
     private Player _GetNearestPlayer()
     {
         Player nearest      = null;
@@ -217,7 +312,14 @@ public partial class Enemy : Sprite2D
         }
         return nearest;
     }
+/*
+```
+*/
 
+/*
+# `_DistanceToNearestPlayer()`
+This is kinda obvious
+```c# */
     private float _DistanceToNearestPlayer()
     {
         float minDist = float.PositiveInfinity;
@@ -229,7 +331,14 @@ public partial class Enemy : Sprite2D
         }
         return minDist;
     }
+/*
+```
+*/
 
+/*
+# `_ExitTree()`
+This is kinda obvious
+```c# */
     public override void _ExitTree()
     {
         EmitSignal(SignalName.Died);
@@ -238,4 +347,8 @@ public partial class Enemy : Sprite2D
         if (_shape.IsValid)
             PhysicsServer2D.FreeRid(_shape);
     }
+/*
+```
+*/
+
 }

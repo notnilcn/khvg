@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "0fe4e385a2314fc2",
+        "id": "67b4e865997f1542",
         "type": "tabs",
         "children": [
           {
-            "id": "6a7ebd59a7185226",
+            "id": "764f461c279232fd",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "g/VS-Like/Game/World/Spawner.cs",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "Spawner"
+              "title": "New tab"
             }
           }
         ]
@@ -182,8 +178,13 @@
       "custom-sort:Toggle custom sorting": false
     }
   },
-  "active": "6a7ebd59a7185226",
+  "active": "764f461c279232fd",
   "lastOpenFiles": [
+    "g/VS-Like/Characters/Player/Utilities/UI/InventoryUI/InventoryUI.cs",
+    "g/VS-Like/Characters/Player/Player.cs",
+    "g/VS-Like/Characters/Enemy/Enemy.cs",
+    "g/VS-Like/Maps/Collision/CollisionObject.cs",
+    "g/VS-Like/Game/World/Spawner.cs",
     "g/VS-Like/Game/UI/FloatingText/FloatingText.cs",
     "g/VS-Like/Game/Lobby/Lobby.cs",
     "g/VS-Like/Game/Singleton/Network.cs",
@@ -192,9 +193,7 @@
     "g/VampireSurvivorsTemplate.csproj.old",
     "`lobby.cs`.md",
     "Notes/001 Godot basics/001 Things in godot.md",
-    "g/VS-Like/Game/World/Spawner.cs",
     "Notes/002 Game Code/001 Opening the game/(old) 000 Opening the game & then clicking Host Game or Join Game.md",
-    "g/VS-Like/Game/Lobby/lobby.tscn",
     "Notes/002 Game Code/001 Opening the game/(old) 001 Spawning into a server.md",
     "Notes/002 Game Code/000 Singleton/000 General Singleton notes.md",
     "Notes/001 Godot basics/002 Godot Multiplayer.md",
@@ -202,9 +201,6 @@
     "Notes/003 Game Development/Features to implement list.md",
     "Notes/003 Game Development/Shelved todo list.md",
     "Notes/003 Game Development/Overhaul list.md",
-    "Notes/003 Game Development/Asemif",
-    "Notes/003 Game Development/Retexcraft",
-    "Notes/003 To do list",
     "Notes/003 Game Development/Notnilc/To Do List.md",
     "Notes/002 Game Code/Untitled.md",
     "Notes/001 Godot basics/999 Stupid notes.md",

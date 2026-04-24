@@ -1,3 +1,6 @@
+/*
+Player code.
+```c# */
 using Godot;
 using System.Collections.Generic;
 
@@ -54,7 +57,14 @@ public partial class Player : CharacterBody2D
     private Vector2? _lastSentMoveInput = null;
 
     public InventoryUI InventoryUi { get; private set; } = null;
+/*
+```
+*/
 
+/*
+# `_Set(property, value)`
+This is kinda obvious
+```c# */
     public override bool _Set(StringName property, Variant value)
     {
         if (property.ToString() == "character_data")
@@ -64,7 +74,14 @@ public partial class Player : CharacterBody2D
         }
         return base._Set(property, value);
     }
+/*
+```
+*/
 
+/*
+# `_Ready()`
+This is kinda obvious
+```c# */
     public override async void _Ready()
     {
         _sprite2D         = GetNode<Sprite2D>("Sprite2D");
@@ -83,7 +100,14 @@ public partial class Player : CharacterBody2D
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         _InitPlayer();
     }
+/*
+```
+*/
 
+/*
+# `_InitPlayer()`
+This is kinda obvious
+```c# */
     private void _InitPlayer()
     {
         if (CharacterData == null)
@@ -114,7 +138,14 @@ public partial class Player : CharacterBody2D
             _hud.AddChild(InventoryUi);
         }
     }
+/*
+```
+*/
 
+/*
+# `_PhysicsProcess(delta)`
+This is kinda obvious
+```c# */
     public override void _PhysicsProcess(double delta)
     {
         if (!IsMultiplayerAuthority())
@@ -124,7 +155,14 @@ public partial class Player : CharacterBody2D
         MoveAndSlide();
         Rpc(nameof(_SyncState), GlobalPosition, _sprite2D.Scale.X);
     }
+/*
+```
+*/
 
+/*
+# `_UnhandledInput(@event)`
+This is kinda obvious
+```c# */
     public override void _UnhandledInput(InputEvent @event)
     {
         if (!IsMultiplayerAuthority())
@@ -140,7 +178,14 @@ public partial class Player : CharacterBody2D
             }
         }
     }
+/*
+```
+*/
 
+/*
+# `_SyncState(pos, scaleX)`
+This is kinda obvious
+```c# */
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
     private void _SyncState(Vector2 pos, float scaleX)
     {
@@ -149,7 +194,14 @@ public partial class Player : CharacterBody2D
         GlobalPosition   = pos;
         _sprite2D.Scale  = new Vector2(scaleX, _sprite2D.Scale.Y);
     }
+/*
+```
+*/
 
+/*
+# `_HandleMovement()`
+This is kinda obvious
+```c# */
     private void _HandleMovement()
     {
         var movementInput = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
@@ -168,7 +220,14 @@ public partial class Player : CharacterBody2D
         else if (Velocity.X < 0)
             _sprite2D.Scale = new Vector2(-1, _sprite2D.Scale.Y);
     }
+/*
+```
+*/
 
+/*
+# `_Hurt(dmg)`
+This is kinda obvious
+```c# */
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void Hurt(float dmg)
     {
@@ -181,14 +240,28 @@ public partial class Player : CharacterBody2D
         if (Health <= 0 && IsMultiplayerAuthority())
             GetTree().CallDeferred("change_scene_to_file", "res://VS-Like/Maps/Woods/woods_map.tscn");
     }
+/*
+```
+*/
 
+/*
+# `_SetHealth(newHealth)`
+This is kinda obvious
+```c# */
     private void _SetHealth(float newHealth)
     {
         _health = Mathf.Clamp(newHealth, 0, MaxHealth);
         if (_healthBar != null && IsMultiplayerAuthority())
             _healthBar.Value = _health;
     }
+/*
+```
+*/
 
+/*
+# `_SetPoints(newPoints)`
+This is kinda obvious
+```c# */
     private void _SetPoints(float newPoints)
     {
         if (!IsMultiplayerAuthority())
@@ -207,7 +280,14 @@ public partial class Player : CharacterBody2D
 
         _progressBar.Value = _points;
     }
+/*
+```
+*/
 
+/*
+# `_OnLevelUp()`
+This is kinda obvious
+```c# */
     private void _OnLevelUp()
     {
         Strength  += 1;
@@ -220,14 +300,28 @@ public partial class Player : CharacterBody2D
         if (InventoryUi != null && InventoryUi.Visible)
             InventoryUi.Refresh();
     }
+/*
+```
+*/
 
+/*
+# `GetAccessorySlotCount()`
+This is kinda obvious
+```c# */
     public int GetAccessorySlotCount()
     {
         if (Wisdom >= 1000) return 3;
         if (Wisdom >= 500)  return 2;
         return 1;
     }
+/*
+```
+*/
 
+/*
+# `_InstantiateWeaponNode(resWpn, isOwner)`
+This is kinda obvious
+```c# */
     private Weapon _InstantiateWeaponNode(ResItem resWpn, bool isOwner)
     {
         var weapon = resWpn.WeaponScene.Instantiate<Weapon>();
@@ -239,7 +333,14 @@ public partial class Player : CharacterBody2D
             AddChild(weapon);
         return weapon;
     }
+/*
+```
+*/
 
+/*
+# `_AssignToSlot(weapon, itemType)`
+This is kinda obvious
+```c# */
     private void _AssignToSlot(Weapon weapon, ResItem.ItemType itemType)
     {
         switch (itemType)
@@ -250,7 +351,14 @@ public partial class Player : CharacterBody2D
             case ResItem.ItemType.Accessory: EquippedAccessories.Add(weapon); break;
         }
     }
+/*
+```
+*/
 
+/*
+# `_EquipItem(resWpn)`
+This is kinda obvious
+```c# */
     public bool EquipItem(ResItem resWpn)
     {
         if (!IsMultiplayerAuthority())
@@ -287,7 +395,14 @@ public partial class Player : CharacterBody2D
         }
         return false;
     }
+/*
+```
+*/
 
+/*
+# `_UnequipToInventory(weapon)`
+This is kinda obvious
+```c# */
     public void _UnequipToInventory(Weapon weapon)
     {
         if (weapon == null)
@@ -297,7 +412,14 @@ public partial class Player : CharacterBody2D
         weapon.RemovePassiveEffects(this);
         weapon.QueueFree();
     }
+/*
+```
+*/
 
+/*
+# `AddToInventory(resWpn)`
+This is kinda obvious
+```c# */
     public bool AddToInventory(ResItem resWpn)
     {
         if (Inventory.Count < InventoryMax)
@@ -307,7 +429,14 @@ public partial class Player : CharacterBody2D
         }
         return false;
     }
+/*
+```
+*/
 
+/*
+# `AddConsumable(resWpn)`
+This is kinda obvious
+```c# */
     public bool AddConsumable(ResItem resWpn)
     {
         if (Consumables.Count < ConsumablesMax)
@@ -317,7 +446,14 @@ public partial class Player : CharacterBody2D
         }
         return false;
     }
+/*
+```
+*/
 
+/*
+# `RpcGiveWeapon(resPath)`
+This is kinda obvious
+```c# */
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void RpcGiveWeapon(string resPath)
     {
@@ -329,7 +465,14 @@ public partial class Player : CharacterBody2D
         if (res != null)
             Global.Instance.PickupItem(res);
     }
+/*
+```
+*/
 
+/*
+# `RpcRemoveWeapon(resPath)`
+This is kinda obvious
+```c# */
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void RpcRemoveWeapon(string resPath)
     {
@@ -369,7 +512,14 @@ public partial class Player : CharacterBody2D
             }
         }
     }
+/*
+```
+*/
 
+/*
+# `_RemoveEquippedSlot(weapon)`
+This is kinda obvious
+```c# */
     private void _RemoveEquippedSlot(Weapon weapon)
     {
         weapon.RemovePassiveEffects(this);
@@ -380,10 +530,21 @@ public partial class Player : CharacterBody2D
             EquippedAbility = null;
         _weaponsContainerUi.UpdateEquipment(this);
     }
+/*
+```
+*/
 
+/*
+# `_ExitTree()`
+This is kinda obvious
+```c# */
     public override void _ExitTree()
     {
         int myPeerId = GetMultiplayerAuthority();
         Global.Instance.Players.Remove(myPeerId);
     }
+/*
+```
+*/
+
 }
