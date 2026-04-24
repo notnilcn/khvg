@@ -1,5 +1,5 @@
 /*
-Network code
+Spawner code
 ```c# */
 using Godot;
 using Godot.Collections;
@@ -21,7 +21,6 @@ using System.Collections.Generic;
 // When a peer connects, the server broadcasts an RPC to create a Player node on ALL peers.
 // Each peer sets the correct multiplayer_authority on that node so only the owning peer
 // processes input for it.
-
 
 public partial class Spawner : Node2D
 {
@@ -165,7 +164,8 @@ public partial class Spawner : Node2D
 
 
 /*
-
+# `_UnhandledKeyInput(@event)`
+when there's some key input
 ```c# */
     public override void _UnhandledKeyInput(InputEvent @event)
     {
@@ -186,7 +186,8 @@ public partial class Spawner : Node2D
 
 
 /*
-
+# `_OnCommandSubmitted(raw)`
+its obvious
 ```c# */
     private void _OnCommandSubmitted(string raw)
     {
@@ -204,7 +205,8 @@ public partial class Spawner : Node2D
 
 
 /*
-
+# `_ParseCommand(cmd)`
+its obvious
 ```c# */
     private void _ParseCommand(string cmd)
     {
@@ -262,9 +264,9 @@ public partial class Spawner : Node2D
 
 
 /*
-
+# `_CmdSelfinfo(verb)`
+/stats — print RPG stats; /inv — print equipment and inventory. Both run locally, no admin needed.
 ```c# */
-    // /stats — print RPG stats; /inv — print equipment and inventory. Both run locally, no admin needed.
     private void _CmdSelfinfo(string verb)
     {
         var player = Global.Instance.GetLocalPlayer();
@@ -316,10 +318,10 @@ public partial class Spawner : Node2D
 */
 
 /*
-
+# `_CmdSelfPos()`
+/stdbpos -- read this client's PlayerPosition row from the local STDB cache.
+No server round-trip: the SDK keeps a local copy of all subscribed rows.
 ```c# */
-    // /stdbpos -- read this client's PlayerPosition row from the local STDB cache.
-    // No server round-trip: the SDK keeps a local copy of all subscribed rows.
     private void _CmdStdbPos()
     {
         var conn = SpacetimeDBManager.Instance?.Conn;
@@ -347,16 +349,23 @@ public partial class Spawner : Node2D
 */
 
 /*
-
+# `_RpcTryAdminPassword(password)`
+/adminpass — any player: claim admin if the password matches.
+Separate RPC so non-admins can reach the server without going through _RpcAdminCmd.
 ```c# */
-    // /adminpass — any player: claim admin if the password matches.
-    // Separate RPC so non-admins can reach the server without going through _RpcAdminCmd.
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void _RpcTryAdminPassword(string password)
     {
         _TryAdminPassword(Multiplayer.GetRemoteSenderId(), password);
     }
+/*
+```
+*/
 
+/*
+# `_TryAdminPassword(sender, password)`
+its obvious ig
+```c# */
     private void _TryAdminPassword(int sender, string password)
     {
         if (string.IsNullOrEmpty(_adminPassword))
@@ -377,7 +386,14 @@ public partial class Spawner : Node2D
         _admins.Add(sender);
         _SendFeedback(sender, "Admin granted");
     }
+/*
+```
+*/
 
+/*
+# `_ShowFeedback(msg)`
+its obvious ig
+```c# */
     private void _ShowFeedback(string msg)
     {
         if (_chatFeedback == null)
@@ -389,25 +405,43 @@ public partial class Spawner : Node2D
                 _chatFeedback.Text = "";
         };
     }
+/*
+```
+*/
 
+/*
+# `_RpcAdminCmd(verb, args)`
+The server validates admin status before executing; clients cannot bypass this by calling
+_ExecuteAdminCmd directly because that function only runs server-side.
+```c# */
     // ── Admin chat ───────────────────────────────────────────────────────────────
 
-    // The server validates admin status before executing; clients cannot bypass this by calling
-    // _ExecuteAdminCmd directly because that function only runs server-side.
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void _RpcAdminCmd(string verb, string[] args)
     {
         _ExecuteAdminCmd(Multiplayer.GetRemoteSenderId(), verb, args);
     }
+/*
+```
+*/
 
-    // Server → client RPC to deliver command feedback.
+/*
+# `_RpcFeedback(msg)`
+Server → client RPC to deliver command feedback.
+```c# */
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void _RpcFeedback(string msg)
     {
         _ShowFeedback(msg);
     }
+/*
+```
+*/
 
-    // Sends feedback to the given peer (or locally if peer_id == 1).
+/*
+# `_SendFeedback(peerId, msg)`
+Sends feedback to the given peer (or locally if peer_id == 1).
+```c# */
     private void _SendFeedback(int peerId, string msg)
     {
         if (peerId == 1)
@@ -415,11 +449,24 @@ public partial class Spawner : Node2D
         else
             RpcId(peerId, nameof(_RpcFeedback), msg);
     }
+/*
+```
+*/
 
+/*
+# `_IsAdmin(peerId)`
+its very obvious
+```c# */
     private bool _IsAdmin(int peerId) => peerId == 1 || _admins.Contains(peerId);
+/*
+```
+*/
 
-    // Validates admin status then dispatches to the appropriate command handler.
-    // Always runs on the server.
+/*
+# `_ExecuteAdminCmd(sender, verb, args)`
+Validates admin status then dispatches to the appropriate command handler.
+Always runs on the server.
+```c# */
     private void _ExecuteAdminCmd(int sender, string verb, string[] args)
     {
         if (!_IsAdmin(sender))
@@ -440,8 +487,14 @@ public partial class Spawner : Node2D
             case "/tickrate":  _CmdTickrate(sender, args);  break;
         }
     }
+/*
+```
+*/
 
-    // /spawner on|off
+/*
+# `_CmdSpawner(sender, args)`
+/spawner on|off
+```c# */
     private void _CmdSpawner(int sender, string[] args)
     {
         if (args.Length == 0)
@@ -464,8 +517,14 @@ public partial class Spawner : Node2D
                 break;
         }
     }
+/*
+```
+*/
 
-    // /give <weapon> [peer_id] — give a weapon to self or another peer
+/*
+# `_CmdGive(sender, args)`
+/give weapon [peer_id] — give a weapon to self or another peer
+```c# */
     private void _CmdGive(int sender, string[] args)
     {
         if (args.Length == 0)
@@ -491,8 +550,14 @@ public partial class Spawner : Node2D
             target.RpcId(targetId, nameof(Player.RpcGiveWeapon), resPath);
         _SendFeedback(sender, $"Gave {weaponName} to peer {targetId}");
     }
+/*
+```
+*/
 
-    // /remove <weapon> [peer_id] — remove a weapon from self or another peer
+/*
+# `_CmdRemove(sender, args)`
+/remove weapon [peer_id] — remove a weapon from self or another peer
+```c# */
     private void _CmdRemove(int sender, string[] args)
     {
         if (args.Length == 0)
@@ -518,8 +583,14 @@ public partial class Spawner : Node2D
             target.RpcId(targetId, nameof(Player.RpcRemoveWeapon), resPath);
         _SendFeedback(sender, $"Removed {weaponName} from peer {targetId}");
     }
+/*
+```
+*/
 
-    // /admin <peer_id> — host only: grant admin to a connected player
+/*
+# `_CmdAdmin(sender, args)`
+/admin <peer_id> — host only: grant admin to a connected player
+```c# */
     private void _CmdAdmin(int sender, string[] args)
     {
         if (sender != 1)
@@ -553,8 +624,14 @@ public partial class Spawner : Node2D
         _SendFeedback(sender,   $"Granted admin to peer {targetId}");
         _SendFeedback(targetId, "You have been granted admin privileges");
     }
+/*
+```
+*/
 
-    // /unadmin <peer_id> — host only: revoke admin from a player
+/*
+# `_CmdUnadmin(sender, args)`
+/unadmin <peer_id> — host only: revoke admin from a player
+```c# */
     private void _CmdUnadmin(int sender, string[] args)
     {
         if (sender != 1)
@@ -583,8 +660,14 @@ public partial class Spawner : Node2D
         _SendFeedback(sender,   $"Revoked admin from peer {targetId}");
         _SendFeedback(targetId, "Your admin privileges have been revoked");
     }
+/*
+```
+*/
 
-    // /setpass [password] — host only: set (or clear) the admin password
+/*
+# `_CmdSetpass(sender, args)`
+/setpass [password] — host only: set (or clear) the admin password
+```c# */
     private void _CmdSetpass(int sender, string[] args)
     {
         if (sender != 1)
@@ -603,8 +686,14 @@ public partial class Spawner : Node2D
             _SendFeedback(sender, "Admin password set");
         }
     }
+/*
+```
+*/
 
-    // /spawn [x y] — spawn a stationary immortal dummy at the given world position (default 0,0)
+/*
+# `_CmdSpawn(sender, args)`
+/spawn [x y] — spawn a stationary immortal dummy at the given world position (default 0,0)
+```c# */
     private void _CmdSpawn(int sender, string[] args)
     {
         if (args.Length == 1)
@@ -622,10 +711,16 @@ public partial class Spawner : Node2D
         _CreateEnemy(pos, res, isElite: false, immortal: true);
         _SendFeedback(sender, $"Spawned dummy at ({(int)pos.X}, {(int)pos.Y})");
     }
+/*
+```
+*/
 
-    // /chest [x y] — spawn an elite enemy guaranteed to drop a chest when killed.
-    // Uses a random enemy from the current pool, or a goblin if the pool is empty.
-    // If no position is given, spawns near the first available player.
+/*
+# `_CmdChest(sender, args)`
+/chest [x y] — spawn an elite enemy guaranteed to drop a chest when killed.
+Uses a random enemy from the current pool, or a goblin if the pool is empty.
+If no position is given, spawns near the first available player.
+```c# */
     private void _CmdChest(int sender, string[] args)
     {
         if (args.Length == 1)
@@ -656,10 +751,15 @@ public partial class Spawner : Node2D
         _CreateEnemy(pos, res, isElite: true);
         _SendFeedback(sender, $"Spawned elite enemy (chest drop) at ({(int)pos.X}, {(int)pos.Y})");
     }
+/*
+```
+*/
 
-
-    // /tickrate <ms> -- set the SpacetimeDB movement tick interval in milliseconds.
-    // E.g. /tickrate 50 = 20 Hz (normal), /tickrate 1000 = 1 Hz (debug-slow).
+/*
+# `_CmdTickrate(sender, args)`
+/tickrate ms -- set the SpacetimeDB movement tick interval in milliseconds.
+E.g. /tickrate 50 = 20 Hz (normal), /tickrate 1000 = 1 Hz (debug-slow).
+```c# */
     private void _CmdTickrate(int sender, string[] args)
     {
         if (args.Length == 0 || !uint.TryParse(args[0], out uint ms))
@@ -681,11 +781,17 @@ public partial class Spawner : Node2D
         conn.Reducers.ResetSchedule(ms);
         _SendFeedback(sender, $"Tick rate set to {ms} ms ({1000f / ms:F1} Hz)");
     }
+/*
+```
+*/
 
+/*
+# `_NotifySceneReload()`
+Sent by the server to already-connected clients when the server scene reloads.
+The client removes all stale player nodes from the previous session and re-requests a spawn.
+```c# */
     // ── RPCs ──────────────────────────────────────────────────────────────────────
 
-    // Sent by the server to already-connected clients when the server scene reloads.
-    // The client removes all stale player nodes from the previous session and re-requests a spawn.
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void _NotifySceneReload()
     {
@@ -707,9 +813,15 @@ public partial class Spawner : Node2D
 
         RpcId(1, nameof(_RequestPlayerSpawn));
     }
+/*
+```
+*/
 
-    // Client calls this to the server once the client's game scene is fully loaded.
-    // The server then spawns a player node for that client on all peers.
+/*
+# `_RequestPlayerSpawn()`
+Client calls this to the server once the client's game scene is fully loaded.
+The server then spawns a player node for that client on all peers.
+```c# */
     [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void _RequestPlayerSpawn()
     {
@@ -733,13 +845,27 @@ public partial class Spawner : Node2D
         foreach (var data in _activeEnemyData)
             RpcId(newPeerId, nameof(_RpcSpawnEnemy), data);
     }
+/*
+```
+*/
 
+/*
+# `_OnPlayerLeft(peerId)`
+its obvious ig
+```c# */
     private void _OnPlayerLeft(int peerId)
     {
         Rpc(nameof(_RemovePlayer), peerId);
         _admins.Remove(peerId);
     }
+/*
+```
+*/
 
+/*
+# `_SpawnPlayerForPeer(peerId)`
+its obvious ig
+```c# */
     private void _SpawnPlayerForPeer(int peerId)
     {
         var pos = PlayerSpawnPositions[_spawnPositionIndex % PlayerSpawnPositions.Length];
@@ -747,8 +873,14 @@ public partial class Spawner : Node2D
         GD.Print($"Spawner: spawning player for peer {peerId} at {pos}");
         Rpc(nameof(_CreatePlayerNode), peerId, pos);
     }
+/*
+```
+*/
 
-    // Runs on ALL peers. Creates the player node with the correct authority.
+/*
+# `_CreatePlayerNode(peerId, spawnPos)`
+Runs on ALL peers. Creates the player node with the correct authority.
+```c# */
     private static readonly ResPlayer DefaultCharacterData =
         GD.Load<ResPlayer>("res://VS-Like/Characters/Player/Types/Dwarf/res_dwarf.tres");
 
@@ -765,14 +897,28 @@ public partial class Spawner : Node2D
         player.GlobalPosition     = spawnPos;
         AddChild(player);
     }
+/*
+```
+*/
 
+/*
+# `_RemovePlayer(peerId)`
+its obvious ig
+```c# */
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void _RemovePlayer(int peerId)
     {
         var node = GetNodeOrNull($"Player_{peerId}");
         node?.QueueFree();
     }
+/*
+```
+*/
 
+/*
+# `_SpawnSingleEnemy(isElite)`
+its obvious ig
+```c# */
     // ── Enemy spawning ────────────────────────────────────────────────────────────
 
     private void _SpawnSingleEnemy(bool isElite = false)
@@ -783,7 +929,14 @@ public partial class Spawner : Node2D
         var spawnPos = _GetRandomSpawnPos(refPlayer.GlobalPosition, MinSpawnRadius);
         _CreateEnemy(spawnPos, _GetEnemy(), isElite);
     }
+/*
+```
+*/
 
+/*
+# `_SpawnCirclePattern(enemiesToSpawn)`
+its obvious ig
+```c# */
     private void _SpawnCirclePattern(int enemiesToSpawn)
     {
         var refPlayer = _GetReferencePlayer();
@@ -798,8 +951,14 @@ public partial class Spawner : Node2D
             _CreateEnemy(spawnPos, AllResEnemy[0]);
         }
     }
+/*
+```
+*/
 
-    // SERVER ONLY: spawn an enemy and replicate it to all connected clients.
+/*
+# `_CreateEnemy(spawnPos, resEnemy, isElite = false, immortal = false)`
+SERVER ONLY: spawn an enemy and replicate it to all connected clients.
+```c# */
     private void _CreateEnemy(Vector2 spawnPos, ResEnemy resEnemy, bool isElite = false, bool immortal = false)
     {
         int eid = _nextEnemyId++;
@@ -819,9 +978,15 @@ public partial class Spawner : Node2D
         // Broadcast to server (call_local) and all currently-connected clients.
         Rpc(nameof(_RpcSpawnEnemy), data);
     }
+/*
+```
+*/
 
-    // Runs on ALL peers (server via CallLocal, clients via network).
-    // Creates, names, and adds the enemy node to this spawner.
+/*
+# `_RpcSpawnEnemy(data)`
+Runs on ALL peers (server via CallLocal, clients via network).
+Creates, names, and adds the enemy node to this spawner.
+```c# */
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void _RpcSpawnEnemy(Dictionary data)
     {
@@ -843,16 +1008,28 @@ public partial class Spawner : Node2D
             enemy.RequestDespawn  += _OnEnemyRequestDespawn;
         }
     }
+/*
+```
+*/
 
-    // Called on the server when an enemy's Die() method fires.
-    // Broadcasts removal to ALL peers so every machine frees the node.
+/*
+# `_OnEnemyRequestDespawn(eid)`
+Called on the server when an enemy's Die() method fires.
+Broadcasts removal to ALL peers so every machine frees the node.
+```c# */
     private void _OnEnemyRequestDespawn(int eid)
     {
         Rpc(nameof(_RpcDespawnEnemy), eid);
     }
+/*
+```
+*/
 
-    // SERVER ONLY helper called by Enemy.SpawnDrop().
-    // Broadcasts a drop spawn to ALL peers so every player can collect it independently.
+/*
+# `_RpcSpawnDrop(resPath, pos)`
+SERVER ONLY helper called by Enemy.SpawnDrop().
+Broadcasts a drop spawn to ALL peers so every player can collect it independently.
+```c# */
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void _RpcSpawnDrop(string resPath, Vector2 pos)
     {
@@ -861,8 +1038,14 @@ public partial class Spawner : Node2D
         drop.GlobalPosition = pos;
         GetTree().CurrentScene.CallDeferred("add_child", drop);
     }
+/*
+```
+*/
 
-    // Runs on ALL peers. Finds the enemy node by name and frees it.
+/*
+# `_RpcDespawnEnemy(eid)`
+Runs on ALL peers. Finds the enemy node by name and frees it.
+```c# */
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void _RpcDespawnEnemy(int eid)
     {
@@ -874,7 +1057,14 @@ public partial class Spawner : Node2D
         var enemy = GetNodeOrNull($"Enemy_{eid}");
         enemy?.QueueFree();
     }
+/*
+```
+*/
 
+/*
+# `_GetReferencePlayer()`
+its obvious ig
+```c# */
     // ── Helpers ───────────────────────────────────────────────────────────────────
 
     private Player _GetReferencePlayer()
@@ -885,25 +1075,53 @@ public partial class Spawner : Node2D
             return p;
         return null;
     }
+/*
+```
+*/
 
+/*
+# `_GetRandomSpawnPos(globalPos, radiusDistance)`
+its obvious ig
+```c# */
     private Vector2 _GetRandomSpawnPos(Vector2 globalPos, int radiusDistance)
     {
         float angle    = GD.Randf() * Mathf.Tau;
         float distance = radiusDistance + GD.Randf() * 100;
         return globalPos + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * distance;
     }
+/*
+```
+*/
 
+/*
+# `_GetEnemy()`
+its obvious ig
+```c# */
     private ResEnemy _GetEnemy()
     {
         return AllResEnemy[GD.RandRange(0, AllResEnemy.Count - 1)];
     }
+/*
+```
+*/
 
+/*
+# `_EnemyDied()`
+its obvious ig
+```c# */
     public void EnemyDied()
     {
         _enemiesCount--;
         _UpdateEnemiesCountLabel();
     }
+/*
+```
+*/
 
+/*
+# `_AddEnemyType(minute)`
+its obvious ig
+```c# */
     private void _AddEnemyType(int minute)
     {
         switch (minute)
@@ -922,14 +1140,28 @@ public partial class Spawner : Node2D
                 break;
         }
     }
+/*
+```
+*/
 
+/*
+# `_UpdateEnemiesCountLabel()`
+its obvious ig
+```c# */
     // ── Setters / UI ──────────────────────────────────────────────────────────────
 
     private void _UpdateEnemiesCountLabel()
     {
         GetNode<Label>("%EnemiesCountLabel").Text = "ENEMIES: " + _enemiesCount;
     }
+/*
+```
+*/
 
+/*
+# `_SetMinutes(value)`
+its obvious ig
+```c# */
     private void _SetMinutes(int value)
     {
         _minutes = value;
@@ -937,7 +1169,14 @@ public partial class Spawner : Node2D
             _AddEnemyType(_minutes);
         GetNode<Label>("%Minutes").Text = _SetDigits(_minutes);
     }
+/*
+```
+*/
 
+/*
+# `_SetSeconds(value)`
+its obvious ig
+```c# */
     private void _SetSeconds(int value)
     {
         _seconds = value;
@@ -952,7 +1191,14 @@ public partial class Spawner : Node2D
         if (Multiplayer.IsServer())
             Rpc(nameof(_RpcSyncTime), _minutes, _seconds);
     }
+/*
+```
+*/
 
+/*
+# `_RpcSyncTime(minutes, seconds)`
+its obvious ig
+```c# */
     [Rpc(MultiplayerApi.RpcMode.Authority, CallLocal = false, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     private void _RpcSyncTime(int minutes, int seconds)
     {
@@ -961,13 +1207,27 @@ public partial class Spawner : Node2D
         GetNode<Label>("%Minutes").Text = _SetDigits(_minutes);
         GetNode<Label>("%Seconds").Text = _SetDigits(_seconds);
     }
+/*
+```
+*/
 
+/*
+# `_SetDigits(n)`
+its obvious ig
+```c# */
     private static string _SetDigits(int n)
     {
         string s = Mathf.Abs(n).ToString();
         return (s.Length == 1 ? "0" : "") + n;
     }
+/*
+```
+*/
 
+/*
+# `_OnTimerTimeout()`
+its obvious ig
+```c# */
     // ── Timer callbacks ───────────────────────────────────────────────────────────
 
     private void _OnTimerTimeout()
@@ -976,7 +1236,14 @@ public partial class Spawner : Node2D
             return;
         _SetSeconds(_seconds + 1);
     }
+/*
+```
+*/
 
+/*
+# `_OnSpawnTimerTimeout()`
+its obvious ig
+```c# */
     private void _OnSpawnTimerTimeout()
     {
         if (!Multiplayer.IsServer() || !SpawningEnabled)
@@ -984,7 +1251,14 @@ public partial class Spawner : Node2D
         if (_enemiesCount < MaxEnemies)
             _SpawnSingleEnemy();
     }
+/*
+```
+*/
 
+/*
+# `_OnPatternTimerTimeout()`
+its obvious ig
+```c# */
     private void _OnPatternTimerTimeout()
     {
         if (!Multiplayer.IsServer() || !SpawningEnabled)
@@ -992,14 +1266,28 @@ public partial class Spawner : Node2D
         if (_enemiesCount < MaxEnemies)
             _SpawnCirclePattern(Mathf.Min(40, MaxEnemies - _enemiesCount));
     }
+/*
+```
+*/
 
+/*
+# `_OnEliteTimerTimeout()`
+its obvious ig
+```c# */
     private void _OnEliteTimerTimeout()
     {
         if (!Multiplayer.IsServer() || !SpawningEnabled)
             return;
         _SpawnSingleEnemy(isElite: true);
     }
+/*
+```
+*/
 
+/*
+# `_OnFoodTimerTimeout()`
+its obvious ig
+```c# */
     private void _OnFoodTimerTimeout()
     {
         if (!Multiplayer.IsServer())
@@ -1017,4 +1305,5 @@ public partial class Spawner : Node2D
 /*
 ```
 */
+
 }

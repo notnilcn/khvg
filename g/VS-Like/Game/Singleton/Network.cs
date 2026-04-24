@@ -16,7 +16,14 @@ public partial class Network : Node
     public const float HitValidationRange = 350.0f;
 
     public bool IsActive { get; private set; } = false;
+/*
+```
+*/
 
+/*
+# `_Ready()`
+its obvious ig
+```c# */
     public override void _Ready()
     {
         Instance = this;
@@ -29,6 +36,7 @@ public partial class Network : Node
 
 /*
 # `StartServer(port)`
+its obvious ig
 ```c# */
     public bool StartServer(int port = DefaultPort)
     {
@@ -55,7 +63,8 @@ public partial class Network : Node
 
 
 /*
-
+# `JoinServer(address, port)`
+its obvious ig
 ```c# */
     public void JoinServer(string address, int port = DefaultPort)
     {
@@ -84,7 +93,8 @@ public partial class Network : Node
 
 
 /*
-
+# `DisconnectFromGame()`
+its obvious ig
 ```c# */
     public void DisconnectFromGame()
     {
@@ -102,7 +112,8 @@ public partial class Network : Node
 
 
 /*
-
+# `IsServer() & GetPeerId()`
+just 2 obvious functions
 ```c# */
     public bool IsServer() => Multiplayer.IsServer();
     public int GetPeerId() => Multiplayer.GetUniqueId();
@@ -113,8 +124,9 @@ public partial class Network : Node
 
 
 /*
-```
-*/
+# `_OnPeerConnected(peerId)`
+its obvious ig
+```c# */
     private void _OnPeerConnected(long peerId)
     {
         GD.Print("Network: peer connected — id ", peerId);
@@ -126,7 +138,8 @@ public partial class Network : Node
 
 
 /*
-
+# `_OnPeerDisconnected(peerId)`
+its obvious ig
 ```c# */
     private void _OnPeerDisconnected(long peerId)
     {
@@ -139,7 +152,7 @@ public partial class Network : Node
 
 
 /*
-
+# `_OnConnectedToServer()`
 ```c# */
     private void _OnConnectedToServer()
     {
@@ -153,7 +166,7 @@ public partial class Network : Node
 
 
 /*
-
+# `_OnConnectedToServer()`
 ```c# */
     private void _OnConnectionFailed()
     {
@@ -161,7 +174,13 @@ public partial class Network : Node
         EmitSignal(SignalName.ConnectionFailed);
         IsActive = false;
     }
+/*
+```
+*/
 
+/*
+# `_OnServerDisconnected()`
+```c# */
     private void _OnServerDisconnected()
     {
         GD.Print("Network: server disconnected");
