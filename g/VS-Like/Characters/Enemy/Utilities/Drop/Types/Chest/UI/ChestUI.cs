@@ -1,3 +1,6 @@
+/*
+ChestUI code.
+```c# */
 using Godot;
 
 public partial class ChestUI : Control
@@ -7,13 +10,27 @@ public partial class ChestUI : Control
 
     private HBoxContainer _itemsContainer;
     private AudioStreamPlayer _audioPlayer;
+/*
+```
+*/
 
+/*
+# `_Ready()`
+This is kinda obvious
+```c# */
     public override void _Ready()
     {
         _itemsContainer = GetNode<HBoxContainer>("%ItemsContainer");
         _audioPlayer    = GetNode<AudioStreamPlayer>("AudioPlayer");
     }
+/*
+```
+*/
 
+/*
+# `_OpenChest()`
+This is kinda obvious
+```c# */
     public void OpenChest()
     {
         GetTree().Paused = true;
@@ -21,7 +38,14 @@ public partial class ChestUI : Control
         _audioPlayer.Play();
         _PopulateItems();
     }
+/*
+```
+*/
 
+/*
+# `_PopulateItems()`
+This is kinda obvious
+```c# */
     private void _PopulateItems()
     {
         var pool = Global.Instance.GetAvailableItems();
@@ -43,7 +67,14 @@ public partial class ChestUI : Control
         for (int i = 0; i < count; i++)
             _CreateItemButton(pool[i]);
     }
+/*
+```
+*/
 
+/*
+# `_CreateItemButton(res)`
+This is kinda obvious
+```c# */
     private void _CreateItemButton(ResItem res)
     {
         var btn = new Button();
@@ -57,7 +88,14 @@ public partial class ChestUI : Control
         btn.Pressed += () => _OnItemChosen(res);
         _itemsContainer.AddChild(btn);
     }
+/*
+```
+*/
 
+/*
+# `_ShowFoodFallback()`
+This is kinda obvious
+```c# */
     private void _ShowFoodFallback()
     {
         var img = new TextureRect();
@@ -66,13 +104,27 @@ public partial class ChestUI : Control
         _itemsContainer.AddChild(img);
         Global.Instance.GetLocalPlayer().Health += 20;
     }
+/*
+```
+*/
 
+/*
+# `_OnItemChosen(res)`
+This is kinda obvious
+```c# */
     private void _OnItemChosen(ResItem res)
     {
         Global.Instance.PickupItem(res);
         CloseChest();
     }
+/*
+```
+*/
 
+/*
+# `CloseChest()`
+This is kinda obvious
+```c# */
     public void CloseChest()
     {
         foreach (var child in _itemsContainer.GetChildren())
@@ -80,9 +132,20 @@ public partial class ChestUI : Control
         Visible = false;
         GetTree().Paused = false;
     }
+/*
+```
+*/
 
+/*
+# `_OnDoneButtonPressed()`
+This is kinda obvious
+```c# */
     private void _OnDoneButtonPressed()
     {
         CloseChest();
     }
+/*
+```
+*/
+
 }
