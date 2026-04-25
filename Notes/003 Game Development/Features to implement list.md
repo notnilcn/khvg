@@ -7,6 +7,7 @@ These are ordered in terms of of priority.
 				- This is for physics.
 			- [ ] Hex grid chunks
 				- This is just visual. This coordinate system is for player buildings.
+				- https://kaylousberg.itch.io/kaykit-medieval-hexagon
 		- The map is going to be a giant torus rather than a giant square/sphere because apparently implementing it as a torus is mathematically easier.
 	- [ ] Syncing
 		- [x] Player position sync
@@ -45,6 +46,13 @@ These are ordered in terms of of priority.
 - In the beginning the game is just going to be a bunch of interesting bosses. [Arena of the Mad King](<https://naniloit.itch.io/aotmk>) is an example. Same with [this game](<https://www.youtube.com/watch?v=yGci-Lb87zs>)
 
 # 4. Graphics
+- [ ] Free 3d assets
+	- https://kaylousberg.itch.io/kaykit-medieval-hexagon
+	- https://kaylousberg.itch.io/
+- [ ] Pixel art shader
+	- https://www.youtube.com/watch?v=7wwE5FLZceY
+	- https://www.youtube.com/watch?v=dHbqsr-KjOg
+	- 
 I have no idea what I want the art direction to be.
 It'll probably have to be 3d since camera rotation is going to be a huge part of the game.
 Maybe low-poly 3d pass through a pixel art shader since I'm lazy and don't want to spend a lot of time on making it look good (the pixel art shader will make it look intentional rather than lazy).
@@ -53,9 +61,12 @@ https://kaylousberg.itch.io/
 I think I want the game to be purple.
 
 # 5. World
-- Probably just make it 3d.
-- Apocalypse epicenter (maybe multiple?) where enemies get stronger the closer you get to the center.
+- Biomes
+	- Ocean
+	- Desert
+	- Apocalypse epicenter (maybe multiple?) where enemies get stronger the closer you get to the center.
 	- The apocalypse epicenter sends out pulses every month (or every day) that changes the world's landscape.
+
 ###### \[Shelved\] Other stuff to do with the world
 - World bosses that roam around the world and change the landscape.
 	- Creates valleys or fissures that cuts off certain regions

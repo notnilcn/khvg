@@ -66,6 +66,10 @@ public partial class Spawner : Node2D
     private int  _spawnPositionIndex;
     private bool _initialized;
     private Label _chatFeedback;
+    private Timer _stdbSnapshotTimer;
+
+    // Tracks the last reported target per enemy so we can fire UpdateEnemyTarget immediately on change.
+    private readonly System.Collections.Generic.Dictionary<int, string> _lastTargetIds = new();
 
     // Array of every live enemy on the SERVER.
     // Used to send a catch-up list to clients that join after enemies already exist.
@@ -134,6 +138,79 @@ public partial class Spawner : Node2D
         // Populate visuals for SpacetimeDB remote players that were already in the DB
         // before this map scene loaded (their OnInsert fired while we were in the lobby).
         StdbPlayerSync.Instance?.OnGameSceneLoaded();
+
+        // Wire up STDB enemy sync. OnGameSceneLoaded handles late-join catch-up for clients.
+        StdbEnemySync.Instance?.OnGameSceneLoaded(this);
+
+        // Host: clear stale enemy rows from previous sessions and start snapshot reporting.
+        if (Multiplayer.IsServer())
+        {
+            var stdb = SpacetimeDBManager.Instance;
+            if (stdb.IsSubscriptionReady)
+                _OnStdbReady();
+            else
+                stdb.SubscriptionReady += _OnStdbReady;
+        }
+    }
+
+    private void _OnStdbReady()
+    {
+        SpacetimeDBManager.Instance.SubscriptionReady -= _OnStdbReady;
+        if (!Multiplayer.IsServer()) return;
+
+        var conn = SpacetimeDBManager.Instance.Conn;
+        if (conn == null) return;
+
+        // Delete any rows left over from a previous session before spawning new enemies.
+        foreach (var row in conn.Db.EnemyState.Iter())
+            conn.Reducers.DespawnEnemy(row.EnemyId);
+
+        _stdbSnapshotTimer = new Timer();
+        _stdbSnapshotTimer.WaitTime = 0.1;
+        _stdbSnapshotTimer.Timeout += _OnStdbSnapshotTimer;
+        AddChild(_stdbSnapshotTimer);
+        _stdbSnapshotTimer.Start();
+        GD.Print("[Spawner] STDB enemy reporting started");
+    }
+
+    private void _OnStdbSnapshotTimer()
+    {
+        if (!Multiplayer.IsServer()) return;
+        var conn = SpacetimeDBManager.Instance.Conn;
+        if (conn == null) return;
+
+        var snapshots = new List<SpacetimeDB.Types.EnemySnapshot>();
+
+        foreach (var child in GetChildren())
+        {
+            if (child is not Enemy enemy || enemy.EnemyId < 0) continue;
+
+            // Fire UpdateEnemyTarget immediately if the target changed.
+            string targetId = _GetStdbTargetId(enemy);
+            if (!_lastTargetIds.TryGetValue(enemy.EnemyId, out var lastTarget) || lastTarget != targetId)
+            {
+                _lastTargetIds[enemy.EnemyId] = targetId;
+                conn.Reducers.UpdateEnemyTarget((ulong)enemy.EnemyId, targetId);
+            }
+
+            snapshots.Add(new SpacetimeDB.Types.EnemySnapshot
+            {
+                EnemyId = (ulong)enemy.EnemyId,
+                X       = enemy.GlobalPosition.X,
+                Y       = enemy.GlobalPosition.Y,
+                MoveX   = enemy.MoveDir.X,
+                MoveY   = enemy.MoveDir.Y,
+                Speed   = enemy.Speed,
+            });
+        }
+
+        if (snapshots.Count > 0)
+            conn.Reducers.UpdateEnemySnapshots(snapshots);
+    }
+
+    private string _GetStdbTargetId(Enemy enemy)
+    {
+        return StdbPlayerSync.Instance?.GetIdentityForNode(enemy.Target) ?? "";
     }
 /*
 ```
@@ -694,28 +771,11 @@ public partial class Spawner : Node2D
     }
 
 
-    // /tickrate <ms> -- set the SpacetimeDB movement tick interval in milliseconds.
-    // E.g. /tickrate 50 = 20 Hz (normal), /tickrate 1000 = 1 Hz (debug-slow).
+    // /tickrate <ms> -- placeholder; will set the server AI tick interval once a
+    // scheduled reducer exists in the SpacetimeDB module.
     private void _CmdTickrate(int sender, string[] args)
     {
-        if (args.Length == 0 || !uint.TryParse(args[0], out uint ms))
-        {
-            _SendFeedback(sender, "Usage: /tickrate <ms>  (e.g. 50 = 20 Hz, 1000 = 1 Hz)");
-            return;
-        }
-        if (ms < 50 || ms > 60000)
-        {
-            _SendFeedback(sender, "Interval must be 50-60000 ms");
-            return;
-        }
-        var conn = SpacetimeDBManager.Instance?.Conn;
-        if (conn == null)
-        {
-            _SendFeedback(sender, "SpacetimeDB not connected");
-            return;
-        }
-        conn.Reducers.ResetSchedule(ms);
-        _SendFeedback(sender, $"Tick rate set to {ms} ms ({1000f / ms:F1} Hz)");
+        _SendFeedback(sender, "/tickrate not yet implemented (requires a scheduled reducer)");
     }
 
     // ── RPCs ──────────────────────────────────────────────────────────────────────
@@ -849,11 +909,23 @@ public partial class Spawner : Node2D
             ["eid"]      = eid,
         };
 
-        // Track for late-join catch-up (sent inside _RequestPlayerSpawn).
         _activeEnemyData.Add(data);
 
-        // Broadcast to server (call_local) and all currently-connected clients.
-        Rpc(nameof(_RpcSpawnEnemy), data);
+        var conn = SpacetimeDBManager.Instance.IsStdbConnected ? SpacetimeDBManager.Instance.Conn : null;
+        if (conn != null)
+        {
+            // STDB path: only call the reducer. StdbEnemySync.OnInsert spawns the node
+            // on every client including this one, so no local node creation here.
+            int hp = isElite ? resEnemy.Health * 10 : resEnemy.Health;
+            conn.Reducers.SpawnEnemy(
+                (ulong)eid, spawnPos.X, spawnPos.Y,
+                resEnemy.ResourcePath, isElite, immortal, hp);
+        }
+        else
+        {
+            // Godot RPC fallback when STDB is not connected.
+            Rpc(nameof(_RpcSpawnEnemy), data);
+        }
     }
 
     // Runs on ALL peers (server via CallLocal, clients via network).
@@ -884,7 +956,28 @@ public partial class Spawner : Node2D
     // Broadcasts removal to ALL peers so every machine frees the node.
     private void _OnEnemyRequestDespawn(int eid)
     {
-        Rpc(nameof(_RpcDespawnEnemy), eid);
+        var conn = SpacetimeDBManager.Instance.IsStdbConnected ? SpacetimeDBManager.Instance.Conn : null;
+        if (conn != null)
+        {
+            // STDB path: only call the reducer. StdbEnemySync.OnDelete frees the node
+            // on every client including this one, so no local QueueFree here.
+            _activeEnemyData.RemoveAll(d => (int)d["eid"] == eid);
+            conn.Reducers.DespawnEnemy((ulong)eid);
+        }
+        else
+        {
+            Rpc(nameof(_RpcDespawnEnemy), eid);
+        }
+    }
+
+    // Called by StdbEnemySync when the host receives its own enemy via OnInsert.
+    // Connects the signals that the host needs to track HP and trigger despawn.
+    public void RegisterStdbEnemy(Enemy enemy)
+    {
+        _enemiesCount++;
+        _UpdateEnemiesCountLabel();
+        enemy.Died           += EnemyDied;
+        enemy.RequestDespawn += _OnEnemyRequestDespawn;
     }
 
     // SERVER ONLY helper called by Enemy.SpawnDrop().

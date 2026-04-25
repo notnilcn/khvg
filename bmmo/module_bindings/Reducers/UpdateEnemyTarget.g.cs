@@ -12,17 +12,17 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void SetMoveInputHandler(ReducerEventContext ctx, float moveX, float moveY);
-        public event SetMoveInputHandler? OnSetMoveInput;
+        public delegate void UpdateEnemyTargetHandler(ReducerEventContext ctx, ulong enemyId, string targetId);
+        public event UpdateEnemyTargetHandler? OnUpdateEnemyTarget;
 
-        public void SetMoveInput(float moveX, float moveY)
+        public void UpdateEnemyTarget(ulong enemyId, string targetId)
         {
-            conn.InternalCallReducer(new Reducer.SetMoveInput(moveX, moveY));
+            conn.InternalCallReducer(new Reducer.UpdateEnemyTarget(enemyId, targetId));
         }
 
-        public bool InvokeSetMoveInput(ReducerEventContext ctx, Reducer.SetMoveInput args)
+        public bool InvokeUpdateEnemyTarget(ReducerEventContext ctx, Reducer.UpdateEnemyTarget args)
         {
-            if (OnSetMoveInput == null)
+            if (OnUpdateEnemyTarget == null)
             {
                 if (InternalOnUnhandledReducerError != null)
                 {
@@ -34,10 +34,10 @@ namespace SpacetimeDB.Types
                 }
                 return false;
             }
-            OnSetMoveInput(
+            OnUpdateEnemyTarget(
                 ctx,
-                args.MoveX,
-                args.MoveY
+                args.EnemyId,
+                args.TargetId
             );
             return true;
         }
@@ -47,27 +47,28 @@ namespace SpacetimeDB.Types
     {
         [SpacetimeDB.Type]
         [DataContract]
-        public sealed partial class SetMoveInput : Reducer, IReducerArgs
+        public sealed partial class UpdateEnemyTarget : Reducer, IReducerArgs
         {
-            [DataMember(Name = "move_x")]
-            public float MoveX;
-            [DataMember(Name = "move_y")]
-            public float MoveY;
+            [DataMember(Name = "enemy_id")]
+            public ulong EnemyId;
+            [DataMember(Name = "target_id")]
+            public string TargetId;
 
-            public SetMoveInput(
-                float MoveX,
-                float MoveY
+            public UpdateEnemyTarget(
+                ulong EnemyId,
+                string TargetId
             )
             {
-                this.MoveX = MoveX;
-                this.MoveY = MoveY;
+                this.EnemyId = EnemyId;
+                this.TargetId = TargetId;
             }
 
-            public SetMoveInput()
+            public UpdateEnemyTarget()
             {
+                this.TargetId = "";
             }
 
-            string IReducerArgs.ReducerName => "set_move_input";
+            string IReducerArgs.ReducerName => "update_enemy_target";
         }
     }
 }
