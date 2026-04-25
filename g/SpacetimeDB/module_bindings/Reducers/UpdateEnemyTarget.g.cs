@@ -12,17 +12,17 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void ResetScheduleHandler(ReducerEventContext ctx, uint intervalMs);
-        public event ResetScheduleHandler? OnResetSchedule;
+        public delegate void UpdateEnemyTargetHandler(ReducerEventContext ctx, ulong enemyId, string targetId);
+        public event UpdateEnemyTargetHandler? OnUpdateEnemyTarget;
 
-        public void ResetSchedule(uint intervalMs)
+        public void UpdateEnemyTarget(ulong enemyId, string targetId)
         {
-            conn.InternalCallReducer(new Reducer.ResetSchedule(intervalMs));
+            conn.InternalCallReducer(new Reducer.UpdateEnemyTarget(enemyId, targetId));
         }
 
-        public bool InvokeResetSchedule(ReducerEventContext ctx, Reducer.ResetSchedule args)
+        public bool InvokeUpdateEnemyTarget(ReducerEventContext ctx, Reducer.UpdateEnemyTarget args)
         {
-            if (OnResetSchedule == null)
+            if (OnUpdateEnemyTarget == null)
             {
                 if (InternalOnUnhandledReducerError != null)
                 {
@@ -34,9 +34,10 @@ namespace SpacetimeDB.Types
                 }
                 return false;
             }
-            OnResetSchedule(
+            OnUpdateEnemyTarget(
                 ctx,
-                args.IntervalMs
+                args.EnemyId,
+                args.TargetId
             );
             return true;
         }
@@ -46,21 +47,28 @@ namespace SpacetimeDB.Types
     {
         [SpacetimeDB.Type]
         [DataContract]
-        public sealed partial class ResetSchedule : Reducer, IReducerArgs
+        public sealed partial class UpdateEnemyTarget : Reducer, IReducerArgs
         {
-            [DataMember(Name = "interval_ms")]
-            public uint IntervalMs;
+            [DataMember(Name = "enemy_id")]
+            public ulong EnemyId;
+            [DataMember(Name = "target_id")]
+            public string TargetId;
 
-            public ResetSchedule(uint IntervalMs)
+            public UpdateEnemyTarget(
+                ulong EnemyId,
+                string TargetId
+            )
             {
-                this.IntervalMs = IntervalMs;
+                this.EnemyId = EnemyId;
+                this.TargetId = TargetId;
             }
 
-            public ResetSchedule()
+            public UpdateEnemyTarget()
             {
+                this.TargetId = "";
             }
 
-            string IReducerArgs.ReducerName => "reset_schedule";
+            string IReducerArgs.ReducerName => "update_enemy_target";
         }
     }
 }

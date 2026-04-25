@@ -1,4 +1,5 @@
 using SpacetimeDB;
+using System.Collections.Generic;
 
 // ──────────────────────────────────────────────
 // Custom types
@@ -12,6 +13,18 @@ public partial struct RpgStats
     public int Dexterity;
     public int Defense;
     public int Vitality;
+}
+
+/// Batch position snapshot sent by the host every 100 ms.
+[SpacetimeDB.Type]
+public partial struct EnemySnapshot
+{
+    public ulong EnemyId;
+    public float X;
+    public float Y;
+    public float MoveX;
+    public float MoveY;
+    public float Speed;
 }
 
 // ──────────────────────────────────────────────
@@ -75,6 +88,27 @@ public partial struct PlayerPosition
     public Timestamp EventTime;
     public int ChunkX;
     public int ChunkY;
+}
+
+/// One row per live enemy. Host inserts on spawn, updates every 100 ms with a dead-reckoning
+/// snapshot, and deletes on despawn. Clients simulate locally and correct on each update.
+/// EnemyId is assigned by the host (matches the local Godot int EnemyId cast to ulong).
+[SpacetimeDB.Table(Accessor = "EnemyState", Public = true)]
+public partial struct EnemyState
+{
+    [SpacetimeDB.PrimaryKey]
+    public ulong EnemyId;
+    public float X;
+    public float Y;
+    public float MoveX;
+    public float MoveY;
+    public float Speed;
+    public Timestamp EventTime;
+    public string ResPath;
+    public bool IsElite;
+    public bool Immortal;
+    public int Hp;
+    public string TargetId; // STDB identity string of the player this enemy is chasing
 }
 
 // ──────────────────────────────────────────────
@@ -274,5 +308,72 @@ public static partial class Module
             BackpackSlots = backpackSlots,
             ConsumableSlots = consumableSlots,
         });
+    }
+
+    // ── Enemies ────────────────────────────────
+
+    /// Called by the Godot host when it spawns an enemy locally.
+    /// EnemyId matches the host's local int ID (cast to ulong) so both sides share the same key.
+    [SpacetimeDB.Reducer]
+    public static void SpawnEnemy(ReducerContext ctx, ulong enemyId, float x, float y,
+        string resPath, bool isElite, bool immortal, int hp)
+    {
+        if (ctx.Db.EnemyState.EnemyId.Find(enemyId) is not null)
+            throw new Exception($"Enemy {enemyId} already exists");
+
+        ctx.Db.EnemyState.Insert(new EnemyState
+        {
+            EnemyId   = enemyId,
+            X         = x,
+            Y         = y,
+            MoveX     = 0f,
+            MoveY     = 0f,
+            Speed     = 0f,
+            EventTime = ctx.Timestamp,
+            ResPath   = resPath,
+            IsElite   = isElite,
+            Immortal  = immortal,
+            Hp        = hp,
+            TargetId  = "",
+        });
+    }
+
+    /// Called by the host every 100 ms with a batch of dead-reckoning snapshots.
+    /// Clients receive OnUpdate and correct any local simulation drift.
+    [SpacetimeDB.Reducer]
+    public static void UpdateEnemySnapshots(ReducerContext ctx, List<EnemySnapshot> snapshots)
+    {
+        foreach (var snap in snapshots)
+        {
+            if (ctx.Db.EnemyState.EnemyId.Find(snap.EnemyId) is not EnemyState enemy)
+                continue;
+            ctx.Db.EnemyState.EnemyId.Update(enemy with
+            {
+                X         = snap.X,
+                Y         = snap.Y,
+                MoveX     = snap.MoveX,
+                MoveY     = snap.MoveY,
+                Speed     = snap.Speed,
+                EventTime = ctx.Timestamp,
+            });
+        }
+    }
+
+    /// Called by the host immediately when an enemy switches targets.
+    /// Kept separate from UpdateEnemySnapshots so target changes aren't
+    /// rate-limited to the 100 ms position tick.
+    [SpacetimeDB.Reducer]
+    public static void UpdateEnemyTarget(ReducerContext ctx, ulong enemyId, string targetId)
+    {
+        if (ctx.Db.EnemyState.EnemyId.Find(enemyId) is not EnemyState enemy)
+            return;
+        ctx.Db.EnemyState.EnemyId.Update(enemy with { TargetId = targetId, EventTime = ctx.Timestamp });
+    }
+
+    /// Called by the host when an enemy is despawned.
+    [SpacetimeDB.Reducer]
+    public static void DespawnEnemy(ReducerContext ctx, ulong enemyId)
+    {
+        ctx.Db.EnemyState.EnemyId.Delete(enemyId);
     }
 }

@@ -25,6 +25,7 @@ Network="*res://VS-Like/Game/Singleton/Network.cs"
 BulletManager="*res://VS-Like/Bullets/BulletManager.cs"
 SpacetimeDBManager="*res://SpacetimeDB/SpacetimeDBManager.cs"
 StdbPlayerSync="*res://SpacetimeDB/StdbPlayerSync.cs"
+StdbEnemySync="*res://SpacetimeDB/StdbEnemySync.cs"
 
 [display]
 

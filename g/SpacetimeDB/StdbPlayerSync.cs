@@ -33,6 +33,19 @@ public partial class StdbPlayerSync : Node
     private readonly Dictionary<string, Node2D> _remoteNodes = new();
     private readonly Dictionary<string, Snapshot> _snapshots = new();
 
+    public IReadOnlyDictionary<string, Node2D> RemoteNodes => _remoteNodes;
+
+    // Returns the STDB identity string for a given player node.
+    // Works for both remote ghost nodes and the local player node.
+    public string? GetIdentityForNode(Node2D node)
+    {
+        foreach (var (id, n) in _remoteNodes)
+            if (n == node) return id;
+        if (node is Player)
+            return SpacetimeDBManager.Instance.LocalIdentity?.ToString();
+        return null;
+    }
+
     public override void _Ready()
     {
         Instance = this;

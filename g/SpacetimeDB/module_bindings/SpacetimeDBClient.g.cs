@@ -28,6 +28,7 @@ namespace SpacetimeDB.Types
         public RemoteTables(DbConnection conn)
         {
             AddTable(CharacterData = new(conn));
+            AddTable(EnemyState = new(conn));
             AddTable(PlayerAccount = new(conn));
             AddTable(PlayerInventory = new(conn));
             AddTable(PlayerPosition = new(conn));
@@ -528,6 +529,7 @@ namespace SpacetimeDB.Types
         internal static string[] AllTablesSqlQueries() => new string[]
         {
             new QueryBuilder().From.CharacterData().ToSql(),
+            new QueryBuilder().From.EnemyState().ToSql(),
             new QueryBuilder().From.PlayerAccount().ToSql(),
             new QueryBuilder().From.PlayerInventory().ToSql(),
             new QueryBuilder().From.PlayerPosition().ToSql(),
@@ -538,6 +540,7 @@ namespace SpacetimeDB.Types
     public sealed class From
     {
         public global::SpacetimeDB.Table<CharacterData, CharacterDataCols, CharacterDataIxCols> CharacterData() => new("character_data", new CharacterDataCols("character_data"), new CharacterDataIxCols("character_data"));
+        public global::SpacetimeDB.Table<EnemyState, EnemyStateCols, EnemyStateIxCols> EnemyState() => new("enemy_state", new EnemyStateCols("enemy_state"), new EnemyStateIxCols("enemy_state"));
         public global::SpacetimeDB.Table<PlayerAccount, PlayerAccountCols, PlayerAccountIxCols> PlayerAccount() => new("player_account", new PlayerAccountCols("player_account"), new PlayerAccountIxCols("player_account"));
         public global::SpacetimeDB.Table<PlayerInventory, PlayerInventoryCols, PlayerInventoryIxCols> PlayerInventory() => new("player_inventory", new PlayerInventoryCols("player_inventory"), new PlayerInventoryIxCols("player_inventory"));
         public global::SpacetimeDB.Table<PlayerPosition, PlayerPositionCols, PlayerPositionIxCols> PlayerPosition() => new("player_position", new PlayerPositionCols("player_position"), new PlayerPositionIxCols("player_position"));
@@ -622,9 +625,13 @@ namespace SpacetimeDB.Types
             var eventContext = (ReducerEventContext)context;
             return reducer switch
             {
+                Reducer.DespawnEnemy args => Reducers.InvokeDespawnEnemy(eventContext, args),
                 Reducer.ReportMovement args => Reducers.InvokeReportMovement(eventContext, args),
                 Reducer.SaveCharacterProgress args => Reducers.InvokeSaveCharacterProgress(eventContext, args),
                 Reducer.SetUsername args => Reducers.InvokeSetUsername(eventContext, args),
+                Reducer.SpawnEnemy args => Reducers.InvokeSpawnEnemy(eventContext, args),
+                Reducer.UpdateEnemySnapshots args => Reducers.InvokeUpdateEnemySnapshots(eventContext, args),
+                Reducer.UpdateEnemyTarget args => Reducers.InvokeUpdateEnemyTarget(eventContext, args),
                 Reducer.UpdateInventory args => Reducers.InvokeUpdateInventory(eventContext, args),
                 _ => throw new ArgumentOutOfRangeException("Reducer", $"Unknown reducer {reducer}")
             };
