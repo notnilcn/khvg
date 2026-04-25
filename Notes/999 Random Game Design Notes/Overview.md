@@ -1,10 +1,6 @@
 # Genre
 Genre is bullet-hell mmo (similar to Realm of the Mad God), with future plans for sandbox building and crafting (similar to BitCraft). The sandbox building and crafting aspect is only there because this game will be using a server backend called spacetimedb which lends itself well to that type of game. The sandbox building and crafting aspect is entirely shelved until the bullet-hell stuff is done because I want to steal the Realm of the Mad God player base as soon as possible (if you know anything about that game, you'll know that the player-base is desperate for a better game that's similar).
 
-[wwwwwwwwl](<lobby.cs#w  */>)
-
-[wwwwwwwwl](<Lobby.cs#^1>)
-
 # Spacetimedb scope creep stuff
 There is an apocalypse epicentre that sends out magical pulses every day that warp the landscape. There are event bosses that spawn resources and alter the terrain.
 
