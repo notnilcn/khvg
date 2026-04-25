@@ -1,11 +1,22 @@
 These are ordered in terms of of priority.
-# 0. Foundations
-- Spacetimedb
-	- Syncing
-- Enemy Bullets system
+# 0. [Foundations](<Foundations.md>)
+- [ ] [Spacetimedb](<Foundations.md#Spacetimedb>)
+	- [ ] [World Grid](<Foundations.md#World Grid>)
+		- The map is going to be a giant torus rather than a giant square/sphere because apparently implementing it as a torus is mathematically easier.
+	- [ ] Syncing
+		- [ ] Player position sync
+		- [ ] Enemy position sync
+		- [ ] Enemy bullet sync
+		- [ ] Player bullet sync
+- [ ] Enemy Bullets system
 	- These will be parametric bullets
-- Player bullets system
+- [ ] Player bullets system
 	- These won't actually be bullets
+
+# 1. Physics
+- [ ] Elevated client that reads spacetimedb, calculates physics, and writes the output to spacetimedb.
+	- The game needs an elevated client that calculates physics because position sync uses dead reckoning.
+
 
 # 1. Controls
 - Camera rotation.

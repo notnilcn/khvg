@@ -4,6 +4,7 @@ Network code
 using Godot;
 using Godot.Collections;
 using System.Collections.Generic;
+using SpacetimeDB.Types;
 
 // Overall Description
 // Handles spawning of enemies AND players.
@@ -237,7 +238,7 @@ public partial class Spawner : Node2D
                 break;
 
             case "/stdbpos":
-                _CmdStdbPos();
+                _CmdStdbPos(args);
                 break;
 
             case "/adminpass":
@@ -318,9 +319,10 @@ public partial class Spawner : Node2D
 /*
 
 ```c# */
-    // /stdbpos -- read this client's PlayerPosition row from the local STDB cache.
-    // No server round-trip: the SDK keeps a local copy of all subscribed rows.
-    private void _CmdStdbPos()
+    // /stdbpos [prefix] -- read a PlayerPosition row from the local STDB cache.
+    // With no argument: shows the local player's row.
+    // With a prefix argument: finds the first row whose identity string starts with that prefix.
+    private void _CmdStdbPos(string[] args)
     {
         var conn = SpacetimeDBManager.Instance?.Conn;
         if (conn == null)
@@ -328,19 +330,53 @@ public partial class Spawner : Node2D
             _ShowFeedback("SpacetimeDB not connected");
             return;
         }
-        var localId = SpacetimeDBManager.Instance.LocalIdentity;
-        if (!localId.HasValue)
+
+        PlayerPosition? row;
+
+        if (args.Length == 0)
         {
-            _ShowFeedback("No local STDB identity yet");
-            return;
+            var localId = SpacetimeDBManager.Instance.LocalIdentity;
+            if (!localId.HasValue)
+            {
+                _ShowFeedback("No local STDB identity yet");
+                return;
+            }
+            row = conn.Db.PlayerPosition.PlayerId.Find(localId.Value);
+            if (row is null)
+            {
+                _ShowFeedback("No PlayerPosition row found (not connected or not spawned)");
+                return;
+            }
         }
-        var row = conn.Db.PlayerPosition.PlayerId.Find(localId.Value);
-        if (row is null)
+        else
         {
-            _ShowFeedback("No PlayerPosition row found (not connected or not spawned)");
-            return;
+            string prefix = args[0].ToLower();
+            PlayerPosition? match = null;
+            int matchCount = 0;
+            foreach (var r in conn.Db.PlayerPosition.Iter())
+            {
+                if (r.PlayerId.ToString().ToLower().StartsWith(prefix))
+                {
+                    match = r;
+                    matchCount++;
+                }
+            }
+            if (matchCount == 0)
+            {
+                _ShowFeedback($"No player found with identity prefix '{args[0]}'");
+                return;
+            }
+            if (matchCount > 1)
+            {
+                _ShowFeedback($"Ambiguous prefix '{args[0]}' matches {matchCount} players — use more characters");
+                return;
+            }
+            row = match;
         }
-        _ShowFeedback($"STDB pos: ({row.X:F1}, {row.Y:F1})  move=({row.MoveX:F1},{row.MoveY:F1})  chunk=({row.ChunkX},{row.ChunkY})");
+
+        var id = row!.PlayerId.ToString();
+        string label = id.Length >= 8 ? id[..8] : id;
+        _ShowFeedback($"[{label}] pos:({row.X:F1},{row.Y:F1})  move:({row.MoveX:F1},{row.MoveY:F1})  chunk:({row.ChunkX},{row.ChunkY})");
     }
 /*
 ```

@@ -50,11 +50,32 @@ public partial class StdbPlayerSync : Node
 
     private void _HookCallbacks()
     {
-        var conn = SpacetimeDBManager.Instance.Conn!;
+        var mgr = SpacetimeDBManager.Instance;
+        var conn = mgr.Conn!;
         conn.Db.PlayerPosition.OnInsert += _OnInsert;
         conn.Db.PlayerPosition.OnUpdate += _OnUpdate;
         conn.Db.PlayerPosition.OnDelete += _OnDelete;
+
+        // If the subscription is already applied (game scene loaded after STDB connected),
+        // catch up immediately. Otherwise wait for the signal.
+        if (mgr.IsSubscriptionReady)
+            _CatchUpIfInGameScene();
+        else
+            mgr.SubscriptionReady += _OnSubscriptionReady;
+
         GD.Print("[StdbSync] Hooked PlayerPosition callbacks");
+    }
+
+    private void _OnSubscriptionReady()
+    {
+        SpacetimeDBManager.Instance.SubscriptionReady -= _OnSubscriptionReady;
+        _CatchUpIfInGameScene();
+    }
+
+    private void _CatchUpIfInGameScene()
+    {
+        if (GetTree().CurrentScene?.SceneFilePath == GameScenePath)
+            OnGameSceneLoaded();
     }
 
     public void OnGameSceneLoaded()
@@ -146,7 +167,7 @@ public partial class StdbPlayerSync : Node
         sprite.FlipH = true;
         node.AddChild(sprite);
 
-        scene.AddChild(node);
+        scene.CallDeferred(Node.MethodName.AddChild, node);
         _remoteNodes[key] = node;
         _targetPositions[key] = pos;
     }
@@ -167,7 +188,10 @@ public partial class StdbPlayerSync : Node
     {
         var mgr = SpacetimeDBManager.Instance;
         if (mgr != null)
+        {
             mgr.ConnectedToServer -= _OnConnectedToServer;
+            mgr.SubscriptionReady -= _OnSubscriptionReady;
+        }
         var conn = mgr?.Conn;
         if (conn == null) return;
         conn.Db.PlayerPosition.OnInsert -= _OnInsert;

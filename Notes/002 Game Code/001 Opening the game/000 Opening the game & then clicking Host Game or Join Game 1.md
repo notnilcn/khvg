@@ -28,7 +28,6 @@
 Note: the host gets **no player node**. The comment on line 65 says "Dedicated server — no player node for peer 1", which contradicts `network.cs`'s doc comment saying it's a listen-server. That looks like an unresolved gap.
 ---
 # **When a client clicks "Join Game":**
-
 1. [`lobby._on_join_pressed()`](<lobby.cs#`_on_join_pressed()`>)
 	1. [`lobby._set_ui_enabled(false)`](<lobby.cs#`_set_ui_enabled(enabled)`>)
 		- Disables lobby ui.
