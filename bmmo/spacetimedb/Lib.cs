@@ -57,9 +57,11 @@ public partial struct PlayerInventory
     public List<string> ConsumableSlots;      // max 8, first 2 active by default
 }
 
-/// Live position and current movement input for each connected player.
-/// ChunkX/ChunkY enable AoI: clients subscribe to a range of chunks
-/// rather than the full table. CHUNK_SIZE must match the client constant.
+/// Dead-reckoning snapshot for each connected player.
+/// X/Y is the confirmed position at EventTime. MoveX/MoveY is the normalised direction
+/// the player was moving in at that moment. Speed is world-units-per-second.
+/// Clients extrapolate: pos = (X,Y) + (MoveX,MoveY)*Speed*(now - EventTime).
+/// ChunkX/ChunkY enable AoI: clients subscribe to a chunk range rather than the full table.
 [SpacetimeDB.Table(Accessor = "PlayerPosition", Public = true)]
 public partial struct PlayerPosition
 {
@@ -67,21 +69,12 @@ public partial struct PlayerPosition
     public Identity PlayerId;
     public float X;
     public float Y;
-    /// Normalized movement direction set by client on keypress/release (-1, 0, or 1).
     public float MoveX;
     public float MoveY;
+    public float Speed;
+    public Timestamp EventTime;
     public int ChunkX;
     public int ChunkY;
-}
-
-/// Drives the 1 Hz player movement tick (slowed for debug). One row inserted at Init; never deleted.
-[SpacetimeDB.Table(Accessor = "MoveTickSchedule", Scheduled = "PlayerMoveTick")]
-public partial struct MoveTickSchedule
-{
-    [SpacetimeDB.PrimaryKey]
-    [SpacetimeDB.AutoInc]
-    public ulong Id;
-    public ScheduleAt ScheduledAt;
 }
 
 // ──────────────────────────────────────────────
@@ -93,14 +86,11 @@ public static partial class Module
     private const int BaseMaxHp = 100;
     private const int HpPerLevel = 5;
 
-    /// Units per second. Must match the player speed constant in Godot.
-    private const float PlayerSpeed = 100f;
+    /// Sanity cap on reported speed. Rejects clearly cheated values.
+    /// Set high enough to allow speed accessories (base ~100, cap at 4×).
+    private const float MaxSpeed = 400f;
 
-    /// Seconds between movement ticks -- slowed to 1 Hz for debug visibility.
-    private const float TickDelta = 1f;
-
-    /// World units per chunk side. Clients subscribe to chunk ranges for AoI.
-    /// Must match the client constant used to compute subscription bounds.
+    /// World units per chunk side. Must match the client constant.
     private const float ChunkSize = 320f;
 
     private static RpgStats StartingStats() => new RpgStats
@@ -113,40 +103,6 @@ public static partial class Module
     };
 
     // ── Lifecycle ──────────────────────────────
-
-    [SpacetimeDB.Reducer(ReducerKind.Init)]
-    public static void Init(ReducerContext ctx)
-    {
-        ctx.Db.MoveTickSchedule.Insert(new MoveTickSchedule
-        {
-            Id = 0,
-            ScheduledAt = new ScheduleAt.Interval(TimeSpan.FromMilliseconds(1000)),
-        });
-    }
-
-    /// Replaces the MoveTickSchedule row with a new interval so tick rate can be
-    /// changed at runtime without wiping account/character data.
-    /// Usage: /tickrate <ms> in the Godot admin chat, or via spacetime call.
-    [SpacetimeDB.Reducer]
-    public static void ResetSchedule(ReducerContext ctx, uint intervalMs)
-    {
-        if (intervalMs < 50)
-            throw new Exception("intervalMs must be >= 50 (20 Hz max)");
-        if (intervalMs > 60000)
-            throw new Exception("intervalMs must be <= 60000 (1-per-minute min)");
-
-        var toDelete = new System.Collections.Generic.List<ulong>();
-        foreach (var row in ctx.Db.MoveTickSchedule.Iter())
-            toDelete.Add(row.Id);
-        foreach (var id in toDelete)
-            ctx.Db.MoveTickSchedule.Id.Delete(id);
-
-        ctx.Db.MoveTickSchedule.Insert(new MoveTickSchedule
-        {
-            ScheduledAt = new ScheduleAt.Interval(TimeSpan.FromMilliseconds(intervalMs)),
-        });
-        Log.Info($"MoveTickSchedule reset to {intervalMs} ms interval.");
-    }
 
     [SpacetimeDB.Reducer(ReducerKind.ClientConnected)]
     public static void ClientConnected(ReducerContext ctx)
@@ -196,6 +152,8 @@ public static partial class Module
             Y = 0f,
             MoveX = 0f,
             MoveY = 0f,
+            Speed = 0f,
+            EventTime = ctx.Timestamp,
             ChunkX = 0,
             ChunkY = 0,
         });
@@ -210,50 +168,38 @@ public static partial class Module
 
     // ── Movement ───────────────────────────────
 
-    /// Called by client on keypress/release with the current normalized direction.
-    /// MoveX/MoveY should each be -1, 0, or 1. The server clamps them.
+    /// Called by the client only when movement input changes (keypress / release).
+    /// x/y: confirmed world position at the moment input changed.
+    /// moveX/moveY: new normalised direction (clamped server-side to unit length).
+    /// speed: world-units-per-second the player is moving at (Speed * ExtraSpeed in Godot).
+    /// Other clients extrapolate this snapshot forward until the next update arrives.
     [SpacetimeDB.Reducer]
-    public static void SetMoveInput(ReducerContext ctx, float moveX, float moveY)
+    public static void ReportMovement(ReducerContext ctx, float x, float y, float moveX, float moveY, float speed)
     {
-        Log.Info($"SetMoveInput({moveX:F2},{moveY:F2}) from {ctx.Sender}");
         if (ctx.Db.PlayerPosition.PlayerId.Find(ctx.Sender) is not PlayerPosition pos)
             throw new Exception($"Position not found for {ctx.Sender}");
 
+        if (speed > MaxSpeed)
+            throw new Exception($"Speed {speed:F1} exceeds MaxSpeed {MaxSpeed}");
+
+        float len = MathF.Sqrt(moveX * moveX + moveY * moveY);
+        float nx = len > 0f ? moveX / len : 0f;
+        float ny = len > 0f ? moveY / len : 0f;
+
+        int chunkX = (int)MathF.Floor(x / ChunkSize);
+        int chunkY = (int)MathF.Floor(y / ChunkSize);
+
         ctx.Db.PlayerPosition.PlayerId.Update(pos with
         {
-            MoveX = Math.Clamp(moveX, -1f, 1f),
-            MoveY = Math.Clamp(moveY, -1f, 1f),
+            X = x,
+            Y = y,
+            MoveX = nx,
+            MoveY = ny,
+            Speed = speed,
+            EventTime = ctx.Timestamp,
+            ChunkX = chunkX,
+            ChunkY = chunkY,
         });
-    }
-
-    /// 1 Hz debug tick. Moves every player according to their stored input direction.
-    /// Wall collision is client-side only — server movement is physics-free for now.
-    [SpacetimeDB.Reducer]
-    public static void PlayerMoveTick(ReducerContext ctx, MoveTickSchedule schedule)
-    {
-        foreach (var pos in ctx.Db.PlayerPosition.Iter())
-        {
-            if (pos.MoveX == 0f && pos.MoveY == 0f)
-                continue;
-
-            // Normalize diagonal movement so speed is consistent in all directions.
-            float len = MathF.Sqrt(pos.MoveX * pos.MoveX + pos.MoveY * pos.MoveY);
-            float nx = pos.MoveX / len;
-            float ny = pos.MoveY / len;
-
-            float newX = pos.X + nx * PlayerSpeed * TickDelta;
-            float newY = pos.Y + ny * PlayerSpeed * TickDelta;
-            int chunkX = (int)MathF.Floor(newX / ChunkSize);
-            int chunkY = (int)MathF.Floor(newY / ChunkSize);
-
-            ctx.Db.PlayerPosition.PlayerId.Update(pos with
-            {
-                X = newX,
-                Y = newY,
-                ChunkX = chunkX,
-                ChunkY = chunkY,
-            });
-        }
     }
 
     // ── Account ────────────────────────────────

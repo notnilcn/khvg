@@ -3,7 +3,7 @@ Genre is bullet-hell mmo (similar to Realm of the Mad God), with future plans fo
 
 [wwwwwwwwl](<lobby.cs#w  */>)
 
-[wwwwwwwwl](<lobby.cs#^1>)
+[wwwwwwwwl](<Lobby.cs#^1>)
 
 # Spacetimedb scope creep stuff
 There is an apocalypse epicentre that sends out magical pulses every day that warp the landscape. There are event bosses that spawn resources and alter the terrain.

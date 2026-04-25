@@ -1,3 +1,6 @@
+/*
+# whatever
+```c# */
 using Godot;
 using System.Collections.Generic;
 
@@ -64,7 +67,10 @@ public partial class Player : CharacterBody2D
         }
         return base._Set(property, value);
     }
-
+/*
+```
+*/
+    
     public override async void _Ready()
     {
         _sprite2D         = GetNode<Sprite2D>("Sprite2D");
@@ -159,8 +165,8 @@ public partial class Player : CharacterBody2D
         {
             _lastSentMoveInput = movementInput;
             var conn = SpacetimeDBManager.Instance.Conn;
-            GD.Print($"[Player] SetMoveInput({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
-            conn?.Reducers.SetMoveInput(movementInput.X, movementInput.Y);
+            // GD.Print($"[Player] ReportMovement({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
+            conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, movementInput.X, movementInput.Y, Speed * ExtraSpeed);
         }
 
         if (Velocity.X > 0)

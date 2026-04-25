@@ -31,10 +31,46 @@
                   "subpath": "#^-"
                 },
                 {
+                  "type": "group",
+                  "ctime": 1776989199404,
+                  "items": [],
+                  "title": "Features to implement"
+                },
+                {
+                  "type": "file",
+                  "ctime": 1776989199404,
+                  "path": "Notes/003 Game Development/Overhaul list.md",
+                  "subpath": "#^-"
+                },
+                {
+                  "type": "group",
+                  "ctime": 1776989246107,
+                  "items": [],
+                  "title": "Overhaul list"
+                },
+                {
                   "type": "file",
                   "ctime": 1776934439422,
                   "path": "Notes/003 Game Development/Shelved todo list.md",
                   "subpath": "#^-"
+                },
+                {
+                  "type": "group",
+                  "ctime": 1776989246107,
+                  "items": [],
+                  "title": "Shelved todo list"
+                },
+                {
+                  "type": "file",
+                  "ctime": 1777046981164,
+                  "path": "Notes/003 Game Development/Optimizations.md",
+                  "subpath": "#^-"
+                },
+                {
+                  "type": "group",
+                  "ctime": 1777047030140,
+                  "items": [],
+                  "title": "Optimizations"
                 },
                 {
                   "type": "group",

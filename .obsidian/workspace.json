@@ -8,35 +8,20 @@
         "type": "tabs",
         "children": [
           {
-            "id": "6a7ebd59a7185226",
+            "id": "5903520f8134e011",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "g/VS-Like/Game/Lobby/Lobby.cs",
+                "file": "Notes/003 Game Development/Features to implement list.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Lobby"
-            }
-          },
-          {
-            "id": "fbc3b51751db903f",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "g/VS-Like/Game/Singleton/Global.cs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Global"
+              "title": "Features to implement list"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -93,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 482.5
   },
   "right": {
     "id": "060b9ccb0c4fedf3",
@@ -186,45 +171,59 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "system3-relay:Relay": false,
+      "custom-sort:Toggle custom sorting": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false,
-      "system3-relay:Relay": false,
-      "custom-sort:Toggle custom sorting": false
+      "bases:Create new base": false
     }
   },
-  "active": "fbc3b51751db903f",
+  "active": "5903520f8134e011",
   "lastOpenFiles": [
-    "g/VS-Like/Game/Lobby/Lobby.cs",
-    "g/VS-Like/Game/Singleton/Global.cs",
-    "Notes/001 Godot basics/001 Things in godot.md",
-    "g/VS-Like/Game/World/Spawner.cs",
-    "Notes/002 Game Code/001 Opening the game/(old) 000 Opening the game & then clicking Host Game or Join Game.md",
-    "g/VS-Like/Game/Lobby/lobby.tscn",
-    "Notes/002 Game Code/001 Opening the game/(old) 001 Spawning into a server.md",
-    "Notes/002 Game Code/000 Singleton/000 General Singleton notes.md",
-    "Notes/001 Godot basics/002 Godot Multiplayer.md",
-    "g/VS-Like/Game/Singleton/Network.cs",
-    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game 1.md",
-    "`lobby.cs`.md",
+    "CLAUDE.md.tmp.39692.1777107627600",
+    "CLAUDE.md.tmp.39692.1777107622191",
+    "CLAUDE.md.tmp.39692.1777107614408",
+    "CLAUDE.md.tmp.39692.1777107608738",
+    "CLAUDE.md.tmp.39692.1777107597494",
+    "CLAUDE.md.tmp.39692.1777107591097",
+    "CLAUDE.md.tmp.39692.1777107558864",
+    "CLAUDE.md.tmp.39692.1777107552095",
+    "Notes/003 Game Development/Features to implement/Foundations.md",
+    "g/SpacetimeDB/module_bindings/Reducers/ReportMovement.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/Reducers/ReportMovement.g.cs",
+    "bmmo/module_bindings/SpacetimeDBClient.g.cs",
+    "Notes/999 Random Game Design Notes/Lore/Destroyed world.md",
     "Notes/003 Game Development/Features to implement list.md",
-    "Notes/003 Game Development/Shelved todo list.md",
+    "Notes/003 Game Development/Optimizations.md",
+    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game 1.md",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425123714.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425123250.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425115208.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425113248.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425113219.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112649.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112558.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112443.png",
+    "Notes/999 Random Game Design Notes/Dungeons & bosses/00 Dungeons & Bosses general notes.md",
+    "Notes/999 Random Game Design Notes/Overview.md",
+    "Notes/999 Resources and files/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
     "Notes/003 Game Development/Overhaul list.md",
-    "Notes/003 Game Development/Asemif",
-    "Notes/003 Game Development/Retexcraft",
-    "Notes/003 To do list",
+    "Notes/003 Game Development/Features to implement/Untitled.md",
+    "Notes/002 Game Code/001 Opening the game/001 Spawning into a server 1.md",
+    "Notes/002 Game Code/001 Opening the game/(old) 001 Spawning into a server.md",
+    "Notes/002 Game Code/001 Opening the game/(old) 000 Opening the game & then clicking Host Game or Join Game.md",
+    "Llobby.cs.md",
+    "Notes/003 Game Development/Todo list.md",
+    "Notes/003 Game Development/Todo list (in order of priority).md",
+    "Notes/003 Game Development/Shelved todo list.md",
     "Notes/003 Game Development/Notnilc/To Do List.md",
-    "Notes/003 Game Development/Notnilc",
-    "Notes/003 Game Development",
+    "Notes/003 Game Development/Notnilc/Untitled.md",
     "Notes/002 Game Code/Untitled.md",
-    "Notes/001 Godot basics/999 Stupid notes.md",
-    "Notes/002 Game Code/001 Opening the game/Untitled.md",
-    "Notes/002 Game Code/001 Opening the game/Untitled-GCW10HP236-0219.md",
     "network.gd.md",
-    "Notes/999 Random Game Design Notes/Overview.md"
+    "Notes/002 Game Code/001 Opening the game/Untitled-GCW10HP236-0219.md"
   ]
 }
