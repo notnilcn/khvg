@@ -376,7 +376,7 @@ public partial class Spawner : Node2D
 
         var id = row!.PlayerId.ToString();
         string label = id.Length >= 8 ? id[..8] : id;
-        _ShowFeedback($"[{label}] pos:({row.X:F1},{row.Y:F1})  move:({row.MoveX:F1},{row.MoveY:F1})  chunk:({row.ChunkX},{row.ChunkY})");
+        _ShowFeedback($"[{label}] pos:({row.X:F1},{row.Y:F1})  move:({row.MoveX:F2},{row.MoveY:F2})  speed:{row.Speed:F1}  chunk:({row.ChunkX},{row.ChunkY})");
     }
 /*
 ```

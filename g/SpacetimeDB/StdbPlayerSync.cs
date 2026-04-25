@@ -1,14 +1,15 @@
 #nullable enable
+using System;
 using Godot;
 using SpacetimeDB.Types;
 using System.Collections.Generic;
 
 // Autoload singleton. Subscribes to PlayerPosition table updates and:
 //   - Spawns a visual node for each remote SpacetimeDB player (archer sprite)
-//   - Buffers position updates by DEBUG_DELAY_MS so the STDB archer is visibly
-//     behind the Godot-multiplayer dwarf, making both sync channels easy to compare
-//   - Lerps buffered nodes toward their delayed target each frame
-//   - Removes them when the player disconnects
+//   - Extrapolates each remote player's position every frame using dead-reckoning:
+//     pos = snapshot.Pos + snapshot.MoveDir * snapshot.Speed * elapsed
+//   - Lerps the visual node toward the extrapolated point to absorb correction drift
+//   - Removes nodes when the player disconnects
 //
 // Call OnGameSceneLoaded() from Spawner._Ready() so players already in the DB
 // get their visual nodes when the game map loads (OnInsert already fired in lobby).
@@ -21,15 +22,16 @@ public partial class StdbPlayerSync : Node
     // Archer sprite so STDB-synced ghosts are visually distinct from the local dwarf.
     private const string RemoteTexturePath = "res://VS-Like/Characters/Player/Types/Archer/sprite_archer.tres";
 
-    // Artificial delay (ms) applied to every incoming position update.
-    // Set to 0 to disable. Makes it obvious the STDB path is working independently.
-    private const ulong DebugDelayMs = 1000;
+    // Dead-reckoning snapshot stored on each PlayerPosition update.
+    private readonly record struct Snapshot(
+        Vector2 Pos,
+        float MoveX,
+        float MoveY,
+        float Speed,
+        long EventTimeMicros);
 
     private readonly Dictionary<string, Node2D> _remoteNodes = new();
-    private readonly Dictionary<string, Vector2> _targetPositions = new();
-
-    // (applyAtMs, playerKey, worldPosition) — drained in _Process when applyAtMs <= now
-    private readonly Queue<(ulong ApplyAt, string Key, Vector2 Pos)> _pendingMoves = new();
+    private readonly Dictionary<string, Snapshot> _snapshots = new();
 
     public override void _Ready()
     {
@@ -88,26 +90,28 @@ public partial class StdbPlayerSync : Node
             if (_IsLocal(row.PlayerId)) continue;
             var key = row.PlayerId.ToString();
             if (_remoteNodes.ContainsKey(key)) continue;
+            _StoreSnapshot(key, row);
             _SpawnRemote(row.PlayerId, row.X, row.Y);
         }
     }
 
-    // ── Per-frame: drain delay queue, then lerp ───────────────────────────────
+    // ── Per-frame: dead-reckoning extrapolation ───────────────────────────────
 
     public override void _Process(double delta)
     {
-        ulong now = Time.GetTicksMsec();
-        while (_pendingMoves.TryPeek(out var next) && now >= next.ApplyAt)
-        {
-            _pendingMoves.Dequeue();
-            _targetPositions[next.Key] = next.Pos;
-        }
+        long nowMicros = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L;
 
         foreach (var (key, node) in _remoteNodes)
         {
             if (!GodotObject.IsInstanceValid(node)) continue;
-            if (!_targetPositions.TryGetValue(key, out var target)) continue;
-            node.GlobalPosition = node.GlobalPosition.Lerp(target, (float)delta * 10f);
+            if (!_snapshots.TryGetValue(key, out var snap)) continue;
+
+            // Clamp elapsed to 2s so a stale snapshot doesn't extrapolate off to infinity.
+            float elapsed = System.Math.Clamp(
+                (nowMicros - snap.EventTimeMicros) / 1_000_000f, 0f, 2f);
+
+            var extrapolated = snap.Pos + new Vector2(snap.MoveX, snap.MoveY) * snap.Speed * elapsed;
+            node.GlobalPosition = node.GlobalPosition.Lerp(extrapolated, (float)delta * 10f);
         }
     }
 
@@ -118,6 +122,8 @@ public partial class StdbPlayerSync : Node
         if (_IsLocal(row.PlayerId)) return;
         if (GetTree().CurrentScene?.SceneFilePath != GameScenePath) return;
 
+        var key = row.PlayerId.ToString();
+        _StoreSnapshot(key, row);
         _SpawnRemote(row.PlayerId, row.X, row.Y);
         GD.Print($"[StdbSync] Remote player joined: {_Short(row.PlayerId)}");
     }
@@ -129,16 +135,16 @@ public partial class StdbPlayerSync : Node
         if (!GodotObject.IsInstanceValid(node))
         {
             _remoteNodes.Remove(key);
-            _targetPositions.Remove(key);
+            _snapshots.Remove(key);
             return;
         }
-        _pendingMoves.Enqueue((Time.GetTicksMsec() + DebugDelayMs, key, new Vector2(newRow.X, newRow.Y)));
+        _StoreSnapshot(key, newRow);
     }
 
     private void _OnDelete(EventContext ctx, PlayerPosition row)
     {
         var key = row.PlayerId.ToString();
-        _targetPositions.Remove(key);
+        _snapshots.Remove(key);
         if (!_remoteNodes.TryGetValue(key, out var node)) return;
         if (GodotObject.IsInstanceValid(node))
             node.QueueFree();
@@ -148,17 +154,23 @@ public partial class StdbPlayerSync : Node
 
     // ── Helpers ───────────────────────────────────────────────────────────────
 
+    private void _StoreSnapshot(string key, PlayerPosition row)
+    {
+        _snapshots[key] = new Snapshot(
+            new Vector2(row.X, row.Y),
+            row.MoveX, row.MoveY, row.Speed,
+            row.EventTime.MicrosecondsSinceUnixEpoch);
+    }
+
     private void _SpawnRemote(SpacetimeDB.Identity id, float x, float y)
     {
         var scene = GetTree().CurrentScene;
         if (scene == null) return;
 
-        var pos = new Vector2(x, y);
         var key = id.ToString();
-
         var node = new Node2D();
         node.Name = $"StdbRemote_{_Short(id)}";
-        node.GlobalPosition = pos;
+        node.GlobalPosition = new Vector2(x, y);
 
         var texture = GD.Load<Texture2D>(RemoteTexturePath);
         var sprite = new Sprite2D();
@@ -169,7 +181,6 @@ public partial class StdbPlayerSync : Node
 
         scene.CallDeferred(Node.MethodName.AddChild, node);
         _remoteNodes[key] = node;
-        _targetPositions[key] = pos;
     }
 
     private bool _IsLocal(SpacetimeDB.Identity id)

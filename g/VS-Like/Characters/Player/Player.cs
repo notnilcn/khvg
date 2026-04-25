@@ -165,8 +165,8 @@ public partial class Player : CharacterBody2D
         {
             _lastSentMoveInput = movementInput;
             var conn = SpacetimeDBManager.Instance.Conn;
-            GD.Print($"[Player] SetMoveInput({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
-            conn?.Reducers.SetMoveInput(movementInput.X, movementInput.Y);
+            // GD.Print($"[Player] ReportMovement({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
+            conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, movementInput.X, movementInput.Y, Speed * ExtraSpeed);
         }
 
         if (Velocity.X > 0)

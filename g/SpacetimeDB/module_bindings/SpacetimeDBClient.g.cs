@@ -622,9 +622,8 @@ namespace SpacetimeDB.Types
             var eventContext = (ReducerEventContext)context;
             return reducer switch
             {
-                Reducer.ResetSchedule args => Reducers.InvokeResetSchedule(eventContext, args),
+                Reducer.ReportMovement args => Reducers.InvokeReportMovement(eventContext, args),
                 Reducer.SaveCharacterProgress args => Reducers.InvokeSaveCharacterProgress(eventContext, args),
-                Reducer.SetMoveInput args => Reducers.InvokeSetMoveInput(eventContext, args),
                 Reducer.SetUsername args => Reducers.InvokeSetUsername(eventContext, args),
                 Reducer.UpdateInventory args => Reducers.InvokeUpdateInventory(eventContext, args),
                 _ => throw new ArgumentOutOfRangeException("Reducer", $"Unknown reducer {reducer}")

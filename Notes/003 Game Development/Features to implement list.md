@@ -2,9 +2,14 @@ These are ordered in terms of of priority.
 # 0. [Foundations](<Foundations.md>)
 - [ ] [Spacetimedb](<Foundations.md#Spacetimedb>)
 	- [ ] [World Grid](<Foundations.md#World Grid>)
+		- The are going to be 2 coordinate systems:
+			- [x] Continuous coordinate system 
+				- This is for physics.
+			- [ ] Hex grid chunks
+				- This is just visual. This coordinate system is for player buildings.
 		- The map is going to be a giant torus rather than a giant square/sphere because apparently implementing it as a torus is mathematically easier.
 	- [ ] Syncing
-		- [ ] Player position sync
+		- [x] Player position sync
 		- [ ] Enemy position sync
 		- [ ] Enemy bullet sync
 		- [ ] Player bullet sync
