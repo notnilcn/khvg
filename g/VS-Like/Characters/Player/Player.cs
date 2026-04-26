@@ -9,6 +9,7 @@ public partial class Player : CharacterBody2D
     [Export] public ResPlayer CharacterData { get; set; }
 
     private Sprite2D _sprite2D;
+    private Node2D _model3D;
     private Camera2D _camera2D;
     private Area2D _enemyDetection;
     private Healthbar _healthBar;
@@ -85,6 +86,7 @@ This is kinda obvious
     public override async void _Ready()
     {
         _sprite2D         = GetNode<Sprite2D>("Sprite2D");
+        _model3D          = GetNode<Node2D>("Model3D");
         _camera2D         = GetNode<Camera2D>("Camera2D");
         _camera2D.Enabled = false; // Prevent camera snap for non-authority peers; _InitPlayer() re-enables for local player.
         _enemyDetection   = GetNode<Area2D>("EnemyDetection");
@@ -115,6 +117,7 @@ This is kinda obvious
             GD.PushError($"Player {Name}: CharacterData export is null — check player.tscn character_data field.");
             return;
         }
+        GD.Print(CharacterData.Sprite);
         _sprite2D.Texture = CharacterData.Sprite;
         MaxHealth = CharacterData.MaxHealth;
         Speed     = CharacterData.MaxSpeed;
@@ -153,7 +156,7 @@ This is kinda obvious
 
         _HandleMovement();
         MoveAndSlide();
-        Rpc(nameof(_SyncState), GlobalPosition, _sprite2D.Scale.X);
+        Rpc(nameof(_SyncState), GlobalPosition, _model3D.Scale.X);
     }
 /*
 ```
@@ -192,7 +195,7 @@ This is kinda obvious
         if (Multiplayer.GetRemoteSenderId() != GetMultiplayerAuthority())
             return;
         GlobalPosition   = pos;
-        _sprite2D.Scale  = new Vector2(scaleX, _sprite2D.Scale.Y);
+        _model3D.Scale  = new Vector2(scaleX, _model3D.Scale.Y);
     }
 /*
 ```
@@ -216,9 +219,9 @@ This is kinda obvious
         }
 
         if (Velocity.X > 0)
-            _sprite2D.Scale = new Vector2(1, _sprite2D.Scale.Y);
+            _model3D.Scale = new Vector2(1, _model3D.Scale.Y);
         else if (Velocity.X < 0)
-            _sprite2D.Scale = new Vector2(-1, _sprite2D.Scale.Y);
+            _model3D.Scale = new Vector2(-1, _model3D.Scale.Y);
     }
 /*
 ```
@@ -328,7 +331,7 @@ This is kinda obvious
         weapon.Resource       = resWpn;
         weapon.IsOwnerWeapon  = isOwner;
         if (resWpn.AttachToRotation)
-            _sprite2D.AddChild(weapon);
+            _model3D.AddChild(weapon);
         else
             AddChild(weapon);
         return weapon;

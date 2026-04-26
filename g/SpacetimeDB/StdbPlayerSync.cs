@@ -18,8 +18,10 @@ public partial class StdbPlayerSync : Node
 
     private const string GameScenePath = "res://VS-Like/Maps/Woods/woods_map.tscn";
 
+    /* old code about archer sprite
     // Archer sprite so STDB-synced ghosts are visually distinct from the local dwarf.
     private const string RemoteTexturePath = "res://VS-Like/Characters/Player/Types/Archer/sprite_archer.tres";
+    */
 
     // Artificial delay (ms) applied to every incoming position update.
     // Set to 0 to disable. Makes it obvious the STDB path is working independently.
