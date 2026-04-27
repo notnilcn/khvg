@@ -117,8 +117,8 @@ This is kinda obvious
             GD.PushError($"Player {Name}: CharacterData export is null — check player.tscn character_data field.");
             return;
         }
-        GD.Print(CharacterData.Sprite);
-        _sprite2D.Texture = CharacterData.Sprite;
+        GD.Print("Model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+CharacterData.ModelName);
+        GetNode<Node3D>("Model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+CharacterData.ModelName).Show();
         MaxHealth = CharacterData.MaxHealth;
         Speed     = CharacterData.MaxSpeed;
         Health    = MaxHealth;

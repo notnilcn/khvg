@@ -4,7 +4,7 @@ using Godot;
 public partial class ResPlayer : Resource
 {
     [Export] public string PlayerName { get; set; } = "";
-    [Export] public Texture2D Sprite { get; set; }
+    [Export] public string ModelName { get; set; } = "Knight";
 
     [Export] public float MaxHealth { get; set; } = 100.0f;
     [Export] public float MaxSpeed { get; set; } = 100.0f;
@@ -15,7 +15,7 @@ public partial class ResPlayer : Resource
         switch (property.ToString())
         {
             case "player_name":  PlayerName = value.AsString();        return true;
-            case "sprite":       Sprite     = value.As<Texture2D>();   return true;
+            case "model_name":   ModelName  = value.AsString();         return true;
             case "max_health":   MaxHealth  = value.AsSingle();        return true;
             case "max_speed":    MaxSpeed   = value.AsSingle();        return true;
             case "res_weapon":   ResWeapon  = value.As<ResItem>();     return true;
