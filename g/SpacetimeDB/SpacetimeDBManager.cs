@@ -27,11 +27,14 @@ public partial class SpacetimeDBManager : Node
     {
         Instance = this;
 
-        // Pass --p2 (or --p3, etc.) on the command line to use a separate token file,
-        // giving that instance a distinct SpacetimeDB identity for local multiplayer testing.
+        // --elevated-server  → dedicated token so the elevated identity is stable.
+        // --p2, --p3, etc.   → separate token for local multiplayer testing.
         string suffix = "";
         foreach (var arg in OS.GetCmdlineArgs())
-            if (arg.StartsWith("--p")) { suffix = "_" + arg[2..]; break; }
+        {
+            if (arg == "--elevated-server") { suffix = "_elevated"; break; }
+            if (arg.StartsWith("--p"))      { suffix = "_" + arg[2..]; break; }
+        }
         AuthToken.Init(OS.GetUserDataDir() + "/.bmmo_token" + suffix);
 
         try
@@ -70,6 +73,9 @@ public partial class SpacetimeDBManager : Node
         LocalIdentity = identity;
         GD.Print($"[STDB] Connected. Identity: {identity}");
         AuthToken.SaveToken(token);
+
+        if (ElevatedServer.IsActive)
+            conn.Reducers.ClaimElevated();
 
         // Emit before subscribing so listeners can register table callbacks
         // before initial OnInsert events arrive (mirrors blackholio GameManager pattern).

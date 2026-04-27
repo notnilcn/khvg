@@ -37,6 +37,8 @@ namespace SpacetimeDB.Types
         public int Hp;
         [DataMember(Name = "target_id")]
         public string TargetId;
+        [DataMember(Name = "bullet_pattern_type")]
+        public byte BulletPatternType;
 
         public EnemyState(
             ulong EnemyId,
@@ -50,7 +52,8 @@ namespace SpacetimeDB.Types
             bool IsElite,
             bool Immortal,
             int Hp,
-            string TargetId
+            string TargetId,
+            byte BulletPatternType
         )
         {
             this.EnemyId = EnemyId;
@@ -65,6 +68,7 @@ namespace SpacetimeDB.Types
             this.Immortal = Immortal;
             this.Hp = Hp;
             this.TargetId = TargetId;
+            this.BulletPatternType = BulletPatternType;
         }
 
         public EnemyState()

@@ -11,7 +11,7 @@ These are ordered in terms of of priority.
 		- The map is going to be a giant torus rather than a giant square/sphere because apparently implementing it as a torus is mathematically easier.
 	- [ ] Syncing
 		- [x] Player position sync
-		- [ ] Enemy position sync
+		- [x] Enemy position sync
 		- [ ] Enemy bullet sync
 		- [ ] Player bullet sync
 - [ ] Enemy Bullets system

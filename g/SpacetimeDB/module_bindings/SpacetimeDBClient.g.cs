@@ -27,7 +27,9 @@ namespace SpacetimeDB.Types
     {
         public RemoteTables(DbConnection conn)
         {
+            AddTable(BulletPattern = new(conn));
             AddTable(CharacterData = new(conn));
+            AddTable(ElevatedClient = new(conn));
             AddTable(EnemyState = new(conn));
             AddTable(PlayerAccount = new(conn));
             AddTable(PlayerInventory = new(conn));
@@ -528,7 +530,9 @@ namespace SpacetimeDB.Types
 
         internal static string[] AllTablesSqlQueries() => new string[]
         {
+            new QueryBuilder().From.BulletPattern().ToSql(),
             new QueryBuilder().From.CharacterData().ToSql(),
+            new QueryBuilder().From.ElevatedClient().ToSql(),
             new QueryBuilder().From.EnemyState().ToSql(),
             new QueryBuilder().From.PlayerAccount().ToSql(),
             new QueryBuilder().From.PlayerInventory().ToSql(),
@@ -539,7 +543,9 @@ namespace SpacetimeDB.Types
 
     public sealed class From
     {
+        public global::SpacetimeDB.Table<BulletPattern, BulletPatternCols, BulletPatternIxCols> BulletPattern() => new("bullet_pattern", new BulletPatternCols("bullet_pattern"), new BulletPatternIxCols("bullet_pattern"));
         public global::SpacetimeDB.Table<CharacterData, CharacterDataCols, CharacterDataIxCols> CharacterData() => new("character_data", new CharacterDataCols("character_data"), new CharacterDataIxCols("character_data"));
+        public global::SpacetimeDB.Table<ElevatedClient, ElevatedClientCols, ElevatedClientIxCols> ElevatedClient() => new("elevated_client", new ElevatedClientCols("elevated_client"), new ElevatedClientIxCols("elevated_client"));
         public global::SpacetimeDB.Table<EnemyState, EnemyStateCols, EnemyStateIxCols> EnemyState() => new("enemy_state", new EnemyStateCols("enemy_state"), new EnemyStateIxCols("enemy_state"));
         public global::SpacetimeDB.Table<PlayerAccount, PlayerAccountCols, PlayerAccountIxCols> PlayerAccount() => new("player_account", new PlayerAccountCols("player_account"), new PlayerAccountIxCols("player_account"));
         public global::SpacetimeDB.Table<PlayerInventory, PlayerInventoryCols, PlayerInventoryIxCols> PlayerInventory() => new("player_inventory", new PlayerInventoryCols("player_inventory"), new PlayerInventoryIxCols("player_inventory"));
@@ -625,7 +631,11 @@ namespace SpacetimeDB.Types
             var eventContext = (ReducerEventContext)context;
             return reducer switch
             {
+                Reducer.ClaimElevated args => Reducers.InvokeClaimElevated(eventContext, args),
+                Reducer.DamagePlayer args => Reducers.InvokeDamagePlayer(eventContext, args),
+                Reducer.DespawnBullet args => Reducers.InvokeDespawnBullet(eventContext, args),
                 Reducer.DespawnEnemy args => Reducers.InvokeDespawnEnemy(eventContext, args),
+                Reducer.FireBullet args => Reducers.InvokeFireBullet(eventContext, args),
                 Reducer.ReportMovement args => Reducers.InvokeReportMovement(eventContext, args),
                 Reducer.SaveCharacterProgress args => Reducers.InvokeSaveCharacterProgress(eventContext, args),
                 Reducer.SetUsername args => Reducers.InvokeSetUsername(eventContext, args),

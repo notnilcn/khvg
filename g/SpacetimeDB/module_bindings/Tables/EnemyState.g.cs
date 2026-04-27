@@ -51,6 +51,7 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<EnemyState, bool> Immortal { get; }
         public global::SpacetimeDB.Col<EnemyState, int> Hp { get; }
         public global::SpacetimeDB.Col<EnemyState, string> TargetId { get; }
+        public global::SpacetimeDB.Col<EnemyState, byte> BulletPatternType { get; }
 
         public EnemyStateCols(string tableName)
         {
@@ -66,6 +67,7 @@ namespace SpacetimeDB.Types
             Immortal = new global::SpacetimeDB.Col<EnemyState, bool>(tableName, "immortal");
             Hp = new global::SpacetimeDB.Col<EnemyState, int>(tableName, "hp");
             TargetId = new global::SpacetimeDB.Col<EnemyState, string>(tableName, "target_id");
+            BulletPatternType = new global::SpacetimeDB.Col<EnemyState, byte>(tableName, "bullet_pattern_type");
         }
     }
 

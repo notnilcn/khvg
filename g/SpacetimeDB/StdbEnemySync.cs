@@ -175,8 +175,9 @@ public partial class StdbEnemySync : Node
         enemy.GlobalPosition = new Vector2(row.X, row.Y);
         enemy.EnemyId        = (int)row.EnemyId;
         enemy.Name           = $"Enemy_{(int)row.EnemyId}";
-        enemy.IsStdbSpawned  = true;
-        enemy.StdbTargetId   = row.TargetId;
+        enemy.IsStdbSpawned      = true;
+        enemy.StdbTargetId       = row.TargetId;
+        enemy.BulletPatternType  = row.BulletPatternType;
 
         // The host needs its Die/Died signals connected so deaths trigger DespawnEnemy reducer.
         if (Multiplayer.IsServer())

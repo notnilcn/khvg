@@ -124,7 +124,9 @@ public partial class Spawner : Node2D
             Network.Instance.PlayerLeft += _OnPlayerLeft;
 
             // Spawn the host's own player (peer 1 never calls _RequestPlayerSpawn).
-            _SpawnPlayerForPeer(1);
+            // Skip on the elevated server — it has no player character.
+            if (!ElevatedServer.IsActive)
+                _SpawnPlayerForPeer(1);
         }
         else
         {
@@ -717,19 +719,44 @@ public partial class Spawner : Node2D
         }
     }
 
-    // /spawn [x y] — spawn a stationary immortal dummy at the given world position (default 0,0)
+    // /spawn [straight|sine] [x y] — fire bullets directly from pos (no enemy drift) or spawn a plain dummy.
     private void _CmdSpawn(int sender, string[] args)
     {
-        if (args.Length == 1)
+        byte patternType = StdbBulletSync.PatternNone;
+        var remaining = args;
+
+        if (remaining.Length > 0 && (remaining[0] == "straight" || remaining[0] == "sine"))
         {
-            _SendFeedback(sender, "Usage: /spawn [x y]");
+            patternType = remaining[0] == "straight" ? StdbBulletSync.PatternStraight : StdbBulletSync.PatternSine;
+            remaining = remaining[1..];
+        }
+
+        if (remaining.Length == 1)
+        {
+            _SendFeedback(sender, "Usage: /spawn [straight|sine] [x y]");
             return;
         }
+
         var pos = Vector2.Zero;
-        if (args.Length >= 2 &&
-            float.TryParse(args[0], out float px) &&
-            float.TryParse(args[1], out float py))
+        if (remaining.Length >= 2 &&
+            float.TryParse(remaining[0], out float px) &&
+            float.TryParse(remaining[1], out float py))
             pos = new Vector2(px, py);
+
+        if (patternType != StdbBulletSync.PatternNone)
+        {
+            // Fire directly — exact origin, no enemy drift.
+            Vector2 firePos = pos;
+            byte    pattern = patternType;
+            var     timer   = new Timer();
+            timer.WaitTime  = 1.0;
+            timer.Autostart = true;
+            timer.Timeout  += () => StdbBulletSync.Instance?.FireBullet(firePos, pattern);
+            AddChild(timer);
+            string typeName = patternType == StdbBulletSync.PatternStraight ? "straight" : "sine";
+            _SendFeedback(sender, $"Firing {typeName} bullets from ({(int)pos.X},{(int)pos.Y}) every 1s");
+            return;
+        }
 
         var res = GD.Load<ResEnemy>(DummyEnemyRes);
         _CreateEnemy(pos, res, isElite: false, immortal: true);
@@ -896,7 +923,7 @@ public partial class Spawner : Node2D
     }
 
     // SERVER ONLY: spawn an enemy and replicate it to all connected clients.
-    private void _CreateEnemy(Vector2 spawnPos, ResEnemy resEnemy, bool isElite = false, bool immortal = false)
+    private void _CreateEnemy(Vector2 spawnPos, ResEnemy resEnemy, bool isElite = false, bool immortal = false, byte bulletPatternType = 0)
     {
         int eid = _nextEnemyId++;
 
@@ -919,7 +946,7 @@ public partial class Spawner : Node2D
             int hp = isElite ? resEnemy.Health * 10 : resEnemy.Health;
             conn.Reducers.SpawnEnemy(
                 (ulong)eid, spawnPos.X, spawnPos.Y,
-                resEnemy.ResourcePath, isElite, immortal, hp);
+                resEnemy.ResourcePath, isElite, immortal, hp, bulletPatternType);
         }
         else
         {

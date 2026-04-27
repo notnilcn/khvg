@@ -26,16 +26,20 @@ public partial class Enemy : Sprite2D
     public int EnemyId          { get; set; } = -1;
     // Set true on non-host clients when spawned from SpacetimeDB.
     // Skips MultiplayerSynchronizer and runs local AI simulation instead.
-    public bool IsStdbSpawned   { get; set; } = false;
+    public bool IsStdbSpawned      { get; set; } = false;
     // STDB identity string of the player this enemy should chase (set from STDB snapshots).
-    public string StdbTargetId  { get; set; } = "";
+    public string StdbTargetId     { get; set; } = "";
+    // Bullet firing pattern for STDB-spawned enemies. 0=none, 1=straight-up, 2=sine-up.
+    public byte BulletPatternType  { get; set; } = 0;
     public Vector2 MoveDir => _direction;
     public Node2D Target   => _target;
 
     private Vector2 _direction;
     private Node2D _target;
 
-    private float _bulletCooldown = 0.0f;
+    private float _bulletCooldown     = 0.0f;
+    private float _stdbBulletCooldown = 0.0f;
+    private const float StdbFireRate  = 1.0f;
 
     private const float HitTimingTolerance = 0.7f;
     private const float MinFireRate        = 0.05f;
@@ -130,6 +134,8 @@ public partial class Enemy : Sprite2D
         {
             _MoveCharacter();
             _TickBulletFire((float)delta);
+            if (IsStdbSpawned)
+                _TickStdbBulletFire((float)delta);
 
             var newTrans = (Transform2D)PhysicsServer2D.BodyGetState(_object, PhysicsServer2D.BodyState.Transform);
             GlobalPosition = newTrans.Origin;
@@ -154,6 +160,16 @@ public partial class Enemy : Sprite2D
             if (_GetStdbNearestDistance() >= 600)
                 QueueFree();
         }
+    }
+
+    private void _TickStdbBulletFire(float delta)
+    {
+        if (BulletPatternType == StdbBulletSync.PatternNone) return;
+        _stdbBulletCooldown -= delta;
+        if (_stdbBulletCooldown > 0f) return;
+        _stdbBulletCooldown = StdbFireRate;
+        GD.Print($"[Enemy {EnemyId}] Firing STDB bullet pattern={BulletPatternType} at {GlobalPosition}");
+        StdbBulletSync.Instance?.FireBullet(GlobalPosition, BulletPatternType);
     }
 
     private void _TickBulletFire(float delta)

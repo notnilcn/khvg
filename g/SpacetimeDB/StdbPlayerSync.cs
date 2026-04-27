@@ -124,7 +124,7 @@ public partial class StdbPlayerSync : Node
                 (nowMicros - snap.EventTimeMicros) / 1_000_000f, 0f, 2f);
 
             var extrapolated = snap.Pos + new Vector2(snap.MoveX, snap.MoveY) * snap.Speed * elapsed;
-            node.GlobalPosition = node.GlobalPosition.Lerp(extrapolated, (float)delta * 10f);
+            node.GlobalPosition = node.GlobalPosition.Lerp(extrapolated, (float)delta);
         }
     }
 

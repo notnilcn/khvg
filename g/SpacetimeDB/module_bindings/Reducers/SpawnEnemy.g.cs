@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void SpawnEnemyHandler(ReducerEventContext ctx, ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, int hp);
+        public delegate void SpawnEnemyHandler(ReducerEventContext ctx, ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, int hp, byte bulletPatternType);
         public event SpawnEnemyHandler? OnSpawnEnemy;
 
-        public void SpawnEnemy(ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, int hp)
+        public void SpawnEnemy(ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, int hp, byte bulletPatternType)
         {
-            conn.InternalCallReducer(new Reducer.SpawnEnemy(enemyId, x, y, resPath, isElite, immortal, hp));
+            conn.InternalCallReducer(new Reducer.SpawnEnemy(enemyId, x, y, resPath, isElite, immortal, hp, bulletPatternType));
         }
 
         public bool InvokeSpawnEnemy(ReducerEventContext ctx, Reducer.SpawnEnemy args)
@@ -42,7 +42,8 @@ namespace SpacetimeDB.Types
                 args.ResPath,
                 args.IsElite,
                 args.Immortal,
-                args.Hp
+                args.Hp,
+                args.BulletPatternType
             );
             return true;
         }
@@ -68,6 +69,8 @@ namespace SpacetimeDB.Types
             public bool Immortal;
             [DataMember(Name = "hp")]
             public int Hp;
+            [DataMember(Name = "bullet_pattern_type")]
+            public byte BulletPatternType;
 
             public SpawnEnemy(
                 ulong EnemyId,
@@ -76,7 +79,8 @@ namespace SpacetimeDB.Types
                 string ResPath,
                 bool IsElite,
                 bool Immortal,
-                int Hp
+                int Hp,
+                byte BulletPatternType
             )
             {
                 this.EnemyId = EnemyId;
@@ -86,6 +90,7 @@ namespace SpacetimeDB.Types
                 this.IsElite = IsElite;
                 this.Immortal = Immortal;
                 this.Hp = Hp;
+                this.BulletPatternType = BulletPatternType;
             }
 
             public SpawnEnemy()
