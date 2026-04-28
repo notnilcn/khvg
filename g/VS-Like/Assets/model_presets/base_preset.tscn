@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://chohqhcs8kwb4"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2l4b1"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_hvppb"]
+sky_material = SubResource("ProceduralSkyMaterial_2l4b1")
+
+[sub_resource type="Environment" id="Environment_lykdi"]
+background_mode = 2
+sky = SubResource("Sky_hvppb")
+tonemap_mode = 2
+
+[node name="base_preset" type="Node2D" unique_id=2043616491]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=2079426778]
+offset_left = -256.0
+offset_top = -256.0
+offset_right = 256.0
+offset_bottom = 256.0
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1592284170]
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport" unique_id=640685137]
+environment = SubResource("Environment_lykdi")
