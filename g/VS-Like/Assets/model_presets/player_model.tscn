@@ -1,12 +1,8 @@
 [gd_scene format=3 uid="uid://bno30x37r4bnm"]
 
 [ext_resource type="PackedScene" uid="uid://dud7eg6a4d3k1" path="res://VS-Like/Assets/characters/Knight.fbx" id="1_6ay00"]
-[ext_resource type="Environment" uid="uid://bby4vk1tvjgu7" path="res://VS-Like/Assets/enviroment.tres" id="1_rpums"]
+[ext_resource type="World3D" uid="uid://ctphkhx1sl0vy" path="res://VS-Like/Assets/world_3d.tres" id="1_rpums"]
 [ext_resource type="PackedScene" uid="uid://cw8y35bqkygin" path="res://VS-Like/Assets/characters/Ranger.fbx" id="2_rpums"]
-
-[sub_resource type="World3D" id="World3D_1lbao"]
-environment = ExtResource("1_rpums")
-fallback_environment = ExtResource("1_rpums")
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6ay00"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -31,7 +27,7 @@ scale = Vector2(0.1, 0.1)
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=564276537]
 own_world_3d = true
-world_3d = SubResource("World3D_1lbao")
+world_3d = ExtResource("1_rpums")
 transparent_bg = true
 handle_input_locally = false
 render_target_update_mode = 4
@@ -42,6 +38,7 @@ environment = SubResource("Environment_1lbao")
 [node name="Knight" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1221006572 instance=ExtResource("1_6ay00")]
 transform = Transform3D(0.779808, 0, 0.62601876, 0, 1, 0, -0.62601876, 0, 0.779808, 0, 0, 0)
 top_level = true
+visible = false
 
 [node name="Archer" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1263903499 instance=ExtResource("2_rpums")]
 transform = Transform3D(0.779808, 0, 0.62601876, 0, 1, 0, -0.62601876, 0, 0.779808, 0, 0, 0)

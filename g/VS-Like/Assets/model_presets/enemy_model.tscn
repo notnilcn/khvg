@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://bysfnrpet77s3"]
+
+[ext_resource type="World3D" uid="uid://ctphkhx1sl0vy" path="res://VS-Like/Assets/world_3d.tres" id="1_g1adg"]
+[ext_resource type="Environment" uid="uid://bby4vk1tvjgu7" path="res://VS-Like/Assets/enviroment.tres" id="2_8posr"]
+[ext_resource type="PackedScene" uid="uid://c5l0np6xeoc5b" path="res://VS-Like/Assets/skeletons/Skeleton_Warrior.fbx" id="3_tteyr"]
+[ext_resource type="PackedScene" uid="uid://b22r8ex8i6hi7" path="res://VS-Like/Assets/skeletons/Skeleton_Rogue.fbx" id="4_i5ty6"]
+[ext_resource type="PackedScene" uid="uid://ccawwfadmv22k" path="res://VS-Like/Assets/skeletons/Skeleton_Minion.fbx" id="5_yfyix"]
+[ext_resource type="PackedScene" uid="uid://7uotdqnbi4yl" path="res://VS-Like/Assets/skeletons/Skeleton_Mage.fbx" id="6_7ragj"]
+
+[node name="model3D" type="Node2D" unique_id=1253801463]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="." unique_id=1730371516]
+offset_left = -26.0
+offset_top = -26.0
+offset_right = 486.0
+offset_bottom = 486.0
+scale = Vector2(0.1, 0.1)
+metadata/_edit_use_anchors_ = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1483882970]
+own_world_3d = true
+world_3d = ExtResource("1_g1adg")
+transparent_bg = true
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport" unique_id=607089726]
+environment = ExtResource("2_8posr")
+
+[node name="Warrior" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1000946448 instance=ExtResource("3_tteyr")]
+visible = false
+
+[node name="Rogue" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1687462588 instance=ExtResource("4_i5ty6")]
+visible = false
+
+[node name="Minion" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=722068943 instance=ExtResource("5_yfyix")]
+visible = false
+
+[node name="Mage" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=2048729057 instance=ExtResource("6_7ragj")]
+visible = false
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=266217171]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=391224775]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 3)
+current = true

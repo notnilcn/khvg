@@ -1,16 +1,7 @@
 [gd_scene format=3 uid="uid://chohqhcs8kwb4"]
 
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_2l4b1"]
-sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-
-[sub_resource type="Sky" id="Sky_hvppb"]
-sky_material = SubResource("ProceduralSkyMaterial_2l4b1")
-
-[sub_resource type="Environment" id="Environment_lykdi"]
-background_mode = 2
-sky = SubResource("Sky_hvppb")
-tonemap_mode = 2
+[ext_resource type="World3D" uid="uid://ctphkhx1sl0vy" path="res://VS-Like/Assets/world_3d.tres" id="1_su8hj"]
+[ext_resource type="Environment" uid="uid://bby4vk1tvjgu7" path="res://VS-Like/Assets/enviroment.tres" id="2_02fpp"]
 
 [node name="base_preset" type="Node2D" unique_id=2043616491]
 
@@ -22,9 +13,14 @@ offset_bottom = 256.0
 metadata/_edit_use_anchors_ = true
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer" unique_id=1592284170]
+world_3d = ExtResource("1_su8hj")
 transparent_bg = true
 handle_input_locally = false
 render_target_update_mode = 4
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport" unique_id=640685137]
-environment = SubResource("Environment_lykdi")
+environment = ExtResource("2_02fpp")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1270701025]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true

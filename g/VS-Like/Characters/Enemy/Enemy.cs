@@ -15,6 +15,7 @@ public partial class Enemy : Sprite2D
         GD.Load<PackedScene>("res://VS-Like/Game/UI/FloatingText/floating_text.tscn");
 
     private AudioStreamPlayer2D _audioPlayer2D;
+    private Node2D _model3D;
 
     private Rid _object;
     private Rid _shape;
@@ -49,7 +50,9 @@ This is kinda obvious
     {
         _audioPlayer2D = GetNode<AudioStreamPlayer2D>("AudioPlayer2D");
 
-        Texture = ResEnemy.Sprite;
+        GD.PrintS("model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+ResEnemy.ModelName);
+
+        GetNode<Node3D>("model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+ResEnemy.ModelName).Show();
 
         if (IsElite)
         {
