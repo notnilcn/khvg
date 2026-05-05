@@ -36,6 +36,7 @@ flip_h = true
 shape = SubResource("CircleShape2D_1h1xi")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1247276422]
+ignore_rotation = false
 
 [node name="HealthBar" parent="." unique_id=1891917197 instance=ExtResource("4_l4u65")]
 offset_left = -32.0
