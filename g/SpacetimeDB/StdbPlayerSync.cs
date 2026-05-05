@@ -192,8 +192,8 @@ public partial class StdbPlayerSync : Node
         node.Name = $"StdbRemote_{_Short(id)}";
         node.GlobalPosition = new Vector2(x, y);
 
-        var model = GD.Load<PackedScene>(RemoteModelPath).Instantiate();
-        model.GetNode("SubViewportContainer/SubViewport/WorldEnvironment/Archer");
+        var model = GD.Load<PackedScene>(RemoteModelPath).Instantiate<Node2D>();
+        model.GetNode<Node3D>("SubViewportContainer/SubViewport/WorldEnvironment/Archer").Show();
         node.AddChild(model);
 
         scene.CallDeferred(Node.MethodName.AddChild, node);
