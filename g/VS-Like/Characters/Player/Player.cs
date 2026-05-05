@@ -20,6 +20,7 @@ public partial class Player : CharacterBody2D
 
     public float MaxHealth { get; set; }
     public float Speed { get; set; }
+    public float CameraSpeed = 75.0f;
 
     private float _health;
     public float Health
@@ -154,7 +155,7 @@ This is kinda obvious
         if (!IsMultiplayerAuthority())
             return;
 
-        _HandleMovement();
+        _HandleMovement(delta);
         MoveAndSlide();
         Rpc(nameof(_SyncState), GlobalPosition, _model3D.Scale.X);
     }
@@ -205,9 +206,10 @@ This is kinda obvious
 # `_HandleMovement()`
 This is kinda obvious
 ```c# */
-    private void _HandleMovement()
+    private void _HandleMovement(double delta)
     {
-        var movementInput = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
+        var movementInput = Input.GetVector("Left", "Right", "Up", "Down").Normalized().Rotated(Mathf.DegToRad(RotationDegrees));
+        var cameraInput = Input.GetAxis("Camera_Left", "Camera_Right");
         Velocity = movementInput * (Speed * ExtraSpeed);
 
         if (_lastSentMoveInput == null || movementInput != _lastSentMoveInput.Value)
@@ -216,6 +218,15 @@ This is kinda obvious
             var conn = SpacetimeDBManager.Instance.Conn;
             GD.Print($"[Player] SetMoveInput({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
             conn?.Reducers.SetMoveInput(movementInput.X, movementInput.Y);
+        }
+
+        if (cameraInput < 0)
+        {
+            RotationDegrees -= (float)(CameraSpeed*delta);
+        }
+        if (cameraInput > 0)
+        {
+            RotationDegrees += (float)(CameraSpeed*delta);
         }
 
         if (Velocity.X > 0)
