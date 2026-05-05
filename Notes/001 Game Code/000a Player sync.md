@@ -1,5 +1,5 @@
 # **Before you open the game**
-0. [StdbPlayerSync.cs](<StdbPlayerSync.cs>) is in the [`project.godot`](<project.godot>) autoload, so it's ran [before you open the game](<000 Autoloads, Spacetimedb,.cs and the elevated client.md#**Before you open the game**>)
+0. [StdbPlayerSync.cs](<StdbPlayerSync.cs>) is in the [`project.godot`](<project.godot>) autoload, so it's ran [before you open the game](<000 Autoloads, Spacetimedb.cs, and the elevated client.md#**Before you open the game**>)
 1. [`StdbPlayerSync._Ready()`](<StdbPlayerSync.cs#`_Ready()`>) runs because it has stage 4 lung cancer.
 	1. Saves the current StdbPlayerSync object to the `{c#}StdbPlayerSync.Instance` variable so that other scripts can access the object. [I have notes if this is confusing](<Stupid notes.md#^Instance-this>).
 	2. Checks if `{c#}SpacetimeDBManager.Instance.IsStdbConnected` is true

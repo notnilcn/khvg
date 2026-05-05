@@ -60,9 +60,8 @@ This is kinda obvious
     {
         _audioPlayer2D = GetNode<AudioStreamPlayer2D>("AudioPlayer2D");
 
-        GD.PrintS("model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+ResEnemy.ModelName);
-
-        GetNode<Node3D>("model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+ResEnemy.ModelName).Show();
+        if (!string.IsNullOrEmpty(ResEnemy.ModelName))
+            GetNode<Node3D>("model3D/SubViewportContainer/SubViewport/WorldEnvironment/" + ResEnemy.ModelName).Show();
 
         if (IsElite)
         {
@@ -145,6 +144,8 @@ This is kinda obvious
     {
         if (ElevatedClient.IsActive)
         {
+            if (!_object.IsValid) return;
+
             _MoveCharacter();
             _TickBulletFire((float)delta);
             if (IsStdbSpawned)

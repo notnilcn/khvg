@@ -276,12 +276,16 @@ public static partial class Module
         if (ctx.Db.ElevatedClient.Identity.Find(ctx.Sender) is ElevatedClient existing)
         {
             ctx.Db.ElevatedClient.Identity.Update(existing with { ClaimedAt = ctx.Timestamp });
+            if (ctx.Db.PlayerAccount.PlayerId.Find(ctx.Sender) is PlayerAccount refreshAcc)
+                ctx.Db.PlayerAccount.PlayerId.Update(refreshAcc with { IsAdmin = true });
             Log.Info($"Elevated seat refreshed by {ctx.Sender}");
             return;
         }
         foreach (var _ in ctx.Db.ElevatedClient.Iter())
             throw new Exception("Elevated seat already claimed by a different identity.");
         ctx.Db.ElevatedClient.Insert(new ElevatedClient { Identity = ctx.Sender, ClaimedAt = ctx.Timestamp });
+        if (ctx.Db.PlayerAccount.PlayerId.Find(ctx.Sender) is PlayerAccount claimAcc)
+            ctx.Db.PlayerAccount.PlayerId.Update(claimAcc with { IsAdmin = true });
         Log.Info($"Elevated seat claimed by {ctx.Sender}");
     }
 /*

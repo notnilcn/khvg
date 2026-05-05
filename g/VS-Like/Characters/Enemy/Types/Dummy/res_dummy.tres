@@ -6,6 +6,7 @@
 [resource]
 script = ExtResource("1_yw3xa")
 enemy_name = "Dummy"
+ModelName = "Warrior"
 sprite = ExtResource("2_77a4p")
 radius = 7.0
 health = 100

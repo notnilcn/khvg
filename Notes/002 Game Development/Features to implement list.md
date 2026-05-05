@@ -60,6 +60,17 @@ https://kaylousberg.itch.io/kaykit-medieval-hexagon
 https://kaylousberg.itch.io/
 I think I want the game to be purple.
 
+Lobby
+- Server list
+	- Players will be able to switch to different servers, similar to RotMG.
+	- Items in a player's vault will be available in the [lore-based safe hub](<Overviews.md#**There are 3 different lore-based safe hubs**>) that they chose, or the default [outcasted magician's safe hub](<Overviews.md#**01 Safe hub that belongs to the outcasted magician dude**>) vault if they haven't chosen one yet. Items in a guild vault aren't transferrable between servers.
+- Character selection
+	- Player slots will be purchasable like in RotMG. Players will be able to have 2 by default.
+	- There will be a character creator thing (COMPLETELY SHELVED UNTIL WE HAVE A MINIMUM VIABLE PRODUCT).
+		- Just be lazy and encode a bunch of different nose/hair/eye/head/eyebrow/mouth/skull shapes continuously and let the player play around with the sliders. Make it too customizable.
+			- I feel like there should be a mathematical way to calculate the appropriate texture maps to allow players to colour their characters freely as well.
+- Settings
+
 # 5. Lobby
 - Server list
 	- Players will be able to switch to different servers, similar to RotMG.
@@ -83,4 +94,9 @@ I think I want the game to be purple.
 	- Creates valleys or fissures that cuts off certain regions
 	- Drops minerals or materials
 
+
+# Weapons animation (deferred)
+![Explaining a complex (yet modular) weapon system I made!](<https://www.youtube.com/watch?v=a5GJcgdSEQo>)
+
+The weapons in this game are going to be magical so you probably don't need to implement the above.
 
