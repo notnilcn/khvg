@@ -1,5 +1,5 @@
 /*
-Network code
+Spawner code
 ```c# */
 using Godot;
 using Godot.Collections;
@@ -16,7 +16,6 @@ using SpacetimeDB.Types;
 //
 // PLAYER SPAWNING
 // Each instance spawns exactly one local player in _Ready() (skipped on the elevated server).
-
 
 public partial class Spawner : Node2D
 {
@@ -207,7 +206,8 @@ public partial class Spawner : Node2D
 
 
 /*
-
+# `_UnhandledKeyInput(@event)`
+when there's some key input
 ```c# */
 	public override void _UnhandledKeyInput(InputEvent @event)
 	{
@@ -228,7 +228,8 @@ public partial class Spawner : Node2D
 
 
 /*
-
+# `_OnCommandSubmitted(raw)`
+its obvious
 ```c# */
 	private void _OnCommandSubmitted(string raw)
 	{
@@ -246,7 +247,8 @@ public partial class Spawner : Node2D
 
 
 /*
-
+# `_ParseCommand(cmd)`
+its obvious
 ```c# */
 	private void _ParseCommand(string cmd)
 	{
@@ -286,7 +288,8 @@ public partial class Spawner : Node2D
 
 
 /*
-
+# `_CmdSelfinfo(verb)`
+/stats — print RPG stats; /inv — print equipment and inventory. Both run locally, no admin needed.
 ```c# */
 	// /stats — print RPG stats; /inv — print equipment and inventory. Both run locally, no admin needed.
 	private void _CmdSelfinfo(string verb)
@@ -340,7 +343,9 @@ public partial class Spawner : Node2D
 */
 
 /*
-
+# `_CmdSelfPos()`
+/stdbpos -- read this client's PlayerPosition row from the local STDB cache.
+No server round-trip: the SDK keeps a local copy of all subscribed rows.
 ```c# */
 	// /stdbpos [prefix] -- read a PlayerPosition row from the local STDB cache.
 	// With no argument: shows the local player's row.
@@ -406,7 +411,9 @@ public partial class Spawner : Node2D
 */
 
 /*
-
+# `_RpcTryAdminPassword(password)`
+/adminpass — any player: claim admin if the password matches.
+Separate RPC so non-admins can reach the server without going through _RpcAdminCmd.
 ```c# */
 
 	private void _ShowFeedback(string msg)

@@ -1,3 +1,6 @@
+/*
+FloatingText
+```c# */
 using Godot;
 using Godot.Collections;
 
@@ -6,7 +9,14 @@ public partial class FloatingText : Label
     [Export] public Dictionary<string, Color> Colors { get; set; } = new();
 
     public int FloatingNumber { get; set; } = 55;
+/*
+```
+*/
 
+/*
+# `_Set(property, value)`
+its obvious ig
+```c# */
     public override bool _Set(StringName property, Variant value)
     {
         if (property.ToString() == "colors")
@@ -16,7 +26,14 @@ public partial class FloatingText : Label
         }
         return base._Set(property, value);
     }
+/*
+```
+*/
 
+/*
+# `_Ready()`
+when it enteres a tree
+```c# */
     public override async void _Ready()
     {
         _SetColor();
@@ -29,7 +46,14 @@ public partial class FloatingText : Label
         await ToSignal(tween, Tween.SignalName.Finished);
         QueueFree();
     }
+/*
+```
+*/
 
+/*
+# `_SetColor()`
+its obvious ig
+```c# */
     private void _SetColor()
     {
         if (Colors == null || Colors.Count == 0)
@@ -41,4 +65,7 @@ public partial class FloatingText : Label
         else
             AddThemeColorOverride("font_color", Colors["Normal"]);
     }
+/*
+```
+*/
 }

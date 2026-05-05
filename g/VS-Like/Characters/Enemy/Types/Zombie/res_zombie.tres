@@ -1,13 +1,7 @@
-[gd_resource type="Resource" script_class="ResEnemy" load_steps=3 format=3 uid="uid://ds8kgdukxhuyu"]
+[gd_resource type="Resource" script_class="ResEnemy" format=3 uid="uid://ds8kgdukxhuyu"]
 
-[ext_resource type="Script" path="res://VS-Like/Characters/Enemy/Types/ResEnemy.cs" id="1_svn4t"]
-[ext_resource type="Texture2D" uid="uid://qu2hqqom5t3r" path="res://VS-Like/Characters/Enemy/Types/Zombie/sprite_zombie.tres" id="2_rlfpb"]
+[ext_resource type="Script" uid="uid://bq2n0w72uwjbf" path="res://VS-Like/Characters/Enemy/Types/ResEnemy.cs" id="1_svn4t"]
 
 [resource]
 script = ExtResource("1_svn4t")
-enemy_name = "Zombie"
-sprite = ExtResource("2_rlfpb")
-radius = 7.0
-health = 15
-speed = 35
-damage = 5
+ModelName = "Minion"

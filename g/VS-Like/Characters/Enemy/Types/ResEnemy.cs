@@ -5,6 +5,7 @@ public partial class ResEnemy : Resource
 {
     [Export] public string EnemyName { get; set; } = "";
     [Export] public Texture2D Sprite { get; set; }
+    [Export] public string ModelName { get; set; } = "";
     [Export] public float Radius { get; set; } = 7.0f;
 
     [Export] public int Health { get; set; } = 10;
@@ -21,6 +22,7 @@ public partial class ResEnemy : Resource
         {
             case "enemy_name":            EnemyName           = value.AsString();       return true;
             case "sprite":                Sprite              = value.As<Texture2D>();  return true;
+            case "model_name":            ModelName           = value.AsString();       return true;
             case "radius":                Radius              = value.AsSingle();       return true;
             case "health":                Health              = value.AsInt32();        return true;
             case "speed":                 Speed               = value.AsInt32();        return true;

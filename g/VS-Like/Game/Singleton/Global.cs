@@ -1,3 +1,6 @@
+/*
+header stuff ig
+```c# */
 using Godot;
 using System.Collections.Generic;
 
@@ -21,19 +24,43 @@ public partial class Global : Node
         GD.Load<ResItem>("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Parchment/res_parchment.tres"),
         GD.Load<ResItem>("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/res_ring.tres"),
     };
+/*
+```
+*/
 
+/*
+# `_Ready()`
+idk what to say, just a default _ready function
+```c#
+*/
     public override void _Ready()
     {
         Instance = this;
     }
+/*
+```
+*/
 
     public Player GetLocalPlayer() => Player.Local;
 
+/*
+# `GetAvailableItems()`
+its obvious ig
+```c#
+*/
     public ResItem[] GetAvailableItems()
     {
         return (ResItem[])ResItems.Clone();
     }
+/*
+```
+*/
 
+/*
+# `PickupItem()`
+its obvious ig
+```c#
+*/
     public void PickupItem(ResItem resItm)
     {
         var player = GetLocalPlayer();
@@ -44,7 +71,15 @@ public partial class Global : Node
         else if (!player.AddToInventory(resItm))
             GD.PushWarning("Inventory full — could not pick up: " + resItm.ItemName);
     }
+/*
+```
+*/
 
+/*
+# `_SlotIsEmpty()`
+its obvious ig
+```c#
+*/
     private static bool _SlotIsEmpty(Player player, ResItem resWpn)
     {
         return resWpn.ItemTypeValue switch
@@ -56,7 +91,7 @@ public partial class Global : Node
             _                          => false,
         };
     }
-}
 /*
 ```
 */
+}

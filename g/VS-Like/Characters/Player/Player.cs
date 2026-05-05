@@ -1,5 +1,5 @@
 /*
-# whatever
+Player code.
 ```c# */
 using Godot;
 using System.Collections.Generic;
@@ -10,6 +10,7 @@ public partial class Player : CharacterBody2D
     [Export] public ResPlayer CharacterData { get; set; }
 
     private Sprite2D _sprite2D;
+    private Node2D _model3D;
     private Camera2D _camera2D;
     private Area2D _enemyDetection;
     private Healthbar _healthBar;
@@ -61,7 +62,14 @@ public partial class Player : CharacterBody2D
     private Vector2? _lastSentMoveInput = null;
 
     public InventoryUI InventoryUi { get; private set; } = null;
+/*
+```
+*/
 
+/*
+# `_Set(property, value)`
+This is kinda obvious
+```c# */
     public override bool _Set(StringName property, Variant value)
     {
         if (property.ToString() == "character_data")
@@ -74,15 +82,20 @@ public partial class Player : CharacterBody2D
 /*
 ```
 */
-    
-    public override void _Ready()
+
+/*
+# `_Ready()`
+This is kinda obvious
+```c# */
+    public override async void _Ready()
     {
-        _sprite2D           = GetNode<Sprite2D>("Sprite2D");
-        _camera2D           = GetNode<Camera2D>("Camera2D");
-        _camera2D.Enabled   = false;
-        _enemyDetection     = GetNode<Area2D>("EnemyDetection");
-        _healthBar          = GetNode<Healthbar>("HealthBar");
-        _progressBar        = GetNode<ProgressBar>("%ProgressBar");
+        _sprite2D         = GetNode<Sprite2D>("Sprite2D");
+        _model3D          = GetNode<Node2D>("Model3D");
+        _camera2D         = GetNode<Camera2D>("Camera2D");
+        _camera2D.Enabled = false; // Prevent camera snap for non-authority peers; _InitPlayer() re-enables for local player.
+        _enemyDetection   = GetNode<Area2D>("EnemyDetection");
+        _healthBar        = GetNode<Healthbar>("HealthBar");
+        _progressBar      = GetNode<ProgressBar>("%ProgressBar");
         _weaponsContainerUi = GetNode<WeaponContainerUI>("%WeaponsContainerUI");
         ChestUi             = GetNode<ChestUI>("%ChestUI");
         _hud                = GetNode<CanvasLayer>("HUD");
@@ -94,7 +107,14 @@ public partial class Player : CharacterBody2D
 
         _InitPlayer();
     }
+/*
+```
+*/
 
+/*
+# `_InitPlayer()`
+This is kinda obvious
+```c# */
     private void _InitPlayer()
     {
         if (CharacterData == null)
@@ -102,7 +122,8 @@ public partial class Player : CharacterBody2D
             GD.PushError($"Player {Name}: CharacterData export is null — check player.tscn character_data field.");
             return;
         }
-        _sprite2D.Texture = CharacterData.Sprite;
+        GD.Print("Model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+CharacterData.ModelName);
+        GetNode<Node3D>("Model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+CharacterData.ModelName).Show();
         MaxHealth = CharacterData.MaxHealth;
         Speed     = CharacterData.MaxSpeed;
         Health    = MaxHealth;
@@ -134,7 +155,14 @@ public partial class Player : CharacterBody2D
             }
         }
     }
+/*
+```
+*/
 
+/*
+# `_PhysicsProcess(delta)`
+This is kinda obvious
+```c# */
     public override void _PhysicsProcess(double delta)
     {
         if (!IsLocalPlayer)
@@ -143,7 +171,14 @@ public partial class Player : CharacterBody2D
         _HandleMovement();
         MoveAndSlide();
     }
+/*
+```
+*/
 
+/*
+# `_UnhandledInput(@event)`
+This is kinda obvious
+```c# */
     public override void _UnhandledInput(InputEvent @event)
     {
         if (!IsLocalPlayer)
@@ -159,6 +194,9 @@ public partial class Player : CharacterBody2D
             }
         }
     }
+/*
+```
+*/
 
     private void _HandleMovement()
     {
@@ -178,10 +216,13 @@ public partial class Player : CharacterBody2D
         }
 
         if (Velocity.X > 0)
-            _sprite2D.Scale = new Vector2(1, _sprite2D.Scale.Y);
+            _model3D.Scale = new Vector2(1, _model3D.Scale.Y);
         else if (Velocity.X < 0)
-            _sprite2D.Scale = new Vector2(-1, _sprite2D.Scale.Y);
+            _model3D.Scale = new Vector2(-1, _model3D.Scale.Y);
     }
+/*
+```
+*/
 
     // TODO: server-authoritative damage delivery (BulletHitCheck reducer, Task 6)
     public void Hurt(float dmg)
@@ -191,14 +232,28 @@ public partial class Player : CharacterBody2D
         if (Health <= 0 && IsLocalPlayer)
             GetTree().CallDeferred("change_scene_to_file", "res://VS-Like/Maps/Woods/woods_map.tscn");
     }
+/*
+```
+*/
 
+/*
+# `_SetHealth(newHealth)`
+This is kinda obvious
+```c# */
     private void _SetHealth(float newHealth)
     {
         _health = Mathf.Clamp(newHealth, 0, MaxHealth);
         if (_healthBar != null && IsLocalPlayer)
             _healthBar.Value = _health;
     }
+/*
+```
+*/
 
+/*
+# `_SetPoints(newPoints)`
+This is kinda obvious
+```c# */
     private void _SetPoints(float newPoints)
     {
         if (!IsLocalPlayer)
@@ -217,7 +272,14 @@ public partial class Player : CharacterBody2D
 
         _progressBar.Value = _points;
     }
+/*
+```
+*/
 
+/*
+# `_OnLevelUp()`
+This is kinda obvious
+```c# */
     private void _OnLevelUp()
     {
         Strength  += 1;
@@ -230,26 +292,47 @@ public partial class Player : CharacterBody2D
         if (InventoryUi != null && InventoryUi.Visible)
             InventoryUi.Refresh();
     }
+/*
+```
+*/
 
+/*
+# `GetAccessorySlotCount()`
+This is kinda obvious
+```c# */
     public int GetAccessorySlotCount()
     {
         if (Wisdom >= 1000) return 3;
         if (Wisdom >= 500)  return 2;
         return 1;
     }
+/*
+```
+*/
 
+/*
+# `_InstantiateWeaponNode(resWpn, isOwner)`
+This is kinda obvious
+```c# */
     private Weapon _InstantiateWeaponNode(ResItem resWpn, bool isOwner)
     {
         var weapon = resWpn.WeaponScene.Instantiate<Weapon>();
         weapon.Resource       = resWpn;
         weapon.IsOwnerWeapon  = isOwner;
         if (resWpn.AttachToRotation)
-            _sprite2D.AddChild(weapon);
+            _model3D.AddChild(weapon);
         else
             AddChild(weapon);
         return weapon;
     }
+/*
+```
+*/
 
+/*
+# `_AssignToSlot(weapon, itemType)`
+This is kinda obvious
+```c# */
     private void _AssignToSlot(Weapon weapon, ResItem.ItemType itemType)
     {
         switch (itemType)
@@ -260,7 +343,14 @@ public partial class Player : CharacterBody2D
             case ResItem.ItemType.Accessory: EquippedAccessories.Add(weapon); break;
         }
     }
+/*
+```
+*/
 
+/*
+# `_EquipItem(resWpn)`
+This is kinda obvious
+```c# */
     public bool EquipItem(ResItem resWpn)
     {
         if (!IsLocalPlayer)
@@ -297,7 +387,14 @@ public partial class Player : CharacterBody2D
         }
         return false;
     }
+/*
+```
+*/
 
+/*
+# `_UnequipToInventory(weapon)`
+This is kinda obvious
+```c# */
     public void _UnequipToInventory(Weapon weapon)
     {
         if (weapon == null)
@@ -307,7 +404,14 @@ public partial class Player : CharacterBody2D
         weapon.RemovePassiveEffects(this);
         weapon.QueueFree();
     }
+/*
+```
+*/
 
+/*
+# `AddToInventory(resWpn)`
+This is kinda obvious
+```c# */
     public bool AddToInventory(ResItem resWpn)
     {
         if (Inventory.Count < InventoryMax)
@@ -317,7 +421,14 @@ public partial class Player : CharacterBody2D
         }
         return false;
     }
+/*
+```
+*/
 
+/*
+# `AddConsumable(resWpn)`
+This is kinda obvious
+```c# */
     public bool AddConsumable(ResItem resWpn)
     {
         if (Consumables.Count < ConsumablesMax)
@@ -327,6 +438,9 @@ public partial class Player : CharacterBody2D
         }
         return false;
     }
+/*
+```
+*/
 
     public void ApplyGiveWeapon(string resPath)
     {
@@ -334,6 +448,9 @@ public partial class Player : CharacterBody2D
         if (res != null)
             Global.Instance.PickupItem(res);
     }
+/*
+```
+*/
 
     public void ApplyRemoveWeapon(string resPath)
     {
@@ -368,7 +485,14 @@ public partial class Player : CharacterBody2D
             }
         }
     }
+/*
+```
+*/
 
+/*
+# `_RemoveEquippedSlot(weapon)`
+This is kinda obvious
+```c# */
     private void _RemoveEquippedSlot(Weapon weapon)
     {
         weapon.RemovePassiveEffects(this);
@@ -379,6 +503,9 @@ public partial class Player : CharacterBody2D
             EquippedAbility = null;
         _weaponsContainerUi.UpdateEquipment(this);
     }
+/*
+```
+*/
 
     private void _OnStdbInventoryUpdate(EventContext ctx, PlayerInventory oldInv, PlayerInventory newInv)
     {
@@ -403,4 +530,8 @@ public partial class Player : CharacterBody2D
         if (conn != null)
             conn.Db.PlayerInventory.OnUpdate -= _OnStdbInventoryUpdate;
     }
+/*
+```
+*/
+
 }

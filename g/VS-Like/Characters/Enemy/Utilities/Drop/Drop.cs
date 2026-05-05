@@ -1,3 +1,6 @@
+/*
+Drop code.
+```c# */
 using Godot;
 
 public partial class Drop : Area2D
@@ -10,7 +13,14 @@ public partial class Drop : Area2D
     private const float AttractSpeed = 300.0f;
 
     [Export] public ResDrop Resource { get; set; }
+/*
+```
+*/
 
+/*
+# `_Ready()`
+This is kinda obvious
+```c# */
     public override void _Ready()
     {
         _sprite2D   = GetNode<Sprite2D>("Sprite2D");
@@ -21,7 +31,14 @@ public partial class Drop : Area2D
         if (Resource.Audio != null)
             _audioPlayer.Stream = Resource.Audio;
     }
+/*
+```
+*/
 
+/*
+# `_Process(delta)`
+This is kinda obvious
+```c# */
     public override void _Process(double delta)
     {
         if (!StartAttracting)
@@ -34,7 +51,14 @@ public partial class Drop : Area2D
         var toPlayer = localPlayer.GlobalPosition - GlobalPosition;
         GlobalPosition += toPlayer.Normalized() * Mathf.Min(AttractSpeed * (float)delta, toPlayer.Length());
     }
+/*
+```
+*/
 
+/*
+# `_OnBodyEntered(body)`
+This is kinda obvious
+```c# */
     private async void _OnBodyEntered(Node2D body)
     {
         if (body is not Player player)
@@ -55,9 +79,19 @@ public partial class Drop : Area2D
 
         QueueFree();
     }
+/*
+```
+*/
 
+/*
+# `_OnTimerTimeout()`
+This is kinda obvious
+```c# */
     private void _OnTimerTimeout()
     {
         QueueFree();
     }
+/*
+```
+*/
 }

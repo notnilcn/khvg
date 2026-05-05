@@ -22,7 +22,9 @@ public partial class StdbPlayerSync : Node
     private const string GameScenePath = "res://VS-Like/Maps/Woods/woods_map.tscn";
 
     // Archer sprite so STDB-synced ghosts are visually distinct from the local dwarf.
-    private const string RemoteTexturePath = "res://VS-Like/Characters/Player/Types/Archer/sprite_archer.tres";
+    private const string RemoteModelPath = "res://VS-Like/Assets/model_presets/player_model.tscn";
+    // TODO: change this to some 3d model stuff
+    
 
     private readonly Dictionary<string, Node2D> _remoteNodes = new();
     private readonly Dictionary<string, SyncSnapshot> _snapshots = new(); // ^-snapshots
@@ -182,6 +184,7 @@ public partial class StdbPlayerSync : Node
     private void _SpawnRemote(SpacetimeDB.Identity id, float x, float y) // ^SpawnRemote
     {
         var scene = GetTree().CurrentScene;
+        GD.PrintS("scene", scene);
         if (scene == null) return;
 
         var key = id.ToString();
@@ -189,12 +192,9 @@ public partial class StdbPlayerSync : Node
         node.Name = $"StdbRemote_{_Short(id)}";
         node.GlobalPosition = new Vector2(x, y);
 
-        var texture = GD.Load<Texture2D>(RemoteTexturePath);
-        var sprite = new Sprite2D();
-        sprite.Texture = texture;
-        sprite.Position = new Vector2(0, -8);
-        sprite.FlipH = true;
-        node.AddChild(sprite);
+        var model = GD.Load<PackedScene>(RemoteModelPath).Instantiate();
+        model.GetNode("SubViewportContainer/SubViewport/WorldEnvironment/Archer");
+        node.AddChild(model);
 
         scene.CallDeferred(Node.MethodName.AddChild, node);
         _remoteNodes[key] = node;

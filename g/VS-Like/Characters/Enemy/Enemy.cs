@@ -1,4 +1,5 @@
 /*
+Enemy code.
 ```c# */
 using Godot;
 using System.Collections.Generic;
@@ -14,6 +15,7 @@ public partial class Enemy : Sprite2D
         GD.Load<PackedScene>("res://VS-Like/Game/UI/FloatingText/floating_text.tscn");
 
     private AudioStreamPlayer2D _audioPlayer2D;
+    private Node2D _model3D;
 
     private Rid _object;
     private Rid _shape;
@@ -46,11 +48,21 @@ public partial class Enemy : Sprite2D
 ```
 */
 
+/*
+```
+*/
+
+/*
+# `_Ready()`
+This is kinda obvious
+```c# */
     public override async void _Ready()
     {
         _audioPlayer2D = GetNode<AudioStreamPlayer2D>("AudioPlayer2D");
 
-        Texture = ResEnemy.Sprite;
+        GD.PrintS("model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+ResEnemy.ModelName);
+
+        GetNode<Node3D>("model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+ResEnemy.ModelName).Show();
 
         if (IsElite)
         {
@@ -78,7 +90,14 @@ public partial class Enemy : Sprite2D
             _target = _GetNearestPlayer();
         }
     }
+/*
+```
+*/
 
+/*
+# `_SetupClientHitbox()`
+This is kinda obvious
+```c# */
     private void _SetupClientHitbox()
     {
         var body              = new StaticBody2D();
@@ -92,6 +111,9 @@ public partial class Enemy : Sprite2D
         body.AddChild(shapeNode);
         AddChild(body);
     }
+/*
+```
+*/
 
     private async System.Threading.Tasks.Task _SetupPhysics()
     {
@@ -111,7 +133,14 @@ public partial class Enemy : Sprite2D
         await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
         PhysicsServer2D.BodyAttachObjectInstanceId(_object, GetInstanceId());
     }
+/*
+```
+*/
 
+/*
+# `_Process(delta)`
+This is kinda obvious
+```c# */
     public override void _Process(double delta)
     {
         if (ElevatedClient.IsActive)
@@ -155,7 +184,14 @@ public partial class Enemy : Sprite2D
         GD.Print($"[Enemy {EnemyId}] Firing STDB bullet pattern={BulletPatternType} at {GlobalPosition}");
         StdbBulletSync.Instance?.FireBullet(GlobalPosition, BulletPatternType);
     }
+/*
+```
+*/
 
+/*
+# `_TickBulletFire(delta)`
+This is kinda obvious
+```c# */
     private void _TickBulletFire(float delta)
     {
         if (ResEnemy.BulletDamage <= 0.0f || _target == null)
@@ -167,7 +203,14 @@ public partial class Enemy : Sprite2D
         var dir = GlobalPosition.DirectionTo(_target.GlobalPosition);
         BulletManager.Instance.ServerSpawnLinear(GlobalPosition, dir, ResEnemy.BulletSpeed, ResEnemy.BulletDamage);
     }
+/*
+```
+*/
 
+/*
+# `_MoveCharacter()`
+This is kinda obvious
+```c# */
     private void _MoveCharacter()
     {
         if (_target == null) return;
@@ -175,13 +218,23 @@ public partial class Enemy : Sprite2D
         PhysicsServer2D.BodySetState(
             _object, PhysicsServer2D.BodyState.LinearVelocity, _direction * Speed);
     }
+/*
+```
+*/
 
     // TODO: server-authoritative hit validation (BulletHitCheck reducer, Task 6)
     public void ReportHit(float damageAmount, float fireRate)
     {
         Hurt(damageAmount);
     }
+/*
+```
+*/
 
+/*
+# `Hurt(dmg)`
+This is kinda obvious
+```c# */
     public void Hurt(float dmg)
     {
         _audioPlayer2D.Play();
@@ -190,6 +243,9 @@ public partial class Enemy : Sprite2D
         if (CurrHealth <= 0)
             Die();
     }
+/*
+```
+*/
 
     public void ShowFloatingText(int dmg)
     {
@@ -198,18 +254,35 @@ public partial class Enemy : Sprite2D
         floatingText.FloatingNumber = dmg;
         GetTree().CurrentScene.CallDeferred("add_child", floatingText);
     }
+/*
+```
+*/
 
+/*
+# `Die`
+This is kinda obvious
+```c# */
     private void Die()
     {
         if (IsElite || GD.Randf() > 0.25f)
             SpawnDrop();
         EmitSignal(SignalName.RequestDespawn, EnemyId);
     }
+/*
+```
+*/
 
+/*
+# `SpawnDrop`
+This is kinda obvious
+```c# */
     public void SpawnDrop()
     {
         GetParent<Spawner>().SpawnDrop(ResDrop.ResourcePath, GlobalPosition);
     }
+/*
+```
+*/
 
     // Used by the server-physics path (Godot multiplayer players only).
     private Player _GetNearestPlayer()
@@ -227,7 +300,14 @@ public partial class Enemy : Sprite2D
         }
         return nearest;
     }
+/*
+```
+*/
 
+/*
+# `_DistanceToNearestPlayer()`
+This is kinda obvious
+```c# */
     private float _DistanceToNearestPlayer()
     {
         float minDist = float.PositiveInfinity;
@@ -239,6 +319,9 @@ public partial class Enemy : Sprite2D
         }
         return minDist;
     }
+/*
+```
+*/
 
     // Used by the IsStdbSpawned path — checks local player AND STDB ghost nodes.
     // Remote Player nodes in Global.Instance.Players have stale positions on non-host clients
@@ -306,4 +389,8 @@ public partial class Enemy : Sprite2D
         if (_shape.IsValid)
             PhysicsServer2D.FreeRid(_shape);
     }
+/*
+```
+*/
+
 }
