@@ -28,7 +28,7 @@ public partial class SineArrowWeapon : Weapon
         var proj = ProjectileScene.Instantiate<SineArrowProjectile>();
         proj.Damage       = Damage;
         proj.FireRate     = Resource.FireRate;
-        proj.OwnerPeerId  = Multiplayer.GetUniqueId();
+        proj.OwnerPeerId  = 1;
         proj.Direction    = dir;
         proj.Amplitude    = 30.0f + _amplitudeBonus;
         proj.GlobalPosition = GlobalPosition;

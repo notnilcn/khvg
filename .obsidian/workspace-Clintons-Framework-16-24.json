@@ -1,0 +1,230 @@
+{
+  "main": {
+    "id": "37d718731ee5cd94",
+    "type": "split",
+    "children": [
+      {
+        "id": "0fe4e385a2314fc2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "5903520f8134e011",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Notes/003 Game Development/Optimizations.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Optimizations"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9e6e612bda9276a2",
+    "type": "split",
+    "children": [
+      {
+        "id": "a31ccfb03fcc4c92",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "702b0ddb37d08ea9",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "1a199ca0ef466ae3",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "d7d1bbc5efcce987",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 482.5
+  },
+  "right": {
+    "id": "060b9ccb0c4fedf3",
+    "type": "split",
+    "children": [
+      {
+        "id": "8dc5b426f41e901a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a0ec55b96a2eb2d2",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "f4299f886cc77be2",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "980c05003454c49d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "6ad309eacaf5bb0b",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "9fd231dfabdf672d",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "system3-relay:Relay": false,
+      "custom-sort:Toggle custom sorting": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "702b0ddb37d08ea9",
+  "lastOpenFiles": [
+    "Notes/003 Game Development/Untitled",
+    "Notes/003 Game Development/Small stuff.md",
+    "Notes/003 Game Development/Features to implement list.md",
+    "CLAUDE.md.tmp.39692.1777107627600",
+    "CLAUDE.md.tmp.39692.1777107622191",
+    "CLAUDE.md.tmp.39692.1777107614408",
+    "CLAUDE.md.tmp.39692.1777107608738",
+    "CLAUDE.md.tmp.39692.1777107597494",
+    "CLAUDE.md.tmp.39692.1777107591097",
+    "CLAUDE.md.tmp.39692.1777107558864",
+    "CLAUDE.md.tmp.39692.1777107552095",
+    "Notes/003 Game Development/Features to implement/Foundations.md",
+    "g/SpacetimeDB/module_bindings/Reducers/ReportMovement.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/Reducers/ReportMovement.g.cs",
+    "Notes/999 Random Game Design Notes/Lore/Destroyed world.md",
+    "Notes/003 Game Development/Optimizations.md",
+    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game 1.md",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425123714.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425123250.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425115208.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425113248.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425113219.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112649.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112558.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112443.png",
+    "Notes/999 Random Game Design Notes/Dungeons & bosses/00 Dungeons & Bosses general notes.md",
+    "Notes/999 Random Game Design Notes/Overview.md",
+    "Notes/999 Resources and files/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
+    "Notes/003 Game Development/Overhaul list.md",
+    "Notes/003 Game Development/Features to implement/Untitled.md",
+    "Notes/002 Game Code/001 Opening the game/001 Spawning into a server 1.md",
+    "Notes/002 Game Code/001 Opening the game/(old) 001 Spawning into a server.md",
+    "Notes/002 Game Code/001 Opening the game/(old) 000 Opening the game & then clicking Host Game or Join Game.md",
+    "Llobby.cs.md",
+    "Notes/003 Game Development/Todo list.md",
+    "Notes/003 Game Development/Todo list (in order of priority).md",
+    "Notes/003 Game Development/Shelved todo list.md",
+    "Notes/003 Game Development/Notnilc/To Do List.md",
+    "Notes/003 Game Development/Notnilc/Untitled.md",
+    "Notes/002 Game Code/Untitled.md",
+    "network.gd.md",
+    "Notes/002 Game Code/001 Opening the game/Untitled-GCW10HP236-0219.md"
+  ]
+}

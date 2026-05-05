@@ -16,22 +16,22 @@ namespace SpacetimeDB.Types
         [DataMember(Name = "player_id")]
         public SpacetimeDB.Identity PlayerId;
         [DataMember(Name = "level")]
-        public int Level;
+        public uint Level;
         [DataMember(Name = "xp")]
-        public int Xp;
+        public uint Xp;
         [DataMember(Name = "max_hp")]
-        public int MaxHp;
+        public uint MaxHp;
         [DataMember(Name = "current_hp")]
-        public int CurrentHp;
+        public uint CurrentHp;
         [DataMember(Name = "stats")]
         public RpgStats Stats;
 
         public CharacterData(
             SpacetimeDB.Identity PlayerId,
-            int Level,
-            int Xp,
-            int MaxHp,
-            int CurrentHp,
+            uint Level,
+            uint Xp,
+            uint MaxHp,
+            uint CurrentHp,
             RpgStats Stats
         )
         {

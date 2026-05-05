@@ -1,0 +1,10 @@
+{
+  "wrapperTags": [
+    {
+      "id": "w1777375816179",
+      "name": "c# commet code block",
+      "startTag": "/*\n```c# */",
+      "endTag": "/*\n```\n*/"
+    }
+  ]
+}

@@ -54,12 +54,8 @@ public partial class AxeWeapon : Weapon
             return;
 
         float finalDamage = Damage * localPlayer.ExtraDamage;
-        enemy.Rpc(nameof(Enemy.ShowFloatingText), Mathf.RoundToInt(finalDamage));
-
-        if (Multiplayer.IsServer())
-            enemy.ReportHit(finalDamage, Resource.FireRate);
-        else
-            enemy.RpcId(1, nameof(Enemy.ReportHit), finalDamage, Resource.FireRate);
+        enemy.ShowFloatingText(Mathf.RoundToInt(finalDamage));
+        enemy.ReportHit(finalDamage, Resource.FireRate);
     }
 
     private static Enemy _GetEnemyFromBody(Node2D body)

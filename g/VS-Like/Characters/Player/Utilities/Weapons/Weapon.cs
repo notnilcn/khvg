@@ -65,15 +65,6 @@ public partial class Weapon : Node2D
         }
 
         EmitSignal(SignalName.Fire);
-
-        if (Multiplayer.HasMultiplayerPeer() && IsReplicated)
-            Rpc(nameof(_RpcFire));
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void _RpcFire()
-    {
-        EmitSignal(SignalName.Fire);
     }
 
     public void UpgradeWeapon()

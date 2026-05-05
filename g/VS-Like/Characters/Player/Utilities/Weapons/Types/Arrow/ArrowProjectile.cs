@@ -28,25 +28,16 @@ public partial class ArrowProjectile : Area2D
             return;
         }
 
-        if (!Global.Instance.Players.TryGetValue(OwnerPeerId, out var shooter))
-        {
-            QueueFree();
-            return;
-        }
-
-        if (OwnerPeerId != Multiplayer.GetUniqueId())
+        var shooter = Player.Local;
+        if (shooter == null)
         {
             QueueFree();
             return;
         }
 
         float finalDamage = Damage * shooter.ExtraDamage;
-        enemy.Rpc(nameof(Enemy.ShowFloatingText), Mathf.RoundToInt(finalDamage));
-
-        if (Multiplayer.IsServer())
-            enemy.ReportHit(finalDamage, FireRate);
-        else
-            enemy.RpcId(1, nameof(Enemy.ReportHit), finalDamage, FireRate);
+        enemy.ShowFloatingText(Mathf.RoundToInt(finalDamage));
+        enemy.ReportHit(finalDamage, FireRate);
 
         QueueFree();
     }

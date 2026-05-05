@@ -27,16 +27,26 @@ public partial class Enemy : Sprite2D
     public ResDrop ResDrop      { get; set; }
     public bool IsElite         { get; set; } = false;
     public bool Immortal        { get; set; } = false;
-    public int EnemyId          { get; set; } = -1;
+    public int EnemyId          { get; set; } = -1; // ^EnemyID
+    // Set true on non-host clients when spawned from SpacetimeDB.
+    // Skips MultiplayerSynchronizer and runs local AI simulation instead.
+    public bool IsStdbSpawned      { get; set; } = false;
+    // STDB identity string of the player this enemy should chase (set from STDB snapshots).
+    public string StdbTargetId     { get; set; } = "";
+    // Bullet firing pattern for STDB-spawned enemies. 0=none, 1=straight-up, 2=sine-up.
+    public byte BulletPatternType  { get; set; } = 0;
+    public Vector2 MoveDir => _direction;
+    public Node2D Target   => _target;
 
     private Vector2 _direction;
     private Node2D _target;
 
-    private float _bulletCooldown = 0.0f;
-
-    private const float HitTimingTolerance = 0.7f;
-    private const float MinFireRate        = 0.05f;
-    private readonly Dictionary<int, float> _lastHitTimes = new();
+    private float _bulletCooldown     = 0.0f;
+    private float _stdbBulletCooldown = 0.0f;
+    private const float StdbFireRate  = 1.0f;
+/*
+```
+*/
 
 /*
 ```
@@ -69,9 +79,7 @@ This is kinda obvious
         Speed  = ResEnemy.Speed;
         Damage = ResEnemy.Damage;
 
-        _SetupSync();
-
-        if (Multiplayer.IsServer())
+        if (ElevatedClient.IsActive)
         {
             await _SetupPhysics();
             _target = _GetNearestPlayer();
@@ -79,6 +87,7 @@ This is kinda obvious
         else
         {
             _SetupClientHitbox();
+            _target = _GetNearestPlayer();
         }
     }
 /*
@@ -106,27 +115,6 @@ This is kinda obvious
 ```
 */
 
-/*
-# `_SetupSync()`
-This is kinda obvious
-```c# */
-    private void _SetupSync()
-    {
-        var sync   = new MultiplayerSynchronizer();
-        sync.Name  = "Sync";
-        var config = new SceneReplicationConfig();
-        config.AddProperty(new NodePath(":position"));
-        sync.ReplicationConfig = config;
-        AddChild(sync);
-    }
-/*
-```
-*/
-
-/*
-# `_SetupPhysics()`
-This is kinda obvious
-```c# */
     private async System.Threading.Tasks.Task _SetupPhysics()
     {
         _object = PhysicsServer2D.BodyCreate();
@@ -155,19 +143,46 @@ This is kinda obvious
 ```c# */
     public override void _Process(double delta)
     {
-        if (!Multiplayer.IsServer())
-            return;
+        if (ElevatedClient.IsActive)
+        {
+            _MoveCharacter();
+            _TickBulletFire((float)delta);
+            if (IsStdbSpawned)
+                _TickStdbBulletFire((float)delta);
 
-        _MoveCharacter();
-        _TickBulletFire((float)delta);
+            var newTrans = (Transform2D)PhysicsServer2D.BodyGetState(_object, PhysicsServer2D.BodyState.Transform);
+            GlobalPosition = newTrans.Origin;
 
-        var newTrans = (Transform2D)PhysicsServer2D.BodyGetState(_object, PhysicsServer2D.BodyState.Transform);
-        GlobalPosition = newTrans.Origin;
+            _target = _GetNearestPlayer();
 
-        _target = _GetNearestPlayer();
+            if (_DistanceToNearestPlayer() >= 600)
+                QueueFree();
+        }
+        else if (IsStdbSpawned)
+        {
+            // Use the host-assigned target id if we have one, otherwise find nearest ourselves.
+            _target = (!string.IsNullOrEmpty(StdbTargetId) ? _FindStdbTarget(StdbTargetId) : null)
+                      ?? _GetStdbNearestPlayer();
 
-        if (_DistanceToNearestPlayer() >= 600)
-            QueueFree();
+            if (_target != null)
+            {
+                _direction = GlobalPosition.DirectionTo(_target.GlobalPosition);
+                GlobalPosition += _direction * Speed * (float)delta;
+            }
+
+            if (_GetStdbNearestDistance() >= 600)
+                QueueFree();
+        }
+    }
+
+    private void _TickStdbBulletFire(float delta)
+    {
+        if (BulletPatternType == StdbBulletSync.PatternNone) return;
+        _stdbBulletCooldown -= delta;
+        if (_stdbBulletCooldown > 0f) return;
+        _stdbBulletCooldown = StdbFireRate;
+        GD.Print($"[Enemy {EnemyId}] Firing STDB bullet pattern={BulletPatternType} at {GlobalPosition}");
+        StdbBulletSync.Instance?.FireBullet(GlobalPosition, BulletPatternType);
     }
 /*
 ```
@@ -207,31 +222,9 @@ This is kinda obvious
 ```
 */
 
-/*
-# `ReportHit(damageAmount, fireRate)`
-This is kinda obvious
-```c# */
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    // TODO: server-authoritative hit validation (BulletHitCheck reducer, Task 6)
     public void ReportHit(float damageAmount, float fireRate)
     {
-        if (damageAmount <= 0 || damageAmount > 500)
-            return;
-
-        int callerId = Multiplayer.GetRemoteSenderId();
-        if (callerId == 0) callerId = Multiplayer.GetUniqueId(); // direct local call (server)
-        if (!Global.Instance.Players.TryGetValue(callerId, out var callerPlayer))
-            return;
-
-        if (GlobalPosition.DistanceTo(callerPlayer.GlobalPosition) > Network.HitValidationRange)
-            return;
-
-        float effectiveRate = Mathf.Max(fireRate, MinFireRate);
-        float now           = Time.GetTicksMsec() * 0.001f;
-        float lastTime      = _lastHitTimes.TryGetValue(callerId, out var lt) ? lt : float.NegativeInfinity;
-        if ((now - lastTime) < effectiveRate * HitTimingTolerance)
-            return;
-
-        _lastHitTimes[callerId] = now;
         Hurt(damageAmount);
     }
 /*
@@ -254,11 +247,6 @@ This is kinda obvious
 ```
 */
 
-/*
-# `ShowFloatingText(dmg)`
-This is kinda obvious
-```c# */
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void ShowFloatingText(int dmg)
     {
         var floatingText = FloatingTextScene.Instantiate<FloatingText>();
@@ -290,16 +278,13 @@ This is kinda obvious
 ```c# */
     public void SpawnDrop()
     {
-        GetParent<Spawner>().Rpc(nameof(Spawner._RpcSpawnDrop), ResDrop.ResourcePath, GlobalPosition);
+        GetParent<Spawner>().SpawnDrop(ResDrop.ResourcePath, GlobalPosition);
     }
 /*
 ```
 */
 
-/*
-# `_GetNearestPlayer()`
-This is kinda obvious
-```c# */
+    // Used by the server-physics path (Godot multiplayer players only).
     private Player _GetNearestPlayer()
     {
         Player nearest      = null;
@@ -338,10 +323,64 @@ This is kinda obvious
 ```
 */
 
-/*
-# `_ExitTree()`
-This is kinda obvious
-```c# */
+    // Used by the IsStdbSpawned path — checks local player AND STDB ghost nodes.
+    // Remote Player nodes in Global.Instance.Players have stale positions on non-host clients
+    // because player position is synced via SpacetimeDB, not Godot MultiplayerSynchronizer.
+    private Node2D _GetStdbNearestPlayer()
+    {
+        Node2D nearest    = null;
+        float nearestDist = float.PositiveInfinity;
+
+        var local = Global.Instance.GetLocalPlayer();
+        if (local != null)
+        {
+            float d = GlobalPosition.DistanceTo(local.GlobalPosition);
+            if (d < nearestDist) { nearestDist = d; nearest = local; }
+        }
+
+        if (StdbPlayerSync.Instance != null)
+            foreach (var node in StdbPlayerSync.Instance.RemoteNodes.Values)
+            {
+                if (!GodotObject.IsInstanceValid(node)) continue;
+                float d = GlobalPosition.DistanceTo(node.GlobalPosition);
+                if (d < nearestDist) { nearestDist = d; nearest = node; }
+            }
+
+        return nearest;
+    }
+
+    private float _GetStdbNearestDistance()
+    {
+        float minDist = float.PositiveInfinity;
+
+        var local = Global.Instance.GetLocalPlayer();
+        if (local != null)
+            minDist = System.Math.Min(minDist, GlobalPosition.DistanceTo(local.GlobalPosition));
+
+        if (StdbPlayerSync.Instance != null)
+            foreach (var node in StdbPlayerSync.Instance.RemoteNodes.Values)
+            {
+                if (!GodotObject.IsInstanceValid(node)) continue;
+                minDist = System.Math.Min(minDist, GlobalPosition.DistanceTo(node.GlobalPosition));
+            }
+
+        return minDist;
+    }
+
+    // Finds a player node by STDB identity string — used when host-assigned TargetId is available.
+    private Node2D _FindStdbTarget(string id)
+    {
+        var localId = SpacetimeDBManager.Instance.LocalIdentity?.ToString();
+        if (localId == id)
+            return Global.Instance.GetLocalPlayer();
+
+        if (StdbPlayerSync.Instance?.RemoteNodes.TryGetValue(id, out var node) == true
+            && GodotObject.IsInstanceValid(node))
+            return node;
+
+        return null;
+    }
+
     public override void _ExitTree()
     {
         EmitSignal(SignalName.Died);

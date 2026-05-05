@@ -4,6 +4,10 @@ header stuff ig
 using Godot;
 using System.Collections.Generic;
 
+/*
+#  
+
+```c# */
 public partial class Global : Node
 {
     public static Global Instance { get; private set; } // ^1
@@ -37,19 +41,7 @@ idk what to say, just a default _ready function
 ```
 */
 
-/*
-# `GetLocalPlayer()`
-its obvious ig
-```c#
-*/
-    public Player GetLocalPlayer()
-    {
-        int myId = Multiplayer.GetUniqueId();
-        return Players.TryGetValue(myId, out var player) ? player : null;
-    }
-/*
-```
-*/
+    public Player GetLocalPlayer() => Player.Local;
 
 /*
 # `GetAvailableItems()`

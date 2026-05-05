@@ -64,7 +64,7 @@ This is kinda obvious
         if (body is not Player player)
             return;
 
-        if (!player.IsMultiplayerAuthority())
+        if (!player.IsLocalPlayer)
             return;
 
         Visible = false;

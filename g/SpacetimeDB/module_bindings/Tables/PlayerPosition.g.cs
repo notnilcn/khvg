@@ -42,8 +42,10 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<PlayerPosition, SpacetimeDB.Identity> PlayerId { get; }
         public global::SpacetimeDB.Col<PlayerPosition, float> X { get; }
         public global::SpacetimeDB.Col<PlayerPosition, float> Y { get; }
-        public global::SpacetimeDB.Col<PlayerPosition, float> MoveX { get; }
-        public global::SpacetimeDB.Col<PlayerPosition, float> MoveY { get; }
+        public global::SpacetimeDB.Col<PlayerPosition, sbyte> MoveX { get; }
+        public global::SpacetimeDB.Col<PlayerPosition, sbyte> MoveY { get; }
+        public global::SpacetimeDB.Col<PlayerPosition, ushort> Speed { get; }
+        public global::SpacetimeDB.Col<PlayerPosition, SpacetimeDB.Timestamp> EventTime { get; }
         public global::SpacetimeDB.Col<PlayerPosition, int> ChunkX { get; }
         public global::SpacetimeDB.Col<PlayerPosition, int> ChunkY { get; }
 
@@ -52,8 +54,10 @@ namespace SpacetimeDB.Types
             PlayerId = new global::SpacetimeDB.Col<PlayerPosition, SpacetimeDB.Identity>(tableName, "player_id");
             X = new global::SpacetimeDB.Col<PlayerPosition, float>(tableName, "x");
             Y = new global::SpacetimeDB.Col<PlayerPosition, float>(tableName, "y");
-            MoveX = new global::SpacetimeDB.Col<PlayerPosition, float>(tableName, "move_x");
-            MoveY = new global::SpacetimeDB.Col<PlayerPosition, float>(tableName, "move_y");
+            MoveX = new global::SpacetimeDB.Col<PlayerPosition, sbyte>(tableName, "move_x");
+            MoveY = new global::SpacetimeDB.Col<PlayerPosition, sbyte>(tableName, "move_y");
+            Speed = new global::SpacetimeDB.Col<PlayerPosition, ushort>(tableName, "speed");
+            EventTime = new global::SpacetimeDB.Col<PlayerPosition, SpacetimeDB.Timestamp>(tableName, "event_time");
             ChunkX = new global::SpacetimeDB.Col<PlayerPosition, int>(tableName, "chunk_x");
             ChunkY = new global::SpacetimeDB.Col<PlayerPosition, int>(tableName, "chunk_y");
         }

@@ -1,3 +1,5 @@
+/* Importing, declaring, assigning things.
+```c# */
 #nullable enable
 using Godot;
 using SpacetimeDB;
@@ -8,97 +10,128 @@ using System;
 /// Access via SpacetimeDBManager.Instance or the autoload name from GDScript.
 public partial class SpacetimeDBManager : Node
 {
-    public static SpacetimeDBManager Instance { get; private set; } = null!;
 
-    // Verify this URI by running: spacetime server list
-    private const string Host = "wss://maincloud.spacetimedb.com";
-    private const string DbName = "bmmo-0nzf1";
+	public static SpacetimeDBManager Instance { get; private set; } = null!;
 
-    public DbConnection? Conn { get; private set; }
-    public bool IsStdbConnected => Conn?.IsActive ?? false;
-    public Identity? LocalIdentity { get; private set; }
-    public bool IsSubscriptionReady { get; private set; }
+	// Verify this URI by running: spacetime server list
+	private const string Host = "wss://maincloud.spacetimedb.com";
+	private const string DbName = "bmmo-0nzf1";
 
-    [Signal] public delegate void ConnectedToServerEventHandler(string identity);
-    [Signal] public delegate void DisconnectedFromServerEventHandler();
-    [Signal] public delegate void SubscriptionReadyEventHandler();
+	public DbConnection? Conn { get; private set; }
+	public bool IsStdbConnected => Conn?.IsActive ?? false;
+	public Identity? LocalIdentity { get; private set; }
+	public bool IsSubscriptionReady { get; private set; }
 
-    public override void _Ready()
-    {
-        Instance = this;
+	[Signal] public delegate void ConnectedToServerEventHandler(string identity);
+	[Signal] public delegate void DisconnectedFromServerEventHandler();
+	[Signal] public delegate void SubscriptionReadyEventHandler();
+/*
+```
+*/
 
-        // Pass --p2 (or --p3, etc.) on the command line to use a separate token file,
-        // giving that instance a distinct SpacetimeDB identity for local multiplayer testing.
-        string suffix = "";
-        foreach (var arg in OS.GetCmdlineArgs())
-            if (arg.StartsWith("--p")) { suffix = "_" + arg[2..]; break; }
-        AuthToken.Init(OS.GetUserDataDir() + "/.bmmo_token" + suffix);
+/*
+# `_Ready()`
+```c# */
+	public override void _Ready()
+	{
+		Instance = this;
 
-        try
-        {
-            Conn = DbConnection.Builder()
-                .WithUri(Host)
-                .WithDatabaseName(DbName)
-                .WithToken(AuthToken.Token)
-                .OnConnect(OnConnected)
-                .OnConnectError(OnConnectError)
-                .OnDisconnect(OnDisconnected)
-                .Build();
-        }
-        catch (Exception e)
-        {
-            GD.PrintErr($"[STDB] Failed to build connection: {e.Message}");
-        }
-    }
+		// --elevated-client  → dedicated token so the elevated identity is stable.
+		// --p2, --p3, etc.   → separate token for local multiplayer testing.
+		string suffix = "";
+		foreach (var arg in OS.GetCmdlineArgs())
+		{
+			if (arg == "--elevated-client") { suffix = "_elevated"; break; } // ^--elevated-client
+			if (arg.StartsWith("--p"))      { suffix = "_" + arg[2..]; break; }
+		}
+		AuthToken.Init(OS.GetUserDataDir() + "/.bmmo_token" + suffix);
 
-    public override void _Process(double delta)
-    {
-        // All SpacetimeDB callbacks fire synchronously here on the main thread.
-        Conn?.FrameTick();
-    }
+		try
+		{
+			Conn = DbConnection.Builder()
+				.WithUri(Host)
+				.WithDatabaseName(DbName)
+				.WithToken(AuthToken.Token)
+				.OnConnect(OnConnected) // Connects to the OnConnected function. This function is available here cus the _Ready() function is special
+				.OnConnectError(OnConnectError)
+				.OnDisconnect(OnDisconnected)
+				.Build();
+		}
+		catch (Exception e)
+		{
+			GD.PrintErr($"[STDB] Failed to build connection: {e.Message}");
+		}
+	}
+/*
+```
+*/
 
-    public override void _ExitTree()
-    {
-        if (Conn?.IsActive == true)
-            Conn.Disconnect();
-    }
+/*
+```c# */
+	public override void _Process(double delta)
+	{
+		// All SpacetimeDB callbacks fire synchronously here on the main thread.
+		Conn?.FrameTick();
+	}
+/*
+```
+*/
 
-    // ── Connection callbacks ───────────────────
+/*
+```c# */
+	public override void _ExitTree()
+	{
+		if (Conn?.IsActive == true)
+			Conn.Disconnect();
+	}
+/*
+```
+*/
 
-    private void OnConnected(DbConnection conn, Identity identity, string token)
-    {
-        LocalIdentity = identity;
-        GD.Print($"[STDB] Connected. Identity: {identity}");
-        AuthToken.SaveToken(token);
+/*
+# Connection callbacks
+```c# */
 
-        // Emit before subscribing so listeners can register table callbacks
-        // before initial OnInsert events arrive (mirrors blackholio GameManager pattern).
-        EmitSignal(SignalName.ConnectedToServer, identity.ToString());
+	private void OnConnected(DbConnection conn, Identity identity, string token) // ^OnConnected
+	{
+		LocalIdentity = identity;
+		GD.Print($"[STDB] Connected. Identity: {identity}");
+		AuthToken.SaveToken(token);
 
-        conn.SubscriptionBuilder()
-            .OnApplied(OnSubscriptionApplied)
-            .SubscribeToAllTables();
-    }
+		if (ElevatedClient.IsActive)
+			conn.Reducers.ClaimElevated(); // ^claim-elevated-client-spot
 
-    private void OnConnectError(Exception e)
-    {
-        GD.PrintErr($"[STDB] Connection error: {e.Message}");
-    }
+		// Emit before subscribing so listeners can register table callbacks
+		// before initial OnInsert events arrive (mirrors blackholio GameManager pattern).
+		EmitSignal(SignalName.ConnectedToServer, identity.ToString()); // ^ConnectedToServer
 
-    private void OnDisconnected(DbConnection conn, Exception? e)
-    {
-        if (e != null)
-            GD.PrintErr($"[STDB] Disconnected with error: {e.Message}");
-        else
-            GD.Print("[STDB] Disconnected cleanly.");
+		conn.SubscriptionBuilder()
+			.OnApplied(OnSubscriptionApplied)
+			.SubscribeToAllTables();
+	}
 
-        EmitSignal(SignalName.DisconnectedFromServer);
-    }
+	private void OnConnectError(Exception e) // ^OnConnectError
+	{
+		GD.PrintErr($"[STDB] Connection error: {e.Message}");
+	}
 
-    private void OnSubscriptionApplied(SubscriptionEventContext ctx)
-    {
-        IsSubscriptionReady = true;
-        GD.Print("[STDB] Subscription ready — table data available.");
-        EmitSignal(SignalName.SubscriptionReady);
-    }
+	private void OnDisconnected(DbConnection conn, Exception? e) // ^OnDisconnected
+	{
+		if (e != null)
+			GD.PrintErr($"[STDB] Disconnected with error: {e.Message}");
+		else
+			GD.Print("[STDB] Disconnected cleanly.");
+
+		EmitSignal(SignalName.DisconnectedFromServer);
+	}
+
+	private void OnSubscriptionApplied(SubscriptionEventContext ctx) // ^OnSubscriptionApplied
+	{
+		IsSubscriptionReady = true;
+		GD.Print("[STDB] Subscription ready — table data available.");
+		EmitSignal(SignalName.SubscriptionReady); // ^SubscriptionReady
+	}
+/*
+```
+*/
 }

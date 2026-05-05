@@ -44,7 +44,7 @@ public partial class ArrowWeapon : Weapon
             var projectile = ProjectileScene.Instantiate<ArrowProjectile>();
             projectile.Damage       = Damage;
             projectile.FireRate     = Resource.FireRate;
-            projectile.OwnerPeerId  = Multiplayer.GetUniqueId();
+            projectile.OwnerPeerId  = 1;
 
             float projectileAngle = startAngle + i * _spreadAngle * Mathf.DegToRad(1);
             projectile.Direction  = new Vector2(Mathf.Cos(projectileAngle), Mathf.Sin(projectileAngle)).Normalized();

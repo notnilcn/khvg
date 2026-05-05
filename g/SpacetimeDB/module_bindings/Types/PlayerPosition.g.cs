@@ -20,9 +20,13 @@ namespace SpacetimeDB.Types
         [DataMember(Name = "y")]
         public float Y;
         [DataMember(Name = "move_x")]
-        public float MoveX;
+        public sbyte MoveX;
         [DataMember(Name = "move_y")]
-        public float MoveY;
+        public sbyte MoveY;
+        [DataMember(Name = "speed")]
+        public ushort Speed;
+        [DataMember(Name = "event_time")]
+        public SpacetimeDB.Timestamp EventTime;
         [DataMember(Name = "chunk_x")]
         public int ChunkX;
         [DataMember(Name = "chunk_y")]
@@ -32,8 +36,10 @@ namespace SpacetimeDB.Types
             SpacetimeDB.Identity PlayerId,
             float X,
             float Y,
-            float MoveX,
-            float MoveY,
+            sbyte MoveX,
+            sbyte MoveY,
+            ushort Speed,
+            SpacetimeDB.Timestamp EventTime,
             int ChunkX,
             int ChunkY
         )
@@ -43,6 +49,8 @@ namespace SpacetimeDB.Types
             this.Y = Y;
             this.MoveX = MoveX;
             this.MoveY = MoveY;
+            this.Speed = Speed;
+            this.EventTime = EventTime;
             this.ChunkX = ChunkX;
             this.ChunkY = ChunkY;
         }
