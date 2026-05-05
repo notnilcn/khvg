@@ -1,3 +1,5 @@
+/*
+```c# */
 using Godot;
 using Godot.Collections;
 using System.Collections.Generic;
@@ -5,11 +7,23 @@ using System.Collections.Generic;
 public partial class BulletManager : Node
 {
     public static BulletManager Instance { get; private set; }
+/*
+```
+*/
 
+/*
+# Bullet pattern enums
+```c# */
     public const int PatternLinear    = 0;
     public const int PatternSineWave  = 1;
     public const int PatternSimulated = 2;
+/*
+```
+*/
 
+/*
+# Bullet drawer
+```c# */
     private static readonly PackedScene BulletVisualScene =
         GD.Load<PackedScene>("res://VS-Like/Bullets/BulletVisual/bullet_visual.tscn");
 
@@ -23,7 +37,14 @@ public partial class BulletManager : Node
 
     private readonly List<Node2D> _pool    = new();
     private readonly System.Collections.Generic.Dictionary<int, Node2D> _visuals = new();
+/*
+```
+*/
 
+
+/*
+# `_Ready()`
+```c# */
     public override void _Ready()
     {
         Instance = this;
@@ -35,15 +56,24 @@ public partial class BulletManager : Node
             _pool.Add(v);
         }
     }
+/*
+```
+*/
 
+/*
+```c# */
     public override void _Process(double delta)
     {
         float now = Time.GetTicksMsec() * 0.001f;
-        if (Multiplayer.IsServer())
-            _ServerTick(now, (float)delta);
+        _ServerTick(now, (float)delta);
         _UpdateVisuals(now);
     }
+/*
+```
+*/
 
+/*
+```c# */
     public void ServerSpawnLinear(Vector2 spawnPos, Vector2 direction, float speed, float damage, float lifetime = 4.0f)
     {
         _Spawn(new Dictionary
@@ -59,7 +89,12 @@ public partial class BulletManager : Node
             { "sim_pos",   spawnPos },
         });
     }
+/*
+```
+*/
 
+/*
+```c# */
     public void ServerSpawnSine(Vector2 spawnPos, Vector2 direction, float speed, float damage,
         float amplitude, float frequency, float lifetime = 4.0f)
     {
@@ -76,7 +111,12 @@ public partial class BulletManager : Node
             { "sim_pos",   spawnPos },
         });
     }
+/*
+```
+*/
 
+/*
+```c# */
     public static Vector2 GetPosition(Dictionary data, float elapsed)
     {
         var sp = data["spawn_pos"].AsVector2();
@@ -96,7 +136,12 @@ public partial class BulletManager : Node
         // Linear
         return sp + d * data["speed"].AsSingle() * elapsed;
     }
+/*
+```
+*/
 
+/*
+```c# */
     private void _ServerTick(float now, float delta)
     {
         var toRemove = new List<int>();
@@ -121,7 +166,7 @@ public partial class BulletManager : Node
             {
                 if (_SweptHit(prev, cur, player.GlobalPosition))
                 {
-                    player.Rpc(nameof(Player.Hurt), data["damage"].AsSingle());
+                    player.Hurt(data["damage"].AsSingle());
                     toRemove.Add(id);
                     break;
                 }
@@ -130,7 +175,12 @@ public partial class BulletManager : Node
 
         _DespawnMany(toRemove);
     }
+/*
+```
+*/
 
+/*
+```c# */
     private static bool _SweptHit(Vector2 a, Vector2 b, Vector2 centre)
     {
         var ab     = b - a;
@@ -140,7 +190,12 @@ public partial class BulletManager : Node
             t = Mathf.Clamp((centre - a).Dot(ab) / lenSq, 0.0f, 1.0f);
         return (a + ab * t).DistanceTo(centre) < BulletRadius + PlayerRadius;
     }
+/*
+```
+*/
 
+/*
+```c# */
     private void _DespawnMany(List<int> ids)
     {
         if (ids.Count == 0)
@@ -150,10 +205,14 @@ public partial class BulletManager : Node
             _active.RemoveAll(d => d["id"].AsInt32() == bid);
             _byId.Remove(bid);
             _HideBullet(bid);
-            Rpc(nameof(_RpcDespawn), bid);
         }
     }
+/*
+```
+*/
 
+/*
+```c# */
     private void _Spawn(Dictionary data)
     {
         data["id"]         = _nextId;
@@ -162,32 +221,24 @@ public partial class BulletManager : Node
         _active.Add(data);
         _byId[data["id"].AsInt32()] = data;
         _ShowBullet(data);
-        Rpc(nameof(_RpcSpawn), data);
     }
+/*
+```
+*/
 
-    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void _RpcSpawn(Dictionary data)
-    {
-        _active.Add(data);
-        _byId[data["id"].AsInt32()] = data;
-        _ShowBullet(data);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    private void _RpcDespawn(int id)
-    {
-        _active.RemoveAll(d => d["id"].AsInt32() == id);
-        _byId.Remove(id);
-        _HideBullet(id);
-    }
-
-    [Rpc(MultiplayerApi.RpcMode.Authority, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
-    public void _RpcUpdateSimulated(int id, Vector2 pos)
+/*
+```c# */
+    public void UpdateSimulated(int id, Vector2 pos)
     {
         if (_byId.TryGetValue(id, out var data))
             data["sim_pos"] = pos;
     }
+/*
+```
+*/
 
+/*
+```c# */
     private void _UpdateVisuals(float now)
     {
         foreach (var kvp in _visuals)
@@ -198,7 +249,12 @@ public partial class BulletManager : Node
             kvp.Value.GlobalPosition = GetPosition(data, elapsed);
         }
     }
+/*
+```
+*/
 
+/*
+```c# */
     private void _ShowBullet(Dictionary data)
     {
         if (_pool.Count == 0)
@@ -209,7 +265,12 @@ public partial class BulletManager : Node
         v.GlobalPosition = data["spawn_pos"].AsVector2();
         _visuals[data["id"].AsInt32()] = v;
     }
+/*
+```
+*/
 
+/*
+```c# */
     private void _HideBullet(int id)
     {
         if (!_visuals.TryGetValue(id, out var v))
@@ -218,4 +279,7 @@ public partial class BulletManager : Node
         _visuals.Remove(id);
         _pool.Add(v);
     }
+/*
+```
+*/
 }

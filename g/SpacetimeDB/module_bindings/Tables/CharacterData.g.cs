@@ -40,19 +40,19 @@ namespace SpacetimeDB.Types
     public sealed class CharacterDataCols
     {
         public global::SpacetimeDB.Col<CharacterData, SpacetimeDB.Identity> PlayerId { get; }
-        public global::SpacetimeDB.Col<CharacterData, int> Level { get; }
-        public global::SpacetimeDB.Col<CharacterData, int> Xp { get; }
-        public global::SpacetimeDB.Col<CharacterData, int> MaxHp { get; }
-        public global::SpacetimeDB.Col<CharacterData, int> CurrentHp { get; }
+        public global::SpacetimeDB.Col<CharacterData, uint> Level { get; }
+        public global::SpacetimeDB.Col<CharacterData, uint> Xp { get; }
+        public global::SpacetimeDB.Col<CharacterData, uint> MaxHp { get; }
+        public global::SpacetimeDB.Col<CharacterData, uint> CurrentHp { get; }
         public global::SpacetimeDB.Col<CharacterData, RpgStats> Stats { get; }
 
         public CharacterDataCols(string tableName)
         {
             PlayerId = new global::SpacetimeDB.Col<CharacterData, SpacetimeDB.Identity>(tableName, "player_id");
-            Level = new global::SpacetimeDB.Col<CharacterData, int>(tableName, "level");
-            Xp = new global::SpacetimeDB.Col<CharacterData, int>(tableName, "xp");
-            MaxHp = new global::SpacetimeDB.Col<CharacterData, int>(tableName, "max_hp");
-            CurrentHp = new global::SpacetimeDB.Col<CharacterData, int>(tableName, "current_hp");
+            Level = new global::SpacetimeDB.Col<CharacterData, uint>(tableName, "level");
+            Xp = new global::SpacetimeDB.Col<CharacterData, uint>(tableName, "xp");
+            MaxHp = new global::SpacetimeDB.Col<CharacterData, uint>(tableName, "max_hp");
+            CurrentHp = new global::SpacetimeDB.Col<CharacterData, uint>(tableName, "current_hp");
             Stats = new global::SpacetimeDB.Col<CharacterData, RpgStats>(tableName, "stats");
         }
     }

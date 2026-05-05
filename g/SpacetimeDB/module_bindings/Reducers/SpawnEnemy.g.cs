@@ -12,10 +12,10 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void SpawnEnemyHandler(ReducerEventContext ctx, ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, int hp, byte bulletPatternType);
+        public delegate void SpawnEnemyHandler(ReducerEventContext ctx, ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, uint hp, byte bulletPatternType);
         public event SpawnEnemyHandler? OnSpawnEnemy;
 
-        public void SpawnEnemy(ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, int hp, byte bulletPatternType)
+        public void SpawnEnemy(ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, uint hp, byte bulletPatternType)
         {
             conn.InternalCallReducer(new Reducer.SpawnEnemy(enemyId, x, y, resPath, isElite, immortal, hp, bulletPatternType));
         }
@@ -68,7 +68,7 @@ namespace SpacetimeDB.Types
             [DataMember(Name = "immortal")]
             public bool Immortal;
             [DataMember(Name = "hp")]
-            public int Hp;
+            public uint Hp;
             [DataMember(Name = "bullet_pattern_type")]
             public byte BulletPatternType;
 
@@ -79,7 +79,7 @@ namespace SpacetimeDB.Types
                 string ResPath,
                 bool IsElite,
                 bool Immortal,
-                int Hp,
+                uint Hp,
                 byte BulletPatternType
             )
             {

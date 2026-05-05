@@ -16,18 +16,12 @@ public partial class Hurtbox : Area2D
         if (body is not Enemy enemy)
             return;
 
-        if (!Multiplayer.IsServer())
-            return;
-
         _HurtOwnerPlayer(enemy.Damage);
         _timer.Start();
     }
 
     private void _OnTimerTimeout()
     {
-        if (!Multiplayer.IsServer())
-            return;
-
         var overlapping = GetOverlappingBodies();
         if (overlapping.Count == 0)
             return;
@@ -47,7 +41,7 @@ public partial class Hurtbox : Area2D
             return;
 
         _audioPlayer.Play();
-        player.Rpc(nameof(Player.Hurt), dmg);
+        player.Hurt(dmg);
     }
 
     private Player _GetOwnerPlayer()

@@ -40,7 +40,7 @@ public partial class Drop : Area2D
         if (body is not Player player)
             return;
 
-        if (!player.IsMultiplayerAuthority())
+        if (!player.IsLocalPlayer)
             return;
 
         Visible = false;

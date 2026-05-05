@@ -12,10 +12,10 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void ReportMovementHandler(ReducerEventContext ctx, float x, float y, float moveX, float moveY, float speed);
+        public delegate void ReportMovementHandler(ReducerEventContext ctx, float x, float y, sbyte moveX, sbyte moveY, ushort speed);
         public event ReportMovementHandler? OnReportMovement;
 
-        public void ReportMovement(float x, float y, float moveX, float moveY, float speed)
+        public void ReportMovement(float x, float y, sbyte moveX, sbyte moveY, ushort speed)
         {
             conn.InternalCallReducer(new Reducer.ReportMovement(x, y, moveX, moveY, speed));
         }
@@ -57,18 +57,18 @@ namespace SpacetimeDB.Types
             [DataMember(Name = "y")]
             public float Y;
             [DataMember(Name = "move_x")]
-            public float MoveX;
+            public sbyte MoveX;
             [DataMember(Name = "move_y")]
-            public float MoveY;
+            public sbyte MoveY;
             [DataMember(Name = "speed")]
-            public float Speed;
+            public ushort Speed;
 
             public ReportMovement(
                 float X,
                 float Y,
-                float MoveX,
-                float MoveY,
-                float Speed
+                sbyte MoveX,
+                sbyte MoveY,
+                ushort Speed
             )
             {
                 this.X = X;

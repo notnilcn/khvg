@@ -1,3 +1,5 @@
+/*
+```c# */
 using Godot;
 using System.Collections.Generic;
 
@@ -23,7 +25,7 @@ public partial class Enemy : Sprite2D
     public ResDrop ResDrop      { get; set; }
     public bool IsElite         { get; set; } = false;
     public bool Immortal        { get; set; } = false;
-    public int EnemyId          { get; set; } = -1;
+    public int EnemyId          { get; set; } = -1; // ^EnemyID
     // Set true on non-host clients when spawned from SpacetimeDB.
     // Skips MultiplayerSynchronizer and runs local AI simulation instead.
     public bool IsStdbSpawned      { get; set; } = false;
@@ -40,10 +42,9 @@ public partial class Enemy : Sprite2D
     private float _bulletCooldown     = 0.0f;
     private float _stdbBulletCooldown = 0.0f;
     private const float StdbFireRate  = 1.0f;
-
-    private const float HitTimingTolerance = 0.7f;
-    private const float MinFireRate        = 0.05f;
-    private readonly Dictionary<int, float> _lastHitTimes = new();
+/*
+```
+*/
 
     public override async void _Ready()
     {
@@ -66,22 +67,15 @@ public partial class Enemy : Sprite2D
         Speed  = ResEnemy.Speed;
         Damage = ResEnemy.Damage;
 
-        if (!IsStdbSpawned)
-            _SetupSync();
-
-        if (Multiplayer.IsServer())
+        if (ElevatedClient.IsActive)
         {
             await _SetupPhysics();
-            _target = _GetNearestPlayer();
-        }
-        else if (IsStdbSpawned)
-        {
-            _SetupClientHitbox();
             _target = _GetNearestPlayer();
         }
         else
         {
             _SetupClientHitbox();
+            _target = _GetNearestPlayer();
         }
     }
 
@@ -97,16 +91,6 @@ public partial class Enemy : Sprite2D
         shapeNode.Shape        = circle;
         body.AddChild(shapeNode);
         AddChild(body);
-    }
-
-    private void _SetupSync()
-    {
-        var sync   = new MultiplayerSynchronizer();
-        sync.Name  = "Sync";
-        var config = new SceneReplicationConfig();
-        config.AddProperty(new NodePath(":position"));
-        sync.ReplicationConfig = config;
-        AddChild(sync);
     }
 
     private async System.Threading.Tasks.Task _SetupPhysics()
@@ -130,7 +114,7 @@ public partial class Enemy : Sprite2D
 
     public override void _Process(double delta)
     {
-        if (Multiplayer.IsServer())
+        if (ElevatedClient.IsActive)
         {
             _MoveCharacter();
             _TickBulletFire((float)delta);
@@ -192,27 +176,9 @@ public partial class Enemy : Sprite2D
             _object, PhysicsServer2D.BodyState.LinearVelocity, _direction * Speed);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    // TODO: server-authoritative hit validation (BulletHitCheck reducer, Task 6)
     public void ReportHit(float damageAmount, float fireRate)
     {
-        if (damageAmount <= 0 || damageAmount > 500)
-            return;
-
-        int callerId = Multiplayer.GetRemoteSenderId();
-        if (callerId == 0) callerId = Multiplayer.GetUniqueId(); // direct local call (server)
-        if (!Global.Instance.Players.TryGetValue(callerId, out var callerPlayer))
-            return;
-
-        if (GlobalPosition.DistanceTo(callerPlayer.GlobalPosition) > Network.HitValidationRange)
-            return;
-
-        float effectiveRate = Mathf.Max(fireRate, MinFireRate);
-        float now           = Time.GetTicksMsec() * 0.001f;
-        float lastTime      = _lastHitTimes.TryGetValue(callerId, out var lt) ? lt : float.NegativeInfinity;
-        if ((now - lastTime) < effectiveRate * HitTimingTolerance)
-            return;
-
-        _lastHitTimes[callerId] = now;
         Hurt(damageAmount);
     }
 
@@ -225,7 +191,6 @@ public partial class Enemy : Sprite2D
             Die();
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
     public void ShowFloatingText(int dmg)
     {
         var floatingText = FloatingTextScene.Instantiate<FloatingText>();
@@ -243,7 +208,7 @@ public partial class Enemy : Sprite2D
 
     public void SpawnDrop()
     {
-        GetParent<Spawner>().Rpc(nameof(Spawner._RpcSpawnDrop), ResDrop.ResourcePath, GlobalPosition);
+        GetParent<Spawner>().SpawnDrop(ResDrop.ResourcePath, GlobalPosition);
     }
 
     // Used by the server-physics path (Godot multiplayer players only).

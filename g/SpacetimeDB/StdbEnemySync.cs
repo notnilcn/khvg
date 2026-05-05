@@ -1,3 +1,5 @@
+/* Importing, declaring, assigning things.
+```c# */
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -23,13 +25,16 @@ public partial class StdbEnemySync : Node
     private static readonly PackedScene EnemyScene =
         GD.Load<PackedScene>("res://VS-Like/Characters/Enemy/enemy.tscn");
 
-    private readonly Dictionary<ulong, Enemy>    _enemyNodes = new();
-    private readonly Dictionary<ulong, Snapshot> _snapshots  = new();
+    private readonly Dictionary<ulong, Enemy>       _enemyNodes = new();
+    private readonly Dictionary<ulong, SyncSnapshot> _snapshots  = new();
+/*
+```
+*/
 
-    private readonly record struct Snapshot(
-        Vector2 Pos, float MoveX, float MoveY, float Speed, long EventTimeMicros);
-
-    public override void _Ready()
+/*
+# `_Ready()`
+```c# */
+	public override void _Ready()
     {
         Instance = this;
 
@@ -39,14 +44,20 @@ public partial class StdbEnemySync : Node
         else
             mgr.ConnectedToServer += _OnConnectedToServer;
     }
+/*
+```
+*/
 
-    private void _OnConnectedToServer(string _)
+/*
+# Callbacks and stuff
+```c# */
+	private void _OnConnectedToServer(string _)
     {
         SpacetimeDBManager.Instance.ConnectedToServer -= _OnConnectedToServer;
         _HookCallbacks();
     }
 
-    private void _HookCallbacks()
+    private void _HookCallbacks() // ^-HookCallbacks
     {
         var mgr  = SpacetimeDBManager.Instance;
         var conn = mgr.Conn!;
@@ -62,13 +73,13 @@ public partial class StdbEnemySync : Node
         GD.Print("[StdbEnemySync] Hooked EnemyState callbacks");
     }
 
-    private void _OnSubscriptionReady()
+    private void _OnSubscriptionReady() // ^-OnSubscriptionReady
     {
         SpacetimeDBManager.Instance.SubscriptionReady -= _OnSubscriptionReady;
         _CatchUpIfInGameScene();
     }
 
-    private void _CatchUpIfInGameScene()
+    private void _CatchUpIfInGameScene() // ^-CatchUpIfInGameScene
     {
         if (GetTree().CurrentScene?.SceneFilePath == GameScenePath)
         {
@@ -79,7 +90,7 @@ public partial class StdbEnemySync : Node
     }
 
     // Called by Spawner._Ready() — spawns nodes for enemies already in the DB.
-    public void OnGameSceneLoaded(Spawner spawner)
+    public void OnGameSceneLoaded(Spawner spawner) // ^OnGameSceneLoaded
     {
         var conn = SpacetimeDBManager.Instance.Conn;
         if (conn == null) return;
@@ -90,9 +101,13 @@ public partial class StdbEnemySync : Node
             _SpawnFromRow(row, spawner);
         }
     }
+/*
+```
+*/
 
-    // ── Per-frame: smooth correction lerp ────────────────────────────────────────
-
+/*
+# Per-frame: smooth correction lerp
+```c# */
     public override void _Process(double delta)
     {
         long nowMicros = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L;
@@ -102,21 +117,24 @@ public partial class StdbEnemySync : Node
             if (!_enemyNodes.TryGetValue(id, out var enemy)) continue;
             if (!GodotObject.IsInstanceValid(enemy)) continue;
 
-            float elapsed = Math.Clamp(
-                (nowMicros - snap.EventTimeMicros) / 1_000_000f, 0f, 1f);
-            var extrapolated = snap.Pos + new Vector2(snap.MoveX, snap.MoveY) * snap.Speed * elapsed;
+            var extrapolated = Simulator.Extrapolate(snap, nowMicros, maxElapsed: 1f); // ^calculate-extrapolated-position
 
             float drift = enemy.GlobalPosition.DistanceTo(extrapolated);
             if (drift >= HardSnapThreshold)
                 enemy.GlobalPosition = extrapolated;
             else if (drift >= SoftCorrectionThreshold)
                 enemy.GlobalPosition = enemy.GlobalPosition.Lerp(extrapolated, (float)delta * 5f);
+			//enemy.GlobalPosition = enemy.GlobalPosition.Lerp(extrapolated, (float)delta);
         }
     }
+/*
+```
+*/
 
-    // ── Table callbacks ───────────────────────────────────────────────────────────
-
-    private void _OnInsert(EventContext ctx, EnemyState row)
+/*
+# Table callbacks
+```c# */
+    private void _OnInsert(EventContext ctx, EnemyState row) // ^-OnInsert
     {
         if (GetTree().CurrentScene?.SceneFilePath != GameScenePath) return;
         if (_enemyNodes.ContainsKey(row.EnemyId)) return;
@@ -128,18 +146,19 @@ public partial class StdbEnemySync : Node
         GD.Print($"[StdbEnemySync] Enemy spawned: {row.EnemyId}");
     }
 
-    private void _OnUpdate(EventContext ctx, EnemyState oldRow, EnemyState newRow)
+    private void _OnUpdate(EventContext ctx, EnemyState oldRow, EnemyState newRow) // ^-OnUpdate
     {
-        _snapshots[newRow.EnemyId] = new Snapshot(
+        var dir = new Vector2(newRow.MoveX, newRow.MoveY).Normalized();
+        _snapshots[newRow.EnemyId] = new SyncSnapshot(
             new Vector2(newRow.X, newRow.Y),
-            newRow.MoveX, newRow.MoveY, newRow.Speed,
+            dir.X, dir.Y, newRow.Speed,
             newRow.EventTime.MicrosecondsSinceUnixEpoch);
 
         if (_enemyNodes.TryGetValue(newRow.EnemyId, out var enemy) && GodotObject.IsInstanceValid(enemy))
             enemy.StdbTargetId = newRow.TargetId;
     }
 
-    private void _OnDelete(EventContext ctx, EnemyState row)
+    private void _OnDelete(EventContext ctx, EnemyState row) // ^-OnDelete
     {
         ulong id = row.EnemyId;
         _snapshots.Remove(id);
@@ -156,9 +175,13 @@ public partial class StdbEnemySync : Node
 
         GD.Print($"[StdbEnemySync] Enemy despawned: {id}");
     }
+/*
+```
+*/
 
-    // ── Helpers ───────────────────────────────────────────────────────────────────
-
+/*
+# Helpers
+```c# */
     private void _SpawnFromRow(EnemyState row, Spawner spawner)
     {
         var resEnemy = GD.Load<ResEnemy>(row.ResPath);
@@ -180,15 +203,16 @@ public partial class StdbEnemySync : Node
         enemy.BulletPatternType  = row.BulletPatternType;
 
         // The host needs its Die/Died signals connected so deaths trigger DespawnEnemy reducer.
-        if (Multiplayer.IsServer())
+        if (ElevatedClient.IsActive)
             spawner.RegisterStdbEnemy(enemy);
 
         spawner.CallDeferred(Node.MethodName.AddChild, enemy);
         _enemyNodes[row.EnemyId] = enemy;
 
-        _snapshots[row.EnemyId] = new Snapshot(
+        var dir = new Vector2(row.MoveX, row.MoveY).Normalized();
+        _snapshots[row.EnemyId] = new SyncSnapshot(
             new Vector2(row.X, row.Y),
-            row.MoveX, row.MoveY, row.Speed,
+            dir.X, dir.Y, row.Speed,
             row.EventTime.MicrosecondsSinceUnixEpoch);
     }
 
@@ -215,4 +239,7 @@ public partial class StdbEnemySync : Node
         conn.Db.EnemyState.OnUpdate -= _OnUpdate;
         conn.Db.EnemyState.OnDelete -= _OnDelete;
     }
+/*
+```
+*/
 }

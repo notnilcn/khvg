@@ -20,11 +20,11 @@ namespace SpacetimeDB.Types
         [DataMember(Name = "y")]
         public float Y;
         [DataMember(Name = "move_x")]
-        public float MoveX;
+        public sbyte MoveX;
         [DataMember(Name = "move_y")]
-        public float MoveY;
+        public sbyte MoveY;
         [DataMember(Name = "speed")]
-        public float Speed;
+        public ushort Speed;
         [DataMember(Name = "event_time")]
         public SpacetimeDB.Timestamp EventTime;
         [DataMember(Name = "res_path")]
@@ -34,9 +34,9 @@ namespace SpacetimeDB.Types
         [DataMember(Name = "immortal")]
         public bool Immortal;
         [DataMember(Name = "hp")]
-        public int Hp;
+        public uint Hp;
         [DataMember(Name = "target_id")]
-        public string TargetId;
+        public string? TargetId;
         [DataMember(Name = "bullet_pattern_type")]
         public byte BulletPatternType;
 
@@ -44,15 +44,15 @@ namespace SpacetimeDB.Types
             ulong EnemyId,
             float X,
             float Y,
-            float MoveX,
-            float MoveY,
-            float Speed,
+            sbyte MoveX,
+            sbyte MoveY,
+            ushort Speed,
             SpacetimeDB.Timestamp EventTime,
             string ResPath,
             bool IsElite,
             bool Immortal,
-            int Hp,
-            string TargetId,
+            uint Hp,
+            string? TargetId,
             byte BulletPatternType
         )
         {
@@ -74,7 +74,6 @@ namespace SpacetimeDB.Types
         public EnemyState()
         {
             this.ResPath = "";
-            this.TargetId = "";
         }
     }
 }

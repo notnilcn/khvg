@@ -1,5 +1,9 @@
 [
   "system3-relay",
   "custom-sort",
+  "obsidian-underline",
+  "obsidian-wrap-with-shortcuts",
+  "block-link-plus",
+  "code-styler",
   "obsidian-custom-file-extensions-plugin"
 ]

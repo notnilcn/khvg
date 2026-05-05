@@ -3,6 +3,7 @@
 ```c# */
 using Godot;
 using System.Collections.Generic;
+using SpacetimeDB.Types;
 
 public partial class Player : CharacterBody2D
 {
@@ -54,6 +55,9 @@ public partial class Player : CharacterBody2D
     public float ExtraDamage { get; set; } = 1.0f;
     public float ExtraSpeed  { get; set; } = 1.0f;
 
+    public static Player Local { get; private set; }
+    public bool IsLocalPlayer { get; set; } = false;
+
     private Vector2? _lastSentMoveInput = null;
 
     public InventoryUI InventoryUi { get; private set; } = null;
@@ -71,22 +75,23 @@ public partial class Player : CharacterBody2D
 ```
 */
     
-    public override async void _Ready()
+    public override void _Ready()
     {
-        _sprite2D         = GetNode<Sprite2D>("Sprite2D");
-        _camera2D         = GetNode<Camera2D>("Camera2D");
-        _camera2D.Enabled = false; // Prevent camera snap for non-authority peers; _InitPlayer() re-enables for local player.
-        _enemyDetection   = GetNode<Area2D>("EnemyDetection");
-        _healthBar        = GetNode<Healthbar>("HealthBar");
-        _progressBar      = GetNode<ProgressBar>("%ProgressBar");
+        _sprite2D           = GetNode<Sprite2D>("Sprite2D");
+        _camera2D           = GetNode<Camera2D>("Camera2D");
+        _camera2D.Enabled   = false;
+        _enemyDetection     = GetNode<Area2D>("EnemyDetection");
+        _healthBar          = GetNode<Healthbar>("HealthBar");
+        _progressBar        = GetNode<ProgressBar>("%ProgressBar");
         _weaponsContainerUi = GetNode<WeaponContainerUI>("%WeaponsContainerUI");
-        ChestUi           = GetNode<ChestUI>("%ChestUI");
-        _hud              = GetNode<CanvasLayer>("HUD");
+        ChestUi             = GetNode<ChestUI>("%ChestUI");
+        _hud                = GetNode<CanvasLayer>("HUD");
 
-        int myPeerId = GetMultiplayerAuthority();
-        Global.Instance.Players[myPeerId] = this;
+        if (IsLocalPlayer)
+            Local = this;
 
-        await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+        Global.Instance.Players[1] = this;
+
         _InitPlayer();
     }
 
@@ -102,7 +107,7 @@ public partial class Player : CharacterBody2D
         Speed     = CharacterData.MaxSpeed;
         Health    = MaxHealth;
 
-        bool isLocal = IsMultiplayerAuthority();
+        bool isLocal = IsLocalPlayer;
         _camera2D.Enabled               = isLocal;
         _healthBar.Visible              = isLocal;
         _progressBar.Visible            = isLocal;
@@ -118,22 +123,30 @@ public partial class Player : CharacterBody2D
 
             InventoryUi = new InventoryUI();
             _hud.AddChild(InventoryUi);
+
+            var mgr = SpacetimeDBManager.Instance;
+            if (mgr != null)
+            {
+                if (mgr.IsStdbConnected)
+                    mgr.Conn!.Db.PlayerInventory.OnUpdate += _OnStdbInventoryUpdate;
+                else
+                    mgr.ConnectedToServer += _ => mgr.Conn!.Db.PlayerInventory.OnUpdate += _OnStdbInventoryUpdate;
+            }
         }
     }
 
     public override void _PhysicsProcess(double delta)
     {
-        if (!IsMultiplayerAuthority())
+        if (!IsLocalPlayer)
             return;
 
         _HandleMovement();
         MoveAndSlide();
-        Rpc(nameof(_SyncState), GlobalPosition, _sprite2D.Scale.X);
     }
 
     public override void _UnhandledInput(InputEvent @event)
     {
-        if (!IsMultiplayerAuthority())
+        if (!IsLocalPlayer)
             return;
         if (@event is InputEventKey key && key.Pressed && !key.Echo)
         {
@@ -147,15 +160,6 @@ public partial class Player : CharacterBody2D
         }
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.UnreliableOrdered)]
-    private void _SyncState(Vector2 pos, float scaleX)
-    {
-        if (Multiplayer.GetRemoteSenderId() != GetMultiplayerAuthority())
-            return;
-        GlobalPosition   = pos;
-        _sprite2D.Scale  = new Vector2(scaleX, _sprite2D.Scale.Y);
-    }
-
     private void _HandleMovement()
     {
         var movementInput = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
@@ -166,7 +170,11 @@ public partial class Player : CharacterBody2D
             _lastSentMoveInput = movementInput;
             var conn = SpacetimeDBManager.Instance.Conn;
             // GD.Print($"[Player] ReportMovement({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
-            conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, movementInput.X, movementInput.Y, Speed * ExtraSpeed);
+            conn?.Reducers.ReportMovement(
+                GlobalPosition.X, GlobalPosition.Y,
+                (sbyte)Mathf.Sign(movementInput.X),
+                (sbyte)Mathf.Sign(movementInput.Y),
+                (ushort)(Speed * ExtraSpeed));
         }
 
         if (Velocity.X > 0)
@@ -175,29 +183,25 @@ public partial class Player : CharacterBody2D
             _sprite2D.Scale = new Vector2(-1, _sprite2D.Scale.Y);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, CallLocal = true, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
+    // TODO: server-authoritative damage delivery (BulletHitCheck reducer, Task 6)
     public void Hurt(float dmg)
     {
-        int sender = Multiplayer.GetRemoteSenderId();
-        if (sender != 0 && sender != 1)
-            return;
-
         Health -= dmg;
 
-        if (Health <= 0 && IsMultiplayerAuthority())
+        if (Health <= 0 && IsLocalPlayer)
             GetTree().CallDeferred("change_scene_to_file", "res://VS-Like/Maps/Woods/woods_map.tscn");
     }
 
     private void _SetHealth(float newHealth)
     {
         _health = Mathf.Clamp(newHealth, 0, MaxHealth);
-        if (_healthBar != null && IsMultiplayerAuthority())
+        if (_healthBar != null && IsLocalPlayer)
             _healthBar.Value = _health;
     }
 
     private void _SetPoints(float newPoints)
     {
-        if (!IsMultiplayerAuthority())
+        if (!IsLocalPlayer)
             return;
 
         if (newPoints >= _progressBar.MaxValue)
@@ -259,7 +263,7 @@ public partial class Player : CharacterBody2D
 
     public bool EquipItem(ResItem resWpn)
     {
-        if (!IsMultiplayerAuthority())
+        if (!IsLocalPlayer)
             return false;
 
         switch (resWpn.ItemTypeValue)
@@ -324,26 +328,15 @@ public partial class Player : CharacterBody2D
         return false;
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void RpcGiveWeapon(string resPath)
+    public void ApplyGiveWeapon(string resPath)
     {
-        if (Multiplayer.GetRemoteSenderId() is not (0 or 1))
-            return;
-        if (!IsMultiplayerAuthority())
-            return;
         var res = GD.Load<ResItem>(resPath);
         if (res != null)
             Global.Instance.PickupItem(res);
     }
 
-    [Rpc(MultiplayerApi.RpcMode.AnyPeer, TransferMode = MultiplayerPeer.TransferModeEnum.Reliable)]
-    public void RpcRemoveWeapon(string resPath)
+    public void ApplyRemoveWeapon(string resPath)
     {
-        if (Multiplayer.GetRemoteSenderId() is not (0 or 1))
-            return;
-        if (!IsMultiplayerAuthority())
-            return;
-
         foreach (var slotWeapon in new[] { EquippedWeapon, EquippedAbility })
         {
             if (slotWeapon != null && slotWeapon.Resource.ResourcePath == resPath)
@@ -387,9 +380,27 @@ public partial class Player : CharacterBody2D
         _weaponsContainerUi.UpdateEquipment(this);
     }
 
+    private void _OnStdbInventoryUpdate(EventContext ctx, PlayerInventory oldInv, PlayerInventory newInv)
+    {
+        var localId = SpacetimeDBManager.Instance.LocalIdentity;
+        if (!localId.HasValue || newInv.PlayerId != localId.Value) return;
+
+        foreach (var item in newInv.BackpackSlots)
+        {
+            if (!string.IsNullOrEmpty(item) && !oldInv.BackpackSlots.Contains(item))
+            {
+                var res = GD.Load<ResItem>(item);
+                if (res != null) Global.Instance.PickupItem(res);
+            }
+        }
+    }
+
     public override void _ExitTree()
     {
-        int myPeerId = GetMultiplayerAuthority();
-        Global.Instance.Players.Remove(myPeerId);
+        if (this == Local) Local = null;
+        Global.Instance.Players.Remove(1);
+        var conn = SpacetimeDBManager.Instance?.Conn;
+        if (conn != null)
+            conn.Db.PlayerInventory.OnUpdate -= _OnStdbInventoryUpdate;
     }
 }

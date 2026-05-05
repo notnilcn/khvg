@@ -42,14 +42,14 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<EnemyState, ulong> EnemyId { get; }
         public global::SpacetimeDB.Col<EnemyState, float> X { get; }
         public global::SpacetimeDB.Col<EnemyState, float> Y { get; }
-        public global::SpacetimeDB.Col<EnemyState, float> MoveX { get; }
-        public global::SpacetimeDB.Col<EnemyState, float> MoveY { get; }
-        public global::SpacetimeDB.Col<EnemyState, float> Speed { get; }
+        public global::SpacetimeDB.Col<EnemyState, sbyte> MoveX { get; }
+        public global::SpacetimeDB.Col<EnemyState, sbyte> MoveY { get; }
+        public global::SpacetimeDB.Col<EnemyState, ushort> Speed { get; }
         public global::SpacetimeDB.Col<EnemyState, SpacetimeDB.Timestamp> EventTime { get; }
         public global::SpacetimeDB.Col<EnemyState, string> ResPath { get; }
         public global::SpacetimeDB.Col<EnemyState, bool> IsElite { get; }
         public global::SpacetimeDB.Col<EnemyState, bool> Immortal { get; }
-        public global::SpacetimeDB.Col<EnemyState, int> Hp { get; }
+        public global::SpacetimeDB.Col<EnemyState, uint> Hp { get; }
         public global::SpacetimeDB.Col<EnemyState, string> TargetId { get; }
         public global::SpacetimeDB.Col<EnemyState, byte> BulletPatternType { get; }
 
@@ -58,14 +58,14 @@ namespace SpacetimeDB.Types
             EnemyId = new global::SpacetimeDB.Col<EnemyState, ulong>(tableName, "enemy_id");
             X = new global::SpacetimeDB.Col<EnemyState, float>(tableName, "x");
             Y = new global::SpacetimeDB.Col<EnemyState, float>(tableName, "y");
-            MoveX = new global::SpacetimeDB.Col<EnemyState, float>(tableName, "move_x");
-            MoveY = new global::SpacetimeDB.Col<EnemyState, float>(tableName, "move_y");
-            Speed = new global::SpacetimeDB.Col<EnemyState, float>(tableName, "speed");
+            MoveX = new global::SpacetimeDB.Col<EnemyState, sbyte>(tableName, "move_x");
+            MoveY = new global::SpacetimeDB.Col<EnemyState, sbyte>(tableName, "move_y");
+            Speed = new global::SpacetimeDB.Col<EnemyState, ushort>(tableName, "speed");
             EventTime = new global::SpacetimeDB.Col<EnemyState, SpacetimeDB.Timestamp>(tableName, "event_time");
             ResPath = new global::SpacetimeDB.Col<EnemyState, string>(tableName, "res_path");
             IsElite = new global::SpacetimeDB.Col<EnemyState, bool>(tableName, "is_elite");
             Immortal = new global::SpacetimeDB.Col<EnemyState, bool>(tableName, "immortal");
-            Hp = new global::SpacetimeDB.Col<EnemyState, int>(tableName, "hp");
+            Hp = new global::SpacetimeDB.Col<EnemyState, uint>(tableName, "hp");
             TargetId = new global::SpacetimeDB.Col<EnemyState, string>(tableName, "target_id");
             BulletPatternType = new global::SpacetimeDB.Col<EnemyState, byte>(tableName, "bullet_pattern_type");
         }

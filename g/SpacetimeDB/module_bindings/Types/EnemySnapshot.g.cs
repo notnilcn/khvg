@@ -20,19 +20,19 @@ namespace SpacetimeDB.Types
         [DataMember(Name = "y")]
         public float Y;
         [DataMember(Name = "move_x")]
-        public float MoveX;
+        public sbyte MoveX;
         [DataMember(Name = "move_y")]
-        public float MoveY;
+        public sbyte MoveY;
         [DataMember(Name = "speed")]
-        public float Speed;
+        public ushort Speed;
 
         public EnemySnapshot(
             ulong EnemyId,
             float X,
             float Y,
-            float MoveX,
-            float MoveY,
-            float Speed
+            sbyte MoveX,
+            sbyte MoveY,
+            ushort Speed
         )
         {
             this.EnemyId = EnemyId;

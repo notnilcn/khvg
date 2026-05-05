@@ -2,7 +2,7 @@ using Godot;
 using System.Collections.Generic;
 
 /*
-# dwdwasdwwdasd 
+#  
 
 ```c# */
 public partial class Global : Node
@@ -27,11 +27,7 @@ public partial class Global : Node
         Instance = this;
     }
 
-    public Player GetLocalPlayer()
-    {
-        int myId = Multiplayer.GetUniqueId();
-        return Players.TryGetValue(myId, out var player) ? player : null;
-    }
+    public Player GetLocalPlayer() => Player.Local;
 
     public ResItem[] GetAvailableItems()
     {

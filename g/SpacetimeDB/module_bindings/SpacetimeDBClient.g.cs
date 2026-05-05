@@ -636,6 +636,8 @@ namespace SpacetimeDB.Types
                 Reducer.DespawnBullet args => Reducers.InvokeDespawnBullet(eventContext, args),
                 Reducer.DespawnEnemy args => Reducers.InvokeDespawnEnemy(eventContext, args),
                 Reducer.FireBullet args => Reducers.InvokeFireBullet(eventContext, args),
+                Reducer.GiveWeapon args => Reducers.InvokeGiveWeapon(eventContext, args),
+                Reducer.RemoveWeapon args => Reducers.InvokeRemoveWeapon(eventContext, args),
                 Reducer.ReportMovement args => Reducers.InvokeReportMovement(eventContext, args),
                 Reducer.SaveCharacterProgress args => Reducers.InvokeSaveCharacterProgress(eventContext, args),
                 Reducer.SetUsername args => Reducers.InvokeSetUsername(eventContext, args),

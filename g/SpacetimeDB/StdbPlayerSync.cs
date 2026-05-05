@@ -1,3 +1,5 @@
+/* Importing, declaring, assigning things.
+```c# */
 #nullable enable
 using System;
 using Godot;
@@ -15,38 +17,25 @@ using System.Collections.Generic;
 // get their visual nodes when the game map loads (OnInsert already fired in lobby).
 public partial class StdbPlayerSync : Node
 {
-    public static StdbPlayerSync Instance { get; private set; } = null!;
+    public static StdbPlayerSync Instance { get; private set; } = null!; // ^Instance
 
     private const string GameScenePath = "res://VS-Like/Maps/Woods/woods_map.tscn";
 
     // Archer sprite so STDB-synced ghosts are visually distinct from the local dwarf.
     private const string RemoteTexturePath = "res://VS-Like/Characters/Player/Types/Archer/sprite_archer.tres";
 
-    // Dead-reckoning snapshot stored on each PlayerPosition update.
-    private readonly record struct Snapshot(
-        Vector2 Pos,
-        float MoveX,
-        float MoveY,
-        float Speed,
-        long EventTimeMicros);
-
     private readonly Dictionary<string, Node2D> _remoteNodes = new();
-    private readonly Dictionary<string, Snapshot> _snapshots = new();
+    private readonly Dictionary<string, SyncSnapshot> _snapshots = new(); // ^-snapshots
 
     public IReadOnlyDictionary<string, Node2D> RemoteNodes => _remoteNodes;
+/*
+```
+*/
 
-    // Returns the STDB identity string for a given player node.
-    // Works for both remote ghost nodes and the local player node.
-    public string? GetIdentityForNode(Node2D node)
-    {
-        foreach (var (id, n) in _remoteNodes)
-            if (n == node) return id;
-        if (node is Player)
-            return SpacetimeDBManager.Instance.LocalIdentity?.ToString();
-        return null;
-    }
-
-    public override void _Ready()
+/*
+# `_Ready()`
+```c# */
+	public override void _Ready()
     {
         Instance = this;
 
@@ -56,14 +45,20 @@ public partial class StdbPlayerSync : Node
         else
             mgr.ConnectedToServer += _OnConnectedToServer;
     }
+/*
+```
+*/
 
-    private void _OnConnectedToServer(string _)
+/*
+# Callbacks and stuff
+```c# */
+    private void _OnConnectedToServer(string _) // ^-OnConnectedToServer
     {
         SpacetimeDBManager.Instance.ConnectedToServer -= _OnConnectedToServer;
         _HookCallbacks();
     }
 
-    private void _HookCallbacks()
+    private void _HookCallbacks() // ^-HookCallbacks
     {
         var mgr = SpacetimeDBManager.Instance;
         var conn = mgr.Conn!;
@@ -81,19 +76,19 @@ public partial class StdbPlayerSync : Node
         GD.Print("[StdbSync] Hooked PlayerPosition callbacks");
     }
 
-    private void _OnSubscriptionReady()
+    private void _OnSubscriptionReady() // ^-OnSubscriptionReady
     {
         SpacetimeDBManager.Instance.SubscriptionReady -= _OnSubscriptionReady;
         _CatchUpIfInGameScene();
     }
 
-    private void _CatchUpIfInGameScene()
+    private void _CatchUpIfInGameScene() // ^-CatchUpIfInGameScene
     {
-        if (GetTree().CurrentScene?.SceneFilePath == GameScenePath)
+        if (GetTree().CurrentScene?.SceneFilePath == GameScenePath) // Deferred: It probably makes more sense to connect this function to a signal rather than checking if gamescenepath is the currentscene.
             OnGameSceneLoaded();
     }
 
-    public void OnGameSceneLoaded()
+    public void OnGameSceneLoaded() // ^OnGameSceneLoaded
     {
         var conn = SpacetimeDBManager.Instance.Conn;
         if (conn == null) return;
@@ -107,30 +102,34 @@ public partial class StdbPlayerSync : Node
             _SpawnRemote(row.PlayerId, row.X, row.Y);
         }
     }
+/*
+```
+*/
 
-    // ── Per-frame: dead-reckoning extrapolation ───────────────────────────────
-
-    public override void _Process(double delta)
+/*
+# Per-frame: dead-reckoning extrapolation
+```c# */
+    public override void _Process(double delta) // ^-Process
     {
         long nowMicros = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L;
 
-        foreach (var (key, node) in _remoteNodes)
+        foreach (var (key, node) in _remoteNodes) // Deferred: You could probably vectorize this calculation rather than loop through every player on screen. Updating the node.GlobalPosition would have to still be sequential though.
         {
             if (!GodotObject.IsInstanceValid(node)) continue;
             if (!_snapshots.TryGetValue(key, out var snap)) continue;
 
-            // Clamp elapsed to 2s so a stale snapshot doesn't extrapolate off to infinity.
-            float elapsed = System.Math.Clamp(
-                (nowMicros - snap.EventTimeMicros) / 1_000_000f, 0f, 2f);
-
-            var extrapolated = snap.Pos + new Vector2(snap.MoveX, snap.MoveY) * snap.Speed * elapsed;
+            var extrapolated = Simulator.Extrapolate(snap, nowMicros, maxElapsed: 2f); // ^calculate-extrapolated-position
             node.GlobalPosition = node.GlobalPosition.Lerp(extrapolated, (float)delta);
         }
     }
+/*
+```
+*/
 
-    // ── Table callbacks ───────────────────────────────────────────────────────
-
-    private void _OnInsert(EventContext ctx, PlayerPosition row)
+/*
+# Table callbacks
+```c# */
+    private void _OnInsert(EventContext ctx, PlayerPosition row) // ^-OnInsert
     {
         if (_IsLocal(row.PlayerId)) return;
         if (GetTree().CurrentScene?.SceneFilePath != GameScenePath) return;
@@ -141,7 +140,7 @@ public partial class StdbPlayerSync : Node
         GD.Print($"[StdbSync] Remote player joined: {_Short(row.PlayerId)}");
     }
 
-    private void _OnUpdate(EventContext ctx, PlayerPosition oldRow, PlayerPosition newRow)
+    private void _OnUpdate(EventContext ctx, PlayerPosition oldRow, PlayerPosition newRow) // ^-OnUpdate
     {
         var key = newRow.PlayerId.ToString();
         if (!_remoteNodes.TryGetValue(key, out var node)) return;
@@ -154,7 +153,7 @@ public partial class StdbPlayerSync : Node
         _StoreSnapshot(key, newRow);
     }
 
-    private void _OnDelete(EventContext ctx, PlayerPosition row)
+    private void _OnDelete(EventContext ctx, PlayerPosition row) // ^-OnDelete
     {
         var key = row.PlayerId.ToString();
         _snapshots.Remove(key);
@@ -164,18 +163,23 @@ public partial class StdbPlayerSync : Node
         _remoteNodes.Remove(key);
         GD.Print($"[StdbSync] Remote player left: {_Short(row.PlayerId)}");
     }
+/*
+```
+*/
 
-    // ── Helpers ───────────────────────────────────────────────────────────────
-
-    private void _StoreSnapshot(string key, PlayerPosition row)
+/*
+# Helpers
+```c# */
+    private void _StoreSnapshot(string key, PlayerPosition row) // ^StoreSnapshot
     {
-        _snapshots[key] = new Snapshot(
+        var dir = new Vector2(row.MoveX, row.MoveY).Normalized();
+        _snapshots[key] = new SyncSnapshot(
             new Vector2(row.X, row.Y),
-            row.MoveX, row.MoveY, row.Speed,
+            dir.X, dir.Y, row.Speed,
             row.EventTime.MicrosecondsSinceUnixEpoch);
     }
 
-    private void _SpawnRemote(SpacetimeDB.Identity id, float x, float y)
+    private void _SpawnRemote(SpacetimeDB.Identity id, float x, float y) // ^SpawnRemote
     {
         var scene = GetTree().CurrentScene;
         if (scene == null) return;
@@ -196,19 +200,19 @@ public partial class StdbPlayerSync : Node
         _remoteNodes[key] = node;
     }
 
-    private bool _IsLocal(SpacetimeDB.Identity id)
+    private bool _IsLocal(SpacetimeDB.Identity id) // ^IsLocal
     {
         var local = SpacetimeDBManager.Instance.LocalIdentity;
         return local.HasValue && id == local.Value;
     }
 
-    private static string _Short(SpacetimeDB.Identity id)
+    private static string _Short(SpacetimeDB.Identity id) // ^Short
     {
         var s = id.ToString();
         return s.Length >= 8 ? s[..8] : s;
     }
 
-    public override void _ExitTree()
+    public override void _ExitTree() // ^ExitTree
     {
         var mgr = SpacetimeDBManager.Instance;
         if (mgr != null)
@@ -222,4 +226,18 @@ public partial class StdbPlayerSync : Node
         conn.Db.PlayerPosition.OnUpdate -= _OnUpdate;
         conn.Db.PlayerPosition.OnDelete -= _OnDelete;
     }
+
+	// Returns the STDB identity string for a given player node.
+    // Works for both remote ghost nodes and the local player node.
+    public string? GetIdentityForNode(Node2D node) // ^GetIdentityForNode
+    {
+        foreach (var (id, n) in _remoteNodes)
+            if (n == node) return id;
+        if (node is Player)
+            return SpacetimeDBManager.Instance.LocalIdentity?.ToString();
+        return null;
+    }
+/*
+```
+*/
 }

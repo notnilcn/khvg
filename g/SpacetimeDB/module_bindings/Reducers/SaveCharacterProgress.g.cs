@@ -12,10 +12,10 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void SaveCharacterProgressHandler(ReducerEventContext ctx, int level, int xp, int currentHp, SpacetimeDB.Types.RpgStats stats);
+        public delegate void SaveCharacterProgressHandler(ReducerEventContext ctx, uint level, uint xp, uint currentHp, SpacetimeDB.Types.RpgStats stats);
         public event SaveCharacterProgressHandler? OnSaveCharacterProgress;
 
-        public void SaveCharacterProgress(int level, int xp, int currentHp, SpacetimeDB.Types.RpgStats stats)
+        public void SaveCharacterProgress(uint level, uint xp, uint currentHp, SpacetimeDB.Types.RpgStats stats)
         {
             conn.InternalCallReducer(new Reducer.SaveCharacterProgress(level, xp, currentHp, stats));
         }
@@ -52,18 +52,18 @@ namespace SpacetimeDB.Types
         public sealed partial class SaveCharacterProgress : Reducer, IReducerArgs
         {
             [DataMember(Name = "level")]
-            public int Level;
+            public uint Level;
             [DataMember(Name = "xp")]
-            public int Xp;
+            public uint Xp;
             [DataMember(Name = "current_hp")]
-            public int CurrentHp;
+            public uint CurrentHp;
             [DataMember(Name = "stats")]
             public RpgStats Stats;
 
             public SaveCharacterProgress(
-                int Level,
-                int Xp,
-                int CurrentHp,
+                uint Level,
+                uint Xp,
+                uint CurrentHp,
                 RpgStats Stats
             )
             {
