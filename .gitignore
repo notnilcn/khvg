@@ -23,3 +23,5 @@ bmmo/bin/
 bmmo/obj/
 bmmo/spacetimedb/bin/
 bmmo/spacetimedb/obj/
+
+.gitignore
