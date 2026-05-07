@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes/002 Game Development/Features to implement list.md",
+                "file": "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Features to implement list"
+              "title": "Overviews"
             }
           },
           {
@@ -62,9 +62,23 @@
               "icon": "lucide-file",
               "title": "Global"
             }
+          },
+          {
+            "id": "c7a6cdc6336e42b3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "bmmo/spacetimedb/Lib.cs",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Lib"
+            }
           }
         ],
-        "currentTab": 1
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -96,7 +110,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "cheat",
+                "query": "pvp",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -225,21 +239,23 @@
       "custom-sort:Toggle custom sorting": false
     }
   },
-  "active": "702b0ddb37d08ea9",
+  "active": "c7a6cdc6336e42b3",
   "lastOpenFiles": [
-    "bmmo/spacetimedb/Lib.cs",
+    "g/project.godot3318433.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/StdbModule.wasm.tmpd441104",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/wasi_bundled_assemblies-3c85e787.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_puEYdevsexGsBupHqmwHqh3_-de45b0a3.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_lI_cvUbWBQbEeB6IFBWyyZRH-b3829483.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_ptnAiRLZ_wWY_o32px33vhLD-d8e96f7a.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_T_eRfTC_bvDgC6vu_mkidq0m-9d36dc7e.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_M_7vdIeIGONFXiMLG8mdCfGI-82a8ee08.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/StdbModule.wasm.tmpcb135c2",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/wasi_bundled_assemblies-badca321.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_puEYdevsexGsBupHqmwHqh3_-d701020e.o.tmp",
+    "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+    "Notes/002 Game Development/Features to implement list.md",
     "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
     "Notes/002 Game Development/Features to implement/Foundations.md",
-    "Notes/002 Game Development/Features to implement list.md",
-    "g/VS-Like/Game/Singleton/Global.cs",
-    "g/VS-Like/Game/World/Spawner.cs",
-    "g/SpacetimeDB/module_bindings/Types/ElevatedClient.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Tables/BulletPattern.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Types/EnemySnapshot.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Tables/ElevatedClient.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Tables/EnemyState.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Tables/PlayerPosition.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Reducers/ChangeStats.g.cs.uid",
     "Notes/002 Game Development/Features to implement/Bugs.md",
     "Notes/001 Game Code/001 Opening the game 1.md",
     "Notes/001 Game Code/002 After joining the game.md",
@@ -251,7 +267,6 @@
     "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-4.md",
     "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-3.md",
     "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-2.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
     "Notes/001 Game Code/000a Player sync.md",
     "Notes/001 Game Code/001 (TO BE OVERHAULED) Opening the game.md",
     "g/VS-Like/Assets/skeletons/skeleton_texture.png",
