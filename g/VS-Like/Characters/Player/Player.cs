@@ -7,7 +7,7 @@ using SpacetimeDB.Types;
 
 public partial class Player : CharacterBody2D
 {
-    [Export] public ResPlayer CharacterData { get; set; }
+    [Export] public ResPlayer CharacterTemplate { get; set; }
 
     private Sprite2D _sprite2D;
     private Node2D _model3D;
@@ -20,8 +20,10 @@ public partial class Player : CharacterBody2D
     private CanvasLayer _hud;
 
     public float MaxHealth { get; set; }
-    public float Speed { get; set; }
     public float CameraSpeed = 75.0f;
+
+    private const float SpeedPerStat = 4f;
+    private const int   HpPerLevel  = 5; // must match Lib.cs
 
     private float _health;
     public float Health
@@ -42,6 +44,7 @@ public partial class Player : CharacterBody2D
     public int Dexterity { get; set; } = 0;
     public int Defense   { get; set; } = 0;
     public int Vitality  { get; set; } = 0;
+    public int SpeedStat { get; set; } = 1;
 
     public Weapon EquippedWeapon      { get; set; } = null;
     public Weapon EquippedAbility     { get; set; } = null;
@@ -55,12 +58,13 @@ public partial class Player : CharacterBody2D
 
     public float ExtraExp    { get; set; } = 1.0f;
     public float ExtraDamage { get; set; } = 1.0f;
-    public float ExtraSpeed  { get; set; } = 1.0f;
 
     public static Player Local { get; private set; }
     public bool IsLocalPlayer { get; set; } = false;
 
     private Vector2? _lastSentMoveInput = null;
+    private ushort   _lastSentSpeed     = 0;
+
 
     public InventoryUI InventoryUi { get; private set; } = null;
 
@@ -68,7 +72,7 @@ public partial class Player : CharacterBody2D
     {
         if (property.ToString() == "character_data")
         {
-            CharacterData = value.As<ResPlayer>();
+            CharacterTemplate = value.As<ResPlayer>();
             return true;
         }
         return base._Set(property, value);
@@ -76,7 +80,9 @@ public partial class Player : CharacterBody2D
 /*
 ```
 */
-    
+
+/*
+```c# */
     public override void _Ready()
     {
         _sprite2D           = GetNode<Sprite2D>("Sprite2D");
@@ -100,15 +106,14 @@ public partial class Player : CharacterBody2D
 
     private void _InitPlayer()
     {
-        if (CharacterData == null)
+        if (CharacterTemplate == null)
         {
-            GD.PushError($"Player {Name}: CharacterData export is null — check player.tscn character_data field.");
+            GD.PushError($"Player {Name}: CharacterTemplate export is null — check player.tscn character_data field.");
             return;
         }
-        
-        GetNode<Node3D>("Model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+CharacterData.ModelName).Show();
-        MaxHealth = CharacterData.MaxHealth;
-        Speed     = CharacterData.MaxSpeed;
+
+        GetNode<Node3D>("Model3D/SubViewportContainer/SubViewport/WorldEnvironment/"+CharacterTemplate.ModelName).Show();
+        MaxHealth = CharacterTemplate.MaxHealth;
         Health    = MaxHealth;
 
         bool isLocal = IsLocalPlayer;
@@ -117,12 +122,12 @@ public partial class Player : CharacterBody2D
         _progressBar.Visible            = isLocal;
         _weaponsContainerUi.Visible     = isLocal;
 
-        var startWpn = _InstantiateWeaponNode(CharacterData.ResWeapon, isLocal);
+        var startWpn = _InstantiateWeaponNode(CharacterTemplate.ResWeapon, isLocal);
         startWpn.IsReplicated = true; // Created on all peers via _InitPlayer, safe to broadcast _RpcFire.
 
         if (isLocal)
         {
-            _AssignToSlot(startWpn, CharacterData.ResWeapon.ItemTypeValue);
+            _AssignToSlot(startWpn, CharacterTemplate.ResWeapon.ItemTypeValue);
             _weaponsContainerUi.UpdateEquipment(this);
 
             InventoryUi = new InventoryUI();
@@ -132,9 +137,18 @@ public partial class Player : CharacterBody2D
             if (mgr != null)
             {
                 if (mgr.IsStdbConnected)
-                    mgr.Conn!.Db.PlayerInventory.OnUpdate += _OnStdbInventoryUpdate;
+                {
+                    mgr.Conn!.Db.PlayerInventory.OnUpdate  += _OnStdbInventoryUpdate;
+                    mgr.Conn!.Db.CharacterData.OnUpdate    += _OnStdbCharacterDataUpdate;
+                }
                 else
-                    mgr.ConnectedToServer += _ => mgr.Conn!.Db.PlayerInventory.OnUpdate += _OnStdbInventoryUpdate;
+                {
+                    mgr.ConnectedToServer += _ =>
+                    {
+                        mgr.Conn!.Db.PlayerInventory.OnUpdate  += _OnStdbInventoryUpdate;
+                        mgr.Conn!.Db.CharacterData.OnUpdate    += _OnStdbCharacterDataUpdate;
+                    };
+                }
             }
         }
     }
@@ -168,18 +182,21 @@ public partial class Player : CharacterBody2D
     {
         var movementInput = Input.GetVector("Left", "Right", "Up", "Down").Normalized().Rotated(Mathf.DegToRad(RotationDegrees));
         var cameraInput = Input.GetAxis("Camera_Left", "Camera_Right");
-        Velocity = movementInput * (Speed * ExtraSpeed);
+        var effectiveSpeed = SpeedStat * SpeedPerStat;
+        Velocity = movementInput * effectiveSpeed;
 
-        if (_lastSentMoveInput == null || movementInput != _lastSentMoveInput.Value)
+        var reportedSpeed = (ushort)Mathf.Min(effectiveSpeed, 65535f);
+        if (_lastSentMoveInput == null || movementInput != _lastSentMoveInput.Value || reportedSpeed != _lastSentSpeed)
         {
             _lastSentMoveInput = movementInput;
+            _lastSentSpeed     = reportedSpeed;
             var conn = SpacetimeDBManager.Instance.Conn;
             // GD.Print($"[Player] ReportMovement({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
             conn?.Reducers.ReportMovement(
                 GlobalPosition.X, GlobalPosition.Y,
                 (sbyte)Mathf.Sign(movementInput.X),
                 (sbyte)Mathf.Sign(movementInput.Y),
-                (ushort)(Speed * ExtraSpeed));
+                reportedSpeed);
         }
 
         if (cameraInput < 0)
@@ -230,15 +247,30 @@ public partial class Player : CharacterBody2D
 
     private void _OnLevelUp()
     {
-        Strength  += 1;
-        Dexterity += 1;
-        Defense   += 1;
-        Vitality  += 1;
-        MaxHealth += 5.0f;
-        Health = Mathf.Min(Health + 5.0f, MaxHealth);
-
+        // Stats and HP are computed and applied server-side by GainXp.
+        // _OnStdbCharacterDataUpdate applies them here once the server responds.
         if (InventoryUi != null && InventoryUi.Visible)
             InventoryUi.Refresh();
+    }
+
+    // Stats are server-authoritative: set by _OnStdbCharacterDataUpdate from CharacterData.
+    // This method only clamps Health to the current MaxHealth (used after MaxHealth changes).
+    public void CollectStats()
+    {
+        Health = Mathf.Min(Health, MaxHealth);
+    }
+
+    private void _SyncInventoryToServer()
+    {
+        var conn = SpacetimeDBManager.Instance?.Conn;
+        if (conn == null) return;
+        conn.Reducers.UpdateInventory(
+            EquippedWeapon?.Resource.ResourcePath,
+            EquippedAbility?.Resource.ResourcePath,
+            (EquippedArmor as Weapon)?.Resource.ResourcePath,
+            EquippedAccessories.ConvertAll(a => a.Resource.ResourcePath),
+            Inventory.ConvertAll(i => i.ResourcePath),
+            Consumables.ConvertAll(c => c.ResourcePath));
     }
 
     public int GetAccessorySlotCount()
@@ -283,6 +315,7 @@ public partial class Player : CharacterBody2D
                     _UnequipToInventory(EquippedWeapon);
                 EquippedWeapon = _InstantiateWeaponNode(resWpn, true);
                 _weaponsContainerUi.UpdateEquipment(this);
+                _SyncInventoryToServer();
                 return true;
 
             case ResItem.ItemType.Ability:
@@ -290,6 +323,7 @@ public partial class Player : CharacterBody2D
                     _UnequipToInventory(EquippedAbility);
                 EquippedAbility = _InstantiateWeaponNode(resWpn, true);
                 _weaponsContainerUi.UpdateEquipment(this);
+                _SyncInventoryToServer();
                 return true;
 
             case ResItem.ItemType.Armor:
@@ -301,6 +335,7 @@ public partial class Player : CharacterBody2D
                     var acc = _InstantiateWeaponNode(resWpn, true);
                     EquippedAccessories.Add(acc);
                     _weaponsContainerUi.UpdateEquipment(this);
+                    _SyncInventoryToServer();
                     return true;
                 }
                 return false;
@@ -365,6 +400,7 @@ public partial class Player : CharacterBody2D
                 acc.QueueFree();
                 EquippedAccessories.RemoveAt(i);
                 _weaponsContainerUi.UpdateEquipment(this);
+                _SyncInventoryToServer();
                 return;
             }
         }
@@ -388,6 +424,7 @@ public partial class Player : CharacterBody2D
         else if (weapon == EquippedAbility)
             EquippedAbility = null;
         _weaponsContainerUi.UpdateEquipment(this);
+        _SyncInventoryToServer();
     }
 
     private void _OnStdbInventoryUpdate(EventContext ctx, PlayerInventory oldInv, PlayerInventory newInv)
@@ -405,12 +442,39 @@ public partial class Player : CharacterBody2D
         }
     }
 
+    private void _OnStdbCharacterDataUpdate(EventContext ctx, CharacterData oldData, CharacterData newData)
+    {
+        var localId = SpacetimeDBManager.Instance.LocalIdentity;
+        if (!localId.HasValue || newData.PlayerId != localId.Value) return;
+
+        Strength  = newData.Stats.Strength;
+        Wisdom    = newData.Stats.Wisdom;
+        Dexterity = newData.Stats.Dexterity;
+        Defense   = newData.Stats.Defense;
+        Vitality  = newData.Stats.Vitality;
+        SpeedStat = newData.Stats.Speed;
+        MaxHealth = newData.MaxHp;
+        Health    = Mathf.Min(Health, MaxHealth);
+
+        if (newData.Level > oldData.Level)
+            Health = Mathf.Min(Health + (newData.Level - oldData.Level) * HpPerLevel, MaxHealth);
+
+        if (InventoryUi != null && InventoryUi.Visible)
+            InventoryUi.Refresh();
+    }
+
     public override void _ExitTree()
     {
         if (this == Local) Local = null;
         Global.Instance.Players.Remove(1);
         var conn = SpacetimeDBManager.Instance?.Conn;
         if (conn != null)
+        {
             conn.Db.PlayerInventory.OnUpdate -= _OnStdbInventoryUpdate;
+            conn.Db.CharacterData.OnUpdate   -= _OnStdbCharacterDataUpdate;
+        }
     }
+/*
+```
+*/
 }

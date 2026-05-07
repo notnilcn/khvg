@@ -5,6 +5,8 @@ public partial class ResDropPoint : ResDrop
 {
     public override void DropCollected(Player player)
     {
-        player.Points += 10 * player.ExtraExp;
+        float gain = 10f * player.ExtraExp;
+        player.Points += gain;
+        SpacetimeDBManager.Instance?.Conn?.Reducers.GainXp((uint)Mathf.Max(1f, Mathf.RoundToInt(gain)));
     }
 }

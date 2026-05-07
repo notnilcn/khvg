@@ -17,9 +17,12 @@ public partial struct RpgStats
     public int Dexterity;
     public int Defense;
     public int Vitality;
+    public int Speed;
+    // hp
+    // mp
 }
 
-/// Batch position snapshot sent by the host every 100 ms.
+// Batch position snapshot sent by the host every 100 ms.
 [SpacetimeDB.Type]
 public partial struct EnemySnapshot
 {
@@ -152,6 +155,33 @@ public partial struct EnemyState
 ```
 */
 
+/// One row per item type. Keyed by the Godot .tres resource path.
+/// Stat bonus formula applied by ServerCollectStats: (base + Σ add) * (1 + Σ mult).
+/// Damage formula (applied by the elevated client): base_damage + Σ(stat * stat_damage_add) * Π(1 + stat_damage_mult).
+[SpacetimeDB.Table(Accessor = "ItemStats", Public = true)] // ^ItemStats
+public partial struct ItemStats
+{
+    [SpacetimeDB.PrimaryKey]
+    public string ItemId;       // Godot .tres resource path
+    public byte   ItemType;     // 0=weapon 1=ability 2=armor 3=accessory
+    public byte   FireRate;
+    public ushort BaseDamage;
+    // Per-stat damage scaling (how much weapon damage scales with player stat)
+    public int   StrDamageAdd;  public float StrDamageMult;
+    public int   WisDamageAdd;  public float WisDamageMult;
+    public int   DexDamageAdd;  public float DexDamageMult;
+    public int   DefDamageAdd;  public float DefDamageMult;
+    public int   VitDamageAdd;  public float VitDamageMult;
+    public int   SpdDamageAdd;  public float SpdDamageMult;
+    // Per-stat bonuses granted to player when equipped
+    public ushort StrBonusAdd;  public float StrBonusMult;
+    public ushort WisBonusAdd;  public float WisBonusMult;
+    public ushort DexBonusAdd;  public float DexBonusMult;
+    public ushort DefBonusAdd;  public float DefBonusMult;
+    public ushort VitBonusAdd;  public float VitBonusMult;
+    public ushort SpdBonusAdd;  public float SpdBonusMult;
+}
+
 /*
 # Defining base stats
 Probably make the variables persistent table entries that can be changed by a reducer because why not
@@ -163,7 +193,8 @@ public static partial class Module
 
     /// Sanity cap on reported speed. Rejects clearly cheated values.
     /// Set high enough to allow speed accessories (base ~100, cap at 4×).
-    private const ushort MaxSpeed = 400;
+    
+    // private const ushort MaxSpeed = 400;
 
     /// World units per chunk side. Must match the client constant.
     private const float ChunkSize = 320f;
@@ -175,7 +206,79 @@ public static partial class Module
         Dexterity = 1,
         Defense = 1,
         Vitality = 1,
+        Speed = 25, // i think this is bugged because typing /stats after spawning in says that the spawning speed is 1.
     };
+
+    // Total XP required to reach a given level (level 1 = 0, level 2 = 100, level 3 = 300, ...).
+    private static uint XpForLevel(uint level) =>
+        level <= 1 ? 0u : 100u * (level - 1u) * level / 2u;
+
+    // Derives authoritative level from accumulated total XP.
+    private static uint ComputeLevel(uint totalXp)
+    {
+        uint level = 1;
+        while (XpForLevel(level + 1) <= totalXp)
+            level++;
+        return level;
+    }
+
+    // Derives authoritative stats from level. +1 to every stat per level above 1.
+    private static RpgStats ComputeStatsForLevel(uint level)
+    {
+        int bonus = (int)level - 1;
+        var s = StartingStats();
+        return new RpgStats
+        {
+            Strength  = s.Strength  + bonus,
+            Wisdom    = s.Wisdom    + bonus,
+            Dexterity = s.Dexterity + bonus,
+            Defense   = s.Defense   + bonus,
+            Vitality  = s.Vitality  + bonus,
+            Speed     = s.Speed     + bonus,
+        };
+    }
+
+    // Recomputes CharacterData.Stats from level base + all equipped item bonuses.
+    // Formula per stat: (base + Σ add) * (1 + Σ mult), truncated to int.
+    // Items without an ItemStats row contribute zero bonuses.
+    private static void ServerCollectStats(ReducerContext ctx, Identity playerId)
+    {
+        if (ctx.Db.CharacterData.PlayerId.Find(playerId) is not CharacterData data) return;
+        if (ctx.Db.PlayerInventory.PlayerId.Find(playerId) is not PlayerInventory inv) return;
+
+        RpgStats baseStats = ComputeStatsForLevel(data.Level);
+
+        int   strFlat = 0, wisFlat = 0, dexFlat = 0, defFlat = 0, vitFlat = 0, spdFlat = 0;
+        float strPct  = 0f, wisPct  = 0f, dexPct  = 0f, defPct  = 0f, vitPct  = 0f, spdPct  = 0f;
+
+        var slots = new List<string?> { inv.EquippedWeapon, inv.EquippedAbility, inv.EquippedArmor };
+        slots.AddRange(inv.EquippedAccessories);
+
+        foreach (var id in slots)
+        {
+            if (string.IsNullOrEmpty(id)) continue;
+            if (ctx.Db.ItemStats.ItemId.Find(id) is not ItemStats item) continue;
+            strFlat += item.StrBonusAdd; strPct += item.StrBonusMult;
+            wisFlat += item.WisBonusAdd; wisPct += item.WisBonusMult;
+            dexFlat += item.DexBonusAdd; dexPct += item.DexBonusMult;
+            defFlat += item.DefBonusAdd; defPct += item.DefBonusMult;
+            vitFlat += item.VitBonusAdd; vitPct += item.VitBonusMult;
+            spdFlat += item.SpdBonusAdd; spdPct += item.SpdBonusMult;
+        }
+
+        ctx.Db.CharacterData.PlayerId.Update(data with
+        {
+            Stats = new RpgStats
+            {
+                Strength  = (int)((baseStats.Strength  + strFlat) * (1f + strPct)),
+                Wisdom    = (int)((baseStats.Wisdom    + wisFlat) * (1f + wisPct)),
+                Dexterity = (int)((baseStats.Dexterity + dexFlat) * (1f + dexPct)),
+                Defense   = (int)((baseStats.Defense   + defFlat) * (1f + defPct)),
+                Vitality  = (int)((baseStats.Vitality  + vitFlat) * (1f + vitPct)),
+                Speed     = (int)((baseStats.Speed     + spdFlat) * (1f + spdPct)),
+            }
+        });
+    }
 /*
 ```
 */
@@ -307,8 +410,8 @@ Dead reckoning sync. You should be able to implement rollback netcode with this.
         if (ctx.Db.PlayerPosition.PlayerId.Find(ctx.Sender) is not PlayerPosition pos)
             throw new Exception($"Position not found for {ctx.Sender}");
 
-        if (speed > MaxSpeed)
-            throw new Exception($"Speed {speed} exceeds MaxSpeed {MaxSpeed}");
+        // if (speed > MaxSpeed)
+            // throw new Exception($"Speed {speed} exceeds MaxSpeed {MaxSpeed}");
 
         int chunkX = (int)MathF.Floor(x / ChunkSize);
         int chunkY = (int)MathF.Floor(y / ChunkSize);
@@ -348,29 +451,75 @@ Dead reckoning sync. You should be able to implement rollback netcode with this.
 */
 
 /*
-# Character
+# Character progression
 ```c# */
-    /// Called by client after level-up. Stats are client-reported for now;
-    /// server-side validation against actual level formula is a TODO.
+    /// Called by the client each time it collects an XP drop.
+    /// The server accumulates total XP, derives level and stats from it, and writes
+    /// the result — clients can never supply stat values directly.
     [SpacetimeDB.Reducer]
-    public static void SaveCharacterProgress(ReducerContext ctx, uint level, uint xp, uint currentHp, RpgStats stats) // ^SaveCharacterProgress
+    public static void GainXp(ReducerContext ctx, uint amount) // ^GainXp
     {
+        const uint MaxXpPerGain = 500;
+        if (amount == 0) return;
+        if (amount > MaxXpPerGain)
+            throw new Exception($"XP gain {amount} exceeds the per-call maximum of {MaxXpPerGain}.");
+
         if (ctx.Db.CharacterData.PlayerId.Find(ctx.Sender) is not CharacterData data)
             throw new Exception("Character not found.");
 
-        if (level < data.Level)
-            throw new Exception("Level cannot decrease.");
-
-        uint maxHp = (uint)(BaseMaxHp + ((int)level - 1) * HpPerLevel);
+        uint oldLevel = data.Level;
+        uint newXp    = data.Xp + amount;
+        uint newLevel = ComputeLevel(newXp);
+        uint newMaxHp = (uint)(BaseMaxHp + ((int)newLevel - 1) * HpPerLevel);
+        uint healAmt  = (newLevel - oldLevel) * (uint)HpPerLevel;
+        uint newCurHp = Math.Min(data.CurrentHp + healAmt, newMaxHp);
 
         ctx.Db.CharacterData.PlayerId.Update(data with
         {
-            Level = level,
-            Xp = xp,
-            MaxHp = maxHp,
-            CurrentHp = Math.Min(currentHp, maxHp),
-            Stats = stats,
+            Level     = newLevel,
+            Xp        = newXp,
+            MaxHp     = newMaxHp,
+            CurrentHp = newCurHp,
         });
+
+        ServerCollectStats(ctx, ctx.Sender);
+    }
+/*
+```
+*/
+
+/*
+# Character stats override (admin)
+```c# */
+    /// Admin command: overwrite a player's RpgStats by username.
+    [SpacetimeDB.Reducer]
+    public static void ChangeStats(ReducerContext ctx, string targetUsername, RpgStats newStats) // ^ChangeStats
+    {
+        if (ctx.Db.PlayerAccount.PlayerId.Find(ctx.Sender) is not PlayerAccount caller)
+            throw new Exception("Account not found.");
+        if (!caller.IsAdmin)
+            throw new Exception("Only admins can change stats.");
+
+        Identity? targetId = null;
+        foreach (var acc in ctx.Db.PlayerAccount.Iter())
+        {
+            string idStr = acc.PlayerId.ToString().ToLower();
+            string lookup = targetUsername.ToLower();
+            if (acc.Username.Equals(targetUsername, System.StringComparison.OrdinalIgnoreCase)
+                || idStr == lookup
+                || idStr.StartsWith(lookup))
+            {
+                targetId = acc.PlayerId;
+                break;
+            }
+        }
+        if (targetId is null)
+            throw new Exception($"Player '{targetUsername}' not found.");
+
+        if (ctx.Db.CharacterData.PlayerId.Find(targetId.Value) is not CharacterData data)
+            throw new Exception("Character data not found.");
+
+        ctx.Db.CharacterData.PlayerId.Update(data with { Stats = newStats });
     }
 /*
 ```
@@ -410,6 +559,8 @@ Dead reckoning sync. You should be able to implement rollback netcode with this.
             BackpackSlots = backpackSlots,
             ConsumableSlots = consumableSlots,
         });
+
+        ServerCollectStats(ctx, ctx.Sender);
     }
 /*
 ```
@@ -490,6 +641,28 @@ Dead reckoning sync. You should be able to implement rollback netcode with this.
         if (!CanControlEnemies(ctx))
             throw new Exception("Unauthorized: only the elevated client may despawn enemies.");
         ctx.Db.EnemyState.EnemyId.Delete(enemyId);
+    }
+/*
+```
+*/
+
+/*
+# Item stats (live balancing)
+```c# */
+    /// Insert or overwrite an ItemStats row. Admin-only.
+    /// Use this to balance items live without republishing the module.
+    [SpacetimeDB.Reducer]
+    public static void UpsertItemStats(ReducerContext ctx, ItemStats stats) // ^UpsertItemStats
+    {
+        if (ctx.Db.PlayerAccount.PlayerId.Find(ctx.Sender) is not PlayerAccount caller)
+            throw new Exception("Account not found.");
+        if (!caller.IsAdmin)
+            throw new Exception("Only admins can modify item stats.");
+
+        if (ctx.Db.ItemStats.ItemId.Find(stats.ItemId) is not null)
+            ctx.Db.ItemStats.ItemId.Update(stats);
+        else
+            ctx.Db.ItemStats.Insert(stats);
     }
 /*
 ```

@@ -25,6 +25,7 @@ public partial class ResItem : Resource
     [Export] public float FireRate { get; set; } = 1.0f;
     [Export] public bool AttachToRotation { get; set; } = false;
 
+    [Export] public int   BonusSpeedStat { get; set; } = 0;
     [Export] public float BonusSpeedMult { get; set; } = 0.0f;
     [Export] public float BonusExpMult { get; set; } = 0.0f;
     [Export] public float BonusDamageMult { get; set; } = 0.0f;
@@ -51,6 +52,7 @@ public partial class ResItem : Resource
             case "damage":                Damage               = value.AsSingle();            return true;
             case "fire_rate":             FireRate             = value.AsSingle();            return true;
             case "attach_to_rotation":    AttachToRotation     = value.AsBool();              return true;
+            case "bonus_speed_stat":      BonusSpeedStat       = value.AsInt32();             return true;
             case "bonus_speed_mult":      BonusSpeedMult       = value.AsSingle();            return true;
             case "bonus_exp_mult":        BonusExpMult         = value.AsSingle();            return true;
             case "bonus_damage_mult":     BonusDamageMult      = value.AsSingle();            return true;

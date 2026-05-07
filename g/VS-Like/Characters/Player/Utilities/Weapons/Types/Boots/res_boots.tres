@@ -8,11 +8,11 @@
 script = ExtResource("1_3apvx")
 weapon_scene = ExtResource("3_kxaha")
 item_name = "BOOTS"
-item_description = "12.5% EXTRA MOVEMENT SPEED"
+item_description = "+3 SPEED"
 sprite = ExtResource("2_3v5f4")
 item_type = 3
 is_passive = true
 fire_rate = 1.0
-bonus_speed_mult = 0.125
-upgrade_description_2 = "12.5% EXTRA MOVEMENT SPEED"
-upgrade_description_3 = "12.5% EXTRA MOVEMENT SPEED"
+bonus_speed_stat = 3
+upgrade_description_2 = "+3 SPEED"
+upgrade_description_3 = "+3 SPEED"

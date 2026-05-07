@@ -190,11 +190,17 @@ public partial class Spawner : Node2D
 	{
 		_chatFeedback = new Label();
 		_chatFeedback.AddThemeFontSizeOverride("font_size", 8);
+		_chatFeedback.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		_chatFeedback.AddThemeColorOverride("font_outline_color", new Color(0, 0, 0));
+		_chatFeedback.AddThemeConstantOverride("outline_size", 4);
 		_vbox.AddChild(_chatFeedback);
 
 		var input = new LineEdit();
 		input.PlaceholderText = "press T to chat";
 		input.AddThemeFontSizeOverride("font_size", 8);
+		input.AddThemeColorOverride("font_color", new Color(1, 1, 1));
+		input.AddThemeColorOverride("font_outline_color", new Color(0, 0, 0));
+		input.AddThemeConstantOverride("outline_size", 4);
 		input.TextSubmitted += _OnCommandSubmitted;
 		input.TextSubmitted += _ => input.ReleaseFocus();
 		input.FocusExited   += () => GetViewport().GuiReleaseFocus();
@@ -264,6 +270,7 @@ its obvious
 			case "/spawn":
 			case "/chest":
 			case "/tickrate":
+			case "/changestats":
 				_ExecuteAdminCmd(verb, args);
 				break;
 
@@ -277,7 +284,7 @@ its obvious
 				break;
 
 			default:
-				_ShowFeedback("Unknown command. Try /stats, /inv, /stdbpos, /spawner, /give, /remove, /spawn, /chest, /tickrate");
+				_ShowFeedback("Unknown command. Try /stats, /inv, /stdbpos, /spawner, /give, /remove, /spawn, /chest, /tickrate, /changestats");
 				break;
 		}
 	}
@@ -306,9 +313,9 @@ its obvious
 		{
 			case "/stats":
 				msg = string.Format(
-					"STR {0}  WIS {1}  DEX {2}  DEF {3}  VIT {4}\nHP {5}/{6}   Slots: {7} acc",
+					"STR {0}  WIS {1}  DEX {2}  DEF {3}  VIT {4}  SPD {5}\nHP {6}/{7}   Slots: {8} acc",
 					player.Strength, player.Wisdom, player.Dexterity,
-					player.Defense,  player.Vitality,
+					player.Defense,  player.Vitality, player.SpeedStat,
 					(int)player.Health, (int)player.MaxHealth,
 					player.GetAccessorySlotCount());
 				break;
@@ -449,12 +456,13 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 		}
 		switch (verb)
 		{
-			case "/spawner":   _CmdSpawner(args);   break;
-			case "/give":      _CmdGive(args);      break;
-			case "/remove":    _CmdRemove(args);    break;
-			case "/spawn":     _CmdSpawn(args);     break;
-			case "/chest":     _CmdChest(args);     break;
-			case "/tickrate":  _CmdTickrate(args);  break;
+			case "/spawner":      _CmdSpawner(args);      break;
+			case "/give":         _CmdGive(args);         break;
+			case "/remove":       _CmdRemove(args);       break;
+			case "/spawn":        _CmdSpawn(args);        break;
+			case "/chest":        _CmdChest(args);        break;
+			case "/tickrate":     _CmdTickrate(args);     break;
+			case "/changestats":  _CmdChangeStats(args);  break;
 		}
 	}
 
@@ -560,6 +568,74 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 		}
 	}
 
+	// /changestats <username> <stat> <val> [<stat> <val> ...] — overwrite a player's RPG stats (admin only).
+	// Stat names: str wis dex def vit spd. Values are absolute, not deltas.
+	// Example: /changestats alice str 10 spd 5
+	private void _CmdChangeStats(string[] args)
+	{
+		if (args.Length < 3 || args.Length % 2 == 0)
+		{
+			_ShowFeedback("Usage: /changestats <username> <stat> <val> [...]\nStats: str wis dex def vit spd");
+			return;
+		}
+
+		var conn = SpacetimeDBManager.Instance?.Conn;
+		if (conn == null) { _ShowFeedback("Not connected to SpacetimeDB."); return; }
+
+		string lookup = args[0];
+
+		SpacetimeDB.Identity? targetId = null;
+		foreach (var acc in conn.Db.PlayerAccount.Iter())
+		{
+			string idStr = acc.PlayerId.ToString().ToLower();
+			if (acc.Username.Equals(lookup, System.StringComparison.OrdinalIgnoreCase)
+			    || idStr == lookup.ToLower()
+			    || idStr.StartsWith(lookup.ToLower()))
+			{
+				targetId = acc.PlayerId;
+				break;
+			}
+		}
+		if (targetId is null)
+		{
+			_ShowFeedback($"Player '{lookup}' not found.");
+			return;
+		}
+
+		var charData = conn.Db.CharacterData.PlayerId.Find(targetId.Value);
+		if (charData is null)
+		{
+			_ShowFeedback($"No character data for '{lookup}'.");
+			return;
+		}
+
+		var stats = charData.Stats;
+		string[] pairs = args[1..];
+		for (int i = 0; i + 1 < pairs.Length; i += 2)
+		{
+			if (!int.TryParse(pairs[i + 1], out int val))
+			{
+				_ShowFeedback($"Bad value '{pairs[i + 1]}' for stat '{pairs[i]}'.");
+				return;
+			}
+			switch (pairs[i].ToLower())
+			{
+				case "str": stats.Strength  = val; break;
+				case "wis": stats.Wisdom    = val; break;
+				case "dex": stats.Dexterity = val; break;
+				case "def": stats.Defense   = val; break;
+				case "vit": stats.Vitality  = val; break;
+				case "spd": stats.Speed     = val; break;
+				default:
+					_ShowFeedback($"Unknown stat '{pairs[i]}'. Valid: str wis dex def vit spd");
+					return;
+			}
+		}
+
+		conn.Reducers.ChangeStats(lookup, stats);
+		_ShowFeedback($"Stats updated for {lookup}.");
+	}
+
 	// /spawn [straight|sine] [x y] — fire bullets directly from pos (no enemy drift) or spawn a plain dummy.
 	private void _CmdSpawn(string[] args)
 	{
@@ -652,7 +728,7 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 		var pos    = PlayerSpawnPositions[_spawnPositionIndex++ % PlayerSpawnPositions.Length];
 		var player = PlayerScene.Instantiate<Player>();
 		player.Name          = "Player_Local";
-		player.CharacterData = DefaultCharacterData;
+		player.CharacterTemplate = DefaultCharacterData;
 		player.IsLocalPlayer = true;
 		AddChild(player);
 		player.GlobalPosition = pos;

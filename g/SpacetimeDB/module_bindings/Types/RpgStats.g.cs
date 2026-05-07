@@ -23,13 +23,16 @@ namespace SpacetimeDB.Types
         public int Defense;
         [DataMember(Name = "vitality")]
         public int Vitality;
+        [DataMember(Name = "speed")]
+        public int Speed;
 
         public RpgStats(
             int Strength,
             int Wisdom,
             int Dexterity,
             int Defense,
-            int Vitality
+            int Vitality,
+            int Speed
         )
         {
             this.Strength = Strength;
@@ -37,6 +40,7 @@ namespace SpacetimeDB.Types
             this.Dexterity = Dexterity;
             this.Defense = Defense;
             this.Vitality = Vitality;
+            this.Speed = Speed;
         }
 
         public RpgStats()

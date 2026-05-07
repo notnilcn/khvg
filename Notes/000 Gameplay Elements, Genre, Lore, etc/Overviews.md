@@ -35,9 +35,9 @@ The game will probably be high fantasy.
 		- Hexagon will have height
 			- Under the hood the game is going to be 2d, but bitcraft's hexagons have height so why not. Also, RotMG is pretty flat which is kinda bland.
 	- The unsafe parts of the world/landscape/map changes every day (I'm not sure if this is feasible in spacetimedb)
-		- This should be doable via lazy evaluation. i.e. whenever a player enters a stale part of the world/landscape/map, it changes based on whether enough time has passed since the last time it was updated.
+		- This should be doable via lazy evaluation. i.e. whenever a player enters a stale part of the world/landscape/map, it changes based on the last time it was updated.
 #### **Lore and gameplay things Overview**
-#### **The world has been destroyed**
+#### **The world has bwhether enough time has passed since een destroyed**
 Gameplay things that this lore is built around:
 - [Safe hubs](<Overviews.md#^safe-hubs>)
 - [Unsafe world](<Overviews.md#^unsafe-world>)

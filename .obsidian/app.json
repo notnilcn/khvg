@@ -2,5 +2,6 @@
   "alwaysUpdateLinks": true,
   "attachmentFolderPath": "./Attachments",
   "showUnsupportedFiles": false,
-  "readableLineLength": false
+  "readableLineLength": false,
+  "promptDelete": false
 }
