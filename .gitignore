@@ -1,0 +1,21 @@
+# Godot 4
+.godot/
+*.import
+.mono/
+android/
+ios/
+
+# Rust / SpacetimeDB server
+server/spacetimedb/target/
+
+# C# build artifacts
+[Bb]in/
+[Oo]bj/
+*.user
+
+# SpacetimeDB local config
+spacetime.local.json
+
+# OS
+.DS_Store
+Thumbs.db
