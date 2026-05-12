@@ -589,8 +589,8 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 		{
 			string idStr = acc.PlayerId.ToString().ToLower();
 			if (acc.Username.Equals(lookup, System.StringComparison.OrdinalIgnoreCase)
-			    || idStr == lookup.ToLower()
-			    || idStr.StartsWith(lookup.ToLower()))
+				|| idStr == lookup.ToLower()
+				|| idStr.StartsWith(lookup.ToLower()))
 			{
 				targetId = acc.PlayerId;
 				break;

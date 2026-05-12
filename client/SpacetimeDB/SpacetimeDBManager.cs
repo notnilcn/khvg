@@ -14,8 +14,8 @@ public partial class SpacetimeDBManager : Node
 	public static SpacetimeDBManager Instance { get; private set; } = null!;
 
 	// Verify this URI by running: spacetime server list
-	private const string Host = "wss://maincloud.spacetimedb.com";
-	private const string DbName = "bmmo-0nzf1";
+	private const string Host = "http://127.0.0.1:3000"; //"wss://maincloud.spacetimedb.com";
+	private const string DbName = "bullethell"; //"bmmo-0nzf1";
 
 	public DbConnection? Conn { get; private set; }
 	public bool IsStdbConnected => Conn?.IsActive ?? false;
