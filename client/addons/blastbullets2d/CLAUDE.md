@@ -383,3 +383,314 @@ SpacetimeDB.Reducers.InsertBulletPattern(new BulletPattern {
     // ... zero-values for unused fields
 });
 ```
+
+## Plan:
+# Plan: BlastBullets2D + SpacetimeDB Translation Layer (Task 6)
+
+## Context
+
+The existing `BulletPattern` table is minimal (slot_id, pattern_type byte, origin, target, timing) and `StdbBulletSync.cs` uses a hand-rolled visual pool with deterministic `GetPosition()` math. The `blastbullets2d` GDExtension is now installed and handles rendering, physics, and hit detection via `BulletFactory2D`. The goal is to:
+
+1. Expand the server `BulletPattern` schema to carry all blastbullets2d parameters
+2. Update/add server reducers
+3. Rewrite `StdbBulletSync.cs` as the translation layer that converts STDB rows into blastbullets2d spawn calls
+
+**Architecture context:**
+- **Player bullets** (already working, NOT changed): `Player._Shoot()` → `BulletFactory2D.spawn_directional_bullets(_BulletsData)` — layer 2, mask 3. No STDB involvement.
+- **Enemy bullets** (this task): Elevated client → `InsertBulletPattern` reducer → STDB row → all clients → `StdbBulletSync.OnInsert` → `BulletFactory2D.spawn_*` — layer 3, mask 2.
+
+Both share the same `BulletFactory2D` node (`Global.BulletFactory`). Hit detection for enemy bullets is discriminated by `BulletCustomData` on `BulletFactory2D.body_entered`.
+
+---
+
+## Files to Modify
+
+| File | Change |
+|------|--------|
+| `server/spacetimedb/src/main/tables.rs` | Replace `BulletPattern`, add `BulletPatternData` SpacetimeType, add `BulletCleanupSchedule` |
+| `server/spacetimedb/src/main/reducers.rs` | Replace `fire_bullet`, add `insert_bullet_pattern`, `report_hit`, `cleanup_expired_bullet_patterns`, `init` |
+| `client/SpacetimeDB/StdbBulletSync.cs` | Full rewrite as translation layer |
+| `client/SpacetimeDB/module_bindings/` | Regenerated — do not hand-edit |
+
+---
+
+## Step 1: `tables.rs` — New Schema
+
+### Remove
+Old `BulletPattern` struct (slot_id u16 PK, pattern_type u8, origin, target, spawn_time, despawn_time).
+
+### Add `BulletPatternData` SpacetimeType
+All 40+ client-provided fields. The reducer takes this; the table embeds it.
+
+```rust
+#[derive(SpacetimeType, Clone)]
+pub struct BulletPatternData {
+    // Identity
+    pub enemy_id: u64,
+    pub origin_x: f32,
+    pub origin_y: f32,
+    pub damage: i32,
+
+    // Bullet type
+    pub is_block_bullets: bool,
+
+    // Pattern shape
+    pub pattern_shape: String,       // "single"|"circle"|"fan"|"line"|"grid"
+    pub bullet_count: i32,
+    pub start_angle_degrees: f32,
+    pub spread_angle_degrees: f32,
+    pub radius_offset: f32,
+    pub line_spacing: f32,
+    pub grid_rows: i32,
+    pub grid_col_offset: f32,
+    pub grid_row_offset: f32,
+    pub grid_alignment: i32,
+
+    // Speed
+    pub speed: f32,
+    pub speed_max: f32,
+    pub speed_acceleration: f32,
+    pub speed_random_min: f32,
+    pub speed_random_max: f32,
+
+    // Rotation
+    pub rotation_speed: f32,
+    pub rotation_speed_max: f32,
+    pub rotation_acceleration: f32,
+    pub stop_rotation_when_max_reached: bool,
+
+    // Block-specific
+    pub block_direction_degrees: f32,
+
+    // Directional-specific
+    pub adjust_direction_based_on_rotation: bool,
+
+    // Homing
+    pub is_homing: bool,
+    pub homing_target_identity: String,
+    pub homing_smoothing: f32,
+    pub homing_take_control_of_texture_rotation: bool,
+
+    // Lifetime & collision
+    pub max_life_time: f32,
+    pub is_life_time_infinite: bool,
+    pub bullet_max_collision_count: i32,
+
+    // Visual
+    pub texture_res_path: String,
+    pub texture_size_x: f32,
+    pub texture_size_y: f32,
+    pub texture_rotation_radians: f32,
+    pub is_texture_permanent_rotation: bool,
+
+    // Collision shape
+    pub collision_shape_size_x: f32,
+    pub collision_shape_size_y: f32,
+    pub collision_shape_offset_x: f32,
+    pub collision_shape_offset_y: f32,
+
+    // Curves
+    pub curves_preset: String,       // "" = none; named key into client-side BULLET_CURVE_PRESETS
+}
+```
+
+### Add new `BulletPattern` table
+```rust
+#[table(accessor = bullet_pattern, public)]
+pub struct BulletPattern {
+    #[primary_key]
+    #[auto_inc]
+    pub pattern_id: u64,
+    pub spawn_time: Timestamp,
+    pub expires_at: Timestamp,    // spawn_time + max_life_time + AUDIT_RETENTION_SECS (48h)
+    pub data: BulletPatternData,
+}
+```
+
+### Add `BulletCleanupSchedule` table
+```rust
+#[table(accessor = bullet_cleanup_schedule, scheduled(cleanup_expired_bullet_patterns))]
+pub struct BulletCleanupSchedule {
+    #[primary_key]
+    #[auto_inc]
+    pub scheduled_id: u64,
+    pub scheduled_at: ScheduleAt,
+}
+```
+
+### Add constant
+```rust
+pub const AUDIT_RETENTION_SECS: u64 = 172_800; // 48 hours
+```
+
+---
+
+## Step 2: `reducers.rs` — Updated/New Reducers
+
+### Add `init` reducer
+Schedules the first cleanup run 60 seconds after publish:
+```rust
+#[reducer(init)]
+pub fn init(ctx: &ReducerContext) {
+    ctx.db.bullet_cleanup_schedule().insert(BulletCleanupSchedule {
+        scheduled_id: 0,
+        scheduled_at: ScheduleAt::Time(ctx.timestamp + Duration::from_secs(60)),
+    });
+}
+```
+
+### Replace `fire_bullet` with `insert_bullet_pattern`
+```rust
+#[spacetimedb::reducer]
+pub fn insert_bullet_pattern(ctx: &ReducerContext, data: BulletPatternData) -> Result<(), String> {
+    if !can_control_enemies(ctx) {
+        return Err("Unauthorized: only the elevated client may insert bullet patterns.".to_string());
+    }
+    let expires_at = ctx.timestamp
+        + Duration::from_secs_f32(data.max_life_time)
+        + Duration::from_secs(AUDIT_RETENTION_SECS);
+    ctx.db.bullet_pattern().insert(BulletPattern {
+        pattern_id: 0,  // auto_inc
+        spawn_time: ctx.timestamp,
+        expires_at,
+        data,
+    });
+    Ok(())
+}
+```
+
+### Update `despawn_bullet`
+Old: `slot_id: u16`. New: `pattern_id: u64`.
+```rust
+#[spacetimedb::reducer]
+pub fn despawn_bullet(ctx: &ReducerContext, pattern_id: u64) -> Result<(), String> {
+    if !can_control_enemies(ctx) {
+        return Err("Unauthorized.".to_string());
+    }
+    ctx.db.bullet_pattern().pattern_id().delete(&pattern_id);
+    Ok(())
+}
+```
+
+### Add `report_hit`
+```rust
+#[spacetimedb::reducer]
+pub fn report_hit(ctx: &ReducerContext, pattern_id: u64, damage: i32) -> Result<(), String> {
+    // No server-side validation — BulletPattern row is the audit record.
+    let data = ctx.db.character_data().player_id().find(ctx.sender())
+        .ok_or("Character not found.")?;
+    let new_hp = (data.current_hp as i32 - damage).max(0) as u32;
+    ctx.db.character_data().player_id().update(CharacterData { current_hp: new_hp, ..data });
+    Ok(())
+}
+```
+
+### Add `cleanup_expired_bullet_patterns`
+```rust
+#[spacetimedb::reducer]
+pub fn cleanup_expired_bullet_patterns(ctx: &ReducerContext, _job: BulletCleanupSchedule) -> Result<(), String> {
+    let expired: Vec<u64> = ctx.db.bullet_pattern().iter()
+        .filter(|row| row.expires_at <= ctx.timestamp)
+        .map(|row| row.pattern_id)
+        .collect();
+    for id in expired {
+        ctx.db.bullet_pattern().pattern_id().delete(&id);
+    }
+    // Reschedule next run in 60 seconds
+    ctx.db.bullet_cleanup_schedule().insert(BulletCleanupSchedule {
+        scheduled_id: 0,
+        scheduled_at: ScheduleAt::Time(ctx.timestamp + Duration::from_secs(60)),
+    });
+    Ok(())
+}
+```
+
+---
+
+## Step 3: Regenerate Client Bindings
+
+After publishing the updated server, run from `server/`:
+```bash
+spacetime publish bmmo-0nzf1 --module-path ./spacetimedb
+spacetime generate --lang csharp --out-dir ./module_bindings --module-path ./spacetimedb
+```
+Then copy `module_bindings/` to `client/SpacetimeDB/module_bindings/`.
+
+The new generated `BulletPattern` binding will have `PatternId`, `SpawnTime`, `ExpiresAt`, and a `Data` field of type `BulletPatternData`.
+
+---
+
+## Step 4: `StdbBulletSync.cs` — Full Rewrite
+
+### Structure overview
+- Remove: visual pool, `_bullets` dict, `GetPosition()`, `_ElevatedTick()`, `MaxBulletSlots` ring buffer
+- Keep: `_HookCallbacks()` / `_CatchUp()` / `_OnSubscriptionReady()` pattern (same as `StdbPlayerSync`, `StdbEnemySync`)
+- Add: `BulletCustomData` inner Resource class, transform generation, blastbullets2d spawn logic
+
+### Inner class `BulletCustomData : Resource`
+```csharp
+private partial class BulletCustomData : Resource
+{
+    public ulong PatternId;
+    public int   Damage;
+}
+```
+Stored in `MultiMeshBulletsData2D.bullets_custom_data` so the `body_entered` signal can pass it back.
+
+### `_Ready()`
+- Hook STDB callbacks (same pattern as other Stdb*.cs files)
+- Connect `Global.BulletFactory.Connect("body_entered", new Callable(this, nameof(_OnBulletBodyEntered)))`
+
+### `_OnInsert` / `_CatchUp`
+Both call `_SpawnFromRow(row)` — see below.
+
+### `_SpawnFromRow(BulletPattern row)`
+1. Compute `elapsed = (DateTimeOffset.UtcNow - row.SpawnTime.ToDateTimeOffset()).TotalSeconds`
+2. Return early if `elapsed >= row.Data.MaxLifeTime`
+3. Call `_GenerateTransforms(row.Data, elapsed)` → `Godot.Collections.Array<Transform2D>`
+4. Build `DirectionalBulletsData2D` or `BlockBulletsData2D` via `ClassDB.Instantiate(...)`
+5. Set all shared fields via `.Set()` / `.Call()` on the GodotObject
+6. Set `bullets_custom_data` to a new `BulletCustomData { PatternId = row.PatternId, Damage = row.Data.Damage }`
+7. Handle homing: if `row.Data.IsHoming`, call `spawn_controllable_directional_bullets`, then set homing fields on the returned instance
+8. Otherwise call `spawn_directional_bullets` or `spawn_block_bullets`
+
+### `_GenerateTransforms(BulletPatternData d, double elapsed)`
+Port the GDScript algorithms from CLAUDE.md to C#:
+- `"single"` — one Transform2D at angle+offset
+- `"circle"` — evenly distributed around origin
+- `"fan"` — arc from `center-half_spread` to `center+half_spread`
+- `"line"` — perpendicular spread, `n` bullets
+- `"grid"` — call `Global.BulletFactory.Call("helper_generate_transforms_grid", ...)`
+
+For late-join (elapsed > 0), advance positions by `direction * speed * elapsed + 0.5 * acceleration * elapsed²` per transform.
+
+### `_OnDelete`
+No visual to tear down — blastbullets2d manages its own lifetime. Used only to log.
+
+### `_OnBulletBodyEntered` (hit detection)
+```csharp
+private void _OnBulletBodyEntered(GodotObject hitBody, GodotObject multimesh, 
+                                   int bulletIndex, GodotObject customData, Transform2D transform)
+{
+    if (hitBody != Player.Local) return;          // only local player
+    if (customData is not BulletCustomData cd) return;  // only enemy bullets
+    var conn = SpacetimeDBManager.Instance.Conn;
+    conn?.Reducers.ReportHit(cd.PatternId, cd.Damage);
+}
+```
+
+### `FireBullet()` (elevated client API — updated signature)
+The old `FireBullet(Vector2 origin, byte patternType)` is replaced. The elevated client (Spawner) will call `InsertBulletPattern(data)` directly with a fully populated `BulletPatternData`. Remove `FireBullet()` or keep as a compatibility shim that builds a default pattern — mark clearly.
+
+> **Out of scope:** Updating `Spawner.cs` / `Enemy.cs` to call `InsertBulletPattern` with real per-enemy patterns. That requires enemy AI design decisions (which pattern type per enemy, what parameters). `StdbBulletSync` only defines the translation layer; callers are updated separately.
+
+---
+
+## Verification
+
+1. **Publish & generate**: `spacetime publish bmmo-0nzf1 --module-path ./spacetimedb` succeeds with no Rust compile errors
+2. **Bindings compile**: Open Godot, C# project builds with no errors
+3. **Manual test**: From the elevated client, call `InsertBulletPattern` with a "circle" pattern (8 bullets, speed 250, layer 3 fireball texture) — all connected clients should see 8 blastbullets2d bullets spawn
+4. **Hit detection**: Walk the local player into a bullet — `ReportHit` is called, `CharacterData.CurrentHp` drops in the STDB dashboard
+5. **Late-join**: Connect a second client mid-flight — existing bullets reconstruct at their current positions with correct remaining lifetime
+6. **Cleanup**: After 48h + max_life_time, rows disappear from the STDB dashboard
