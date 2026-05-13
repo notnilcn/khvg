@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<class name="BulletAttachment2D" inherits="Node2D" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.githubusercontent.com/godotengine/godot/master/doc/class.xsd">
+	<brief_description>
+		Provides the functionality of bullets being able to carry particles or other nodes as they move.
+	</brief_description>
+	<description>
+	</description>
+	<tutorials>
+	</tutorials>
+	<methods>
+		<method name="on_bullet_disable" qualifiers="virtual">
+			<return type="void" />
+			<description>
+				Executed when the attachment is disabled before it goes to the object pool. You should provide disable logic - attachment gets invisible/disables specific functionality or children etc...
+			</description>
+		</method>
+		<method name="on_bullet_enable" qualifiers="virtual">
+			<return type="void" />
+			<description>
+				Executed when the attachment is enabled again from the object pool. You should provide activation logic - attachment gets visible/enabled etc..
+			</description>
+		</method>
+		<method name="on_bullet_spawn" qualifiers="virtual">
+			<return type="void" />
+			<description>
+				Executed before the attachment gets added to the scene tree.
+
+				Warning: The [BulletAttachment2D] is not yet in the scene tree when this method is executed.
+			</description>
+		</method>
+		<method name="on_spawn_in_pool" qualifiers="virtual">
+			<return type="void" />
+			<description>
+				Ensure the attachment is in disabled state (example: attachment should be invisible when you are populating the object pool... in the same state as in the [method on_bullet_disable] function).
+
+				Warning: The [BulletAttachment2D] is not yet in the scene tree when this method is executed, so don't call functions that depend on already configured children etc.. instead use [code]_ready[/code]. Just save state specific logic in variables and then later in [code]_ready[/code] handle that.
+			</description>
+		</method>
+	</methods>
+</class>

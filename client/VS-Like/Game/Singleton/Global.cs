@@ -24,6 +24,8 @@ public partial class Global : Node
         GD.Load<ResItem>("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Parchment/res_parchment.tres"),
         GD.Load<ResItem>("res://VS-Like/Characters/Player/Utilities/Weapons/Types/Ring/res_ring.tres"),
     };
+
+    public static Node BulletFactory { get; set; }
 /*
 ```
 */
@@ -36,6 +38,8 @@ idk what to say, just a default _ready function
     public override void _Ready()
     {
         Instance = this;
+
+        // GD.Print("Global ready. BulletFactory set to: " + BulletFactory.Name);
     }
 /*
 ```

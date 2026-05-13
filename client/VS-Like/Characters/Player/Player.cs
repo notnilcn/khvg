@@ -62,6 +62,18 @@ public partial class Player : CharacterBody2D
     public static Player Local { get; private set; }
     public bool IsLocalPlayer { get; set; } = false;
 
+    public Timer _FireTimer;//
+
+    public bool IsTryingToShoot { get; set; } = false;//
+
+    public bool AllowedToShoot { get; set; } = true;//
+
+    public Node2D _MarkerContainer;//
+
+    private GodotObject _BulletsData;//
+
+    [Export] private Texture2D[] _BulletTextures;
+
     private Vector2? _lastSentMoveInput = null;
     private ushort   _lastSentSpeed     = 0;
 
@@ -102,6 +114,18 @@ public partial class Player : CharacterBody2D
         Global.Instance.Players[1] = this;
 
         _InitPlayer();
+
+        _FireTimer          = GetNode<Timer>("FireTimer");//
+        _FireTimer.Timeout += _OnFireTimerTimeout;//
+        _BulletsData = ClassDB.Instantiate("DirectionalBulletsData2D").AsGodotObject();//
+        _BulletsData.Call("set_textures", _BulletTextures);//
+        _BulletsData.Set("texture_size", new Vector2(64, 64));//
+        _BulletsData.Call("set_collision_layer_from_array", new Godot.Collections.Array { 2 });//world where bullets exist. anything that wants to detect this bullet has to be on this layer//
+        _BulletsData.Call("set_collision_mask_from_array", new Godot.Collections.Array { 3 });//world that the bullet tracks. anything that the bullet wants to detect has to be on this layer//
+        _BulletsData.Set("all_bullet_speed_data",ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject().Call("generate_random_data",3,100,200,500,650, 300, 500));//
+        _BulletsData.Set("collision_shape_size",new Vector2(32,32));//
+
+        _MarkerContainer = GetNode<Node2D>("MarkerContainer");//
     }
 
     private void _InitPlayer()
@@ -176,6 +200,58 @@ public partial class Player : CharacterBody2D
                     InventoryUi.Open(this);
             }
         }
+
+        if (@event.IsActionPressed("player_shoot"))//
+        {
+            IsTryingToShoot = true;
+            GD.Print("[Player] Shoot input detected");
+        }
+
+        if (@event.IsActionReleased("player_shoot"))//
+        {
+            IsTryingToShoot = false;
+            GD.Print("[Player] Shoot input released");
+        }
+    }
+
+    public override void _Process(double delta)//
+    {
+        // # Shoot logic
+        if (AllowedToShoot && IsTryingToShoot) // If the user has pressed the left mouse button and is allowed to shoot, then go ahead and spawn bullets
+        {
+            // TODO spawn bullets
+            AllowedToShoot = false;
+            _FireTimer.Start();
+            GD.Print("Player shot");
+            _Shoot();
+        }
+    }
+
+    private Godot.Collections.Array<Transform2D> _GetMarkerTransforms()//
+    {
+        var _AllMarkers = new Godot.Collections.Array<Transform2D>();
+
+        foreach (Node2D marker in _MarkerContainer.GetChildren())
+        {
+            _AllMarkers.Add(marker.GlobalTransform);
+        }
+
+        return _AllMarkers;
+    }
+
+    private void _Shoot()//
+    {
+        if (Global.BulletFactory == null)
+        {
+            GD.PrintErr("[Player] BulletFactory not registered — check woods_map.tscn has BulletFactory node.");
+            return;
+        }
+        _BulletsData.Set("transforms", _GetMarkerTransforms());
+        Global.BulletFactory.Call("spawn_directional_bullets", _BulletsData);
+        // This is where you would put the logic to spawn bullets, e.g. by calling ServerSpawnLinear or ServerSpawnSine with the appropriate parameters based on the equipped weapon and player stats.
+        // For example:
+        // ServerSpawnLinear(GlobalPosition, new Vector2(1, 0).Rotated(Mathf.DegToRad(RotationDegrees)), 300, 10);
+        GD.Print("Player shoot logic executed");
     }
 
     private void _HandleMovement(double delta)
@@ -461,6 +537,25 @@ public partial class Player : CharacterBody2D
 
         if (InventoryUi != null && InventoryUi.Visible)
             InventoryUi.Refresh();
+    }
+
+    public void _OnFireTimerTimeout()
+    {
+        AllowedToShoot = true; // allow the player to shoot
+        GD.Print("Player can shoot again");
+    }
+    
+    public void _ChangeFireTimerCooldown(float newWaitTime)
+    {
+        _FireTimer.Stop();
+        AllowedToShoot = true;
+
+        _FireTimer.WaitTime = newWaitTime;
+        if (_FireTimer.IsStopped())
+        {
+            _FireTimer.Start();
+        }
+        
     }
 
     public override void _ExitTree()
