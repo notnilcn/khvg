@@ -20,9 +20,6 @@ spacetime.local.json
 .DS_Store
 Thumbs.db
 
-Claude.md*
-.claude/
-
 2026-*.txt
 
 g.godot-editor-filesystem_cache10

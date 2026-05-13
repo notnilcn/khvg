@@ -6,6 +6,30 @@ Genre is bullet-hell mmo (similar to Realm of the Mad God), with future plans fo
 The game will probably be high fantasy.
 
 ## Rotmg videos
+RotMG description and general feel:
+
+### Group videos
+![Completing My First Marble Colossus Ever! - Rotmg Lost Halls Progression!](<https://www.youtube.com/watch?v=audTKsu6qTA>)
+
+![RotMG Lost Halls 3 man full skip run](<https://www.youtube.com/watch?v=ZRKva2qU9kE>)
+
+![Rotmg - WR Void led by BigDort (5:42)](<https://www.youtube.com/watch?v=uvYRJ30DF5c>)
+
+![Rotmg - Bad players get world record Oryx 3 (2:29.39)](<https://www.youtube.com/watch?v=rgSjmhpQGM8>)
+
+![Full Skip Void Run](<https://www.youtube.com/watch?v=axbRt3DQBeM>)
+
+![Oryx 3 - Gemsbok mini RotMG](<https://www.youtube.com/watch?v=fNIsiBib2jc>)
+
+![Oryx 3 - Beisa mini RotMG](<https://www.youtube.com/watch?v=eHdOlBJWA8Q>)
+
+![Oryx 3 - Leucoryx mini (with 3rd counter) RotMG](<https://www.youtube.com/watch?v=QiUTa-oDBxo>)
+
+![Oryx 3 - Dammah mini RotMG](<https://www.youtube.com/watch?v=-mdb-6HktkQ>)
+
+### Solo videos
+![out](<https://youtu.be/Psh3f2np4Ok?si=zOuCcC2gKdqe38fy&t=660>)
+
 ![RotMG - lvl 1 Kitsune Umi gearless consumableless solo](<https://www.youtube.com/watch?v=IGowzviaTUA>)
 
 ![RotMG Solo Plagued Nest WR (3:21)](<https://www.youtube.com/watch?v=mau4t3P7Hpw>)
@@ -14,7 +38,7 @@ The game will probably be high fantasy.
 
 ![RotMG - Murcian No Hit](<https://www.youtube.com/watch?v=-eOg3N7OKLY>)
 
-![my best t8 petless solo void run](<https://youtu.be/mJUmuELLeYc?si=IIJ28N9Xeh0lIWGJ&t=485>)
+![my best t8 petless solo void run](<https://youtu.be/mJUmuELLeYc&t=485>)
 
 # **Overview of [lore](<Lore.md>) and [lore-relevant gameplay things](<Gameplay.md>)**
 **<u>The lore is entirely shaped by the gameplay</u>**.
@@ -35,9 +59,9 @@ The game will probably be high fantasy.
 		- Hexagon will have height
 			- Under the hood the game is going to be 2d, but bitcraft's hexagons have height so why not. Also, RotMG is pretty flat which is kinda bland.
 	- The unsafe parts of the world/landscape/map changes every day (I'm not sure if this is feasible in spacetimedb)
-		- This should be doable via lazy evaluation. i.e. whenever a player enters a stale part of the world/landscape/map, it changes based on the last time it was updated.
+		- This should be doable via lazy evaluation. i.e. whenever a player enters a stale part of the world/landscape/map, it changes based on whether enough time has passed since the last time it was updated.
 #### **Lore and gameplay things Overview**
-#### **The world has bwhether enough time has passed since een destroyed**
+#### **The world has been destroyed**
 Gameplay things that this lore is built around:
 - [Safe hubs](<Overviews.md#^safe-hubs>)
 - [Unsafe world](<Overviews.md#^unsafe-world>)
@@ -88,6 +112,9 @@ When players first open up the game, they spawn into the world before it was des
 **==Players spawning in with end game gear will be the only hint that players get for how to build their characters==**.
 
 
+
+# Look
+![Frontier Wars: Online - Steam Next Fest Announcement Trailer #gamedev #mmorpg #gaming](<https://www.youtube.com/watch?v=KIOcdETv3rQ>)
 # Scope creep stuff
 There is an apocalypse epicentre that sends out magical pulses every day that warp the landscape. There are event bosses that spawn resources and alter the terrain.
 

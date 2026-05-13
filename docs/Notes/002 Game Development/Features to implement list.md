@@ -14,15 +14,18 @@ These are ordered in terms of of priority.
 		- [x] Enemy position sync
 		- [ ] Enemy bullet sync
 		- [ ] Player bullet sync
-- [ ] Enemy Bullets system
-	- These will be parametric bullets
-- [ ] Player bullets system
-	- These won't actually be bullets.
-		- Player clients will mostly have full authority over which enemies that the player is landing a hit on. Yes, I meant what I said. Player clients won't have any authority over the damage dealt, but they will have full authority over which enemies that the player has landed a hit on.
-	- You should sync firing angles.
-		- This is so that players can see where other players are shooting.
-		- This is also so that the elevated client can audit a player's firing angle against the enemies that the player has landed a hit on.
-			- Hacked clients will probably be able to reverse engineer the proper angles and send the correct firing angles to get past these audits. If this happens, you might as well disable this audit. It's fine though, since we're already implementing a forgiving aim assist.
+- [ ] Translation layer between SpacetimeDB and blastbullets2d
+	- [ ] Enemy Bullets system
+		- These will be parametric bullets
+		- Use the blastbullets2d plugin.
+			- Just make the bullets 2d sprites.
+	- [ ] Player bullets system
+		- These won't actually be bullets.
+			- Player clients will mostly have full authority over which enemies that the player is landing a hit on. Yes, I meant what I said. Player clients won't have any authority over the damage dealt, but they will have full authority over which enemies that the player has landed a hit on.
+		- You should sync firing angles.
+			- This is so that players can see where other players are shooting.
+			- This is also so that the elevated client can audit a player's firing angle against the enemies that the player has landed a hit on.
+				- Hacked clients will probably be able to reverse engineer the proper angles and send the correct firing angles to get past these audits. If this happens, you might as well disable this audit. It's fine though, since we're already implementing a forgiving aim assist.
 
 # **1. Elevated client, probabilistic anti-cheat, and multiplayer authority**
 - [ ] Handles enemy spawning.
@@ -46,10 +49,12 @@ There won't be any client-side anti cheat. The way anti-cheating will be handled
 	- Hacked clients will probably be able to reverse engineer the proper angles and send the correct firing angles to get past these audits. If this happens, you might as well disable this audit. It's fine though, since we're already implementing a forgiving aim assist.
 - [ ] Player clients tell the server where the player moved and stuff.
 	- If a player is alone and is in a dungeon or something (somewhere where no-clipping is important) then they will be audited and the elevated-client will calculate physics and stuff. Otherwise, **==the server will trust the player client==** since no clipping is kinda obvious and I expect no clippers to get reported.
-#### **1.2 (deferred) Transaction log audits**
-- [ ] The elevated client should be able to audit a player's transaction logs. Spacetimedb is able to keep a transaction log of every reducer call, so it should be possible to reconstruct and replay all player inputs as well as all bullet spawns to see if a player is cheating.
-	- Maybe you could vectorize this and turn it into a bunch of matrix operations and run it on the gpu you bought rather than your cpu? Do it in batches every month to make it economical?
-#### **1.3 Things that increase/decrease a player's cheater probability stat:**
+#### **1.2 Transaction(deferred) Cheat detectione elevated client should be able to audit a player's transaction logs. Spacetimedb keeps a transacis able to tion log of evey reducer call, so it should be possible to reconstruct and replay all player inputs as well as all bullet spawns to see if a player is cheating.
+	- Maybe you could vectorize this and turn it into a bunch of matrix operations and run it on a gpu rather than a cpu. theo it inyou bought  batches every month toyourmake it?economical.
+#### **1.3 Things that increase/decreas?
+- [ ] **==Rather than having the elevated client do the validations, you could have the player clients do the validation. As in, player clients also send whether they think other players were hit by a bullet.==**
+	- This has room for another exploit wherein players falsely report that another player was hit when they actually weren't.
+	- It'd be pretty weird for people to make hacked clients for this, though, since you'd need to get a bunch of non-hacking players to download your hacked client as well. Like, you'd need to get like 5 or so hacked clients to follow a player that they want banned and have the hacked clients report that the player they want banned should've been hit when the player actually wasn'te a player's cheater probability stat:**
 - Increase:
 	 - [ ] A player's total gold value has a spike increase.
 	 - [ ] A player has perfect accuracy when landing hits on enemies
@@ -113,7 +118,7 @@ I think I want the game to be purple.
 # **97. Spacetimedb stuff (deferred)**
 ## Sharding
 ![Rust-powered SpacetimeDB is 1000x Faster? Founder Explains](<https://youtu.be/qfKBv3A0CVs?si=la7f0RChUlYZTRJB&t=2002>)
-I don't know what sharding. The github repo for bitcraft is open source though (bitcraftpublic folder) so have a look in that.
+
 # **98. World (deferred)**
 - Biomes
 	- Ocean
@@ -127,7 +132,7 @@ I don't know what sharding. The github repo for bitcraft is open source though (
 - Character selection
 	- Player slots will be purchasable like in RotMG. Players will be able to have 2 by default.
 	- There will be a character creator thing (COMPLETELY SHELVED UNTIL WE HAVE A MINIMUM VIABLE PRODUCT).
-		- Just be lazy and encode a bunch of different nose/hair/eye/head/eyebrow/mouth/skull shapes continuously and let the player play around with the sliders. Make it too customizable.
+		- Just be lazy and encode a bunch of different nose/hair/eye/I don't know what sharding. The github repo for bitcraft is open source though (bitcraftpublic folder) so have a look in that.head/eyebrow/mouth/skull shapes continuously and let the player play around with the sliders. Make it too customizable.
 			- I feel like there should be a mathematical way to calculate the appropriate texture maps to allow players to colour their characters freely as well.
 
 # **99. Weapons animation (deferred)**
