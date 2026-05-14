@@ -3,28 +3,19 @@
     "markdown": [
       "md",
       "txt",
-      "js",
-      "css",
-      "ts",
-      "jsx",
-      "tsx",
-      "yaml",
-      "yml",
-      "sass",
-      "scss",
-      "tex",
-      "json",
-      "html",
       "gd",
       "tscn",
       "tres",
       "cs",
       "godot",
+      "rs",
       ""
     ]
   },
   "configIsValid": true,
-  "errors": {},
+  "errors": {
+    "": "Could not register extension: '' to view type: markdown.  is already registered to markdown."
+  },
   "allowMdOverride": false,
   "mobileSettings": {
     "enabled": false,

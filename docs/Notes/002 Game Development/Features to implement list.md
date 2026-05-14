@@ -28,8 +28,9 @@ These are ordered in terms of of priority.
 				- Hacked clients will probably be able to reverse engineer the proper angles and send the correct firing angles to get past these audits. If this happens, you might as well disable this audit. It's fine though, since we're already implementing a forgiving aim assist.
 
 # **1. Elevated client, probabilistic anti-cheat, and multiplayer authority**
+#### Elevated Client
 - [ ] Handles enemy spawning.
-- [ ] Simulates enemy pathing and sends snapshots to players clients for them to sync.
+- [x] Simulates enemy pathing and sends snapshots to players clients for them to sync.
 	- Enemy pathing is going to be deterministic, so player clients will also simulate enemy pathing locally. Enemies on player clients will snap to the snapshots that the elevated client sends out.
 	- Deterministic also means pseudo-random btw. Snapping to the snapshots is only there because different machines calculate the same calculation differently, which results in floating point drift and stuff.
 	- You could probably set the snapshot timer to something like one every 0.3 seconds or something.
@@ -37,18 +38,23 @@ These are ordered in terms of of priority.
 	- These will be batched to a larger extent than the calculations for players getting damaged. This is because the server doesn't need to tell the clients every little bit of damage that an enemy takes - if two bullets hit an enemy at the same time (or within like 0.1 seconds of each other) players won't realistically be able to tell if those calculations were separate or batched.
 - [ ] Calculations for players getting damaged
 	- These will be batched to a lesser extent than the calculations for enemies damaged. Again, the server doesn't need to tell the clients about every little bit of damage that a player takes - if two bullets hit a player at the same time (or within like 0.1 seconds of each other) players won't realistically be able to tell if those calculations were separate or batched.
-#### **1.1 (deferred) Probabilistic anti-cheat and multiplayer authority**
-There won't be any client-side anti cheat. The way anti-cheating will be handled is by simulating things in the elevated client. Each player will have a cheater probability stat thing that effects their upload tick rate thing (download tick rates stay the same). Players that have a high cheater probability stat thing will have their upload audit rate set higher, whereas players that have a low cheater probability stat thing will have their upload audit rate set lower. These words don't really make sense, but they will make more sense when I elaborate.
-- [ ] Each player has a cheater probability stat thing
-	- [ ] This cheater probability stat thing determines the player's audit rate.
-		- High cheater probability players will have a higher audit rate, whereas low cheater probability players will have a lower audit rate.
-- [ ] Player clients tell the server when the player was hit by a bullet.
-	- [ ] If a player is being audited, then the elevated client calculates whether the player was hit its nearby bullets. **==If the player isn't being audited, then the server trusts the player client==**.
+#### **1.1 (deferred) Anti-cheat and multiplayer authority**
+The way anti-cheating will be handled is by having clients validate each other. Clients will have a LOT of authority over the game. If the "clients validating each other" anti cheat thing slows down the clients, then we can implement probabilistic anti cheat where clients only validate a handful of players. The things that player clients have full authority over are:
+- [ ] Player clients tell the server when the player was hit by a bullet x.
+	- [ ] **==Player clients have full authority over whether or not they were hit by a bullet==**. Other player clients also simulate those collisions and are able to tell the server whether that player was hit by that bullet. This contributes to a cheater score.
+	- Since this game is PvE, cheaters don't need to be banned immediately.
+	- The server should be able to perform the same hit validation collisions from the transaction log, however, this should only be done when players appeal a death or appeal a ban.
+	- **==This model is susceptible to groups of players targeting a single player to get them banned. As in, if a group of players with hacked clients all target a single player and they all say that that player was hit by a bunch of bullets when in actuality that player wasn't, then the server won't be able to deal with that live. This is why players shouldn't be banned immediately==**.
+	- Any player who's above a certain cheater score gets audited (the server starts logging their actions in the transaction log) and if they're found to be cheating, then they're banned.
+		- If they're found to not be cheating, then all of the players who reported that that player was cheating loses some reputation score. 
 - [ ] Player clients tell the server which enemies that the player has landed a hit on.
-	- [ ] If a player is being audited, then the elevated client calculates whether the player landed hits on those enemies. **==If the player isn't being audited, then the server trusts the player client==**.
+	- [ ] **==Player clients have full authority over the enemies that they landed a hit on==**. They do not have authority on the damage dealt. Other players 
 	- Hacked clients will probably be able to reverse engineer the proper angles and send the correct firing angles to get past these audits. If this happens, you might as well disable this audit. It's fine though, since we're already implementing a forgiving aim assist.
 - [ ] Player clients tell the server where the player moved and stuff.
 	- If a player is alone and is in a dungeon or something (somewhere where no-clipping is important) then they will be audited and the elevated-client will calculate physics and stuff. Otherwise, **==the server will trust the player client==** since no clipping is kinda obvious and I expect no clippers to get reported.
+- [ ] (deferred) Each player has a cheater probability stat thing
+	- [ ] This cheater probability stat thing determines the player's audit rate.
+		- High cheater probability players will have a higher audit rate, whereas low cheater probability players will have a lower audit rate.
 #### **1.2 Transaction(deferred) Cheat detectione elevated client should be able to audit a player's transaction logs. Spacetimedb keeps a transacis able to tion log of evey reducer call, so it should be possible to reconstruct and replay all player inputs as well as all bullet spawns to see if a player is cheating.
 	- Maybe you could vectorize this and turn it into a bunch of matrix operations and run it on a gpu rather than a cpu. theo it inyou bought  batches every month toyourmake it?economical.
 #### **1.3 Things that increase/decreas?
