@@ -84,11 +84,3 @@ Each enemy script runs its own bullet simulation using BlastBullets2D plugin:
 - Player collision detected locally → apply damage to local player HP
 
 No server involvement. No sync. Fully self-contained per enemy script.
-
-## 6. Player taking damage (gap to close)
-
-Currently no reducer for a player being hit by an enemy bullet. Options:
-- `report_player_hit(damage: u32)` — any client can call on themselves; server updates PlayerData.hp (trusted, no validation yet)
-- Keep HP purely local until the player dies, then reconcile
-
-Decide and implement alongside the bullet simulation work.
