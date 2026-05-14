@@ -13,30 +13,15 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "server/spacetimedb/src/main/reducers.rs",
+                "file": "server/Teo-Notes/next-steps.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "reducers"
-            }
-          },
-          {
-            "id": "f7aef3a82d46a5e6",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Notes/002 Game Development/Features to implement list.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Features to implement list"
+              "title": "next-steps"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -193,24 +178,39 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "system3-relay:Relay": false
     }
   },
-  "active": "f7aef3a82d46a5e6",
+  "active": "702b0ddb37d08ea9",
   "lastOpenFiles": [
+    "server/spacetimedb/target/debug/build/zmij-24c1cd7e16561251/build_script_build.pdb",
+    "server/spacetimedb/target/debug/build/zerocopy-850ff3ca60941d42/build_script_build-850ff3ca60941d42.exe",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcDciZ8R/linker-arguments",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcDciZ8R",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.cnh06siv6w8jvgve116zcuezd.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.f63b0a1163bcdff3-cgu.02.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.f63b0a1163bcdff3-cgu.00.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.f63b0a1163bcdff3-cgu.09.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.f63b0a1163bcdff3-cgu.01.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.f63b0a1163bcdff3-cgu.04.rcgu.o",
+    "hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md",
+    "hexagon-tiling-of-an-hexagonal-grid/README.md",
+    "hexmod-representation/README.md",
+    "Untitled.md",
+    "server/Teo-Notes/system-overview.md",
+    "server/Teo-Notes/system-overview 1.md",
+    "server/Teo-Notes/next-steps.md",
+    "server/Teo-Notes/next-steps comments.md",
+    "next-steps.md",
+    "system-overview.md",
     "docs/Notes/002 Game Development/Features to implement/Foundations.md",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/Pasted image 20260426070151.png",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/Pasted image 20260425115208.png",
     "docs/Notes/002 Game Development/Features to implement list.md",
+    "server/CLAUDE.md",
     "docs/Notes/002 Game Development/Features to implement list-Clintons-Framework-16.md",
-    "server/spacetimedb/src/main/reducers.rs",
-    "server/spacetimedb/src/main/methods.rs",
-    "server/spacetimedb/src/lib.rs",
-    "g/project.godot3318433.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/StdbModule.wasm.tmpd441104",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/wasi_bundled_assemblies-3c85e787.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_puEYdevsexGsBupHqmwHqh3_-de45b0a3.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_lI_cvUbWBQbEeB6IFBWyyZRH-b3829483.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_ptnAiRLZ_wWY_o32px33vhLD-d8e96f7a.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_T_eRfTC_bvDgC6vu_mkidq0m-9d36dc7e.o.tmp",
     "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
     "Notes/002 Game Development/Features to implement list.md",
     "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
@@ -219,15 +219,9 @@
     "Notes/001 Game Code/001 Opening the game 1.md",
     "Notes/001 Game Code/002 After joining the game.md",
     "Notes/000 Gameplay Elements, Genre, Lore, etc/Monetisation/Consumables.md",
-    "Untitled.md",
     "Notes/002 Game Development/Features to implement list-GCW10HP236-0219.md",
     "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-6.md",
     "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-5.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-4.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-3.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-2.md",
-    "Notes/001 Game Code/000a Player sync.md",
-    "Notes/001 Game Code/001 (TO BE OVERHAULED) Opening the game.md",
     "g/VS-Like/Assets/skeletons/skeleton_texture.png",
     "g/VS-Like/Assets/nature_decorations/hexagons_medieval.png",
     "g/VS-Like/Assets/hexagon_tiles/hexagons_medieval.png",
@@ -235,14 +229,6 @@
     "g/VS-Like/Assets/characters/knight_texture.png",
     "g/VS-Like/Assets/characters/mage_texture.png",
     "g/VS-Like/Assets/characters/ranger_texture.png",
-    "g/VS-Like/Assets/characters/rogue_texture.png",
-    "g/VS-Like/Assets/buildings/hexagons_medieval.png",
-    "g/VS-Like/Assets/accesiories/barbarian_texture.png",
-    "Notes/002 Game Development/Notnilc/Untitled.md",
-    "Notes/002 Game Development/Asemif/Untitled.md",
-    "Notes/002 Game Development/Overhaul list.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Paladin question mark.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Tank/00 Tank classes & notes.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Tank/High defense tank.md"
+    "g/VS-Like/Assets/characters/rogue_texture.png"
   ]
 }

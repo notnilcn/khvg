@@ -3,39 +3,30 @@ use std::time::Duration;
 use super::tables::*;
 use super::methods::*;
 
+// ── Lifecycle ────────────────────────────────────────────────────────────────
+
 #[spacetimedb::reducer(client_connected)]
 pub fn client_connected(ctx: &ReducerContext) {
-    if ctx.db.player_account().player_id().find(ctx.sender()).is_none() {
-        ctx.db.player_account().insert(PlayerAccount {
+    if ctx.db.player().player_id().find(ctx.sender()).is_none() {
+        ctx.db.player().insert(Player {
             player_id: ctx.sender(),
             username: String::new(),
             is_admin: false,
-            created_at: ctx.timestamp,
         });
-
-        ctx.db.character_data().insert(CharacterData {
+        ctx.db.player_data().insert(PlayerData {
             player_id: ctx.sender(),
             level: 1,
             xp: 0,
+            hp: BASE_MAX_HP as u32,
             max_hp: BASE_MAX_HP as u32,
-            current_hp: BASE_MAX_HP as u32,
-            stats: starting_stats(),
         });
-
         ctx.db.player_inventory().insert(PlayerInventory {
             player_id: ctx.sender(),
-            equipped_weapon: None,
-            equipped_ability: None,
-            equipped_armor: None,
-            equipped_accessories: Vec::new(),
-            backpack_slots: Vec::new(),
-            consumable_slots: Vec::new(),
+            slots: Vec::new(),
         });
-
+        recompute_stats(ctx, ctx.sender());
         log::info!("New player: {:?}", ctx.sender());
-    } 
-    
-    else {
+    } else {
         log::info!("Returning player: {:?}", ctx.sender());
     }
 
@@ -43,10 +34,7 @@ pub fn client_connected(ctx: &ReducerContext) {
         player_id: ctx.sender(),
         x: 0.0,
         y: 0.0,
-        move_x: 0,
-        move_y: 0,
-        speed: 0,
-        event_time: ctx.timestamp,
+        rotation: 0.0,
         chunk_x: 0,
         chunk_y: 0,
     });
@@ -55,57 +43,32 @@ pub fn client_connected(ctx: &ReducerContext) {
 #[spacetimedb::reducer(client_disconnected)]
 pub fn client_disconnected(ctx: &ReducerContext) {
     ctx.db.player_position().player_id().delete(ctx.sender());
-    ctx.db.elevated_client().identity().delete(ctx.sender());
     log::info!("Player disconnected: {:?}", ctx.sender());
 }
 
-#[spacetimedb::reducer]
-pub fn claim_elevated(ctx: &ReducerContext) -> Result<(), String> {
-    if let Some(existing) = ctx.db.elevated_client().identity().find(ctx.sender()) {
-        ctx.db.elevated_client().identity().update(ElevatedClient { claimed_at: ctx.timestamp, ..existing });
-        if let Some(acc) = ctx.db.player_account().player_id().find(ctx.sender()) {
-            ctx.db.player_account().player_id().update(PlayerAccount { is_admin: true, ..acc });
-        }
-        log::info!("Elevated seat refreshed by {:?}", ctx.sender());
-        return Ok(());
-    }
-
-    for _ in ctx.db.elevated_client().iter() {
-        return Err("Elevated seat already claimed by a different identity.".to_string());
-    }
-
-    ctx.db.elevated_client().insert(ElevatedClient { identity: ctx.sender(), claimed_at: ctx.timestamp });
-    if let Some(acc) = ctx.db.player_account().player_id().find(ctx.sender()) {
-        ctx.db.player_account().player_id().update(PlayerAccount { is_admin: true, ..acc });
-    }
-    
-    log::info!("Elevated seat claimed by {:?}", ctx.sender());
-    Ok(())
-}
-
-#[spacetimedb::reducer]
-pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, move_x: i8, move_y: i8, speed: u16) -> Result<(), String> {
-    let pos = ctx.db.player_position().player_id().find(ctx.sender())
-        .ok_or_else(|| format!("Position not found for {:?}", ctx.sender()))?;
-
-    let chunk_x = (x / CHUNK_SIZE).floor() as i32;
-    let chunk_y = (y / CHUNK_SIZE).floor() as i32;
-
-    ctx.db.player_position().player_id().update(PlayerPosition {
-        x, y, move_x, move_y, speed, event_time: ctx.timestamp, chunk_x, chunk_y,
-        ..pos
-    });
-    Ok(())
-}
+// ── Player reducers ──────────────────────────────────────────────────────────
 
 #[spacetimedb::reducer]
 pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String> {
     if username.trim().is_empty() || username.len() > 20 {
         return Err("Username must be 1–20 non-whitespace characters.".to_string());
     }
-    let account = ctx.db.player_account().player_id().find(ctx.sender())
-        .ok_or("Account not found.")?;
-    ctx.db.player_account().player_id().update(PlayerAccount { username, ..account });
+    let player = ctx.db.player().player_id().find(ctx.sender())
+        .ok_or("Player not found.")?;
+    ctx.db.player().player_id().update(Player { username, ..player });
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> Result<(), String> {
+    let pos = ctx.db.player_position().player_id().find(ctx.sender())
+        .ok_or_else(|| format!("Position not found for {:?}", ctx.sender()))?;
+    let chunk_x = (x / CHUNK_SIZE).floor() as i32;
+    let chunk_y = (y / CHUNK_SIZE).floor() as i32;
+    ctx.db.player_position().player_id().update(PlayerPosition {
+        x, y, rotation, chunk_x, chunk_y,
+        ..pos
+    });
     Ok(())
 }
 
@@ -114,136 +77,173 @@ pub fn gain_xp(ctx: &ReducerContext, amount: u32) -> Result<(), String> {
     const MAX_XP_PER_GAIN: u32 = 500;
     if amount == 0 { return Ok(()); }
     if amount > MAX_XP_PER_GAIN {
-        return Err(format!("XP gain {} exceeds the per-call maximum of {}.", amount, MAX_XP_PER_GAIN));
+        return Err(format!("XP gain {} exceeds per-call maximum of {}.", amount, MAX_XP_PER_GAIN));
     }
-    let data = ctx.db.character_data().player_id().find(ctx.sender())
-        .ok_or("Character not found.")?;
-
+    let data = ctx.db.player_data().player_id().find(ctx.sender())
+        .ok_or("Player data not found.")?;
     let old_level = data.level;
     let new_xp = data.xp + amount;
     let new_level = compute_level(new_xp);
     let new_max_hp = (BASE_MAX_HP + (new_level as i32 - 1) * HP_PER_LEVEL) as u32;
-    let heal_amt = (new_level - old_level) * HP_PER_LEVEL as u32;
-    let new_cur_hp = (data.current_hp + heal_amt).min(new_max_hp);
-
-    ctx.db.character_data().player_id().update(CharacterData {
-        level: new_level, xp: new_xp, max_hp: new_max_hp, current_hp: new_cur_hp,
+    let heal = (new_level - old_level) * HP_PER_LEVEL as u32;
+    let new_hp = (data.hp + heal).min(new_max_hp);
+    ctx.db.player_data().player_id().update(PlayerData {
+        level: new_level, xp: new_xp, hp: new_hp, max_hp: new_max_hp,
         ..data
     });
-    server_collect_stats(ctx, ctx.sender());
+    if new_level != old_level {
+        recompute_stats(ctx, ctx.sender());
+    }
     Ok(())
 }
 
 #[spacetimedb::reducer]
-pub fn change_stats(ctx: &ReducerContext, target_username: String, new_stats: RpgStats) -> Result<(), String> {
-    let caller = ctx.db.player_account().player_id().find(ctx.sender())
-        .ok_or("Account not found.")?;
-    if !caller.is_admin {
-        return Err("Only admins can change stats.".to_string());
-    }
-
-    let target_lower = target_username.to_lowercase();
-    let mut target_id: Option<Identity> = None;
-    for acc in ctx.db.player_account().iter() {
-        let id_str = acc.player_id.to_hex().to_string().to_lowercase();
-        if acc.username.to_lowercase() == target_lower || id_str == target_lower || id_str.starts_with(&target_lower) {
-            target_id = Some(acc.player_id);
-            break;
-        }
-    }
-    let target_id = target_id.ok_or_else(|| format!("Player '{}' not found.", target_username))?;
-
-    let data = ctx.db.character_data().player_id().find(target_id)
-        .ok_or("Character data not found.")?;
-    ctx.db.character_data().player_id().update(CharacterData { stats: new_stats, ..data });
-    Ok(())
-}
-
-#[spacetimedb::reducer]
-pub fn update_inventory(ctx: &ReducerContext, equipped_weapon: Option<String>, equipped_ability: Option<String>, equipped_armor: Option<String>, equipped_accessories: Vec<String>, backpack_slots: Vec<String>, consumable_slots: Vec<String>) -> Result<(), String> {
+pub fn update_inventory(ctx: &ReducerContext, slots: Vec<InventorySlot>) -> Result<(), String> {
+    let backpack_count = slots.iter().filter(|s| matches!(s.kind, SlotKind::Backpack)).count();
+    let accessory_count = slots.iter().filter(|s| matches!(s.kind, SlotKind::Accessory)).count();
+    let consumable_count = slots.iter().filter(|s| matches!(s.kind, SlotKind::Consumable)).count();
+    if backpack_count > 12 { return Err("Too many backpack slots.".to_string()); }
+    if accessory_count > 3 { return Err("Too many accessory slots.".to_string()); }
+    if consumable_count > 8 { return Err("Too many consumable slots.".to_string()); }
     let inv = ctx.db.player_inventory().player_id().find(ctx.sender())
         .ok_or("Inventory not found.")?;
-
-    if equipped_accessories.len() > 3 { return Err("Too many accessories.".to_string()); }
-    if backpack_slots.len() > 12 { return Err("Too many backpack slots.".to_string()); }
-    if consumable_slots.len() > 8 { return Err("Too many consumable slots.".to_string()); }
-
-    ctx.db.player_inventory().player_id().update(PlayerInventory {
-        equipped_weapon, equipped_ability, equipped_armor,
-        equipped_accessories, backpack_slots, consumable_slots,
-        ..inv
-    });
-    server_collect_stats(ctx, ctx.sender());
+    ctx.db.player_inventory().player_id().update(PlayerInventory { slots, ..inv });
+    recompute_stats(ctx, ctx.sender());
     Ok(())
 }
 
-#[spacetimedb::reducer]
-pub fn spawn_enemy(ctx: &ReducerContext, enemy_id: u64, x: f32, y: f32, res_path: String, is_elite: bool, immortal: bool, hp: u32, bullet_pattern_type: u8) -> Result<(), String> {
-    if !can_control_enemies(ctx) {
-        return Err("Unauthorized: only the elevated client may spawn enemies.".to_string());
-    }
-    if ctx.db.enemy_state().enemy_id().find(&enemy_id).is_some() {
-        return Err(format!("Enemy {} already exists", enemy_id));
-    }
-    ctx.db.enemy_state().insert(EnemyState {
-        enemy_id, x, y, move_x: 0, move_y: 0, speed: 0,
-        event_time: ctx.timestamp, res_path, is_elite, immortal, hp,
-        target_id: None, bullet_pattern_type,
-    });
-    Ok(())
-}
+// ── Enemy hit reporting ──────────────────────────────────────────────────────
 
+// Client calls this when their weapon hits an enemy. Server computes damage from
+// the caller's stats + equipped weapon, applies it to the enemy, and handles death.
 #[spacetimedb::reducer]
-pub fn update_enemy_snapshots(ctx: &ReducerContext, snapshots: Vec<EnemySnapshot>) -> Result<(), String> {
-    if !can_control_enemies(ctx) {
-        return Err("Unauthorized: only the elevated client may update enemy snapshots.".to_string());
-    }
-    for snap in snapshots {
-        let enemy = match ctx.db.enemy_state().enemy_id().find(&snap.enemy_id) {
-            Some(e) => e,
-            None => continue,
-        };
-        ctx.db.enemy_state().enemy_id().update(EnemyState {
-            x: snap.x, y: snap.y, move_x: snap.move_x, move_y: snap.move_y,
-            speed: snap.speed, event_time: ctx.timestamp,
-            ..enemy
-        });
-    }
-    Ok(())
-}
-
-#[spacetimedb::reducer]
-pub fn update_enemy_target(ctx: &ReducerContext, enemy_id: u64, target_id: String) -> Result<(), String> {
-    if !can_control_enemies(ctx) {
-        return Err("Unauthorized: only the elevated client may update enemy targets.".to_string());
-    }
-    let enemy = match ctx.db.enemy_state().enemy_id().find(&enemy_id) {
+pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
+    let enemy = match ctx.db.enemy().enemy_id().find(&enemy_id) {
         Some(e) => e,
         None => return Ok(()),
     };
-    ctx.db.enemy_state().enemy_id().update(EnemyState {
-        target_id: Some(target_id), event_time: ctx.timestamp,
-        ..enemy
+    if enemy.immortal { return Ok(()); }
+
+    let damage = compute_player_damage(ctx, ctx.sender());
+    let new_hp = enemy.hp.saturating_sub(damage);
+
+    if new_hp == 0 {
+        let template = ctx.db.enemy_template().template_id().find(&enemy.template_id);
+        let xp_reward = template.as_ref().map(|t| t.max_hp / 10).unwrap_or(10);
+        ctx.db.loot_drop().insert(LootDrop {
+            drop_id: 0,
+            item_id: String::new(),
+            x: enemy.spawn_x,
+            y: enemy.spawn_y,
+            chunk_x: enemy.chunk_x,
+            chunk_y: enemy.chunk_y,
+            expires_at: ctx.timestamp + Duration::from_secs(60),
+        });
+        ctx.db.enemy().enemy_id().delete(&enemy_id);
+        internal_gain_xp(ctx, ctx.sender(), xp_reward);
+        return Ok(());
+    }
+
+    let new_phase = match ctx.db.enemy_template().template_id().find(&enemy.template_id) {
+        Some(template) => compute_phase(new_hp, template.max_hp, &template.phases),
+        None => enemy.phase,
+    };
+
+    ctx.db.enemy().enemy_id().update(Enemy { hp: new_hp, phase: new_phase, ..enemy });
+    Ok(())
+}
+
+// ── Loot pickup ──────────────────────────────────────────────────────────────
+
+#[spacetimedb::reducer]
+pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
+    let drop = ctx.db.loot_drop().drop_id().find(&drop_id)
+        .ok_or("Drop not found.")?;
+    if drop.item_id.is_empty() { return Ok(()); }
+    let inv = ctx.db.player_inventory().player_id().find(ctx.sender())
+        .ok_or("Inventory not found.")?;
+    let backpack_count = inv.slots.iter().filter(|s| matches!(s.kind, SlotKind::Backpack)).count();
+    if backpack_count >= 12 { return Err("Backpack full.".to_string()); }
+    let next_index = inv.slots.iter()
+        .filter(|s| matches!(s.kind, SlotKind::Backpack))
+        .map(|s| s.index)
+        .max()
+        .map(|i| i + 1)
+        .unwrap_or(0);
+    let mut slots = inv.slots.clone();
+    slots.push(InventorySlot { kind: SlotKind::Backpack, index: next_index, item_id: drop.item_id });
+    ctx.db.player_inventory().player_id().update(PlayerInventory { slots, ..inv });
+    ctx.db.loot_drop().drop_id().delete(&drop_id);
+    Ok(())
+}
+
+// ── Admin reducers ───────────────────────────────────────────────────────────
+
+// Bootstrap: caller becomes admin only if no admins exist yet.
+// Safe to leave in — once any admin exists this is a no-op for everyone else.
+#[spacetimedb::reducer]
+pub fn make_me_admin(ctx: &ReducerContext) -> Result<(), String> {
+    let any_admin = ctx.db.player().iter().any(|p| p.is_admin);
+    if any_admin {
+        return Err("An admin already exists.".to_string());
+    }
+    let player = ctx.db.player().player_id().find(ctx.sender())
+        .ok_or("You must connect first so a Player row exists.")?;
+    ctx.db.player().player_id().update(Player { is_admin: true, ..player });
+    log::info!("make_me_admin: {:?} is now admin.", ctx.sender());
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn change_stats(ctx: &ReducerContext, target_username: String, strength: i32, wisdom: i32, dexterity: i32, defense: i32, vitality: i32, speed: i32) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    let target_id = find_player_by_username(ctx, &target_username)
+        .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
+    let stats = ctx.db.player_stats().player_id().find(target_id)
+        .ok_or("Stats not found.")?;
+    ctx.db.player_stats().player_id().update(PlayerStats {
+        strength, wisdom, dexterity, defense, vitality, speed, ..stats
     });
     Ok(())
 }
 
 #[spacetimedb::reducer]
-pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
-    if !can_control_enemies(ctx) {
-        return Err("Unauthorized: only the elevated client may despawn enemies.".to_string());
-    }
-    ctx.db.enemy_state().enemy_id().delete(&enemy_id);
+pub fn give_item(ctx: &ReducerContext, target_username: String, item_id: String) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    let target_id = find_player_by_username(ctx, &target_username)
+        .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
+    let inv = ctx.db.player_inventory().player_id().find(target_id)
+        .ok_or("Inventory not found.")?;
+    let next_index = inv.slots.iter()
+        .filter(|s| matches!(s.kind, SlotKind::Backpack))
+        .map(|s| s.index)
+        .max()
+        .map(|i| i + 1)
+        .unwrap_or(0);
+    let mut slots = inv.slots.clone();
+    slots.push(InventorySlot { kind: SlotKind::Backpack, index: next_index, item_id });
+    ctx.db.player_inventory().player_id().update(PlayerInventory { slots, ..inv });
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn remove_item(ctx: &ReducerContext, target_username: String, item_id: String) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    let target_id = find_player_by_username(ctx, &target_username)
+        .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
+    let inv = ctx.db.player_inventory().player_id().find(target_id)
+        .ok_or("Inventory not found.")?;
+    let slots: Vec<InventorySlot> = inv.slots.iter()
+        .filter(|s| s.item_id != item_id)
+        .cloned()
+        .collect();
+    ctx.db.player_inventory().player_id().update(PlayerInventory { slots, ..inv });
     Ok(())
 }
 
 #[spacetimedb::reducer]
 pub fn upsert_item_stats(ctx: &ReducerContext, stats: ItemStats) -> Result<(), String> {
-    let caller = ctx.db.player_account().player_id().find(ctx.sender())
-        .ok_or("Account not found.")?;
-    if !caller.is_admin {
-        return Err("Only admins can modify item stats.".to_string());
-    }
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     if ctx.db.item_stats().item_id().find(&stats.item_id).is_some() {
         ctx.db.item_stats().item_id().update(stats);
     } else {
@@ -253,101 +253,180 @@ pub fn upsert_item_stats(ctx: &ReducerContext, stats: ItemStats) -> Result<(), S
 }
 
 #[spacetimedb::reducer]
-pub fn give_weapon(ctx: &ReducerContext, target_username: String, item_res_path: String) -> Result<(), String> {
-    let caller = ctx.db.player_account().player_id().find(ctx.sender())
-        .ok_or("Account not found.")?;
-    if !caller.is_admin {
-        return Err("Only admins can give weapons.".to_string());
+pub fn upsert_enemy_template(ctx: &ReducerContext, template: EnemyTemplate) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if ctx.db.enemy_template().template_id().find(&template.template_id).is_some() {
+        ctx.db.enemy_template().template_id().update(template);
+    } else {
+        ctx.db.enemy_template().insert(template);
     }
-
-    let mut found_inv: Option<PlayerInventory> = None;
-    for account in ctx.db.player_account().iter() {
-        if account.username.to_lowercase() == target_username.to_lowercase() {
-            found_inv = ctx.db.player_inventory().player_id().find(account.player_id);
-            break;
-        }
-    }
-    let inv = found_inv.ok_or_else(|| format!("Player '{}' not found.", target_username))?;
-
-    let mut backpack = inv.backpack_slots.clone();
-    backpack.push(item_res_path);
-    ctx.db.player_inventory().player_id().update(PlayerInventory { backpack_slots: backpack, ..inv });
     Ok(())
 }
 
 #[spacetimedb::reducer]
-pub fn remove_weapon(ctx: &ReducerContext, target_username: String, item_res_path: String) -> Result<(), String> {
-    let caller = ctx.db.player_account().player_id().find(ctx.sender())
-        .ok_or("Account not found.")?;
-    if !caller.is_admin {
-        return Err("Only admins can remove weapons.".to_string());
-    }
-
-    let mut found_inv: Option<PlayerInventory> = None;
-    for account in ctx.db.player_account().iter() {
-        if account.username.to_lowercase() == target_username.to_lowercase() {
-            found_inv = ctx.db.player_inventory().player_id().find(account.player_id);
-            break;
-        }
-    }
-    let inv = found_inv.ok_or_else(|| format!("Player '{}' not found.", target_username))?;
-
-    let mut accessories = inv.equipped_accessories.clone();
-    accessories.retain(|s| s != &item_res_path);
-    let mut backpack = inv.backpack_slots.clone();
-    backpack.retain(|s| s != &item_res_path);
-    let mut consumables = inv.consumable_slots.clone();
-    consumables.retain(|s| s != &item_res_path);
-
-    ctx.db.player_inventory().player_id().update(PlayerInventory {
-        equipped_weapon: if inv.equipped_weapon.as_deref() == Some(&item_res_path) { None } else { inv.equipped_weapon.clone() },
-        equipped_ability: if inv.equipped_ability.as_deref() == Some(&item_res_path) { None } else { inv.equipped_ability.clone() },
-        equipped_armor: if inv.equipped_armor.as_deref() == Some(&item_res_path) { None } else { inv.equipped_armor.clone() },
-        equipped_accessories: accessories,
-        backpack_slots: backpack,
-        consumable_slots: consumables,
-        ..inv
+pub fn spawn_enemy(ctx: &ReducerContext, template_id: String, res_path: String, x: f32, y: f32, is_elite: bool, immortal: bool) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    let template = ctx.db.enemy_template().template_id().find(&template_id)
+        .ok_or_else(|| format!("Template '{}' not found.", template_id))?;
+    let chunk_x = (x / CHUNK_SIZE).floor() as i32;
+    let chunk_y = (y / CHUNK_SIZE).floor() as i32;
+    ctx.db.enemy().insert(Enemy {
+        enemy_id: 0,
+        template_id,
+        res_path,
+        spawn_x: x,
+        spawn_y: y,
+        spawn_time: ctx.timestamp,
+        hp: template.max_hp,
+        phase: 0,
+        is_elite,
+        immortal,
+        chunk_x,
+        chunk_y,
     });
     Ok(())
 }
 
 #[spacetimedb::reducer]
-pub fn fire_bullet(ctx: &ReducerContext, slot_id: u16, pattern_type: u8, origin_x: f32, origin_y: f32, target_x: f32, target_y: f32, lifetime_secs: f32) -> Result<(), String> {
-    if !can_control_enemies(ctx) {
-        return Err("Unauthorized: only the elevated client may fire bullets.".to_string());
+pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    ctx.db.enemy().enemy_id().delete(&enemy_id);
+    Ok(())
+}
+
+// ── Hex building grid ────────────────────────────────────────────────────────
+
+// Pre-populates every BuildingTile row for the map. Admin-only; call once after deploy.
+// hexRadius: chunk radius in small hexes (1–10)
+// chunkCols: rhombus width in chunks (1–200)
+// chunkRows: rhombus height in chunks (1–200)
+#[spacetimedb::reducer]
+pub fn generate_map(ctx: &ReducerContext, hex_radius: i32, chunk_cols: i32, chunk_rows: i32) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if !(1..=10).contains(&hex_radius)  { return Err("hex_radius must be 1–10.".to_string()); }
+    if !(1..=200).contains(&chunk_cols) { return Err("chunk_cols must be 1–200.".to_string()); }
+    if !(1..=200).contains(&chunk_rows) { return Err("chunk_rows must be 1–200.".to_string()); }
+
+    let area  = hex_area(hex_radius);
+    let shift = hex_shift(hex_radius);
+
+    for cr in 0..chunk_rows {
+        for cq in 0..chunk_cols {
+            let cidx = flat_chunk_index(cq, cr, chunk_cols);
+            let (cx, cz) = chunk_center_hex(cq, cr, hex_radius);
+            for m in 0..area {
+                let (rx, rz) = inv_hexmod(m, hex_radius, shift);
+                ctx.db.building_tile().insert(BuildingTile {
+                    tile_id: 0,
+                    hex_q: cx + rx,
+                    hex_r: cz + rz,
+                    chunk_q: cq,
+                    chunk_r: cr,
+                    local_index: m,
+                    chunk_index: cidx,
+                    building_type: String::new(),
+                    owner_id: None,
+                });
+            }
+        }
     }
-    let row = BulletPattern {
-        slot_id, pattern_type, origin_x, origin_y, target_x, target_y,
-        spawn_time: ctx.timestamp,
-        despawn_time: ctx.timestamp + Duration::from_secs_f32(lifetime_secs),
+    log::info!("generate_map: {} tiles inserted ({} chunks, area {})", chunk_cols * chunk_rows * area, chunk_cols * chunk_rows, area);
+    Ok(())
+}
+
+// Place a building on an empty hex tile.
+#[spacetimedb::reducer]
+pub fn place_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32, building_type: String) -> Result<(), String> {
+    if building_type.is_empty() { return Err("building_type cannot be empty.".to_string()); }
+
+    let tile = ctx.db.building_tile().hex_q().filter(&hex_q)
+        .find(|t| t.hex_r == hex_r)
+        .ok_or("Tile not found — has generate_map been called?")?;
+
+    if !tile.building_type.is_empty() {
+        return Err("Tile already occupied.".to_string());
+    }
+
+    ctx.db.building_tile().tile_id().update(BuildingTile {
+        building_type,
+        owner_id: Some(ctx.sender()),
+        ..tile
+    });
+    Ok(())
+}
+
+// Remove a building from a tile. Caller must be the owner or an admin.
+#[spacetimedb::reducer]
+pub fn remove_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32) -> Result<(), String> {
+    let tile = ctx.db.building_tile().hex_q().filter(&hex_q)
+        .find(|t| t.hex_r == hex_r)
+        .ok_or("Tile not found.")?;
+
+    if tile.building_type.is_empty() { return Ok(()); }
+
+    if tile.owner_id != Some(ctx.sender()) && !is_admin(ctx) {
+        return Err("Not the owner.".to_string());
+    }
+
+    ctx.db.building_tile().tile_id().update(BuildingTile {
+        building_type: String::new(),
+        owner_id: None,
+        ..tile
+    });
+    Ok(())
+}
+
+// ── Internal helpers ─────────────────────────────────────────────────────────
+
+fn find_player_by_username(ctx: &ReducerContext, username: &str) -> Option<Identity> {
+    let lower = username.to_lowercase();
+    for p in ctx.db.player().iter() {
+        if p.username.to_lowercase() == lower {
+            return Some(p.player_id);
+        }
+    }
+    None
+}
+
+fn compute_player_damage(ctx: &ReducerContext, player_id: Identity) -> u32 {
+    let stats = match ctx.db.player_stats().player_id().find(player_id) {
+        Some(s) => s,
+        None => return 1,
     };
-    if ctx.db.bullet_pattern().slot_id().find(&slot_id).is_some() {
-        ctx.db.bullet_pattern().slot_id().update(row);
-    } else {
-        ctx.db.bullet_pattern().insert(row);
+    let inv = match ctx.db.player_inventory().player_id().find(player_id) {
+        Some(i) => i,
+        None => return 1,
+    };
+    let weapon_slot = inv.slots.iter().find(|s| matches!(s.kind, SlotKind::Weapon));
+    let item = weapon_slot.and_then(|s| ctx.db.item_stats().item_id().find(&s.item_id));
+    match item {
+        Some(i) => {
+            let dmg = i.base_damage as f32
+                + (stats.strength * i.str_damage_add) as f32
+                + (stats.wisdom   * i.wis_damage_add) as f32
+                + (stats.dexterity * i.dex_damage_add) as f32;
+            dmg.max(1.0) as u32
+        }
+        None => 1,
     }
-    Ok(())
 }
 
-#[spacetimedb::reducer]
-pub fn despawn_bullet(ctx: &ReducerContext, slot_id: u16) -> Result<(), String> {
-    if !can_control_enemies(ctx) {
-        return Err("Unauthorized: only the elevated client may despawn bullets.".to_string());
-    }
-    ctx.db.bullet_pattern().slot_id().delete(&slot_id);
-    Ok(())
-}
-
-#[spacetimedb::reducer]
-pub fn damage_player(ctx: &ReducerContext, player_id: Identity, damage: i32) -> Result<(), String> {
-    if !can_control_enemies(ctx) {
-        return Err("Unauthorized: only the elevated client may deal damage.".to_string());
-    }
-    let data = match ctx.db.character_data().player_id().find(player_id) {
+fn internal_gain_xp(ctx: &ReducerContext, player_id: Identity, amount: u32) {
+    let data = match ctx.db.player_data().player_id().find(player_id) {
         Some(d) => d,
-        None => return Ok(()),
+        None => return,
     };
-    let new_hp = (data.current_hp as i32 - damage).max(0) as u32;
-    ctx.db.character_data().player_id().update(CharacterData { current_hp: new_hp, ..data });
-    Ok(())
+    let old_level = data.level;
+    let new_xp = data.xp + amount;
+    let new_level = compute_level(new_xp);
+    let new_max_hp = (BASE_MAX_HP + (new_level as i32 - 1) * HP_PER_LEVEL) as u32;
+    let heal = (new_level - old_level) * HP_PER_LEVEL as u32;
+    let new_hp = (data.hp + heal).min(new_max_hp);
+    ctx.db.player_data().player_id().update(PlayerData {
+        level: new_level, xp: new_xp, hp: new_hp, max_hp: new_max_hp,
+        ..data
+    });
+    if new_level != old_level {
+        recompute_stats(ctx, player_id);
+    }
 }
