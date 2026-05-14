@@ -8,11 +8,12 @@
         "type": "tabs",
         "children": [
           {
-            "id": "5903520f8134e011",
+            "id": "6f416f91b97b6508",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
+<<<<<<< HEAD
                 "file": "Notes/003 Game Development/Features to implement/Foundations.md",
                 "mode": "source",
                 "source": false
@@ -28,15 +29,78 @@
               "type": "markdown",
               "state": {
                 "file": "Notes/003 Game Development/Features to implement list.md",
+=======
+                "file": "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
+>>>>>>> origin/Rust-Migration
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Features to implement list"
+              "title": "000 Autoloads, Spacetimedb.cs, and the elevated client"
+            }
+          },
+          {
+            "id": "b6b70359f2997d50",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Overviews"
+            }
+          },
+          {
+            "id": "a82b7fd6023c4f9c",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "g/VS-Like/Game/World/Spawner.cs",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Spawner"
+            }
+          },
+          {
+            "id": "3b86ca1bce45de49",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "g/VS-Like/Game/Singleton/Global.cs",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Global"
+            }
+          },
+          {
+            "id": "c7a6cdc6336e42b3",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "bmmo/spacetimedb/Lib.cs",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Lib"
             }
           }
         ],
+<<<<<<< HEAD
         "currentTab": 1
+=======
+        "currentTab": 4
+>>>>>>> origin/Rust-Migration
       }
     ],
     "direction": "vertical"
@@ -68,7 +132,11 @@
             "state": {
               "type": "search",
               "state": {
+<<<<<<< HEAD
                 "query": "pdf",
+=======
+                "query": "pvp",
+>>>>>>> origin/Rust-Migration
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -93,7 +161,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 482.5
+    "width": 363.5
   },
   "right": {
     "id": "060b9ccb0c4fedf3",
@@ -186,17 +254,18 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "system3-relay:Relay": false,
-      "custom-sort:Toggle custom sorting": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "system3-relay:Relay": false,
+      "custom-sort:Toggle custom sorting": false
     }
   },
+<<<<<<< HEAD
   "active": "ba7151b10a534cdf",
   "lastOpenFiles": [
     "Notes/003 Game Development/Features to implement/Foundations.md",
@@ -244,5 +313,55 @@
     "Notes/999 Resources and files/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
     "Notes/003 Game Development/Features to implement/Untitled.md",
     "Notes/002 Game Code/001 Opening the game/(old) 001 Spawning into a server.md"
+=======
+  "active": "c7a6cdc6336e42b3",
+  "lastOpenFiles": [
+    "g/project.godot3318433.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/StdbModule.wasm.tmpd441104",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/wasi_bundled_assemblies-3c85e787.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_puEYdevsexGsBupHqmwHqh3_-de45b0a3.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_lI_cvUbWBQbEeB6IFBWyyZRH-b3829483.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_ptnAiRLZ_wWY_o32px33vhLD-d8e96f7a.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_T_eRfTC_bvDgC6vu_mkidq0m-9d36dc7e.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_M_7vdIeIGONFXiMLG8mdCfGI-82a8ee08.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/StdbModule.wasm.tmpcb135c2",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/wasi_bundled_assemblies-badca321.o.tmp",
+    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_puEYdevsexGsBupHqmwHqh3_-d701020e.o.tmp",
+    "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+    "Notes/002 Game Development/Features to implement list.md",
+    "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
+    "Notes/002 Game Development/Features to implement/Foundations.md",
+    "Notes/002 Game Development/Features to implement/Bugs.md",
+    "Notes/001 Game Code/001 Opening the game 1.md",
+    "Notes/001 Game Code/002 After joining the game.md",
+    "Notes/000 Gameplay Elements, Genre, Lore, etc/Monetisation/Consumables.md",
+    "Untitled.md",
+    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219.md",
+    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-6.md",
+    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-5.md",
+    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-4.md",
+    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-3.md",
+    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-2.md",
+    "Notes/001 Game Code/000a Player sync.md",
+    "Notes/001 Game Code/001 (TO BE OVERHAULED) Opening the game.md",
+    "g/VS-Like/Assets/skeletons/skeleton_texture.png",
+    "g/VS-Like/Assets/nature_decorations/hexagons_medieval.png",
+    "g/VS-Like/Assets/hexagon_tiles/hexagons_medieval.png",
+    "g/VS-Like/Assets/characters/barbarian_texture.png",
+    "g/VS-Like/Assets/characters/knight_texture.png",
+    "g/VS-Like/Assets/characters/mage_texture.png",
+    "g/VS-Like/Assets/characters/ranger_texture.png",
+    "g/VS-Like/Assets/characters/rogue_texture.png",
+    "g/VS-Like/Assets/buildings/hexagons_medieval.png",
+    "g/VS-Like/Assets/accesiories/barbarian_texture.png",
+    "Notes/002 Game Development/Notnilc/Untitled.md",
+    "Notes/002 Game Development/Asemif/Untitled.md",
+    "Notes/002 Game Development/Overhaul list.md",
+    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Paladin question mark.md",
+    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Tank/00 Tank classes & notes.md",
+    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Tank/High defense tank.md",
+    "Notes/001 Game Code/000c Bullet sync.md",
+    "Notes/001 Game Code/000b Enemy sync.md"
+>>>>>>> origin/Rust-Migration
   ]
 }

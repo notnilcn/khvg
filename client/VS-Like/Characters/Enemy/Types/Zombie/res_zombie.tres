@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="ResEnemy" format=3 uid="uid://ds8kgdukxhuyu"]
+
+[ext_resource type="Script" uid="uid://bq2n0w72uwjbf" path="res://VS-Like/Characters/Enemy/Types/ResEnemy.cs" id="1_svn4t"]
+
+[resource]
+script = ExtResource("1_svn4t")
+ModelName = "Minion"

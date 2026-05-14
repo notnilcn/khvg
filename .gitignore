@@ -1,0 +1,57 @@
+# Godot 4
+.godot/
+*.import
+.mono/
+android/
+ios/
+
+# Rust / SpacetimeDB server
+server/spacetimedb/target/
+
+# C# build artifacts
+[Bb]in/
+[Oo]bj/
+*.user
+
+# SpacetimeDB local config
+spacetime.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+2026-*.txt
+
+g.godot-editor-filesystem_cache10
+
+g.godot-editor-filesystem_update4
+
+Untitled.base
+
+*.log
+
+*.tmp
+
+bholio/
+
+.claude/
+
+BitCraftPublic/
+
+bmmo/bin/
+bmmo/obj/
+bmmo/spacetimedb/bin/
+bmmo/spacetimedb/obj/
+
+.gitignore
+
+example-project-blastbullets2d/
+
+*.mp4
+
+godot-blast-bullets-2d/
+*Shortcut
+
+SpacetimeDB/
+
+personal_notes/

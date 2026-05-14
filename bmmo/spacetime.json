@@ -1,8 +1,0 @@
-{
-  "dev": {
-    "run": "dotnet run"
-  },
-  "database": "bmmo-0nzf1",
-  "server": "maincloud",
-  "module-path": "./spacetimedb"
-}

@@ -6,107 +6,165 @@
       "items": [
         {
           "type": "group",
-          "ctime": 1775615953330,
+          "ctime": 1777342658729,
           "items": [
             {
               "type": "group",
-              "ctime": 1776650184621,
-              "items": [],
-              "title": "001 Godot basics"
-            },
-            {
-              "type": "group",
-              "ctime": 1776650184621,
-              "items": [],
-              "title": "002 Game Code"
-            },
-            {
-              "type": "group",
-              "ctime": 1776934352260,
+              "ctime": 1777344582251,
               "items": [
                 {
                   "type": "file",
-                  "ctime": 1776934439422,
-                  "path": "Notes/003 Game Development/Features to implement list.md",
+                  "ctime": 1777344582251,
+                  "path": "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+                  "subpath": "#^-"
+                },
+                {
+                  "type": "file",
+                  "ctime": 1777344582251,
+                  "path": "Notes/000 Gameplay Elements, Genre, Lore, etc/Gameplay.md",
+                  "subpath": "#^-"
+                },
+                {
+                  "type": "file",
+                  "ctime": 1777344582251,
+                  "path": "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+                  "subpath": "#^-"
+                },
+                {
+                  "type": "file",
+                  "ctime": 1777344582251,
+                  "path": "Notes/000 Gameplay Elements, Genre, Lore, etc/Gameplay.md",
+                  "subpath": "#^-"
+                },
+                {
+                  "type": "file",
+                  "ctime": 1777344582251,
+                  "path": "Notes/000 Gameplay Elements, Genre, Lore, etc/Lore.md",
+                  "subpath": "#^-"
+                }
+              ],
+              "title": "000 Gameplay Elements, Genre, Lore, etc"
+            },
+            {
+              "type": "group",
+              "ctime": 1777435933595,
+              "items": [
+                {
+                  "type": "group",
+                  "ctime": 1777518256695,
+                  "items": [
+                    {
+                      "type": "file",
+                      "ctime": 1777518256696,
+                      "path": "Notes/001 Game Code/000 Stupid notes for stupid people/Stupid notes.md",
+                      "subpath": "#^-"
+                    },
+                    {
+                      "type": "group",
+                      "ctime": 1777518256696,
+                      "items": [],
+                      "title": "Godot"
+                    },
+                    {
+                      "type": "group",
+                      "ctime": 1777518256696,
+                      "items": [],
+                      "title": "Spacetimedb"
+                    }
+                  ],
+                  "title": "000 Stupid notes for stupid people"
+                }
+              ],
+              "title": "001 Game Code"
+            },
+            {
+              "type": "group",
+              "ctime": 1777435933595,
+              "items": [
+                {
+                  "type": "file",
+                  "ctime": 1777435939139,
+                  "path": "Notes/002 Game Development/Features to implement list.md",
                   "subpath": "#^-"
                 },
                 {
                   "type": "group",
-                  "ctime": 1776989199404,
+                  "ctime": 1777435939139,
                   "items": [],
                   "title": "Features to implement"
                 },
                 {
                   "type": "file",
-                  "ctime": 1776989199404,
-                  "path": "Notes/003 Game Development/Overhaul list.md",
+                  "ctime": 1777435939139,
+                  "path": "Notes/002 Game Development/Overhaul list.md",
                   "subpath": "#^-"
                 },
                 {
                   "type": "group",
-                  "ctime": 1776989246107,
+                  "ctime": 1777435939139,
                   "items": [],
                   "title": "Overhaul list"
                 },
                 {
                   "type": "file",
-                  "ctime": 1776934439422,
-                  "path": "Notes/003 Game Development/Shelved todo list.md",
+                  "ctime": 1777435939139,
+                  "path": "Notes/002 Game Development/Optimizations.md",
                   "subpath": "#^-"
                 },
                 {
                   "type": "group",
-                  "ctime": 1776989246107,
-                  "items": [],
-                  "title": "Shelved todo list"
-                },
-                {
-                  "type": "file",
-                  "ctime": 1777046981164,
-                  "path": "Notes/003 Game Development/Optimizations.md",
-                  "subpath": "#^-"
-                },
-                {
-                  "type": "group",
-                  "ctime": 1777047030140,
+                  "ctime": 1777435939139,
                   "items": [],
                   "title": "Optimizations"
                 },
                 {
                   "type": "file",
-                  "ctime": 1777108055964,
-                  "path": "Notes/003 Game Development/Small stuff.md",
+                  "ctime": 1777435939139,
+                  "path": "Notes/002 Game Development/Small stuff.md",
                   "subpath": "#^-"
                 },
                 {
                   "type": "group",
-                  "ctime": 1777108055964,
-                  "items": [],
-                  "title": "Small stuff"
-                },
-                {
-                  "type": "group",
-                  "ctime": 1776934439422,
+                  "ctime": 1777435939139,
                   "items": [],
                   "title": "Asemif"
                 },
                 {
                   "type": "group",
-                  "ctime": 1776934439422,
+                  "ctime": 1777435939139,
+                  "items": [],
+                  "title": "Asemif"
+                },
+                {
+                  "type": "group",
+                  "ctime": 1777435939139,
                   "items": [],
                   "title": "Notnilc"
                 },
                 {
                   "type": "group",
-                  "ctime": 1776934439422,
+                  "ctime": 1777435939139,
                   "items": [],
-                  "title": "Retexcraft"
+                  "title": "Small stuff"
+                },
+                {
+                  "type": "file",
+                  "ctime": 1777435939139,
+                  "path": "Notes/002 Game Development/Shelved todo list.md",
+                  "subpath": "#^-"
+                },
+                {
+                  "type": "group",
+                  "ctime": 1777435939139,
+                  "items": [],
+                  "title": "Shelved todo list"
                 }
               ],
-              "title": "003 Game Development"
+              "title": "002 Game Development"
             },
             {
               "type": "group",
+<<<<<<< HEAD
               "ctime": 1776650184621,
               "items": [
                 {
@@ -123,9 +181,27 @@
                 }
               ],
               "title": "999 Random Game Design Notes"
+=======
+              "ctime": 1777435933595,
+              "items": [],
+              "title": "999 Resources and files"
+>>>>>>> origin/Rust-Migration
             }
           ],
           "title": "Notes"
+        },
+        {
+          "type": "group",
+          "ctime": 1777342690600,
+          "items": [
+            {
+              "type": "group",
+              "ctime": 1777342690600,
+              "items": [],
+              "title": "VS-Like"
+            }
+          ],
+          "title": "g"
         }
       ],
       "title": "sortspec"

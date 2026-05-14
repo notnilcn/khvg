@@ -1,0 +1,117 @@
+[gd_scene format=3 uid="uid://dmehgodydmmh8"]
+
+[ext_resource type="Script" uid="uid://bklnmy3yr8i7h" path="res://VS-Like/Characters/Player/Player.cs" id="1_1h1xi"]
+[ext_resource type="Texture2D" uid="uid://gyqog5068lo8" path="res://VS-Like/Assets/player_bullets/1.png" id="2_pugax"]
+[ext_resource type="Texture2D" uid="uid://dkrsryl0agqd2" path="res://VS-Like/Assets/player_bullets/2.png" id="3_1iyaw"]
+[ext_resource type="Texture2D" uid="uid://dja5rrfynttv5" path="res://VS-Like/Characters/Player/Types/Dwarf/tex_dwarf.tres" id="3_hvppb"]
+[ext_resource type="Texture2D" uid="uid://cg2mr25oadwe7" path="res://VS-Like/Assets/player_bullets/3.png" id="4_h8eyl"]
+[ext_resource type="PackedScene" uid="uid://ylm3n7gg46ep" path="res://VS-Like/Characters/Player/Utilities/UI/HealthbarUI/health_bar.tscn" id="4_l4u65"]
+[ext_resource type="Texture2D" uid="uid://cj7hoowj3s306" path="res://VS-Like/Assets/player_bullets/4.png" id="5_8via4"]
+[ext_resource type="PackedScene" uid="uid://bendo7yc3uen7" path="res://VS-Like/Characters/Player/Utilities/Hurtbox/hurtbox.tscn" id="5_l4u65"]
+[ext_resource type="Texture2D" uid="uid://tt2po6rf2ty5" path="res://VS-Like/Assets/player_bullets/5.png" id="6_ador3"]
+[ext_resource type="PackedScene" uid="uid://bgwah0k2f5td8" path="res://VS-Like/Characters/Player/Utilities/DropDetection/drops_detection.tscn" id="6_bj8pa"]
+[ext_resource type="PackedScene" uid="uid://cwneuivvape0f" path="res://VS-Like/Characters/Player/Utilities/UI/WeaponUI/weapons_container_ui.tscn" id="7_0fte0"]
+[ext_resource type="Texture2D" uid="uid://qp1cejfvwhhg" path="res://VS-Like/Assets/player_bullets/6.png" id="7_p1r1x"]
+[ext_resource type="PackedScene" uid="uid://bno30x37r4bnm" path="res://VS-Like/Assets/model_presets/player_model.tscn" id="8_0fte0"]
+[ext_resource type="Texture2D" uid="uid://dcoq40jvdph2k" path="res://VS-Like/Assets/player_bullets/7.png" id="8_8we17"]
+[ext_resource type="Texture2D" uid="uid://dhpryik4xkpd8" path="res://VS-Like/Assets/player_bullets/8.png" id="9_020gm"]
+[ext_resource type="PackedScene" uid="uid://cmxyfw4upvh5a" path="res://VS-Like/Characters/Enemy/Utilities/Drop/Types/Chest/UI/chest_ui.tscn" id="9_hvppb"]
+[ext_resource type="Texture2D" uid="uid://c7wfaxchybivf" path="res://VS-Like/Assets/player_bullets/9.png" id="10_7q1ve"]
+[ext_resource type="Texture2D" uid="uid://c1q047iluyhy" path="res://VS-Like/Assets/player_bullets/10.png" id="11_d5imo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_1h1xi"]
+radius = 7.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kfbvp"]
+radius = 150.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kfbvp"]
+bg_color = Color(0.188235, 0.188235, 0.188235, 0.352941)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1eh3f"]
+bg_color = Color(0, 0.592157, 1, 1)
+
+[node name="Player" type="CharacterBody2D" unique_id=181449813]
+z_index = 1
+collision_layer = 2
+script = ExtResource("1_1h1xi")
+_BulletTextures = Array[Texture2D]([ExtResource("2_pugax"), ExtResource("3_1iyaw"), ExtResource("4_h8eyl"), ExtResource("5_8via4"), ExtResource("6_ador3"), ExtResource("7_p1r1x"), ExtResource("8_8we17"), ExtResource("9_020gm"), ExtResource("10_7q1ve"), ExtResource("11_d5imo")])
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1741398226]
+visible = false
+position = Vector2(0, -8)
+texture = ExtResource("3_hvppb")
+flip_h = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1164750873]
+shape = SubResource("CircleShape2D_1h1xi")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1247276422]
+ignore_rotation = false
+
+[node name="HealthBar" parent="." unique_id=1891917197 instance=ExtResource("4_l4u65")]
+offset_left = -32.0
+offset_top = -32.0
+offset_right = 32.0
+offset_bottom = -24.0
+
+[node name="Hurtbox" parent="." unique_id=1717487182 instance=ExtResource("5_l4u65")]
+
+[node name="DropsDetection" parent="." unique_id=1340819427 instance=ExtResource("6_bj8pa")]
+
+[node name="EnemyDetection" type="Area2D" parent="." unique_id=1320562080]
+collision_layer = 0
+collision_mask = 4
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyDetection" unique_id=43179204]
+shape = SubResource("CircleShape2D_kfbvp")
+debug_color = Color(0.889277, 0.249172, 0.540243, 0.42)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=563264647]
+layer = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD" unique_id=1236358630]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 100
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 100
+theme_override_constants/margin_bottom = 25
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/MarginContainer" unique_id=1878742547]
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="HUD/MarginContainer/VBoxContainer" unique_id=171626061]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 5)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_kfbvp")
+theme_override_styles/fill = SubResource("StyleBoxFlat_1eh3f")
+show_percentage = false
+
+[node name="WeaponsContainerUI" parent="HUD/MarginContainer/VBoxContainer" unique_id=1350902132 instance=ExtResource("7_0fte0")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="ChestUI" parent="HUD" unique_id=1642477408 instance=ExtResource("9_hvppb")]
+unique_name_in_owner = true
+
+[node name="Model3D" parent="." unique_id=220424947 instance=ExtResource("8_0fte0")]
+
+[node name="FireTimer" type="Timer" parent="." unique_id=159757279]
+wait_time = 0.3
+one_shot = true
+
+[node name="MarkerContainer" type="Node2D" parent="." unique_id=1661070613]
+
+[node name="Marker2D" type="Marker2D" parent="MarkerContainer" unique_id=462761037]
+position = Vector2(96, 0)
+
+[node name="Marker2D2" type="Marker2D" parent="MarkerContainer" unique_id=1200733687]
+position = Vector2(96, -88)
+
+[node name="Marker2D3" type="Marker2D" parent="MarkerContainer" unique_id=487749623]
+position = Vector2(96, 80)
