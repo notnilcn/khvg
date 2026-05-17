@@ -174,11 +174,10 @@ public partial class StdbPlayerSync : Node
 ```c# */
     private void _StoreSnapshot(string key, PlayerPosition row) // ^StoreSnapshot
     {
-        var dir = new Vector2(row.MoveX, row.MoveY).Normalized();
         _snapshots[key] = new SyncSnapshot(
             new Vector2(row.X, row.Y),
-            dir.X, dir.Y, row.Speed,
-            row.EventTime.MicrosecondsSinceUnixEpoch);
+            0f, 0f, 0f,
+            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L);
     }
 
     private void _SpawnRemote(SpacetimeDB.Identity id, float x, float y) // ^SpawnRemote

@@ -1,0 +1,263 @@
+{
+  "main": {
+    "id": "37d718731ee5cd94",
+    "type": "split",
+    "children": [
+      {
+        "id": "0fe4e385a2314fc2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f7aef3a82d46a5e6",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Notes/002 Game Development/Features to implement list.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Features to implement list"
+            }
+          },
+          {
+            "id": "5f25989162e27e5d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Notes/002 Game Development/Features to implement list.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Features to implement list"
+            }
+          },
+          {
+            "id": "9055346b81436cef",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "server/spacetimedb/src/main/methods.rs",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "methods"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "9e6e612bda9276a2",
+    "type": "split",
+    "children": [
+      {
+        "id": "a31ccfb03fcc4c92",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "702b0ddb37d08ea9",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "1a199ca0ef466ae3",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "pvp",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "d7d1bbc5efcce987",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 363.5
+  },
+  "right": {
+    "id": "060b9ccb0c4fedf3",
+    "type": "split",
+    "children": [
+      {
+        "id": "8dc5b426f41e901a",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "a0ec55b96a2eb2d2",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks"
+            }
+          },
+          {
+            "id": "f4299f886cc77be2",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links"
+            }
+          },
+          {
+            "id": "980c05003454c49d",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "6ad309eacaf5bb0b",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "9fd231dfabdf672d",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "system3-relay:Relay": false,
+      "custom-sort:Toggle custom sorting": false,
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "5f25989162e27e5d",
+  "lastOpenFiles": [
+    "docs/Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player/Player.gd.md",
+    "docs/Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes/(old) 000 Opening the game & then clicking Host Game or Join Game.md",
+    "docs/Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes/(old) 001 Spawning into a server.md",
+    "docs/Notes/001 Explaining Game Code/Important Classes and Node Trees/Game/World/spawner.gd and spawner.tscn.md",
+    "docs/Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player/atoastwiththoughts",
+    "docs/Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player/res_player.gd.md",
+    "docs/Notes/001 Explaining Game Code/Old notes/000 Singleton/000 General Singleton notes.md",
+    "docs/Notes/001 Explaining Game Code/Plugins and addons and whatnot/BlastBullets2D/Stuff that's relevant for the spacetimedb translation.md",
+    "docs/Notes/001 Explaining Game Code/Old notes/000 Singleton/network.gd Notes.md",
+    "docs/Notes/001 Explaining Game Code/Old notes/000 Singleton/global.gd Notes.md",
+    "docs/Notes/001 Explaining Game Code/Old notes/001 Opening the game/Untitled.md",
+    "docs/Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes",
+    "docs/Notes/001 Explaining Game Code/Important Classes and Node Trees/Game/World",
+    "docs/Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 5.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 4.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 3.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/000 Spacetimedb overview.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 2.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 1.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Godot/000 Godot overview.md",
+    "docs/Notes/001 Explaining Game Code/Plugins and addons and whatnot/SpacetimeDB",
+    "docs/Notes/001 Explaining Game Code/Plugins and addons and whatnot/BlastBullets2D",
+    "docs/Notes/001 Explaining Game Code/Old notes/000 Singleton",
+    "docs/Notes/001 Explaining Game Code/Old notes/001 Opening the game",
+    "docs/Notes/001 Explaining Game Code/Important Classes and Node Trees/Game",
+    "docs/Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Stupid notes.md",
+    "docs/Notes/001 Explaining Game Code/002 After joining the game.md",
+    "docs/Notes/001 Explaining Game Code/001 Opening the game 1.md",
+    "docs/Notes/001 Explaining Game Code/001 (TO BE OVERHAULED) Opening the game.md",
+    "docs/Notes/001 Explaining Game Code/000c Bullet sync.md",
+    "docs/Notes/001 Explaining Game Code/000b Enemy sync.md",
+    "docs/Notes/001 Explaining Game Code/000a Player sync.md",
+    "docs/Notes/001 Explaining Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
+    "untitled (5).png",
+    "untitled (4).png",
+    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/chunkradius6.svg",
+    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/chunkradius8.svg",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius5.png",
+    "untitled (3).png",
+    "untitled (2).png",
+    "untitled (1).png",
+    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/chunkradius12.svg",
+    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/chunkradius2.svg"
+  ]
+}

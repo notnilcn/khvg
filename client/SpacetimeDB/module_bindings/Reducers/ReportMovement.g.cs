@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void ReportMovementHandler(ReducerEventContext ctx, float x, float y, sbyte moveX, sbyte moveY, ushort speed);
+        public delegate void ReportMovementHandler(ReducerEventContext ctx, float x, float y, float rotation);
         public event ReportMovementHandler? OnReportMovement;
 
-        public void ReportMovement(float x, float y, sbyte moveX, sbyte moveY, ushort speed)
+        public void ReportMovement(float x, float y, float rotation)
         {
-            conn.InternalCallReducer(new Reducer.ReportMovement(x, y, moveX, moveY, speed));
+            conn.InternalCallReducer(new Reducer.ReportMovement(x, y, rotation));
         }
 
         public bool InvokeReportMovement(ReducerEventContext ctx, Reducer.ReportMovement args)
@@ -38,9 +38,7 @@ namespace SpacetimeDB.Types
                 ctx,
                 args.X,
                 args.Y,
-                args.MoveX,
-                args.MoveY,
-                args.Speed
+                args.Rotation
             );
             return true;
         }
@@ -56,26 +54,18 @@ namespace SpacetimeDB.Types
             public float X;
             [DataMember(Name = "y")]
             public float Y;
-            [DataMember(Name = "move_x")]
-            public sbyte MoveX;
-            [DataMember(Name = "move_y")]
-            public sbyte MoveY;
-            [DataMember(Name = "speed")]
-            public ushort Speed;
+            [DataMember(Name = "rotation")]
+            public float Rotation;
 
             public ReportMovement(
                 float X,
                 float Y,
-                sbyte MoveX,
-                sbyte MoveY,
-                ushort Speed
+                float Rotation
             )
             {
                 this.X = X;
                 this.Y = Y;
-                this.MoveX = MoveX;
-                this.MoveY = MoveY;
-                this.Speed = Speed;
+                this.Rotation = Rotation;
             }
 
             public ReportMovement()

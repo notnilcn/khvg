@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void ChangeStatsHandler(ReducerEventContext ctx, string targetUsername, SpacetimeDB.Types.RpgStats newStats);
+        public delegate void ChangeStatsHandler(ReducerEventContext ctx, string targetUsername, int strength, int wisdom, int dexterity, int defense, int vitality, int speed);
         public event ChangeStatsHandler? OnChangeStats;
 
-        public void ChangeStats(string targetUsername, SpacetimeDB.Types.RpgStats newStats)
+        public void ChangeStats(string targetUsername, int strength, int wisdom, int dexterity, int defense, int vitality, int speed)
         {
-            conn.InternalCallReducer(new Reducer.ChangeStats(targetUsername, newStats));
+            conn.InternalCallReducer(new Reducer.ChangeStats(targetUsername, strength, wisdom, dexterity, defense, vitality, speed));
         }
 
         public bool InvokeChangeStats(ReducerEventContext ctx, Reducer.ChangeStats args)
@@ -37,7 +37,12 @@ namespace SpacetimeDB.Types
             OnChangeStats(
                 ctx,
                 args.TargetUsername,
-                args.NewStats
+                args.Strength,
+                args.Wisdom,
+                args.Dexterity,
+                args.Defense,
+                args.Vitality,
+                args.Speed
             );
             return true;
         }
@@ -51,22 +56,41 @@ namespace SpacetimeDB.Types
         {
             [DataMember(Name = "target_username")]
             public string TargetUsername;
-            [DataMember(Name = "new_stats")]
-            public RpgStats NewStats;
+            [DataMember(Name = "strength")]
+            public int Strength;
+            [DataMember(Name = "wisdom")]
+            public int Wisdom;
+            [DataMember(Name = "dexterity")]
+            public int Dexterity;
+            [DataMember(Name = "defense")]
+            public int Defense;
+            [DataMember(Name = "vitality")]
+            public int Vitality;
+            [DataMember(Name = "speed")]
+            public int Speed;
 
             public ChangeStats(
                 string TargetUsername,
-                RpgStats NewStats
+                int Strength,
+                int Wisdom,
+                int Dexterity,
+                int Defense,
+                int Vitality,
+                int Speed
             )
             {
                 this.TargetUsername = TargetUsername;
-                this.NewStats = NewStats;
+                this.Strength = Strength;
+                this.Wisdom = Wisdom;
+                this.Dexterity = Dexterity;
+                this.Defense = Defense;
+                this.Vitality = Vitality;
+                this.Speed = Speed;
             }
 
             public ChangeStats()
             {
                 this.TargetUsername = "";
-                this.NewStats = new();
             }
 
             string IReducerArgs.ReducerName => "change_stats";

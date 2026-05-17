@@ -163,16 +163,24 @@ public partial class Player : CharacterBody2D
                 if (mgr.IsStdbConnected)
                 {
                     mgr.Conn!.Db.PlayerInventory.OnUpdate  += _OnStdbInventoryUpdate;
-                    mgr.Conn!.Db.CharacterData.OnUpdate    += _OnStdbCharacterDataUpdate;
+                    mgr.Conn!.Db.PlayerData.OnUpdate       += _OnStdbPlayerDataUpdate;
+                    mgr.Conn!.Db.PlayerStats.OnUpdate      += _OnStdbPlayerStatsUpdate;
                 }
                 else
                 {
                     mgr.ConnectedToServer += _ =>
                     {
                         mgr.Conn!.Db.PlayerInventory.OnUpdate  += _OnStdbInventoryUpdate;
-                        mgr.Conn!.Db.CharacterData.OnUpdate    += _OnStdbCharacterDataUpdate;
+                        mgr.Conn!.Db.PlayerData.OnUpdate       += _OnStdbPlayerDataUpdate;
+                        mgr.Conn!.Db.PlayerStats.OnUpdate      += _OnStdbPlayerStatsUpdate;
                     };
                 }
+
+                // OnUpdate only fires on changes — read the cache now for initial values.
+                if (mgr.IsSubscriptionReady)
+                    _ApplyStdbStats();
+                else
+                    mgr.SubscriptionReady += _OnStdbSubscriptionReady;
             }
         }
     }
@@ -268,11 +276,7 @@ public partial class Player : CharacterBody2D
             _lastSentSpeed     = reportedSpeed;
             var conn = SpacetimeDBManager.Instance.Conn;
             // GD.Print($"[Player] ReportMovement({movementInput.X:F2},{movementInput.Y:F2}) — conn:{(conn == null ? "null" : conn.IsActive ? "active" : "inactive")}");
-            conn?.Reducers.ReportMovement(
-                GlobalPosition.X, GlobalPosition.Y,
-                (sbyte)Mathf.Sign(movementInput.X),
-                (sbyte)Mathf.Sign(movementInput.Y),
-                reportedSpeed);
+            conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, Rotation);
         }
 
         if (cameraInput < 0)
@@ -340,13 +344,20 @@ public partial class Player : CharacterBody2D
     {
         var conn = SpacetimeDBManager.Instance?.Conn;
         if (conn == null) return;
-        conn.Reducers.UpdateInventory(
-            EquippedWeapon?.Resource.ResourcePath,
-            EquippedAbility?.Resource.ResourcePath,
-            (EquippedArmor as Weapon)?.Resource.ResourcePath,
-            EquippedAccessories.ConvertAll(a => a.Resource.ResourcePath),
-            Inventory.ConvertAll(i => i.ResourcePath),
-            Consumables.ConvertAll(c => c.ResourcePath));
+        var slots = new List<InventorySlot>();
+        if (EquippedWeapon?.Resource.ResourcePath != null)
+            slots.Add(new InventorySlot(SlotKind.Weapon, 0, EquippedWeapon.Resource.ResourcePath));
+        if (EquippedAbility?.Resource.ResourcePath != null)
+            slots.Add(new InventorySlot(SlotKind.Ability, 0, EquippedAbility.Resource.ResourcePath));
+        var armorPath = (EquippedArmor as Weapon)?.Resource.ResourcePath;
+        if (armorPath != null) slots.Add(new InventorySlot(SlotKind.Armor, 0, armorPath));
+        for (int i = 0; i < EquippedAccessories.Count; i++)
+            slots.Add(new InventorySlot(SlotKind.Accessory, (byte)i, EquippedAccessories[i].Resource.ResourcePath));
+        for (int i = 0; i < Inventory.Count; i++)
+            slots.Add(new InventorySlot(SlotKind.Backpack, (byte)i, Inventory[i].ResourcePath));
+        for (int i = 0; i < Consumables.Count; i++)
+            slots.Add(new InventorySlot(SlotKind.Consumable, (byte)i, Consumables[i].ResourcePath));
+        conn.Reducers.UpdateInventory(slots);
     }
 
     public int GetAccessorySlotCount()
@@ -508,35 +519,78 @@ public partial class Player : CharacterBody2D
         var localId = SpacetimeDBManager.Instance.LocalIdentity;
         if (!localId.HasValue || newInv.PlayerId != localId.Value) return;
 
-        foreach (var item in newInv.BackpackSlots)
+        foreach (var slot in newInv.Slots)
         {
-            if (!string.IsNullOrEmpty(item) && !oldInv.BackpackSlots.Contains(item))
+            if (slot.Kind != SlotKind.Backpack || string.IsNullOrEmpty(slot.ItemId)) continue;
+            bool wasInOld = false;
+            foreach (var os in oldInv.Slots)
+                if (os.Kind == SlotKind.Backpack && os.ItemId == slot.ItemId) { wasInOld = true; break; }
+            if (!wasInOld)
             {
-                var res = GD.Load<ResItem>(item);
+                var res = GD.Load<ResItem>(slot.ItemId);
                 if (res != null) Global.Instance.PickupItem(res);
             }
         }
     }
 
-    private void _OnStdbCharacterDataUpdate(EventContext ctx, CharacterData oldData, CharacterData newData)
+    private void _OnStdbPlayerDataUpdate(EventContext ctx, PlayerData oldData, PlayerData newData)
     {
         var localId = SpacetimeDBManager.Instance.LocalIdentity;
         if (!localId.HasValue || newData.PlayerId != localId.Value) return;
 
-        Strength  = newData.Stats.Strength;
-        Wisdom    = newData.Stats.Wisdom;
-        Dexterity = newData.Stats.Dexterity;
-        Defense   = newData.Stats.Defense;
-        Vitality  = newData.Stats.Vitality;
-        SpeedStat = newData.Stats.Speed;
         MaxHealth = newData.MaxHp;
         Health    = Mathf.Min(Health, MaxHealth);
 
         if (newData.Level > oldData.Level)
-            Health = Mathf.Min(Health + (newData.Level - oldData.Level) * HpPerLevel, MaxHealth);
+            Health = Mathf.Min(Health + (int)(newData.Level - oldData.Level) * HpPerLevel, MaxHealth);
 
         if (InventoryUi != null && InventoryUi.Visible)
             InventoryUi.Refresh();
+    }
+
+    private void _OnStdbPlayerStatsUpdate(EventContext ctx, PlayerStats oldStats, PlayerStats newStats)
+    {
+        var localId = SpacetimeDBManager.Instance.LocalIdentity;
+        if (!localId.HasValue || newStats.PlayerId != localId.Value) return;
+
+        Strength  = newStats.Strength;
+        Wisdom    = newStats.Wisdom;
+        Dexterity = newStats.Dexterity;
+        Defense   = newStats.Defense;
+        Vitality  = newStats.Vitality;
+        SpeedStat = newStats.Speed;
+    }
+
+    private void _OnStdbSubscriptionReady()
+    {
+        SpacetimeDBManager.Instance.SubscriptionReady -= _OnStdbSubscriptionReady;
+        _ApplyStdbStats();
+    }
+
+    private void _ApplyStdbStats()
+    {
+        var conn = SpacetimeDBManager.Instance?.Conn;
+        if (conn == null) return;
+        var localId = SpacetimeDBManager.Instance.LocalIdentity;
+        if (!localId.HasValue) return;
+
+        var stats = conn.Db.PlayerStats.PlayerId.Find(localId.Value);
+        if (stats != null)
+        {
+            Strength  = stats.Strength;
+            Wisdom    = stats.Wisdom;
+            Dexterity = stats.Dexterity;
+            Defense   = stats.Defense;
+            Vitality  = stats.Vitality;
+            SpeedStat = stats.Speed;
+        }
+
+        var data = conn.Db.PlayerData.PlayerId.Find(localId.Value);
+        if (data != null)
+        {
+            MaxHealth = data.MaxHp;
+            Health    = data.Hp;
+        }
     }
 
     public void _OnFireTimerTimeout()
@@ -562,11 +616,15 @@ public partial class Player : CharacterBody2D
     {
         if (this == Local) Local = null;
         Global.Instance.Players.Remove(1);
-        var conn = SpacetimeDBManager.Instance?.Conn;
+        var mgr = SpacetimeDBManager.Instance;
+        if (mgr != null)
+            mgr.SubscriptionReady -= _OnStdbSubscriptionReady;
+        var conn = mgr?.Conn;
         if (conn != null)
         {
             conn.Db.PlayerInventory.OnUpdate -= _OnStdbInventoryUpdate;
-            conn.Db.CharacterData.OnUpdate   -= _OnStdbCharacterDataUpdate;
+            conn.Db.PlayerData.OnUpdate      -= _OnStdbPlayerDataUpdate;
+            conn.Db.PlayerStats.OnUpdate     -= _OnStdbPlayerStatsUpdate;
         }
     }
 /*

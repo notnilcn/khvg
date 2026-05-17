@@ -125,7 +125,7 @@ public partial class Spawner : Node2D
 		if (conn == null) return;
 
 		// Delete any rows left over from a previous session before spawning new enemies.
-		foreach (var row in conn.Db.EnemyState.Iter())
+		foreach (var row in conn.Db.Enemy.Iter())
 			conn.Reducers.DespawnEnemy(row.EnemyId);
 
 		_stdbSnapshotTimer = new Timer();
@@ -142,33 +142,7 @@ public partial class Spawner : Node2D
 		var conn = SpacetimeDBManager.Instance.Conn;
 		if (conn == null) return;
 
-		var snapshots = new List<SpacetimeDB.Types.EnemySnapshot>();
-
-		foreach (var child in GetChildren())
-		{
-			if (child is not Enemy enemy || enemy.EnemyId < 0) continue;
-
-			// Fire UpdateEnemyTarget immediately if the target changed.
-			string targetId = _GetStdbTargetId(enemy);
-			if (!_lastTargetIds.TryGetValue(enemy.EnemyId, out var lastTarget) || lastTarget != targetId)
-			{
-				_lastTargetIds[enemy.EnemyId] = targetId;
-				conn.Reducers.UpdateEnemyTarget((ulong)enemy.EnemyId, targetId);
-			}
-
-			snapshots.Add(new SpacetimeDB.Types.EnemySnapshot
-			{
-				EnemyId = (ulong)enemy.EnemyId,
-				X       = enemy.GlobalPosition.X,
-				Y       = enemy.GlobalPosition.Y,
-				MoveX   = (sbyte)Mathf.Sign(enemy.MoveDir.X),
-				MoveY   = (sbyte)Mathf.Sign(enemy.MoveDir.Y),
-				Speed   = (ushort)enemy.Speed,
-			});
-		}
-
-		if (snapshots.Count > 0)
-			conn.Reducers.UpdateEnemySnapshots(snapshots);
+		// Enemy position sync removed — enemies now simulate locally from spawn data.
 	}
 
 	private string _GetStdbTargetId(Enemy enemy)
@@ -271,6 +245,7 @@ its obvious
 			case "/chest":
 			case "/tickrate":
 			case "/changestats":
+			case "/releaseadmin":
 				_ExecuteAdminCmd(verb, args);
 				break;
 
@@ -366,7 +341,7 @@ No server round-trip: the SDK keeps a local copy of all subscribed rows.
 			return;
 		}
 
-		PlayerPosition? row;
+		PlayerPosition row = null;
 
 		if (args.Length == 0)
 		{
@@ -386,7 +361,7 @@ No server round-trip: the SDK keeps a local copy of all subscribed rows.
 		else
 		{
 			string prefix = args[0].ToLower();
-			PlayerPosition? match = null;
+			PlayerPosition match = null;
 			int matchCount = 0;
 			foreach (var r in conn.Db.PlayerPosition.Iter())
 			{
@@ -411,7 +386,7 @@ No server round-trip: the SDK keeps a local copy of all subscribed rows.
 
 		var id = row!.PlayerId.ToString();
 		string label = id.Length >= 8 ? id[..8] : id;
-		_ShowFeedback($"[{label}] pos:({row.X:F1},{row.Y:F1})  move:({row.MoveX:F2},{row.MoveY:F2})  speed:{row.Speed:F1}  chunk:({row.ChunkX},{row.ChunkY})");
+		_ShowFeedback($"[{label}] pos:({row.X:F1},{row.Y:F1})  rot:{row.Rotation:F2}  chunk_index:{row.ChunkIndex}");
 	}
 /*
 ```
@@ -441,7 +416,7 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 	{
 		var localId = SpacetimeDBManager.Instance?.LocalIdentity;
 		if (!localId.HasValue) return false;
-		var acc = SpacetimeDBManager.Instance.Conn?.Db.PlayerAccount.PlayerId.Find(localId.Value);
+		var acc = SpacetimeDBManager.Instance.Conn?.Db.Player.PlayerId.Find(localId.Value);
 		return acc?.IsAdmin ?? false;
 	}
 
@@ -459,10 +434,11 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 			case "/spawner":      _CmdSpawner(args);      break;
 			case "/give":         _CmdGive(args);         break;
 			case "/remove":       _CmdRemove(args);       break;
+			case "/changestats":  _CmdChangeStats(args);  break;
 			case "/spawn":        _CmdSpawn(args);        break;
 			case "/chest":        _CmdChest(args);        break;
 			case "/tickrate":     _CmdTickrate(args);     break;
-			case "/changestats":  _CmdChangeStats(args);  break;
+			case "/releaseadmin": _CmdReleaseAdmin(args); break;
 		}
 	}
 
@@ -511,7 +487,7 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 		if (args.Length >= 2)
 		{
 			// Remote target by username — updates STDB only; they pick it up via OnUpdate callback.
-			conn.Reducers.GiveWeapon(args[1], resPath);
+			conn.Reducers.GiveItem(args[1], resPath);
 			_ShowFeedback($"Gave {weaponName} to {args[1]}.");
 		}
 		else
@@ -521,9 +497,9 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 			var localId = SpacetimeDBManager.Instance.LocalIdentity;
 			if (localId.HasValue)
 			{
-				var acc = conn.Db.PlayerAccount.PlayerId.Find(localId.Value);
+				var acc = conn.Db.Player.PlayerId.Find(localId.Value);
 				if (acc != null && !string.IsNullOrEmpty(acc.Username))
-					conn.Reducers.GiveWeapon(acc.Username, resPath);
+					conn.Reducers.GiveItem(acc.Username, resPath);
 			}
 			_ShowFeedback($"Gave {weaponName}.");
 		}
@@ -550,7 +526,7 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 		if (args.Length >= 2)
 		{
 			// Remote target by username — updates STDB persistence only.
-			conn.Reducers.RemoveWeapon(args[1], resPath);
+			conn.Reducers.RemoveItem(args[1], resPath);
 			_ShowFeedback($"Removed {weaponName} from {args[1]}.");
 		}
 		else
@@ -560,9 +536,9 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 			var localId = SpacetimeDBManager.Instance.LocalIdentity;
 			if (localId.HasValue)
 			{
-				var acc = conn.Db.PlayerAccount.PlayerId.Find(localId.Value);
+				var acc = conn.Db.Player.PlayerId.Find(localId.Value);
 				if (acc != null && !string.IsNullOrEmpty(acc.Username))
-					conn.Reducers.RemoveWeapon(acc.Username, resPath);
+					conn.Reducers.RemoveItem(acc.Username, resPath);
 			}
 			_ShowFeedback($"Removed {weaponName}.");
 		}
@@ -585,7 +561,7 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 		string lookup = args[0];
 
 		SpacetimeDB.Identity? targetId = null;
-		foreach (var acc in conn.Db.PlayerAccount.Iter())
+		foreach (var acc in conn.Db.Player.Iter())
 		{
 			string idStr = acc.PlayerId.ToString().ToLower();
 			if (acc.Username.Equals(lookup, System.StringComparison.OrdinalIgnoreCase)
@@ -602,14 +578,14 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 			return;
 		}
 
-		var charData = conn.Db.CharacterData.PlayerId.Find(targetId.Value);
+		var charData = conn.Db.PlayerStats.PlayerId.Find(targetId.Value);
 		if (charData is null)
 		{
 			_ShowFeedback($"No character data for '{lookup}'.");
 			return;
 		}
 
-		var stats = charData.Stats;
+		var stats = charData;
 		string[] pairs = args[1..];
 		for (int i = 0; i + 1 < pairs.Length; i += 2)
 		{
@@ -632,7 +608,7 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 			}
 		}
 
-		conn.Reducers.ChangeStats(lookup, stats);
+		conn.Reducers.ChangeStats(lookup, stats.Strength, stats.Wisdom, stats.Dexterity, stats.Defense, stats.Vitality, stats.Speed);
 		_ShowFeedback($"Stats updated for {lookup}.");
 	}
 
@@ -716,6 +692,21 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 		_ShowFeedback("/tickrate not yet implemented (requires a scheduled reducer)");
 	}
 
+	private void _CmdReleaseAdmin(string[] args)
+	{
+		var conn = SpacetimeDBManager.Instance?.Conn;
+		if (conn == null) { _ShowFeedback("Not connected to SpacetimeDB."); return; }
+
+		var localId = SpacetimeDBManager.Instance.LocalIdentity;
+		if (!localId.HasValue)
+		{
+			_ShowFeedback("No local STDB identity yet");
+			return;
+		}
+
+		conn.Reducers.ReleaseAdmin();
+		_ShowFeedback("Admin privileges released.");
+	}
 	// ── Player spawning ───────────────────────────────────────────────────────────
 
 	private static readonly ResPlayer DefaultCharacterData =
@@ -761,15 +752,10 @@ Separate RPC so non-admins can reach the server without going through _RpcAdminC
 	}
 
 	// SERVER ONLY: spawn an enemy and replicate it to all connected clients.
-	private void _CreateEnemy(Vector2 spawnPos, ResEnemy resEnemy, bool isElite = false, bool immortal = false, byte bulletPatternType = 0)
+	private void _CreateEnemy(Vector2 spawnPos, ResEnemy resEnemy, bool isElite = false, bool immortal = false)
 	{
-		int eid = _nextEnemyId++;
-
 		var conn = SpacetimeDBManager.Instance.IsStdbConnected ? SpacetimeDBManager.Instance.Conn : null;
-		uint hp = (uint)(isElite ? resEnemy.Health * 10 : resEnemy.Health);
-		conn?.Reducers.SpawnEnemy(
-			(ulong)eid, spawnPos.X, spawnPos.Y,
-			resEnemy.ResourcePath, isElite, immortal, hp, bulletPatternType);
+		conn?.Reducers.SpawnEnemy("", resEnemy.ResourcePath, spawnPos.X, spawnPos.Y, isElite, immortal);
 	}
 
 	// Called on the server when an enemy's Die() method fires.

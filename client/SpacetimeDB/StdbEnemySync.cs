@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using Godot;
 using SpacetimeDB.Types;
+using EnemyRow = SpacetimeDB.Types.Enemy;
 
 // Autoload singleton. Subscribes to EnemyState table updates and handles enemy
 // spawning/despawning/correction identically on every client — host included.
@@ -61,16 +62,16 @@ public partial class StdbEnemySync : Node
     {
         var mgr  = SpacetimeDBManager.Instance;
         var conn = mgr.Conn!;
-        conn.Db.EnemyState.OnInsert += _OnInsert;
-        conn.Db.EnemyState.OnUpdate += _OnUpdate;
-        conn.Db.EnemyState.OnDelete += _OnDelete;
+        conn.Db.Enemy.OnInsert += _OnInsert;
+        conn.Db.Enemy.OnUpdate += _OnUpdate;
+        conn.Db.Enemy.OnDelete += _OnDelete;
 
         if (mgr.IsSubscriptionReady)
             _CatchUpIfInGameScene();
         else
             mgr.SubscriptionReady += _OnSubscriptionReady;
 
-        GD.Print("[StdbEnemySync] Hooked EnemyState callbacks");
+        GD.Print("[StdbEnemySync] Hooked Enemy callbacks");
     }
 
     private void _OnSubscriptionReady() // ^-OnSubscriptionReady
@@ -95,7 +96,7 @@ public partial class StdbEnemySync : Node
         var conn = SpacetimeDBManager.Instance.Conn;
         if (conn == null) return;
 
-        foreach (var row in conn.Db.EnemyState.Iter())
+        foreach (var row in conn.Db.Enemy.Iter())
         {
             if (_enemyNodes.ContainsKey(row.EnemyId)) continue;
             _SpawnFromRow(row, spawner);
@@ -134,7 +135,7 @@ public partial class StdbEnemySync : Node
 /*
 # Table callbacks
 ```c# */
-    private void _OnInsert(EventContext ctx, EnemyState row) // ^-OnInsert
+    private void _OnInsert(EventContext ctx, EnemyRow row) // ^-OnInsert
     {
         if (GetTree().CurrentScene?.SceneFilePath != GameScenePath) return;
         if (_enemyNodes.ContainsKey(row.EnemyId)) return;
@@ -146,19 +147,13 @@ public partial class StdbEnemySync : Node
         GD.Print($"[StdbEnemySync] Enemy spawned: {row.EnemyId}");
     }
 
-    private void _OnUpdate(EventContext ctx, EnemyState oldRow, EnemyState newRow) // ^-OnUpdate
+    private void _OnUpdate(EventContext ctx, EnemyRow oldRow, EnemyRow newRow) // ^-OnUpdate
     {
-        var dir = new Vector2(newRow.MoveX, newRow.MoveY).Normalized();
-        _snapshots[newRow.EnemyId] = new SyncSnapshot(
-            new Vector2(newRow.X, newRow.Y),
-            dir.X, dir.Y, newRow.Speed,
-            newRow.EventTime.MicrosecondsSinceUnixEpoch);
-
         if (_enemyNodes.TryGetValue(newRow.EnemyId, out var enemy) && GodotObject.IsInstanceValid(enemy))
-            enemy.StdbTargetId = newRow.TargetId;
+            enemy.CurrHealth = newRow.Hp;
     }
 
-    private void _OnDelete(EventContext ctx, EnemyState row) // ^-OnDelete
+    private void _OnDelete(EventContext ctx, EnemyRow row) // ^-OnDelete
     {
         ulong id = row.EnemyId;
         _snapshots.Remove(id);
@@ -182,7 +177,7 @@ public partial class StdbEnemySync : Node
 /*
 # Helpers
 ```c# */
-    private void _SpawnFromRow(EnemyState row, Spawner spawner)
+    private void _SpawnFromRow(EnemyRow row, Spawner spawner)
     {
         var resEnemy = GD.Load<ResEnemy>(row.ResPath);
         if (resEnemy == null)
@@ -195,25 +190,16 @@ public partial class StdbEnemySync : Node
         enemy.ResEnemy       = resEnemy;
         enemy.IsElite        = row.IsElite;
         enemy.Immortal       = row.Immortal;
-        enemy.GlobalPosition = new Vector2(row.X, row.Y);
+        enemy.GlobalPosition = new Vector2(row.SpawnX, row.SpawnY);
         enemy.EnemyId        = (int)row.EnemyId;
         enemy.Name           = $"Enemy_{(int)row.EnemyId}";
-        enemy.IsStdbSpawned      = true;
-        enemy.StdbTargetId       = row.TargetId;
-        enemy.BulletPatternType  = row.BulletPatternType;
+        enemy.IsStdbSpawned  = true;
 
-        // The host needs its Die/Died signals connected so deaths trigger DespawnEnemy reducer.
         if (ElevatedClient.IsActive)
             spawner.RegisterStdbEnemy(enemy);
 
         spawner.CallDeferred(Node.MethodName.AddChild, enemy);
         _enemyNodes[row.EnemyId] = enemy;
-
-        var dir = new Vector2(row.MoveX, row.MoveY).Normalized();
-        _snapshots[row.EnemyId] = new SyncSnapshot(
-            new Vector2(row.X, row.Y),
-            dir.X, dir.Y, row.Speed,
-            row.EventTime.MicrosecondsSinceUnixEpoch);
     }
 
     private Spawner? _FindSpawner()
@@ -235,9 +221,9 @@ public partial class StdbEnemySync : Node
         }
         var conn = mgr?.Conn;
         if (conn == null) return;
-        conn.Db.EnemyState.OnInsert -= _OnInsert;
-        conn.Db.EnemyState.OnUpdate -= _OnUpdate;
-        conn.Db.EnemyState.OnDelete -= _OnDelete;
+        conn.Db.Enemy.OnInsert -= _OnInsert;
+        conn.Db.Enemy.OnUpdate -= _OnUpdate;
+        conn.Db.Enemy.OnDelete -= _OnDelete;
     }
 /*
 ```

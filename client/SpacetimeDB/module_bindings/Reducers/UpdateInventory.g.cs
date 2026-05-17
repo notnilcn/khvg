@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void UpdateInventoryHandler(ReducerEventContext ctx, string? equippedWeapon, string? equippedAbility, string? equippedArmor, System.Collections.Generic.List<string> equippedAccessories, System.Collections.Generic.List<string> backpackSlots, System.Collections.Generic.List<string> consumableSlots);
+        public delegate void UpdateInventoryHandler(ReducerEventContext ctx, System.Collections.Generic.List<SpacetimeDB.Types.InventorySlot> slots);
         public event UpdateInventoryHandler? OnUpdateInventory;
 
-        public void UpdateInventory(string? equippedWeapon, string? equippedAbility, string? equippedArmor, System.Collections.Generic.List<string> equippedAccessories, System.Collections.Generic.List<string> backpackSlots, System.Collections.Generic.List<string> consumableSlots)
+        public void UpdateInventory(System.Collections.Generic.List<SpacetimeDB.Types.InventorySlot> slots)
         {
-            conn.InternalCallReducer(new Reducer.UpdateInventory(equippedWeapon, equippedAbility, equippedArmor, equippedAccessories, backpackSlots, consumableSlots));
+            conn.InternalCallReducer(new Reducer.UpdateInventory(slots));
         }
 
         public bool InvokeUpdateInventory(ReducerEventContext ctx, Reducer.UpdateInventory args)
@@ -36,12 +36,7 @@ namespace SpacetimeDB.Types
             }
             OnUpdateInventory(
                 ctx,
-                args.EquippedWeapon,
-                args.EquippedAbility,
-                args.EquippedArmor,
-                args.EquippedAccessories,
-                args.BackpackSlots,
-                args.ConsumableSlots
+                args.Slots
             );
             return true;
         }
@@ -53,41 +48,17 @@ namespace SpacetimeDB.Types
         [DataContract]
         public sealed partial class UpdateInventory : Reducer, IReducerArgs
         {
-            [DataMember(Name = "equipped_weapon")]
-            public string? EquippedWeapon;
-            [DataMember(Name = "equipped_ability")]
-            public string? EquippedAbility;
-            [DataMember(Name = "equipped_armor")]
-            public string? EquippedArmor;
-            [DataMember(Name = "equipped_accessories")]
-            public System.Collections.Generic.List<string> EquippedAccessories;
-            [DataMember(Name = "backpack_slots")]
-            public System.Collections.Generic.List<string> BackpackSlots;
-            [DataMember(Name = "consumable_slots")]
-            public System.Collections.Generic.List<string> ConsumableSlots;
+            [DataMember(Name = "slots")]
+            public System.Collections.Generic.List<InventorySlot> Slots;
 
-            public UpdateInventory(
-                string? EquippedWeapon,
-                string? EquippedAbility,
-                string? EquippedArmor,
-                System.Collections.Generic.List<string> EquippedAccessories,
-                System.Collections.Generic.List<string> BackpackSlots,
-                System.Collections.Generic.List<string> ConsumableSlots
-            )
+            public UpdateInventory(System.Collections.Generic.List<InventorySlot> Slots)
             {
-                this.EquippedWeapon = EquippedWeapon;
-                this.EquippedAbility = EquippedAbility;
-                this.EquippedArmor = EquippedArmor;
-                this.EquippedAccessories = EquippedAccessories;
-                this.BackpackSlots = BackpackSlots;
-                this.ConsumableSlots = ConsumableSlots;
+                this.Slots = Slots;
             }
 
             public UpdateInventory()
             {
-                this.EquippedAccessories = new();
-                this.BackpackSlots = new();
-                this.ConsumableSlots = new();
+                this.Slots = new();
             }
 
             string IReducerArgs.ReducerName => "update_inventory";

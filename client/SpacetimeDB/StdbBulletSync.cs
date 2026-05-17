@@ -41,9 +41,6 @@ public partial class StdbBulletSync : Node
 	// Elevated server only: when (local seconds) each slot expires.
 	private readonly Dictionary<ushort, float> _expiry = new();
 
-	// Elevated server only: slots we've already called DespawnBullet on (awaiting OnDelete).
-	private readonly HashSet<ushort> _pendingDespawn = new();
-
 	// Ring-buffer slot counter, elevated server only.
 	private ushort _nextSlot;
 
@@ -87,56 +84,10 @@ public partial class StdbBulletSync : Node
 
 	private void _HookCallbacks()
 	{
-		var mgr  = SpacetimeDBManager.Instance;
-		var conn = mgr.Conn!;
-		conn.Db.BulletPattern.OnInsert += _OnInsert;
-		conn.Db.BulletPattern.OnUpdate += _OnUpdate;
-		conn.Db.BulletPattern.OnDelete += _OnDelete;
-		GD.Print("[StdbBulletSync] Hooked BulletPattern callbacks");
-
-		if (mgr.IsSubscriptionReady)
-			_CatchUp();
-		else
-			mgr.SubscriptionReady += _OnSubscriptionReady;
+		GD.Print("[StdbBulletSync] Ready (BulletPattern table not yet implemented)");
 	}
 
-	private void _OnSubscriptionReady()
-	{
-		SpacetimeDBManager.Instance.SubscriptionReady -= _OnSubscriptionReady;
-		_CatchUp();
-	}
-
-	private void _CatchUp()
-	{
-		var conn = SpacetimeDBManager.Instance.Conn;
-		if (conn == null) return;
-		foreach (var row in conn.Db.BulletPattern.Iter())
-		{
-			if (!_bullets.ContainsKey(row.SlotId))
-				_SpawnVisual(row);
-		}
-	}
-
-	private void _OnInsert(EventContext ctx, BulletPattern row)
-	{
-		GD.Print($"[StdbBulletSync] OnInsert slot={row.SlotId} pattern={row.PatternType} origin=({row.OriginX},{row.OriginY})");
-		_SpawnVisual(row);
-	}
-
-	private void _OnUpdate(EventContext ctx, BulletPattern old, BulletPattern row)
-	{
-		// Slot reuse: tear down the old bullet and start the new one.
-		_TeardownVisual(old.SlotId);
-		_SpawnVisual(row);
-	}
-
-	private void _OnDelete(EventContext ctx, BulletPattern row)
-	{
-		_pendingDespawn.Remove(row.SlotId);
-		_TeardownVisual(row.SlotId);
-	}
-
-	private void _SpawnVisual(BulletPattern row)
+private void _SpawnVisual(float ox, float oy, ushort slotId, byte pattern)
 	{
 		if (_pool.Count == 0)
 		{
@@ -145,12 +96,12 @@ public partial class StdbBulletSync : Node
 		}
 		var v = _pool[^1];
 		_pool.RemoveAt(_pool.Count - 1);
-		v.GlobalPosition = new Vector2(row.OriginX, row.OriginY);
+		v.GlobalPosition = new Vector2(ox, oy);
 		v.Visible = true;
 		v.QueueRedraw();
-		_visuals[row.SlotId] = v;
-		_bullets[row.SlotId] = new BulletData(row.OriginX, row.OriginY, row.PatternType, Time.GetTicksMsec() * 0.001f);
-		GD.Print($"[StdbBulletSync] Visual spawned slot={row.SlotId} at {v.GlobalPosition}");
+		_visuals[slotId] = v;
+		_bullets[slotId] = new BulletData(ox, oy, pattern, Time.GetTicksMsec() * 0.001f);
+		GD.Print($"[StdbBulletSync] Visual spawned slot={slotId} at {v.GlobalPosition}");
 	}
 
 	private void _TeardownVisual(ushort slotId)
@@ -188,31 +139,22 @@ public partial class StdbBulletSync : Node
 
 		var toRemove = new HashSet<ushort>();
 
-		// Expiry check.
 		foreach (var kv in _expiry)
 			if (now >= kv.Value)
 				toRemove.Add(kv.Key);
 
-		// Hit detection: collect player positions once per tick.
 		var players = new List<PlayerPosition>();
 		foreach (var p in conn.Db.PlayerPosition.Iter())
 			players.Add(p);
 
-		long nowMicros = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L;
-
 		foreach (var kv in _bullets)
 		{
-			if (toRemove.Contains(kv.Key) || _pendingDespawn.Contains(kv.Key)) continue;
+			if (toRemove.Contains(kv.Key)) continue;
 			var bulletPos = GetPosition(kv.Value.Ox, kv.Value.Oy, kv.Value.Pattern, now - kv.Value.SpawnTime);
 			foreach (var ppos in players)
 			{
-				float dt = Math.Max((nowMicros - ppos.EventTime.MicrosecondsSinceUnixEpoch) * 1e-6f, 0f);
-				var playerPos = new Vector2(
-					ppos.X + ppos.MoveX * ppos.Speed * dt,
-					ppos.Y + ppos.MoveY * ppos.Speed * dt);
-				if (bulletPos.DistanceTo(playerPos) < BulletRadius + PlayerRadius)
+				if (bulletPos.DistanceTo(new Vector2(ppos.X, ppos.Y)) < BulletRadius + PlayerRadius)
 				{
-					conn.Reducers.DamagePlayer(ppos.PlayerId, BulletDamage);
 					toRemove.Add(kv.Key);
 					break;
 				}
@@ -222,8 +164,7 @@ public partial class StdbBulletSync : Node
 		foreach (var slotId in toRemove)
 		{
 			_expiry.Remove(slotId);
-			_pendingDespawn.Add(slotId);
-			conn.Reducers.DespawnBullet(slotId);
+			_TeardownVisual(slotId);
 		}
 	}
 /*
@@ -232,24 +173,15 @@ public partial class StdbBulletSync : Node
 
 /*
 ```c# */
-	// Called by Enemy._TickStdbBulletFire on the server (elevated or host in dev mode).
+	// Called by Enemy._TickStdbBulletFire on the elevated client.
 	public void FireBullet(Vector2 origin, byte patternType)
 	{
-		var conn = SpacetimeDBManager.Instance.Conn;
-		if (conn == null)
-		{
-			GD.Print("[StdbBulletSync] FireBullet: no STDB connection");
-			return;
-		}
-
 		ushort slot = _nextSlot;
 		_nextSlot = (ushort)((_nextSlot + 1) % MaxBulletSlots);
 
-		float expireAt = Time.GetTicksMsec() * 0.001f + BulletLifetime;
-		_expiry[slot] = expireAt;
-
+		_expiry[slot] = Time.GetTicksMsec() * 0.001f + BulletLifetime;
+		_SpawnVisual(origin.X, origin.Y, slot, patternType);
 		GD.Print($"[StdbBulletSync] FireBullet slot={slot} pattern={patternType} origin={origin}");
-		conn.Reducers.FireBullet(slot, patternType, origin.X, origin.Y, origin.X, origin.Y - 50f, BulletLifetime);
 	}
 
 	// Deterministic parametric position — must match server-side math exactly.
@@ -268,14 +200,9 @@ public partial class StdbBulletSync : Node
 		var mgr = SpacetimeDBManager.Instance;
 		if (mgr != null)
 		{
-			mgr.ConnectedToServer   -= _OnConnected;
-			mgr.SubscriptionReady   -= _OnSubscriptionReady;
+			mgr.ConnectedToServer -= _OnConnected;
 		}
-		var conn = mgr?.Conn;
-		if (conn == null) return;
-		conn.Db.BulletPattern.OnInsert -= _OnInsert;
-		conn.Db.BulletPattern.OnUpdate -= _OnUpdate;
-		conn.Db.BulletPattern.OnDelete -= _OnDelete;
+		// BulletPattern table not yet implemented — no callbacks to unsubscribe.
 	}
 /*
 ```

@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://c51pe5ionn003" path="res://VS-Like/Assets/nature_decorations/mountain_C.fbx" id="11_8esvi"]
 [ext_resource type="PackedScene" uid="uid://duiudr5j6p4go" path="res://VS-Like/Assets/nature_decorations/mountain_B_grass.fbx" id="12_8hpcu"]
 [ext_resource type="PackedScene" uid="uid://bulletfactory_rm" path="res://VS-Like/Game/Singleton/BulletFactory.tscn" id="13_bfct"]
+[ext_resource type="Script" uid="uid://hexgridoverlay" path="res://VS-Like/Maps/HexGrid/hex_grid_overlay.gd" id="14_hexov"]
 
 [sub_resource type="World3D" id="World3D_k04el"]
 environment = ExtResource("1_k04el")
@@ -109,5 +110,8 @@ position = Vector2(768, 336)
 collision_mask = 1
 
 [node name="BulletFactory" parent="." unique_id=92519440 instance=ExtResource("13_bfct")]
+
+[node name="HexGridOverlay" type="Node2D" parent="." unique_id=114756823]
+script = ExtResource("14_hexov")
 
 [node name="Spawner" parent="." unique_id=923874041 instance=ExtResource("3_gx3ls")]

@@ -15,43 +15,21 @@ namespace SpacetimeDB.Types
     {
         [DataMember(Name = "player_id")]
         public SpacetimeDB.Identity PlayerId;
-        [DataMember(Name = "equipped_weapon")]
-        public string? EquippedWeapon;
-        [DataMember(Name = "equipped_ability")]
-        public string? EquippedAbility;
-        [DataMember(Name = "equipped_armor")]
-        public string? EquippedArmor;
-        [DataMember(Name = "equipped_accessories")]
-        public System.Collections.Generic.List<string> EquippedAccessories;
-        [DataMember(Name = "backpack_slots")]
-        public System.Collections.Generic.List<string> BackpackSlots;
-        [DataMember(Name = "consumable_slots")]
-        public System.Collections.Generic.List<string> ConsumableSlots;
+        [DataMember(Name = "slots")]
+        public System.Collections.Generic.List<InventorySlot> Slots;
 
         public PlayerInventory(
             SpacetimeDB.Identity PlayerId,
-            string? EquippedWeapon,
-            string? EquippedAbility,
-            string? EquippedArmor,
-            System.Collections.Generic.List<string> EquippedAccessories,
-            System.Collections.Generic.List<string> BackpackSlots,
-            System.Collections.Generic.List<string> ConsumableSlots
+            System.Collections.Generic.List<InventorySlot> Slots
         )
         {
             this.PlayerId = PlayerId;
-            this.EquippedWeapon = EquippedWeapon;
-            this.EquippedAbility = EquippedAbility;
-            this.EquippedArmor = EquippedArmor;
-            this.EquippedAccessories = EquippedAccessories;
-            this.BackpackSlots = BackpackSlots;
-            this.ConsumableSlots = ConsumableSlots;
+            this.Slots = Slots;
         }
 
         public PlayerInventory()
         {
-            this.EquippedAccessories = new();
-            this.BackpackSlots = new();
-            this.ConsumableSlots = new();
+            this.Slots = new();
         }
     }
 }

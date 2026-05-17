@@ -30,13 +30,20 @@ pub fn client_connected(ctx: &ReducerContext) {
         log::info!("Returning player: {:?}", ctx.sender());
     }
 
+    let spawn_x = 0.0f32;
+    let spawn_y = 0.0f32;
+    let cfg = ctx.db.map_config().id().find(&0u32);
+    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
+    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
+    let (cq, cr) = world_to_chunk(spawn_x, spawn_y, chunk_hex_radius, hex_outer_radius);
+    let chunk_index = spiral_chunk_index(cq, cr);
     ctx.db.player_position().insert(PlayerPosition {
         player_id: ctx.sender(),
-        x: 0.0,
-        y: 0.0,
+        x: spawn_x,
+        y: spawn_y,
         rotation: 0.0,
-        chunk_x: 0,
-        chunk_y: 0,
+        chunk_index,
     });
 }
 
@@ -63,10 +70,14 @@ pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String
 pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> Result<(), String> {
     let pos = ctx.db.player_position().player_id().find(ctx.sender())
         .ok_or_else(|| format!("Position not found for {:?}", ctx.sender()))?;
-    let chunk_x = (x / CHUNK_SIZE).floor() as i32;
-    let chunk_y = (y / CHUNK_SIZE).floor() as i32;
+    let cfg = ctx.db.map_config().id().find(&0u32);
+    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
+    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
+    let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
+    let chunk_index = spiral_chunk_index(cq, cr);
     ctx.db.player_position().player_id().update(PlayerPosition {
-        x, y, rotation, chunk_x, chunk_y,
+        x, y, rotation, chunk_index,
         ..pos
     });
     Ok(())
@@ -135,8 +146,7 @@ pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), Strin
             item_id: String::new(),
             x: enemy.spawn_x,
             y: enemy.spawn_y,
-            chunk_x: enemy.chunk_x,
-            chunk_y: enemy.chunk_y,
+            chunk_index: enemy.chunk_index,
             expires_at: ctx.timestamp + Duration::from_secs(60),
         });
         ctx.db.enemy().enemy_id().delete(&enemy_id);
@@ -180,17 +190,32 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
 // ── Admin reducers ───────────────────────────────────────────────────────────
 
 // Bootstrap: caller becomes admin only if no admins exist yet.
-// Safe to leave in — once any admin exists this is a no-op for everyone else.
+// If the caller is already admin, succeeds silently (idempotent).
 #[spacetimedb::reducer]
-pub fn make_me_admin(ctx: &ReducerContext) -> Result<(), String> {
-    let any_admin = ctx.db.player().iter().any(|p| p.is_admin);
-    if any_admin {
-        return Err("An admin already exists.".to_string());
-    }
+pub fn claim_admin(ctx: &ReducerContext) -> Result<(), String> {
     let player = ctx.db.player().player_id().find(ctx.sender())
         .ok_or("You must connect first so a Player row exists.")?;
+    if player.is_admin {
+        return Ok(()); // already admin, nothing to do
+    }
+    let any_admin = ctx.db.player().iter().any(|p| p.is_admin);
+    if any_admin {
+        return Err("An admin already exists. Use release_admin to remove them first.".to_string());
+    }
     ctx.db.player().player_id().update(Player { is_admin: true, ..player });
-    log::info!("make_me_admin: {:?} is now admin.", ctx.sender());
+    log::info!("claim_admin: {:?} is now admin.", ctx.sender());
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn release_admin(ctx: &ReducerContext) -> Result<(), String> {
+    let player = ctx.db.player().player_id().find(ctx.sender())
+        .ok_or("No Player row found.")?;
+    if !player.is_admin {
+        return Err("You are not an admin.".to_string());
+    }
+    ctx.db.player().player_id().update(Player { is_admin: false, ..player });
+    log::info!("release_admin: {:?} released admin.", ctx.sender());
     Ok(())
 }
 
@@ -268,8 +293,12 @@ pub fn spawn_enemy(ctx: &ReducerContext, template_id: String, res_path: String, 
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     let template = ctx.db.enemy_template().template_id().find(&template_id)
         .ok_or_else(|| format!("Template '{}' not found.", template_id))?;
-    let chunk_x = (x / CHUNK_SIZE).floor() as i32;
-    let chunk_y = (y / CHUNK_SIZE).floor() as i32;
+    let cfg = ctx.db.map_config().id().find(&0u32);
+    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
+    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
+    let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
+    let chunk_index = spiral_chunk_index(cq, cr);
     ctx.db.enemy().insert(Enemy {
         enemy_id: 0,
         template_id,
@@ -281,8 +310,7 @@ pub fn spawn_enemy(ctx: &ReducerContext, template_id: String, res_path: String, 
         phase: 0,
         is_elite,
         immortal,
-        chunk_x,
-        chunk_y,
+        chunk_index,
     });
     Ok(())
 }
@@ -301,21 +329,23 @@ pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> 
 // chunkCols: rhombus width in chunks (1–200)
 // chunkRows: rhombus height in chunks (1–200)
 #[spacetimedb::reducer]
-pub fn generate_map(ctx: &ReducerContext, hex_radius: i32, chunk_cols: i32, chunk_rows: i32) -> Result<(), String> {
+pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: Option<f32>) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    if !(1..=10).contains(&hex_radius)  { return Err("hex_radius must be 1–10.".to_string()); }
+    if !(1..=10).contains(&chunk_hex_radius)  { return Err("chunk_hex_radius must be 1–10.".to_string()); }
     if !(1..=200).contains(&chunk_cols) { return Err("chunk_cols must be 1–200.".to_string()); }
     if !(1..=200).contains(&chunk_rows) { return Err("chunk_rows must be 1–200.".to_string()); }
+    let hex_outer_radius = hex_outer_radius.unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+    if hex_outer_radius <= 0.0 { return Err("hex_outer_radius must be positive.".to_string()); }
 
-    let area  = hex_area(hex_radius);
-    let shift = hex_shift(hex_radius);
+    let area  = hex_area(chunk_hex_radius);
+    let shift = hex_shift(chunk_hex_radius);
 
     for cr in 0..chunk_rows {
         for cq in 0..chunk_cols {
-            let cidx = flat_chunk_index(cq, cr, chunk_cols);
-            let (cx, cz) = chunk_center_hex(cq, cr, hex_radius);
+            let cidx = spiral_chunk_index(cq, cr);
+            let (cx, cz) = chunk_center_hex(cq, cr, chunk_hex_radius);
             for m in 0..area {
-                let (rx, rz) = inv_hexmod(m, hex_radius, shift);
+                let (rx, rz) = inv_hexmod(m, chunk_hex_radius, shift);
                 ctx.db.building_tile().insert(BuildingTile {
                     tile_id: 0,
                     hex_q: cx + rx,
@@ -330,7 +360,16 @@ pub fn generate_map(ctx: &ReducerContext, hex_radius: i32, chunk_cols: i32, chun
             }
         }
     }
-    log::info!("generate_map: {} tiles inserted ({} chunks, area {})", chunk_cols * chunk_rows * area, chunk_cols * chunk_rows, area);
+    if ctx.db.map_config().id().find(&0u32).is_some() {
+        ctx.db.map_config().id().update(MapConfig {
+            id: 0, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius,
+        });
+    } else {
+        ctx.db.map_config().insert(MapConfig {
+            id: 0, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius,
+        });
+    }
+    log::info!("add_chunks: {} tiles inserted ({} chunks, area {})", chunk_cols * chunk_rows * area, chunk_cols * chunk_rows, area);
     Ok(())
 }
 
@@ -341,7 +380,7 @@ pub fn place_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32, building_typ
 
     let tile = ctx.db.building_tile().hex_q().filter(&hex_q)
         .find(|t| t.hex_r == hex_r)
-        .ok_or("Tile not found — has generate_map been called?")?;
+        .ok_or("Tile not found — has add_chunks been called?")?;
 
     if !tile.building_type.is_empty() {
         return Err("Tile already occupied.".to_string());
@@ -378,10 +417,15 @@ pub fn remove_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32) -> Result<(
 
 // ── Internal helpers ─────────────────────────────────────────────────────────
 
-fn find_player_by_username(ctx: &ReducerContext, username: &str) -> Option<Identity> {
-    let lower = username.to_lowercase();
+fn find_player_by_username(ctx: &ReducerContext, lookup: &str) -> Option<Identity> {
+    let lower = lookup.to_lowercase();
+    let hex = lower.trim_start_matches("0x");
     for p in ctx.db.player().iter() {
-        if p.username.to_lowercase() == lower {
+        let id_hex = p.player_id.to_hex().to_string().to_lowercase();
+        if (!p.username.is_empty() && p.username.to_lowercase() == lower)
+            || id_hex == hex
+            || (!hex.is_empty() && id_hex.starts_with(hex))
+        {
             return Some(p.player_id);
         }
     }

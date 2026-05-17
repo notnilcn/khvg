@@ -1,9 +1,11 @@
 [
   "custom-sort",
   "obsidian-underline",
-  "obsidian-wrap-with-shortcuts",
   "block-link-plus",
   "code-styler",
+  "system3-relay",
   "obsidian-custom-file-extensions-plugin",
-  "system3-relay"
+  "html-viewer",
+  "obsidian-wrap-with-shortcuts",
+  "automatic-table-of-contents"
 ]

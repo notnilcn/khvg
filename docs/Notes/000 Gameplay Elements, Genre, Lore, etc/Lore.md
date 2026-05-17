@@ -4,7 +4,7 @@
 # World Lore
 ## Destroyed world
 Players spawn into a world that has already been destroyed. Their purpose is to recolonize the word. The reason for the perma-death is because the players play as artificially created humans (created via magic or science, but I'm leaning towards magic because sci-fi isn't really appealing for kids).
-## Torus world
+## Torus world lore
 I have no lore for this
 I feel like it'd be boring if the torus world was linked to the apocalypse event Maybe the world was always a torus and the inhabitants don't know any better so they just take it as fact.
 

@@ -98,8 +98,7 @@ public partial class SpacetimeDBManager : Node
 		GD.Print($"[STDB] Connected. Identity: {identity}");
 		AuthToken.SaveToken(token);
 
-		if (ElevatedClient.IsActive)
-			conn.Reducers.ClaimElevated(); // ^claim-elevated-client-spot
+		// ClaimElevated removed — elevated client identified locally via ElevatedClient.IsActive
 
 		// Emit before subscribing so listeners can register table callbacks
 		// before initial OnInsert events arrive (mirrors blackholio GameManager pattern).
@@ -125,10 +124,30 @@ public partial class SpacetimeDBManager : Node
 		EmitSignal(SignalName.DisconnectedFromServer);
 	}
 
+	// Returns MapConfig as a GDScript-accessible Dictionary, or null if not yet loaded.
+	public Godot.Collections.Dictionary? GetMapConfig()
+	{
+		var cfg = Conn?.Db.MapConfig.Id.Find(0);
+		if (cfg == null) return null;
+		return new Godot.Collections.Dictionary {
+			["chunk_hex_radius"] = cfg.ChunkHexRadius,
+			["chunk_cols"]       = cfg.ChunkCols,
+			["chunk_rows"]       = cfg.ChunkRows,
+			["hex_outer_radius"] = cfg.HexOuterRadius,
+		};
+	}
+
 	private void OnSubscriptionApplied(SubscriptionEventContext ctx) // ^OnSubscriptionApplied
 	{
 		IsSubscriptionReady = true;
 		GD.Print("[STDB] Subscription ready — table data available.");
+
+		if (ElevatedClient.IsActive)
+		{
+			Conn?.Reducers.ClaimAdmin();
+			GD.Print("[ElevatedClient] Called ClaimAdmin.");
+		}
+
 		EmitSignal(SignalName.SubscriptionReady); // ^SubscriptionReady
 	}
 /*

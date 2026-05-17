@@ -9,13 +9,12 @@
       "cs",
       "godot",
       "rs",
+      "js",
       ""
     ]
   },
   "configIsValid": true,
-  "errors": {
-    "": "Could not register extension: '' to view type: markdown.  is already registered to markdown."
-  },
+  "errors": {},
   "allowMdOverride": false,
   "mobileSettings": {
     "enabled": false,

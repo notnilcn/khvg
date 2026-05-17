@@ -93,8 +93,8 @@ pub struct PlayerPosition {
     pub x: f32,
     pub y: f32,
     pub rotation: f32,
-    pub chunk_x: i32,
-    pub chunk_y: i32,
+    #[index(btree)]
+    pub chunk_index: i64,
 }
 
 // ── Enemy tables ─────────────────────────────────────────────────────────────
@@ -125,8 +125,8 @@ pub struct Enemy {
     pub phase: u8,
     pub is_elite: bool,
     pub immortal: bool,
-    pub chunk_x: i32,
-    pub chunk_y: i32,
+    #[index(btree)]
+    pub chunk_index: i64,
 }
 
 // ── Loot table ───────────────────────────────────────────────────────────────
@@ -139,8 +139,8 @@ pub struct LootDrop {
     pub item_id: String, // FK to ItemStats
     pub x: f32,
     pub y: f32,
-    pub chunk_x: i32,
-    pub chunk_y: i32,
+    #[index(btree)]
+    pub chunk_index: i64,
     pub expires_at: Timestamp,
 }
 
@@ -164,6 +164,20 @@ pub struct BuildingTile {
     pub chunk_index: i64,        // flat chunk index: cr * chunk_cols + cq
     pub building_type: String,   // empty = unoccupied
     pub owner_id: Option<Identity>,
+}
+
+// ── Map configuration (singleton) ────────────────────────────────────────────
+
+// Written by add_chunks; read by report_movement and spawn_enemy so that all
+// chunk and world-position computations use the same parameters the map was generated with.
+#[table(accessor = map_config, public)]
+pub struct MapConfig {
+    #[primary_key]
+    pub id: u32, // always 0
+    pub chunk_hex_radius: i32,
+    pub chunk_cols: i32,
+    pub chunk_rows: i32,
+    pub hex_outer_radius: f32,
 }
 
 // ── Item reference table ─────────────────────────────────────────────────────

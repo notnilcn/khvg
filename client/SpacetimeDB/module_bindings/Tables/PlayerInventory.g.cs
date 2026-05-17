@@ -40,22 +40,12 @@ namespace SpacetimeDB.Types
     public sealed class PlayerInventoryCols
     {
         public global::SpacetimeDB.Col<PlayerInventory, SpacetimeDB.Identity> PlayerId { get; }
-        public global::SpacetimeDB.Col<PlayerInventory, string> EquippedWeapon { get; }
-        public global::SpacetimeDB.Col<PlayerInventory, string> EquippedAbility { get; }
-        public global::SpacetimeDB.Col<PlayerInventory, string> EquippedArmor { get; }
-        public global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<string>> EquippedAccessories { get; }
-        public global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<string>> BackpackSlots { get; }
-        public global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<string>> ConsumableSlots { get; }
+        public global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<InventorySlot>> Slots { get; }
 
         public PlayerInventoryCols(string tableName)
         {
             PlayerId = new global::SpacetimeDB.Col<PlayerInventory, SpacetimeDB.Identity>(tableName, "player_id");
-            EquippedWeapon = new global::SpacetimeDB.Col<PlayerInventory, string>(tableName, "equipped_weapon");
-            EquippedAbility = new global::SpacetimeDB.Col<PlayerInventory, string>(tableName, "equipped_ability");
-            EquippedArmor = new global::SpacetimeDB.Col<PlayerInventory, string>(tableName, "equipped_armor");
-            EquippedAccessories = new global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<string>>(tableName, "equipped_accessories");
-            BackpackSlots = new global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<string>>(tableName, "backpack_slots");
-            ConsumableSlots = new global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<string>>(tableName, "consumable_slots");
+            Slots = new global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<InventorySlot>>(tableName, "slots");
         }
     }
 

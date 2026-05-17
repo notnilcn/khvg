@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void SpawnEnemyHandler(ReducerEventContext ctx, ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, uint hp, byte bulletPatternType);
+        public delegate void SpawnEnemyHandler(ReducerEventContext ctx, string templateId, string resPath, float x, float y, bool isElite, bool immortal);
         public event SpawnEnemyHandler? OnSpawnEnemy;
 
-        public void SpawnEnemy(ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, uint hp, byte bulletPatternType)
+        public void SpawnEnemy(string templateId, string resPath, float x, float y, bool isElite, bool immortal)
         {
-            conn.InternalCallReducer(new Reducer.SpawnEnemy(enemyId, x, y, resPath, isElite, immortal, hp, bulletPatternType));
+            conn.InternalCallReducer(new Reducer.SpawnEnemy(templateId, resPath, x, y, isElite, immortal));
         }
 
         public bool InvokeSpawnEnemy(ReducerEventContext ctx, Reducer.SpawnEnemy args)
@@ -36,14 +36,12 @@ namespace SpacetimeDB.Types
             }
             OnSpawnEnemy(
                 ctx,
-                args.EnemyId,
+                args.TemplateId,
+                args.ResPath,
                 args.X,
                 args.Y,
-                args.ResPath,
                 args.IsElite,
-                args.Immortal,
-                args.Hp,
-                args.BulletPatternType
+                args.Immortal
             );
             return true;
         }
@@ -55,46 +53,39 @@ namespace SpacetimeDB.Types
         [DataContract]
         public sealed partial class SpawnEnemy : Reducer, IReducerArgs
         {
-            [DataMember(Name = "enemy_id")]
-            public ulong EnemyId;
+            [DataMember(Name = "template_id")]
+            public string TemplateId;
+            [DataMember(Name = "res_path")]
+            public string ResPath;
             [DataMember(Name = "x")]
             public float X;
             [DataMember(Name = "y")]
             public float Y;
-            [DataMember(Name = "res_path")]
-            public string ResPath;
             [DataMember(Name = "is_elite")]
             public bool IsElite;
             [DataMember(Name = "immortal")]
             public bool Immortal;
-            [DataMember(Name = "hp")]
-            public uint Hp;
-            [DataMember(Name = "bullet_pattern_type")]
-            public byte BulletPatternType;
 
             public SpawnEnemy(
-                ulong EnemyId,
+                string TemplateId,
+                string ResPath,
                 float X,
                 float Y,
-                string ResPath,
                 bool IsElite,
-                bool Immortal,
-                uint Hp,
-                byte BulletPatternType
+                bool Immortal
             )
             {
-                this.EnemyId = EnemyId;
+                this.TemplateId = TemplateId;
+                this.ResPath = ResPath;
                 this.X = X;
                 this.Y = Y;
-                this.ResPath = ResPath;
                 this.IsElite = IsElite;
                 this.Immortal = Immortal;
-                this.Hp = Hp;
-                this.BulletPatternType = BulletPatternType;
             }
 
             public SpawnEnemy()
             {
+                this.TemplateId = "";
                 this.ResPath = "";
             }
 

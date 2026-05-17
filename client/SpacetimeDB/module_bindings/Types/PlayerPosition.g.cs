@@ -19,40 +19,24 @@ namespace SpacetimeDB.Types
         public float X;
         [DataMember(Name = "y")]
         public float Y;
-        [DataMember(Name = "move_x")]
-        public sbyte MoveX;
-        [DataMember(Name = "move_y")]
-        public sbyte MoveY;
-        [DataMember(Name = "speed")]
-        public ushort Speed;
-        [DataMember(Name = "event_time")]
-        public SpacetimeDB.Timestamp EventTime;
-        [DataMember(Name = "chunk_x")]
-        public int ChunkX;
-        [DataMember(Name = "chunk_y")]
-        public int ChunkY;
+        [DataMember(Name = "rotation")]
+        public float Rotation;
+        [DataMember(Name = "chunk_index")]
+        public long ChunkIndex;
 
         public PlayerPosition(
             SpacetimeDB.Identity PlayerId,
             float X,
             float Y,
-            sbyte MoveX,
-            sbyte MoveY,
-            ushort Speed,
-            SpacetimeDB.Timestamp EventTime,
-            int ChunkX,
-            int ChunkY
+            float Rotation,
+            long ChunkIndex
         )
         {
             this.PlayerId = PlayerId;
             this.X = X;
             this.Y = Y;
-            this.MoveX = MoveX;
-            this.MoveY = MoveY;
-            this.Speed = Speed;
-            this.EventTime = EventTime;
-            this.ChunkX = ChunkX;
-            this.ChunkY = ChunkY;
+            this.Rotation = Rotation;
+            this.ChunkIndex = ChunkIndex;
         }
 
         public PlayerPosition()

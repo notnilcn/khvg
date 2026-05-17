@@ -1,10 +1,11 @@
 use spacetimedb::{ReducerContext, Identity, Table};
+use hexx::{Hex, HexLayout, HexOrientation, Vec2};
 use super::tables::*;
 
 pub const BASE_MAX_HP: i32 = 100;
 pub const HP_PER_LEVEL: i32 = 5;
-pub const CHUNK_SIZE: f32 = 320.0;
-pub const HEX_TILE_OUTER_RADIUS: f32 = 32.0; // outer radius R of each small hex in world units
+pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 32.0; // fallback outer radius before MapConfig is written
+pub const DEFAULT_CHUNK_HEX_RADIUS: i32 = 7; // fallback chunk size before MapConfig is written
 
 pub fn starting_stats() -> PlayerStats {
     PlayerStats {
@@ -98,103 +99,93 @@ pub fn recompute_stats(ctx: &ReducerContext, player_id: Identity) {
     }
 }
 
-// ── Hex grid math ────────────────────────────────────────────────────────────
+// ── Hex grid math (wrappers around hexx) ─────────────────────────────────────
 
-// Floored integer division: result is always rounded toward −∞.
-fn floor_div(a: i32, b: i32) -> i32 {
-    let d = a / b;
-    let r = a % b;
-    if r < 0 { d - 1 } else { d }
-}
-
-// Non-negative modulo: result is always in [0, b).
-fn pos_mod(a: i32, b: i32) -> i32 {
-    ((a % b) + b) % b
-}
-
-// Number of small hexes per chunk for a given chunk radius.
+// Number of small hexes per chunk. Delegates to Hex::range_count.
 pub fn hex_area(hex_radius: i32) -> i32 {
-    3 * hex_radius * hex_radius + 3 * hex_radius + 1
+    Hex::range_count(hex_radius as u32) as i32
 }
 
-// Shift constant used throughout the sanderevers tiling algorithm.
+// Shift constant for hexmod arithmetic. hexx::Hex::shift is pub(crate) so the
+// formula is reproduced here; it is identical to hexx's implementation.
 pub fn hex_shift(hex_radius: i32) -> i32 {
     3 * hex_radius + 2
 }
 
-// World position → small hex axial (q, r) using fractional cube rounding.
-// r_outer is HEX_TILE_OUTER_RADIUS; pointy-top orientation.
+// World position → small hex axial (q, r). Delegates to HexLayout::world_pos_to_hex.
 pub fn world_to_hex(wx: f32, wy: f32, r_outer: f32) -> (i32, i32) {
-    let inner = r_outer * 0.866_025_4_f32;
-    let mut fx = wx / (inner * 2.0);
-    let mut fy = -fx;
-    let offset = wy / (r_outer * 3.0);
-    fx -= offset;
-    fy -= offset;
-    let mut ix = fx.round() as i32;
-    let iy = fy.round() as i32;
-    let mut iz = (-fx - fy).round() as i32;
-    if ix + iy + iz != 0 {
-        let dx = (fx - ix as f32).abs();
-        let dy = (fy - iy as f32).abs();
-        let dz = (-fx - fy - iz as f32).abs();
-        if dx > dy && dx > dz { ix = -iy - iz; }
-        else if dz > dy       { iz = -ix - iy; }
-    }
-    (ix, iz) // (hex_q, hex_r); implicit cube y = -ix-iz
+    let layout = HexLayout {
+        orientation: HexOrientation::Pointy,
+        scale: Vec2::splat(r_outer),
+        origin: Vec2::ZERO,
+    };
+    let h = layout.world_pos_to_hex(Vec2::new(wx, wy));
+    (h.x, h.y)
 }
 
-// Small hex (hq, hr) → chunk (cq, cr). Implements sanderevers' small_to_big algorithm.
-pub fn small_to_big(hq: i32, hr: i32, area: i32, shift: i32) -> (i32, i32) {
-    let hy = -hq - hr;
-    let xh = floor_div(hy + shift * hq, area);
-    let yh = floor_div(hr + shift * hy, area);
-    let zh = floor_div(hq + shift * hr, area);
-    let ci = floor_div(1 + xh - yh, 3);
-    let ck = floor_div(1 + zh - xh, 3);
-    (ci, ck) // (chunk_q, chunk_r)
+// Small hex (q, r) → chunk (cq, cr). Delegates to Hex::to_lower_res.
+// `area` is unused; radius is derived from `shift` (shift = 3r+2 → r = (shift-2)/3).
+pub fn small_to_big(hq: i32, hr: i32, _area: i32, shift: i32) -> (i32, i32) {
+    let radius = ((shift - 2) / 3) as u32;
+    let chunk = Hex::new(hq, hr).to_lower_res(radius);
+    (chunk.x, chunk.y)
 }
 
-// Compact local index m ∈ [0, area) uniquely identifying a small hex within its chunk.
-pub fn hexmod(hq: i32, hr: i32, area: i32, shift: i32) -> i32 {
-    let hy = -hq - hr;
-    pos_mod(hy + shift * hq, area)
+// Compact local index m ∈ [0, area) for a small hex within its chunk.
+// Delegates to Hex::to_hexmod_coordinates.
+// `area` is unused; radius is derived from `shift` (shift = 3r+2 → r = (shift-2)/3).
+pub fn hexmod(hq: i32, hr: i32, _area: i32, shift: i32) -> i32 {
+    let radius = ((shift - 2) / 3) as u32;
+    Hex::new(hq, hr).to_hexmod_coordinates(radius) as i32
 }
 
-// Center of chunk (cq, cr) expressed as small hex axial coordinates.
+// Center of chunk (cq, cr) as small hex axial coords. Delegates to Hex::to_higher_res.
 pub fn chunk_center_hex(cq: i32, cr: i32, hex_radius: i32) -> (i32, i32) {
-    let r = hex_radius;
-    let cj = -cq - cr;
-    let hq = (r + 1) * cq - r * cr;
-    let hr = (r + 1) * cr - r * cj;
-    (hq, hr)
+    let center = Hex::new(cq, cr).to_higher_res(hex_radius as u32);
+    (center.x, center.y)
 }
 
 // Local hexmod index → relative small hex (q, r) offset from chunk center.
-// Add this offset to chunk_center_hex to get absolute hex coords.
-pub fn inv_hexmod(m: i32, hex_radius: i32, shift: i32) -> (i32, i32) {
-    let r = hex_radius;
-    let ms  = floor_div(m + r,     shift);
-    let mcs = floor_div(m + 2 * r, shift - 1);
-    let hq = ms * (r + 1) + mcs * (-r);
-    let hr = -m + ms * r + mcs * (2 * r + 1);
-    (hq, hr)
+// Delegates to Hex::from_hexmod_coordinates. `shift` is unused; hexx derives it
+// internally from hex_radius.
+pub fn inv_hexmod(m: i32, hex_radius: i32, _shift: i32) -> (i32, i32) {
+    let rel = Hex::from_hexmod_coordinates(m as u32, hex_radius as u32);
+    (rel.x, rel.y)
 }
 
-// Flat i64 chunk index for SpacetimeDB AoI subscription queries.
-pub fn flat_chunk_index(cq: i32, cr: i32, chunk_cols: i32) -> i64 {
-    (cr * chunk_cols + cq) as i64
+// Bijective i64 chunk index using hex spiral order (ring ρ = max(|x|,|y|,|z|) in cube coords).
+// Unique for all integer (cq, cr) including negative values. Mirrors _hex_spiral_index in
+// hex_grid_overlay.gd so the server, overlay, and future AoI client code all share one formula.
+pub fn spiral_chunk_index(cq: i32, cr: i32) -> i64 {
+    let x = cq;
+    let z = cr;
+    let y = -cq - cr;
+    let rho = x.abs().max(y.abs()).max(z.abs());
+    if rho == 0 { return 0; }
+    let b = (3 * rho * (rho - 1) + 1) as i64;
+    let (arm, step): (i64, i64) =
+        if z == -rho && x > 0          { (0, y as i64) }
+        else if y == rho && x > -rho   { (1, -x as i64) }
+        else if x == -rho && z < rho   { (2, z as i64) }
+        else if z == rho && x < 0      { (3, (x + rho) as i64) }
+        else if y == -rho && x >= 0 && x < rho { (4, x as i64) }
+        else                           { (5, (y + rho) as i64) };
+    b + arm * rho as i64 + step
 }
 
-// Small hex axial (q, r) → world center position (pointy-top, world units).
+// Small hex axial (q, r) → world center position. Delegates to HexLayout::hex_to_world_pos.
 pub fn hex_to_world(hq: i32, hr: i32, r_outer: f32) -> (f32, f32) {
-    let inner = r_outer * 0.866_025_4_f32;
-    let wx = 2.0 * inner * hq as f32 + inner * hr as f32;
-    let wy = 1.5 * r_outer * hr as f32;
-    (wx, wy)
+    let layout = HexLayout {
+        orientation: HexOrientation::Pointy,
+        scale: Vec2::splat(r_outer),
+        origin: Vec2::ZERO,
+    };
+    let pos = layout.hex_to_world_pos(Hex::new(hq, hr));
+    (pos.x, pos.y)
 }
 
 // Returns the 9 chunk indices (3×3 neighbourhood) around (cq, cr), clamped to map bounds.
+// No hexx equivalent; kept as a local helper for SpacetimeDB AoI queries.
 pub fn surrounding_chunk_indices(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: i32) -> Vec<i64> {
     let mut result = Vec::with_capacity(9);
     for dr in -1..=1i32 {
@@ -202,7 +193,7 @@ pub fn surrounding_chunk_indices(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: 
             let nq = cq + dq;
             let nr = cr + dr;
             if nq >= 0 && nq < chunk_cols && nr >= 0 && nr < chunk_rows {
-                result.push(flat_chunk_index(nq, nr, chunk_cols));
+                result.push(spiral_chunk_index(nq, nr));
             }
         }
     }
@@ -210,11 +201,10 @@ pub fn surrounding_chunk_indices(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: 
 }
 
 // Returns the chunk (cq, cr) that a world position falls within.
-pub fn world_to_chunk(wx: f32, wy: f32, hex_radius: i32) -> (i32, i32) {
-    let (hq, hr) = world_to_hex(wx, wy, HEX_TILE_OUTER_RADIUS);
-    let area  = hex_area(hex_radius);
-    let shift = hex_shift(hex_radius);
-    small_to_big(hq, hr, area, shift)
+pub fn world_to_chunk(wx: f32, wy: f32, chunk_hex_radius: i32, hex_outer_radius: f32) -> (i32, i32) {
+    let (hq, hr) = world_to_hex(wx, wy, hex_outer_radius);
+    let chunk = Hex::new(hq, hr).to_lower_res(chunk_hex_radius as u32);
+    (chunk.x, chunk.y)
 }
 
 // ── Enemy phase ───────────────────────────────────────────────────────────────

@@ -8,31 +8,29 @@
         "type": "tabs",
         "children": [
           {
-            "id": "c7a6cdc6336e42b3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "server/spacetimedb/src/main/reducers.rs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "reducers"
-            }
-          },
-          {
             "id": "f7aef3a82d46a5e6",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Notes/002 Game Development/Features to implement/Foundations.md",
+                "file": "docs/Notes/002 Game Development/Features to implement list.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Foundations"
+              "title": "Features to implement list"
+            }
+          },
+          {
+            "id": "5f25989162e27e5d",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/chunkradius2.svg"
+              },
+              "icon": "lucide-image",
+              "title": "chunkradius2"
             }
           }
         ],
@@ -186,6 +184,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "system3-relay:Relay": false,
       "custom-sort:Toggle custom sorting": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
@@ -196,31 +195,42 @@
       "bases:Create new base": false
     }
   },
-  "active": "f7aef3a82d46a5e6",
+  "active": "5f25989162e27e5d",
   "lastOpenFiles": [
+    "docs/Notes/002 Game Development/Features to implement/World grid.md",
+    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/chunkradius2.svg",
+    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/chunkradius2.svg",
+    "untitled.svg~RF9c47afc.TMP",
+    "docs/Notes/002 Game Development/Features to implement list.md",
+    "docs/Resources/hex-grid/Hexagonal Grids.html",
+    "docs/Resources/hex-grid/Hexagonal Grids_files/index.js.download",
+    "docs/Resources/hex-grid/Hexagonal Grids_files/vue.v2.min.js.download",
+    "docs/Resources/hex-grid/Hexagonal Grids_files/code-highlighting.js.download",
+    "docs/Resources/hex-grid/Hexagonal Grids_files/count-data.js.download",
+    "docs/Resources/hex-grid/Hexagonal Grids_files/diagrams.js.download",
+    "docs/Resources/hex-grid/Hexagonal Grids_files/hex-algorithms.js.download",
+    "docs/Resources/hex-grid/Hexagonal Grids_files/lib.js.download",
+    "docs/Resources/hex-grid/Hexagonal Grids_files",
+    "docs/Resources/hex-grid/hexmod-representation/README.md",
+    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/README.md",
+    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Lore.md",
+    "docs/Notes/002 Game Development/Features to implement/Bugs.md",
+    "example-project-blastbullets2d/assets/player_skin/player_ship_idle.png",
+    "example-project-blastbullets2d/assets/player_skin/player_ship5.png",
+    "example-project-blastbullets2d/assets/player_skin/player_ship4.png",
+    "example-project-blastbullets2d/assets/player_skin/player_ship3.png",
+    "example-project-blastbullets2d/assets/player_skin/player_ship2.png",
+    "example-project-blastbullets2d/assets/player_skin/player_ship1.png",
+    "example-project-blastbullets2d/assets/player_bullets/9.png",
+    "example-project-blastbullets2d/assets/player_bullets/8.png",
+    "example-project-blastbullets2d/addons/blastbullets2d/README.md",
+    "example-project-blastbullets2d/addons/blastbullets2d/LICENSE.md",
+    "example-project-blastbullets2d/README.md",
+    "example-project-blastbullets2d/CLAUDE.md",
     "docs/Resources/hexmod-representation/README.md",
-    "docs/Resources/hexmod-representation/runtime.js",
-    "docs/Resources/hexmod-representation/inspector.css",
-    "docs/Resources/hexmod-representation/index.js",
-    "docs/Resources/hexmod-representation/package.json",
-    "docs/Resources/hexmod-representation/index.html",
-    "docs/Resources/hexmod-representation/a46446d8701dfc65@35.js",
-    "docs/Resources/hexmod-representation/8d271c22db968ab0@160.js",
-    "docs/Resources/hexmod-representation/4ec02aa4a67ac76d@842.js",
-    "docs/Resources/hexmod-representation/47e466502e507073@1681.js",
-    "docs/Resources/hexmod-representation",
     "docs/Resources/hexagon-tiling-of-an-hexagonal-grid/README.md",
     "docs/Resources/hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/9.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/8.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/5.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/7.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/6.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/3.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/4.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/10.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_bullets/2.png",
-    "docs/Resources/example-project-blastbullets2d/assets/player_skin/player_ship_idle.png",
     "docs/Resources/example-project-blastbullets2d/addons/blastbullets2d/LICENSE.md",
     "docs/Resources/example-project-blastbullets2d/addons/blastbullets2d/README.md",
     "docs/Resources/example-project-blastbullets2d/README.md",
@@ -231,18 +241,6 @@
     "Untitled.md",
     "server/Teo-Notes/next-steps comments.md",
     "server/Teo-Notes/next-steps 1.md",
-    "server/Teo-Notes/system-overview 1.md",
-    "system-overview.md",
-    "next-steps.md",
-    "docs/Notes/002 Game Development/Features to implement/Foundations.md",
-    "docs/Notes/002 Game Development/Features to implement list.md",
-    "server/Teo-Notes/next-steps.md",
-    "server/Teo-Notes/system-overview.md",
-    "server/CLAUDE.md",
-    "docs/Notes/002 Game Development/Features to implement list-Clintons-Framework-16.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-    "Notes/002 Game Development/Features to implement list.md",
-    "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
-    "Notes/002 Game Development/Features to implement/Foundations.md"
+    "server/Teo-Notes/system-overview 1.md"
   ]
 }

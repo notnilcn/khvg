@@ -1,0 +1,143 @@
+/*!
+ * From https://www.redblobgames.com/grids/
+ * Copyright 2026 Red Blob Games <redblobgames@gmail.com>
+ * @license Apache-2.0 <https://www.apache.org/licenses/LICENSE-2.0.html>
+ *
+ * Lightweight syntax highlighting for the hexagons page.
+ *
+ * Normal syntax highlighting libraries take plain text and output html.
+ * The hexagon page has html as input, and that html is changing over
+ * time due to the interactive elements on the page.
+ *
+ * This syntax highlighter uses the DOM MutationObserver API and CSS
+ * Custom Highlight API to apply highlighting that does *not* change
+ * the underlying HTML.
+ *
+ * The Custom Highlight API is limited in the styles that can be applied.
+ */
+
+if (window.Highlight && window.MutationObserver) {
+    /** @type{ {type: string, pattern: string, highlight: Highlight}[] } */
+    const rules = Object.entries({
+        // NOTE: the comment regexp will stop at the end of the line, but
+        // that depends on the code having \n and not <br>
+        comment:    /\/\/.*/,
+        keyword:    /\b(?:return|var|function|if|else|for|while|each|in|and|not|or)\b/,
+        type:       /\b(?:Array|Set|int|float|Hex|FloatHex|Cube|FloatCube|OffsetCoord|DoubledCoord|Point)\b/,
+        axis1:      /\bd?(?:q|col|cols|qmin|qmax|q_basis|q_diff|first_column)\b/,
+        axis2:      /\bd?(?:r|row|rows|rmin|rmax|r_basis|r_diff|first_row)\b/,
+        axis3:      /\bd?(?:s|smin|smax|s_diff)\b/,
+    }).map(([type, regexp]) => ({
+        type,
+        pattern: regexp.source,
+        highlight: new Highlight(),
+    }));
+
+    rules.forEach((rule) => CSS.highlights.set(rule.type, rule.highlight));
+
+
+    /**
+     * Tokenize a string
+     *
+     * @param {string} text - input string
+     * @returns {Array<{type: string, start: number, end: number, value: string, highlight: Highlight}>}
+     */
+    function tokenize(text) {
+        // Construct regexp (pattern1)|(pattern2)|(pattern3)|…
+        let regexp = new RegExp(
+            rules.map((rule) => "(" + rule.pattern + ")").join("|"),
+            'g'
+        );
+
+        // Find all matches, then figure out which group matched
+        let tokens = [];
+        for (const match of text.matchAll(regexp)) {
+            let groups = match.slice(1);
+            for (let i = 0; i < groups.length; i++) {
+                if (groups[i]) {
+                    tokens.push({
+                        type: rules[i].type,
+                        start: match.index,
+                        end: match.index + match[0].length,
+                        value: match[i],
+                        highlight: rules[i].highlight,
+                    });
+                    break;
+                }
+            }
+        }
+
+        return tokens;
+    }
+
+    /**
+     * Walk a DOM tree to find a given string index into all the text nodes in the tree.
+     * For example, given <div><b>foo</b><i>bar</i></div>, position 4 will be the 'a'
+     * in the <i>.
+     *
+     * @param {Node} el
+     * @param {number} index
+     * @returns {{node: Node, offset: number} | null} The node and offset within the node
+     */
+    function stringIndexIntoDomTree(el, index) {
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+
+        let position = 0;
+        for (let node = walker.nextNode(); node; node = walker.nextNode()) {
+            let offset = index - position;
+            if (offset <= node.textContent.length) {
+                return {node, offset};
+            }
+            position += node.textContent.length;
+        }
+
+        return null;
+    }
+
+    /**
+     * Set up a watcher on an element to syntax highlight that element whenever anything changes.
+     *
+     * @param {Element} el
+     * @param {boolean} watchForChanges
+     */
+    function setUpSyntaxHighlightingFor(el, watchForChanges) {
+        let cleanup = [];
+
+        function unhighlight() {
+            cleanup.forEach((f) => f());
+            cleanup = [];
+        }
+
+        function highlight() {
+            let tokens = tokenize(el.textContent);
+            for (let token of tokens) {
+                let start = stringIndexIntoDomTree(el, token.start);
+                let end = stringIndexIntoDomTree(el, token.end);
+                let range = new Range();
+                range.setStart(start.node, start.offset);
+                range.setEnd(end.node, end.offset);
+                token.highlight.add(range);
+                cleanup.push(() => token.highlight.delete(range));
+            }
+        }
+
+        function callback(_mutationList, _observer) {
+            unhighlight();
+            highlight();
+            // NOTE: I didn't add rate limiting here because the changes
+            // on this page are in response to clicks and not motion
+        }
+
+        highlight();
+        if (watchForChanges) {
+            let observer = new MutationObserver(callback);
+            observer.observe(el, {subtree: true, attributes: false, childList: true, characterData: true});
+            // NOTE: attributes won't affect the text content, so we don't need to watch them
+        }
+    }
+
+    for (let el of document.querySelectorAll("main :is(pre, code)")) {
+        // The <code> elements aren't changing on this page; don't need an observer on them
+        setUpSyntaxHighlightingFor(el, el.tagName === "PRE");
+    }
+}
