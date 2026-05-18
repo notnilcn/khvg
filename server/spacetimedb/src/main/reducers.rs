@@ -1,55 +1,41 @@
-use spacetimedb::{ReducerContext, Identity, Table};
+use spacetimedb::{ReducerContext, Identity, Table, ScheduleAt, TimeDuration, Timestamp};
 use std::time::Duration;
 use super::tables::*;
 use super::methods::*;
+use super::seeds::*;
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
+#[spacetimedb::reducer(init)]
+pub fn init(ctx: &ReducerContext) {
+    ctx.db.enemy_behavior_schedule().insert(EnemyBehaviorSchedule {
+        scheduled_id: 0,
+        scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_millis(500))),
+    });
+}
 
 // ── Lifecycle ────────────────────────────────────────────────────────────────
 
 #[spacetimedb::reducer(client_connected)]
 pub fn client_connected(ctx: &ReducerContext) {
-    if ctx.db.player().player_id().find(ctx.sender()).is_none() {
-        ctx.db.player().insert(Player {
-            player_id: ctx.sender(),
-            username: String::new(),
-            is_admin: false,
-        });
-        ctx.db.player_data().insert(PlayerData {
-            player_id: ctx.sender(),
-            level: 1,
-            xp: 0,
-            hp: BASE_MAX_HP as u32,
-            max_hp: BASE_MAX_HP as u32,
-        });
-        ctx.db.player_inventory().insert(PlayerInventory {
-            player_id: ctx.sender(),
-            slots: Vec::new(),
-        });
-        recompute_stats(ctx, ctx.sender());
+    let is_new = ctx.db.logged_in_player().player_id().find(ctx.sender()).is_none()
+        && ctx.db.logged_out_player().player_id().find(ctx.sender()).is_none();
+    if is_new {
+        seed_new_player(ctx, ctx.sender());
         log::info!("New player: {:?}", ctx.sender());
-    } else {
+    } else if let Some(player) = ctx.db.logged_out_player().player_id().find(ctx.sender()) {
+        ctx.db.logged_out_player().player_id().delete(ctx.sender());
+        ctx.db.logged_in_player().insert(player);
         log::info!("Returning player: {:?}", ctx.sender());
     }
-
-    let spawn_x = 0.0f32;
-    let spawn_y = 0.0f32;
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
-    let (cq, cr) = world_to_chunk(spawn_x, spawn_y, chunk_hex_radius, hex_outer_radius);
-    let chunk_index = spiral_chunk_index(cq, cr);
-    ctx.db.player_position().insert(PlayerPosition {
-        player_id: ctx.sender(),
-        x: spawn_x,
-        y: spawn_y,
-        rotation: 0.0,
-        chunk_index,
-    });
 }
 
 #[spacetimedb::reducer(client_disconnected)]
 pub fn client_disconnected(ctx: &ReducerContext) {
-    ctx.db.player_position().player_id().delete(ctx.sender());
+    if let Some(player) = ctx.db.logged_in_player().player_id().find(ctx.sender()) {
+        ctx.db.logged_in_player().player_id().delete(ctx.sender());
+        ctx.db.logged_out_player().insert(player);
+    }
     log::info!("Player disconnected: {:?}", ctx.sender());
 }
 
@@ -58,16 +44,17 @@ pub fn client_disconnected(ctx: &ReducerContext) {
 #[spacetimedb::reducer]
 pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String> {
     if username.trim().is_empty() || username.len() > 20 {
-        return Err("Username must be 1–20 non-whitespace characters.".to_string());
+        return Err("Username must be 1-20 non-whitespace characters.".to_string());
     }
-    let player = ctx.db.player().player_id().find(ctx.sender())
+    let player = ctx.db.logged_in_player().player_id().find(ctx.sender())
         .ok_or("Player not found.")?;
-    ctx.db.player().player_id().update(Player { username, ..player });
+    ctx.db.logged_in_player().player_id().update(Player { username, ..player });
     Ok(())
 }
 
 #[spacetimedb::reducer]
 pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> Result<(), String> {
+    require_logged_in(ctx)?;
     let pos = ctx.db.player_position().player_id().find(ctx.sender())
         .ok_or_else(|| format!("Position not found for {:?}", ctx.sender()))?;
     let cfg = ctx.db.map_config().id().find(&0u32);
@@ -87,6 +74,7 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
 
 #[spacetimedb::reducer]
 pub fn gain_xp(ctx: &ReducerContext, amount: u32) -> Result<(), String> {
+    require_logged_in(ctx)?;
     const MAX_XP_PER_GAIN: u32 = 500;
     if amount == 0 { return Ok(()); }
     if amount > MAX_XP_PER_GAIN {
@@ -112,6 +100,7 @@ pub fn gain_xp(ctx: &ReducerContext, amount: u32) -> Result<(), String> {
 
 #[spacetimedb::reducer]
 pub fn update_inventory(ctx: &ReducerContext, slots: Vec<InventorySlot>) -> Result<(), String> {
+    require_logged_in(ctx)?;
     let backpack_count = slots.iter().filter(|s| matches!(s.kind, SlotKind::Backpack)).count();
     let accessory_count = slots.iter().filter(|s| matches!(s.kind, SlotKind::Accessory)).count();
     let consumable_count = slots.iter().filter(|s| matches!(s.kind, SlotKind::Consumable)).count();
@@ -131,6 +120,7 @@ pub fn update_inventory(ctx: &ReducerContext, slots: Vec<InventorySlot>) -> Resu
 // the caller's stats + equipped weapon, applies it to the enemy, and handles death.
 #[spacetimedb::reducer]
 pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
+    require_logged_in(ctx)?;
     let enemy = match ctx.db.enemy().enemy_id().find(&enemy_id) {
         Some(e) => e,
         None => return Ok(()),
@@ -146,8 +136,8 @@ pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), Strin
         ctx.db.loot_drop().insert(LootDrop {
             drop_id: 0,
             item_id: String::new(),
-            x: enemy.spawn_x,
-            y: enemy.spawn_y,
+            x: enemy.x,
+            y: enemy.y,
             chunk_index: enemy.chunk_index,
             expires_at: ctx.timestamp + Duration::from_secs(60),
         });
@@ -169,6 +159,7 @@ pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), Strin
 
 #[spacetimedb::reducer]
 pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
+    require_logged_in(ctx)?;
     let drop = ctx.db.loot_drop().drop_id().find(&drop_id)
         .ok_or("Drop not found.")?;
     if drop.item_id.is_empty() { return Ok(()); }
@@ -189,24 +180,13 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
     Ok(())
 }
 
-// ── Admin reducers ───────────────────────────────────────────────────────────
+// ── Enemy behavior schedule ───────────────────────────────────────────────────
 
-// Bootstrap: caller becomes admin only if no admins exist yet.
-// If the caller is already admin, succeeds silently (idempotent).
-#[spacetimedb::reducer]
-pub fn claim_admin(ctx: &ReducerContext) -> Result<(), String> {
-    let player = ctx.db.player().player_id().find(ctx.sender())
-        .ok_or("You must connect first so a Player row exists.")?;
-    if player.is_admin {
-        return Ok(()); // already admin, nothing to do
-    }
-    let any_admin = ctx.db.player().iter().any(|p| p.is_admin);
-    if any_admin {
-        return Err("An admin already exists. Use release_admin to remove them first.".to_string());
-    }
-    ctx.db.player().player_id().update(Player { is_admin: true, ..player });
-    log::info!("claim_admin: {:?} is now admin.", ctx.sender());
-    Ok(())
+#[spacetimedb::table(accessor = enemy_behavior_schedule, scheduled(tick_enemy_behavior))]
+pub struct EnemyBehaviorSchedule {
+    #[primary_key] #[auto_inc]
+    pub scheduled_id: u64,
+    pub scheduled_at: ScheduleAt,
 }
 
 #[spacetimedb::reducer]
@@ -364,33 +344,12 @@ pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, 
             }
         }
     }
-    if ctx.db.map_config().id().find(&0u32).is_some() {
-        ctx.db.map_config().id().update(MapConfig {
-            id: 0, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius,
-        });
-    } else {
-        ctx.db.map_config().insert(MapConfig {
-            id: 0, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius,
-        });
-    }
-    log::info!("add_chunks: {} tiles inserted ({} chunks, area {})", chunk_cols * chunk_rows * area, chunk_cols * chunk_rows, area);
-    Ok(())
-}
-
-#[spacetimedb::reducer]
-pub fn clear_chunks(ctx: &ReducerContext) -> Result<(), String> {
-    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    let count = ctx.db.building_tile().iter().count();
-    for tile in ctx.db.building_tile().iter() {
-        ctx.db.building_tile().tile_id().delete(&tile.tile_id);
-    }
-    log::info!("clear_chunks: {} tiles deleted.", count);
-    Ok(())
 }
 
 // Place a building on an empty hex tile.
 #[spacetimedb::reducer]
 pub fn place_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32, building_type: String) -> Result<(), String> {
+    require_logged_in(ctx)?;
     if building_type.is_empty() { return Err("building_type cannot be empty.".to_string()); }
 
     let tile = ctx.db.building_tile().hex_q().filter(&hex_q)
@@ -412,6 +371,7 @@ pub fn place_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32, building_typ
 // Remove a building from a tile. Caller must be the owner or an admin.
 #[spacetimedb::reducer]
 pub fn remove_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32) -> Result<(), String> {
+    require_logged_in(ctx)?;
     let tile = ctx.db.building_tile().hex_q().filter(&hex_q)
         .find(|t| t.hex_r == hex_r)
         .ok_or("Tile not found.")?;
@@ -431,21 +391,6 @@ pub fn remove_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32) -> Result<(
 }
 
 // ── Internal helpers ─────────────────────────────────────────────────────────
-
-fn find_player_by_username(ctx: &ReducerContext, lookup: &str) -> Option<Identity> {
-    let lower = lookup.to_lowercase();
-    let hex = lower.trim_start_matches("0x");
-    for p in ctx.db.player().iter() {
-        let id_hex = p.player_id.to_hex().to_string().to_lowercase();
-        if (!p.username.is_empty() && p.username.to_lowercase() == lower)
-            || id_hex == hex
-            || (!hex.is_empty() && id_hex.starts_with(hex))
-        {
-            return Some(p.player_id);
-        }
-    }
-    None
-}
 
 fn compute_player_damage(ctx: &ReducerContext, player_id: Identity) -> u32 {
     let stats = match ctx.db.player_stats().player_id().find(player_id) {

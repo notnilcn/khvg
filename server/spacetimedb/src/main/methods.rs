@@ -9,6 +9,7 @@ pub const HP_PER_LEVEL: i32 = 5;
 pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 32.0; // fallback outer radius before MapConfig is written
 pub const DEFAULT_CHUNK_HEX_RADIUS: i32 = 5; // fallback chunk size before MapConfig is written
 pub const DEFAULT_AOI_CHUNK_RADIUS: i32 = 3; // fallback chunk size before MapConfig is written
+pub const ENEMY_SIMULATION_RANGE: f32 = 640.0;
 
 pub fn starting_stats() -> PlayerStats {
     PlayerStats {
@@ -22,8 +23,15 @@ pub fn starting_stats() -> PlayerStats {
     }
 }
 
+pub fn require_logged_in(ctx: &ReducerContext) -> Result<(), String> {
+    if ctx.db.logged_in_player().player_id().find(ctx.sender()).is_none() {
+        return Err("Not logged in.".to_string());
+    }
+    Ok(())
+}
+
 pub fn is_admin(ctx: &ReducerContext) -> bool {
-    ctx.db.player().player_id().find(ctx.sender())
+    ctx.db.logged_in_player().player_id().find(ctx.sender())
         .map(|p| p.is_admin)
         .unwrap_or(false)
 }
@@ -100,6 +108,19 @@ pub fn recompute_stats(ctx: &ReducerContext, player_id: Identity) {
     } else {
         ctx.db.player_stats().insert(new_stats);
     }
+}
+
+pub fn has_player_in_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
+    let range_sq = range * range;
+    ctx.db.logged_in_player().iter().any(|p| {
+        ctx.db.player_position().player_id().find(p.player_id)
+            .map(|pos| {
+                let dx = pos.x - x;
+                let dy = pos.y - y;
+                dx * dx + dy * dy <= range_sq
+            })
+            .unwrap_or(false)
+    })
 }
 
 // ── Hex grid math (wrappers around hexx) ─────────────────────────────────────
