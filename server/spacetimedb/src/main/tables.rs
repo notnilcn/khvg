@@ -34,6 +34,7 @@ pub enum PatternType {
 #[derive(SpacetimeType, Clone)]
 pub struct AttackDef {
     pub pattern_type: PatternType,
+    pub target: EnemyTarget,
     pub fire_rate: f32, // seconds between shots
     pub params: String, // pattern-specific params: speed, amplitude, count, spread, etc.
 }
@@ -45,9 +46,10 @@ pub struct PhaseDef {
     pub attacks: Vec<AttackDef>,
 }
 
-// ── Player tables (persistent) ───────────────────────────────────────────────
+// ── Player tables ────────────────────────────────────────────────────────────
 
-#[table(accessor = player, public)]
+#[table(accessor = logged_in_player, public)]
+#[table(accessor = logged_out_player)]
 pub struct Player {
     #[primary_key]
     pub player_id: Identity,
@@ -103,8 +105,7 @@ pub struct PlayerPosition {
 pub enum EnemyTarget {
     Idle,
     NearestPlayer,
-    NearestCluster,
-    SpecificPlayer(Identity),
+    NearestCluster
 }
 
 // ── Enemy tables ─────────────────────────────────────────────────────────────
@@ -123,36 +124,46 @@ pub struct EnemyTemplate {
 // Clients simulate position/AI/bullets deterministically from spawn_x/y at spawn_time.
 #[table(accessor = enemy, public)]
 pub struct Enemy {
-    #[primary_key]
-    #[auto_inc]
-    pub enemy_id: u64,
+    #[primary_key] #[auto_inc] pub enemy_id: u64,
     pub template_id: String, // FK to EnemyTemplate
     pub res_path: String,    // Godot scene path; client loads visuals and AI script from here
     pub spawn_x: f32,
     pub spawn_y: f32,
+    pub x: f32,
+    pub y: f32,
     pub spawn_time: Timestamp,
+    pub last_attack_time: Timestamp,
     pub hp: u32,
     pub phase: u8,
-    pub target: EnemyTarget,
     pub is_elite: bool,
     pub immortal: bool,
-    #[index(btree)]
-    pub chunk_index: i64,
+    #[index(btree)] pub chunk_index: i64,
 }
 
 // ── Loot table ───────────────────────────────────────────────────────────────
 
 #[table(accessor = loot_drop, public)]
 pub struct LootDrop {
-    #[primary_key]
-    #[auto_inc]
-    pub drop_id: u64,
+    #[primary_key] #[auto_inc] pub drop_id: u64,
     pub item_id: String, // FK to ItemStats
     pub x: f32,
     pub y: f32,
-    #[index(btree)]
-    pub chunk_index: i64,
+    #[index(btree)] pub chunk_index: i64,
     pub expires_at: Timestamp,
+}
+
+// ── Bullet pattern event table ───────────────────────────────────────────────
+
+#[table(accessor = bullet_pattern_event, public, event)]
+pub struct BulletPatternEvent {
+    #[primary_key] #[auto_inc] pub event_id: u64,
+    pub enemy_id: u64,
+    pub origin_x: f32,
+    pub origin_y: f32,
+    pub pattern_type: PatternType,
+    pub targets: Vec<Identity>,
+    pub params: String,
+    #[index(btree)] pub chunk_index: i64,
 }
 
 // ── Building tile table ──────────────────────────────────────────────────────
