@@ -9,6 +9,8 @@ The game will probably be high fantasy.
 RotMG description and general feel:
 
 ### Group videos
+![(rotmg o3) Fastest Sorc 2 million top damage (5:48)](<https://www.youtube.com/watch?v=885sidnkIps>)
+
 ![Completing My First Marble Colossus Ever! - Rotmg Lost Halls Progression!](<https://www.youtube.com/watch?v=audTKsu6qTA>)
 
 ![RotMG Lost Halls 3 man full skip run](<https://www.youtube.com/watch?v=ZRKva2qU9kE>)

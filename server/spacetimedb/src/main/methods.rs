@@ -1,3 +1,5 @@
+/*
+```rust */
 use spacetimedb::{ReducerContext, Identity, Table};
 use hexx::{Hex, HexLayout, HexOrientation, Vec2};
 use super::tables::*;
@@ -5,7 +7,8 @@ use super::tables::*;
 pub const BASE_MAX_HP: i32 = 100;
 pub const HP_PER_LEVEL: i32 = 5;
 pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 32.0; // fallback outer radius before MapConfig is written
-pub const DEFAULT_CHUNK_HEX_RADIUS: i32 = 7; // fallback chunk size before MapConfig is written
+pub const DEFAULT_CHUNK_HEX_RADIUS: i32 = 5; // fallback chunk size before MapConfig is written
+pub const DEFAULT_AOI_CHUNK_RADIUS: i32 = 3; // fallback chunk size before MapConfig is written
 
 pub fn starting_stats() -> PlayerStats {
     PlayerStats {
@@ -184,20 +187,16 @@ pub fn hex_to_world(hq: i32, hr: i32, r_outer: f32) -> (f32, f32) {
     (pos.x, pos.y)
 }
 
-// Returns the 9 chunk indices (3×3 neighbourhood) around (cq, cr), clamped to map bounds.
-// No hexx equivalent; kept as a local helper for SpacetimeDB AoI queries.
-pub fn surrounding_chunk_indices(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: i32) -> Vec<i64> {
-    let mut result = Vec::with_capacity(9);
-    for dr in -1..=1i32 {
-        for dq in -1..=1i32 {
-            let nq = cq + dq;
-            let nr = cr + dr;
-            if nq >= 0 && nq < chunk_cols && nr >= 0 && nr < chunk_rows {
-                result.push(spiral_chunk_index(nq, nr));
-            }
-        }
-    }
-    result
+// Returns chunk spiral indices for all chunks within `rings` rings of (cq, cr),
+// clamped to map bounds. Delegates to Hex::range (yields 3r(r+1)+1 chunks before clamping).
+// `rings` defaults to DEFAULT_AOI_CHUNK_RADIUS when None (r=0→1, r=1→7, r=2→19).
+pub fn surrounding_chunk_indices(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: i32, rings: Option<i32>) -> Vec<i64> {
+    let rings = rings.unwrap_or(DEFAULT_AOI_CHUNK_RADIUS) as u32;
+    Hex::new(cq, cr)
+        .range(rings)
+        .filter(|h| h.x >= 0 && h.x < chunk_cols && h.y >= 0 && h.y < chunk_rows)
+        .map(|h| spiral_chunk_index(h.x, h.y))
+        .collect()
 }
 
 // Returns the chunk (cq, cr) that a world position falls within.
@@ -220,3 +219,6 @@ pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 {
     }
     phase
 }
+/*
+```
+*/

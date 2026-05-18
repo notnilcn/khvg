@@ -4,16 +4,17 @@ const SQRT3 := 1.7320508075688772
 
 # Fallback values used before MapConfig is received from the server.
 # These match DEFAULT_CHUNK_HEX_RADIUS and HEX_TILE_OUTER_RADIUS in methods.rs.
-const DEFAULT_CHUNK_RADIUS := 7
-const DEFAULT_OUTER_RADIUS := 32.0
+const DEFAULT_CHUNK_HEX_RADIUS := 5
+const DEFAULT_AOI_CHUNK_RADIUS := 3
+const DEFAULT_HEX_OUTER_RADIUS := 32.0
 
 const LINE_COLOR := Color(0.0, 0.0, 0.0, 0.3)
 const LINE_WIDTH := 1.0
 const LABEL_COLOR := Color(0.0, 0.0, 0.0, 0.75)
 const FONT_SIZE := 8
 
-var _outer_radius: float = DEFAULT_OUTER_RADIUS
-var _chunk_radius: int   = DEFAULT_CHUNK_RADIUS
+var _outer_radius: float = DEFAULT_HEX_OUTER_RADIUS
+var _chunk_radius: int   = DEFAULT_CHUNK_HEX_RADIUS
 var _chunk_cols: int     = 1
 
 var _cam_pos := Vector2.ZERO
@@ -146,6 +147,21 @@ func _hex_spiral_index(cq: int, cr: int) -> int:
 	else:
 		arm = 5; step = y + rho
 	return B + arm * rho + step
+
+# Mirrors surrounding_chunk_indices in methods.rs.
+# Returns spiral indices of all chunk hexes within `rings` rings of (cq, cr),
+# clamped to map bounds. Yields 3r(r+1)+1 results before clamping (r=0→1, r=1→7, r=2→19).
+func _surrounding_chunk_indices(cq: int, cr: int, chunk_cols: int, chunk_rows: int, rings: int = DEFAULT_AOI_CHUNK_RADIUS) -> Array[int]:
+	var result: Array[int] = []
+	for dq in range(-rings, rings + 1):
+		var dr_min := maxi(-rings, -dq - rings)
+		var dr_max := mini(rings, -dq + rings)
+		for dr in range(dr_min, dr_max + 1):
+			var nq := cq + dq
+			var nr := cr + dr
+			if nq >= 0 and nq < chunk_cols and nr >= 0 and nr < chunk_rows:
+				result.append(_hex_spiral_index(nq, nr))
+	return result
 
 # Port of hexx Hex::to_lower_res
 func _to_lower_res(q: int, r: int, radius: int) -> Vector2i:

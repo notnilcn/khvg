@@ -8,34 +8,77 @@
         "type": "tabs",
         "children": [
           {
-            "id": "9b90c426ed114030",
+            "id": "f7aef3a82d46a5e6",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
+                "file": "docs/Notes/002 Game Development/Features to implement/Enemy and Player Movement.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "World grid notes"
+              "title": "Enemy and Player Movement"
             }
           },
           {
-            "id": "5d14e471dbc80aa4",
+            "id": "9055346b81436cef",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "client/SpacetimeDB/ElevatedClient.cs",
+                "file": "server/spacetimedb/src/main/methods.rs",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "ElevatedClient"
+              "title": "methods"
+            }
+          },
+          {
+            "id": "f8ad4144c2c0b1de",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "server/spacetimedb/src/main/reducers.rs",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "reducers"
+            }
+          },
+          {
+            "id": "5118f7adb5872895",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "server/spacetimedb/src/main/tables.rs",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "tables"
+            }
+          },
+          {
+            "id": "7d9d511b1ce7c015",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Overviews"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -67,7 +110,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "pvp",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -196,53 +239,53 @@
       "bases:Create new base": false
     }
   },
-  "active": "9b90c426ed114030",
+  "active": "7d9d511b1ce7c015",
   "lastOpenFiles": [
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm.tmpc189291",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcoEja2X/linker-arguments",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcoEja2X",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.93tc5u7s9nxq7yxoy1njgb6ui.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.02.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.00.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.14.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.01.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.05.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.15.rcgu.o",
-    "docs/Notes/002 Game Development/Features to implement/Player bullets system.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius7.png",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/untitled (6).png",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius8.svg",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius6.svg",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius2.svg",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius12.svg",
+    "client/VS-Like/Maps/HexGrid/hex_grid_overlay.gd",
+    "client/VS-Like/Characters/Player/player.tscn23739807699.tmp",
+    "server/spacetimedb/src/main/methods.rs.tmp.44296.791269eb13d8",
+    "docs/Notes/002 Game Development/Features to implement/Enemy and Player Movement.md",
+    "server/spacetimedb/src/main/methods.rs",
+    "server/spacetimedb/src/main/reducers.rs",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/untitled (1).pdn.0.pdnSave",
+    "server/spacetimedb/src/main/tables.rs",
     "docs/Notes/002 Game Development/Features to implement/Enemy bullets system.md",
-    "personal_notes/how does the bitcraftpublic repo handle player position.md",
-    "docs/Resources/hex-grid/Hexagonal Grids.md",
-    "docs/Resources and dependencies/hex-grid/hexx/assets/kenney/hexagonTerrain_sheet.png",
-    "docs/Resources and dependencies/hex-grid/hexx/docs/sprite_sheet.png",
-    "docs/Resources and dependencies/hex-grid/hexx/docs/wrap_map.gif",
-    "docs/Resources and dependencies/hex-grid/hexx/docs/shapes.png",
+    "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
+    "docs/Notes/002 Game Development/Features to implement list.md",
+    "Untitled.md",
+    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll",
+    "CLAUDE.md",
+    "server/CLAUDE.md",
+    "docs/Notes/001 Explaining Game Code/999 Hard coded stuff that might be an issue later.md",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/libglam-711beb983da96f1e.rlib",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/libglam-711beb983da96f1e.rmeta",
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hilcro1xf7-0gwpwua-e9c1ryv055pmhc23qdpcbfqem/query-cache.bin",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius7.png",
     "docs/Resources and dependencies/hex-grid/hexmod-representation/README.md",
     "docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/README.md",
-    "docs/Resources and dependencies/hex-grid/hexx/README.md",
-    "docs/Resources and dependencies/hex-grid/hexx/CONTRIBUTING.md",
-    "docs/Resources and dependencies/hex-grid/hexx/CHANGELOG.md",
     "docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md",
     "docs/Resources and dependencies/hex-grid/Implementation of Hex Grids.md",
     "docs/Resources and dependencies/hex-grid/Hexagonal Grids.md",
-    "docs/Resources/hex-grid/hexx/README.md",
-    "docs/Resources/hex-grid/hexx/CONTRIBUTING.md",
-    "docs/Resources/hex-grid/hexx/CHANGELOG.md",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius6.svg",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius8.svg",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius12.svg",
+    "docs/Notes/002 Game Development/Features to implement/Attachments/chunkradius2.svg",
+    "code_examples/HexGrid2/icon.png",
     "code_examples/HexGrid2/README.md",
-    "code_examples/HexagonalLib/README.md",
+    "code_examples/HexGrid/docs/html/search/close.png",
+    "code_examples/HexGrid/docs/html/search/mag_sel.png",
+    "code_examples/HexGrid/docs/html/search/search_l.png",
+    "code_examples/HexGrid/docs/html/search/search_m.png",
     "code_examples/HexGrid/README.md",
     "code_examples/hexagonal_map/README.md",
+    "code_examples/HexagonalLib/README.md",
     "code_examples/bholio/Notes/Chronological Execution Order.md",
     "code_examples/bholio/Blackholio/README.md",
     "code_examples/bholio/Blackholio/DEVELOP.md",
-    "code_examples/BitCraftPublic/SECURITY.md",
-    "code_examples/BitCraftPublic/README.md"
+    "code_examples/godot-blast-bullets-2d/LICENSE.md",
+    "code_examples/godot-blast-bullets-2d/README.md",
+    "code_examples/godot-blast-bullets-2d/CLAUDE.md",
+    "code_examples/example-project-blastbullets2d/addons/blastbullets2d/LICENSE.md",
+    "code_examples/example-project-blastbullets2d/addons/blastbullets2d/README.md"
   ]
 }

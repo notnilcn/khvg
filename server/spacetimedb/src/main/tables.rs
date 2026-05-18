@@ -97,6 +97,16 @@ pub struct PlayerPosition {
     pub chunk_index: i64,
 }
 
+// ── Enemy types ──────────────────────────────────────────────────────────────
+
+#[derive(SpacetimeType, Clone)]
+pub enum EnemyTarget {
+    Idle,
+    NearestPlayer,
+    NearestCluster,
+    SpecificPlayer(Identity),
+}
+
 // ── Enemy tables ─────────────────────────────────────────────────────────────
 
 // Reference data — admin uploads once per enemy type. Clients subscribe to drive simulation.
@@ -123,6 +133,7 @@ pub struct Enemy {
     pub spawn_time: Timestamp,
     pub hp: u32,
     pub phase: u8,
+    pub target: EnemyTarget,
     pub is_elite: bool,
     pub immortal: bool,
     #[index(btree)]

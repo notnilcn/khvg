@@ -44,114 +44,112 @@ Health bar, XP bar, weapons container (shows currently equipped items by slot), 
 
 SpacetimeDB is a relational database that is also a server: tables + reducers, clients subscribe to row subsets, scheduled reducers act as game ticks. Deployed on SpacetimeDB maincloud (registered via GitHub account).
 
-**Database name:** `bmmo-0nzf1` on maincloud. Dashboard: `https://spacetimedb.com/@<username>/bmmo-0nzf1`
+**Database name:** `bullethell` on maincloud. Dashboard: `https://spacetimedb.com/@<username>/bullethell`
 
-**Module language: C#.** Server module lives at `bmmo/spacetimedb/Lib.cs`. Publish with `spacetime publish` from `bmmo/`. After publishing, regenerate client bindings with `spacetime generate --lang csharp --out-dir ./module_bindings --module-path ./spacetimedb` from `bmmo/`, then copy `bmmo/module_bindings/` to `g/SpacetimeDB/module_bindings/`.
+**Module language: Rust.** Server module lives at `server/spacetimedb/src/main/` (split across `tables.rs`, `methods.rs`, `reducers.rs`). Publish with `spacetime publish bullethell --module-path ./spacetimedb` from `server/`. After publishing, regenerate client bindings with `spacetime generate --lang csharp --out-dir ../client/SpacetimeDB/module_bindings --module-path ./spacetimedb` from `server/`.
 
-**Key architectural decision: clients connect to SpacetimeDB only.** No separate Godot listen-server. All server authority runs inside SpacetimeDB C# reducers.
+**Key architectural decision: clients connect to SpacetimeDB only.** No separate Godot listen-server. All server authority runs inside SpacetimeDB Rust reducers.
 
 ### What is implemented (working)
 
-**Tables in `bmmo/spacetimedb/Lib.cs`:**
+**Tables (`server/spacetimedb/src/main/tables.rs`):**
 
 | Table | Contents | Lifetime |
 |-------|----------|----------|
-| `PlayerAccount` | Identity, username, is_admin, created_at | Persistent |
-| `CharacterData` | Level, XP, HP, `RpgStats` (str/wis/dex/def/vit) | Persistent |
-| `PlayerInventory` | Equipment slots + backpack (12) + consumables (8) as string lists of item IDs | Persistent |
-| `PlayerPosition` | x, y, move_x, move_y, speed, event_time, chunk_x, chunk_y | Session-only (deleted on disconnect) |
-| `EnemyState` | enemy_id (host-assigned ulong), x, y, move_x, move_y, speed, event_time, res_path, is_elite, immortal, hp, target_id | Session-only (cleared by host on scene load) |
+| `Player` | Identity, username, is_admin | Persistent |
+| `PlayerData` | level, xp, hp, max_hp | Persistent |
+| `PlayerStats` | str/wis/dex/def/vit/spd — recomputed from level + gear | Persistent |
+| `PlayerInventory` | `Vec<InventorySlot>` (kind + index + item_id) | Persistent |
+| `ItemStats` | item_id (PK), all stat bonus/mult fields per stat | Persistent |
+| `EnemyTemplate` | template_id (PK), display_name, max_hp, phases | Persistent |
+| `PlayerPosition` | x, y, rotation, chunk_index (btree) | Session-only (deleted on disconnect) |
+| `Enemy` | enemy_id (auto_inc PK), template_id, res_path, spawn_x/y/time, hp, phase, target (EnemyTarget enum), is_elite, immortal, chunk_index (btree) | Session-only |
+| `LootDrop` | drop_id (auto_inc PK), item_id, x, y, chunk_index (btree), expires_at | Session-only |
+| `BuildingTile` | tile_id (auto_inc PK), hex_q (btree), hex_r, chunk_q, chunk_r, local_index, chunk_index (btree), building_type, owner_id, hp, destroyed_at (nullable Timestamp) | Persistent |
+| `MapConfig` | id=0 (PK singleton), chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius | Persistent |
 
-**Reducers:**
-- `ClientConnected` — creates account/character/inventory rows for new players; inserts `PlayerPosition` for all players
-- `ClientDisconnected` — deletes `PlayerPosition`
-- `ReportMovement(float x, float y, float moveX, float moveY, float speed)` — client sends dead-reckoning snapshot on input change; server validates speed and updates `PlayerPosition`
-- `SetUsername`, `SaveCharacterProgress`, `UpdateInventory` — persistence helpers
-- `SpawnEnemy(ulong enemyId, float x, float y, string resPath, bool isElite, bool immortal, int hp)` — host calls when spawning an enemy; `enemyId` is the host's local int ID cast to ulong
-- `UpdateEnemySnapshots(List<EnemySnapshot> snapshots)` — host calls every 100 ms with batch of position/direction/speed for all live enemies
-- `UpdateEnemyTarget(ulong enemyId, string targetId)` — host calls immediately when an enemy switches targets; `targetId` is the STDB identity string of the chased player
-- `DespawnEnemy(ulong enemyId)` — host calls when an enemy dies
+**Reducers (`server/spacetimedb/src/main/reducers.rs`):**
+- `client_connected` — creates Player/PlayerData/PlayerStats/PlayerInventory rows for new players; inserts PlayerPosition for all
+- `client_disconnected` — deletes PlayerPosition
+- `report_movement(x, y, rotation)` — validates speed, updates PlayerPosition with new coords and recomputed chunk_index
+- `change_stats(...)` — updates PlayerStats (admin only)
+- `update_inventory(slots)` — replaces PlayerInventory slots, calls recompute_stats
+- `spawn_enemy(template_id, res_path, x, y, is_elite, immortal)` — inserts Enemy row (host calls)
+- `report_enemy_hit(enemy_id, damage, weapon_id)` — reduces enemy HP; on death: awards XP, drops loot, deletes row
+- `add_chunks(chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius?)` — generates all BuildingTile rows and writes MapConfig; admin only. CLI: `spacetime call bullethell add_chunks 7 10 10` (omit last arg for default outer radius)
+- `claim_admin` — grants is_admin to caller; for CLI bootstrapping. Run once: `spacetime call bullethell claim_admin`
+- `release_admin` — grants is_admin to caller; for CLI bootstrapping. Run once: `spacetime call bullethell release_admin`
+
+**Not yet ported to Rust (existed in old C# module):**
+- `UpdateEnemySnapshots` / `UpdateEnemyTarget` / `DespawnEnemy` — enemy dead-reckoning sync reducers; `StdbEnemySync.cs` still references these but they don't exist in the Rust module yet
 
 **Godot client:**
 - `StdbPlayerSync.cs` — autoload; spawns archer sprite for each remote player, dead-reckoning extrapolates position each frame, handles late-join catch-up via `SubscriptionReady` hook. Exposes `RemoteNodes` dict and `GetIdentityForNode()` for enemy targeting.
-- `StdbEnemySync.cs` — autoload; subscribes to `EnemyState`. On insert: spawns enemy node with `IsStdbSpawned = true` and seeds `StdbTargetId`. On update: stores dead-reckoning snapshot and updates `StdbTargetId`. On delete: frees the node. `_Process` lerps/snaps enemies toward the extrapolated snapshot position when drift exceeds threshold (50 units soft, 200 hard). `Spawner._Ready` calls `OnGameSceneLoaded(spawner)` for late-join catch-up.
+- `StdbEnemySync.cs` — autoload; updated for Rust Enemy table. On insert: spawns enemy node. On update/delete: drift correction and despawn.
+- `SpacetimeDBManager.cs` — autoload singleton; manages connection + `FrameTick()`; emits `ConnectedToServer`, `DisconnectedFromServer`, `SubscriptionReady` signals. Exposes `GetMapConfig()` returning a GDScript-compatible Dictionary with `chunk_hex_radius`, `chunk_cols`, `chunk_rows`, `hex_outer_radius`.
 - `Player.cs` — sends `ReportMovement` on WASD direction change
 
 **Constants to keep in sync with Godot client:**
 - `ChunkSize = 320f` — used for AoI subscription query bounds
-- `WorldSize` — not yet set; deferred with torus world (see Torus World section)
+- `DEFAULT_CHUNK_HEX_RADIUS = 7`, `DEFAULT_HEX_OUTER_RADIUS = 32.0` — fallback values used before MapConfig is received; defined in `methods.rs` and mirrored in `hex_grid_overlay.gd`
 
 ### What is NOT yet implemented
 
-- `BulletPattern` table + `BulletHitCheck` reducer (20Hz)
-- Torus world topology + hex grid overlay (deferred — see Torus World and Hex Grid sections)
+- `BulletPattern` table + bullet pattern system (Task 6)
+- Torus world topology
 - AoI chunk subscriptions (currently using `SubscribeToAllTables()`; torus-aware queries deferred with torus world)
+- Enemy dead-reckoning reducers (`UpdateEnemySnapshots`, `UpdateEnemyTarget`, `DespawnEnemy`) not yet ported to Rust
 
 ### Godot client setup
 
-- **`g/SpacetimeDB/SpacetimeDBManager.cs`** — autoload singleton; manages connection + `FrameTick()`; emits `ConnectedToServer`, `DisconnectedFromServer`, `SubscriptionReady` signals
-- **`g/SpacetimeDB/module_bindings/`** — generated C# bindings; do not edit manually
-- **`g/VampireSurvivorsTemplate.csproj`** — has `SpacetimeDB.ClientSDK 2.1.0` package reference
+- **`client/SpacetimeDB/SpacetimeDBManager.cs`** — autoload singleton; manages connection + `FrameTick()`; emits `ConnectedToServer`, `DisconnectedFromServer`, `SubscriptionReady` signals
+- **`client/SpacetimeDB/module_bindings/`** — generated C# bindings; do not edit manually
+- **`VampireSurvivorsTemplate.csproj`** (project root) — has `SpacetimeDB.ClientSDK 2.1.0` package reference
 - Registered in `project.godot` autoload as `SpacetimeDBManager`
 
 ### AoI (not yet wired)
 
-Clients will subscribe to chunk-range SQL queries instead of all tables. Because the world is a torus, a player near an edge has an AoI window that wraps around — this requires splitting into up to two queries per axis (four total in the corner case):
+Session tables (`PlayerPosition`, `Enemy`, `LootDrop`) each carry a single `chunk_index: i64` column (btree indexed) computed from the entity's chunk axial coords `(cq, cr)` using the hex spiral formula (see below). AoI queries filter by this column:
 
 ```sql
--- non-wrapping case (most common):
-SELECT * FROM player_position WHERE chunk_x BETWEEN @minX AND @maxX AND chunk_y BETWEEN @minY AND @maxY
-
--- wrapping case (player near x-edge): two queries unioned client-side:
-SELECT * FROM player_position WHERE (chunk_x >= @wrapMin OR chunk_x <= @wrapMax) AND chunk_y BETWEEN @minY AND @maxY
+SELECT * FROM player_position WHERE chunk_index IN (0, 1, 2, 3, 4, 5, 6, 7, ...)
 ```
 
-Re-subscribe when the local player crosses a chunk boundary. `NumChunks = WorldSize / ChunkSize` — both must be powers of 2 so chunks divide evenly with no remainder.
+The list is the 9 spiral indices of the 3×3 neighbourhood around the player's current chunk — computed by `surrounding_chunk_indices(cq, cr, chunk_cols, chunk_rows)` in `methods.rs`.
+
+Re-subscribe when the local player crosses a chunk boundary. Torus wrapping means a player near an edge has an AoI window that may include chunks on the opposite side; `surrounding_chunk_indices` already clamps to map bounds, but the torus wrap logic is deferred with torus world.
+
+**Chunk index formula (hex spiral) — must match on server and all clients:**
+
+1. Convert axial (cq, cr) → cube: `x = cq`, `z = cr`, `y = −cq − cr`
+2. Ring radius: `ρ = max(|x|, |y|, |z|)`
+3. If ρ = 0: index = 0
+4. Otherwise: `index = 3ρ(ρ−1)+1 + arm×ρ + step`, where arm/step are determined by which face of the ring cube (cq, cr) lies on (see `spiral_chunk_index` in `methods.rs` and `_hex_spiral_index` in `hex_grid_overlay.gd`)
+
+This bijection is unique for all integer (cq, cr) including negative values, unlike the old linear formula `cr * chunk_cols + cq` which collides for coordinates summing to the same value.
 
 ### Enemy position sync strategy
 
-**Implementation (elevated client / trusted-host pattern):** The elevated client is permanently responsible for calling enemy reducers — enemy spawning, position simulation, and bullet firing will not move to a server-side reducer. On each enemy spawn the elevated client calls `SpawnEnemy`; every 100 ms it calls `UpdateEnemySnapshots` with a batch of dead-reckoning snapshots for all live enemies; when an enemy switches targets it immediately calls `UpdateEnemyTarget`; on death it calls `DespawnEnemy`. All clients (including the elevated client) receive enemy state exclusively via `EnemyState` table callbacks in `StdbEnemySync.cs` — the elevated client does not take a special code path on the receive side. Clients run deterministic local AI (`Enemy._Process` STDB branch) and `StdbEnemySync._Process` applies drift correction (lerp at 50-unit drift, hard snap at 200-unit drift).
+**Implementation (elevated client / trusted-host pattern):** The elevated client is permanently responsible for calling enemy reducers — enemy spawning, position simulation, and bullet firing will not move to a server-side reducer. On each enemy spawn the elevated client calls `SpawnEnemy`; periodically it calls `UpdateEnemySnapshots` with a batch of dead-reckoning snapshots for all live enemies; when an enemy switches targets it immediately calls `UpdateEnemyTarget`; on death it calls `DespawnEnemy`. All clients (including the elevated client) receive enemy state exclusively via `EnemyState` table callbacks in `StdbEnemySync.cs` — the elevated client does not take a special code path on the receive side. Clients run deterministic local AI (`Enemy._Process` STDB branch) and `StdbEnemySync._Process` applies drift correction (lerp at 50-unit drift, hard snap at 200-unit drift).
+
+**Snapshot interval:** Intended to be as long as possible. Because all clients simulate enemy AI deterministically from the `target` field, snapshots are only needed for drift correction — not to convey position on every tick. Behavior transitions (enemy switches target mode or acquires a specific player) trigger an immediate snapshot; periodic snapshots handle accumulated drift only. The exact interval is not yet decided.
+
+**Enemy targeting — `EnemyTarget` enum (discriminated union / sentinel value pattern):**
+
+```
+Idle              — no target; enemy does not move
+NearestPlayer     — client computes nearest player independently each frame
+NearestCluster    — client computes centroid of nearest player cluster independently
+SpecificPlayer(Identity) — all clients chase the same named player; no divergence
+```
+
+Clients `match` on this field to determine simulation behavior. The elevated client writes the variant when spawning or when a target transition occurs. `NearestPlayer` and `NearestCluster` are computed independently per client, which introduces potential divergence — this is bounded by the AoI targeting constraint below.
+
+**AoI targeting constraint:** Enemies only target players/clusters within 2 chunk-rings of the enemy's current position. Clients do not simulate enemy behavior for enemies in the outer 2-ring buffer of their AoI window. This guarantees that any enemy a client is simulating has its target within that client's AoI subscription, keeping independent centroid/nearest-player computations consistent across clients.
 
 ### Bullet system (not yet implemented)
 
 The elevated client writes a `BulletPattern` row (pattern_id, origin, spawn_time, params) when an enemy fires. Clients reconstruct bullet visuals locally using deterministic parametric math. No per-tick bullet position sync.
-
-### Local testing note
-
-Multiple instances on the same machine share the same identity (same `.bmmo_token` file). The second connect attempt by the same identity will fail to insert a duplicate `PlayerPosition` row. True multiplayer testing requires different machines or manually clearing the token file between instances.
-
-### Constants (choose once, never change)
-
-- **`WorldSize`** — side length of the square torus in world units. Must be a power of 2. Recommended: `65536`. At player speed 100 u/s, one full lap takes 655 seconds (~11 min) of uninterrupted movement. View width is 640 units → ratio 102×, curvature is imperceptible.
-- **`ChunkSize`** — must divide `WorldSize` exactly. `320` gives `65536 / 320 = 204` chunks per axis, `204² = 41616` total chunks.
-
-Changing `WorldSize` after any position data exists in the DB invalidates all stored coordinates. Pick it once.
-
-### Wrapping math
-
-```csharp
-// Wrap a coordinate into [0, WorldSize)
-static float Wrap(float v) => ((v % WorldSize) + WorldSize) % WorldSize;
-
-// Shortest signed delta between two positions on the torus (for lerp direction)
-static float TorusDelta(float from, float to) {
-    float d = Wrap(to - from);
-    return d > WorldSize * 0.5f ? d - WorldSize : d;
-}
-```
-
-`TorusDelta` is the key function: use it anywhere you compute a direction or interpolate between two positions so the path always takes the short way around.
-
-### Lerp on a torus
-
-Standard `Lerp(a, b, t)` breaks near the wrap boundary (e.g. lerping from x=65530 to x=6 goes the wrong way). Always lerp as:
-
-```csharp
-float newX = Wrap(from.X + TorusDelta(from.X, to.X) * t);
-float newY = Wrap(from.Y + TorusDelta(from.Y, to.Y) * t);
-```
-
-Apply this in `StdbPlayerSync._Process` when interpolating remote player nodes.
 
 ### Position reporting and validation
 
@@ -164,17 +162,7 @@ Other clients receive the snapshot via subscription and extrapolate position for
 
 **When torus world is added:** step 1 should also wrap incoming coords with `Wrap()`, and step 2 should add a plausibility check: extrapolate the old snapshot to `ctx.Timestamp`, then reject if `TorusDist(extrapolated, incoming) > MaxSpeed * tolerance`.
 
-No server-side movement tick for players — the server is a trusted relay, not a physics simulator. Enemy movement is handled by the elevated client (trusted-host pattern).
-
-### Chunk indexing on torus
-
-```csharp
-int ChunkIndex(float v) => (int)(Wrap(v) / ChunkSize);
-```
-
-Chunk indices are always in `[0, NumChunks)`. AoI queries use modular range checks — see AoI section above.
-
-## Hex Grid (future — not yet implemented)
+## Hex Grid
 
 Planned as a BitCraft-style dual coordinate system. Two grids coexist independently:
 
@@ -185,15 +173,30 @@ Planned as a BitCraft-style dual coordinate system. Two grids coexist independen
 x = R * sqrt(3) * (q + r/2)
 y = R * 1.5 * r
 ```
-Storage: `Dictionary<(int q, int r), CellData>` — O(1) lookup by cell. Hex size `R` must be chosen once and never changed (changing it invalidates all stored coordinates).
+Hex size `R` (`hex_outer_radius` in MapConfig, default 32.0) must be chosen once and never changed — it invalidates all stored coordinates.
 
-**Architectural rules to follow when implementing:**
-- The two grids never mix in hit detection. Bullets stay in `Vector2`. Immunity zones (shelter mechanic) convert once at zone-enter/exit to set `player.IsInImmunityZone = true` — not checked per-bullet per-tick.
-- The hex grid and the spatial hash grid (for AoI/hit detection) are different things at different granularities. Don't conflate them.
-- If SpacetimeDB is ever added, clients subscribe to hex chunks for building data separately from entity AoI. Size hex chunks so one chunk ≈ one AoI radius.
-- Bullets pass through all objects including player-built structures. Shelter is implemented as **immunity zones** (damage immunity flag), not physical collision — this preserves parametric bullet correctness.
+### What is implemented
 
-**Scope note:** The hex math itself is trivial (two conversion functions, one afternoon). The systems on top — crafting, resource nodes, persistence, griefing prevention, destruction — are months of work. To future-proof without committing: pick hex size `R`, write the two conversion functions, stop there.
+- **`BuildingTile` table** — persists all hex tiles generated by `add_chunks`. Stores small hex axial `(hex_q, hex_r)`, chunk axial `(chunk_q, chunk_r)`, `local_index` (hexmod offset within chunk), `chunk_index` (spiral, for AoI), `building_type` (empty = unoccupied), `owner_id`.
+- **`MapConfig` singleton** — written by `add_chunks`, read by all reducers. Stores `chunk_hex_radius`, `chunk_cols`, `chunk_rows`, `hex_outer_radius`. Fallback constants `DEFAULT_CHUNK_HEX_RADIUS = 7` and `DEFAULT_HEX_OUTER_RADIUS = 32.0` used before the table is populated.
+- **Hex grid overlay** — GDScript debug overlay at `client/VS-Like/Maps/HexGrid/hex_grid_overlay.gd`, added to `woods_map.tscn`. Draws hex outlines and three labels per hex: small hex `(q,r)`, chunk `(cq,cr)`, and chunk spiral index. Reads MapConfig at runtime via `SpacetimeDBManager.GetMapConfig()`. Redraws on camera move.
+- **Server hex math** — `methods.rs` wraps the `hexx` crate: `world_to_hex`, `hex_to_world`, `small_to_big`, `hexmod`, `inv_hexmod`, `chunk_center_hex`, `world_to_chunk`, `spiral_chunk_index`, `surrounding_chunk_indices`.
+
+### What is NOT yet implemented
+
+- Building placement / mutation (building_type is always empty after generation)
+- Tile claiming system (players must claim tiles before building; claimed zones are where enemies can raid)
+- Enemy-vs-structure combat (elevated client calls `DamageBuilding` reducer; building HP tracked in `BuildingTile`)
+- Client-side hex grid rendering (tiles, structures)
+- Crafting, resource nodes, ownership, destruction
+- AoI subscriptions for BuildingTile (hex chunks for building data separate from entity AoI)
+
+### Architectural rules
+
+- All collision math is in continuous `Vector2` space — never in hex coordinate space. Building positions are converted to world space via `hex_to_world` before any collision check. The hex grid and the spatial hash grid (for AoI/hit detection) are different things at different granularities. Don't conflate them.
+- **Bullets can hit buildings.** The immunity zone / bullet-pass-through approach was abandoned. Enemy bullets interact with player structures; building damage is handled by the elevated client (which already owns enemy bullet trajectories) calling a `DamageBuilding` reducer. Other clients react to the building's HP changing via subscription — no client-side determinism required for building damage.
+- **Building placement requires a claimed zone.** Players can only place buildings in tiles they have claimed. Enemies can enter and attack structures in claimed zones (raids are intentional). This sidesteps the mid-flight obstruction problem: bullet patterns are always fired in unclaimed territory, so buildings cannot appear mid-pattern in the area the audit reconstructs for player-evasion checks.
+- `BuildingTile` needs a `destroyed_at` timestamp (nullable) so the batch audit can reconstruct which buildings existed during a given audit window.
 
 ## Target Architecture (not yet implemented)
 
@@ -241,9 +244,11 @@ Audits run non-live, once per day, via an external script (not a STDB reducer). 
 1. Reads the SpacetimeDB transaction log / `PlayerPositionHistory` table for sampled players
 2. Reconstructs player positions over the audit window using dead-reckoning from stored snapshots
 3. Reconstructs bullet positions using the parametric math from `BulletPattern` rows
-4. Checks for statistically implausible bullet evasion (player position inside bullet radius with no damage taken)
+4. Checks for statistically implausible bullet evasion (player position inside bullet radius with no damage taken) — bullet patterns are fired in unclaimed territory, so building state is not needed for this check
 5. Checks for statistically implausible hit reports on enemies (damage claimed exceeds weapon stats, or player was not in range)
 6. Adjusts `suspicion_score` up or down based on findings
+
+Note: building damage is not currently an audit target (elevated client has authority over it), but `BuildingTile.destroyed_at` is retained so future audits can reconstruct building existence over time if needed.
 
 Audits cover both directions: **bullet hit evasion** (invincibility cheats) and **outgoing damage inflation** (damage/hit-rate cheats against enemies).
 
@@ -259,10 +264,10 @@ Bans from audit findings are not applied immediately. They are queued and releas
 
 **Authority note:** Per the anti-cheat design, clients have authority over combat. Clients self-report bullet hits (damage taken) and hits on enemies. The server does not validate hits in real time. Instead, `BulletPattern` rows are retained as the audit record — the batch audit script uses them to reconstruct bullet positions offline and cross-check client reports. There is no live `BulletHitCheck` reducer.
 
-**Files to edit:** `bmmo/spacetimedb/Lib.cs` + new client file
+**Files to edit:** `server/spacetimedb/src/main/tables.rs`, `server/spacetimedb/src/main/reducers.rs` + new client file
 
 **Read first:**
-- `g/VS-Like/Bullets/BulletManager.cs` and `g/VS-Like/Bullets/BulletVisual/BulletVisual.cs` — the existing local bullet system. The visual reconstruction logic replaces this.
+- `client/VS-Like/Bullets/BulletManager.cs` and `client/VS-Like/Bullets/BulletVisual/BulletVisual.cs` — the existing local bullet system. The visual reconstruction logic replaces this.
 
 **What to do:**
 - Add `BulletPattern` table: `PatternId` (PK, AutoInc), `OriginX`, `OriginY`, `SpawnTime` (Timestamp), `PatternType` (string), `Params` (string — serialise as JSON or delimited values), `ExpiresAt` (Timestamp — set to SpawnTime + pattern lifetime + audit retention window)
