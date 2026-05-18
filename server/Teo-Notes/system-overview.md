@@ -1,7 +1,20 @@
 # System Overview
-# System Overview
 
-SpacetimeDB is the database AND the server. Clients connect, subscribe to table subsets, and call reducers. The server stores state and broadcasts changes. No separate game server process.
+SpacetimeDB is the database AND the server. Clients connect, subscribe to views, and call reducers. The server stores state and broadcasts changes. No separate game server process. No elevated client — the server scheduled reducer owns enemy behavior.
+
+---
+
+## Module Structure
+
+```
+server/spacetimedb/src/main/
+  tables.rs    — all table + type definitions
+  methods.rs   — pure helpers, constants, math (world_to_chunk, spiral_chunk_index, etc.)
+  reducers.rs  — lifecycle + player reducers + scheduled tick
+  admin.rs     — admin-only reducers (spawn, seeding, player management, map)
+  seeds.rs     — Seed trait + seed_new_player + make_phase + make_attack helpers
+  views.rs     — Query<T> views for client subscriptions
+```
 
 ---
 
@@ -9,138 +22,222 @@ SpacetimeDB is the database AND the server. Clients connect, subscribe to table 
 
 ### Persistent (survive disconnects, across sessions)
 
-| Table | What it stores | Who writes |
-|-------|---------------|------------|
-| `Player` | Identity, username, is_admin | Server on first connect |
-| `PlayerData` | Level, XP, HP, max_hp | Server (gain_xp, report_enemy_hit) |
-| `PlayerStats` | Computed STR/WIS/DEX/DEF/VIT/SPD | Server recomputes on level-up or inventory change |
-| `PlayerInventory` | Equipment + backpack as Vec<InventorySlot> | Client via update_inventory |
-| `ItemStats` | Item definitions, damage/stat formulas | Admin via upsert_item_stats or init |
-| `EnemyTemplate` | Enemy type definitions: phases, attack patterns | Admin via upsert_enemy_template or init |
+| Table | Struct | What it stores | Who writes |
+|-------|--------|----------------|------------|
+| `logged_in_player` | `Player` | Identity, username, is_admin — active players | Server on connect (swapped from logged_out) |
+| `logged_out_player` | `Player` | Same struct — inactive players | Server on disconnect (swapped from logged_in) |
+| `PlayerData` | `PlayerData` | Level, XP, HP, max_hp | Server (gain_xp, report_enemy_hit) |
+| `PlayerStats` | `PlayerStats` | Computed STR/WIS/DEX/DEF/VIT/SPD | Server recomputes on level-up or inventory change |
+| `PlayerInventory` | `PlayerInventory` | Equipment + backpack as Vec<InventorySlot> | Client via update_inventory |
+| `PlayerPosition` | `PlayerPosition` | x, y, rotation, chunk_index | Client via report_movement. Persists on disconnect — player respawns where they left off. |
+| `ItemStats` | `ItemStats` | Item definitions, damage/stat formulas | Admin via upsert_item_stats or init |
+| `EnemyTemplate` | `EnemyTemplate` | Enemy type defs: phases → attacks (typed PatternType params, no string parsing) | Admin via upsert_enemy_template or init |
+| `BuildingTile` | `BuildingTile` | Hex grid tiles: axial coords, chunk, building type, owner | Pre-populated by add_chunks; mutated by place/remove_building |
+| `MapConfig` | `MapConfig` | Singleton: chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius | Admin via add_chunks |
 
-### Session (exist only while game is running)
+### Session (cleared between server restarts)
 
 | Table | What it stores | Who writes |
-|-------|---------------|------------|
-| `PlayerPosition` | x, y, rotation, chunk | Client via report_movement (~5 Hz) |
-| `Enemy` | Live enemy instances: spawn info, hp, phase | Admin spawns/despawns; server updates hp+phase |
-| `LootDrop` | Items on the ground | Server on enemy death |
+|-------|----------------|------------|
+| `Enemy` | Live instances: template_id, res_path, spawn_x/y, x/y (live position updated by server tick), hp, phase, last_attack_time, chunk_index | Admin spawns; server tick updates position + phase; clients report hits |
+| `LootDrop` | Items on the ground: item_id, x, y, chunk_index, expires_at | Server on enemy death |
+
+### Event (ephemeral — insert + immediate delete, clients react to OnInsert)
+
+| Table | What it stores | Who writes |
+|-------|----------------|------------|
+| `BulletPatternEvent` | enemy_id, origin_x/y, PatternType (with typed params), targets (Vec<Identity>), chunk_index | Server tick when enemy fires |
+
+---
+
+## Pattern Types
+
+Bullet patterns are typed enums — no string parsing. Each variant carries its own params struct:
+
+```rust
+PatternType::Straight(StraightParams { speed, count })
+PatternType::Sine(SineParams { speed, count, amplitude, frequency })
+PatternType::Homing(HomingParams { speed, count, turn_rate })
+PatternType::Ring(RingParams { speed, count })
+PatternType::Spiral(SpiralParams { speed, count, arms, rotation_speed })
+PatternType::Burst(BurstParams { speed, count, spread })
+```
 
 ---
 
 ## Reducers
 
-### Any connected client
-
-| Reducer | Signature | What it does |
-|---------|-----------|-------------|
-| `set_username` | `(username: String)` | Updates Player.username |
-| `report_movement` | `(x, y, rotation: f32)` | Updates PlayerPosition. Call at ~5 Hz. |
-| `report_enemy_hit` | `(enemy_id: u64)` | Server computes damage from caller's stats + weapon, updates Enemy.hp, triggers phase change or death |
-| `pickup_drop` | `(drop_id: u64)` | Validates drop exists, adds item to PlayerInventory, deletes drop row |
-| `update_inventory` | `(slots: Vec<InventorySlot>)` | Replaces PlayerInventory.slots, triggers recompute_stats |
-| `gain_xp` | `(amount: u32)` | Adds XP, levels up if threshold crossed, updates PlayerData, recomputes stats |
-
-### Admin only (`Player.is_admin == true`)
+### Lifecycle (reducers.rs)
 
 | Reducer | What it does |
 |---------|-------------|
-| `spawn_enemy(template_id, res_path, x, y, is_elite, immortal)` | Inserts Enemy row |
-| `despawn_enemy(enemy_id)` | Deletes Enemy row |
-| `upsert_enemy_template(template)` | Creates or updates enemy type definition |
+| `init` | Runs once on first publish. Starts `EnemyBehaviorSchedule` (500ms interval). |
+| `client_connected` | New player: calls `seed_new_player`. Returning player: moves row from `logged_out_player` → `logged_in_player`. |
+| `client_disconnected` | Moves row from `logged_in_player` → `logged_out_player`. PlayerPosition is preserved. |
+
+### Player (reducers.rs) — all guarded by `require_logged_in`
+
+| Reducer | What it does |
+|---------|-------------|
+| `set_username(username)` | Updates Player.username in logged_in_player |
+| `report_movement(x, y, rotation)` | Validates caller is logged in, wraps torus coords, updates PlayerPosition |
+| `gain_xp(amount)` | Adds XP, levels up, recomputes stats |
+| `update_inventory(slots)` | Replaces inventory slots, recomputes stats |
+| `report_enemy_hit(enemy_id)` | Computes damage from caller stats + weapon, updates enemy HP, handles death + loot + XP |
+| `pickup_drop(drop_id)` | Adds item to inventory, deletes drop row |
+| `place_building(hex_q, hex_r, building_type)` | Places building on empty tile |
+| `remove_building(hex_q, hex_r)` | Owner or admin can remove |
+
+### Scheduled (reducers.rs)
+
+| Reducer | What it does |
+|---------|-------------|
+| `tick_enemy_behavior` | Runs every 500ms. Iterates all enemies. Skips any with no player within ENEMY_SIMULATION_RANGE (640 units). Behavior logic filled in per-template by designer. |
+
+### Admin (admin.rs) — all require `is_admin`
+
+| Reducer | What it does |
+|---------|-------------|
+| `claim_admin` | Bootstrap: caller becomes admin if none exist |
+| `release_admin` | Removes admin from caller |
+| `change_stats(target, ...)` | Overrides target's PlayerStats directly |
+| `give_item(target, item_id)` | Adds item to target's backpack |
+| `remove_item(target, item_id)` | Removes item from target's inventory |
 | `upsert_item_stats(stats)` | Creates or updates item definition |
-| `give_item(target_username, item_id)` | Adds item to target's backpack |
-| `remove_item(target_username, item_id)` | Removes item from target's inventory |
-| `change_stats(target_username, ...)` | Overrides target's PlayerStats directly |
+| `upsert_enemy_template(template)` | Creates or updates enemy type definition |
+| `spawn_enemy(template_id, res_path, x, y, is_elite, immortal)` | Inserts Enemy row at world position |
+| `despawn_enemy(enemy_id)` | Deletes Enemy row |
+| `add_chunks(hex_radius, cols, rows, outer_radius)` | Pre-populates BuildingTile rows + writes MapConfig singleton |
+| `clear_chunks` | Deletes all BuildingTile rows |
 
 ---
 
-## Client Subscriptions (AoI model)
+## Views
 
-Rather than `subscribe_to_all_tables()`, clients use parameterised SQL chunk queries. Each client knows its current chunk and re-subscribes when crossing a chunk boundary.
+Clients subscribe to views rather than raw tables or SQL. Views use `Query<T>` (incremental — read set updated without full recompute). Each table has its own view so queries stay efficient.
 
-```sql
--- Other players nearby
-SELECT * FROM player_position
-WHERE chunk_x BETWEEN @min_x AND @max_x
-  AND chunk_y BETWEEN @min_y AND @max_y
+### Local player (subscribe once on connect)
 
--- Enemies nearby
-SELECT * FROM enemy
-WHERE chunk_x BETWEEN @min_x AND @max_x
-  AND chunk_y BETWEEN @min_y AND @max_y
+| View | Returns | Filter |
+|------|---------|--------|
+| `local_player` | `Player` | player_id == sender |
+| `local_player_data` | `PlayerData` | player_id == sender |
+| `local_player_stats` | `PlayerStats` | player_id == sender |
+| `local_player_inventory` | `PlayerInventory` | player_id == sender |
+| `local_player_position` | `PlayerPosition` | player_id == sender |
 
--- Loot nearby
-SELECT * FROM loot_drop
-WHERE chunk_x BETWEEN @min_x AND @max_x
-  AND chunk_y BETWEEN @min_y AND @max_y
-```
+### Other players (subscribe once on connect)
 
-**Always subscribed (no AoI filter):**
-- `player` — all usernames (small, needed for display)
-- `player_data`, `player_stats`, `player_inventory` — filtered to own player_id
-- `enemy_template` — all templates (small reference data, read-only)
-- `item_stats` — all item definitions (small reference data, read-only)
+| View | Returns | Filter |
+|------|---------|--------|
+| `remote_players` | `Player` | All logged_in_player except sender (metadata — username etc.) |
+| `nearby_player_positions` | `PlayerPosition` | chunk_index IN surrounding_chunk_indices(sender position) |
 
-Chunk size is 320 units. AoI radius = 1 chunk in each direction (3x3 chunk window). No server-side views needed — the SQL condition in the subscription handles it per client.
+### Enemies (subscribe once on connect)
+
+| View | Returns | Filter |
+|------|---------|--------|
+| `nearby_enemies` | `Enemy` | chunk_index IN surrounding_chunk_indices(sender position) |
+| `enemy_templates` | `EnemyTemplate` | All (static reference data) |
+
+### Bullet events (direct table subscription — event tables don't support views yet)
+
+Clients subscribe directly to `BulletPatternEvent`. On `OnInsert`, unpack `PatternType` variant and feed to bullet factory. Row is already deleted server-side by the time the client reacts — purely a broadcast mechanism.
 
 ---
 
-## Client Simulation Model
+## Login / Logout Flow
 
-### Player position (other players)
-- Server relays position at ~5 Hz via PlayerPosition table updates
-- Client receives `OnUpdate` → lerps visual node to new x/y
-- Rotation updated directly (no lerp needed for camera direction)
+`Player` is a single struct used by two tables. On connect/disconnect the row is moved between them, carrying all player data including username and is_admin.
 
-### Enemy lifecycle
 ```
-Admin calls spawn_enemy()
-  → Enemy row inserted with spawn_x, spawn_y, spawn_time, hp=max_hp, phase=0
-  → All clients in AoI receive OnInsert
-  → Each client: instantiate scene from res_path, set position to spawn_x/y
-  → Each client: start deterministic AI simulation from spawn_time
+New player connects
+  → seed_new_player: creates PlayerData, PlayerStats, PlayerInventory, PlayerPosition (0,0), inserts into logged_in_player
 
-Server receives report_enemy_hit()
-  → Computes damage, updates Enemy.hp + Enemy.phase
-  → All clients receive OnUpdate → update health bar, switch phase behavior if phase changed
+Returning player connects
+  → logged_out_player row deleted, same row inserted into logged_in_player
+  → PlayerPosition unchanged — player loads in at last known position
 
-Admin calls despawn_enemy() OR server kills enemy (hp=0)
-  → Enemy row deleted
-  → All clients receive OnDelete → remove visual node, play death FX
+Player disconnects
+  → logged_in_player row deleted, same row inserted into logged_out_player
+  → PlayerPosition row stays — position persists for next session
 ```
 
-### Enemy AI simulation (fully client-side)
-- Each client reads `EnemyTemplate` for its `res_path` to get phase defs and attack patterns
-- Enemy script computes elapsed = `Time.now - spawn_time`
-- Determines current behavior from `EnemyTemplate.phases[Enemy.phase].attacks`
-- Moves and fires bullets locally — no server involvement
-- When `Enemy.phase` updates via OnUpdate: enemy script switches attack set immediately
+Gameplay reducers only operate on logged_in_player (enforced by `require_logged_in` guard). Admin reducers can target any player by username, searching both tables.
 
-### Bullet simulation (fully client-side, no server rows)
-- Enemy script reads `AttackDef.fire_rate` + `AttackDef.pattern_type` + `AttackDef.params`
-- Fires bullets at the right intervals based on elapsed time from spawn_time
-- All clients run the same deterministic logic → bullets appear at the same time on all clients
-- Local player collision detection → client applies damage locally (and optionally reports to server)
-- No `BulletPattern` table. No server rows. Zero network traffic for bullets.
+---
 
-### Loot drops
+## Enemy Lifecycle
+
 ```
-Enemy dies (report_enemy_hit reduces hp to 0)
-  → Server inserts LootDrop at enemy.spawn_x/y
-  → All clients in AoI receive OnInsert → spawn loot visual
+Admin calls spawn_enemy() (or future spawn zone logic)
+  → Enemy row inserted with spawn_x/y, x/y, hp=max_hp, phase=0
+  → Clients in AoI receive OnInsert from nearby_enemies view
+  → Game manager spawns enemy node
 
-Client walks over loot, calls pickup_drop(drop_id)
-  → Server validates, adds to PlayerInventory, deletes LootDrop row
-  → Client receives OnDelete → remove loot visual
-  → Client receives PlayerInventory OnUpdate → show new item
+tick_enemy_behavior fires every 500ms
+  → Skips enemies with no player within 640 units
+  → Updates Enemy.x/y (live position), Enemy.phase, Enemy.last_attack_time
+  → If firing: inserts BulletPatternEvent (ephemeral — deleted same transaction)
+  → Clients receive Enemy OnUpdate → enemy node updates itself
+  → Clients receive BulletPatternEvent OnInsert → bullet factory spawns pattern
+
+Client calls report_enemy_hit(enemy_id)
+  → Server computes damage from caller stats + equipped weapon
+  → Updates Enemy.hp + Enemy.phase
+  → On death: inserts LootDrop, deletes Enemy row, awards XP
+  → Clients receive OnDelete → game manager despawns node
 ```
 
 ---
 
-## Known Gaps (to address in future tasks)
+## Client Responsibility Split (target architecture)
 
-- **Player taking damage from bullets** — currently no reducer for this. Need `report_player_hit(damage)` that any client can call on themselves, or trust client to apply locally and only sync HP on death/session.
-- **Chunk AoI subscriptions** — currently using `subscribe_to_all_tables()`. Chunk subscriptions are the next networking milestone.
-- **Torus world wrapping** — chunk queries need two-range queries near edges. Deferred until world size is finalized.
-- **LootDrop item content** — currently spawns with empty item_id as placeholder. Needs drop table per enemy template.
+| Node | Subscribes to | Owns |
+|------|--------------|------|
+| SpacetimeDBManager | — | Connection, view subscriptions |
+| Game manager | `nearby_enemies`, `loot` (future view) | OnInsert → spawn node; OnDelete → despawn node |
+| Local player | 5 local_player_* views | Input, movement, combat calls to server |
+| Remote player node | `remote_players`, `nearby_player_positions` | OnUpdate for own player_id → lerp position |
+| Enemy node | `nearby_enemies` | OnUpdate for own enemy_id → apply server state |
+| Bullet factory | `BulletPatternEvent` (direct table sub) | OnInsert → unpack PatternType → run spawner |
+| Drop node | Loot view (TBD) | Pickup collision, visual |
+
+---
+
+## Seeding
+
+New enemy templates and items are defined in code via the `Seed` trait and helper functions. Safe to re-run on republish (upsert pattern).
+
+```rust
+EnemyTemplate::seed(ctx, EnemyTemplate {
+    template_id: "goblin".into(),
+    display_name: "Goblin".into(),
+    max_hp: 100,
+    phases: vec![
+        make_phase(0, 1.0, vec![
+            make_attack(PatternType::Straight(StraightParams { speed: 150.0, count: 1 }), EnemyTarget::NearestPlayer, 2.0),
+        ]),
+        make_phase(1, 0.5, vec![
+            make_attack(PatternType::Ring(RingParams { speed: 150.0, count: 8 }), EnemyTarget::NearestPlayer, 1.5),
+        ]),
+    ],
+});
+```
+
+---
+
+## Known Gaps
+
+| Gap | Status |
+|-----|--------|
+| Client refactor | Next step — see next-steps.md |
+| Bullet factory node integration | After client refactor |
+| Enemy behavior logic in tick | Skeleton only — behavior per template designed by designer |
+| Spawn zones (proximity-based spawning) | Not yet implemented |
+| AoI resubscription on chunk boundary crossing | Not yet wired on client |
+| Player taking damage reducer | Not yet defined |
+| View params for world events | Blocked on SpacetimeDB — event tables and views with params not yet supported |
+| Torus world wrapping in chunk queries | Deferred until world size finalized |
+| Loot drop item content | drop_id placeholder only — needs drop table per template |
+| `report_player_hit` reducer | Needed for bullet → player damage flow |

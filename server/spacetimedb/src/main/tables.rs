@@ -21,22 +21,28 @@ pub struct InventorySlot {
 
 // ── Enemy template types ─────────────────────────────────────────────────────
 
+#[derive(SpacetimeType, Clone)] pub struct StraightParams { pub speed: f32, pub count: u32 }
+#[derive(SpacetimeType, Clone)] pub struct SineParams { pub speed: f32, pub count: u32, pub amplitude: f32, pub frequency: f32 }
+#[derive(SpacetimeType, Clone)] pub struct HomingParams { pub speed: f32, pub count: u32, pub turn_rate: f32 }
+#[derive(SpacetimeType, Clone)] pub struct RingParams { pub speed: f32, pub count: u32 }
+#[derive(SpacetimeType, Clone)] pub struct SpiralParams { pub speed: f32, pub count: u32, pub arms: u32, pub rotation_speed: f32 }
+#[derive(SpacetimeType, Clone)] pub struct BurstParams { pub speed: f32, pub count: u32, pub spread: f32 }
+
 #[derive(SpacetimeType, Clone)]
 pub enum PatternType {
-    Straight,
-    Sine,
-    Homing,
-    Ring,
-    Spiral,
-    Burst,
+    Straight(StraightParams),
+    Sine(SineParams),
+    Homing(HomingParams),
+    Ring(RingParams),
+    Spiral(SpiralParams),
+    Burst(BurstParams),
 }
 
 #[derive(SpacetimeType, Clone)]
 pub struct AttackDef {
     pub pattern_type: PatternType,
     pub target: EnemyTarget,
-    pub fire_rate: f32, // seconds between shots
-    pub params: String, // pattern-specific params: speed, amplitude, count, spread, etc.
+    pub fire_rate: f32,
 }
 
 #[derive(SpacetimeType, Clone)]
@@ -162,7 +168,6 @@ pub struct BulletPatternEvent {
     pub origin_y: f32,
     pub pattern_type: PatternType,
     pub targets: Vec<Identity>,
-    pub params: String,
     #[index(btree)] pub chunk_index: i64,
 }
 
