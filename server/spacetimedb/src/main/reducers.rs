@@ -336,7 +336,7 @@ pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> 
 #[spacetimedb::reducer]
 pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    // if !(0..=10).contains(&chunk_hex_radius)  { return Err("chunk_hex_radius must be 0–10.".to_string()); }
+    if !(1..=10).contains(&chunk_hex_radius)  { return Err("chunk_hex_radius must be 1–10.".to_string()); }
     if !(1..=200).contains(&chunk_cols) { return Err("chunk_cols must be 1–200.".to_string()); }
     if !(1..=200).contains(&chunk_rows) { return Err("chunk_rows must be 1–200.".to_string()); }
     if hex_outer_radius <= 0.0 { return Err("hex_outer_radius must be positive.".to_string()); }
