@@ -152,7 +152,10 @@ public partial class StdbPlayerSync : Node
             _snapshots.Remove(key);
             return;
         }
-        _StoreSnapshot(key, newRow);
+        var snapPos = _TorusNearestCopy(node.GlobalPosition, new Vector2(newRow.X, newRow.Y));
+        _snapshots[key] = new SyncSnapshot(
+            snapPos, 0f, 0f, 0f,
+            DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L);
     }
 
     private void _OnDelete(EventContext ctx, PlayerPosition row) // ^-OnDelete
@@ -224,6 +227,28 @@ public partial class StdbPlayerSync : Node
         conn.Db.PlayerPosition.OnInsert -= _OnInsert;
         conn.Db.PlayerPosition.OnUpdate -= _OnUpdate;
         conn.Db.PlayerPosition.OnDelete -= _OnDelete;
+    }
+
+    // Returns the torus copy of newSnap geometrically closest to current,
+    // preventing the lerp target from jumping across the whole map at a seam crossing.
+    private Vector2 _TorusNearestCopy(Vector2 current, Vector2 newSnap)
+    {
+        var vecs = SpacetimeDBManager.Instance.GetMapPeriodVectors();
+        if (vecs == null) return newSnap;
+        var (vq, vr) = vecs.Value;
+        Vector2[] offsets = {
+            Vector2.Zero,
+            vq, -vq, vr, -vr,
+            vq + vr, vq - vr, -vq + vr, -vq - vr
+        };
+        Vector2 best = newSnap;
+        float minDist = current.DistanceTo(newSnap);
+        foreach (var off in offsets)
+        {
+            float d = current.DistanceTo(newSnap + off);
+            if (d < minDist) { minDist = d; best = newSnap + off; }
+        }
+        return best;
     }
 
 	// Returns the STDB identity string for a given player node.

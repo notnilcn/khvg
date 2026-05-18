@@ -2,6 +2,7 @@
 # whatever
 ```c# */
 using Godot;
+using System;
 using System.Collections.Generic;
 using SpacetimeDB.Types;
 
@@ -192,6 +193,11 @@ public partial class Player : CharacterBody2D
 
         _HandleMovement(delta);
         MoveAndSlide();
+        var cfg = SpacetimeDBManager.Instance?.GetMapConfig();
+        if (cfg != null)
+            GlobalPosition = WrapWorldPos(GlobalPosition,
+                (int)cfg["chunk_hex_radius"], (int)cfg["chunk_cols"], (int)cfg["chunk_rows"],
+                (float)cfg["hex_outer_radius"]);
     }
 
     public override void _UnhandledInput(InputEvent @event)
@@ -630,4 +636,60 @@ public partial class Player : CharacterBody2D
 /*
 ```
 */
+
+    // ── Torus hex math helpers ────────────────────────────────────────────────
+    // Port of hexx Hex::to_higher_res: center_hq = cq*(2r+1) + r*cr, center_hr = cr*(r+1) - r*cq
+    internal static (int hq, int hr) ChunkCenterHex(int cq, int cr, int r) =>
+        (cq * (2 * r + 1) + r * cr, cr * (r + 1) - r * cq);
+
+    internal static (float x, float y) HexToWorld(int hq, int hr, float rOuter)
+    {
+        float sqrt3 = MathF.Sqrt(3f);
+        return (rOuter * sqrt3 * (hq + hr * 0.5f), rOuter * 1.5f * hr);
+    }
+
+    // Port of hexx Hex::to_lower_res (mirrors _to_lower_res in hex_grid_overlay.gd)
+    private static int _FloorDiv(int a, int b) => (int)Math.Floor((double)a / b);
+    private static (int cq, int cr) _ToLowerRes(int hq, int hr, int r)
+    {
+        int area = 3 * r * (r + 1) + 1, shift = 3 * r + 2, s = -hq - hr;
+        int a = _FloorDiv(hr + shift * hq, area);
+        int b = _FloorDiv(s  + shift * hr, area);
+        int c = _FloorDiv(hq + shift * s,  area);
+        return (_FloorDiv(1 + a - b, 3), _FloorDiv(1 + b - c, 3));
+    }
+
+    private static (int hq, int hr) _WorldToHex(float wx, float wy, float rOuter)
+    {
+        float sqrt3 = MathF.Sqrt(3f);
+        float r = wy * 2f / 3f / rOuter;
+        float q = (wx * sqrt3 / 3f - wy / 3f) / rOuter;
+        float s = -q - r;
+        float rq = MathF.Round(q), rr = MathF.Round(r), rs = MathF.Round(s);
+        if (MathF.Abs(rq - q) > MathF.Abs(rr - r) && MathF.Abs(rq - q) > MathF.Abs(rs - s)) rq = -rr - rs;
+        else if (MathF.Abs(rr - r) > MathF.Abs(rs - s)) rr = -rq - rs;
+        return ((int)rq, (int)rr);
+    }
+
+    private static (int cq, int cr) _WorldToChunk(float wx, float wy, int r, float rOuter)
+    {
+        var (hq, hr) = _WorldToHex(wx, wy, rOuter);
+        return _ToLowerRes(hq, hr, r);
+    }
+
+    internal static Vector2 WrapWorldPos(Vector2 pos, int hexRadius, int chunkCols, int chunkRows, float rOuter)
+    {
+        if (chunkCols <= 0 || chunkRows <= 0) return pos;
+        var (cq, cr) = _WorldToChunk(pos.X, pos.Y, hexRadius, rOuter);
+        int cqw = ((cq % chunkCols) + chunkCols) % chunkCols;
+        int crw = ((cr % chunkRows) + chunkRows) % chunkRows;
+        if (cq == cqw && cr == crw) return pos;
+        int lapsQ = (cqw - cq) / chunkCols;
+        int lapsR = (crw - cr) / chunkRows;
+        var (pqHq, pqHr) = ChunkCenterHex(chunkCols, 0, hexRadius);
+        var (prHq, prHr) = ChunkCenterHex(0, chunkRows, hexRadius);
+        var (pqx, pqy) = HexToWorld(pqHq, pqHr, rOuter);
+        var (prx, pry) = HexToWorld(prHq, prHr, rOuter);
+        return new Vector2(pos.X + lapsQ * pqx + lapsR * prx, pos.Y + lapsQ * pqy + lapsR * pry);
+    }
 }

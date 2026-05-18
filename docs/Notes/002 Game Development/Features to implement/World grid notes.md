@@ -1,5 +1,7 @@
 # Torus world overview
-I want to make the map a torus because I don't like maps that don't wrap around. Apparently it's mathematically impossible to discretise a sphere with hexagons so it has to be a torus. The images below show how the tile map wraps around.
+I want to make the map a torus because I don't like maps that don't wrap around. Apparently it's mathematically impossible to discretise a sphere with hexagons so it has to be a torus.
+https://mathematica.stackexchange.com/questions/39879/create-a-torus-with-a-hexagonal-mesh-for-3d-printing
+The images below show how the tile map wraps around.
 ![[Pasted image 20260425115208.png]]
 ![[Pasted image 20260426070151.png|720]]
 Light blue hexagons are the outer ring of the torus (outer diameter is number of light blue hexagons * 1.5).

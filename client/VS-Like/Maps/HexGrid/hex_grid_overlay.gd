@@ -6,16 +6,24 @@ const SQRT3 := 1.7320508075688772
 # These match DEFAULT_CHUNK_HEX_RADIUS and HEX_TILE_OUTER_RADIUS in methods.rs.
 const DEFAULT_CHUNK_HEX_RADIUS := 5
 const DEFAULT_AOI_CHUNK_RADIUS := 3
-const DEFAULT_HEX_OUTER_RADIUS := 32.0
+const DEFAULT_HEX_OUTER_RADIUS := 16.0
 
 const LINE_COLOR := Color(0.0, 0.0, 0.0, 0.3)
 const LINE_WIDTH := 1.0
 const LABEL_COLOR := Color(0.0, 0.0, 0.0, 0.75)
 const FONT_SIZE := 8
 
+# 3-coloring: (cq - cr) mod 3 guarantees no two adjacent chunks share a colour.
+const CHUNK_COLORS := [
+	Color(0.0, 1.0, 1.0, 0.5),  # Cyan
+	Color(1.0, 0.0, 1.0, 0.5),  # Magenta
+	Color(1.0, 1.0, 0.0, 0.5),  # Yellow
+]
+
 var _outer_radius: float = DEFAULT_HEX_OUTER_RADIUS
 var _chunk_radius: int   = DEFAULT_CHUNK_HEX_RADIUS
 var _chunk_cols: int     = 1
+var _chunk_rows: int     = 1
 
 var _cam_pos := Vector2.ZERO
 var _cam_zoom := Vector2.ONE
@@ -44,6 +52,7 @@ func _load_map_config(mgr) -> void:
 	_chunk_radius = cfg["chunk_hex_radius"]
 	_outer_radius = cfg["hex_outer_radius"]
 	_chunk_cols   = cfg["chunk_cols"]
+	_chunk_rows   = cfg["chunk_rows"]
 	queue_redraw()
 
 func _process(_delta: float) -> void:
@@ -76,17 +85,24 @@ func _draw() -> void:
 
 func _draw_hex(q: int, r: int) -> void:
 	var center := _hex_to_world(q, r)
+	var chunk := _to_lower_res(q, r, _chunk_radius)
 
-	# Outline
-	var pts := PackedVector2Array()
+	# Build the 6 vertices once.
+	var verts := PackedVector2Array()
 	for i in 6:
 		var angle := deg_to_rad(30.0 + 60.0 * i)
-		pts.append(center + Vector2(_outer_radius * cos(angle), _outer_radius * sin(angle)))
-	pts.append(pts[0])
-	draw_polyline(pts, LINE_COLOR, LINE_WIDTH, true)
+		verts.append(center + Vector2(_outer_radius * cos(angle), _outer_radius * sin(angle)))
+
+	# Chunk fill (draw before outline so outline renders on top).
+	var color_idx := ((chunk.x - chunk.y) % 3 + 3) % 3
+	draw_polygon(verts, PackedColorArray([CHUNK_COLORS[color_idx]]))
+
+	# Outline
+	var outline := verts
+	outline.append(verts[0])
+	draw_polyline(outline, LINE_COLOR, LINE_WIDTH, true)
 
 	# Labels
-	var chunk := _to_lower_res(q, r, _chunk_radius)
 	var cidx := _hex_spiral_index(chunk.x, chunk.y)
 	var hex_str   := "%d,%d" % [q, r]
 	var chunk_str := "%d,%d" % [chunk.x, chunk.y]
@@ -150,17 +166,22 @@ func _hex_spiral_index(cq: int, cr: int) -> int:
 
 # Mirrors surrounding_chunk_indices in methods.rs.
 # Returns spiral indices of all chunk hexes within `rings` rings of (cq, cr),
-# clamped to map bounds. Yields 3r(r+1)+1 results before clamping (r=0→1, r=1→7, r=2→19).
+# wrapped to map bounds. Deduplicates in case the window overlaps itself on a small torus.
 func _surrounding_chunk_indices(cq: int, cr: int, chunk_cols: int, chunk_rows: int, rings: int = DEFAULT_AOI_CHUNK_RADIUS) -> Array[int]:
+	var seen := {}
 	var result: Array[int] = []
 	for dq in range(-rings, rings + 1):
 		var dr_min := maxi(-rings, -dq - rings)
 		var dr_max := mini(rings, -dq + rings)
 		for dr in range(dr_min, dr_max + 1):
-			var nq := cq + dq
-			var nr := cr + dr
-			if nq >= 0 and nq < chunk_cols and nr >= 0 and nr < chunk_rows:
-				result.append(_hex_spiral_index(nq, nr))
+			var wq := (cq + dq) % chunk_cols
+			var wr := (cr + dr) % chunk_rows
+			if wq < 0: wq += chunk_cols
+			if wr < 0: wr += chunk_rows
+			var idx := _hex_spiral_index(wq, wr)
+			if not seen.has(idx):
+				seen[idx] = true
+				result.append(idx)
 	return result
 
 # Port of hexx Hex::to_lower_res

@@ -137,6 +137,20 @@ public partial class SpacetimeDBManager : Node
 		};
 	}
 
+	// Returns the two world-space period vectors of the torus map, or null if MapConfig not loaded.
+	public (Vector2 vq, Vector2 vr)? GetMapPeriodVectors()
+	{
+		var cfg = Conn?.Db.MapConfig.Id.Find(0);
+		if (cfg == null) return null;
+		int r = cfg.ChunkHexRadius, cols = cfg.ChunkCols, rows = cfg.ChunkRows;
+		float rOuter = cfg.HexOuterRadius;
+		var (pqHq, pqHr) = Player.ChunkCenterHex(cols, 0, r);
+		var (prHq, prHr) = Player.ChunkCenterHex(0, rows, r);
+		var (pqx, pqy) = Player.HexToWorld(pqHq, pqHr, rOuter);
+		var (prx, pry) = Player.HexToWorld(prHq, prHr, rOuter);
+		return (new Vector2(pqx, pqy), new Vector2(prx, pry));
+	}
+
 	private void OnSubscriptionApplied(SubscriptionEventContext ctx) // ^OnSubscriptionApplied
 	{
 		IsSubscriptionReady = true;

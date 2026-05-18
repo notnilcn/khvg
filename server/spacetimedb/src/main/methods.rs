@@ -187,15 +187,42 @@ pub fn hex_to_world(hq: i32, hr: i32, r_outer: f32) -> (f32, f32) {
     (pos.x, pos.y)
 }
 
+// Wraps chunk axial coordinates into [0, chunk_cols) × [0, chunk_rows).
+pub fn wrap_chunk_coords(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: i32) -> (i32, i32) {
+    (cq.rem_euclid(chunk_cols), cr.rem_euclid(chunk_rows))
+}
+
+// Wraps a world position onto the torus. The period vectors are derived from
+// chunk_center_hex so they stay in sync with the hexx to_higher_res formula.
+pub fn wrap_world_pos(x: f32, y: f32, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> (f32, f32) {
+    if chunk_cols <= 0 || chunk_rows <= 0 { return (x, y); }
+    let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
+    let (cqw, crw) = wrap_chunk_coords(cq, cr, chunk_cols, chunk_rows);
+    if cq == cqw && cr == crw { return (x, y); }
+    let laps_q = (cqw - cq) / chunk_cols;
+    let laps_r = (crw - cr) / chunk_rows;
+    let (pq_hq, pq_hr) = chunk_center_hex(chunk_cols, 0, chunk_hex_radius);
+    let (pr_hq, pr_hr) = chunk_center_hex(0, chunk_rows, chunk_hex_radius);
+    let (pq_x, pq_y) = hex_to_world(pq_hq, pq_hr, hex_outer_radius);
+    let (pr_x, pr_y) = hex_to_world(pr_hq, pr_hr, hex_outer_radius);
+    (x + laps_q as f32 * pq_x + laps_r as f32 * pr_x,
+     y + laps_q as f32 * pq_y + laps_r as f32 * pr_y)
+}
+
 // Returns chunk spiral indices for all chunks within `rings` rings of (cq, cr),
-// clamped to map bounds. Delegates to Hex::range (yields 3r(r+1)+1 chunks before clamping).
+// wrapped to map bounds. Delegates to Hex::range (yields 3r(r+1)+1 chunks before wrapping).
+// Deduplicates in case the AoI window overlaps itself on a small torus map.
 // `rings` defaults to DEFAULT_AOI_CHUNK_RADIUS when None (r=0→1, r=1→7, r=2→19).
 pub fn surrounding_chunk_indices(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: i32, rings: Option<i32>) -> Vec<i64> {
     let rings = rings.unwrap_or(DEFAULT_AOI_CHUNK_RADIUS) as u32;
+    let mut seen = std::collections::HashSet::new();
     Hex::new(cq, cr)
         .range(rings)
-        .filter(|h| h.x >= 0 && h.x < chunk_cols && h.y >= 0 && h.y < chunk_rows)
-        .map(|h| spiral_chunk_index(h.x, h.y))
+        .filter_map(|h| {
+            let (wq, wr) = wrap_chunk_coords(h.x, h.y, chunk_cols, chunk_rows);
+            let idx = spiral_chunk_index(wq, wr);
+            if seen.insert(idx) { Some(idx) } else { None }
+        })
         .collect()
 }
 

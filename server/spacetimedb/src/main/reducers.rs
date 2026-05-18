@@ -74,6 +74,8 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
     let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
     let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
     let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
+    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(1);
+    let (x, y) = wrap_world_pos(x, y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
     let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
     let chunk_index = spiral_chunk_index(cq, cr);
     ctx.db.player_position().player_id().update(PlayerPosition {
@@ -297,6 +299,8 @@ pub fn spawn_enemy(ctx: &ReducerContext, template_id: String, res_path: String, 
     let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
     let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
     let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
+    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(1);
+    let (x, y) = wrap_world_pos(x, y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
     let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
     let chunk_index = spiral_chunk_index(cq, cr);
     ctx.db.enemy().insert(Enemy {
@@ -308,6 +312,7 @@ pub fn spawn_enemy(ctx: &ReducerContext, template_id: String, res_path: String, 
         spawn_time: ctx.timestamp,
         hp: template.max_hp,
         phase: 0,
+        target: EnemyTarget::NearestPlayer,
         is_elite,
         immortal,
         chunk_index,
@@ -329,12 +334,11 @@ pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> 
 // chunkCols: rhombus width in chunks (1–200)
 // chunkRows: rhombus height in chunks (1–200)
 #[spacetimedb::reducer]
-pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: Option<f32>) -> Result<(), String> {
+pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    if !(1..=10).contains(&chunk_hex_radius)  { return Err("chunk_hex_radius must be 1–10.".to_string()); }
+    // if !(0..=10).contains(&chunk_hex_radius)  { return Err("chunk_hex_radius must be 0–10.".to_string()); }
     if !(1..=200).contains(&chunk_cols) { return Err("chunk_cols must be 1–200.".to_string()); }
     if !(1..=200).contains(&chunk_rows) { return Err("chunk_rows must be 1–200.".to_string()); }
-    let hex_outer_radius = hex_outer_radius.unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
     if hex_outer_radius <= 0.0 { return Err("hex_outer_radius must be positive.".to_string()); }
 
     let area  = hex_area(chunk_hex_radius);
@@ -370,6 +374,17 @@ pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, 
         });
     }
     log::info!("add_chunks: {} tiles inserted ({} chunks, area {})", chunk_cols * chunk_rows * area, chunk_cols * chunk_rows, area);
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn clear_chunks(ctx: &ReducerContext) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    let count = ctx.db.building_tile().iter().count();
+    for tile in ctx.db.building_tile().iter() {
+        ctx.db.building_tile().tile_id().delete(&tile.tile_id);
+    }
+    log::info!("clear_chunks: {} tiles deleted.", count);
     Ok(())
 }
 
