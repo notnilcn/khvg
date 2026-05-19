@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="ResEnemy" format=3 uid="uid://bpm351c5xe65k"]
-
-[ext_resource type="Script" uid="uid://bq2n0w72uwjbf" path="res://VS-Like/Characters/Enemy/Types/ResEnemy.cs" id="1_6c5o4"]
-
-[resource]
-script = ExtResource("1_6c5o4")
-ModelName = "Warrior"

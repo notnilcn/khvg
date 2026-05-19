@@ -60,8 +60,8 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
     let cfg = ctx.db.map_config().id().find(&0u32);
     let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
     let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
-    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(1);
+    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
+    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
     let (x, y) = wrap_world_pos(x, y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
     let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
     let chunk_index = spiral_chunk_index(cq, cr);

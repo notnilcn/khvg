@@ -1,8 +1,0 @@
-[gd_scene format=3 uid="uid://bulletfactory_rm"]
-
-[ext_resource type="Script" uid="uid://dfftyt3s8h7x4" path="res://VS-Like/Game/Singleton/BulletFactory.cs" id="1_bfct"]
-
-[node name="BulletFactory" type="BulletFactory2D" unique_id=1204615336]
-
-[node name="RegisterBulletFactory" type="Node" parent="." unique_id=1470299182]
-script = ExtResource("1_bfct")

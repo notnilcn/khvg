@@ -48,26 +48,26 @@ fn local_player_position(ctx: &ViewContext) -> impl Query<PlayerPosition> {
 
 // ── Remote player views ───────────────────────────────────────────────────────
 
-#[spacetimedb::view(accessor = remote_players, public)]
-fn remote_players(ctx: &ViewContext) -> impl Query<Player> {
-    let sender = ctx.sender();
-    ctx.from.logged_in_player().r#where(move |p| p.player_id.ne(sender)).build()
-}
-
-#[spacetimedb::view(accessor = nearby_player_positions, public)]
-fn nearby_player_positions(ctx: &ViewContext) -> impl Query<PlayerPosition> {
+#[spacetimedb::view(accessor = nearby_remote_players, public)]
+fn nearby_remote_players(ctx: &ViewContext) -> impl Query<PlayerPosition> {
     let empty = ctx.from.player_position().r#where(|p| p.player_id.eq(Identity::default())).build();
     let indices = match nearby_indices(ctx) {
         Some(i) if !i.is_empty() => i,
         _ => return empty,
     };
-    ctx.from.player_position().r#where(move |p| {
-        let mut cond = p.chunk_index.eq(indices[0]);
-        for &idx in &indices[1..] {
-            cond = cond.or(p.chunk_index.eq(idx));
-        }
-        cond
-    }).build()
+    ctx.from.player_position()
+        .r#where(move |p| {
+            let mut cond = p.chunk_index.eq(indices[0]);
+            for &idx in &indices[1..] {
+                cond = cond.or(p.chunk_index.eq(idx));
+            }
+            cond
+        })
+        .left_semijoin(
+            ctx.from.logged_in_player(),
+            |pos, player| pos.player_id.eq(player.player_id),
+        )
+        .build()
 }
 
 // ── Enemy views ───────────────────────────────────────────────────────────────

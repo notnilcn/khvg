@@ -15,19 +15,8 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="VampireSurvivorsTemplate"
-run/main_scene="res://VS-Like/Game/Lobby/lobby.tscn"
+run/main_scene="uid://bk4d3bkeqrqvu"
 config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
-
-[autoload]
-
-Global="*res://VS-Like/Game/Singleton/Global.cs"
-Network="*res://VS-Like/Game/Singleton/Network.cs"
-BulletManager="*res://VS-Like/Bullets/BulletManager.cs"
-SpacetimeDBManager="*res://SpacetimeDB/SpacetimeDBManager.cs"
-StdbPlayerSync="*res://SpacetimeDB/StdbPlayerSync.cs"
-StdbEnemySync="*res://SpacetimeDB/StdbEnemySync.cs"
-StdbBulletSync="*res://SpacetimeDB/StdbBulletSync.cs"
-ElevatedClient="*res://SpacetimeDB/ElevatedClient.cs"
 
 [display]
 

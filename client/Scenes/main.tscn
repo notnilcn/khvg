@@ -1,0 +1,10 @@
+[gd_scene format=3 uid="uid://bk4d3bkeqrqvu"]
+
+[ext_resource type="Script" uid="uid://cqiavfx25o6be" path="res://Scripts/Game/GameManager.cs" id="1_8gbba"]
+[ext_resource type="PackedScene" uid="uid://bbjjh55yrwyfn" path="res://Scenes/local_player.tscn" id="2_jjvhh"]
+[ext_resource type="PackedScene" uid="uid://8oytx5u0vik3" path="res://Scenes/non_local_player.tscn" id="3_kry3j"]
+
+[node name="Main" type="Node2D" unique_id=24548255]
+script = ExtResource("1_8gbba")
+LocalPlayerScene = ExtResource("2_jjvhh")
+NonLocalPlayerScene = ExtResource("3_kry3j")
