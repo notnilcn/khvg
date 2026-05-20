@@ -1,4 +1,10 @@
 {
   "server": "local",
-  "module-path": "./spacetimedb"
+  "module-path": "./spacetimedb",
+  "generate": [
+    {
+      "language": "csharp",
+      "out-dir": "../client/Scripts/module_bindings"
+    }
+  ]
 }
