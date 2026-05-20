@@ -89,14 +89,9 @@ SpacetimeDB is a relational database that is also a server: tables + reducers, c
 - `SpacetimeDBManager.cs` — autoload singleton; manages connection + `FrameTick()`; emits `ConnectedToServer`, `DisconnectedFromServer`, `SubscriptionReady` signals. Exposes `GetMapConfig()` returning a GDScript-compatible Dictionary with `chunk_hex_radius`, `chunk_cols`, `chunk_rows`, `hex_outer_radius`.
 - `Player.cs` — sends `ReportMovement` on WASD direction change
 
-**Constants to keep in sync with Godot client:**
-- `ChunkSize = 320f` — used for AoI subscription query bounds
-- `DEFAULT_CHUNK_HEX_RADIUS = 7`, `DEFAULT_HEX_OUTER_RADIUS = 32.0` — fallback values used before MapConfig is received; defined in `methods.rs` and mirrored in `hex_grid_overlay.gd`
-
 ### What is NOT yet implemented
 
 - `BulletPattern` table + bullet pattern system (Task 6)
-- Torus world topology
 - AoI chunk subscriptions (currently using `SubscribeToAllTables()`; torus-aware queries deferred with torus world)
 - Enemy dead-reckoning reducers (`UpdateEnemySnapshots`, `UpdateEnemyTarget`, `DespawnEnemy`) not yet ported to Rust
 
@@ -115,7 +110,7 @@ Session tables (`PlayerPosition`, `Enemy`, `LootDrop`) each carry a single `chun
 SELECT * FROM player_position WHERE chunk_index IN (0, 1, 2, 3, 4, 5, 6, 7, ...)
 ```
 
-The list is the 9 spiral indices of the 3×3 neighbourhood around the player's current chunk — computed by `surrounding_chunk_indices(cq, cr, chunk_cols, chunk_rows)` in `methods.rs`.
+The list is the 37 spiral indices of the chunks around the player's current chunk — computed by `surrounding_chunk_indices(cq, cr, chunk_cols, chunk_rows)` in `methods.rs`.
 
 Re-subscribe when the local player crosses a chunk boundary. Torus wrapping means a player near an edge has an AoI window that may include chunks on the opposite side; `surrounding_chunk_indices` already clamps to map bounds, but the torus wrap logic is deferred with torus world.
 
@@ -145,7 +140,7 @@ SpecificPlayer(Identity) — all clients chase the same named player; no diverge
 
 Clients `match` on this field to determine simulation behavior. The elevated client writes the variant when spawning or when a target transition occurs. `NearestPlayer` and `NearestCluster` are computed independently per client, which introduces potential divergence — this is bounded by the AoI targeting constraint below.
 
-**AoI targeting constraint:** Enemies only target players/clusters within 2 chunk-rings of the enemy's current position. Clients do not simulate enemy behavior for enemies in the outer 2-ring buffer of their AoI window. This guarantees that any enemy a client is simulating has its target within that client's AoI subscription, keeping independent centroid/nearest-player computations consistent across clients.
+**AoI targeting constraint:** Enemies only target players/clusters within 1 chunk-rings of the enemy's current position. Clients do not simulate enemy behavior for enemies in the outer 3-ring buffer of their AoI window. This guarantees that any enemy a client is simulating has its target within that client's AoI subscription, keeping independent centroid/nearest-player computations consistent across clients.
 
 ### Bullet system (not yet implemented)
 
@@ -222,15 +217,15 @@ The networking model is SpacetimeDB maincloud — see SpacetimeDB Backend sectio
 
 ### Authority model
 
-**Stats:** Server authority always. `RpgStats` (STR/WIS/DEX/DEF/VIT/SPD) are written only by the elevated client or admin reducers — never accepted from regular clients. Since damage is computed from stats, client-controlled stats are a direct cheat vector regardless of PvE/PvP mode.
+**Stats:** Server authority always. `RpgStats` (STR/WIS/DEX/DEF/VIT/SPD) are written only by the elevated client or admin reducers — never accepted from regular clients.
 
-**Combat:** Client authority by default. Clients self-report both taking damage from bullets and landing hits on enemies. Because this is PvE, combat cheating only harms the cheater — delayed detection and banning is acceptable. This is intentional; it means zero server overhead for honest players and gives a lever to tighten enforcement if abuse becomes a real problem.
+**Combat:** Client authority by default. Clients self-report both getting hit bullets and landing hits on enemies. The server calculates the damage from those hit reports, but the server relies on the clients to report those hits in the first place. Because this is PvE, combat cheating only harms the cheater — delayed detection and banning is acceptable. This is intentional; it means zero server overhead for honest players and gives a lever to tighten enforcement if abuse becomes a real problem.
 
 **Economy:** Server authority always. Drops, trades, purchases, and inventory mutations are validated server-side. Economy cheating has cross-player impact so it is never deferred to auditing.
 
-### Suspicion score
+### Swarm anti-cheat
 
-Each player has a `suspicion_score` stored in `PlayerAccount`. It drifts upward when audits find discrepancies and decays back toward zero over time. The score determines how likely a player is to be selected for an audit in the next audit batch, and whether their position history is being logged.
+Honest clients will be able to tell the server when another player is cheating. For example, for bullet collisions, players will be performing those bullet collisions for all other players within their AoI, and those collisions will be reported to the server. If a player cheats by not reporting that they were hit, other players will still tell the server that that player was hit by a bullet and the cheater will be suspected of cheating and the cheating player's `suspicion_score` will increase.
 
 ### Movement history logging
 
@@ -248,7 +243,7 @@ Audits run non-live, once per day, via an external script (not a STDB reducer). 
 5. Checks for statistically implausible hit reports on enemies (damage claimed exceeds weapon stats, or player was not in range)
 6. Adjusts `suspicion_score` up or down based on findings
 
-Note: building damage is not currently an audit target (elevated client has authority over it), but `BuildingTile.destroyed_at` is retained so future audits can reconstruct building existence over time if needed.
+Note: buildings will need to be in the transaction to correctly simulate the bullet positions
 
 Audits cover both directions: **bullet hit evasion** (invincibility cheats) and **outgoing damage inflation** (damage/hit-rate cheats against enemies).
 

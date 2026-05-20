@@ -1,13 +1,18 @@
+An alternative to the torus world is a honeycomb geode
+https://blenderartists.org/t/geode-honeycomb/653434
+https://en.wikipedia.org/wiki/User:Tomruen/Geodestic_sphere
+
 # Torus world overview
 I want to make the map a torus because I don't like maps that don't wrap around. Apparently it's mathematically impossible to discretise a sphere with hexagons so it has to be a torus.
 https://mathematica.stackexchange.com/questions/39879/create-a-torus-with-a-hexagonal-mesh-for-3d-printing
 The images below show how the tile map wraps around.
 ![[Pasted image 20260425115208.png]]
-![[Pasted image 20260426070151.png|720]]
+![[Pasted image 20260426070151 .png|720]]
 Light blue hexagons are the outer ring of the torus (outer diameter is number of light blue hexagons * 1.5).
 Dark blue hexagons are the inner ring of the torus (inner diameter is number of dark blue hexagons * 1.5, however, due to the geometry of it all the number of dark blue hexagons must equal the number of light blue hexagons. Use the green hexagons as a better indication of inner diameter).
 Green hexagons are the thickness of the torus.
 Idk what the red hexagons are. Perhaps they are gay.
+==**The number of chunk columns needs to cleanly divide into the number of chunk rows**==.
 
 # Torus world logic
 Before we can talk about the code, we need to talk about the chunking because it directly effects the world map
@@ -28,6 +33,8 @@ The dimensions of it all are going to be extremely similar to bitcraft.
 
 > [!info] The formula for calculating the number of hexagons that're in a chunk from a hex_radius is:
 $3r^2+3r+1$ ^r-to-chunk
+
+After a bunch of discussion, I have settled on making the chunk_hex_radius=5 and the aoi_chunk_radius=3 (the radius doesn't include the centre hex btw, so the chunk_hex_diameter is 11 and the aoi_chunk_diameter is )
 
 Since the max number of hexagons that are visible in the radius when you fully zoom out is 16, the chunk radius should be 6 hexes, and the AoI radius should be 3 chunks. You can get away with making the chunk radius 5 hexes and the AoI radius 3 chunks, but it'll be tight. Just do a chunk radius of 6.
 
