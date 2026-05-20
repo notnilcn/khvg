@@ -34,6 +34,7 @@ namespace SpacetimeDB.Types
         public AttackDef()
         {
             this.PatternType = null!;
+            this.Target = null!;
         }
     }
 }

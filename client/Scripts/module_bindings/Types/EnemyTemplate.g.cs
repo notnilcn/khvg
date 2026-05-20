@@ -15,6 +15,8 @@ namespace SpacetimeDB.Types
     {
         [DataMember(Name = "template_id")]
         public string TemplateId;
+        [DataMember(Name = "res_path")]
+        public string ResPath;
         [DataMember(Name = "display_name")]
         public string DisplayName;
         [DataMember(Name = "max_hp")]
@@ -24,12 +26,14 @@ namespace SpacetimeDB.Types
 
         public EnemyTemplate(
             string TemplateId,
+            string ResPath,
             string DisplayName,
             uint MaxHp,
             System.Collections.Generic.List<PhaseDef> Phases
         )
         {
             this.TemplateId = TemplateId;
+            this.ResPath = ResPath;
             this.DisplayName = DisplayName;
             this.MaxHp = MaxHp;
             this.Phases = Phases;
@@ -38,6 +42,7 @@ namespace SpacetimeDB.Types
         public EnemyTemplate()
         {
             this.TemplateId = "";
+            this.ResPath = "";
             this.DisplayName = "";
             this.Phases = new();
         }

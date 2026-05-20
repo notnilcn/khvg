@@ -54,7 +54,7 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginX { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginY { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, PatternType> PatternType { get; }
-        public global::SpacetimeDB.Col<BulletPatternEvent, System.Collections.Generic.List<SpacetimeDB.Identity>> Targets { get; }
+        public global::SpacetimeDB.Col<BulletPatternEvent, SpacetimeDB.Identity> Target { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, long> ChunkIndex { get; }
 
         public BulletPatternEventCols(string tableName)
@@ -64,7 +64,7 @@ namespace SpacetimeDB.Types
             OriginX = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_x");
             OriginY = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_y");
             PatternType = new global::SpacetimeDB.Col<BulletPatternEvent, PatternType>(tableName, "pattern_type");
-            Targets = new global::SpacetimeDB.Col<BulletPatternEvent, System.Collections.Generic.List<SpacetimeDB.Identity>>(tableName, "targets");
+            Target = new global::SpacetimeDB.Col<BulletPatternEvent, SpacetimeDB.Identity>(tableName, "target");
             ChunkIndex = new global::SpacetimeDB.Col<BulletPatternEvent, long>(tableName, "chunk_index");
         }
     }

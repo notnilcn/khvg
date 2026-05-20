@@ -40,6 +40,7 @@ namespace SpacetimeDB.Types
     public sealed class EnemyTemplateCols
     {
         public global::SpacetimeDB.Col<EnemyTemplate, string> TemplateId { get; }
+        public global::SpacetimeDB.Col<EnemyTemplate, string> ResPath { get; }
         public global::SpacetimeDB.Col<EnemyTemplate, string> DisplayName { get; }
         public global::SpacetimeDB.Col<EnemyTemplate, uint> MaxHp { get; }
         public global::SpacetimeDB.Col<EnemyTemplate, System.Collections.Generic.List<PhaseDef>> Phases { get; }
@@ -47,6 +48,7 @@ namespace SpacetimeDB.Types
         public EnemyTemplateCols(string tableName)
         {
             TemplateId = new global::SpacetimeDB.Col<EnemyTemplate, string>(tableName, "template_id");
+            ResPath = new global::SpacetimeDB.Col<EnemyTemplate, string>(tableName, "res_path");
             DisplayName = new global::SpacetimeDB.Col<EnemyTemplate, string>(tableName, "display_name");
             MaxHp = new global::SpacetimeDB.Col<EnemyTemplate, uint>(tableName, "max_hp");
             Phases = new global::SpacetimeDB.Col<EnemyTemplate, System.Collections.Generic.List<PhaseDef>>(tableName, "phases");

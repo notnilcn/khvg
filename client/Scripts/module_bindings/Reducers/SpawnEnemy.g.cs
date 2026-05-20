@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void SpawnEnemyHandler(ReducerEventContext ctx, string templateId, string resPath, float x, float y, bool isElite, bool immortal);
+        public delegate void SpawnEnemyHandler(ReducerEventContext ctx, string templateId, float x, float y, bool isElite, bool immortal);
         public event SpawnEnemyHandler? OnSpawnEnemy;
 
-        public void SpawnEnemy(string templateId, string resPath, float x, float y, bool isElite, bool immortal)
+        public void SpawnEnemy(string templateId, float x, float y, bool isElite, bool immortal)
         {
-            conn.InternalCallReducer(new Reducer.SpawnEnemy(templateId, resPath, x, y, isElite, immortal));
+            conn.InternalCallReducer(new Reducer.SpawnEnemy(templateId, x, y, isElite, immortal));
         }
 
         public bool InvokeSpawnEnemy(ReducerEventContext ctx, Reducer.SpawnEnemy args)
@@ -37,7 +37,6 @@ namespace SpacetimeDB.Types
             OnSpawnEnemy(
                 ctx,
                 args.TemplateId,
-                args.ResPath,
                 args.X,
                 args.Y,
                 args.IsElite,
@@ -55,8 +54,6 @@ namespace SpacetimeDB.Types
         {
             [DataMember(Name = "template_id")]
             public string TemplateId;
-            [DataMember(Name = "res_path")]
-            public string ResPath;
             [DataMember(Name = "x")]
             public float X;
             [DataMember(Name = "y")]
@@ -68,7 +65,6 @@ namespace SpacetimeDB.Types
 
             public SpawnEnemy(
                 string TemplateId,
-                string ResPath,
                 float X,
                 float Y,
                 bool IsElite,
@@ -76,7 +72,6 @@ namespace SpacetimeDB.Types
             )
             {
                 this.TemplateId = TemplateId;
-                this.ResPath = ResPath;
                 this.X = X;
                 this.Y = Y;
                 this.IsElite = IsElite;
@@ -86,7 +81,6 @@ namespace SpacetimeDB.Types
             public SpawnEnemy()
             {
                 this.TemplateId = "";
-                this.ResPath = "";
             }
 
             string IReducerArgs.ReducerName => "spawn_enemy";

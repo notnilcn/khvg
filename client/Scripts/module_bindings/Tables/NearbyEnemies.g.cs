@@ -31,13 +31,10 @@ namespace SpacetimeDB.Types
     {
         public global::SpacetimeDB.Col<Enemy, ulong> EnemyId { get; }
         public global::SpacetimeDB.Col<Enemy, string> TemplateId { get; }
-        public global::SpacetimeDB.Col<Enemy, string> ResPath { get; }
-        public global::SpacetimeDB.Col<Enemy, float> SpawnX { get; }
-        public global::SpacetimeDB.Col<Enemy, float> SpawnY { get; }
+        public global::SpacetimeDB.Col<Enemy, ulong> BehaviorId { get; }
         public global::SpacetimeDB.Col<Enemy, float> X { get; }
         public global::SpacetimeDB.Col<Enemy, float> Y { get; }
         public global::SpacetimeDB.Col<Enemy, SpacetimeDB.Timestamp> SpawnTime { get; }
-        public global::SpacetimeDB.Col<Enemy, SpacetimeDB.Timestamp> LastAttackTime { get; }
         public global::SpacetimeDB.Col<Enemy, uint> Hp { get; }
         public global::SpacetimeDB.Col<Enemy, byte> Phase { get; }
         public global::SpacetimeDB.Col<Enemy, bool> IsElite { get; }
@@ -48,13 +45,10 @@ namespace SpacetimeDB.Types
         {
             EnemyId = new global::SpacetimeDB.Col<Enemy, ulong>(tableName, "enemy_id");
             TemplateId = new global::SpacetimeDB.Col<Enemy, string>(tableName, "template_id");
-            ResPath = new global::SpacetimeDB.Col<Enemy, string>(tableName, "res_path");
-            SpawnX = new global::SpacetimeDB.Col<Enemy, float>(tableName, "spawn_x");
-            SpawnY = new global::SpacetimeDB.Col<Enemy, float>(tableName, "spawn_y");
+            BehaviorId = new global::SpacetimeDB.Col<Enemy, ulong>(tableName, "behavior_id");
             X = new global::SpacetimeDB.Col<Enemy, float>(tableName, "x");
             Y = new global::SpacetimeDB.Col<Enemy, float>(tableName, "y");
             SpawnTime = new global::SpacetimeDB.Col<Enemy, SpacetimeDB.Timestamp>(tableName, "spawn_time");
-            LastAttackTime = new global::SpacetimeDB.Col<Enemy, SpacetimeDB.Timestamp>(tableName, "last_attack_time");
             Hp = new global::SpacetimeDB.Col<Enemy, uint>(tableName, "hp");
             Phase = new global::SpacetimeDB.Col<Enemy, byte>(tableName, "phase");
             IsElite = new global::SpacetimeDB.Col<Enemy, bool>(tableName, "is_elite");

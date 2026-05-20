@@ -17,20 +17,14 @@ namespace SpacetimeDB.Types
         public ulong EnemyId;
         [DataMember(Name = "template_id")]
         public string TemplateId;
-        [DataMember(Name = "res_path")]
-        public string ResPath;
-        [DataMember(Name = "spawn_x")]
-        public float SpawnX;
-        [DataMember(Name = "spawn_y")]
-        public float SpawnY;
+        [DataMember(Name = "behavior_id")]
+        public ulong BehaviorId;
         [DataMember(Name = "x")]
         public float X;
         [DataMember(Name = "y")]
         public float Y;
         [DataMember(Name = "spawn_time")]
         public SpacetimeDB.Timestamp SpawnTime;
-        [DataMember(Name = "last_attack_time")]
-        public SpacetimeDB.Timestamp LastAttackTime;
         [DataMember(Name = "hp")]
         public uint Hp;
         [DataMember(Name = "phase")]
@@ -45,13 +39,10 @@ namespace SpacetimeDB.Types
         public Enemy(
             ulong EnemyId,
             string TemplateId,
-            string ResPath,
-            float SpawnX,
-            float SpawnY,
+            ulong BehaviorId,
             float X,
             float Y,
             SpacetimeDB.Timestamp SpawnTime,
-            SpacetimeDB.Timestamp LastAttackTime,
             uint Hp,
             byte Phase,
             bool IsElite,
@@ -61,13 +52,10 @@ namespace SpacetimeDB.Types
         {
             this.EnemyId = EnemyId;
             this.TemplateId = TemplateId;
-            this.ResPath = ResPath;
-            this.SpawnX = SpawnX;
-            this.SpawnY = SpawnY;
+            this.BehaviorId = BehaviorId;
             this.X = X;
             this.Y = Y;
             this.SpawnTime = SpawnTime;
-            this.LastAttackTime = LastAttackTime;
             this.Hp = Hp;
             this.Phase = Phase;
             this.IsElite = IsElite;
@@ -78,7 +66,6 @@ namespace SpacetimeDB.Types
         public Enemy()
         {
             this.TemplateId = "";
-            this.ResPath = "";
         }
     }
 }

@@ -17,22 +17,27 @@ namespace SpacetimeDB.Types
         public byte PhaseIndex;
         [DataMember(Name = "hp_threshold")]
         public float HpThreshold;
+        [DataMember(Name = "movement")]
+        public MovementBehavior Movement;
         [DataMember(Name = "attacks")]
         public System.Collections.Generic.List<AttackDef> Attacks;
 
         public PhaseDef(
             byte PhaseIndex,
             float HpThreshold,
+            MovementBehavior Movement,
             System.Collections.Generic.List<AttackDef> Attacks
         )
         {
             this.PhaseIndex = PhaseIndex;
             this.HpThreshold = HpThreshold;
+            this.Movement = Movement;
             this.Attacks = Attacks;
         }
 
         public PhaseDef()
         {
+            this.Movement = null!;
             this.Attacks = new();
         }
     }

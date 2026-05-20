@@ -18,12 +18,14 @@ public partial class GameManager : Node
 	[Export] public string Host   { get; set; } = "http://127.0.0.1:3000";
 	[Export] public string DbName { get; set; } = "bullethell";
 
-	[Export] public PackedScene LocalPlayerScene    { get; set; } = null!;
+	[Export] public PackedScene LocalPlayerScene { get; set; } = null!;
 	[Export] public PackedScene NonLocalPlayerScene { get; set; } = null!;
-	[Export] public PackedScene EnemyScene          { get; set; } = null!;
-	[Export] public PackedScene DropScene           { get; set; } = null!;
+	[Export] public PackedScene EnemyScene { get; set; } = null!;
+	[Export] public PackedScene DropScene { get; set; } = null!;
+	[Export] public PackedScene BulletManagerScene { get; set; } = null!;
 
 	private LocalPlayer? _localPlayer;
+	private BulletManager? _bulletManager; 
 	private readonly Dictionary<string, NonLocalPlayer> _remotePlayers = new();
 	private readonly Dictionary<ulong, Enemy>           _enemies       = new();
 	private readonly Dictionary<ulong, Drop>            _drops         = new();
@@ -136,9 +138,16 @@ public partial class GameManager : Node
 
 	private void OnLocalPlayerInsert(EventContext ctx, PlayerRow row)
 	{
-		if (_localPlayer != null) return;
-		_localPlayer = LocalPlayerScene.Instantiate<LocalPlayer>();
-		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, _localPlayer);
+		if (_localPlayer == null)
+		{
+			_localPlayer = LocalPlayerScene.Instantiate<LocalPlayer>();
+			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, _localPlayer);
+		}
+		if (_bulletManager == null)
+		{
+			_bulletManager = BulletManagerScene.Instantiate<BulletManager>();
+			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, _bulletManager);
+		}
 	}
 
 	private void OnLocalPlayerDelete(EventContext ctx, PlayerRow row)
@@ -146,6 +155,9 @@ public partial class GameManager : Node
 		if (_localPlayer != null && IsInstanceValid(_localPlayer))
 			_localPlayer.QueueFree();
 		_localPlayer = null;
+		if (_bulletManager != null && IsInstanceValid(_bulletManager))
+			_bulletManager.QueueFree();
+		_bulletManager = null;
 	}
 
 	private void OnNearbyRemotePlayerInsert(EventContext ctx, PlayerPosition row)

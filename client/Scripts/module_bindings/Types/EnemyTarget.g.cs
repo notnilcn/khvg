@@ -8,10 +8,10 @@ using System;
 namespace SpacetimeDB.Types
 {
     [SpacetimeDB.Type]
-    public enum EnemyTarget
-    {
-        Idle,
-        NearestPlayer,
-        NearestCluster,
-    }
+    public partial record EnemyTarget : SpacetimeDB.TaggedEnum<(
+        SpacetimeDB.Unit Idle,
+        SpacetimeDB.Unit NearestPlayer,
+        SpacetimeDB.Unit NearestCluster,
+        SpacetimeDB.Identity? SpecificPlayer
+    )>;
 }

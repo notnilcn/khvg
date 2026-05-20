@@ -3,8 +3,6 @@
 [ext_resource type="Script" uid="uid://c3xnyvxw0oftk" path="res://Scripts/Characters/NonLocalPlayer.cs" id="1_v7aue"]
 [ext_resource type="Texture2D" uid="uid://8inyhea1j4g5" path="res://Assets/RunSpriteSheet.png" id="2_isda7"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_l3nh3"]
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_nlgxu"]
 atlas = ExtResource("2_isda7")
 region = Rect2(0, 0, 96, 96)
@@ -137,11 +135,8 @@ animations = [{
 "speed": 32.0
 }]
 
-[node name="NonLocalPlayer" type="CharacterBody2D" unique_id=689646183]
+[node name="NonLocalPlayer" type="Node2D" unique_id=538548655]
 script = ExtResource("1_v7aue")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1762662774]
-shape = SubResource("CapsuleShape2D_l3nh3")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1561664506]
 position = Vector2(-6, -18)
