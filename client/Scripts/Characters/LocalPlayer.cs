@@ -16,7 +16,10 @@ public partial class LocalPlayer : CharacterBody2D
 	public int Vitality  { get; private set; }
 	public int Speed     { get; private set; }
 
-	private const float SpeedPerStat = 4f;
+	private const float SpeedPerStat    = 4f;
+	// Any server correction larger than this is a torus wrap, not latency jitter.
+	// Max legitimate drift = MaxSpeed * ReportInterval ≈ 100 * 0.1 = 10 units.
+	private const float WrapSnapThreshold = 50f;
 
 	private AnimatedSprite2D _sprite = null!;
 	private float _reportTimer       = 0f;
@@ -30,8 +33,9 @@ public partial class LocalPlayer : CharacterBody2D
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
 
-		conn.Db.LocalPlayerData.OnUpdate  += OnDataUpdate;
-		conn.Db.LocalPlayerStats.OnUpdate += OnStatsUpdate;
+		conn.Db.LocalPlayerData.OnUpdate     += OnDataUpdate;
+		conn.Db.LocalPlayerStats.OnUpdate    += OnStatsUpdate;
+		conn.Db.LocalPlayerPosition.OnUpdate += OnPositionUpdate;
 
 		foreach (var row in conn.Db.LocalPlayerData.Iter())
 			ApplyData(row);
@@ -60,6 +64,13 @@ public partial class LocalPlayer : CharacterBody2D
 	private void OnDataUpdate(EventContext ctx, PlayerData old, PlayerData row) => ApplyData(row);
 	private void OnStatsUpdate(EventContext ctx, PlayerStats old, PlayerStats row) => ApplyStats(row);
 
+	private void OnPositionUpdate(EventContext ctx, PlayerPosition old, PlayerPosition row)
+	{
+		var serverPos = new Vector2(row.X, row.Y);
+		if (GlobalPosition.DistanceSquaredTo(serverPos) > WrapSnapThreshold * WrapSnapThreshold)
+			GlobalPosition = serverPos;
+	}
+
 	private void ApplyData(PlayerData row)
 	{
 		Level = row.Level;
@@ -82,7 +93,8 @@ public partial class LocalPlayer : CharacterBody2D
 		if (Local == this) Local = null;
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
-		conn.Db.LocalPlayerData.OnUpdate  -= OnDataUpdate;
-		conn.Db.LocalPlayerStats.OnUpdate -= OnStatsUpdate;
+		conn.Db.LocalPlayerData.OnUpdate     -= OnDataUpdate;
+		conn.Db.LocalPlayerStats.OnUpdate    -= OnStatsUpdate;
+		conn.Db.LocalPlayerPosition.OnUpdate -= OnPositionUpdate;
 	}
 }

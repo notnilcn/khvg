@@ -12,7 +12,7 @@ Light blue hexagons are the outer ring of the torus (outer diameter is number of
 Dark blue hexagons are the inner ring of the torus (inner diameter is number of dark blue hexagons * 1.5, however, due to the geometry of it all the number of dark blue hexagons must equal the number of light blue hexagons. Use the green hexagons as a better indication of inner diameter).
 Green hexagons are the thickness of the torus.
 Idk what the red hexagons are. Perhaps they are gay.
-==**The number of chunk columns needs to cleanly divide into the number of chunk rows**==.
+==**The number of chunk columns needs to cleanly divide into the number of chunk rows**==. This is because the number of hexagons going up needs to match the number of hexagons going bottom right.
 
 # Torus world logic
 Before we can talk about the code, we need to talk about the chunking because it directly effects the world map

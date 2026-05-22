@@ -112,6 +112,7 @@ public partial class GameManager : Node
 			.AddQuery(q => q.From.NearbyEnemies())
 			.AddQuery(q => q.From.EnemyTemplates())
 			.AddQuery(q => q.From.BulletPatternEvent())
+			.AddQuery(q => q.From.MapConfig())
 			.OnApplied(OnSubscriptionApplied)
 			.Subscribe();
 	}

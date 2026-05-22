@@ -52,6 +52,8 @@ example-project-blastbullets2d/
 godot-blast-bullets-2d/
 *Shortcut
 
-client/SpacetimeDB/
+client/Scripts/module_bindings
 
 personal_notes/
+
+SpacetimeDB/

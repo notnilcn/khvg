@@ -139,6 +139,8 @@ pub fn spawn_from_zones(ctx: &ReducerContext) {
     let cfg = ctx.db.map_config().id().find(&0u32);
     let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
     let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
+    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
 
     for zone in ctx.db.enemy_zone().iter() {
         let (center_hq, center_hr) = chunk_center_hex(zone.center_chunk_q, zone.center_chunk_r, chunk_hex_radius);
@@ -164,6 +166,7 @@ pub fn spawn_from_zones(ctx: &ReducerContext) {
         let angle = (angle_hash as f32 / u64::MAX as f32) * std::f32::consts::TAU;
         let spawn_x = center_x + angle.cos() * zone.spawn_radius * 0.5;
         let spawn_y = center_y + angle.sin() * zone.spawn_radius * 0.5;
+        let (spawn_x, spawn_y) = wrap_world_pos(spawn_x, spawn_y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
 
         let (cq, cr) = world_to_chunk(spawn_x, spawn_y, chunk_hex_radius, hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);

@@ -7,7 +7,6 @@ use crate::player::methods::*;
 use crate::enemy::tables::*;
 use crate::enemy::methods::*;
 use crate::enemy::seeds::seed_default_enemies;
-
 #[spacetimedb::reducer(init)]
 pub fn init(ctx: &ReducerContext) {
     ctx.db.enemy_behavior_schedule().insert(EnemyBehaviorSchedule {
@@ -49,6 +48,8 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
     let cfg = ctx.db.map_config().id().find(&0u32);
     let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
     let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
+    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
 
     for enemy in ctx.db.enemy().iter() {
         if !has_player_in_range(ctx, enemy.x, enemy.y, ENEMY_SIMULATION_RANGE) { continue; }
@@ -79,6 +80,7 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
 
         let movement = phases[phase_idx].movement.clone();
         let (new_x, new_y, new_dir_x, new_dir_y, new_move_timer) = apply_movement(ctx, &enemy, &behavior, &movement);
+        let (new_x, new_y) = wrap_world_pos(new_x, new_y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
         let (cq, cr) = world_to_chunk(new_x, new_y, chunk_hex_radius, hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);
 

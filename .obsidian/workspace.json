@@ -13,72 +13,42 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Notes/002 Game Development/Features to implement/Enemy and Player Movement.md",
+                "file": "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Enemy and Player Movement"
+              "title": "World grid notes"
             }
           },
           {
-            "id": "9055346b81436cef",
+            "id": "baf4c6fc7a11f41d",
+            "type": "leaf",
+            "state": {
+              "type": "html-view",
+              "state": {
+                "file": "docs/Resources and dependencies/hex-grid/Hexagonal Grids.html"
+              },
+              "icon": "file-code",
+              "title": "Hexagonal Grids.html"
+            }
+          },
+          {
+            "id": "ccf2250b685ae439",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "server/spacetimedb/src/main/methods.rs",
+                "file": "CLAUDE.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "methods"
-            }
-          },
-          {
-            "id": "f8ad4144c2c0b1de",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "server/spacetimedb/src/main/reducers.rs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "reducers"
-            }
-          },
-          {
-            "id": "5118f7adb5872895",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "server/spacetimedb/src/main/tables.rs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "tables"
-            }
-          },
-          {
-            "id": "7d9d511b1ce7c015",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Overviews"
+              "title": "CLAUDE"
             }
           }
         ],
-        "currentTab": 4
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -239,53 +209,53 @@
       "bases:Create new base": false
     }
   },
-  "active": "7d9d511b1ce7c015",
+  "active": "ccf2250b685ae439",
   "lastOpenFiles": [
-    "client/VS-Like/Maps/Woods/woods_map.tscn85356637670.tmp",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Gameplay.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Lore.md",
+    "hex_grid_overlay.gd",
+    "CLAUDE.md",
+    "Boobookitty.md",
+    "Pursuit of jade.md",
+    "client/Scenes/main.tscn119281396.tmp",
+    "client/Scenes/main.tscn115132363.tmp",
+    "client/Scenes/main.tscn103406889.tmp",
+    "client/Scenes/main.tscn102651843.tmp",
+    "client/Scenes/main.tscn96760878.tmp",
+    "client/Scenes/main.tscn71804007.tmp",
+    "client/Scenes/main.tscn70964088.tmp",
+    "client/Scenes/main.tscn60784145.tmp",
+    "client/Scenes/main.tscn58221287.tmp",
+    "client/project.godot7203033.tmp",
     "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
+    "g.md",
+    "CLAUDE - Copy.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Overview.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/00 Overview.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Untitled.md",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/rivers/waterless/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/coast/waterless/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/yellow/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/red/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/neutral/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/green/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/blue/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/roads/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/rivers/hexagons_medieval.png",
+    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/coast/hexagons_medieval.png",
     "docs/Notes/002 Game Development/Features to implement/World grid notes-Clintons-Framework-16.md",
     "docs/Notes/002 Game Development/Features to implement/World grid notes-GCW10HP236-0219-2.md",
     "docs/Notes/002 Game Development/Features to implement/World grid notes-GCW10HP236-0219.md",
-    "client/VS-Like/Maps/Woods/woods_map.tscn55813019363.tmp",
-    "client/VS-Like/Maps/Woods/woods_map.tscn55751999947.tmp",
     "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/01 Enemy AI.md",
-    "client/VS-Like/Maps/Woods/woods_map.tscn51609786250.tmp",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/Pasted image 20260426070151 .pdn",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/untitled (7).png",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/Untitled.pdn",
-    "untitled (7).png",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/Untitled-Clintons-Framework-16.pdn",
-    "server/spacetimedb/src/main/tables-Clintons-Framework-16.rs",
-    "docs/Resources/hex-grid/Hexagonal Grids_files",
-    "docs/Resources/hex-grid/hexmod-representation",
-    "docs/Resources/hex-grid/hexagon-tiling-of-an-hexagonal-grid",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/Pasted image 20260426070151 .png",
-    "docs/Notes/002 Game Development/Features to implement/Attachments/Untitled.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/powered_by_logo.svg",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/so.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/img-upvote.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/xTHKv.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/2Gn1a.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/ivtrS.png",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/00 Dungeons & Bosses general notes.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/Murcian ripoff.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/Nest ripoff.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/Fungal Cavern ripoff.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/Lost Halls ripoff.md",
+    "docs/Notes/002 Game Development/Features to implement/Player bullets system.md",
     "docs/Notes/002 Game Development/Features to implement/Enemy and Player Movement.md",
     "docs/Notes/002 Game Development/Features to implement/Enemy bullets system.md",
     "docs/Notes/002 Game Development/Features to implement list.md",
-    "Untitled.md",
-    "CLAUDE.md",
     "server/CLAUDE.md",
     "docs/Notes/001 Explaining Game Code/999 Hard coded stuff that might be an issue later.md",
-    "docs/Resources and dependencies/hex-grid/hexmod-representation/README.md",
-    "docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/README.md",
-    "docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md",
-    "docs/Resources and dependencies/hex-grid/Implementation of Hex Grids.md",
-    "docs/Resources and dependencies/hex-grid/Hexagonal Grids.md",
-    "code_examples/HexGrid2/README.md",
-    "code_examples/HexGrid/README.md",
-    "code_examples/hexagonal_map/README.md",
-    "code_examples/HexagonalLib/README.md",
-    "code_examples/bholio/Notes/Chronological Execution Order.md"
+    "docs/Resources and dependencies/hex-grid/hexmod-representation/README.md"
   ]
 }
