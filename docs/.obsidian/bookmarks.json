@@ -1,0 +1,104 @@
+{
+  "items": [
+    {
+      "type": "group",
+      "ctime": 1778720675643,
+      "items": [
+        {
+          "type": "group",
+          "ctime": 1778720675643,
+          "items": [
+            {
+              "type": "group",
+              "ctime": 1778720675643,
+              "items": [
+                {
+                  "type": "group",
+                  "ctime": 1778720675643,
+                  "items": [
+                    {
+                      "type": "file",
+                      "ctime": 1778720675643,
+                      "path": "docs/Notes/002 Game Development/Features to implement list.md",
+                      "subpath": "#^-"
+                    },
+                    {
+                      "type": "group",
+                      "ctime": 1778720675643,
+                      "items": [],
+                      "title": "Features to implement"
+                    },
+                    {
+                      "type": "group",
+                      "ctime": 1778720675643,
+                      "items": [],
+                      "title": "Asemif"
+                    },
+                    {
+                      "type": "group",
+                      "ctime": 1778720675643,
+                      "items": [],
+                      "title": "Notnilc"
+                    },
+                    {
+                      "type": "group",
+                      "ctime": 1778720675643,
+                      "items": [],
+                      "title": "Shelved todo list"
+                    },
+                    {
+                      "type": "group",
+                      "ctime": 1778720675643,
+                      "items": [],
+                      "title": "Small stuff"
+                    },
+                    {
+                      "type": "file",
+                      "ctime": 1778720675643,
+                      "path": "docs/Notes/002 Game Development/Optimizations.md",
+                      "subpath": "#^-"
+                    },
+                    {
+                      "type": "file",
+                      "ctime": 1778720675643,
+                      "path": "docs/Notes/002 Game Development/Overhaul list.md",
+                      "subpath": "#^-"
+                    },
+                    {
+                      "type": "file",
+                      "ctime": 1778720675643,
+                      "path": "docs/Notes/002 Game Development/Shelved todo list.md",
+                      "subpath": "#^-"
+                    },
+                    {
+                      "type": "file",
+                      "ctime": 1778720675643,
+                      "path": "docs/Notes/002 Game Development/Small stuff.md",
+                      "subpath": "#^-"
+                    },
+                    {
+                      "type": "file",
+                      "ctime": 1778720675643,
+                      "path": "docs/Notes/002 Game Development/Small stuff to implement.md",
+                      "subpath": "#^-"
+                    },
+                    {
+                      "type": "file",
+                      "ctime": 1778720675643,
+                      "path": "docs/Notes/002 Game Development/Things to fix list.md",
+                      "subpath": "#^-"
+                    }
+                  ],
+                  "title": "\\\\002 Game Development"
+                }
+              ],
+              "title": "\\\\Notes"
+            }
+          ],
+          "title": "\\\\docs"
+        }
+      ],
+      "title": "sortspec"
+    }
+  ]
+}

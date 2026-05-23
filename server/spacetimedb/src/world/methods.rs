@@ -2,8 +2,10 @@ use hexx::{Hex, HexLayout, HexOrientation, Vec2};
 
 pub const BASE_MAX_HP: i32 = 100;
 pub const HP_PER_LEVEL: i32 = 5;
-pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 32.0;
 pub const DEFAULT_CHUNK_HEX_RADIUS: i32 = 5;
+pub const DEFAULT_CHUNK_COLS: i32 = 10;
+pub const DEFAULT_CHUNK_ROWS: i32 = 20;
+pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 32.0;
 pub const DEFAULT_AOI_CHUNK_RADIUS: i32 = 3;
 pub const ENEMY_SIMULATION_RANGE: f32 = 640.0;
 pub const BEHAVIOR_TICK_DT: f32 = 0.1;

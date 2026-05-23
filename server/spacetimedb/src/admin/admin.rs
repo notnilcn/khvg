@@ -6,7 +6,21 @@ use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::enemy::tables::*;
 use crate::enemy::methods::build_enemy_behavior;
+use crate::enemy::seeds::seed_default_enemies;
 use crate::admin::tables::*;
+#[spacetimedb::reducer(init)]
+pub fn init(ctx: &ReducerContext) {
+    ctx.db.enemy_behavior_schedule().insert(EnemyBehaviorSchedule {
+        scheduled_id: 0,
+        scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_millis(100))),
+    });
+    ctx.db.enemy_spawn_schedule().insert(EnemySpawnSchedule {
+        scheduled_id: 0,
+        scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_secs(2))),
+    });
+    seed_default_enemies(ctx);
+    let _ = internal_add_chunks(ctx, DEFAULT_CHUNK_HEX_RADIUS, DEFAULT_CHUNK_COLS, DEFAULT_CHUNK_ROWS, DEFAULT_HEX_OUTER_RADIUS);
+}
 
 #[spacetimedb::reducer]
 pub fn claim_admin(ctx: &ReducerContext) -> Result<(), String> {
@@ -117,11 +131,8 @@ pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> 
     Ok(())
 }
 
-#[spacetimedb::reducer]
-pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> Result<(), String> {
-    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    if !(1..=200).contains(&chunk_cols) { return Err("chunk_cols must be 1–200.".to_string()); }
-    if !(1..=200).contains(&chunk_rows) { return Err("chunk_rows must be 1–200.".to_string()); }
+pub fn internal_add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> Result<(), String> {
+    if !( chunk_rows % chunk_cols == 0 ) { return Err("chunk_cols must cleanly divide into chunk_rows.".to_string()); }
     if hex_outer_radius <= 0.0 { return Err("hex_outer_radius must be positive.".to_string()); }
     let area = hex_area(chunk_hex_radius);
     let shift = hex_shift(chunk_hex_radius);
@@ -146,6 +157,12 @@ pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, 
     }
     log::info!("add_chunks: {} tiles inserted ({} chunks, area {})", chunk_cols * chunk_rows * area, chunk_cols * chunk_rows, area);
     Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    internal_add_chunks(ctx, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius)
 }
 
 #[spacetimedb::reducer]

@@ -6,20 +6,6 @@ use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::enemy::tables::*;
 use crate::enemy::methods::*;
-use crate::enemy::seeds::seed_default_enemies;
-#[spacetimedb::reducer(init)]
-pub fn init(ctx: &ReducerContext) {
-    ctx.db.enemy_behavior_schedule().insert(EnemyBehaviorSchedule {
-        scheduled_id: 0,
-        scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_millis(100))),
-    });
-    ctx.db.enemy_spawn_schedule().insert(EnemySpawnSchedule {
-        scheduled_id: 0,
-        scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_secs(2))),
-    });
-    seed_default_enemies(ctx);
-}
-
 #[spacetimedb::reducer]
 pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
     if ctx.db.enemy().iter().next().is_some() { return; } // temporary: one enemy at a time
