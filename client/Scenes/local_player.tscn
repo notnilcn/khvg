@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://bbjjh55yrwyfn"]
 
 [ext_resource type="Script" uid="uid://t75xafvl7xab" path="res://Scripts/Characters/LocalPlayer.cs" id="1_h1vum"]
-[ext_resource type="PackedScene" uid="uid://nt1io38fmdws" path="res://Assets/characters/Knight.fbx" id="2_7ophi"]
-[ext_resource type="Texture2D" uid="uid://cg7jwhyt8q54m" path="res://Assets/RunSpriteSheet.png" id="2_b1nyi"]
+[ext_resource type="PackedScene" uid="uid://07ddsp5bale" path="res://Assets/characters/Knight.fbx" id="2_7ophi"]
+[ext_resource type="Texture2D" uid="uid://gx3wjv3ctbqx" path="res://Assets/RunSpriteSheet.png" id="2_b1nyi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mrxaf"]
 atlas = ExtResource("2_b1nyi")
