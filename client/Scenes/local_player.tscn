@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://bbjjh55yrwyfn"]
 
 [ext_resource type="Script" uid="uid://t75xafvl7xab" path="res://Scripts/Characters/LocalPlayer.cs" id="1_h1vum"]
-[ext_resource type="Texture2D" uid="uid://8inyhea1j4g5" path="res://Assets/RunSpriteSheet.png" id="2_b1nyi"]
+[ext_resource type="PackedScene" uid="uid://nt1io38fmdws" path="res://Assets/characters/Knight.fbx" id="2_7ophi"]
+[ext_resource type="Texture2D" uid="uid://cg7jwhyt8q54m" path="res://Assets/RunSpriteSheet.png" id="2_b1nyi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mrxaf"]
 atlas = ExtResource("2_b1nyi")
@@ -139,6 +140,7 @@ animations = [{
 
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
+KnightScene = ExtResource("2_7ophi")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=170833701]
 position = Vector2(0, 14)

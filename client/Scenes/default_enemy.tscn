@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://ddell0nm3yshp" path="res://Assets/Tiny Swords (Free Pack)/Units/Yellow Units/Warrior/Warrior_Idle.png" id="1_kjvdn"]
 [ext_resource type="Script" uid="uid://d4no3bknpbhoc" path="res://Scripts/Characters/Enemy.cs" id="1_tincf"]
+[ext_resource type="PackedScene" uid="uid://dg5gp4v48hk7d" path="res://Assets/skeletons/Skeleton_Warrior.fbx" id="2_iwv3o"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tincf"]
 atlas = ExtResource("1_kjvdn")
@@ -74,6 +75,7 @@ height = 70.0
 [node name="DefaultEnemy" type="CharacterBody2D" unique_id=1112231485]
 scale = Vector2(0.5, 0.5)
 script = ExtResource("1_tincf")
+EnemyModelScene = ExtResource("2_iwv3o")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=637474852]
 position = Vector2(3, 2)

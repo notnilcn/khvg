@@ -5,6 +5,8 @@ using EnemyRow = SpacetimeDB.Types.Enemy;
 
 public partial class Enemy : CharacterBody2D
 {
+    [Export] public PackedScene? EnemyModelScene { get; set; }
+
     public ulong EnemyId { get; set; }
     public uint Hp { get; private set; }
     public byte Phase { get; private set; }
@@ -12,6 +14,7 @@ public partial class Enemy : CharacterBody2D
 
     private const float LerpSpeed = 10f;
     private Vector2 _targetPosition;
+    private CharacterModel3D? _model;
 
     public override void _Ready()
     {
@@ -33,11 +36,15 @@ public partial class Enemy : CharacterBody2D
             IsElite = row.IsElite;
             break;
         }
+
+        if (EnemyModelScene != null && World3d.Instance != null)
+            _model = new CharacterModel3D(EnemyModelScene, GlobalPosition, World3d.Instance.Scene3D);
     }
 
     public override void _Process(double delta)
     {
         GlobalPosition = GlobalPosition.Lerp(_targetPosition, LerpSpeed * (float)delta);
+        _model?.SyncFrom2D(GlobalPosition, Rotation);
     }
 
     private void OnEnemyUpdate(EventContext ctx, EnemyRow old, EnemyRow row)
@@ -56,6 +63,7 @@ public partial class Enemy : CharacterBody2D
 
     public override void _ExitTree()
     {
+        _model?.Dispose();
         var conn = GameManager.Instance.Conn;
         if (conn == null) return;
         conn.Db.NearbyEnemies.OnUpdate -= OnEnemyUpdate;

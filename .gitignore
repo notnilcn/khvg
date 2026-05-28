@@ -58,4 +58,11 @@ personal_notes/
 
 # ./SpacetimeDB/
 
-client/addons/blastbullets2d/
+client/addons/
+client-old/
+
+server3d/
+oldclient/
+clientt/
+client-old/
+client3d/

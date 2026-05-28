@@ -1,0 +1,133 @@
+[gd_scene format=3 uid="uid://b6lwr7bsg1b0u"]
+
+[ext_resource type="Script" uid="uid://bwx5qb387ayfm" path="res://Scripts/Game/LobbyGui.cs" id="1_tmv5o"]
+
+[node name="LobbyGui" type="Control" unique_id=847043116]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_tmv5o")
+
+[node name="MainMenu" type="CenterContainer" parent="." unique_id=868648525]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="MainMenu" unique_id=1425122617]
+custom_minimum_size = Vector2(146, 121)
+layout_mode = 2
+
+[node name="CenterContainer" type="CenterContainer" parent="MainMenu/Panel" unique_id=2070197861]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/Panel/CenterContainer" unique_id=982118341]
+layout_mode = 2
+
+[node name="CharSlots" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=1754694892]
+layout_mode = 2
+text = "Character Slots"
+
+[node name="ServerList" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=1146796576]
+layout_mode = 2
+text = "Server List"
+
+[node name="Settings" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=723901937]
+layout_mode = 2
+text = "Settings"
+
+[node name="ServerList" type="Panel" parent="." unique_id=215366892]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="ServerList" unique_id=1575786603]
+custom_minimum_size = Vector2(720, 40)
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 40.0
+
+[node name="CenterContainer" type="CenterContainer" parent="ServerList/Panel" unique_id=800181761]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="ServerList/Panel/CenterContainer" unique_id=2045478315]
+layout_mode = 2
+text = "BACK"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="ServerList" unique_id=1836654141]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 42.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ServerList/ScrollContainer" unique_id=73376750]
+layout_mode = 2
+
+[node name="Settings" type="Panel" parent="." unique_id=1192864034]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="Settings" unique_id=1024146705]
+custom_minimum_size = Vector2(720, 40)
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 40.0
+
+[node name="CenterContainer" type="CenterContainer" parent="Settings/Panel" unique_id=370842680]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="Settings/Panel/CenterContainer" unique_id=700481866]
+layout_mode = 2
+text = "BACK"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Settings" unique_id=1991317474]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 42.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Settings/ScrollContainer" unique_id=444352849]
+layout_mode = 2
+
+[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/CharSlots" to="." method="CharSlotsPressed"]
+[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/ServerList" to="." method="ServerListPressed"]
+[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/Settings" to="." method="SettingsPressed"]
+[connection signal="pressed" from="ServerList/Panel/CenterContainer/Button" to="." method="BackPressed"]
+[connection signal="pressed" from="Settings/Panel/CenterContainer/Button" to="." method="BackPressed"]

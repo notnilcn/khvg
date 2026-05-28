@@ -39,12 +39,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+                "file": "docs/Notes/002 Game Development/Optimizations.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Overviews"
+              "title": "Optimizations"
             }
           },
           {
@@ -61,8 +61,7 @@
               "title": "Overviews"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
@@ -94,7 +93,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "look",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -223,22 +222,45 @@
       "bases:Create new base": false
     }
   },
-  "active": "ccf2250b685ae439",
+  "active": "f7aef3a82d46a5e6",
   "lastOpenFiles": [
-    "client/Scenes/main.tscn127339777.tmp",
-    "client/Scenes/main.tscn114241400.tmp",
-    "client/Scenes/main.tscn51290905.tmp",
-    "client/Scenes/main.tscn50857815.tmp",
-    "client/Scenes/main.tscn43007466.tmp",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm.tmp6add52a",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcvuPxhI/linker-arguments",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcvuPxhI",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.93tc5u7s9nxq7yxoy1njgb6ui.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.07.rcgu.o",
+    "clientt/Scenes/main.tscn8401333.tmp",
+    "clientt/Scenes/main.tscn5351967.tmp",
+    "clientt/project.godot2890370.tmp",
+    "clientt/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll",
+    "clientt/Scenes/main.tscn15611884.tmp",
+    "clientt/Scenes/main.tscn11177710.tmp",
+    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/libblastbullets2d.ios.template_release.single",
+    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/Info.plist",
+    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/Info.plist",
+    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/libblastbullets2d.ios.template_debug.single",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Trees.aseprite",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Wood Resource/Wood Resource.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree4.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree3.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree2.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree1.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 4.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 3.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 2.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 1.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Meat/Sheep/Sheep_Move.png",
+    "clientt/addons/blastbullets2d/LICENSE.md",
+    "clientt/addons/blastbullets2d/README.md",
+    "docs/Notes/002 Game Development/Optimizations.md",
+    "client/addons/phantom_camera/CLAUDE.md",
+    "docs/Notes/002 Game Development/Shelved todo list.md",
+    "docs/Notes/002 Game Development/Small stuff.md",
+    "docs/Notes/002 Game Development/Overhaul list.md",
+    "docs/Notes/002 Game Development/Small stuff to implement.md",
+    "docs/Notes/002 Game Development/Things to fix list.md",
+    "docs/Untitled.md",
+    "CLAUDE.md",
+    "docs/todo.md",
+    "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
     "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Lore.md",
     "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Gameplay.md",
-    "CLAUDE.md",
     "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled.md",
     "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 5.md",
     "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 4.md",
@@ -247,29 +269,6 @@
     "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 2.md",
     "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/000 Spacetimedb overview.md",
     "Boobookitty.md",
-    "Pursuit of jade.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
-    "g.md",
-    "CLAUDE - Copy.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Overview.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/00 Overview.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Untitled.md",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/rivers/waterless/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/coast/waterless/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/yellow/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/red/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/neutral/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/green/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/blue/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/roads/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/rivers/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/coast/hexagons_medieval.png",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes-Clintons-Framework-16.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes-GCW10HP236-0219-2.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes-GCW10HP236-0219.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/01 Enemy AI.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/00 Dungeons & Bosses general notes.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/Murcian ripoff.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/Nest ripoff.md"
+    "Pursuit of jade.md"
   ]
 }

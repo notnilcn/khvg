@@ -7,4 +7,8 @@
   <ItemGroup>
     <PackageReference Include="SpacetimeDB.ClientSDK" Version="2.1.0" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="addons/godot_dotnet_mcp/dotnet_bridge/**/*.cs" />
+    <Compile Remove="addons/godot_dotnet_mcp/plugin/runtime/roslyn/**/*.cs" />
+  </ItemGroup>
 </Project>
