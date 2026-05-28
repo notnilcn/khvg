@@ -1,4 +1,4 @@
-<Project Sdk="Godot.NET.Sdk/4.6.1">
+<Project Sdk="Godot.NET.Sdk/4.6.3">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
@@ -6,5 +6,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="SpacetimeDB.ClientSDK" Version="2.1.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="addons/godot_dotnet_mcp/dotnet_bridge/**/*.cs" />
+    <Compile Remove="addons/godot_dotnet_mcp/plugin/runtime/roslyn/**/*.cs" />
   </ItemGroup>
 </Project>
