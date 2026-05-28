@@ -25,6 +25,8 @@ namespace SpacetimeDB.Types
         public PatternType PatternType;
         [DataMember(Name = "target")]
         public SpacetimeDB.Identity? Target;
+        [DataMember(Name = "texture_id")]
+        public string TextureId;
         [DataMember(Name = "chunk_index")]
         public long ChunkIndex;
 
@@ -35,6 +37,7 @@ namespace SpacetimeDB.Types
             float OriginY,
             PatternType PatternType,
             SpacetimeDB.Identity? Target,
+            string TextureId,
             long ChunkIndex
         )
         {
@@ -44,12 +47,14 @@ namespace SpacetimeDB.Types
             this.OriginY = OriginY;
             this.PatternType = PatternType;
             this.Target = Target;
+            this.TextureId = TextureId;
             this.ChunkIndex = ChunkIndex;
         }
 
         public BulletPatternEvent()
         {
             this.PatternType = null!;
+            this.TextureId = "";
         }
     }
 }

@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void RemoveItemHandler(ReducerEventContext ctx, string targetUsername, string itemId);
+        public delegate void RemoveItemHandler(ReducerEventContext ctx, string targetUsername, string profileName, string itemId);
         public event RemoveItemHandler? OnRemoveItem;
 
-        public void RemoveItem(string targetUsername, string itemId)
+        public void RemoveItem(string targetUsername, string profileName, string itemId)
         {
-            conn.InternalCallReducer(new Reducer.RemoveItem(targetUsername, itemId));
+            conn.InternalCallReducer(new Reducer.RemoveItem(targetUsername, profileName, itemId));
         }
 
         public bool InvokeRemoveItem(ReducerEventContext ctx, Reducer.RemoveItem args)
@@ -37,6 +37,7 @@ namespace SpacetimeDB.Types
             OnRemoveItem(
                 ctx,
                 args.TargetUsername,
+                args.ProfileName,
                 args.ItemId
             );
             return true;
@@ -51,21 +52,26 @@ namespace SpacetimeDB.Types
         {
             [DataMember(Name = "target_username")]
             public string TargetUsername;
+            [DataMember(Name = "profile_name")]
+            public string ProfileName;
             [DataMember(Name = "item_id")]
             public string ItemId;
 
             public RemoveItem(
                 string TargetUsername,
+                string ProfileName,
                 string ItemId
             )
             {
                 this.TargetUsername = TargetUsername;
+                this.ProfileName = ProfileName;
                 this.ItemId = ItemId;
             }
 
             public RemoveItem()
             {
                 this.TargetUsername = "";
+                this.ProfileName = "";
                 this.ItemId = "";
             }
 

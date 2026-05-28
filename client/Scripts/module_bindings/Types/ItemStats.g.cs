@@ -15,6 +15,8 @@ namespace SpacetimeDB.Types
     {
         [DataMember(Name = "item_id")]
         public string ItemId;
+        [DataMember(Name = "texture_id")]
+        public string TextureId;
         [DataMember(Name = "item_type")]
         public byte ItemType;
         [DataMember(Name = "fire_rate")]
@@ -72,6 +74,7 @@ namespace SpacetimeDB.Types
 
         public ItemStats(
             string ItemId,
+            string TextureId,
             byte ItemType,
             byte FireRate,
             ushort BaseDamage,
@@ -102,6 +105,7 @@ namespace SpacetimeDB.Types
         )
         {
             this.ItemId = ItemId;
+            this.TextureId = TextureId;
             this.ItemType = ItemType;
             this.FireRate = FireRate;
             this.BaseDamage = BaseDamage;
@@ -134,6 +138,7 @@ namespace SpacetimeDB.Types
         public ItemStats()
         {
             this.ItemId = "";
+            this.TextureId = "";
         }
     }
 }

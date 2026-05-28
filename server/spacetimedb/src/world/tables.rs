@@ -1,4 +1,13 @@
-use spacetimedb::{table, Identity};
+use spacetimedb::{table, Identity, SpacetimeType};
+
+#[derive(SpacetimeType, Clone)]
+pub enum TextureKind {
+    Player,
+    Enemy,
+    Bullet,
+    Item,
+    Environment,
+}
 
 #[table(accessor = map_config, public)]
 pub struct MapConfig {
@@ -26,10 +35,19 @@ pub struct BuildingTile {
     pub owner_id: Option<Identity>,
 }
 
+#[table(accessor = texture_entry, public)]
+pub struct TextureEntry {
+    #[primary_key]
+    pub texture_id: String,
+    pub res_path: String,
+    pub kind: TextureKind,
+}
+
 #[table(accessor = item_stats, public)]
 pub struct ItemStats {
     #[primary_key]
     pub item_id: String,
+    pub texture_id: String,
     pub item_type: u8,
     pub fire_rate: u8,
     pub base_damage: u16,

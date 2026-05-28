@@ -21,7 +21,7 @@ namespace SpacetimeDB.Types
             {
             }
 
-            protected override object GetPrimaryKey(PlayerPosition row) => row.PlayerId;
+            protected override object GetPrimaryKey(PlayerPosition row) => row.ProfileId;
         }
 
         public readonly NearbyRemotePlayersHandle NearbyRemotePlayers;
@@ -29,6 +29,7 @@ namespace SpacetimeDB.Types
 
     public sealed class NearbyRemotePlayersCols
     {
+        public global::SpacetimeDB.Col<PlayerPosition, ulong> ProfileId { get; }
         public global::SpacetimeDB.Col<PlayerPosition, SpacetimeDB.Identity> PlayerId { get; }
         public global::SpacetimeDB.Col<PlayerPosition, float> X { get; }
         public global::SpacetimeDB.Col<PlayerPosition, float> Y { get; }
@@ -37,6 +38,7 @@ namespace SpacetimeDB.Types
 
         public NearbyRemotePlayersCols(string tableName)
         {
+            ProfileId = new global::SpacetimeDB.Col<PlayerPosition, ulong>(tableName, "profile_id");
             PlayerId = new global::SpacetimeDB.Col<PlayerPosition, SpacetimeDB.Identity>(tableName, "player_id");
             X = new global::SpacetimeDB.Col<PlayerPosition, float>(tableName, "x");
             Y = new global::SpacetimeDB.Col<PlayerPosition, float>(tableName, "y");
@@ -47,11 +49,11 @@ namespace SpacetimeDB.Types
 
     public sealed class NearbyRemotePlayersIxCols
     {
-        public global::SpacetimeDB.IxCol<PlayerPosition, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.IxCol<PlayerPosition, ulong> ProfileId { get; }
 
         public NearbyRemotePlayersIxCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.IxCol<PlayerPosition, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.IxCol<PlayerPosition, ulong>(tableName, "profile_id");
         }
     }
 }

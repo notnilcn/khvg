@@ -17,21 +17,21 @@ namespace SpacetimeDB.Types
         {
             protected override string RemoteTableName => "player_stats";
 
-            public sealed class PlayerIdUniqueIndex : UniqueIndexBase<SpacetimeDB.Identity>
+            public sealed class ProfileIdUniqueIndex : UniqueIndexBase<ulong>
             {
-                protected override SpacetimeDB.Identity GetKey(PlayerStats row) => row.PlayerId;
+                protected override ulong GetKey(PlayerStats row) => row.ProfileId;
 
-                public PlayerIdUniqueIndex(PlayerStatsHandle table) : base(table) { }
+                public ProfileIdUniqueIndex(PlayerStatsHandle table) : base(table) { }
             }
 
-            public readonly PlayerIdUniqueIndex PlayerId;
+            public readonly ProfileIdUniqueIndex ProfileId;
 
             internal PlayerStatsHandle(DbConnection conn) : base(conn)
             {
-                PlayerId = new(this);
+                ProfileId = new(this);
             }
 
-            protected override object GetPrimaryKey(PlayerStats row) => row.PlayerId;
+            protected override object GetPrimaryKey(PlayerStats row) => row.ProfileId;
         }
 
         public readonly PlayerStatsHandle PlayerStats;
@@ -39,7 +39,7 @@ namespace SpacetimeDB.Types
 
     public sealed class PlayerStatsCols
     {
-        public global::SpacetimeDB.Col<PlayerStats, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.Col<PlayerStats, ulong> ProfileId { get; }
         public global::SpacetimeDB.Col<PlayerStats, int> Strength { get; }
         public global::SpacetimeDB.Col<PlayerStats, int> Wisdom { get; }
         public global::SpacetimeDB.Col<PlayerStats, int> Dexterity { get; }
@@ -49,7 +49,7 @@ namespace SpacetimeDB.Types
 
         public PlayerStatsCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.Col<PlayerStats, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.Col<PlayerStats, ulong>(tableName, "profile_id");
             Strength = new global::SpacetimeDB.Col<PlayerStats, int>(tableName, "strength");
             Wisdom = new global::SpacetimeDB.Col<PlayerStats, int>(tableName, "wisdom");
             Dexterity = new global::SpacetimeDB.Col<PlayerStats, int>(tableName, "dexterity");
@@ -61,11 +61,11 @@ namespace SpacetimeDB.Types
 
     public sealed class PlayerStatsIxCols
     {
-        public global::SpacetimeDB.IxCol<PlayerStats, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.IxCol<PlayerStats, ulong> ProfileId { get; }
 
         public PlayerStatsIxCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.IxCol<PlayerStats, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.IxCol<PlayerStats, ulong>(tableName, "profile_id");
         }
     }
 }

@@ -10,12 +10,12 @@ public partial class BulletManager : Node
 
     private Node _blastBullets = null!;
     private GodotObject _directionalData = null!;
+    private readonly System.Collections.Generic.Dictionary<string, Texture2D?> _bulletTextureCache = new();
 
     public override void _Ready()
     {
         Instance = this;
         _blastBullets = GetChild(0);
-        BulletTextures = [GD.Load<Texture2D>("res://Assets/player_bullets/1.png")];
         SetupDirectionalBullets();
     }
 
@@ -30,6 +30,18 @@ public partial class BulletManager : Node
         _directionalData.Set("max_life_time", 8.0f);
     }
 
+    private void ApplyBulletTexture(string textureId)
+    {
+        if (!_bulletTextureCache.TryGetValue(textureId, out var tex))
+        {
+            var resPath = GameManager.Instance.GetResPath(textureId);
+            tex = resPath != null ? GD.Load<Texture2D>(resPath) : null;
+            _bulletTextureCache[textureId] = tex;
+        }
+        if (tex != null)
+            _directionalData.Call("set_textures", new Godot.Collections.Array<Texture2D> { tex });
+    }
+
     public void Spawn(BulletPatternEvent evt)
     {
         var origin = new Vector2(evt.OriginX, evt.OriginY);
@@ -37,6 +49,7 @@ public partial class BulletManager : Node
 
         _directionalData.SetMeta("event_id", evt.EventId);
         _directionalData.SetMeta("enemy_id", evt.EnemyId);
+        ApplyBulletTexture(evt.TextureId);
 
         if (evt.PatternType is PatternType.Straight(var straight))
             SpawnStraight(origin, straight, baseAngle);

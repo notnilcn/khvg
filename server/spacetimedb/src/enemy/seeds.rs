@@ -16,19 +16,19 @@ pub fn make_phase(phase_index: u8, hp_threshold: f32, movement: MovementBehavior
     PhaseDef { phase_index, hp_threshold, movement, attacks }
 }
 
-pub fn make_attack(pattern_type: PatternType, target: EnemyTarget, fire_rate: f32) -> AttackDef {
-    AttackDef { pattern_type, target, fire_rate }
+pub fn make_attack(pattern_type: PatternType, target: EnemyTarget, fire_rate: f32, texture_id: &str) -> AttackDef {
+    AttackDef { pattern_type, target, fire_rate, texture_id: texture_id.to_string() }
 }
 
 pub fn seed_default_enemies(ctx: &ReducerContext) {
     EnemyTemplate::seed(ctx, EnemyTemplate {
         template_id: "default_enemy".to_string(),
-        res_path: "res://Scenes/default_enemy.tscn".to_string(),
+        texture_id: "Enemy".to_string(),
         display_name: "Default Enemy".to_string(),
         max_hp: 100,
         phases: vec![
             make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 25.0, change_interval: 2.0 }), vec![
-                make_attack(PatternType::Straight(StraightParams { speed: 50.0, count: 5 }), EnemyTarget::NearestPlayer, 1.0),
+                make_attack(PatternType::Straight(StraightParams { speed: 50.0, count: 5 }), EnemyTarget::NearestPlayer, 1.0, "bullet"),
             ]),
         ],
     });

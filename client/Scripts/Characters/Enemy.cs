@@ -1,6 +1,7 @@
 #nullable enable
 using Godot;
 using SpacetimeDB.Types;
+using System.Linq;
 using EnemyRow = SpacetimeDB.Types.Enemy;
 
 public partial class Enemy : CharacterBody2D
@@ -15,6 +16,7 @@ public partial class Enemy : CharacterBody2D
     private const float LerpSpeed = 10f;
     private Vector2 _targetPosition;
     private CharacterModel3D? _model;
+    private AnimatedSprite2D? _sprite;
 
     public override void _Ready()
     {
@@ -34,6 +36,14 @@ public partial class Enemy : CharacterBody2D
             Hp = row.Hp;
             Phase = row.Phase;
             IsElite = row.IsElite;
+            _sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
+            var template = conn.Db.EnemyTemplates.Iter().FirstOrDefault(t => t.TemplateId == row.TemplateId);
+            if (template != null && _sprite != null)
+            {
+                var resPath = GameManager.Instance.GetResPath(template.TextureId);
+                if (resPath != null)
+                    _sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
+            }
             break;
         }
 

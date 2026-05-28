@@ -59,7 +59,8 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
                     event_id: 0, enemy_id: enemy.enemy_id,
                     origin_x: enemy.x, origin_y: enemy.y,
                     pattern_type: attack.pattern_type.clone(),
-                    target, chunk_index: enemy.chunk_index,
+                    target, texture_id: attack.texture_id.clone(),
+                    chunk_index: enemy.chunk_index,
                 });
             }
         }
@@ -80,14 +81,14 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
 
 #[spacetimedb::reducer]
 pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
-    require_logged_in(ctx)?;
+    let profile_id = require_in_world(ctx)?;
     let enemy = match ctx.db.enemy().enemy_id().find(&enemy_id) {
         Some(e) => e,
         None => return Ok(()),
     };
     if enemy.immortal { return Ok(()); }
 
-    let damage = compute_player_damage(ctx, ctx.sender());
+    let damage = compute_player_damage(ctx, profile_id);
     let new_hp = enemy.hp.saturating_sub(damage);
 
     if new_hp == 0 {
@@ -101,7 +102,7 @@ pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), Strin
         });
         ctx.db.enemy_behavior().behavior_id().delete(&enemy.behavior_id);
         ctx.db.enemy().enemy_id().delete(&enemy_id);
-        internal_gain_xp(ctx, ctx.sender(), xp_reward);
+        internal_gain_xp(ctx, profile_id, xp_reward);
         return Ok(());
     }
 

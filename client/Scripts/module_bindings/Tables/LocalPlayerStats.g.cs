@@ -21,7 +21,7 @@ namespace SpacetimeDB.Types
             {
             }
 
-            protected override object GetPrimaryKey(PlayerStats row) => row.PlayerId;
+            protected override object GetPrimaryKey(PlayerStats row) => row.ProfileId;
         }
 
         public readonly LocalPlayerStatsHandle LocalPlayerStats;
@@ -29,7 +29,7 @@ namespace SpacetimeDB.Types
 
     public sealed class LocalPlayerStatsCols
     {
-        public global::SpacetimeDB.Col<PlayerStats, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.Col<PlayerStats, ulong> ProfileId { get; }
         public global::SpacetimeDB.Col<PlayerStats, int> Strength { get; }
         public global::SpacetimeDB.Col<PlayerStats, int> Wisdom { get; }
         public global::SpacetimeDB.Col<PlayerStats, int> Dexterity { get; }
@@ -39,7 +39,7 @@ namespace SpacetimeDB.Types
 
         public LocalPlayerStatsCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.Col<PlayerStats, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.Col<PlayerStats, ulong>(tableName, "profile_id");
             Strength = new global::SpacetimeDB.Col<PlayerStats, int>(tableName, "strength");
             Wisdom = new global::SpacetimeDB.Col<PlayerStats, int>(tableName, "wisdom");
             Dexterity = new global::SpacetimeDB.Col<PlayerStats, int>(tableName, "dexterity");
@@ -51,11 +51,11 @@ namespace SpacetimeDB.Types
 
     public sealed class LocalPlayerStatsIxCols
     {
-        public global::SpacetimeDB.IxCol<PlayerStats, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.IxCol<PlayerStats, ulong> ProfileId { get; }
 
         public LocalPlayerStatsIxCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.IxCol<PlayerStats, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.IxCol<PlayerStats, ulong>(tableName, "profile_id");
         }
     }
 }

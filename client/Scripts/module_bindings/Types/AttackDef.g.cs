@@ -19,22 +19,27 @@ namespace SpacetimeDB.Types
         public EnemyTarget Target;
         [DataMember(Name = "fire_rate")]
         public float FireRate;
+        [DataMember(Name = "texture_id")]
+        public string TextureId;
 
         public AttackDef(
             PatternType PatternType,
             EnemyTarget Target,
-            float FireRate
+            float FireRate,
+            string TextureId
         )
         {
             this.PatternType = PatternType;
             this.Target = Target;
             this.FireRate = FireRate;
+            this.TextureId = TextureId;
         }
 
         public AttackDef()
         {
             this.PatternType = null!;
             this.Target = null!;
+            this.TextureId = "";
         }
     }
 }

@@ -13,17 +13,17 @@ namespace SpacetimeDB.Types
     [DataContract]
     public sealed partial class PlayerInventory
     {
-        [DataMember(Name = "player_id")]
-        public SpacetimeDB.Identity PlayerId;
+        [DataMember(Name = "profile_id")]
+        public ulong ProfileId;
         [DataMember(Name = "slots")]
         public System.Collections.Generic.List<InventorySlot> Slots;
 
         public PlayerInventory(
-            SpacetimeDB.Identity PlayerId,
+            ulong ProfileId,
             System.Collections.Generic.List<InventorySlot> Slots
         )
         {
-            this.PlayerId = PlayerId;
+            this.ProfileId = ProfileId;
             this.Slots = Slots;
         }
 

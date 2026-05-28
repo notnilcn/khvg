@@ -45,6 +45,7 @@ pub struct AttackDef {
     pub pattern_type: PatternType,
     pub target: EnemyTarget,
     pub fire_rate: f32,
+    pub texture_id: String,
 }
 
 #[derive(SpacetimeType, Clone)]
@@ -61,6 +62,7 @@ pub struct AttackInstance {
     pub target: EnemyTarget,
     pub fire_rate: f32,
     pub last_fire_time: Timestamp,
+    pub texture_id: String,
 }
 
 #[derive(SpacetimeType, Clone)]
@@ -75,7 +77,7 @@ pub struct PhaseInstance {
 pub struct EnemyTemplate {
     #[primary_key]
     pub template_id: String,
-    pub res_path: String,
+    pub texture_id: String,
     pub display_name: String,
     pub max_hp: u32,
     pub phases: Vec<PhaseDef>,
@@ -132,6 +134,7 @@ pub struct BulletPatternEvent {
     pub origin_y: f32,
     pub pattern_type: PatternType,
     pub target: Option<Identity>,
+    pub texture_id: String,
     #[index(btree)]
     pub chunk_index: i64,
 }

@@ -4,9 +4,10 @@ using SpacetimeDB;
 using SpacetimeDB.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using EnemyRow = SpacetimeDB.Types.Enemy;
 using LootDropRow = SpacetimeDB.Types.LootDrop;
-using PlayerRow = SpacetimeDB.Types.Player;
+using LoggedInPlayerRow = SpacetimeDB.Types.LoggedInPlayer;
 
 public partial class GameManager : Node
 {
@@ -25,18 +26,22 @@ public partial class GameManager : Node
 	[Export] public PackedScene BulletManagerScene { get; set; } = null!;
 
 	private LocalPlayer? _localPlayer;
-	private BulletManager? _bulletManager; 
+	private BulletManager? _bulletManager;
 	private readonly Dictionary<string, NonLocalPlayer> _remotePlayers = new();
 	private readonly Dictionary<ulong, Enemy>           _enemies       = new();
 	private readonly Dictionary<ulong, Drop>            _drops         = new();
+	private readonly Dictionary<string, string>         _textureCache  = new();
 
 	private CanvasLayer? _lobbyLayer;
 	private Button?      _joinButton;
+
+	private SubscriptionHandle? _lobbySub;
 
 	public override void _Ready()
 	{
 		if (Instance != null) return;
 		Instance = this;
+		Connect(Host, DbName);
 		ShowLobby();
 	}
 
@@ -68,8 +73,19 @@ public partial class GameManager : Node
 
 	private void OnJoinPressed()
 	{
+		if (Conn == null) return;
+		var profile = Conn.Db.LocalPlayerProfiles.Iter()
+			.FirstOrDefault(p => p.ProfileName == "Knight");
+		if (profile == null)
+		{
+			GD.PrintErr("[GameManager] Knight profile not found — not yet synced or missing.");
+			return;
+		}
 		HideLobby();
-		Connect(Host, DbName);
+		Conn.Reducers.JoinWorld(profile.ProfileId);
+		SubscribeGame();
+		_lobbySub?.Unsubscribe();
+		_lobbySub = null;
 	}
 
 	// ── Connection ────────────────────────────────────────────────────────────
@@ -93,27 +109,45 @@ public partial class GameManager : Node
 		LocalIdentity = identity;
 		AuthToken.SaveToken(token);
 
-		conn.Db.LocalPlayer.OnInsert          += OnLocalPlayerInsert;
-		conn.Db.LocalPlayer.OnDelete          += OnLocalPlayerDelete;
-		conn.Db.NearbyRemotePlayers.OnInsert  += OnNearbyRemotePlayerInsert;
-		conn.Db.NearbyRemotePlayers.OnDelete  += OnNearbyRemotePlayerDelete;
-		conn.Db.NearbyEnemies.OnInsert        += OnEnemyInsert;
-		conn.Db.NearbyEnemies.OnDelete        += OnEnemyDelete;
-		conn.Db.LootDrop.OnInsert             += OnDropInsert;
-		conn.Db.LootDrop.OnDelete             += OnDropDelete;
+		conn.Db.LocalPlayer.OnInsert += OnLocalPlayerInsert;
+		conn.Db.LocalPlayer.OnDelete += OnLocalPlayerDelete;
+		conn.Db.NearbyRemotePlayers.OnInsert += OnNearbyRemotePlayerInsert;
+		conn.Db.NearbyRemotePlayers.OnDelete += OnNearbyRemotePlayerDelete;
+		conn.Db.NearbyEnemies.OnInsert += OnEnemyInsert;
+		conn.Db.NearbyEnemies.OnDelete += OnEnemyDelete;
+		conn.Db.LootDrop.OnInsert += OnDropInsert;
+		conn.Db.LootDrop.OnDelete += OnDropDelete;
+
+		conn.Db.AllTextures.OnInsert += (ctx, row) => _textureCache[row.TextureId] = row.ResPath;
+		conn.Db.AllTextures.OnUpdate += (ctx, old, row) => _textureCache[row.TextureId] = row.ResPath;
+		conn.Db.AllTextures.OnDelete += (ctx, row) => _textureCache.Remove(row.TextureId);
 
 		conn.SubscriptionBuilder()
+			.AddQuery(q => q.From.AllTextures())
+			.Subscribe();
+
+		_lobbySub = conn.SubscriptionBuilder()
+			.AddQuery(q => q.From.LocalLobbyPlayer())
+			.AddQuery(q => q.From.LocalPlayerProfiles())
+			.OnApplied(OnLobbySubApplied)
+			.Subscribe();
+	}
+
+	private void SubscribeGame()
+	{
+		Conn!.SubscriptionBuilder()
 			.AddQuery(q => q.From.LocalPlayer())
 			.AddQuery(q => q.From.LocalPlayerData())
 			.AddQuery(q => q.From.LocalPlayerStats())
 			.AddQuery(q => q.From.LocalPlayerInventory())
 			.AddQuery(q => q.From.LocalPlayerPosition())
+			.AddQuery(q => q.From.LocalPlayerProfiles())
 			.AddQuery(q => q.From.NearbyRemotePlayers())
 			.AddQuery(q => q.From.NearbyEnemies())
 			.AddQuery(q => q.From.EnemyTemplates())
 			.AddQuery(q => q.From.BulletPatternEvent())
 			.AddQuery(q => q.From.MapConfig())
-			.OnApplied(OnSubscriptionApplied)
+			.OnApplied(OnGameSubApplied)
 			.Subscribe();
 	}
 
@@ -128,16 +162,19 @@ public partial class GameManager : Node
 			GD.PrintErr($"[GameManager] Disconnected: {e.Message}");
 	}
 
-	private void OnSubscriptionApplied(SubscriptionEventContext ctx)
+	private void OnLobbySubApplied(SubscriptionEventContext ctx)
 	{
-		GD.Print("[GameManager] Subscription ready");
-		// TODO: read initial rows from client cache here (e.g. catch up entities
-		// that already existed before subscription was applied).
+		GD.Print("[GameManager] Lobby subscription ready");
+	}
+
+	private void OnGameSubApplied(SubscriptionEventContext ctx)
+	{
+		GD.Print("[GameManager] Game subscription ready");
 	}
 
 	// ── Entity lifecycle ──────────────────────────────────────────────────────
 
-	private void OnLocalPlayerInsert(EventContext ctx, PlayerRow row)
+	private void OnLocalPlayerInsert(EventContext _, LoggedInPlayerRow __)
 	{
 		if (_localPlayer == null)
 		{
@@ -151,7 +188,7 @@ public partial class GameManager : Node
 		}
 	}
 
-	private void OnLocalPlayerDelete(EventContext ctx, PlayerRow row)
+	private void OnLocalPlayerDelete(EventContext _, LoggedInPlayerRow __)
 	{
 		if (_localPlayer != null && IsInstanceValid(_localPlayer))
 			_localPlayer.QueueFree();
@@ -220,6 +257,9 @@ public partial class GameManager : Node
 	// ── Helpers ───────────────────────────────────────────────────────────────
 
 	public bool IsLocal(Identity id) => LocalIdentity.HasValue && id == LocalIdentity.Value;
+
+	public string? GetResPath(string textureId) =>
+		_textureCache.TryGetValue(textureId, out var path) ? path : null;
 
 	public override void _ExitTree()
 	{

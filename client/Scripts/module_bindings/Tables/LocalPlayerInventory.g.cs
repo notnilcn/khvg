@@ -21,7 +21,7 @@ namespace SpacetimeDB.Types
             {
             }
 
-            protected override object GetPrimaryKey(PlayerInventory row) => row.PlayerId;
+            protected override object GetPrimaryKey(PlayerInventory row) => row.ProfileId;
         }
 
         public readonly LocalPlayerInventoryHandle LocalPlayerInventory;
@@ -29,23 +29,23 @@ namespace SpacetimeDB.Types
 
     public sealed class LocalPlayerInventoryCols
     {
-        public global::SpacetimeDB.Col<PlayerInventory, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.Col<PlayerInventory, ulong> ProfileId { get; }
         public global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<InventorySlot>> Slots { get; }
 
         public LocalPlayerInventoryCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.Col<PlayerInventory, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.Col<PlayerInventory, ulong>(tableName, "profile_id");
             Slots = new global::SpacetimeDB.Col<PlayerInventory, System.Collections.Generic.List<InventorySlot>>(tableName, "slots");
         }
     }
 
     public sealed class LocalPlayerInventoryIxCols
     {
-        public global::SpacetimeDB.IxCol<PlayerInventory, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.IxCol<PlayerInventory, ulong> ProfileId { get; }
 
         public LocalPlayerInventoryIxCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.IxCol<PlayerInventory, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.IxCol<PlayerInventory, ulong>(tableName, "profile_id");
         }
     }
 }

@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void ChangeStatsHandler(ReducerEventContext ctx, string targetUsername, int strength, int wisdom, int dexterity, int defense, int vitality, int speed);
+        public delegate void ChangeStatsHandler(ReducerEventContext ctx, string targetUsername, string profileName, int strength, int wisdom, int dexterity, int defense, int vitality, int speed);
         public event ChangeStatsHandler? OnChangeStats;
 
-        public void ChangeStats(string targetUsername, int strength, int wisdom, int dexterity, int defense, int vitality, int speed)
+        public void ChangeStats(string targetUsername, string profileName, int strength, int wisdom, int dexterity, int defense, int vitality, int speed)
         {
-            conn.InternalCallReducer(new Reducer.ChangeStats(targetUsername, strength, wisdom, dexterity, defense, vitality, speed));
+            conn.InternalCallReducer(new Reducer.ChangeStats(targetUsername, profileName, strength, wisdom, dexterity, defense, vitality, speed));
         }
 
         public bool InvokeChangeStats(ReducerEventContext ctx, Reducer.ChangeStats args)
@@ -37,6 +37,7 @@ namespace SpacetimeDB.Types
             OnChangeStats(
                 ctx,
                 args.TargetUsername,
+                args.ProfileName,
                 args.Strength,
                 args.Wisdom,
                 args.Dexterity,
@@ -56,6 +57,8 @@ namespace SpacetimeDB.Types
         {
             [DataMember(Name = "target_username")]
             public string TargetUsername;
+            [DataMember(Name = "profile_name")]
+            public string ProfileName;
             [DataMember(Name = "strength")]
             public int Strength;
             [DataMember(Name = "wisdom")]
@@ -71,6 +74,7 @@ namespace SpacetimeDB.Types
 
             public ChangeStats(
                 string TargetUsername,
+                string ProfileName,
                 int Strength,
                 int Wisdom,
                 int Dexterity,
@@ -80,6 +84,7 @@ namespace SpacetimeDB.Types
             )
             {
                 this.TargetUsername = TargetUsername;
+                this.ProfileName = ProfileName;
                 this.Strength = Strength;
                 this.Wisdom = Wisdom;
                 this.Dexterity = Dexterity;
@@ -91,6 +96,7 @@ namespace SpacetimeDB.Types
             public ChangeStats()
             {
                 this.TargetUsername = "";
+                this.ProfileName = "";
             }
 
             string IReducerArgs.ReducerName => "change_stats";

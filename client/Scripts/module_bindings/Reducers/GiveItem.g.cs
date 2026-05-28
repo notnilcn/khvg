@@ -12,12 +12,12 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteReducers : RemoteBase
     {
-        public delegate void GiveItemHandler(ReducerEventContext ctx, string targetUsername, string itemId);
+        public delegate void GiveItemHandler(ReducerEventContext ctx, string targetUsername, string profileName, string itemId);
         public event GiveItemHandler? OnGiveItem;
 
-        public void GiveItem(string targetUsername, string itemId)
+        public void GiveItem(string targetUsername, string profileName, string itemId)
         {
-            conn.InternalCallReducer(new Reducer.GiveItem(targetUsername, itemId));
+            conn.InternalCallReducer(new Reducer.GiveItem(targetUsername, profileName, itemId));
         }
 
         public bool InvokeGiveItem(ReducerEventContext ctx, Reducer.GiveItem args)
@@ -37,6 +37,7 @@ namespace SpacetimeDB.Types
             OnGiveItem(
                 ctx,
                 args.TargetUsername,
+                args.ProfileName,
                 args.ItemId
             );
             return true;
@@ -51,21 +52,26 @@ namespace SpacetimeDB.Types
         {
             [DataMember(Name = "target_username")]
             public string TargetUsername;
+            [DataMember(Name = "profile_name")]
+            public string ProfileName;
             [DataMember(Name = "item_id")]
             public string ItemId;
 
             public GiveItem(
                 string TargetUsername,
+                string ProfileName,
                 string ItemId
             )
             {
                 this.TargetUsername = TargetUsername;
+                this.ProfileName = ProfileName;
                 this.ItemId = ItemId;
             }
 
             public GiveItem()
             {
                 this.TargetUsername = "";
+                this.ProfileName = "";
                 this.ItemId = "";
             }
 

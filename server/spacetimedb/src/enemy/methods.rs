@@ -8,7 +8,7 @@ use crate::enemy::tables::*;
 pub fn has_player_in_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
     let range_sq = range * range;
     ctx.db.logged_in_player().iter().any(|p| {
-        ctx.db.player_position().player_id().find(p.player_id)
+        ctx.db.player_position().profile_id().find(&p.profile_id)
             .map(|pos| {
                 let dx = pos.x - x;
                 let dy = pos.y - y;
@@ -20,7 +20,7 @@ pub fn has_player_in_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> 
 
 pub fn find_nearest_player_pos(ctx: &ReducerContext, x: f32, y: f32) -> Option<(f32, f32)> {
     ctx.db.player_position().iter()
-        .filter(|p| ctx.db.logged_in_player().player_id().find(p.player_id).is_some())
+        .filter(|p| ctx.db.logged_in_player().profile_id().find(&p.profile_id).is_some())
         .min_by(|a, b| {
             let da = (a.x - x).powi(2) + (a.y - y).powi(2);
             let db = (b.x - x).powi(2) + (b.y - y).powi(2);
@@ -31,7 +31,7 @@ pub fn find_nearest_player_pos(ctx: &ReducerContext, x: f32, y: f32) -> Option<(
 
 pub fn find_nearest_player_id(ctx: &ReducerContext, x: f32, y: f32) -> Option<Identity> {
     ctx.db.player_position().iter()
-        .filter(|p| ctx.db.logged_in_player().player_id().find(p.player_id).is_some())
+        .filter(|p| ctx.db.logged_in_player().profile_id().find(&p.profile_id).is_some())
         .min_by(|a, b| {
             let da = (a.x - x).powi(2) + (a.y - y).powi(2);
             let db = (b.x - x).powi(2) + (b.y - y).powi(2);
@@ -55,6 +55,7 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
                 target: a.target.clone(),
                 fire_rate: a.fire_rate,
                 last_fire_time: ctx.timestamp,
+                texture_id: a.texture_id.clone(),
             }).collect(),
         }).collect(),
         move_dir_x: 0.0,

@@ -1,72 +1,7 @@
 [gd_scene format=3 uid="uid://djjulhvulxtyc"]
 
-[ext_resource type="Texture2D" uid="uid://ddell0nm3yshp" path="res://Assets/Tiny Swords (Free Pack)/Units/Yellow Units/Warrior/Warrior_Idle.png" id="1_kjvdn"]
 [ext_resource type="Script" uid="uid://d4no3bknpbhoc" path="res://Scripts/Characters/Enemy.cs" id="1_tincf"]
-[ext_resource type="PackedScene" uid="uid://dg5gp4v48hk7d" path="res://Assets/skeletons/Skeleton_Warrior.fbx" id="2_iwv3o"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_tincf"]
-atlas = ExtResource("1_kjvdn")
-region = Rect2(0, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_iwv3o"]
-atlas = ExtResource("1_kjvdn")
-region = Rect2(192, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_83nxn"]
-atlas = ExtResource("1_kjvdn")
-region = Rect2(384, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_jfdy7"]
-atlas = ExtResource("1_kjvdn")
-region = Rect2(576, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_073ug"]
-atlas = ExtResource("1_kjvdn")
-region = Rect2(768, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_ndtsb"]
-atlas = ExtResource("1_kjvdn")
-region = Rect2(960, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_f7ww0"]
-atlas = ExtResource("1_kjvdn")
-region = Rect2(1152, 0, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kpx6f"]
-atlas = ExtResource("1_kjvdn")
-region = Rect2(1344, 0, 192, 192)
-
-[sub_resource type="SpriteFrames" id="SpriteFrames_6l2qu"]
-animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_tincf")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_iwv3o")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_83nxn")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_jfdy7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_073ug")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_ndtsb")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_f7ww0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kpx6f")
-}],
-"loop": true,
-"name": &"Idle",
-"speed": 5.0
-}]
+[ext_resource type="PackedScene" uid="uid://c5l0np6xeoc5b" path="res://Assets/skeletons/Skeleton_Warrior.fbx" id="2_iwv3o"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hkglx"]
 radius = 23.0
@@ -79,7 +14,6 @@ EnemyModelScene = ExtResource("2_iwv3o")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=637474852]
 position = Vector2(3, 2)
-sprite_frames = SubResource("SpriteFrames_6l2qu")
 animation = &"Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=9122553]

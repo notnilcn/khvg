@@ -40,6 +40,7 @@ namespace SpacetimeDB.Types
     public sealed class ItemStatsCols
     {
         public global::SpacetimeDB.Col<ItemStats, string> ItemId { get; }
+        public global::SpacetimeDB.Col<ItemStats, string> TextureId { get; }
         public global::SpacetimeDB.Col<ItemStats, byte> ItemType { get; }
         public global::SpacetimeDB.Col<ItemStats, byte> FireRate { get; }
         public global::SpacetimeDB.Col<ItemStats, ushort> BaseDamage { get; }
@@ -71,6 +72,7 @@ namespace SpacetimeDB.Types
         public ItemStatsCols(string tableName)
         {
             ItemId = new global::SpacetimeDB.Col<ItemStats, string>(tableName, "item_id");
+            TextureId = new global::SpacetimeDB.Col<ItemStats, string>(tableName, "texture_id");
             ItemType = new global::SpacetimeDB.Col<ItemStats, byte>(tableName, "item_type");
             FireRate = new global::SpacetimeDB.Col<ItemStats, byte>(tableName, "fire_rate");
             BaseDamage = new global::SpacetimeDB.Col<ItemStats, ushort>(tableName, "base_damage");

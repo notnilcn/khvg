@@ -26,22 +26,22 @@ namespace SpacetimeDB.Types
 
             public readonly ChunkIndexIndex ChunkIndex;
 
-            public sealed class PlayerIdUniqueIndex : UniqueIndexBase<SpacetimeDB.Identity>
+            public sealed class ProfileIdUniqueIndex : UniqueIndexBase<ulong>
             {
-                protected override SpacetimeDB.Identity GetKey(PlayerPosition row) => row.PlayerId;
+                protected override ulong GetKey(PlayerPosition row) => row.ProfileId;
 
-                public PlayerIdUniqueIndex(PlayerPositionHandle table) : base(table) { }
+                public ProfileIdUniqueIndex(PlayerPositionHandle table) : base(table) { }
             }
 
-            public readonly PlayerIdUniqueIndex PlayerId;
+            public readonly ProfileIdUniqueIndex ProfileId;
 
             internal PlayerPositionHandle(DbConnection conn) : base(conn)
             {
                 ChunkIndex = new(this);
-                PlayerId = new(this);
+                ProfileId = new(this);
             }
 
-            protected override object GetPrimaryKey(PlayerPosition row) => row.PlayerId;
+            protected override object GetPrimaryKey(PlayerPosition row) => row.ProfileId;
         }
 
         public readonly PlayerPositionHandle PlayerPosition;
@@ -49,6 +49,7 @@ namespace SpacetimeDB.Types
 
     public sealed class PlayerPositionCols
     {
+        public global::SpacetimeDB.Col<PlayerPosition, ulong> ProfileId { get; }
         public global::SpacetimeDB.Col<PlayerPosition, SpacetimeDB.Identity> PlayerId { get; }
         public global::SpacetimeDB.Col<PlayerPosition, float> X { get; }
         public global::SpacetimeDB.Col<PlayerPosition, float> Y { get; }
@@ -57,6 +58,7 @@ namespace SpacetimeDB.Types
 
         public PlayerPositionCols(string tableName)
         {
+            ProfileId = new global::SpacetimeDB.Col<PlayerPosition, ulong>(tableName, "profile_id");
             PlayerId = new global::SpacetimeDB.Col<PlayerPosition, SpacetimeDB.Identity>(tableName, "player_id");
             X = new global::SpacetimeDB.Col<PlayerPosition, float>(tableName, "x");
             Y = new global::SpacetimeDB.Col<PlayerPosition, float>(tableName, "y");
@@ -67,12 +69,12 @@ namespace SpacetimeDB.Types
 
     public sealed class PlayerPositionIxCols
     {
-        public global::SpacetimeDB.IxCol<PlayerPosition, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.IxCol<PlayerPosition, ulong> ProfileId { get; }
         public global::SpacetimeDB.IxCol<PlayerPosition, long> ChunkIndex { get; }
 
         public PlayerPositionIxCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.IxCol<PlayerPosition, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.IxCol<PlayerPosition, ulong>(tableName, "profile_id");
             ChunkIndex = new global::SpacetimeDB.IxCol<PlayerPosition, long>(tableName, "chunk_index");
         }
     }

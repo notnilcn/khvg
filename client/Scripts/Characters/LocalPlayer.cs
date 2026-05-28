@@ -1,6 +1,7 @@
 #nullable enable
 using Godot;
 using SpacetimeDB.Types;
+using System.Linq;
 
 public partial class LocalPlayer : CharacterBody2D
 {
@@ -32,7 +33,6 @@ public partial class LocalPlayer : CharacterBody2D
 	{
 		Local   = this;
 		_sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
-		_sprite.Visible = false;
 		if (KnightScene != null && World3d.Instance != null)
 			_model = new CharacterModel3D(KnightScene, GlobalPosition, World3d.Instance.Scene3D);
 		World3d.Instance?.SetCameraFollowTarget(this);
@@ -48,6 +48,19 @@ public partial class LocalPlayer : CharacterBody2D
 			ApplyData(row);
 		foreach (var row in conn.Db.LocalPlayerStats.Iter())
 			ApplyStats(row);
+
+		var loggedIn = conn.Db.LocalPlayer.Iter().FirstOrDefault();
+		if (loggedIn != null)
+		{
+			var profile = conn.Db.LocalPlayerProfiles.Iter()
+				.FirstOrDefault(p => p.ProfileId == loggedIn.ProfileId);
+			if (profile != null)
+			{
+				var resPath = GameManager.Instance.GetResPath(profile.TextureId);
+				if (resPath != null)
+					_sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
+			}
+		}
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -63,7 +76,7 @@ public partial class LocalPlayer : CharacterBody2D
 		MoveAndSlide();
 		_model?.SyncFrom2D(GlobalPosition, Rotation);
 
-		_sprite.Play(input != Vector2.Zero ? "Move" : "Idle");
+		_sprite.Play(input != Vector2.Zero ? "Walk" : "Idle");
 
 		_reportTimer += (float)delta;
 		if (_reportTimer >= ReportInterval)

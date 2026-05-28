@@ -13,25 +13,35 @@ namespace SpacetimeDB.Types
 {
     public sealed partial class RemoteTables
     {
-        public sealed class LoggedInPlayerHandle : RemoteTableHandle<EventContext, Player>
+        public sealed class LoggedInPlayerHandle : RemoteTableHandle<EventContext, LoggedInPlayer>
         {
             protected override string RemoteTableName => "logged_in_player";
 
             public sealed class PlayerIdUniqueIndex : UniqueIndexBase<SpacetimeDB.Identity>
             {
-                protected override SpacetimeDB.Identity GetKey(Player row) => row.PlayerId;
+                protected override SpacetimeDB.Identity GetKey(LoggedInPlayer row) => row.PlayerId;
 
                 public PlayerIdUniqueIndex(LoggedInPlayerHandle table) : base(table) { }
             }
 
             public readonly PlayerIdUniqueIndex PlayerId;
 
+            public sealed class ProfileIdUniqueIndex : UniqueIndexBase<ulong>
+            {
+                protected override ulong GetKey(LoggedInPlayer row) => row.ProfileId;
+
+                public ProfileIdUniqueIndex(LoggedInPlayerHandle table) : base(table) { }
+            }
+
+            public readonly ProfileIdUniqueIndex ProfileId;
+
             internal LoggedInPlayerHandle(DbConnection conn) : base(conn)
             {
                 PlayerId = new(this);
+                ProfileId = new(this);
             }
 
-            protected override object GetPrimaryKey(Player row) => row.PlayerId;
+            protected override object GetPrimaryKey(LoggedInPlayer row) => row.PlayerId;
         }
 
         public readonly LoggedInPlayerHandle LoggedInPlayer;
@@ -39,25 +49,29 @@ namespace SpacetimeDB.Types
 
     public sealed class LoggedInPlayerCols
     {
-        public global::SpacetimeDB.Col<Player, SpacetimeDB.Identity> PlayerId { get; }
-        public global::SpacetimeDB.Col<Player, string> Username { get; }
-        public global::SpacetimeDB.Col<Player, bool> IsAdmin { get; }
+        public global::SpacetimeDB.Col<LoggedInPlayer, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.Col<LoggedInPlayer, string> Username { get; }
+        public global::SpacetimeDB.Col<LoggedInPlayer, bool> IsAdmin { get; }
+        public global::SpacetimeDB.Col<LoggedInPlayer, ulong> ProfileId { get; }
 
         public LoggedInPlayerCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.Col<Player, SpacetimeDB.Identity>(tableName, "player_id");
-            Username = new global::SpacetimeDB.Col<Player, string>(tableName, "username");
-            IsAdmin = new global::SpacetimeDB.Col<Player, bool>(tableName, "is_admin");
+            PlayerId = new global::SpacetimeDB.Col<LoggedInPlayer, SpacetimeDB.Identity>(tableName, "player_id");
+            Username = new global::SpacetimeDB.Col<LoggedInPlayer, string>(tableName, "username");
+            IsAdmin = new global::SpacetimeDB.Col<LoggedInPlayer, bool>(tableName, "is_admin");
+            ProfileId = new global::SpacetimeDB.Col<LoggedInPlayer, ulong>(tableName, "profile_id");
         }
     }
 
     public sealed class LoggedInPlayerIxCols
     {
-        public global::SpacetimeDB.IxCol<Player, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.IxCol<LoggedInPlayer, SpacetimeDB.Identity> PlayerId { get; }
+        public global::SpacetimeDB.IxCol<LoggedInPlayer, ulong> ProfileId { get; }
 
         public LoggedInPlayerIxCols(string tableName)
         {
-            PlayerId = new global::SpacetimeDB.IxCol<Player, SpacetimeDB.Identity>(tableName, "player_id");
+            PlayerId = new global::SpacetimeDB.IxCol<LoggedInPlayer, SpacetimeDB.Identity>(tableName, "player_id");
+            ProfileId = new global::SpacetimeDB.IxCol<LoggedInPlayer, ulong>(tableName, "profile_id");
         }
     }
 }

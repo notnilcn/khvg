@@ -13,6 +13,8 @@ namespace SpacetimeDB.Types
     [DataContract]
     public sealed partial class PlayerPosition
     {
+        [DataMember(Name = "profile_id")]
+        public ulong ProfileId;
         [DataMember(Name = "player_id")]
         public SpacetimeDB.Identity PlayerId;
         [DataMember(Name = "x")]
@@ -25,6 +27,7 @@ namespace SpacetimeDB.Types
         public long ChunkIndex;
 
         public PlayerPosition(
+            ulong ProfileId,
             SpacetimeDB.Identity PlayerId,
             float X,
             float Y,
@@ -32,6 +35,7 @@ namespace SpacetimeDB.Types
             long ChunkIndex
         )
         {
+            this.ProfileId = ProfileId;
             this.PlayerId = PlayerId;
             this.X = X;
             this.Y = Y;

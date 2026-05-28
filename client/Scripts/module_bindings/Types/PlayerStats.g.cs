@@ -13,8 +13,8 @@ namespace SpacetimeDB.Types
     [DataContract]
     public sealed partial class PlayerStats
     {
-        [DataMember(Name = "player_id")]
-        public SpacetimeDB.Identity PlayerId;
+        [DataMember(Name = "profile_id")]
+        public ulong ProfileId;
         [DataMember(Name = "strength")]
         public int Strength;
         [DataMember(Name = "wisdom")]
@@ -29,7 +29,7 @@ namespace SpacetimeDB.Types
         public int Speed;
 
         public PlayerStats(
-            SpacetimeDB.Identity PlayerId,
+            ulong ProfileId,
             int Strength,
             int Wisdom,
             int Dexterity,
@@ -38,7 +38,7 @@ namespace SpacetimeDB.Types
             int Speed
         )
         {
-            this.PlayerId = PlayerId;
+            this.ProfileId = ProfileId;
             this.Strength = Strength;
             this.Wisdom = Wisdom;
             this.Dexterity = Dexterity;

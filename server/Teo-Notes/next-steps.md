@@ -1,55 +1,56 @@
 # Next Steps
 
-## 1. Client refactor
+## 1. Non-local player textures
 
-Split client responsibilities so each entity owns its own behavior. No god objects. No IsOwner checks cluttering shared scripts.
+`NearbyRemotePlayers` is a view of `PlayerPosition` and carries no `texture_id`. Remote player nodes spawn with no sprite.
 
-**SpacetimeDBManager** — connection + subscription setup only. Subscribes to views on connect. No game logic.
-
-**Game manager** — handles `OnInsert` / `OnDelete` for nearby entities (enemies, loot). Spawns and despawns nodes. Does not update state after spawn.
-
-**Local player** — owns input, calls server reducers (`report_movement`, `report_enemy_hit`, `pickup_drop`). Subscribes to `local_player`, `local_player_data`, `local_player_stats`, `local_player_inventory`, `local_player_position` views.
-
-**Remote player** — separate script from local player (no IsOwner branches). Subscribes to `remote_players` and `nearby_player_positions`. Listens to `OnUpdate` for its own player_id, lerps position.
-
-**Enemy node** — spawned by game manager on `nearby_enemies` OnInsert. After spawn, handles its own `OnUpdate` from the same view. Reads `EnemyTemplate` for phase/attack data. Game manager handles `OnDelete` (despawn).
-
-**Bullet factory node** — receives `BulletPatternEvent` table subscription (direct table sub, not a view — event tables don't support views yet). On `OnInsert`, unpacks `PatternType` variant and feeds into the bullet spawner algorithm.
-
-**Drop node** — spawned by game manager on loot OnInsert. Handles its own pickup collision. Game manager handles OnDelete.
-
-Split `Player.cs` into: `PlayerController` (orchestrator), `PlayerMovement`, `PlayerCombat`, `PlayerEquipment`. Remove any remaining dead-reckoning code and elevated client references.
+**Fix:** New server-side view that joins `PlayerPosition` + `PlayerProfile` and projects position fields + `texture_id` together. Subscribe to it in the game sub. Wire up in `NonLocalPlayer._Ready()` the same way `LocalPlayer` and `Enemy` already do — look up `texture_id`, resolve via `_textureCache`, load `SpriteFrames`.
 
 ---
 
-## 2. Bullet factory node integration
+## 2. Add client texture folders
 
-Wire the server-side bullet pattern events to the client-side bullet spawner (BlastBullets2D or equivalent).
-
-**Flow:**
-```
-Server tick_enemy_behavior decides enemy fires
-  → Inserts BulletPatternEvent (ephemeral event broadcast)
-  → Client BulletFactory receives OnInsert
-  → Unpacks PatternType variant (Straight, Ring, Spiral, etc.)
-  → Reads typed params (speed, count, spread, etc.) — no string parsing
-  → Feeds into bullet spawner algorithm
-  → Spawner handles pooling, trajectory math, collision
-```
-
-The bullet factory is a standalone node — it has no knowledge of which enemy fired or player state. It just takes a pattern + params and runs the spawner. Clean interface.
-
-Bullet hit detection is client-side. Player collision → apply damage locally → call `report_player_hit` (reducer TBD).
+Organize `client/Assets/` into subfolders matching `TextureKind` (Players, Enemies, Bullets, Items, Environment). Keeps asset paths consistent with how the server categorizes textures.
 
 ---
 
-## 3. World expansion + enemy behavior (TBD)
+## 3. Server file structure — reintroduce `main` module
 
-After bullet factory is wired, the systems are in place to build features on top of:
+Consolidate the module entry point. Currently `init`, `client_connected`, `client_disconnected`, and seed calls are split between `admin/admin.rs` and `player/reducers.rs`.
 
-- **Enemy behavior logic** — fill in `tick_enemy_behavior` with actual per-template AI (movement toward target, phase transitions, attack timing based on `last_attack_time` + `fire_rate`)
-- **Spawn zones** — scheduled reducer checks if players are near a spawn zone; spawns enemies only if needed; despawns when players leave
-- **AoI resubscription** — client re-subscribes to nearby views when crossing a chunk boundary
-- **World events** — loot, enemies, and other world state grouped by chunk. Currently blocked on view params (not yet in SpacetimeDB). Once view params land, views can be parameterised by chunk index list.
-- **Torus world** — chunk wrapping for all position and subscription logic
-- **Loot drop content** — drop table per enemy template instead of empty item_id placeholder
+Introduce a `main` module (or `lib` entry file) that owns:
+- `init` reducer (schedules, seeds)
+- `client_connected` / `client_disconnected`
+- All seed function calls
+
+Each domain module (`player`, `enemy`, `world`, `admin`) keeps its own tables, reducers, and methods. `main` just wires the lifecycle.
+
+---
+
+## 4. Research Path2D attack defs
+
+Investigate pros/cons of defining bullet patterns via a parameterized Path2D node vs. the current typed enum (`PatternType` — Straight, Ring, Sine, Burst, Spiral, Homing). Write up findings to share with notnilc for a decision on bullet pattern architecture going forward.
+
+**Questions to answer:**
+- Can Path2D express all current pattern types without loss of precision?
+- How does the server represent and store a Path2D definition (serialized curve points)?
+- Does parameterized Path2D reduce the number of variants needed, or just shift complexity to the curve data?
+- What's the authoring workflow difference for designers?
+
+---
+
+## 5. Code cleanup
+
+Client and server tidy pass:
+- Remove dead code left over from the refactor
+- Review client script responsibilities (GameManager is still fairly large)
+- Consolidate small inconsistencies in naming and structure
+
+---
+
+## Backlog (deferred)
+
+- **Bullet collision + player damage** — wire BlastBullets2D collision callback, call `ReportHit` reducer, batch damage reports
+- **AoI re-subscription on chunk crossing** — game sub is static at join time
+- **Enemy behavior depth** — phase transitions, spawn zones, loot drop content
+- **Torus world** — chunk wrapping for position and subscription logic

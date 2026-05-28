@@ -21,24 +21,29 @@ namespace SpacetimeDB.Types
         public float FireRate;
         [DataMember(Name = "last_fire_time")]
         public SpacetimeDB.Timestamp LastFireTime;
+        [DataMember(Name = "texture_id")]
+        public string TextureId;
 
         public AttackInstance(
             PatternType PatternType,
             EnemyTarget Target,
             float FireRate,
-            SpacetimeDB.Timestamp LastFireTime
+            SpacetimeDB.Timestamp LastFireTime,
+            string TextureId
         )
         {
             this.PatternType = PatternType;
             this.Target = Target;
             this.FireRate = FireRate;
             this.LastFireTime = LastFireTime;
+            this.TextureId = TextureId;
         }
 
         public AttackInstance()
         {
             this.PatternType = null!;
             this.Target = null!;
+            this.TextureId = "";
         }
     }
 }
