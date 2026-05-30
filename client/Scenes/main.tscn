@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://8oytx5u0vik3" path="res://Scenes/non_local_player.tscn" id="3_kry3j"]
 [ext_resource type="PackedScene" uid="uid://djjulhvulxtyc" path="res://Scenes/default_enemy.tscn" id="4_jjvhh"]
 [ext_resource type="PackedScene" uid="uid://simxqrad34gm" path="res://Scenes/bullet_manager.tscn" id="5_21xkr"]
-[ext_resource type="Texture2D" uid="uid://btfkqgxlaioo5" path="res://Assets/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color1.png" id="5_kry3j"]
+[ext_resource type="Texture2D" uid="uid://btfkqgxlaioo5" path="res://Assets/2D/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color1.png" id="5_kry3j"]
 [ext_resource type="PackedScene" uid="uid://oq20q8miyvsa" path="res://Scenes/world_3d.tscn" id="7_344ge"]
 [ext_resource type="Script" uid="uid://bnglmn7ljv5uq" path="res://Scripts/Game/CameraController.cs" id="8_camctrl"]
 

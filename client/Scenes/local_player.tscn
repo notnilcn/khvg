@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bbjjh55yrwyfn"]
 
 [ext_resource type="Script" uid="uid://t75xafvl7xab" path="res://Scripts/Characters/LocalPlayer.cs" id="1_h1vum"]
-[ext_resource type="PackedScene" uid="uid://dud7eg6a4d3k1" path="res://Assets/characters/Knight.fbx" id="2_7ophi"]
+[ext_resource type="PackedScene" path="res://Assets/characters/Knight.fbx" id="2_7ophi"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mrxaf"]
 
@@ -11,7 +11,7 @@ KnightScene = ExtResource("2_7ophi")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=170833701]
 position = Vector2(-4, -2)
-animation = &"Idle"
+animation = &""
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=273656135]
 shape = SubResource("CapsuleShape2D_mrxaf")

@@ -81,3 +81,10 @@ fn nearby_remote_players(ctx: &ViewContext) -> impl Query<PlayerPosition> {
         .left_semijoin(ctx.from.logged_in_player(), |pos, player| pos.profile_id.eq(player.profile_id))
         .build()
 }
+
+#[spacetimedb::view(accessor = nearby_remote_players_profiles, public)]
+fn nearby_remote_players_profiles(ctx: &ViewContext) -> impl Query<PlayerProfile> {
+    ctx.from.player_profile()
+        .left_semijoin(ctx.from.logged_in_player(), |profile, player| profile.profile_id.eq(player.profile_id))
+        .build()
+}

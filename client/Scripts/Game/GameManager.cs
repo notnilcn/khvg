@@ -5,9 +5,6 @@ using SpacetimeDB.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using EnemyRow = SpacetimeDB.Types.Enemy;
-using LootDropRow = SpacetimeDB.Types.LootDrop;
-using LoggedInPlayerRow = SpacetimeDB.Types.LoggedInPlayer;
 
 public partial class GameManager : Node
 {
@@ -16,7 +13,7 @@ public partial class GameManager : Node
 	public DbConnection? Conn { get; private set; }
 	public Identity? LocalIdentity { get; private set; }
 
-	[Export] public string Host   { get; set; } = "http://127.0.0.1:3000";
+	[Export] public string Host { get; set; } = "http://127.0.0.1:3000";
 	[Export] public string DbName { get; set; } = "bullethell";
 
 	[Export] public PackedScene LocalPlayerScene { get; set; } = null!;
@@ -25,17 +22,16 @@ public partial class GameManager : Node
 	[Export] public PackedScene DropScene { get; set; } = null!;
 	[Export] public PackedScene BulletManagerScene { get; set; } = null!;
 
-	private LocalPlayer? _localPlayer;
-	private BulletManager? _bulletManager;
-	private readonly Dictionary<string, NonLocalPlayer> _remotePlayers = new();
-	private readonly Dictionary<ulong, Enemy>           _enemies       = new();
-	private readonly Dictionary<ulong, Drop>            _drops         = new();
-	private readonly Dictionary<string, string>         _textureCache  = new();
+	private LocalPlayer? localPlayer;
+	private BulletManager? bulletManager;
+	private readonly Dictionary<string, NonLocalPlayer> remotePlayers = new();
+	private readonly Dictionary<ulong, Enemy> enemies = new();
+	private readonly Dictionary<ulong, Drop> drops = new();
+	private readonly Dictionary<string, string> textureCache = new();
 
-	private CanvasLayer? _lobbyLayer;
-	private Button?      _joinButton;
-
-	private SubscriptionHandle? _lobbySub;
+	private CanvasLayer? lobbyLayer;
+	private Button? joinButton;
+	private SubscriptionHandle? lobbySub;
 
 	public override void _Ready()
 	{
@@ -54,21 +50,21 @@ public partial class GameManager : Node
 
 	public void ShowLobby()
 	{
-		_lobbyLayer = new CanvasLayer();
-		_joinButton = new Button { Text = "Join World" };
-		_joinButton.Pressed += OnJoinPressed;
-		_lobbyLayer.AddChild(_joinButton);
-		AddChild(_lobbyLayer);
+		lobbyLayer = new CanvasLayer();
+		joinButton = new Button { Text = "Join World" };
+		joinButton.Pressed += OnJoinPressed;
+		lobbyLayer.AddChild(joinButton);
+		AddChild(lobbyLayer);
 	}
 
 	private void HideLobby()
 	{
-		if (_lobbyLayer == null) return;
-		_joinButton!.Disabled = true;
-		_lobbyLayer.Visible   = false;
-		_lobbyLayer.QueueFree();
-		_lobbyLayer = null;
-		_joinButton = null;
+		if (lobbyLayer == null) return;
+		joinButton!.Disabled = true;
+		lobbyLayer.Visible = false;
+		lobbyLayer.QueueFree();
+		lobbyLayer = null;
+		joinButton = null;
 	}
 
 	private void OnJoinPressed()
@@ -84,20 +80,18 @@ public partial class GameManager : Node
 		HideLobby();
 		Conn.Reducers.JoinWorld(profile.ProfileId);
 		SubscribeGame();
-		_lobbySub?.Unsubscribe();
-		_lobbySub = null;
+		lobbySub?.Unsubscribe();
+		lobbySub = null;
 	}
 
 	// ── Connection ────────────────────────────────────────────────────────────
 
 	public void Connect(string host, string dbName)
 	{
-		AuthToken.Init(OS.GetUserDataDir() + "/.bullethell_token_");
-		AuthToken.Init();
 		Conn = DbConnection.Builder()
 			.WithUri(host)
 			.WithDatabaseName(dbName)
-			.WithToken(AuthToken.Token)
+			.WithToken(null)
 			.OnConnect(OnConnected)
 			.OnConnectError(OnConnectError)
 			.OnDisconnect(OnDisconnected)
@@ -107,7 +101,7 @@ public partial class GameManager : Node
 	private void OnConnected(DbConnection conn, Identity identity, string token)
 	{
 		LocalIdentity = identity;
-		AuthToken.SaveToken(token);
+		//AuthToken.SaveToken(token);
 
 		conn.Db.LocalPlayer.OnInsert += OnLocalPlayerInsert;
 		conn.Db.LocalPlayer.OnDelete += OnLocalPlayerDelete;
@@ -118,15 +112,15 @@ public partial class GameManager : Node
 		conn.Db.LootDrop.OnInsert += OnDropInsert;
 		conn.Db.LootDrop.OnDelete += OnDropDelete;
 
-		conn.Db.AllTextures.OnInsert += (ctx, row) => _textureCache[row.TextureId] = row.ResPath;
-		conn.Db.AllTextures.OnUpdate += (ctx, old, row) => _textureCache[row.TextureId] = row.ResPath;
-		conn.Db.AllTextures.OnDelete += (ctx, row) => _textureCache.Remove(row.TextureId);
+		conn.Db.AllTextures.OnInsert += (_, texture) => textureCache[texture.TextureId] = texture.ResPath;
+		conn.Db.AllTextures.OnUpdate += (_, _, texture) => textureCache[texture.TextureId] = texture.ResPath;
+		conn.Db.AllTextures.OnDelete += (_, texture) => textureCache.Remove(texture.TextureId);
 
 		conn.SubscriptionBuilder()
 			.AddQuery(q => q.From.AllTextures())
 			.Subscribe();
 
-		_lobbySub = conn.SubscriptionBuilder()
+		lobbySub = conn.SubscriptionBuilder()
 			.AddQuery(q => q.From.LocalLobbyPlayer())
 			.AddQuery(q => q.From.LocalPlayerProfiles())
 			.OnApplied(OnLobbySubApplied)
@@ -143,6 +137,7 @@ public partial class GameManager : Node
 			.AddQuery(q => q.From.LocalPlayerPosition())
 			.AddQuery(q => q.From.LocalPlayerProfiles())
 			.AddQuery(q => q.From.NearbyRemotePlayers())
+			.AddQuery(q => q.From.NearbyRemotePlayersProfiles())
 			.AddQuery(q => q.From.NearbyEnemies())
 			.AddQuery(q => q.From.EnemyTemplates())
 			.AddQuery(q => q.From.BulletPatternEvent())
@@ -174,84 +169,85 @@ public partial class GameManager : Node
 
 	// ── Entity lifecycle ──────────────────────────────────────────────────────
 
-	private void OnLocalPlayerInsert(EventContext _, LoggedInPlayerRow __)
+	private void OnLocalPlayerInsert(EventContext _, LoggedInPlayer loggedInPlayer)
 	{
-		if (_localPlayer == null)
+		if (localPlayer == null)
 		{
-			_localPlayer = LocalPlayerScene.Instantiate<LocalPlayer>();
-			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, _localPlayer);
+			localPlayer = LocalPlayerScene.Instantiate<LocalPlayer>();
+			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, localPlayer);
 		}
-		if (_bulletManager == null)
+		if (bulletManager == null)
 		{
-			_bulletManager = BulletManagerScene.Instantiate<BulletManager>();
-			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, _bulletManager);
+			bulletManager = BulletManagerScene.Instantiate<BulletManager>();
+			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, bulletManager);
 		}
 	}
 
-	private void OnLocalPlayerDelete(EventContext _, LoggedInPlayerRow __)
+	private void OnLocalPlayerDelete(EventContext _, LoggedInPlayer loggedInPlayer)
 	{
-		if (_localPlayer != null && IsInstanceValid(_localPlayer))
-			_localPlayer.QueueFree();
-		_localPlayer = null;
-		if (_bulletManager != null && IsInstanceValid(_bulletManager))
-			_bulletManager.QueueFree();
-		_bulletManager = null;
+		if (localPlayer != null && IsInstanceValid(localPlayer))
+			localPlayer.QueueFree();
+		localPlayer = null;
+		if (bulletManager != null && IsInstanceValid(bulletManager))
+			bulletManager.QueueFree();
+		bulletManager = null;
 	}
 
-	private void OnNearbyRemotePlayerInsert(EventContext ctx, PlayerPosition row)
+	private void OnNearbyRemotePlayerInsert(EventContext _, PlayerPosition position)
 	{
-		var key = row.PlayerId.ToString();
-		if (IsLocal(row.PlayerId) || _remotePlayers.ContainsKey(key)) return;
+		var key = position.PlayerId.ToString();
+		if (IsLocal(position.PlayerId) || remotePlayers.ContainsKey(key)) return;
 		var node = NonLocalPlayerScene.Instantiate<NonLocalPlayer>();
-		node.PlayerId       = row.PlayerId;
-		node.GlobalPosition = new Vector2(row.X, row.Y);
+		node.PlayerId = position.PlayerId;
+		node.ProfileId = position.ProfileId;
+		node.GlobalPosition = new Vector2(position.X, position.Y);
 		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
-		_remotePlayers[key] = node;
+		remotePlayers[key] = node;
 	}
 
-	private void OnNearbyRemotePlayerDelete(EventContext ctx, PlayerPosition row)
+	private void OnNearbyRemotePlayerDelete(EventContext _, PlayerPosition position)
 	{
-		var key = row.PlayerId.ToString();
-		if (!_remotePlayers.TryGetValue(key, out var node)) return;
-		_remotePlayers.Remove(key);
+		var key = position.PlayerId.ToString();
+		if (!remotePlayers.TryGetValue(key, out var node)) return;
+		remotePlayers.Remove(key);
 		if (IsInstanceValid(node))
 			node.QueueFree();
 	}
 
-	private void OnEnemyInsert(EventContext ctx, EnemyRow row)
+	private void OnEnemyInsert(EventContext _, SpacetimeDB.Types.Enemy enemy)
 	{
-		if (_enemies.ContainsKey(row.EnemyId)) return;
-		var enemy = EnemyScene.Instantiate<Enemy>();
-		enemy.EnemyId = row.EnemyId;
-		enemy.GlobalPosition = new Vector2(row.X, row.Y);
-		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, enemy);
-		_enemies[row.EnemyId] = enemy;
+		if (enemies.ContainsKey(enemy.EnemyId)) return;
+		var node = EnemyScene.Instantiate<Enemy>();
+		node.EnemyId = enemy.EnemyId;
+		node.GlobalPosition = new Vector2(enemy.X, enemy.Y);
+		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
+		enemies[enemy.EnemyId] = node;
 	}
 
-	private void OnEnemyDelete(EventContext ctx, EnemyRow row)
+	private void OnEnemyDelete(EventContext _, SpacetimeDB.Types.Enemy enemy)
 	{
-		if (!_enemies.TryGetValue(row.EnemyId, out var enemy)) return;
-		_enemies.Remove(row.EnemyId);
-		if (IsInstanceValid(enemy))
-			enemy.QueueFree();
+		if (!enemies.TryGetValue(enemy.EnemyId, out var node)) return;
+		enemies.Remove(enemy.EnemyId);
+		if (IsInstanceValid(node))
+			node.QueueFree();
 	}
 
-	private void OnDropInsert(EventContext ctx, LootDropRow row)
+	private void OnDropInsert(EventContext _, LootDrop lootDrop)
 	{
-		if (_drops.ContainsKey(row.DropId)) return;
-		var drop = DropScene.Instantiate<Drop>();
-		drop.DropId = row.DropId;
-		drop.GlobalPosition = new Vector2(row.X, row.Y);
-		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, drop);
-		_drops[row.DropId] = drop;
+		if (drops.ContainsKey(lootDrop.DropId)) return;
+		var node = DropScene.Instantiate<Drop>();
+		node.DropId = lootDrop.DropId;
+		node.GlobalPosition = new Vector2(lootDrop.X, lootDrop.Y);
+		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
+		drops[lootDrop.DropId] = node;
 	}
 
-	private void OnDropDelete(EventContext ctx, LootDropRow row)
+	private void OnDropDelete(EventContext _, LootDrop lootDrop)
 	{
-		if (!_drops.TryGetValue(row.DropId, out var drop)) return;
-		_drops.Remove(row.DropId);
-		if (IsInstanceValid(drop))
-			drop.QueueFree();
+		if (!drops.TryGetValue(lootDrop.DropId, out var node)) return;
+		drops.Remove(lootDrop.DropId);
+		if (IsInstanceValid(node))
+			node.QueueFree();
 	}
 
 	// ── Helpers ───────────────────────────────────────────────────────────────
@@ -259,7 +255,7 @@ public partial class GameManager : Node
 	public bool IsLocal(Identity id) => LocalIdentity.HasValue && id == LocalIdentity.Value;
 
 	public string? GetResPath(string textureId) =>
-		_textureCache.TryGetValue(textureId, out var path) ? path : null;
+		textureCache.TryGetValue(textureId, out var path) ? path : null;
 
 	public override void _ExitTree()
 	{

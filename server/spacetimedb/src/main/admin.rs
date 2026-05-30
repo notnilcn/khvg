@@ -1,29 +1,10 @@
-use spacetimedb::{ReducerContext, Identity, Table, ScheduleAt, TimeDuration};
-use std::time::Duration;
+use spacetimedb::{ReducerContext, Identity, Table};
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::enemy::tables::*;
 use crate::enemy::methods::build_enemy_behavior;
-use crate::enemy::seeds::seed_default_enemies;
-use crate::world::seeds::seed_default_textures;
-use crate::admin::tables::*;
-
-#[spacetimedb::reducer(init)]
-pub fn init(ctx: &ReducerContext) {
-    ctx.db.enemy_behavior_schedule().insert(EnemyBehaviorSchedule {
-        scheduled_id: 0,
-        scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_millis(100))),
-    });
-    ctx.db.enemy_spawn_schedule().insert(EnemySpawnSchedule {
-        scheduled_id: 0,
-        scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_secs(2))),
-    });
-    seed_default_textures(ctx);
-    seed_default_enemies(ctx);
-    let _ = internal_add_chunks(ctx, DEFAULT_CHUNK_HEX_RADIUS, DEFAULT_CHUNK_COLS, DEFAULT_CHUNK_ROWS, DEFAULT_HEX_OUTER_RADIUS);
-}
 
 #[spacetimedb::reducer]
 pub fn claim_admin(ctx: &ReducerContext) -> Result<(), String> {
@@ -164,7 +145,7 @@ pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> 
 }
 
 pub fn internal_add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> Result<(), String> {
-    if !( chunk_rows % chunk_cols == 0 ) { return Err("chunk_cols must cleanly divide into chunk_rows.".to_string()); }
+    if !(chunk_rows % chunk_cols == 0) { return Err("chunk_cols must cleanly divide into chunk_rows.".to_string()); }
     if hex_outer_radius <= 0.0 { return Err("hex_outer_radius must be positive.".to_string()); }
     let area = hex_area(chunk_hex_radius);
     let shift = hex_shift(chunk_hex_radius);
@@ -205,51 +186,6 @@ pub fn clear_chunks(ctx: &ReducerContext) -> Result<(), String> {
         ctx.db.building_tile().tile_id().delete(&tile.tile_id);
     }
     log::info!("clear_chunks: {} tiles deleted.", count);
-    Ok(())
-}
-
-#[spacetimedb::reducer]
-pub fn tick_player_position_debug(ctx: &ReducerContext, _job: PlayerPositionDebugSchedule) {
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let mut active_ids = std::collections::HashSet::new();
-    for pos in ctx.db.player_position().iter() {
-        let (hex_q, hex_r) = world_to_hex(pos.x, pos.y, hex_outer_radius);
-        let row = PlayerPositionDebug {
-            player_id: pos.player_id, x: pos.x, y: pos.y, rotation: pos.rotation,
-            chunk_index: pos.chunk_index, hex_q, hex_r,
-        };
-        if ctx.db.player_position_debug().player_id().find(&pos.player_id).is_some() {
-            ctx.db.player_position_debug().player_id().update(row);
-        } else {
-            ctx.db.player_position_debug().insert(row);
-        }
-        active_ids.insert(pos.player_id);
-    }
-    let stale: Vec<Identity> = ctx.db.player_position_debug()
-        .iter().filter(|d| !active_ids.contains(&d.player_id)).map(|d| d.player_id).collect();
-    for id in stale { ctx.db.player_position_debug().player_id().delete(&id); }
-}
-
-#[spacetimedb::reducer]
-pub fn toggle_debug(ctx: &ReducerContext) -> Result<(), String> {
-    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    let is_active = ctx.db.player_position_debug_schedule().iter().next().is_some();
-    if is_active {
-        for row in ctx.db.player_position_debug_schedule().iter() {
-            ctx.db.player_position_debug_schedule().scheduled_id().delete(&row.scheduled_id);
-        }
-        for row in ctx.db.player_position_debug().iter() {
-            ctx.db.player_position_debug().player_id().delete(&row.player_id);
-        }
-        log::info!("toggle_debug: position debug disabled.");
-    } else {
-        ctx.db.player_position_debug_schedule().insert(PlayerPositionDebugSchedule {
-            scheduled_id: 0,
-            scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_secs(1))),
-        });
-        log::info!("toggle_debug: position debug enabled.");
-    }
     Ok(())
 }
 

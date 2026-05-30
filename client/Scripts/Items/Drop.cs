@@ -7,10 +7,10 @@ public partial class Drop : Area2D
 
     public override void _Ready()
     {
-        BodyEntered += _OnBodyEntered;
+        BodyEntered += OnBodyEntered;
     }
 
-    private void _OnBodyEntered(Node2D body)
+    private void OnBodyEntered(Node2D body)
     {
         if (body is not LocalPlayer) return;
         var conn = GameManager.Instance.Conn;
@@ -19,6 +19,6 @@ public partial class Drop : Area2D
 
     public override void _ExitTree()
     {
-        BodyEntered -= _OnBodyEntered;
+        BodyEntered -= OnBodyEntered;
     }
 }

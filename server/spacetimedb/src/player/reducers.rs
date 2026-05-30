@@ -4,38 +4,6 @@ use crate::world::tables::*;
 use crate::player::tables::*;
 use crate::player::methods::*;
 
-#[spacetimedb::reducer(client_connected)]
-pub fn client_connected(ctx: &ReducerContext) {
-    let in_world = ctx.db.logged_in_player().player_id().find(ctx.sender()).is_some();
-    let in_lobby = ctx.db.logged_out_player().player_id().find(ctx.sender()).is_some();
-    if in_world {
-        log::error!("Player {:?} connected while already in world — this is a bug.", ctx.sender());
-        if let Some(p) = ctx.db.logged_in_player().player_id().find(ctx.sender()) {
-            ctx.db.logged_in_player().player_id().delete(ctx.sender());
-            ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: p.player_id, username: p.username, is_admin: p.is_admin });
-        }
-    } else if !in_lobby {
-        ctx.db.logged_out_player().insert(LoggedOutPlayer {
-            player_id: ctx.sender(), username: String::new(), is_admin: false,
-        });
-        ctx.db.player_profile().insert(PlayerProfile {
-            profile_id: 0, player_id: ctx.sender(),
-            profile_name: "Knight".to_string(),
-            texture_id: "Knight".to_string(),
-        });
-        log::info!("New player: {:?}", ctx.sender());
-    }
-}
-
-#[spacetimedb::reducer(client_disconnected)]
-pub fn client_disconnected(ctx: &ReducerContext) {
-    if let Some(p) = ctx.db.logged_in_player().player_id().find(ctx.sender()) {
-        ctx.db.logged_in_player().player_id().delete(ctx.sender());
-        ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: p.player_id, username: p.username, is_admin: p.is_admin });
-    }
-    log::info!("Player disconnected: {:?}", ctx.sender());
-}
-
 #[spacetimedb::reducer]
 pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String> {
     if username.trim().is_empty() || username.len() > 20 {

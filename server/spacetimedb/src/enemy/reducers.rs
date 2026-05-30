@@ -10,7 +10,7 @@ use crate::enemy::methods::*;
 pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
     if ctx.db.enemy().iter().next().is_some() { return; } // temporary: one enemy at a time
 
-    let template = match ctx.db.enemy_template().template_id().find(&"default_enemy".to_string()) {
+    let template = match ctx.db.enemy_template().template_id().find(&"Archer".to_string()) {
         Some(t) => t,
         None => return,
     };
