@@ -1,4 +1,6 @@
 #nullable enable
+using System;
+using System.Collections.Generic;
 using Godot;
 using SpacetimeDB.Types;
 
@@ -7,15 +9,33 @@ public partial class BulletManager : Node
     public static BulletManager Instance { get; private set; } = null!;
 
     [Export] public Texture2D[] BulletTextures { get; set; } = System.Array.Empty<Texture2D>();
+    [Export] public float BulletScale  { get; set; } = 8f;
+    [Export] public float BulletHeight { get; set; } = 0f;
+
+    [Export] public PackedScene? StraightBulletScene { get; set; }
+    [Export] public PackedScene? RingBulletScene     { get; set; }
+    [Export] public PackedScene? SineBulletScene     { get; set; }
+    [Export] public PackedScene? BurstBulletScene    { get; set; }
+    [Export] public PackedScene? SpiralBulletScene   { get; set; }
+    [Export] public PackedScene? HomingBulletScene   { get; set; }
 
     private Node blastBullets = null!;
     private GodotObject directionalData = null!;
-    private readonly System.Collections.Generic.Dictionary<string, Texture2D?> bulletTextureCache = new();
+    private readonly Dictionary<string, Texture2D?> bulletTextureCache = new();
+
+    private sealed class BulletSet3D
+    {
+        public required GodotObject Set;
+        public required Node3D[] Visuals;
+        public float RemainingLife;
+    }
+    private readonly List<BulletSet3D> trackedSets = new();
 
     public override void _Ready()
     {
         Instance = this;
         blastBullets = GetChild(0);
+        blastBullets.Set("visible", false);
         SetupDirectionalBullets();
     }
 
@@ -104,6 +124,49 @@ public partial class BulletManager : Node
                 .Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
     }
 
+    private void SpawnAndTrack(int bulletCount, Vector2 origin, PackedScene? scene = null)
+    {
+        var setObj = blastBullets.Call("spawn_controllable_directional_bullets", directionalData).AsGodotObject();
+        if (scene == null || World3d.Instance == null) return;
+
+        var visuals = new Node3D[bulletCount];
+        for (int i = 0; i < bulletCount; i++)
+        {
+            var v = scene.Instantiate<Node3D>();
+            v.Scale    = Vector3.One * BulletScale;
+            v.Position = new Vector3(origin.X, BulletHeight, origin.Y);
+            World3d.Instance.Scene3D.AddChild(v);
+            visuals[i] = v;
+        }
+        trackedSets.Add(new BulletSet3D { Set = setObj, Visuals = visuals, RemainingLife = 8f });
+    }
+
+    public override void _Process(double delta)
+    {
+        for (int i = trackedSets.Count - 1; i >= 0; i--)
+        {
+            var bs = trackedSets[i];
+            bs.RemainingLife -= (float)delta;
+
+            if (bs.RemainingLife <= 0f)
+            {
+                foreach (var v in bs.Visuals)
+                    if (GodotObject.IsInstanceValid(v)) v.QueueFree();
+                trackedSets.RemoveAt(i);
+                continue;
+            }
+
+            var transforms = bs.Set.Call("all_bullets_get_transforms").AsGodotArray<Transform2D>();
+            int count = Math.Min(transforms.Count, bs.Visuals.Length);
+            for (int j = 0; j < count; j++)
+            {
+                if (!GodotObject.IsInstanceValid(bs.Visuals[j])) continue;
+                var t = transforms[j];
+                bs.Visuals[j].Position = new Vector3(t.Origin.X, BulletHeight, t.Origin.Y);
+            }
+        }
+    }
+
     private void SpawnStraight(Vector2 origin, StraightParams p, float baseAngle)
     {
         SetSpeed(p.Speed);
@@ -111,7 +174,7 @@ public partial class BulletManager : Node
         for (int i = 0; i < p.Count; i++)
             transforms.Add(new Transform2D(baseAngle, origin));
         directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        SpawnAndTrack((int)p.Count, origin, StraightBulletScene);
     }
 
     private void SpawnRing(Vector2 origin, RingParams p, float baseAngle)
@@ -122,7 +185,7 @@ public partial class BulletManager : Node
         for (int i = 0; i < p.Count; i++)
             transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
         directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        SpawnAndTrack((int)p.Count, origin, RingBulletScene);
     }
 
     private void SpawnSine(Vector2 origin, SineParams p, float baseAngle)
@@ -133,7 +196,7 @@ public partial class BulletManager : Node
         for (int i = 0; i < p.Count; i++)
             transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
         directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        SpawnAndTrack((int)p.Count, origin, SineBulletScene);
     }
 
     private void SpawnBurst(Vector2 origin, BurstParams p, float baseAngle)
@@ -145,7 +208,7 @@ public partial class BulletManager : Node
         for (int i = 0; i < p.Count; i++)
             transforms.Add(new Transform2D(baseAngle - halfSpread + angleStep * i, origin));
         directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        SpawnAndTrack((int)p.Count, origin, BurstBulletScene);
     }
 
     private void SpawnSpiral(Vector2 origin, SpiralParams p, float baseAngle)
@@ -156,7 +219,7 @@ public partial class BulletManager : Node
         for (int i = 0; i < p.Arms; i++)
             transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
         directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        SpawnAndTrack((int)p.Arms, origin, SpiralBulletScene);
     }
 
     private void SpawnHoming(Vector2 origin, HomingParams p, float baseAngle)
@@ -167,11 +230,15 @@ public partial class BulletManager : Node
         for (int i = 0; i < p.Count; i++)
             transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
         directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        SpawnAndTrack((int)p.Count, origin, HomingBulletScene);
     }
 
     public override void _ExitTree()
     {
+        foreach (var bs in trackedSets)
+            foreach (var v in bs.Visuals)
+                if (GodotObject.IsInstanceValid(v)) v.QueueFree();
+        trackedSets.Clear();
         if (Instance == this) Instance = null!;
     }
 }

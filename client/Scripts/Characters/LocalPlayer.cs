@@ -25,14 +25,16 @@ public partial class LocalPlayer : CharacterBody2D
 	private const float WrapSnapThreshold = 50f;
 
 	private CharacterModel3D? model;
-	private AnimatedSprite2D sprite = null!;
-	private float reportTimer = 0f;
+	private AnimatedSprite2D sprite   = null!;
+	private Camera2D camera2D         = null!;
+	private float reportTimer         = 0f;
 	private const float ReportInterval = 0.1f;
 
 	public override void _Ready()
 	{
-		Local = this;
-		sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		Local     = this;
+		sprite    = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		camera2D  = GetNode<Camera2D>("Camera2D");
 		if (KnightScene != null && World3d.Instance != null)
 			model = new CharacterModel3D(KnightScene, GlobalPosition, World3d.Instance.Scene3D);
 		World3d.Instance?.SetCameraFollowTarget(this);
@@ -70,7 +72,7 @@ public partial class LocalPlayer : CharacterBody2D
 		var rot3d = new Vector3(raw.X, 0f, raw.Y).Rotated(Vector3.Up, yaw);
 		var input = new Vector2(rot3d.X, rot3d.Z);
 
-		Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
+		camera2D.Rotation = -yaw;
 
 		Velocity = input * Speed * SpeedPerStat;
 		MoveAndSlide();
