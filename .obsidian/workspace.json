@@ -13,6 +13,25 @@
             "state": {
               "type": "markdown",
               "state": {
+<<<<<<< HEAD
+                "file": "Notes/003 Game Development/Features to implement/Foundations.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Foundations"
+            }
+          },
+          {
+            "id": "ba7151b10a534cdf",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Notes/003 Game Development/Features to implement list.md",
+=======
+                "file": "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
+>>>>>>> origin/Rust-Migration
                 "file": "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
                 "mode": "source",
                 "source": false
@@ -61,7 +80,12 @@
               "title": "Overviews"
             }
           }
-        ]
+        ],
+<<<<<<< HEAD
+        "currentTab": 1
+=======
+        "currentTab": 4
+>>>>>>> origin/Rust-Migration
       }
     ],
     "direction": "vertical"
@@ -93,7 +117,11 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+<<<<<<< HEAD
+                "query": "pdf",
+=======
+                "query": "pvp",
+>>>>>>> origin/Rust-Migration
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -222,7 +250,56 @@
       "bases:Create new base": false
     }
   },
-  "active": "f7aef3a82d46a5e6",
+<<<<<<< HEAD
+  "active": "ba7151b10a534cdf",
+  "lastOpenFiles": [
+    "Notes/003 Game Development/Features to implement/Foundations.md",
+    "Notes/999 Random Game Design Notes/Lore.md",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260426070151.png",
+    "Notes/999 Random Game Design Notes/Overview.md",
+    "Notes/003 Game Development/Features to implement list.md",
+    "Notes/999 Random Game Design Notes/Lore/Destroyed world.md",
+    "Notes/999 Random Game Design Notes/Lore/Forest.md",
+    "Notes/003 Game Development/Asemif/Untitled.md",
+    "Notes/003 Game Development/Retexcraft/Untitled.md",
+    "bholio/Blackholio/README.md",
+    "Notes/999 Random Game Design Notes/Classes/Tank/00 Tank classes & notes.md",
+    "Notes/999 Random Game Design Notes/Classes/Tank/Abilities.md",
+    "Notes/999 Random Game Design Notes/Classes/Tank/High defense tank.md",
+    "Notes/999 Random Game Design Notes/Classes/Support/Support classes & notes.md",
+    "Notes/999 Random Game Design Notes/Classes/Scout/Scout classes & notes.md",
+    "Notes/999 Random Game Design Notes/Classes/DPS/DPS classes & notes.md",
+    "g/VS-Like/Game/Lobby/Lobby.cs",
+    "Notes/002 Game Code/001 Opening the game/Untitled.md",
+    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game 1.md",
+    "Notes/002 Game Code/001 Opening the game/001 Spawning into a server 1.md",
+    "Notes/003 Game Development/Overhaul list.md",
+    "g/VS-Like/Game/Lobby/lobby.tscn",
+    "Notes/003 Game Development/Bugs.md",
+    "Notes/003 Game Development/Optimizations.md",
+    "g/SpacetimeDB/module_bindings/Types/CharacterData.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/Types/EnemySnapshot.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/Types/EnemyState.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/Types/PlayerAccount.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/Types/PlayerInventory.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/Types/PlayerPosition.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/SpacetimeDBClient.g.cs.uid",
+    "g/SpacetimeDB/module_bindings/Types/RpgStats.g.cs.uid",
+    "Notes/003 Game Development/Small stuff.md",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425123714.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425123250.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425115208.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425113248.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425113219.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112649.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112558.png",
+    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112443.png",
+    "Notes/999 Random Game Design Notes/Dungeons & bosses/00 Dungeons & Bosses general notes.md",
+    "Notes/999 Resources and files/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
+    "Notes/003 Game Development/Features to implement/Untitled.md",
+    "Notes/002 Game Code/001 Opening the game/(old) 001 Spawning into a server.md"
+=======
+  "active": "c7a6cdc6336e42b3",
   "lastOpenFiles": [
     "clientt/Scenes/main.tscn8401333.tmp",
     "clientt/Scenes/main.tscn5351967.tmp",
