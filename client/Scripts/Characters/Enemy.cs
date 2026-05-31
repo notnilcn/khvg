@@ -5,8 +5,6 @@ using System.Linq;
 
 public partial class Enemy : CharacterBody2D
 {
-    [Export] public PackedScene? EnemyModelScene { get; set; }
-
     public ulong EnemyId { get; set; }
     public uint Hp { get; private set; }
     public byte Phase { get; private set; }
@@ -14,7 +12,6 @@ public partial class Enemy : CharacterBody2D
 
     private const float LerpSpeed = 10f;
     private Vector2 targetPosition;
-    private CharacterModel3D? model;
     private AnimatedSprite2D? sprite;
 
     public override void _Ready()
@@ -46,15 +43,12 @@ public partial class Enemy : CharacterBody2D
             break;
         }
 
-        if (EnemyModelScene != null && World3d.Instance != null)
-            model = new CharacterModel3D(EnemyModelScene, GlobalPosition, World3d.Instance.Scene3D);
     }
 
     public override void _Process(double delta)
     {
         var moving = GlobalPosition.DistanceSquaredTo(targetPosition) > 1f;
         GlobalPosition = GlobalPosition.Lerp(targetPosition, LerpSpeed * (float)delta);
-        model?.SyncFrom2D(GlobalPosition, Rotation);
         if (sprite?.SpriteFrames != null)
             sprite.Play(moving ? "Walk" : "Idle");
     }
@@ -75,7 +69,6 @@ public partial class Enemy : CharacterBody2D
 
     public override void _ExitTree()
     {
-        model?.Dispose();
         var conn = GameManager.Instance.Conn;
         if (conn == null) return;
         conn.Db.NearbyEnemies.OnUpdate -= OnEnemyUpdate;

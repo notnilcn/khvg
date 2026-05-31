@@ -6,8 +6,6 @@ using System.Linq;
 
 public partial class NonLocalPlayer : Node2D
 {
-	[Export] public PackedScene? PlayerModelScene { get; set; }
-
 	public Identity PlayerId  { get; set; }
 	public ulong    ProfileId { get; set; }
 
@@ -19,7 +17,6 @@ public partial class NonLocalPlayer : Node2D
 	private Vector2 snapVelocity;
 	private float   timeSinceSnap;
 	private float   targetRotation;
-	private CharacterModel3D? model;
 	private AnimatedSprite2D? sprite;
 
 	public override void _Ready()
@@ -34,9 +31,6 @@ public partial class NonLocalPlayer : Node2D
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
 		conn.Db.NearbyRemotePlayers.OnUpdate += OnPositionUpdate;
-
-		if (PlayerModelScene != null && World3d.Instance != null)
-			model = new CharacterModel3D(PlayerModelScene, GlobalPosition, World3d.Instance.Scene3D);
 
 		var profile = conn.Db.NearbyRemotePlayersProfiles.Iter()
 			.FirstOrDefault(p => p.ProfileId == ProfileId);
@@ -55,7 +49,6 @@ public partial class NonLocalPlayer : Node2D
 		var moving = GlobalPosition.DistanceSquaredTo(extrapolated) > 1f;
 		GlobalPosition = GlobalPosition.Lerp(extrapolated, LerpSpeed * (float)delta);
 		Rotation       = Mathf.LerpAngle(Rotation, targetRotation, LerpSpeed * (float)delta);
-		model?.SyncFrom2D(GlobalPosition, targetRotation);
 		if (sprite?.SpriteFrames != null)
 			sprite.Play(moving ? "Walk" : "Idle");
 	}
@@ -79,7 +72,6 @@ public partial class NonLocalPlayer : Node2D
 
 	public override void _ExitTree()
 	{
-		model?.Dispose();
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
 		conn.Db.NearbyRemotePlayers.OnUpdate -= OnPositionUpdate;
