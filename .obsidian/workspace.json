@@ -8,7 +8,7 @@
         "type": "tabs",
         "children": [
           {
-            "id": "6f416f91b97b6508",
+            "id": "f7aef3a82d46a5e6",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -32,67 +32,52 @@
 =======
                 "file": "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
 >>>>>>> origin/Rust-Migration
+                "file": "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "000 Autoloads, Spacetimedb.cs, and the elevated client"
+              "title": "World grid notes"
             }
           },
           {
-            "id": "b6b70359f2997d50",
+            "id": "baf4c6fc7a11f41d",
+            "type": "leaf",
+            "state": {
+              "type": "html-view",
+              "state": {
+                "file": "docs/Resources and dependencies/hex-grid/Hexagonal Grids.html"
+              },
+              "icon": "file-code",
+              "title": "Hexagonal Grids.html"
+            }
+          },
+          {
+            "id": "ccf2250b685ae439",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+                "file": "docs/Notes/002 Game Development/Optimizations.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Optimizations"
+            }
+          },
+          {
+            "id": "878da29cac7554fa",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
               "title": "Overviews"
-            }
-          },
-          {
-            "id": "a82b7fd6023c4f9c",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "g/VS-Like/Game/World/Spawner.cs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Spawner"
-            }
-          },
-          {
-            "id": "3b86ca1bce45de49",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "g/VS-Like/Game/Singleton/Global.cs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Global"
-            }
-          },
-          {
-            "id": "c7a6cdc6336e42b3",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "bmmo/spacetimedb/Lib.cs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Lib"
             }
           }
         ],
@@ -254,15 +239,15 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "system3-relay:Relay": false,
+      "custom-sort:Toggle custom sorting": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false,
-      "system3-relay:Relay": false,
-      "custom-sort:Toggle custom sorting": false
+      "bases:Create new base": false
     }
   },
 <<<<<<< HEAD
@@ -316,52 +301,51 @@
 =======
   "active": "c7a6cdc6336e42b3",
   "lastOpenFiles": [
-    "g/project.godot3318433.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/StdbModule.wasm.tmpd441104",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/wasi_bundled_assemblies-3c85e787.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_puEYdevsexGsBupHqmwHqh3_-de45b0a3.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_lI_cvUbWBQbEeB6IFBWyyZRH-b3829483.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_ptnAiRLZ_wWY_o32px33vhLD-d8e96f7a.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_T_eRfTC_bvDgC6vu_mkidq0m-9d36dc7e.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_M_7vdIeIGONFXiMLG8mdCfGI-82a8ee08.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/StdbModule.wasm.tmpcb135c2",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/wasi_bundled_assemblies-badca321.o.tmp",
-    "bmmo/spacetimedb/obj/Release/net8.0/wasi-wasm/wasm/for-publish/bundled_resource_puEYdevsexGsBupHqmwHqh3_-d701020e.o.tmp",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-    "Notes/002 Game Development/Features to implement list.md",
-    "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
-    "Notes/002 Game Development/Features to implement/Foundations.md",
-    "Notes/002 Game Development/Features to implement/Bugs.md",
-    "Notes/001 Game Code/001 Opening the game 1.md",
-    "Notes/001 Game Code/002 After joining the game.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Monetisation/Consumables.md",
-    "Untitled.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-6.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-5.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-4.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-3.md",
-    "Notes/002 Game Development/Features to implement list-GCW10HP236-0219-2.md",
-    "Notes/001 Game Code/000a Player sync.md",
-    "Notes/001 Game Code/001 (TO BE OVERHAULED) Opening the game.md",
-    "g/VS-Like/Assets/skeletons/skeleton_texture.png",
-    "g/VS-Like/Assets/nature_decorations/hexagons_medieval.png",
-    "g/VS-Like/Assets/hexagon_tiles/hexagons_medieval.png",
-    "g/VS-Like/Assets/characters/barbarian_texture.png",
-    "g/VS-Like/Assets/characters/knight_texture.png",
-    "g/VS-Like/Assets/characters/mage_texture.png",
-    "g/VS-Like/Assets/characters/ranger_texture.png",
-    "g/VS-Like/Assets/characters/rogue_texture.png",
-    "g/VS-Like/Assets/buildings/hexagons_medieval.png",
-    "g/VS-Like/Assets/accesiories/barbarian_texture.png",
-    "Notes/002 Game Development/Notnilc/Untitled.md",
-    "Notes/002 Game Development/Asemif/Untitled.md",
-    "Notes/002 Game Development/Overhaul list.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Paladin question mark.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Tank/00 Tank classes & notes.md",
-    "Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Tank/High defense tank.md",
-    "Notes/001 Game Code/000c Bullet sync.md",
-    "Notes/001 Game Code/000b Enemy sync.md"
->>>>>>> origin/Rust-Migration
+    "clientt/Scenes/main.tscn8401333.tmp",
+    "clientt/Scenes/main.tscn5351967.tmp",
+    "clientt/project.godot2890370.tmp",
+    "clientt/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll",
+    "clientt/Scenes/main.tscn15611884.tmp",
+    "clientt/Scenes/main.tscn11177710.tmp",
+    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/libblastbullets2d.ios.template_release.single",
+    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/Info.plist",
+    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/Info.plist",
+    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/libblastbullets2d.ios.template_debug.single",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Trees.aseprite",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Wood Resource/Wood Resource.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree4.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree3.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree2.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree1.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 4.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 3.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 2.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 1.png",
+    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Meat/Sheep/Sheep_Move.png",
+    "clientt/addons/blastbullets2d/LICENSE.md",
+    "clientt/addons/blastbullets2d/README.md",
+    "docs/Notes/002 Game Development/Optimizations.md",
+    "client/addons/phantom_camera/CLAUDE.md",
+    "docs/Notes/002 Game Development/Shelved todo list.md",
+    "docs/Notes/002 Game Development/Small stuff.md",
+    "docs/Notes/002 Game Development/Overhaul list.md",
+    "docs/Notes/002 Game Development/Small stuff to implement.md",
+    "docs/Notes/002 Game Development/Things to fix list.md",
+    "docs/Untitled.md",
+    "CLAUDE.md",
+    "docs/todo.md",
+    "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Lore.md",
+    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Gameplay.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 5.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 4.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 3.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 1.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 2.md",
+    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/000 Spacetimedb overview.md",
+    "Boobookitty.md",
+    "Pursuit of jade.md"
   ]
 }

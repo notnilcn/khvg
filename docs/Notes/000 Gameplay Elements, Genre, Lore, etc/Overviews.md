@@ -9,6 +9,8 @@ The game will probably be high fantasy.
 RotMG description and general feel:
 
 ### Group videos
+![(rotmg o3) Fastest Sorc 2 million top damage (5:48)](<https://www.youtube.com/watch?v=885sidnkIps>)
+
 ![Completing My First Marble Colossus Ever! - Rotmg Lost Halls Progression!](<https://www.youtube.com/watch?v=audTKsu6qTA>)
 
 ![RotMG Lost Halls 3 man full skip run](<https://www.youtube.com/watch?v=ZRKva2qU9kE>)
@@ -60,7 +62,7 @@ RotMG description and general feel:
 			- Under the hood the game is going to be 2d, but bitcraft's hexagons have height so why not. Also, RotMG is pretty flat which is kinda bland.
 	- The unsafe parts of the world/landscape/map changes every day (I'm not sure if this is feasible in spacetimedb)
 		- This should be doable via lazy evaluation. i.e. whenever a player enters a stale part of the world/landscape/map, it changes based on whether enough time has passed since the last time it was updated.
-#### **Lore and gameplay things Overview**
+#### **Lore and Overview**
 #### **The world has been destroyed**
 Gameplay things that this lore is built around:
 - [Safe hubs](<Overviews.md#^safe-hubs>)
@@ -89,7 +91,7 @@ Gameplay things that this lore is built around:
 	- The philosophy of this faction could be something like "We don't want to just survive, we want to have standards. Just because the world has ended, that doesn't mean we should forgive or overlook people's actions just because we want to survive."
 - This safe hub will have (possibly one-sided) beef with the [safe hub that belongs to the magic organisation that outcasted the outcasted magician dude](<Overviews.md#**Safe hub that belongs to the magic organisation that outcasted the outcasted magician dude**>) because the friend wants to stand up on the outcasted magician dude's behalf even though the outcasted magician dude doesn't want them to. **==You could probably use this faction as a stand-in for the edgy people who care about fairness and justice and whatnot==**. This faction's beef with the [safe hub that belongs to the magic organisation that outcasted the outcasted magician dude](<Overviews.md#**Safe hub that belongs to the magic organisation that outcasted the outcasted magician dude**>) could probably be the main driver of the story.
 #### **Lore-based safe hub story line**
-You could probably take a lot of inspiration from love triangle tropes for the story line between the 3 safe hubs. If you are a weak and pathetic man, then you would make the leaders of safe hub 02 and safe hub 03 girls so that you could have the player base argue over which one is best girl. If you are a principled and strong-willed man, then you'll make the leader of safe hub 02 a guy, and the leader of safe hub 03 a girl. Maybe make the leader of safe hub 03 the daughter of the magic organisation's leader who died. If you are a weak-willed man, you'll make the 2 dudes gay. If you are a strong-willed man, you will make the 2 dudes simply just 2 dudes who are really good friends.
+You could probably take a lot of inspiration from love triangle tropes for the story line between the 3 safe hubs. If you are a weak and pathetic man, then you would make the leaders of safe hub 02 and safe hub 03 girls so that you could have the player base argue over which one is best girl. If you are a principled and strong man, then you'll make the leader of safe hub 02 a guy, and the leader of safe hub 03 a girl. Maybe make the leader of safe hub 03 the daughter of the magic organisation's leader who died. If you are a weak man, you'll make the 2 dudes gay. If you are a strong man, you will make the 2 dudes simply just 2 dudes who are really good friends.
 
 The main result of this story line would be that all of the player's items will be stored in one of the 3 safe hubs and the connection between the 3 from there on out will be completely severed. As in, before this story line players will be able to transfer items between these safe hubs, but after this story line players will have to walk between these safe hubs if they want to transfer items to them. Players will still be able to transfer wearable gear between safe hubs by teleporting, but if players want to transfer money or consumables or non-gear items or whatever then they'll have to walk. Players will still be able to teleport, though, since I want experienced players to be able to play with and new players. **==You could probably even use this mechanic as a reason for experienced players to seek out newer players==**, though, I can't think of a way that wouldn't be hard to balance or cheat.
 

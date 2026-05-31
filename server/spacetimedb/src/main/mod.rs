@@ -1,4 +1,4 @@
-pub mod methods;
-pub mod reducers;
-pub mod tables;
-pub mod views;
+pub mod lifecycle;
+pub mod admin;
+pub mod debug;
+pub mod seeds;

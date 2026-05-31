@@ -1,12 +1,13 @@
 [
-  "system3-relay",
   "custom-sort",
 <<<<<<< HEAD
 =======
   "obsidian-underline",
-  "obsidian-wrap-with-shortcuts",
   "block-link-plus",
   "code-styler",
->>>>>>> origin/Rust-Migration
-  "obsidian-custom-file-extensions-plugin"
+  "system3-relay",
+  "obsidian-custom-file-extensions-plugin",
+  "html-viewer",
+  "obsidian-wrap-with-shortcuts",
+  "automatic-table-of-contents"
 ]

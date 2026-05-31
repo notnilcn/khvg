@@ -1,86 +1,56 @@
 # Next Steps
 
-## 1. Seed system (init reducer + builder traits)
+## 1. Non-local player textures
 
-Goal: cleanly define enemies, items, etc. in code once without re-doing on every republish.
+`NearbyRemotePlayers` is a view of `PlayerPosition` and carries no `texture_id`. Remote player nodes spawn with no sprite.
 
-`init` reducer runs once when the module is first published. Each type gets a `create` associated function that upserts (safe to re-run):
+**Fix:** New server-side view that joins `PlayerPosition` + `PlayerProfile` and projects position fields + `texture_id` together. Subscribe to it in the game sub. Wire up in `NonLocalPlayer._Ready()` the same way `LocalPlayer` and `Enemy` already do — look up `texture_id`, resolve via `_textureCache`, load `SpriteFrames`.
 
-```rust
-#[reducer(init)]
-pub fn init(ctx: &ReducerContext) {
-    EnemyTemplate::seed(ctx, "goblin", "Goblin", 100, vec![
-        PhaseDef { phase_index: 0, hp_threshold: 1.0, attacks: vec![
-            AttackDef { pattern_type: PatternType::Straight, fire_rate: 2.0, params: "speed=150".into() },
-        ]},
-        PhaseDef { phase_index: 1, hp_threshold: 0.5, attacks: vec![
-            AttackDef { pattern_type: PatternType::Ring, fire_rate: 1.5, params: "speed=150,count=8".into() },
-        ]},
-    ]);
+---
 
-    ItemStats::seed(ctx, ItemStats { item_id: "sword".into(), base_damage: 20, ... });
-}
-```
+## 2. Add client texture folders
 
-Implement `seed()` as an associated method on each type (upsert pattern — insert if not exists, update if exists). This means republishing the module safely re-seeds without duplicating data.
+Organize `client/Assets/` into subfolders matching `TextureKind` (Players, Enemies, Bullets, Items, Environment). Keeps asset paths consistent with how the server categorizes textures.
 
-## 2. CLI-callable admin reducers
+---
 
-Reducers callable via `spacetime call` for manual testing:
+## 3. Server file structure — reintroduce `main` module
 
-```bash
-spacetime call spawn_enemy '["goblin", "res://...", 0.0, 0.0, false, false]'
-spacetime call despawn_enemy '[42]'
-spacetime call give_item '["Teo", "sword"]'
-spacetime call change_stats '["Teo", 10, 10, 10, 10, 10, 25]'
-```
+Consolidate the module entry point. Currently `init`, `client_connected`, `client_disconnected`, and seed calls are split between `admin/admin.rs` and `player/reducers.rs`.
 
-These are already defined — just need to test the CLI invocation format. Can also add convenience reducers like `spawn_enemy_at_player(template_id)` that looks up an online player's position.
+Introduce a `main` module (or `lib` entry file) that owns:
+- `init` reducer (schedules, seeds)
+- `client_connected` / `client_disconnected`
+- All seed function calls
 
-## 3. AoI chunk subscriptions (client-side)
+Each domain module (`player`, `enemy`, `world`, `admin`) keeps its own tables, reducers, and methods. `main` just wires the lifecycle.
 
-Replace `SubscribeToAllTables()` in `SpacetimeDBManager.cs` with parameterised chunk queries:
+---
 
-```csharp
-conn.SubscriptionBuilder()
-    .OnApplied(OnSubscriptionReady)
-    .Subscribe(new[] {
-        // Own player data — no chunk filter
-        "SELECT * FROM player WHERE player_id = @id",
-        "SELECT * FROM player_data WHERE player_id = @id",
-        "SELECT * FROM player_stats WHERE player_id = @id",
-        "SELECT * FROM player_inventory WHERE player_id = @id",
-        // Reference data — no chunk filter
-        "SELECT * FROM enemy_template",
-        "SELECT * FROM item_stats",
-        // AoI — chunk window
-        $"SELECT * FROM player_position WHERE chunk_x BETWEEN {minX} AND {maxX} AND chunk_y BETWEEN {minY} AND {maxY}",
-        $"SELECT * FROM enemy WHERE chunk_x BETWEEN {minX} AND {maxX} AND chunk_y BETWEEN {minY} AND {maxY}",
-        $"SELECT * FROM loot_drop WHERE chunk_x BETWEEN {minX} AND {maxX} AND chunk_y BETWEEN {minY} AND {maxY}",
-    });
-```
+## 4. Research Path2D attack defs
 
-Re-subscribe when local player crosses a chunk boundary. AoI window = 1 chunk radius (3x3 grid of chunks around player).
+Investigate pros/cons of defining bullet patterns via a parameterized Path2D node vs. the current typed enum (`PatternType` — Straight, Ring, Sine, Burst, Spiral, Homing). Write up findings to share with notnilc for a decision on bullet pattern architecture going forward.
 
-## 4. Client refactor
+**Questions to answer:**
+- Can Path2D express all current pattern types without loss of precision?
+- How does the server represent and store a Path2D definition (serialized curve points)?
+- Does parameterized Path2D reduce the number of variants needed, or just shift complexity to the curve data?
+- What's the authoring workflow difference for designers?
 
-See `system-overview.md` for the full architecture. Key points:
+---
 
-- `SpacetimeDBManager` — connection + subscription manager only
-- `PlayerSync` autoload — owns PlayerPosition table callbacks, spawns/despawns remote player nodes
-- `EnemySync` autoload — owns Enemy table callbacks, spawns/despawns enemy nodes; each enemy node simulates itself from EnemyTemplate data
-- `DropSync` autoload — owns LootDrop table callbacks, spawns/despawns loot nodes
-- `LocalPlayer` — calls report_movement timer, report_enemy_hit on weapon collision, pickup_drop on loot
-- Split `Player.cs` into: Player (orchestrator), PlayerMovement, PlayerCombat, PlayerEquipment
+## 5. Code cleanup
 
-Remove: `StdbBulletSync.cs`, `ElevatedClient.cs`, dead-reckoning code in `StdbPlayerSync.cs`
+Client and server tidy pass:
+- Remove dead code left over from the refactor
+- Review client script responsibilities (GameManager is still fairly large)
+- Consolidate small inconsistencies in naming and structure
 
-## 5. Bullet simulation integration (BlastBullets2D)
+---
 
-Each enemy script runs its own bullet simulation using BlastBullets2D plugin:
-- On spawn: read `EnemyTemplate` for current phase's `AttackDef` list
-- Each frame: track elapsed time from `spawn_time`, fire bullets at `fire_rate` intervals
-- `pattern_type` + `params` drive the BlastBullets2D configuration
-- Player collision detected locally → apply damage to local player HP
+## Backlog (deferred)
 
-No server involvement. No sync. Fully self-contained per enemy script.
+- **Bullet collision + player damage** — wire BlastBullets2D collision callback, call `ReportHit` reducer, batch damage reports
+- **AoI re-subscription on chunk crossing** — game sub is static at join time
+- **Enemy behavior depth** — phase transitions, spawn zones, loot drop content
+- **Torus world** — chunk wrapping for position and subscription logic

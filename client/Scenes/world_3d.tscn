@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://oq20q8miyvsa"]
+
+[ext_resource type="Script" uid="uid://cqdq8srkbcwb3" path="res://Scripts/World/World3d.cs" id="1_5pobv"]
+[ext_resource type="Environment" uid="uid://bby4vk1tvjgu7" path="res://Assets/enviroment.tres" id="2_e0ebs"]
+[ext_resource type="Script" uid="uid://bw1357ojrb7ia" path="res://Scripts/World/HexGridOverlay.cs" id="3_374ew"]
+[ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="4_30yqp"]
+[ext_resource type="PackedScene" uid="uid://bm6owd1yaoyxg" path="res://Assets/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_purple.tscn" id="4_bgqy3"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="5_68m80"]
+[ext_resource type="PackedScene" uid="uid://r8xdalncce6g" path="res://Assets/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grey.tscn" id="6_7lipw"]
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_pcmh"]
+[ext_resource type="PackedScene" uid="uid://765ipyrj6pyx" path="res://Assets/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_pink.tscn" id="8_03i3r"]
+
+[sub_resource type="Resource" id="Resource_bgqy3"]
+script = ExtResource("5_68m80")
+
+[node name="World3d" type="Node3D" unique_id=414086215]
+script = ExtResource("1_5pobv")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=982133649]
+transform = Transform3D(0.70710677, 0.49999997, -0.49999997, 0, 0.70710677, 0.70710677, 0.70710677, -0.49999997, 0.49999997, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=447528972]
+environment = ExtResource("2_e0ebs")
+
+[node name="HexGridOverlay" type="Node3D" parent="." unique_id=1278647656]
+script = ExtResource("3_374ew")
+PurpleTileScene = ExtResource("4_bgqy3")
+PinkTileScene = ExtResource("8_03i3r")
+GreyTileScene = ExtResource("6_7lipw")
+TileScaleMultiplier = 0.8
+
+[node name="PhantomCamera3D" type="Node3D" parent="." unique_id=1707859310 node_paths=PackedStringArray("follow_target")]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 200, 0)
+script = ExtResource("4_30yqp")
+follow_mode = 6
+follow_target = NodePath("../CameraTarget")
+tween_resource = SubResource("Resource_bgqy3")
+follow_distance = 200.0
+vertical_rotation_offset = 1.5707963267948966
+spring_length = 200.0
+align_transform_with_view = Callable()
+align_position_with_view = Callable()
+align_rotation_with_view = Callable()
+metadata/_custom_type_script = "uid://csjccrhj5wnx7"
+
+[node name="CameraTarget" type="Node3D" parent="." unique_id=298986677]
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=789335122]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 200, 0)
+top_level = true
+
+[node name="PhantomCameraHost" type="Node" parent="Camera3D" unique_id=1946111886]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("7_pcmh")
+metadata/_custom_type_script = "uid://bd046eokvcnu2"
