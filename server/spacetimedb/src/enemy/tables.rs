@@ -41,11 +41,45 @@ pub enum EnemyTarget {
 }
 
 #[derive(SpacetimeType, Clone)]
-pub struct AttackDef {
+pub struct SequenceSingle {
     pub pattern_type: PatternType,
     pub target: EnemyTarget,
-    pub fire_rate: f32,
+    pub origin_offset_x: f32,
+    pub origin_offset_y: f32,
+    pub base_angle_offset: f32,
     pub texture_id: String,
+    pub wait: f32,
+}
+
+#[derive(SpacetimeType, Clone)]
+pub struct SequenceRepeat {
+    pub pattern_type: PatternType,
+    pub target: EnemyTarget,
+    pub origin_offset_x: f32,
+    pub origin_offset_y: f32,
+    pub base_angle_offset: f32,
+    pub texture_id: String,
+    pub interval: f32,
+    pub count: u32,
+    pub wait: f32,
+}
+
+#[derive(SpacetimeType, Clone)]
+pub enum SequenceStep {
+    Single(SequenceSingle),
+    Repeat(SequenceRepeat),
+}
+
+#[derive(SpacetimeType, Clone)]
+pub struct AttackSequence {
+    pub steps: Vec<SequenceStep>,
+    pub loop_sequence: bool,
+}
+
+#[derive(SpacetimeType, Clone)]
+pub struct AttackDef {
+    pub attack: AttackSequence,
+    pub fire_rate: f32,
 }
 
 #[derive(SpacetimeType, Clone)]
@@ -58,11 +92,14 @@ pub struct PhaseDef {
 
 #[derive(SpacetimeType, Clone)]
 pub struct AttackInstance {
-    pub pattern_type: PatternType,
-    pub target: EnemyTarget,
+    pub attack: AttackSequence,
     pub fire_rate: f32,
     pub last_fire_time: Timestamp,
-    pub texture_id: String,
+    pub seq_step_index: u32,
+    pub seq_repeat_count: u32,
+    pub seq_step_timer: Timestamp,
+    pub seq_active: bool,
+    pub seq_waiting: bool,
 }
 
 #[derive(SpacetimeType, Clone)]
@@ -132,6 +169,9 @@ pub struct BulletPatternEvent {
     pub enemy_id: u64,
     pub origin_x: f32,
     pub origin_y: f32,
+    pub origin_offset_x: f32,
+    pub origin_offset_y: f32,
+    pub base_angle_offset: f32,
     pub pattern_type: PatternType,
     pub target: Option<Identity>,
     pub texture_id: String,

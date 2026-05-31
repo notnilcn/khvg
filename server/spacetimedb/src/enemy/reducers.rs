@@ -10,7 +10,7 @@ use crate::enemy::methods::*;
 pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
     if ctx.db.enemy().iter().next().is_some() { return; } // temporary: one enemy at a time
 
-    let template = match ctx.db.enemy_template().template_id().find(&"Archer".to_string()) {
+    let template = match ctx.db.enemy_template().template_id().find(&"TestBoss".to_string()) {
         Some(t) => t,
         None => return,
     };
@@ -51,15 +51,16 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         let mut phases = behavior.phases.clone();
 
         for attack in &mut phases[phase_idx].attacks {
-            let fire_interval = Duration::from_secs_f32(1.0 / attack.fire_rate);
-            if ctx.timestamp >= attack.last_fire_time + fire_interval {
-                attack.last_fire_time = ctx.timestamp;
-                let target = resolve_attack_targets(ctx, &mut attack.target, enemy.x, enemy.y);
+            let seq = attack.attack.clone();
+            if let Some((pt, step_target, ox, oy, bao, tex)) = tick_sequence(ctx, attack, &seq) {
+                let target = resolve_step_target(ctx, step_target, enemy.x, enemy.y);
                 ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
                     event_id: 0, enemy_id: enemy.enemy_id,
                     origin_x: enemy.x, origin_y: enemy.y,
-                    pattern_type: attack.pattern_type.clone(),
-                    target, texture_id: attack.texture_id.clone(),
+                    origin_offset_x: ox, origin_offset_y: oy,
+                    base_angle_offset: bao,
+                    pattern_type: pt,
+                    target, texture_id: tex,
                     chunk_index: enemy.chunk_index,
                 });
             }

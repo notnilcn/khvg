@@ -13,33 +13,23 @@ namespace SpacetimeDB.Types
     [DataContract]
     public sealed partial class AttackDef
     {
-        [DataMember(Name = "pattern_type")]
-        public PatternType PatternType;
-        [DataMember(Name = "target")]
-        public EnemyTarget Target;
+        [DataMember(Name = "attack")]
+        public AttackSequence Attack;
         [DataMember(Name = "fire_rate")]
         public float FireRate;
-        [DataMember(Name = "texture_id")]
-        public string TextureId;
 
         public AttackDef(
-            PatternType PatternType,
-            EnemyTarget Target,
-            float FireRate,
-            string TextureId
+            AttackSequence Attack,
+            float FireRate
         )
         {
-            this.PatternType = PatternType;
-            this.Target = Target;
+            this.Attack = Attack;
             this.FireRate = FireRate;
-            this.TextureId = TextureId;
         }
 
         public AttackDef()
         {
-            this.PatternType = null!;
-            this.Target = null!;
-            this.TextureId = "";
+            this.Attack = new();
         }
     }
 }

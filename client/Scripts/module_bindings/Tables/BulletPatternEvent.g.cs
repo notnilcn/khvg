@@ -53,6 +53,9 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<BulletPatternEvent, ulong> EnemyId { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginX { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginY { get; }
+        public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginOffsetX { get; }
+        public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginOffsetY { get; }
+        public global::SpacetimeDB.Col<BulletPatternEvent, float> BaseAngleOffset { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, PatternType> PatternType { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, SpacetimeDB.Identity> Target { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, string> TextureId { get; }
@@ -64,6 +67,9 @@ namespace SpacetimeDB.Types
             EnemyId = new global::SpacetimeDB.Col<BulletPatternEvent, ulong>(tableName, "enemy_id");
             OriginX = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_x");
             OriginY = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_y");
+            OriginOffsetX = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_offset_x");
+            OriginOffsetY = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_offset_y");
+            BaseAngleOffset = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "base_angle_offset");
             PatternType = new global::SpacetimeDB.Col<BulletPatternEvent, PatternType>(tableName, "pattern_type");
             Target = new global::SpacetimeDB.Col<BulletPatternEvent, SpacetimeDB.Identity>(tableName, "target");
             TextureId = new global::SpacetimeDB.Col<BulletPatternEvent, string>(tableName, "texture_id");

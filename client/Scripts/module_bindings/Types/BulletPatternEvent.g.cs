@@ -21,6 +21,12 @@ namespace SpacetimeDB.Types
         public float OriginX;
         [DataMember(Name = "origin_y")]
         public float OriginY;
+        [DataMember(Name = "origin_offset_x")]
+        public float OriginOffsetX;
+        [DataMember(Name = "origin_offset_y")]
+        public float OriginOffsetY;
+        [DataMember(Name = "base_angle_offset")]
+        public float BaseAngleOffset;
         [DataMember(Name = "pattern_type")]
         public PatternType PatternType;
         [DataMember(Name = "target")]
@@ -35,6 +41,9 @@ namespace SpacetimeDB.Types
             ulong EnemyId,
             float OriginX,
             float OriginY,
+            float OriginOffsetX,
+            float OriginOffsetY,
+            float BaseAngleOffset,
             PatternType PatternType,
             SpacetimeDB.Identity? Target,
             string TextureId,
@@ -45,6 +54,9 @@ namespace SpacetimeDB.Types
             this.EnemyId = EnemyId;
             this.OriginX = OriginX;
             this.OriginY = OriginY;
+            this.OriginOffsetX = OriginOffsetX;
+            this.OriginOffsetY = OriginOffsetY;
+            this.BaseAngleOffset = BaseAngleOffset;
             this.PatternType = PatternType;
             this.Target = Target;
             this.TextureId = TextureId;

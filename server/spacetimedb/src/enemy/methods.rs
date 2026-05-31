@@ -51,17 +51,108 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
             hp_threshold: p.hp_threshold,
             movement: p.movement.clone(),
             attacks: p.attacks.iter().map(|a| AttackInstance {
-                pattern_type: a.pattern_type.clone(),
-                target: a.target.clone(),
+                attack: a.attack.clone(),
                 fire_rate: a.fire_rate,
                 last_fire_time: ctx.timestamp,
-                texture_id: a.texture_id.clone(),
+                seq_step_index: 0,
+                seq_repeat_count: 0,
+                seq_step_timer: ctx.timestamp,
+                seq_active: true,
+                seq_waiting: false,
             }).collect(),
         }).collect(),
         move_dir_x: 0.0,
         move_dir_y: 0.0,
         move_timer: ctx.timestamp,
     }
+}
+
+pub fn resolve_step_target(ctx: &ReducerContext, target: EnemyTarget, ex: f32, ey: f32) -> Option<Identity> {
+    match target {
+        EnemyTarget::Idle => None,
+        EnemyTarget::NearestPlayer | EnemyTarget::NearestCluster => find_nearest_player_id(ctx, ex, ey),
+        EnemyTarget::SpecificPlayer(opt) => opt.or_else(|| find_nearest_player_id(ctx, ex, ey)),
+    }
+}
+
+pub fn tick_sequence(ctx: &ReducerContext, attack: &mut AttackInstance, seq: &AttackSequence) -> Option<(PatternType, EnemyTarget, f32, f32, f32, String)> {
+    if seq.steps.is_empty() { return None; }
+
+    if !attack.seq_active {
+        if attack.fire_rate <= 0.0 { return None; }
+        let cooldown = Duration::from_secs_f32(1.0 / attack.fire_rate);
+        if ctx.timestamp < attack.last_fire_time + cooldown { return None; }
+        attack.seq_active = true;
+        attack.seq_step_index = 0;
+        attack.seq_repeat_count = 0;
+        attack.seq_waiting = false;
+        attack.seq_step_timer = ctx.timestamp;
+    }
+
+    for _ in 0..=seq.steps.len() {
+        let idx = attack.seq_step_index as usize;
+        if idx >= seq.steps.len() {
+            if seq.loop_sequence {
+                attack.seq_step_index = 0;
+                attack.seq_repeat_count = 0;
+                attack.seq_waiting = false;
+                continue;
+            } else {
+                attack.seq_active = false;
+                attack.last_fire_time = ctx.timestamp;
+                return None;
+            }
+        }
+        match seq.steps[idx].clone() {
+            SequenceStep::Single(s) => {
+                if attack.seq_waiting {
+                    if s.wait <= 0.0 || ctx.timestamp >= attack.seq_step_timer + Duration::from_secs_f32(s.wait) {
+                        attack.seq_step_index += 1;
+                        attack.seq_waiting = false;
+                        continue;
+                    }
+                    return None;
+                }
+                attack.seq_step_timer = ctx.timestamp;
+                if s.wait > 0.0 {
+                    attack.seq_waiting = true;
+                } else {
+                    attack.seq_step_index += 1;
+                }
+                return Some((s.pattern_type, s.target, s.origin_offset_x, s.origin_offset_y, s.base_angle_offset, s.texture_id));
+            }
+            SequenceStep::Repeat(r) => {
+                if attack.seq_waiting {
+                    if r.wait <= 0.0 || ctx.timestamp >= attack.seq_step_timer + Duration::from_secs_f32(r.wait) {
+                        attack.seq_step_index += 1;
+                        attack.seq_repeat_count = 0;
+                        attack.seq_waiting = false;
+                        continue;
+                    }
+                    return None;
+                }
+                if r.count == 0 || attack.seq_repeat_count >= r.count {
+                    if r.wait > 0.0 {
+                        if r.count == 0 { attack.seq_step_timer = ctx.timestamp; }
+                        attack.seq_waiting = true;
+                        return None;
+                    }
+                    attack.seq_step_index += 1;
+                    attack.seq_repeat_count = 0;
+                    continue;
+                }
+                let should_fire = attack.seq_repeat_count == 0
+                    || ctx.timestamp >= attack.seq_step_timer + Duration::from_secs_f32(r.interval);
+                if should_fire {
+                    attack.seq_repeat_count += 1;
+                    attack.seq_step_timer = ctx.timestamp;
+                    return Some((r.pattern_type, r.target, r.origin_offset_x, r.origin_offset_y, r.base_angle_offset, r.texture_id));
+                }
+                return None;
+            }
+        }
+    }
+    None
 }
 
 pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 {
@@ -73,17 +164,6 @@ pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 {
         }
     }
     phase
-}
-
-pub fn resolve_attack_targets(ctx: &ReducerContext, target: &mut EnemyTarget, ex: f32, ey: f32) -> Option<Identity> {
-    match target {
-        EnemyTarget::Idle => None,
-        EnemyTarget::NearestPlayer | EnemyTarget::NearestCluster => find_nearest_player_id(ctx, ex, ey),
-        EnemyTarget::SpecificPlayer(opt) => {
-            if opt.is_none() { *opt = find_nearest_player_id(ctx, ex, ey); }
-            *opt
-        }
-    }
 }
 
 pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, movement: &MovementBehavior) -> (f32, f32, f32, f32, Timestamp) {

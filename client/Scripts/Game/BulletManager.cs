@@ -44,8 +44,8 @@ public partial class BulletManager : Node
 
     public void Spawn(BulletPatternEvent bulletPattern)
     {
-        var origin = new Vector2(bulletPattern.OriginX, bulletPattern.OriginY);
-        var baseAngle = ResolveTargetAngle(origin, bulletPattern.Target);
+        var origin = new Vector2(bulletPattern.OriginX, bulletPattern.OriginY) + new Vector2(bulletPattern.OriginOffsetX, bulletPattern.OriginOffsetY);
+        var baseAngle = ResolveTargetAngle(origin, bulletPattern.Target) + Mathf.DegToRad(bulletPattern.BaseAngleOffset);
 
         directionalData.SetMeta("event_id", bulletPattern.EventId);
         directionalData.SetMeta("enemy_id", bulletPattern.EnemyId);
@@ -54,7 +54,7 @@ public partial class BulletManager : Node
         if (bulletPattern.PatternType is PatternType.Straight(var straight))
             SpawnStraight(origin, straight, baseAngle);
         else if (bulletPattern.PatternType is PatternType.Ring(var ring))
-            SpawnRing(origin, ring);
+            SpawnRing(origin, ring, baseAngle);
         else if (bulletPattern.PatternType is PatternType.Sine(var sine))
             SpawnSine(origin, sine, baseAngle);
         else if (bulletPattern.PatternType is PatternType.Burst(var burst))
@@ -104,25 +104,23 @@ public partial class BulletManager : Node
                 .Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
     }
 
-    private async void SpawnStraight(Vector2 origin, StraightParams p, float baseAngle)
+    private void SpawnStraight(Vector2 origin, StraightParams p, float baseAngle)
     {
         SetSpeed(p.Speed);
-        directionalData.Set("transforms", new Godot.Collections.Array<Transform2D> { new(baseAngle, origin) });
+        var transforms = new Godot.Collections.Array<Transform2D>();
         for (int i = 0; i < p.Count; i++)
-        {
-            blastBullets.Call("spawn_directional_bullets", directionalData);
-            if (i < p.Count - 1)
-                await ToSignal(GetTree().CreateTimer(0.15f), SceneTreeTimer.SignalName.Timeout);
-        }
+            transforms.Add(new Transform2D(baseAngle, origin));
+        directionalData.Set("transforms", transforms);
+        blastBullets.Call("spawn_directional_bullets", directionalData);
     }
 
-    private void SpawnRing(Vector2 origin, RingParams p)
+    private void SpawnRing(Vector2 origin, RingParams p, float baseAngle)
     {
         SetSpeed(p.Speed);
         var transforms = new Godot.Collections.Array<Transform2D>();
         float angleStep = Mathf.Tau / p.Count;
         for (int i = 0; i < p.Count; i++)
-            transforms.Add(new Transform2D(angleStep * i, origin));
+            transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
         directionalData.Set("transforms", transforms);
         blastBullets.Call("spawn_directional_bullets", directionalData);
     }

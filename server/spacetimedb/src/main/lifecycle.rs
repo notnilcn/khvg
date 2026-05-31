@@ -4,7 +4,7 @@ use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
 use crate::enemy::tables::*;
-use super::seeds::{seed_default_textures, seed_default_enemies};
+use super::seeds::{seed_default_textures, seed_default_enemies, seed_test_boss};
 use super::admin::internal_add_chunks;
 
 #[spacetimedb::reducer(init)]
@@ -19,6 +19,7 @@ pub fn init(ctx: &ReducerContext) {
     });
     seed_default_textures(ctx);
     seed_default_enemies(ctx);
+    seed_test_boss(ctx);
     let _ = internal_add_chunks(ctx, DEFAULT_CHUNK_HEX_RADIUS, DEFAULT_CHUNK_COLS, DEFAULT_CHUNK_ROWS, DEFAULT_HEX_OUTER_RADIUS);
 }
 

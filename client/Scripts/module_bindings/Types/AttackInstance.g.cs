@@ -13,37 +13,47 @@ namespace SpacetimeDB.Types
     [DataContract]
     public sealed partial class AttackInstance
     {
-        [DataMember(Name = "pattern_type")]
-        public PatternType PatternType;
-        [DataMember(Name = "target")]
-        public EnemyTarget Target;
+        [DataMember(Name = "attack")]
+        public AttackSequence Attack;
         [DataMember(Name = "fire_rate")]
         public float FireRate;
         [DataMember(Name = "last_fire_time")]
         public SpacetimeDB.Timestamp LastFireTime;
-        [DataMember(Name = "texture_id")]
-        public string TextureId;
+        [DataMember(Name = "seq_step_index")]
+        public uint SeqStepIndex;
+        [DataMember(Name = "seq_repeat_count")]
+        public uint SeqRepeatCount;
+        [DataMember(Name = "seq_step_timer")]
+        public SpacetimeDB.Timestamp SeqStepTimer;
+        [DataMember(Name = "seq_active")]
+        public bool SeqActive;
+        [DataMember(Name = "seq_waiting")]
+        public bool SeqWaiting;
 
         public AttackInstance(
-            PatternType PatternType,
-            EnemyTarget Target,
+            AttackSequence Attack,
             float FireRate,
             SpacetimeDB.Timestamp LastFireTime,
-            string TextureId
+            uint SeqStepIndex,
+            uint SeqRepeatCount,
+            SpacetimeDB.Timestamp SeqStepTimer,
+            bool SeqActive,
+            bool SeqWaiting
         )
         {
-            this.PatternType = PatternType;
-            this.Target = Target;
+            this.Attack = Attack;
             this.FireRate = FireRate;
             this.LastFireTime = LastFireTime;
-            this.TextureId = TextureId;
+            this.SeqStepIndex = SeqStepIndex;
+            this.SeqRepeatCount = SeqRepeatCount;
+            this.SeqStepTimer = SeqStepTimer;
+            this.SeqActive = SeqActive;
+            this.SeqWaiting = SeqWaiting;
         }
 
         public AttackInstance()
         {
-            this.PatternType = null!;
-            this.Target = null!;
-            this.TextureId = "";
+            this.Attack = new();
         }
     }
 }

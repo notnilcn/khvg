@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://bbjjh55yrwyfn"]
 
 [ext_resource type="Script" uid="uid://t75xafvl7xab" path="res://Scripts/Characters/LocalPlayer.cs" id="1_h1vum"]
-[ext_resource type="PackedScene" path="res://Assets/characters/Knight.fbx" id="2_7ophi"]
+[ext_resource type="PackedScene" uid="uid://dud7eg6a4d3k1" path="res://Assets/3D/characters/Knight.fbx" id="2_h1vum"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mrxaf"]
 
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
-KnightScene = ExtResource("2_7ophi")
+KnightScene = ExtResource("2_h1vum")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=170833701]
 position = Vector2(-4, -2)
