@@ -57,9 +57,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
             ]),
         ],
     });
-}
 
-pub fn seed_test_boss(ctx: &ReducerContext) {
     EnemyTemplate::seed(ctx, EnemyTemplate {
         template_id: "TestBoss".to_string(),
         texture_id: "Enemy".to_string(),
@@ -129,6 +127,66 @@ pub fn seed_test_boss(ctx: &ReducerContext) {
                     seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 270.0, "Arrow", 0.0),
                     seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 360.0, "Arrow", 0.1),
                 ], true), 1.0),
+            ]),
+        ],
+    });
+}
+
+pub fn seed_stress_enemies(ctx: &ReducerContext) {
+    EnemyTemplate::seed(ctx, EnemyTemplate {
+        template_id: "LowStress".to_string(),
+        texture_id: "Enemy".to_string(),
+        display_name: "Low Stress".to_string(),
+        max_hp: 100,
+        phases: vec![
+            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 20.0, change_interval: 3.0 }), vec![
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Ring(RingParams { speed: 60.0, count: 8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 0.0),
+                ], true), 0.3),
+            ]),
+        ],
+    });
+
+    EnemyTemplate::seed(ctx, EnemyTemplate {
+        template_id: "MedStress".to_string(),
+        texture_id: "Enemy".to_string(),
+        display_name: "Med Stress".to_string(),
+        max_hp: 150,
+        phases: vec![
+            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 35.0, change_interval: 2.0 }), vec![
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Ring(RingParams { speed: 80.0, count: 16 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 0.0),
+                ], true), 0.8),
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Straight(StraightParams { speed: 120.0, count: 3 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 0.0, "Arrow", 0.0),
+                ], true), 1.5),
+            ]),
+        ],
+    });
+
+    EnemyTemplate::seed(ctx, EnemyTemplate {
+        template_id: "HighStress".to_string(),
+        texture_id: "Enemy".to_string(),
+        display_name: "High Stress".to_string(),
+        max_hp: 200,
+        phases: vec![
+            make_phase(0, 0.0, MovementBehavior::Chase(ChaseParams { speed: 50.0 }), vec![
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Ring(RingParams { speed: 60.0, count: 24 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 0.0),
+                ], true), 1.5),
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Burst(BurstParams { speed: 100.0, count: 8, spread: 1.05 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 0.0, "Arrow", 0.0),
+                ], true), 2.0),
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 0.0, "Bullet", 0.0),
+                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 45.0, "Bullet", 0.0),
+                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 90.0, "Bullet", 0.0),
+                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 135.0, "Bullet", 0.0),
+                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 180.0, "Bullet", 0.0),
+                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 225.0, "Bullet", 0.0),
+                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 270.0, "Bullet", 0.0),
+                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 315.0, "Bullet", 0.0),
+                ], true), 2.5),
             ]),
         ],
     });
