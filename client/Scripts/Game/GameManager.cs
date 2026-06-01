@@ -69,7 +69,12 @@ public partial class GameManager : Node
 
 	private void OnJoinPressed()
 	{
-		if (Conn == null) return;
+		GD.Print("[GameManager] join pressed");
+		if (Conn == null) 
+		{
+			GD.PrintErr("[GameManager] Null connection on join pressed");
+			return;
+		}
 		var profile = Conn.Db.LocalPlayerProfiles.Iter()
 			.FirstOrDefault(p => p.ProfileName == "Knight");
 		if (profile == null)

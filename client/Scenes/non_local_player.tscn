@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://8oytx5u0vik3"]
 
 [ext_resource type="Script" uid="uid://c3xnyvxw0oftk" path="res://Scripts/Characters/NonLocalPlayer.cs" id="1_v7aue"]
-[ext_resource type="PackedScene" uid="uid://cw8y35bqkygin" path="res://Assets/3D/characters/Ranger.fbx" id="2_v7aue"]
+[ext_resource type="SpriteFrames" uid="uid://b53v3eyd2thnc" path="res://Textures/Players/Knight.tres" id="2_v7aue"]
 
 [node name="NonLocalPlayer" type="Node2D" unique_id=538548655]
 script = ExtResource("1_v7aue")
-PlayerModelScene = ExtResource("2_v7aue")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1561664506]
 position = Vector2(-6, -18)
-animation = &""
+sprite_frames = ExtResource("2_v7aue")
+animation = &"Idle"
