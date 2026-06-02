@@ -27,15 +27,25 @@ namespace SpacetimeDB.Types
     {
         public RemoteTables(DbConnection conn)
         {
+            AddTable(Ability = new(conn));
+            AddTable(Accessory = new(conn));
+            AddTable(AllAbilities = new(conn));
+            AddTable(AllAccessories = new(conn));
+            AddTable(AllArmor = new(conn));
+            AddTable(AllConsumables = new(conn));
+            AddTable(AllItems = new(conn));
             AddTable(AllTextures = new(conn));
+            AddTable(AllWeapons = new(conn));
+            AddTable(Armor = new(conn));
             AddTable(BuildingTile = new(conn));
             AddTable(BulletPatternEvent = new(conn));
+            AddTable(Consumable = new(conn));
             AddTable(Enemy = new(conn));
             AddTable(EnemyBehavior = new(conn));
             AddTable(EnemyTemplate = new(conn));
             AddTable(EnemyTemplates = new(conn));
             AddTable(EnemyZone = new(conn));
-            AddTable(ItemStats = new(conn));
+            AddTable(Item = new(conn));
             AddTable(LocalLobbyPlayer = new(conn));
             AddTable(LocalPlayer = new(conn));
             AddTable(LocalPlayerData = new(conn));
@@ -55,6 +65,7 @@ namespace SpacetimeDB.Types
             AddTable(PlayerProfile = new(conn));
             AddTable(PlayerStats = new(conn));
             AddTable(TextureEntry = new(conn));
+            AddTable(Weapon = new(conn));
         }
     }
 
@@ -551,15 +562,25 @@ namespace SpacetimeDB.Types
 
         internal static string[] AllTablesSqlQueries() => new string[]
         {
+            new QueryBuilder().From.Ability().ToSql(),
+            new QueryBuilder().From.Accessory().ToSql(),
+            new QueryBuilder().From.AllAbilities().ToSql(),
+            new QueryBuilder().From.AllAccessories().ToSql(),
+            new QueryBuilder().From.AllArmor().ToSql(),
+            new QueryBuilder().From.AllConsumables().ToSql(),
+            new QueryBuilder().From.AllItems().ToSql(),
             new QueryBuilder().From.AllTextures().ToSql(),
+            new QueryBuilder().From.AllWeapons().ToSql(),
+            new QueryBuilder().From.Armor().ToSql(),
             new QueryBuilder().From.BuildingTile().ToSql(),
             new QueryBuilder().From.BulletPatternEvent().ToSql(),
+            new QueryBuilder().From.Consumable().ToSql(),
             new QueryBuilder().From.Enemy().ToSql(),
             new QueryBuilder().From.EnemyBehavior().ToSql(),
             new QueryBuilder().From.EnemyTemplate().ToSql(),
             new QueryBuilder().From.EnemyTemplates().ToSql(),
             new QueryBuilder().From.EnemyZone().ToSql(),
-            new QueryBuilder().From.ItemStats().ToSql(),
+            new QueryBuilder().From.Item().ToSql(),
             new QueryBuilder().From.LocalLobbyPlayer().ToSql(),
             new QueryBuilder().From.LocalPlayer().ToSql(),
             new QueryBuilder().From.LocalPlayerData().ToSql(),
@@ -579,21 +600,32 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.PlayerProfile().ToSql(),
             new QueryBuilder().From.PlayerStats().ToSql(),
             new QueryBuilder().From.TextureEntry().ToSql(),
+            new QueryBuilder().From.Weapon().ToSql(),
         }
         ;
     }
 
     public sealed class From
     {
+        public global::SpacetimeDB.Table<Ability, AbilityCols, AbilityIxCols> Ability() => new("ability", new AbilityCols("ability"), new AbilityIxCols("ability"));
+        public global::SpacetimeDB.Table<Accessory, AccessoryCols, AccessoryIxCols> Accessory() => new("accessory", new AccessoryCols("accessory"), new AccessoryIxCols("accessory"));
+        public global::SpacetimeDB.Table<Ability, AllAbilitiesCols, AllAbilitiesIxCols> AllAbilities() => new("all_abilities", new AllAbilitiesCols("all_abilities"), new AllAbilitiesIxCols("all_abilities"));
+        public global::SpacetimeDB.Table<Accessory, AllAccessoriesCols, AllAccessoriesIxCols> AllAccessories() => new("all_accessories", new AllAccessoriesCols("all_accessories"), new AllAccessoriesIxCols("all_accessories"));
+        public global::SpacetimeDB.Table<Armor, AllArmorCols, AllArmorIxCols> AllArmor() => new("all_armor", new AllArmorCols("all_armor"), new AllArmorIxCols("all_armor"));
+        public global::SpacetimeDB.Table<Consumable, AllConsumablesCols, AllConsumablesIxCols> AllConsumables() => new("all_consumables", new AllConsumablesCols("all_consumables"), new AllConsumablesIxCols("all_consumables"));
+        public global::SpacetimeDB.Table<Item, AllItemsCols, AllItemsIxCols> AllItems() => new("all_items", new AllItemsCols("all_items"), new AllItemsIxCols("all_items"));
         public global::SpacetimeDB.Table<TextureEntry, AllTexturesCols, AllTexturesIxCols> AllTextures() => new("all_textures", new AllTexturesCols("all_textures"), new AllTexturesIxCols("all_textures"));
+        public global::SpacetimeDB.Table<Weapon, AllWeaponsCols, AllWeaponsIxCols> AllWeapons() => new("all_weapons", new AllWeaponsCols("all_weapons"), new AllWeaponsIxCols("all_weapons"));
+        public global::SpacetimeDB.Table<Armor, ArmorCols, ArmorIxCols> Armor() => new("armor", new ArmorCols("armor"), new ArmorIxCols("armor"));
         public global::SpacetimeDB.Table<BuildingTile, BuildingTileCols, BuildingTileIxCols> BuildingTile() => new("building_tile", new BuildingTileCols("building_tile"), new BuildingTileIxCols("building_tile"));
         public global::SpacetimeDB.Table<BulletPatternEvent, BulletPatternEventCols, BulletPatternEventIxCols> BulletPatternEvent() => new("bullet_pattern_event", new BulletPatternEventCols("bullet_pattern_event"), new BulletPatternEventIxCols("bullet_pattern_event"));
+        public global::SpacetimeDB.Table<Consumable, ConsumableCols, ConsumableIxCols> Consumable() => new("consumable", new ConsumableCols("consumable"), new ConsumableIxCols("consumable"));
         public global::SpacetimeDB.Table<Enemy, EnemyCols, EnemyIxCols> Enemy() => new("enemy", new EnemyCols("enemy"), new EnemyIxCols("enemy"));
         public global::SpacetimeDB.Table<EnemyBehavior, EnemyBehaviorCols, EnemyBehaviorIxCols> EnemyBehavior() => new("enemy_behavior", new EnemyBehaviorCols("enemy_behavior"), new EnemyBehaviorIxCols("enemy_behavior"));
         public global::SpacetimeDB.Table<EnemyTemplate, EnemyTemplateCols, EnemyTemplateIxCols> EnemyTemplate() => new("enemy_template", new EnemyTemplateCols("enemy_template"), new EnemyTemplateIxCols("enemy_template"));
         public global::SpacetimeDB.Table<EnemyTemplate, EnemyTemplatesCols, EnemyTemplatesIxCols> EnemyTemplates() => new("enemy_templates", new EnemyTemplatesCols("enemy_templates"), new EnemyTemplatesIxCols("enemy_templates"));
         public global::SpacetimeDB.Table<EnemyZone, EnemyZoneCols, EnemyZoneIxCols> EnemyZone() => new("enemy_zone", new EnemyZoneCols("enemy_zone"), new EnemyZoneIxCols("enemy_zone"));
-        public global::SpacetimeDB.Table<ItemStats, ItemStatsCols, ItemStatsIxCols> ItemStats() => new("item_stats", new ItemStatsCols("item_stats"), new ItemStatsIxCols("item_stats"));
+        public global::SpacetimeDB.Table<Item, ItemCols, ItemIxCols> Item() => new("item", new ItemCols("item"), new ItemIxCols("item"));
         public global::SpacetimeDB.Table<LoggedOutPlayer, LocalLobbyPlayerCols, LocalLobbyPlayerIxCols> LocalLobbyPlayer() => new("local_lobby_player", new LocalLobbyPlayerCols("local_lobby_player"), new LocalLobbyPlayerIxCols("local_lobby_player"));
         public global::SpacetimeDB.Table<LoggedInPlayer, LocalPlayerCols, LocalPlayerIxCols> LocalPlayer() => new("local_player", new LocalPlayerCols("local_player"), new LocalPlayerIxCols("local_player"));
         public global::SpacetimeDB.Table<PlayerData, LocalPlayerDataCols, LocalPlayerDataIxCols> LocalPlayerData() => new("local_player_data", new LocalPlayerDataCols("local_player_data"), new LocalPlayerDataIxCols("local_player_data"));
@@ -613,6 +645,7 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<PlayerProfile, PlayerProfileCols, PlayerProfileIxCols> PlayerProfile() => new("player_profile", new PlayerProfileCols("player_profile"), new PlayerProfileIxCols("player_profile"));
         public global::SpacetimeDB.Table<PlayerStats, PlayerStatsCols, PlayerStatsIxCols> PlayerStats() => new("player_stats", new PlayerStatsCols("player_stats"), new PlayerStatsIxCols("player_stats"));
         public global::SpacetimeDB.Table<TextureEntry, TextureEntryCols, TextureEntryIxCols> TextureEntry() => new("texture_entry", new TextureEntryCols("texture_entry"), new TextureEntryIxCols("texture_entry"));
+        public global::SpacetimeDB.Table<Weapon, WeaponCols, WeaponIxCols> Weapon() => new("weapon", new WeaponCols("weapon"), new WeaponIxCols("weapon"));
     }
 
     public sealed class TypedSubscriptionBuilder
@@ -719,7 +752,7 @@ namespace SpacetimeDB.Types
                 Reducer.ToggleDebug args => Reducers.InvokeToggleDebug(eventContext, args),
                 Reducer.UpdateInventory args => Reducers.InvokeUpdateInventory(eventContext, args),
                 Reducer.UpsertEnemyTemplate args => Reducers.InvokeUpsertEnemyTemplate(eventContext, args),
-                Reducer.UpsertItemStats args => Reducers.InvokeUpsertItemStats(eventContext, args),
+                Reducer.UpsertItem args => Reducers.InvokeUpsertItem(eventContext, args),
                 Reducer.UpsertTextureEntry args => Reducers.InvokeUpsertTextureEntry(eventContext, args),
                 _ => throw new ArgumentOutOfRangeException("Reducer", $"Unknown reducer {reducer}")
             };

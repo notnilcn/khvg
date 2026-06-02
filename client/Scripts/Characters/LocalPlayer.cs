@@ -1,10 +1,25 @@
 #nullable enable
 using Godot;
 using SpacetimeDB.Types;
+using System.Collections.Generic;
 using System.Linq;
+
+public class ResolvedSlot
+{
+	public InventorySlot? Slot { get; init; }
+	public Item? Item { get; init; }
+	public Weapon? Weapon { get; init; }
+	public Ability? Ability { get; init; }
+	public Consumable? Consumable { get; init; }
+	public Armor? Armor { get; init; }
+	public Accessory? Accessory { get; init; }
+	public bool IsEmpty => Item == null;
+}
 
 public partial class LocalPlayer : CharacterBody2D
 {
+	[Signal] public delegate void InventoryChangedEventHandler();
+
 	public static LocalPlayer? Local { get; private set; }
 
 	public uint Level { get; private set; }
@@ -17,12 +32,29 @@ public partial class LocalPlayer : CharacterBody2D
 	public int Vitality { get; private set; }
 	public int Speed { get; private set; }
 
-	private const float SpeedPerStat      = 4f;
+	private const float SpeedPerStat = 4f;
 	private const float WrapSnapThreshold = 50f;
 
+	private readonly List<InventorySlot> inventorySlots = new();
+
 	private AnimatedSprite2D sprite = null!;
-	private float reportTimer       = 0f;
+	private float reportTimer = 0f;
 	private const float ReportInterval = 0.1f;
+
+	// Slot 0: weapon only
+	public Weapon? EquippedWeapon => GetSlotItem<Weapon>(0, GameManager.Instance.GetWeapon);
+
+	// Slots 1-5: ability/consumable mixed
+	public IReadOnlyList<ResolvedSlot> HotbarSlots => BuildResolvedSlots(1, 5);
+
+	// Slots 6-9: accessories only
+	public IReadOnlyList<Accessory?> AccessorySlots => BuildTypedSlots<Accessory>(6, 4, GameManager.Instance.GetAccessory);
+
+	// Slots 10-13: armor only
+	public IReadOnlyList<Armor?> ArmorSlots => BuildTypedSlots<Armor>(10, 4, GameManager.Instance.GetArmor);
+
+	// Slots 14-22: general mixed
+	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(14, 9);
 
 	public override void _Ready()
 	{
@@ -32,14 +64,17 @@ public partial class LocalPlayer : CharacterBody2D
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
 
-		conn.Db.LocalPlayerData.OnUpdate     += OnDataUpdate;
-		conn.Db.LocalPlayerStats.OnUpdate    += OnStatsUpdate;
-		conn.Db.LocalPlayerPosition.OnUpdate += OnPositionUpdate;
+		conn.Db.LocalPlayerData.OnUpdate      += OnDataUpdate;
+		conn.Db.LocalPlayerStats.OnUpdate     += OnStatsUpdate;
+		conn.Db.LocalPlayerPosition.OnUpdate  += OnPositionUpdate;
+		conn.Db.LocalPlayerInventory.OnUpdate += OnInventoryUpdate;
 
 		foreach (var row in conn.Db.LocalPlayerData.Iter())
 			ApplyData(row);
 		foreach (var row in conn.Db.LocalPlayerStats.Iter())
 			ApplyStats(row);
+		foreach (var row in conn.Db.LocalPlayerInventory.Iter())
+			ApplyInventory(row);
 
 		var loggedIn = conn.Db.LocalPlayer.Iter().FirstOrDefault();
 		if (loggedIn != null)
@@ -85,6 +120,15 @@ public partial class LocalPlayer : CharacterBody2D
 			GlobalPosition = serverPos;
 	}
 
+	private void OnInventoryUpdate(EventContext _, PlayerInventory old, PlayerInventory inventory) => ApplyInventory(inventory);
+
+	private void ApplyInventory(PlayerInventory inventory)
+	{
+		inventorySlots.Clear();
+		inventorySlots.AddRange(inventory.Slots);
+		EmitSignal("InventoryChanged");
+	}
+
 	private void ApplyData(PlayerData data)
 	{
 		Level = data.Level;
@@ -102,13 +146,45 @@ public partial class LocalPlayer : CharacterBody2D
 		Speed     = stats.Speed;
 	}
 
+	private IReadOnlyList<ResolvedSlot> BuildResolvedSlots(int startIndex, int count) =>
+		Enumerable.Range(startIndex, count).Select(ResolveSlotAt).ToList();
+
+	private IReadOnlyList<T?> BuildTypedSlots<T>(int startIndex, int count, System.Func<string, T?> resolver) where T : class =>
+		Enumerable.Range(startIndex, count).Select(i => GetSlotItem(i, resolver)).ToList();
+
+	private ResolvedSlot ResolveSlotAt(int index)
+	{
+		if (index >= inventorySlots.Count) return new ResolvedSlot();
+		var slot = inventorySlots[index];
+		if (slot.ItemId == null) return new ResolvedSlot { Slot = slot };
+		var item = GameManager.Instance.GetItem(slot.ItemId);
+		if (item == null) return new ResolvedSlot { Slot = slot };
+		return new ResolvedSlot {
+			Slot       = slot,
+			Item       = item,
+			Weapon     = item.ItemType == ItemType.Weapon     ? GameManager.Instance.GetWeapon(slot.ItemId)     : null,
+			Ability    = item.ItemType == ItemType.Ability    ? GameManager.Instance.GetAbility(slot.ItemId)    : null,
+			Consumable = item.ItemType == ItemType.Consumable ? GameManager.Instance.GetConsumable(slot.ItemId) : null,
+			Armor      = item.ItemType == ItemType.Armor      ? GameManager.Instance.GetArmor(slot.ItemId)      : null,
+			Accessory  = item.ItemType == ItemType.Accessory  ? GameManager.Instance.GetAccessory(slot.ItemId)  : null,
+		};
+	}
+
+	private T? GetSlotItem<T>(int index, System.Func<string, T?> resolver) where T : class
+	{
+		if (index >= inventorySlots.Count) return null;
+		var itemId = inventorySlots[index].ItemId;
+		return itemId != null ? resolver(itemId) : null;
+	}
+
 	public override void _ExitTree()
 	{
 		if (Local == this) Local = null;
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
-		conn.Db.LocalPlayerData.OnUpdate     -= OnDataUpdate;
-		conn.Db.LocalPlayerStats.OnUpdate    -= OnStatsUpdate;
-		conn.Db.LocalPlayerPosition.OnUpdate -= OnPositionUpdate;
+		conn.Db.LocalPlayerData.OnUpdate      -= OnDataUpdate;
+		conn.Db.LocalPlayerStats.OnUpdate     -= OnStatsUpdate;
+		conn.Db.LocalPlayerPosition.OnUpdate  -= OnPositionUpdate;
+		conn.Db.LocalPlayerInventory.OnUpdate -= OnInventoryUpdate;
 	}
 }

@@ -43,36 +43,71 @@ pub struct TextureEntry {
     pub kind: TextureKind,
 }
 
-#[table(accessor = item_stats, public)]
-pub struct ItemStats {
+#[derive(SpacetimeType, Clone, PartialEq)]
+pub enum ItemType {
+    Weapon,
+    Ability,
+    Armor,
+    Accessory,
+    Bag,
+    Consumable,
+}
+
+#[table(accessor = item, public)]
+pub struct Item {
     #[primary_key]
     pub item_id: String,
+    pub display_name: String,
     pub texture_id: String,
-    pub item_type: u8,
-    pub fire_rate: u8,
-    pub base_damage: u16,
-    pub str_damage_add: i32,
-    pub str_damage_mult: f32,
-    pub wis_damage_add: i32,
-    pub wis_damage_mult: f32,
-    pub dex_damage_add: i32,
-    pub dex_damage_mult: f32,
-    pub def_damage_add: i32,
-    pub def_damage_mult: f32,
-    pub vit_damage_add: i32,
-    pub vit_damage_mult: f32,
-    pub spd_damage_add: i32,
-    pub spd_damage_mult: f32,
-    pub str_bonus_add: u16,
-    pub str_bonus_mult: f32,
-    pub wis_bonus_add: u16,
-    pub wis_bonus_mult: f32,
-    pub dex_bonus_add: u16,
-    pub dex_bonus_mult: f32,
-    pub def_bonus_add: u16,
-    pub def_bonus_mult: f32,
-    pub vit_bonus_add: u16,
-    pub vit_bonus_mult: f32,
-    pub spd_bonus_add: u16,
-    pub spd_bonus_mult: f32,
+    pub item_type: ItemType,
+}
+
+#[table(accessor = weapon, public)]
+pub struct Weapon {
+    #[primary_key]
+    pub weapon_id: String,
+    pub damage: u32,
+    pub range: f32,
+    pub fire_rate: f32,
+    pub bullet_speed: f32,
+    pub zone_count: u32,
+    pub pierce: bool,
+    pub projectile_texture_id: String,
+}
+
+#[table(accessor = armor, public)]
+pub struct Armor {
+    #[primary_key]
+    pub armor_id: String,
+    pub defense_bonus: i32,
+    pub vitality_bonus: i32,
+    pub hp_bonus: u32,
+}
+
+#[table(accessor = ability, public)]
+pub struct Ability {
+    #[primary_key]
+    pub ability_id: String,
+    pub cooldown: f32,
+    pub duration: f32,
+    pub potency: f32,
+}
+
+#[table(accessor = accessory, public)]
+pub struct Accessory {
+    #[primary_key]
+    pub accessory_id: String,
+    pub strength_bonus: i32,
+    pub wisdom_bonus: i32,
+    pub dexterity_bonus: i32,
+    pub speed_bonus: i32,
+}
+
+#[table(accessor = consumable, public)]
+pub struct Consumable {
+    #[primary_key]
+    pub consumable_id: String,
+    pub effect: String,
+    pub potency: f32,
+    pub duration: f32,
 }

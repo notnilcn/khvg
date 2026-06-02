@@ -28,6 +28,12 @@ public partial class GameManager : Node
 	private readonly Dictionary<ulong, Enemy> enemies = new();
 	private readonly Dictionary<ulong, Drop> drops = new();
 	private readonly Dictionary<string, string> textureCache = new();
+	private readonly Dictionary<string, SpacetimeDB.Types.Item> itemCache = new();
+	private readonly Dictionary<string, SpacetimeDB.Types.Weapon> weaponCache = new();
+	private readonly Dictionary<string, SpacetimeDB.Types.Armor> armorCache = new();
+	private readonly Dictionary<string, SpacetimeDB.Types.Ability> abilityCache = new();
+	private readonly Dictionary<string, SpacetimeDB.Types.Accessory> accessoryCache = new();
+	private readonly Dictionary<string, SpacetimeDB.Types.Consumable> consumableCache = new();
 
 	private CanvasLayer? lobbyLayer;
 	private Button? joinButton;
@@ -116,8 +122,38 @@ public partial class GameManager : Node
 		conn.Db.AllTextures.OnUpdate += (_, _, texture) => textureCache[texture.TextureId] = texture.ResPath;
 		conn.Db.AllTextures.OnDelete += (_, texture) => textureCache.Remove(texture.TextureId);
 
+		conn.Db.AllItems.OnInsert += (_, item) => itemCache[item.ItemId] = item;
+		conn.Db.AllItems.OnUpdate += (_, _, item) => itemCache[item.ItemId] = item;
+		conn.Db.AllItems.OnDelete += (_, item) => itemCache.Remove(item.ItemId);
+
+		conn.Db.AllWeapons.OnInsert += (_, weapon) => weaponCache[weapon.WeaponId] = weapon;
+		conn.Db.AllWeapons.OnUpdate += (_, _, weapon) => weaponCache[weapon.WeaponId] = weapon;
+		conn.Db.AllWeapons.OnDelete += (_, weapon) => weaponCache.Remove(weapon.WeaponId);
+
+		conn.Db.AllArmor.OnInsert += (_, armor) => armorCache[armor.ArmorId] = armor;
+		conn.Db.AllArmor.OnUpdate += (_, _, armor) => armorCache[armor.ArmorId] = armor;
+		conn.Db.AllArmor.OnDelete += (_, armor) => armorCache.Remove(armor.ArmorId);
+
+		conn.Db.AllAbilities.OnInsert += (_, ability) => abilityCache[ability.AbilityId] = ability;
+		conn.Db.AllAbilities.OnUpdate += (_, _, ability) => abilityCache[ability.AbilityId] = ability;
+		conn.Db.AllAbilities.OnDelete += (_, ability) => abilityCache.Remove(ability.AbilityId);
+
+		conn.Db.AllAccessories.OnInsert += (_, accessory) => accessoryCache[accessory.AccessoryId] = accessory;
+		conn.Db.AllAccessories.OnUpdate += (_, _, accessory) => accessoryCache[accessory.AccessoryId] = accessory;
+		conn.Db.AllAccessories.OnDelete += (_, accessory) => accessoryCache.Remove(accessory.AccessoryId);
+
+		conn.Db.AllConsumables.OnInsert += (_, consumable) => consumableCache[consumable.ConsumableId] = consumable;
+		conn.Db.AllConsumables.OnUpdate += (_, _, consumable) => consumableCache[consumable.ConsumableId] = consumable;
+		conn.Db.AllConsumables.OnDelete += (_, consumable) => consumableCache.Remove(consumable.ConsumableId);
+
 		conn.SubscriptionBuilder()
 			.AddQuery(q => q.From.AllTextures())
+			.AddQuery(q => q.From.AllItems())
+			.AddQuery(q => q.From.AllWeapons())
+			.AddQuery(q => q.From.AllArmor())
+			.AddQuery(q => q.From.AllAbilities())
+			.AddQuery(q => q.From.AllAccessories())
+			.AddQuery(q => q.From.AllConsumables())
 			.Subscribe();
 
 		lobbySub = conn.SubscriptionBuilder()
@@ -256,6 +292,13 @@ public partial class GameManager : Node
 
 	public string? GetResPath(string textureId) =>
 		textureCache.TryGetValue(textureId, out var path) ? path : null;
+
+	public Item? GetItem(string itemId) => itemCache.TryGetValue(itemId, out var item) ? item : null;
+	public Weapon? GetWeapon(string itemId) => weaponCache.TryGetValue(itemId, out var weapon) ? weapon : null;
+	public Armor? GetArmor(string itemId) => armorCache.TryGetValue(itemId, out var armor) ? armor : null;
+	public Ability? GetAbility(string itemId) => abilityCache.TryGetValue(itemId, out var ability) ? ability : null;
+	public Accessory? GetAccessory(string itemId) => accessoryCache.TryGetValue(itemId, out var accessory) ? accessory : null;
+	public Consumable? GetConsumable(string itemId) => consumableCache.TryGetValue(itemId, out var consumable) ? consumable : null;
 
 	public override void _ExitTree()
 	{

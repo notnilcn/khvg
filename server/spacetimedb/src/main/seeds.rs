@@ -192,6 +192,55 @@ pub fn seed_stress_enemies(ctx: &ReducerContext) {
     });
 }
 
+pub fn seed_default_items(ctx: &ReducerContext) {
+    seed_weapon(ctx, "StarterBow", "Starter Bow", "Arrow", "Arrow", 10, 300.0, 2.0, 400.0, 3, false);
+}
+
+pub fn seed_weapon(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, projectile_texture_id: &str, damage: u32, range: f32, fire_rate: f32, bullet_speed: f32, zone_count: u32, pierce: bool) {
+    Weapon::seed(ctx, Weapon { weapon_id: item_id.to_string(), damage, range, fire_rate, bullet_speed, zone_count, pierce, projectile_texture_id: projectile_texture_id.to_string() });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Weapon });
+}
+
+pub fn seed_armor(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, defense_bonus: i32, vitality_bonus: i32, hp_bonus: u32) {
+    Armor::seed(ctx, Armor { armor_id: item_id.to_string(), defense_bonus, vitality_bonus, hp_bonus });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Armor });
+}
+
+pub fn seed_ability(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, cooldown: f32, duration: f32, potency: f32) {
+    Ability::seed(ctx, Ability { ability_id: item_id.to_string(), cooldown, duration, potency });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Ability });
+}
+
+pub fn seed_accessory(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, strength_bonus: i32, wisdom_bonus: i32, dexterity_bonus: i32, speed_bonus: i32) {
+    Accessory::seed(ctx, Accessory { accessory_id: item_id.to_string(), strength_bonus, wisdom_bonus, dexterity_bonus, speed_bonus });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Accessory });
+}
+
+pub fn seed_consumable(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, effect: &str, potency: f32, duration: f32) {
+    Consumable::seed(ctx, Consumable { consumable_id: item_id.to_string(), effect: effect.to_string(), potency, duration });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Consumable });
+}
+
+pub fn make_phase(phase_index: u8, hp_threshold: f32, movement: MovementBehavior, attacks: Vec<AttackDef>) -> PhaseDef {
+    PhaseDef { phase_index, hp_threshold, movement, attacks }
+}
+
+pub fn make_attack(attack: AttackSequence, fire_rate: f32) -> AttackDef {
+    AttackDef { attack, fire_rate }
+}
+
+pub fn make_sequence(steps: Vec<SequenceStep>, loop_sequence: bool) -> AttackSequence {
+    AttackSequence { steps, loop_sequence }
+}
+
+pub fn seq_single(pattern_type: PatternType, target: EnemyTarget, origin_offset_x: f32, origin_offset_y: f32, base_angle_offset: f32, texture_id: &str, wait: f32) -> SequenceStep {
+    SequenceStep::Single(SequenceSingle { pattern_type, target, origin_offset_x, origin_offset_y, base_angle_offset, texture_id: texture_id.to_string(), wait })
+}
+
+pub fn seq_repeat(pattern_type: PatternType, target: EnemyTarget, origin_offset_x: f32, origin_offset_y: f32, base_angle_offset: f32, texture_id: &str, interval: f32, count: u32, wait: f32) -> SequenceStep {
+    SequenceStep::Repeat(SequenceRepeat { pattern_type, target, origin_offset_x, origin_offset_y, base_angle_offset, texture_id: texture_id.to_string(), interval, count, wait })
+}
+
 pub trait Seed: Sized {
     fn seed(ctx: &ReducerContext, data: Self);
 }
@@ -216,12 +265,62 @@ impl Seed for TextureEntry {
     }
 }
 
-impl Seed for ItemStats {
-    fn seed(ctx: &ReducerContext, data: ItemStats) {
-        if ctx.db.item_stats().item_id().find(&data.item_id).is_some() {
-            ctx.db.item_stats().item_id().update(data);
+impl Seed for Item {
+    fn seed(ctx: &ReducerContext, data: Item) {
+        if ctx.db.item().item_id().find(&data.item_id).is_some() {
+            ctx.db.item().item_id().update(data);
         } else {
-            ctx.db.item_stats().insert(data);
+            ctx.db.item().insert(data);
+        }
+    }
+}
+
+impl Seed for Weapon {
+    fn seed(ctx: &ReducerContext, data: Weapon) {
+        if ctx.db.weapon().weapon_id().find(&data.weapon_id).is_some() {
+            ctx.db.weapon().weapon_id().update(data);
+        } else {
+            ctx.db.weapon().insert(data);
+        }
+    }
+}
+
+impl Seed for Armor {
+    fn seed(ctx: &ReducerContext, data: Armor) {
+        if ctx.db.armor().armor_id().find(&data.armor_id).is_some() {
+            ctx.db.armor().armor_id().update(data);
+        } else {
+            ctx.db.armor().insert(data);
+        }
+    }
+}
+
+impl Seed for Ability {
+    fn seed(ctx: &ReducerContext, data: Ability) {
+        if ctx.db.ability().ability_id().find(&data.ability_id).is_some() {
+            ctx.db.ability().ability_id().update(data);
+        } else {
+            ctx.db.ability().insert(data);
+        }
+    }
+}
+
+impl Seed for Accessory {
+    fn seed(ctx: &ReducerContext, data: Accessory) {
+        if ctx.db.accessory().accessory_id().find(&data.accessory_id).is_some() {
+            ctx.db.accessory().accessory_id().update(data);
+        } else {
+            ctx.db.accessory().insert(data);
+        }
+    }
+}
+
+impl Seed for Consumable {
+    fn seed(ctx: &ReducerContext, data: Consumable) {
+        if ctx.db.consumable().consumable_id().find(&data.consumable_id).is_some() {
+            ctx.db.consumable().consumable_id().update(data);
+        } else {
+            ctx.db.consumable().insert(data);
         }
     }
 }
@@ -236,22 +335,4 @@ impl Seed for EnemyTemplate {
     }
 }
 
-pub fn make_phase(phase_index: u8, hp_threshold: f32, movement: MovementBehavior, attacks: Vec<AttackDef>) -> PhaseDef {
-    PhaseDef { phase_index, hp_threshold, movement, attacks }
-}
 
-pub fn make_attack(attack: AttackSequence, fire_rate: f32) -> AttackDef {
-    AttackDef { attack, fire_rate }
-}
-
-pub fn make_sequence(steps: Vec<SequenceStep>, loop_sequence: bool) -> AttackSequence {
-    AttackSequence { steps, loop_sequence }
-}
-
-pub fn seq_single(pattern_type: PatternType, target: EnemyTarget, origin_offset_x: f32, origin_offset_y: f32, base_angle_offset: f32, texture_id: &str, wait: f32) -> SequenceStep {
-    SequenceStep::Single(SequenceSingle { pattern_type, target, origin_offset_x, origin_offset_y, base_angle_offset, texture_id: texture_id.to_string(), wait })
-}
-
-pub fn seq_repeat(pattern_type: PatternType, target: EnemyTarget, origin_offset_x: f32, origin_offset_y: f32, base_angle_offset: f32, texture_id: &str, interval: f32, count: u32, wait: f32) -> SequenceStep {
-    SequenceStep::Repeat(SequenceRepeat { pattern_type, target, origin_offset_x, origin_offset_y, base_angle_offset, texture_id: texture_id.to_string(), interval, count, wait })
-}
