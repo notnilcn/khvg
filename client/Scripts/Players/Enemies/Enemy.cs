@@ -42,7 +42,6 @@ public partial class Enemy : CharacterBody2D
             }
             break;
         }
-
     }
 
     public override void _Process(double delta)

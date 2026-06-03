@@ -10,7 +10,7 @@ use crate::enemy::methods::*;
 pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
     if ctx.db.enemy().iter().next().is_some() { return; } // temporary: one enemy at a time
 
-    let template = match ctx.db.enemy_template().template_id().find(&"TestBoss".to_string()) {
+    let template = match ctx.db.enemy_template().template_id().find(&"Archer".to_string()) {
         Some(t) => t,
         None => return,
     };
@@ -89,7 +89,7 @@ pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), Strin
     };
     if enemy.immortal { return Ok(()); }
 
-    let damage = compute_player_damage(ctx, profile_id);
+    let damage = 0; //compute_player_damage(ctx, profile_id);
     let new_hp = enemy.hp.saturating_sub(damage);
 
     if new_hp == 0 {

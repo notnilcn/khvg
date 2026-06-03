@@ -193,7 +193,7 @@ pub fn seed_stress_enemies(ctx: &ReducerContext) {
 }
 
 pub fn seed_default_items(ctx: &ReducerContext) {
-    seed_weapon(ctx, "StarterBow", "Starter Bow", "Arrow", "Arrow", 10, 300.0, 2.0, 400.0, 3, false);
+    seed_weapon(ctx, "StarterBow", "Starter Bow", "Arrow", "Arrow", 10, 50.0, 4.0, 250.0, 6, false);
 }
 
 pub fn seed_weapon(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, projectile_texture_id: &str, damage: u32, range: f32, fire_rate: f32, bullet_speed: f32, zone_count: u32, pierce: bool) {

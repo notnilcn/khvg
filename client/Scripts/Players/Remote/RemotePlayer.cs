@@ -4,7 +4,7 @@ using SpacetimeDB;
 using SpacetimeDB.Types;
 using System.Linq;
 
-public partial class NonLocalPlayer : Node2D
+public partial class RemotePlayer : Node2D
 {
 	public Identity PlayerId  { get; set; }
 	public ulong    ProfileId { get; set; }

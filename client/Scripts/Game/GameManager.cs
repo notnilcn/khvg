@@ -24,7 +24,7 @@ public partial class GameManager : Node
 
 	private LocalPlayer? localPlayer;
 	private BulletManager? bulletManager;
-	private readonly Dictionary<string, NonLocalPlayer> remotePlayers = new();
+	private readonly Dictionary<string, RemotePlayer> remotePlayers = new();
 	private readonly Dictionary<ulong, Enemy> enemies = new();
 	private readonly Dictionary<ulong, Drop> drops = new();
 	private readonly Dictionary<string, string> textureCache = new();
@@ -233,7 +233,7 @@ public partial class GameManager : Node
 	{
 		var key = position.PlayerId.ToString();
 		if (IsLocal(position.PlayerId) || remotePlayers.ContainsKey(key)) return;
-		var node = NonLocalPlayerScene.Instantiate<NonLocalPlayer>();
+		var node = NonLocalPlayerScene.Instantiate<RemotePlayer>();
 		node.PlayerId = position.PlayerId;
 		node.ProfileId = position.ProfileId;
 		node.GlobalPosition = new Vector2(position.X, position.Y);

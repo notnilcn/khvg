@@ -6,23 +6,22 @@ public partial class BulletManager : Node
 {
     public static BulletManager Instance { get; private set; } = null!;
 
-    [Export] public Texture2D[] BulletTextures { get; set; } = System.Array.Empty<Texture2D>();
-
     private Node blastBullets = null!;
     private GodotObject directionalData = null!;
-    private readonly System.Collections.Generic.Dictionary<string, Texture2D?> bulletTextureCache = new();
+    private GodotObject playerBulletData = null!;
+    private readonly System.Collections.Generic.Dictionary<string, Texture2D?> bulletTextureCache = [];
 
     public override void _Ready()
     {
         Instance = this;
         blastBullets = GetChild(0);
         SetupDirectionalBullets();
+        SetupPlayerBulletData();
     }
 
     private void SetupDirectionalBullets()
     {
         directionalData = ClassDB.Instantiate("DirectionalBulletsData2D").AsGodotObject();
-        directionalData.Call("set_textures", new Godot.Collections.Array<Texture2D>(BulletTextures));
         directionalData.Set("texture_size", new Vector2(8, 8));
         directionalData.Call("set_collision_layer_from_array", new Godot.Collections.Array { 3 });
         directionalData.Call("set_collision_mask_from_array", new Godot.Collections.Array { 2 });
@@ -30,7 +29,27 @@ public partial class BulletManager : Node
         directionalData.Set("max_life_time", 8.0f);
     }
 
-    private void ApplyBulletTexture(string textureId)
+    private void SetupPlayerBulletData()
+    {
+        playerBulletData = ClassDB.Instantiate("DirectionalBulletsData2D").AsGodotObject();
+        playerBulletData.Set("texture_size", new Vector2(8, 8));
+        playerBulletData.Call("set_collision_layer_from_array", new Godot.Collections.Array());
+        playerBulletData.Call("set_collision_mask_from_array", new Godot.Collections.Array());
+        playerBulletData.Set("collision_shape_size", Vector2.Zero);
+    }
+
+    public void SpawnPlayerBullet(Vector2 origin, float angle, float lifetime, float speed, string textureId)
+    {
+        ApplyBulletTexture(playerBulletData, textureId);
+        playerBulletData.Set("max_life_time", lifetime);
+        playerBulletData.Set("all_bullet_speed_data",
+            ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject()
+                .Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
+        playerBulletData.Set("transforms", new Godot.Collections.Array<Transform2D> { new(angle, origin) });
+        blastBullets.Call("spawn_directional_bullets", playerBulletData);
+    }
+
+    private void ApplyBulletTexture(GodotObject data, string textureId)
     {
         if (!bulletTextureCache.TryGetValue(textureId, out var tex))
         {
@@ -39,7 +58,7 @@ public partial class BulletManager : Node
             bulletTextureCache[textureId] = tex;
         }
         if (tex != null)
-            directionalData.Call("set_textures", new Godot.Collections.Array<Texture2D> { tex });
+            data.Call("set_textures", new Godot.Collections.Array<Texture2D> { tex });
     }
 
     public void Spawn(BulletPatternEvent bulletPattern)
@@ -49,7 +68,7 @@ public partial class BulletManager : Node
 
         directionalData.SetMeta("event_id", bulletPattern.EventId);
         directionalData.SetMeta("enemy_id", bulletPattern.EnemyId);
-        ApplyBulletTexture(bulletPattern.TextureId);
+        ApplyBulletTexture(directionalData, bulletPattern.TextureId);
 
         if (bulletPattern.PatternType is PatternType.Straight(var straight))
             SpawnStraight(origin, straight, baseAngle);

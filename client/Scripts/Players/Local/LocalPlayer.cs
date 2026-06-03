@@ -42,16 +42,16 @@ public partial class LocalPlayer : CharacterBody2D
 	private const float ReportInterval = 0.1f;
 
 	// Slot 0: weapon only
-	public Weapon? EquippedWeapon => GetSlotItem<Weapon>(0, GameManager.Instance.GetWeapon);
+	public Weapon? EquippedWeapon => GetSlotItem(0, GameManager.Instance.GetWeapon);
 
 	// Slots 1-5: ability/consumable mixed
 	public IReadOnlyList<ResolvedSlot> HotbarSlots => BuildResolvedSlots(1, 5);
 
 	// Slots 6-9: accessories only
-	public IReadOnlyList<Accessory?> AccessorySlots => BuildTypedSlots<Accessory>(6, 4, GameManager.Instance.GetAccessory);
+	public IReadOnlyList<Accessory?> AccessorySlots => BuildTypedSlots(6, 4, GameManager.Instance.GetAccessory);
 
 	// Slots 10-13: armor only
-	public IReadOnlyList<Armor?> ArmorSlots => BuildTypedSlots<Armor>(10, 4, GameManager.Instance.GetArmor);
+	public IReadOnlyList<Armor?> ArmorSlots => BuildTypedSlots(10, 4, GameManager.Instance.GetArmor);
 
 	// Slots 14-22: general mixed
 	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(14, 9);
