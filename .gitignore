@@ -58,7 +58,9 @@ personal_notes/
 
 # ./SpacetimeDB/
 
-client/addons/
+client/addons/blastbullets2d
+client/addons/godot_dotnet_mcp
+client/addons/phantom_camera
 client-old/
 
 server3d/

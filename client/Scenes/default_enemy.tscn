@@ -12,7 +12,6 @@ scale = Vector2(0.5, 0.5)
 script = ExtResource("1_tincf")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=637474852]
-position = Vector2(3, 2)
 sprite_frames = ExtResource("2_tincf")
 animation = &"Idle"
 

@@ -93,9 +93,11 @@ public partial class GameManager : Node
 
 	public void Connect(string host, string dbName)
 	{
+		AuthToken.Init(OS.GetUserDataDir() + "/.bullethell_token_");
 		Conn = DbConnection.Builder()
 			.WithUri(host)
 			.WithDatabaseName(dbName)
+			// .WithToken(AuthToken.Token)
 			.WithToken(null)
 			.OnConnect(OnConnected)
 			.OnConnectError(OnConnectError)
@@ -106,7 +108,7 @@ public partial class GameManager : Node
 	private void OnConnected(DbConnection conn, Identity identity, string token)
 	{
 		LocalIdentity = identity;
-		//AuthToken.SaveToken(token);
+		// AuthToken.SaveToken(token);
 
 		conn.Db.LocalPlayer.OnInsert += OnLocalPlayerInsert;
 		conn.Db.LocalPlayer.OnDelete += OnLocalPlayerDelete;

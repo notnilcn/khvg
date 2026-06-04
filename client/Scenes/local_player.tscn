@@ -1,43 +1,16 @@
 [gd_scene format=3 uid="uid://bbjjh55yrwyfn"]
 
 [ext_resource type="Script" uid="uid://t75xafvl7xab" path="res://Scripts/Characters/LocalPlayer.cs" id="1_h1vum"]
-[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="2_7ophi"]
-[ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="3_t6pqr"]
-[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="4_rmvjh"]
+[ext_resource type="SpriteFrames" uid="uid://b53v3eyd2thnc" path="res://Textures/Players/Knight.tres" id="2_h1vum"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mrxaf"]
-
-[sub_resource type="Resource" id="Resource_t6pqr"]
-script = ExtResource("4_rmvjh")
 
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=170833701]
-position = Vector2(-4, -2)
+sprite_frames = ExtResource("2_h1vum")
 animation = &"Idle"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=273656135]
 shape = SubResource("CapsuleShape2D_mrxaf")
-
-[node name="Camera2D" type="Camera2D" parent="." unique_id=207238916]
-physics_interpolation_mode = 1
-top_level = true
-ignore_rotation = false
-editor_draw_limits = true
-
-[node name="PhantomCameraHost" type="Node" parent="Camera2D" unique_id=219973996]
-process_priority = 300
-process_physics_priority = 300
-script = ExtResource("2_7ophi")
-metadata/_custom_type_script = "uid://bd046eokvcnu2"
-
-[node name="PhantomCamera2D" type="Node2D" parent="." unique_id=1959819459 node_paths=PackedStringArray("follow_target")]
-top_level = true
-script = ExtResource("3_t6pqr")
-follow_mode = 2
-follow_target = NodePath("..")
-tween_resource = SubResource("Resource_t6pqr")
-rotate_with_target = true
-draw_limits = true
-metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
