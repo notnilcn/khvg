@@ -114,7 +114,7 @@ pub fn scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
         ctx.db.player_inventory().insert(PlayerInventory {
             profile_id,
             slots: vec![
-                weapon_slot(Some("StarterBow".to_string())), // 0: weapon
+                weapon_slot(Some("StarterShotgun".to_string())), // 0: weapon
                 hotbar_slot(), hotbar_slot(), hotbar_slot(), hotbar_slot(), hotbar_slot(), // 1-5: hotbar
                 accessory_slot(), accessory_slot(), accessory_slot(), accessory_slot(), // 6-9: accessories
                 armor_slot(), armor_slot(), armor_slot(), armor_slot(), // 10-13: armor

@@ -12,6 +12,7 @@ public partial class GameManager : Node
 
 	public DbConnection? Conn { get; private set; }
 	public Identity? LocalIdentity { get; private set; }
+	public string Username { get; private set; } = "";
 
 	[Export] public string Host { get; set; } = "http://127.0.0.1:3000";
 	[Export] public string DbName { get; set; } = "bullethell";
@@ -31,7 +32,7 @@ public partial class GameManager : Node
 	private readonly Dictionary<string, SpacetimeDB.Types.Item> itemCache = new();
 	private readonly Dictionary<string, SpacetimeDB.Types.Weapon> weaponCache = new();
 	private readonly Dictionary<string, SpacetimeDB.Types.Armor> armorCache = new();
-	private readonly Dictionary<string, SpacetimeDB.Types.Ability> abilityCache = new();
+	private readonly Dictionary<string, SpacetimeDB.Types.Artifact> artifactCache = new();
 	private readonly Dictionary<string, SpacetimeDB.Types.Accessory> accessoryCache = new();
 	private readonly Dictionary<string, SpacetimeDB.Types.Consumable> consumableCache = new();
 
@@ -109,6 +110,8 @@ public partial class GameManager : Node
 		LocalIdentity = identity;
 		//AuthToken.SaveToken(token);
 
+		conn.Db.LocalLobbyPlayer.OnInsert += (_, p) => Username = p.Username;
+		conn.Db.LocalLobbyPlayer.OnUpdate += (_, _, p) => Username = p.Username;
 		conn.Db.LocalPlayer.OnInsert += OnLocalPlayerInsert;
 		conn.Db.LocalPlayer.OnDelete += OnLocalPlayerDelete;
 		conn.Db.NearbyRemotePlayers.OnInsert += OnNearbyRemotePlayerInsert;
@@ -134,9 +137,9 @@ public partial class GameManager : Node
 		conn.Db.AllArmor.OnUpdate += (_, _, armor) => armorCache[armor.ArmorId] = armor;
 		conn.Db.AllArmor.OnDelete += (_, armor) => armorCache.Remove(armor.ArmorId);
 
-		conn.Db.AllAbilities.OnInsert += (_, ability) => abilityCache[ability.AbilityId] = ability;
-		conn.Db.AllAbilities.OnUpdate += (_, _, ability) => abilityCache[ability.AbilityId] = ability;
-		conn.Db.AllAbilities.OnDelete += (_, ability) => abilityCache.Remove(ability.AbilityId);
+		conn.Db.AllArtifacts.OnInsert += (_, artifact) => artifactCache[artifact.ArtifactId] = artifact;
+		conn.Db.AllArtifacts.OnUpdate += (_, _, artifact) => artifactCache[artifact.ArtifactId] = artifact;
+		conn.Db.AllArtifacts.OnDelete += (_, artifact) => artifactCache.Remove(artifact.ArtifactId);
 
 		conn.Db.AllAccessories.OnInsert += (_, accessory) => accessoryCache[accessory.AccessoryId] = accessory;
 		conn.Db.AllAccessories.OnUpdate += (_, _, accessory) => accessoryCache[accessory.AccessoryId] = accessory;
@@ -151,7 +154,7 @@ public partial class GameManager : Node
 			.AddQuery(q => q.From.AllItems())
 			.AddQuery(q => q.From.AllWeapons())
 			.AddQuery(q => q.From.AllArmor())
-			.AddQuery(q => q.From.AllAbilities())
+			.AddQuery(q => q.From.AllArtifacts())
 			.AddQuery(q => q.From.AllAccessories())
 			.AddQuery(q => q.From.AllConsumables())
 			.Subscribe();
@@ -171,6 +174,7 @@ public partial class GameManager : Node
 			.AddQuery(q => q.From.LocalPlayerStats())
 			.AddQuery(q => q.From.LocalPlayerInventory())
 			.AddQuery(q => q.From.LocalPlayerPosition())
+			.AddQuery(q => q.From.LocalPlayerActiveProfile())
 			.AddQuery(q => q.From.LocalPlayerProfiles())
 			.AddQuery(q => q.From.NearbyRemotePlayers())
 			.AddQuery(q => q.From.NearbyRemotePlayersProfiles())
@@ -289,6 +293,7 @@ public partial class GameManager : Node
 	// ── Helpers ───────────────────────────────────────────────────────────────
 
 	public bool IsLocal(Identity id) => LocalIdentity.HasValue && id == LocalIdentity.Value;
+	public Enemy? GetEnemy(ulong enemyId) => enemies.TryGetValue(enemyId, out var node) ? node : null;
 
 	public string? GetResPath(string textureId) =>
 		textureCache.TryGetValue(textureId, out var path) ? path : null;
@@ -296,7 +301,7 @@ public partial class GameManager : Node
 	public Item? GetItem(string itemId) => itemCache.TryGetValue(itemId, out var item) ? item : null;
 	public Weapon? GetWeapon(string itemId) => weaponCache.TryGetValue(itemId, out var weapon) ? weapon : null;
 	public Armor? GetArmor(string itemId) => armorCache.TryGetValue(itemId, out var armor) ? armor : null;
-	public Ability? GetAbility(string itemId) => abilityCache.TryGetValue(itemId, out var ability) ? ability : null;
+	public Artifact? GetArtifact(string itemId) => artifactCache.TryGetValue(itemId, out var artifact) ? artifact : null;
 	public Accessory? GetAccessory(string itemId) => accessoryCache.TryGetValue(itemId, out var accessory) ? accessory : null;
 	public Consumable? GetConsumable(string itemId) => consumableCache.TryGetValue(itemId, out var consumable) ? consumable : null;
 

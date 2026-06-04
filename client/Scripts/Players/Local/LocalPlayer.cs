@@ -9,7 +9,7 @@ public class ResolvedSlot
 	public InventorySlot? Slot { get; init; }
 	public Item? Item { get; init; }
 	public Weapon? Weapon { get; init; }
-	public Ability? Ability { get; init; }
+	public Artifact? Artifact { get; init; }
 	public Consumable? Consumable { get; init; }
 	public Armor? Armor { get; init; }
 	public Accessory? Accessory { get; init; }
@@ -19,8 +19,12 @@ public class ResolvedSlot
 public partial class LocalPlayer : CharacterBody2D
 {
 	[Signal] public delegate void InventoryChangedEventHandler();
+	[Signal] public delegate void AimSettingsChangedEventHandler();
 
 	public static LocalPlayer? Local { get; private set; }
+
+	public string Username { get; private set; } = "";
+	public string ProfileName { get; private set; } = "";
 
 	public uint Level { get; private set; }
 	public uint Hp { get; private set; }
@@ -64,30 +68,31 @@ public partial class LocalPlayer : CharacterBody2D
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
 
-		conn.Db.LocalPlayerData.OnUpdate      += OnDataUpdate;
-		conn.Db.LocalPlayerStats.OnUpdate     += OnStatsUpdate;
-		conn.Db.LocalPlayerPosition.OnUpdate  += OnPositionUpdate;
-		conn.Db.LocalPlayerInventory.OnUpdate += OnInventoryUpdate;
+		conn.Db.LocalPlayerData.OnUpdate            += OnDataUpdate;
+		conn.Db.LocalPlayerStats.OnUpdate           += OnStatsUpdate;
+		conn.Db.LocalPlayerPosition.OnUpdate        += OnPositionUpdate;
+		conn.Db.LocalPlayerInventory.OnUpdate       += OnInventoryUpdate;
+		conn.Db.LocalPlayerActiveProfile.OnUpdate   += OnActiveProfileUpdate;
 
+		Username = GameManager.Instance.Username;
 		foreach (var row in conn.Db.LocalPlayerData.Iter())
 			ApplyData(row);
 		foreach (var row in conn.Db.LocalPlayerStats.Iter())
 			ApplyStats(row);
 		foreach (var row in conn.Db.LocalPlayerInventory.Iter())
 			ApplyInventory(row);
+		foreach (var row in conn.Db.LocalPlayerPosition.Iter())
+			GlobalPosition = new Vector2(row.X, row.Y);
 
-		var loggedIn = conn.Db.LocalPlayer.Iter().FirstOrDefault();
-		if (loggedIn != null)
+		foreach (var profile in conn.Db.LocalPlayerActiveProfile.Iter())
 		{
-			var profile = conn.Db.LocalPlayerProfiles.Iter()
-				.FirstOrDefault(p => p.ProfileId == loggedIn.ProfileId);
-			if (profile != null)
-			{
-				var resPath = GameManager.Instance.GetResPath(profile.TextureId);
-				if (resPath != null)
-					sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
-			}
+			ProfileName = profile.ProfileName;
+			var resPath = GameManager.Instance.GetResPath(profile.TextureId);
+			if (resPath != null)
+				sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
+			EmitSignal("AimSettingsChanged");
 		}
+			
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -112,12 +117,16 @@ public partial class LocalPlayer : CharacterBody2D
 
 	private void OnDataUpdate(EventContext _, PlayerData old, PlayerData data) => ApplyData(data);
 	private void OnStatsUpdate(EventContext _, PlayerStats old, PlayerStats stats) => ApplyStats(stats);
+	private void OnActiveProfileUpdate(EventContext _, PlayerProfile old, PlayerProfile profile) => EmitSignal("AimSettingsChanged");
 
 	private void OnPositionUpdate(EventContext _, PlayerPosition old, PlayerPosition position)
 	{
 		var serverPos = new Vector2(position.X, position.Y);
 		if (GlobalPosition.DistanceSquaredTo(serverPos) > WrapSnapThreshold * WrapSnapThreshold)
+		{
+			GD.Print($"[Wrap] {GlobalPosition} → {serverPos} (dist={GlobalPosition.DistanceTo(serverPos):F1})");
 			GlobalPosition = serverPos;
+		}
 	}
 
 	private void OnInventoryUpdate(EventContext _, PlayerInventory old, PlayerInventory inventory) => ApplyInventory(inventory);
@@ -163,7 +172,7 @@ public partial class LocalPlayer : CharacterBody2D
 			Slot       = slot,
 			Item       = item,
 			Weapon     = item.ItemType == ItemType.Weapon     ? GameManager.Instance.GetWeapon(slot.ItemId)     : null,
-			Ability    = item.ItemType == ItemType.Ability    ? GameManager.Instance.GetAbility(slot.ItemId)    : null,
+			Artifact   = item.ItemType == ItemType.Ability    ? GameManager.Instance.GetArtifact(slot.ItemId)   : null,
 			Consumable = item.ItemType == ItemType.Consumable ? GameManager.Instance.GetConsumable(slot.ItemId) : null,
 			Armor      = item.ItemType == ItemType.Armor      ? GameManager.Instance.GetArmor(slot.ItemId)      : null,
 			Accessory  = item.ItemType == ItemType.Accessory  ? GameManager.Instance.GetAccessory(slot.ItemId)  : null,
@@ -182,9 +191,10 @@ public partial class LocalPlayer : CharacterBody2D
 		if (Local == this) Local = null;
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
-		conn.Db.LocalPlayerData.OnUpdate      -= OnDataUpdate;
-		conn.Db.LocalPlayerStats.OnUpdate     -= OnStatsUpdate;
-		conn.Db.LocalPlayerPosition.OnUpdate  -= OnPositionUpdate;
-		conn.Db.LocalPlayerInventory.OnUpdate -= OnInventoryUpdate;
+		conn.Db.LocalPlayerData.OnUpdate            -= OnDataUpdate;
+		conn.Db.LocalPlayerStats.OnUpdate           -= OnStatsUpdate;
+		conn.Db.LocalPlayerPosition.OnUpdate        -= OnPositionUpdate;
+		conn.Db.LocalPlayerInventory.OnUpdate       -= OnInventoryUpdate;
+		conn.Db.LocalPlayerActiveProfile.OnUpdate   -= OnActiveProfileUpdate;
 	}
 }

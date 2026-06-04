@@ -42,6 +42,7 @@ pub fn client_connected(ctx: &ReducerContext) {
             profile_id: 0, player_id: ctx.sender(),
             profile_name: "Knight".to_string(),
             texture_id: "Knight".to_string(),
+            aim_assist: false, lock_on: false,
         });
         log::info!("New player: {:?}", ctx.sender());
     }

@@ -35,7 +35,7 @@ pub fn create_profile(ctx: &ReducerContext, profile_name: String, texture_id: St
         return Err(format!("Profile '{}' already exists.", profile_name));
     }
     ctx.db.player_profile().insert(PlayerProfile {
-        profile_id: 0, player_id: ctx.sender(), profile_name, texture_id,
+        profile_id: 0, player_id: ctx.sender(), profile_name, texture_id, aim_assist: false, lock_on: false,
     });
     Ok(())
 }

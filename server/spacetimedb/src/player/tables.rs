@@ -33,6 +33,8 @@ pub struct PlayerProfile {
     pub player_id: Identity,
     pub profile_name: String,
     pub texture_id: String,
+    pub aim_assist: bool,
+    pub lock_on: bool,
 }
 
 #[table(accessor = player_data, public)]

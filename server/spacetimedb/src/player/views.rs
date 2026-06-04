@@ -33,6 +33,14 @@ fn local_player_profiles(ctx: &ViewContext) -> impl Query<PlayerProfile> {
     ctx.from.player_profile().r#where(move |p| p.player_id.eq(sender)).build()
 }
 
+#[spacetimedb::view(accessor = local_player_active_profile, public)]
+fn local_player_active_profile(ctx: &ViewContext) -> impl Query<PlayerProfile> {
+    let profile_id = ctx.db.logged_in_player().player_id().find(ctx.sender())
+        .map(|p| p.profile_id)
+        .unwrap_or(u64::MAX);
+    ctx.from.player_profile().r#where(move |p| p.profile_id.eq(profile_id)).build()
+}
+
 #[spacetimedb::view(accessor = local_player_data, public)]
 fn local_player_data(ctx: &ViewContext) -> impl Query<PlayerData> {
     let profile_id = ctx.db.logged_in_player().player_id().find(ctx.sender())

@@ -16,6 +16,7 @@ animation = &""
 shape = SubResource("CapsuleShape2D_mrxaf")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=207238916]
+zoom = Vector2(0.75, 0.75)
 
 [node name="Combat" type="Node2D" parent="." unique_id=1107745331]
 script = ExtResource("2_h1vum")

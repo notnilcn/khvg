@@ -21,9 +21,9 @@ fn all_armor(ctx: &AnonymousViewContext) -> impl Query<Armor> {
     ctx.from.armor().build()
 }
 
-#[spacetimedb::view(accessor = all_abilities, public)]
-fn all_abilities(ctx: &AnonymousViewContext) -> impl Query<Ability> {
-    ctx.from.ability().build()
+#[spacetimedb::view(accessor = all_artifacts, public)]
+fn all_artifacts(ctx: &AnonymousViewContext) -> impl Query<Artifact> {
+    ctx.from.artifact().build()
 }
 
 #[spacetimedb::view(accessor = all_accessories, public)]

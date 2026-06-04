@@ -44,6 +44,13 @@ pub struct TextureEntry {
 }
 
 #[derive(SpacetimeType, Clone, PartialEq)]
+pub enum WeaponPattern {
+    Single,
+    Triple,
+    Cluster,
+}
+
+#[derive(SpacetimeType, Clone, PartialEq)]
 pub enum ItemType {
     Weapon,
     Ability,
@@ -70,9 +77,12 @@ pub struct Weapon {
     pub range: f32,
     pub fire_rate: f32,
     pub bullet_speed: f32,
+    pub shot_count: u32,
     pub zone_count: u32,
     pub pierce: bool,
     pub projectile_texture_id: String,
+    pub pattern: WeaponPattern,
+    pub spread_angle: f32,
 }
 
 #[table(accessor = armor, public)]
@@ -84,10 +94,10 @@ pub struct Armor {
     pub hp_bonus: u32,
 }
 
-#[table(accessor = ability, public)]
-pub struct Ability {
+#[table(accessor = artifact, public)]
+pub struct Artifact {
     #[primary_key]
-    pub ability_id: String,
+    pub artifact_id: String,
     pub cooldown: f32,
     pub duration: f32,
     pub potency: f32,

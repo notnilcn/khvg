@@ -193,11 +193,13 @@ pub fn seed_stress_enemies(ctx: &ReducerContext) {
 }
 
 pub fn seed_default_items(ctx: &ReducerContext) {
-    seed_weapon(ctx, "StarterBow", "Starter Bow", "Arrow", "Arrow", 10, 50.0, 4.0, 250.0, 6, false);
+    seed_weapon(ctx, "StarterBow",     "Starter Bow",     "Arrow",  "Arrow",  10, 150.0, 4.0, 300.0,  3, 25, false, WeaponPattern::Triple,  0.35);
+    seed_weapon(ctx, "StarterRifle",   "Starter Rifle",   "Bullet", "Bullet", 60, 500.0, 0.8, 700.0,  1, 50, true, WeaponPattern::Single,  0.0);
+    seed_weapon(ctx, "StarterShotgun", "Starter Shotgun", "Arrow", "Arrow", 30, 100.0, 1.5, 250.0, 8, 25, false, WeaponPattern::Cluster, 1.05);
 }
 
-pub fn seed_weapon(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, projectile_texture_id: &str, damage: u32, range: f32, fire_rate: f32, bullet_speed: f32, zone_count: u32, pierce: bool) {
-    Weapon::seed(ctx, Weapon { weapon_id: item_id.to_string(), damage, range, fire_rate, bullet_speed, zone_count, pierce, projectile_texture_id: projectile_texture_id.to_string() });
+pub fn seed_weapon(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, projectile_texture_id: &str, damage: u32, range: f32, fire_rate: f32, bullet_speed: f32, shot_count: u32, zone_count: u32, pierce: bool, pattern: WeaponPattern, spread_angle: f32) {
+    Weapon::seed(ctx, Weapon { weapon_id: item_id.to_string(), damage, range, fire_rate, bullet_speed, shot_count, zone_count, pierce, projectile_texture_id: projectile_texture_id.to_string(), pattern, spread_angle });
     Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Weapon });
 }
 
@@ -207,7 +209,7 @@ pub fn seed_armor(ctx: &ReducerContext, item_id: &str, display_name: &str, textu
 }
 
 pub fn seed_ability(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, cooldown: f32, duration: f32, potency: f32) {
-    Ability::seed(ctx, Ability { ability_id: item_id.to_string(), cooldown, duration, potency });
+    Artifact::seed(ctx, Artifact { artifact_id: item_id.to_string(), cooldown, duration, potency });
     Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Ability });
 }
 
@@ -295,12 +297,12 @@ impl Seed for Armor {
     }
 }
 
-impl Seed for Ability {
-    fn seed(ctx: &ReducerContext, data: Ability) {
-        if ctx.db.ability().ability_id().find(&data.ability_id).is_some() {
-            ctx.db.ability().ability_id().update(data);
+impl Seed for Artifact {
+    fn seed(ctx: &ReducerContext, data: Artifact) {
+        if ctx.db.artifact().artifact_id().find(&data.artifact_id).is_some() {
+            ctx.db.artifact().artifact_id().update(data);
         } else {
-            ctx.db.ability().insert(data);
+            ctx.db.artifact().insert(data);
         }
     }
 }
