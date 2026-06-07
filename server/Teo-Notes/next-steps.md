@@ -1,15 +1,5 @@
 # Next Steps
 
-## M2. Stress Test
-
-With all systems in place, stress test how many enemies a single client can handle before performance degrades. Specific goals:
-
-- **Enemy bullet lifetimes** — currently hardcoded at 8s in `BulletManager`. Move lifetime to enemy seed configuration so each enemy type has a realistic bullet lifetime appropriate to its pattern and range.
-- **Client performance** — measure FPS and memory under increasing enemy counts.
-- **Server cost** — measure server-side load during stress test. Exact tooling TBD, but some baseline metric should be captured (SpacetimeDB dashboard, logs, or a scheduled diagnostic reducer).
-
----
-
 ## M3. Combat Damage, Player Hits, and Audit Logs
 
 Wire up the full damage loop:

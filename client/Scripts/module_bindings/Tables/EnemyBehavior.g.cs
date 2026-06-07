@@ -43,6 +43,11 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<EnemyBehavior, string> TemplateId { get; }
         public global::SpacetimeDB.Col<EnemyBehavior, string> DisplayName { get; }
         public global::SpacetimeDB.Col<EnemyBehavior, uint> MaxHp { get; }
+        public global::SpacetimeDB.Col<EnemyBehavior, float> SimulationRange { get; }
+        public global::SpacetimeDB.Col<EnemyBehavior, float> AggroLockSeconds { get; }
+        public global::SpacetimeDB.Col<EnemyBehavior, SpacetimeDB.Identity> AggroTarget { get; }
+        public global::SpacetimeDB.Col<EnemyBehavior, SpacetimeDB.Timestamp> AggroLockedUntil { get; }
+        public global::SpacetimeDB.Col<EnemyBehavior, bool> WasSimulating { get; }
         public global::SpacetimeDB.Col<EnemyBehavior, System.Collections.Generic.List<PhaseInstance>> Phases { get; }
         public global::SpacetimeDB.Col<EnemyBehavior, float> MoveDirX { get; }
         public global::SpacetimeDB.Col<EnemyBehavior, float> MoveDirY { get; }
@@ -54,6 +59,11 @@ namespace SpacetimeDB.Types
             TemplateId = new global::SpacetimeDB.Col<EnemyBehavior, string>(tableName, "template_id");
             DisplayName = new global::SpacetimeDB.Col<EnemyBehavior, string>(tableName, "display_name");
             MaxHp = new global::SpacetimeDB.Col<EnemyBehavior, uint>(tableName, "max_hp");
+            SimulationRange = new global::SpacetimeDB.Col<EnemyBehavior, float>(tableName, "simulation_range");
+            AggroLockSeconds = new global::SpacetimeDB.Col<EnemyBehavior, float>(tableName, "aggro_lock_seconds");
+            AggroTarget = new global::SpacetimeDB.Col<EnemyBehavior, SpacetimeDB.Identity>(tableName, "aggro_target");
+            AggroLockedUntil = new global::SpacetimeDB.Col<EnemyBehavior, SpacetimeDB.Timestamp>(tableName, "aggro_locked_until");
+            WasSimulating = new global::SpacetimeDB.Col<EnemyBehavior, bool>(tableName, "was_simulating");
             Phases = new global::SpacetimeDB.Col<EnemyBehavior, System.Collections.Generic.List<PhaseInstance>>(tableName, "phases");
             MoveDirX = new global::SpacetimeDB.Col<EnemyBehavior, float>(tableName, "move_dir_x");
             MoveDirY = new global::SpacetimeDB.Col<EnemyBehavior, float>(tableName, "move_dir_y");

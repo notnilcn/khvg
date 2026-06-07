@@ -46,6 +46,7 @@ public partial class GameManager : Node
 		Instance = this;
 		Connect(Host, DbName);
 		ShowLobby();
+		AddChild(new DebugOverlay());
 	}
 
 	public override void _Process(double delta)
@@ -294,6 +295,7 @@ public partial class GameManager : Node
 
 	public bool IsLocal(Identity id) => LocalIdentity.HasValue && id == LocalIdentity.Value;
 	public Enemy? GetEnemy(ulong enemyId) => enemies.TryGetValue(enemyId, out var node) ? node : null;
+	public int EnemyCount => enemies.Count;
 
 	public string? GetResPath(string textureId) =>
 		textureCache.TryGetValue(textureId, out var path) ? path : null;

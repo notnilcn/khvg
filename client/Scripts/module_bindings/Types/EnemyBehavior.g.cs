@@ -21,6 +21,16 @@ namespace SpacetimeDB.Types
         public string DisplayName;
         [DataMember(Name = "max_hp")]
         public uint MaxHp;
+        [DataMember(Name = "simulation_range")]
+        public float SimulationRange;
+        [DataMember(Name = "aggro_lock_seconds")]
+        public float AggroLockSeconds;
+        [DataMember(Name = "aggro_target")]
+        public SpacetimeDB.Identity? AggroTarget;
+        [DataMember(Name = "aggro_locked_until")]
+        public SpacetimeDB.Timestamp AggroLockedUntil;
+        [DataMember(Name = "was_simulating")]
+        public bool WasSimulating;
         [DataMember(Name = "phases")]
         public System.Collections.Generic.List<PhaseInstance> Phases;
         [DataMember(Name = "move_dir_x")]
@@ -35,6 +45,11 @@ namespace SpacetimeDB.Types
             string TemplateId,
             string DisplayName,
             uint MaxHp,
+            float SimulationRange,
+            float AggroLockSeconds,
+            SpacetimeDB.Identity? AggroTarget,
+            SpacetimeDB.Timestamp AggroLockedUntil,
+            bool WasSimulating,
             System.Collections.Generic.List<PhaseInstance> Phases,
             float MoveDirX,
             float MoveDirY,
@@ -45,6 +60,11 @@ namespace SpacetimeDB.Types
             this.TemplateId = TemplateId;
             this.DisplayName = DisplayName;
             this.MaxHp = MaxHp;
+            this.SimulationRange = SimulationRange;
+            this.AggroLockSeconds = AggroLockSeconds;
+            this.AggroTarget = AggroTarget;
+            this.AggroLockedUntil = AggroLockedUntil;
+            this.WasSimulating = WasSimulating;
             this.Phases = Phases;
             this.MoveDirX = MoveDirX;
             this.MoveDirY = MoveDirY;

@@ -18,15 +18,8 @@ pub fn has_player_in_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> 
     })
 }
 
-pub fn find_nearest_player_pos(ctx: &ReducerContext, x: f32, y: f32) -> Option<(f32, f32)> {
-    ctx.db.player_position().iter()
-        .filter(|p| ctx.db.logged_in_player().profile_id().find(&p.profile_id).is_some())
-        .min_by(|a, b| {
-            let da = (a.x - x).powi(2) + (a.y - y).powi(2);
-            let db = (b.x - x).powi(2) + (b.y - y).powi(2);
-            da.partial_cmp(&db).unwrap_or(std::cmp::Ordering::Equal)
-        })
-        .map(|p| (p.x, p.y))
+pub fn find_player_pos_by_id(ctx: &ReducerContext, id: Identity) -> Option<(f32, f32)> {
+    ctx.db.player_position().iter().find(|p| p.player_id == id).map(|p| (p.x, p.y))
 }
 
 pub fn find_nearest_player_id(ctx: &ReducerContext, x: f32, y: f32) -> Option<Identity> {
@@ -40,12 +33,47 @@ pub fn find_nearest_player_id(ctx: &ReducerContext, x: f32, y: f32) -> Option<Id
         .map(|p| p.player_id)
 }
 
+pub fn seconds_since(ctx: &ReducerContext, since: Timestamp) -> f32 {
+    let now = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros();
+    let then = since.to_duration_since_unix_epoch().unwrap_or_default().as_micros();
+    now.saturating_sub(then) as f32 / 1_000_000.0
+}
+
+pub fn splitmix64(seed: u64) -> u64 {
+    let h = (seed ^ (seed >> 30)).wrapping_mul(0xbf58476d1ce4e5b9);
+    let h = (h ^ (h >> 27)).wrapping_mul(0x94d049bb133111eb);
+    h ^ (h >> 31)
+}
+
+pub fn hash_to_unit(h: u64) -> f32 {
+    (h >> 11) as f32 / (1u64 << 53) as f32
+}
+
+// Returns (is_in_active_phase, cycle_index) for a move/pause cycle measured from `since`.
+pub fn cycle_phase(ctx: &ReducerContext, since: Timestamp, active_duration: f32, pause_duration: f32) -> (bool, u64) {
+    let cycle = (active_duration + pause_duration).max(f32::EPSILON);
+    let elapsed = seconds_since(ctx, since);
+    let cycle_index = (elapsed / cycle).floor() as u64;
+    (elapsed % cycle < active_duration, cycle_index)
+}
+
+pub fn recompute_aggro(ctx: &ReducerContext, x: f32, y: f32, lock_seconds: f32) -> (Option<Identity>, Timestamp) {
+    let target = find_nearest_player_id(ctx, x, y);
+    let locked_until = ctx.timestamp + Duration::from_secs_f32(lock_seconds.max(0.0));
+    (target, locked_until)
+}
+
 pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> EnemyBehavior {
     EnemyBehavior {
         behavior_id: 0,
         template_id: template.template_id.clone(),
         display_name: template.display_name.clone(),
         max_hp: template.max_hp,
+        simulation_range: template.simulation_range,
+        aggro_lock_seconds: template.aggro_lock_seconds,
+        aggro_target: None,
+        aggro_locked_until: ctx.timestamp,
+        was_simulating: false,
         phases: template.phases.iter().map(|p| PhaseInstance {
             phase_index: p.phase_index,
             hp_threshold: p.hp_threshold,
@@ -67,15 +95,14 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
     }
 }
 
-pub fn resolve_step_target(ctx: &ReducerContext, target: EnemyTarget, ex: f32, ey: f32) -> Option<Identity> {
+pub fn resolve_step_target(target: EnemyTarget, aggro_target: Option<Identity>) -> Option<Identity> {
     match target {
         EnemyTarget::Idle => None,
-        EnemyTarget::NearestPlayer | EnemyTarget::NearestCluster => find_nearest_player_id(ctx, ex, ey),
-        EnemyTarget::SpecificPlayer(opt) => opt.or_else(|| find_nearest_player_id(ctx, ex, ey)),
+        EnemyTarget::AggroTarget => aggro_target,
     }
 }
 
-pub fn tick_sequence(ctx: &ReducerContext, attack: &mut AttackInstance, seq: &AttackSequence) -> Option<(PatternType, EnemyTarget, f32, f32, f32, String)> {
+pub fn tick_sequence(ctx: &ReducerContext, attack: &mut AttackInstance, seq: &AttackSequence) -> Option<(PatternType, EnemyTarget, f32, f32, f32, String, f32)> {
     if seq.steps.is_empty() { return None; }
 
     if !attack.seq_active {
@@ -119,7 +146,7 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut AttackInstance, seq: &At
                 } else {
                     attack.seq_step_index += 1;
                 }
-                return Some((s.pattern_type, s.target, s.origin_offset_x, s.origin_offset_y, s.base_angle_offset, s.texture_id));
+                return Some((s.pattern_type, s.target, s.origin_offset_x, s.origin_offset_y, s.base_angle_offset, s.texture_id, s.lifetime));
             }
             SequenceStep::Repeat(r) => {
                 if attack.seq_waiting {
@@ -146,7 +173,7 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut AttackInstance, seq: &At
                 if should_fire {
                     attack.seq_repeat_count += 1;
                     attack.seq_step_timer = ctx.timestamp;
-                    return Some((r.pattern_type, r.target, r.origin_offset_x, r.origin_offset_y, r.base_angle_offset, r.texture_id));
+                    return Some((r.pattern_type, r.target, r.origin_offset_x, r.origin_offset_y, r.base_angle_offset, r.texture_id, r.lifetime));
                 }
                 return None;
             }
@@ -168,49 +195,47 @@ pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 {
 
 pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, movement: &MovementBehavior) -> (f32, f32, f32, f32, Timestamp) {
     let dt = BEHAVIOR_TICK_DT;
+    let idle = (enemy.x, enemy.y, behavior.move_dir_x, behavior.move_dir_y, behavior.move_timer);
     match movement {
-        MovementBehavior::Stationary => (enemy.x, enemy.y, behavior.move_dir_x, behavior.move_dir_y, behavior.move_timer),
-        MovementBehavior::Linear(p) => {
-            let len = (p.dir_x * p.dir_x + p.dir_y * p.dir_y).sqrt().max(f32::EPSILON);
-            (enemy.x + p.dir_x / len * p.speed * dt, enemy.y + p.dir_y / len * p.speed * dt, p.dir_x, p.dir_y, behavior.move_timer)
-        }
+        MovementBehavior::Stationary => idle,
         MovementBehavior::Wander(p) => {
-            let interval = Duration::from_secs_f32(p.change_interval);
-            let (dir_x, dir_y, move_timer) = if ctx.timestamp >= behavior.move_timer + interval {
-                let us = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros() as u64;
-                let h = enemy.enemy_id.wrapping_add(us);
-                let h = (h ^ (h >> 30)).wrapping_mul(0xbf58476d1ce4e5b9);
-                let h = (h ^ (h >> 27)).wrapping_mul(0x94d049bb133111eb);
-                let h = h ^ (h >> 31);
-                let angle = (h >> 11) as f32 / (1u64 << 53) as f32 * std::f32::consts::TAU;
-                (angle.cos(), angle.sin(), ctx.timestamp)
-            } else {
-                (behavior.move_dir_x, behavior.move_dir_y, behavior.move_timer)
-            };
-            (enemy.x + dir_x * p.speed * dt, enemy.y + dir_y * p.speed * dt, dir_x, dir_y, move_timer)
+            let (active, cycle_index) = cycle_phase(ctx, enemy.spawn_time, p.active_duration, p.pause_duration);
+            if !active { return idle; }
+            let angle = hash_to_unit(splitmix64(enemy.enemy_id.wrapping_add(cycle_index))) * std::f32::consts::TAU;
+            let (dir_x, dir_y) = (angle.cos(), angle.sin());
+            (enemy.x + dir_x * p.speed * dt, enemy.y + dir_y * p.speed * dt, dir_x, dir_y, behavior.move_timer)
         }
         MovementBehavior::Chase(p) => {
-            if let Some((px, py)) = find_nearest_player_pos(ctx, enemy.x, enemy.y) {
-                let dx = px - enemy.x;
-                let dy = py - enemy.y;
-                let len = (dx * dx + dy * dy).sqrt().max(f32::EPSILON);
-                let (nx, ny) = (dx / len, dy / len);
-                (enemy.x + nx * p.speed * dt, enemy.y + ny * p.speed * dt, nx, ny, behavior.move_timer)
-            } else {
-                (enemy.x, enemy.y, behavior.move_dir_x, behavior.move_dir_y, behavior.move_timer)
+            let (active, _) = cycle_phase(ctx, enemy.spawn_time, p.active_duration, p.pause_duration);
+            if !active { return idle; }
+            match behavior.aggro_target.and_then(|id| find_player_pos_by_id(ctx, id)) {
+                Some((px, py)) => {
+                    let dx = px - enemy.x;
+                    let dy = py - enemy.y;
+                    let len = (dx * dx + dy * dy).sqrt().max(f32::EPSILON);
+                    let (nx, ny) = (dx / len, dy / len);
+                    (enemy.x + nx * p.speed * dt, enemy.y + ny * p.speed * dt, nx, ny, behavior.move_timer)
+                }
+                None => idle,
             }
         }
         MovementBehavior::Flee(p) => {
-            if let Some((px, py)) = find_nearest_player_pos(ctx, enemy.x, enemy.y) {
-                let dx = enemy.x - px;
-                let dy = enemy.y - py;
-                let dist = (dx * dx + dy * dy).sqrt();
-                if dist < p.min_range {
-                    let (nx, ny) = (dx / dist.max(f32::EPSILON), dy / dist.max(f32::EPSILON));
-                    return (enemy.x + nx * p.speed * dt, enemy.y + ny * p.speed * dt, nx, ny, behavior.move_timer);
+            let (active, _) = cycle_phase(ctx, enemy.spawn_time, p.active_duration, p.pause_duration);
+            if !active { return idle; }
+            match behavior.aggro_target.and_then(|id| find_player_pos_by_id(ctx, id)) {
+                Some((px, py)) => {
+                    let dx = enemy.x - px;
+                    let dy = enemy.y - py;
+                    let dist = (dx * dx + dy * dy).sqrt();
+                    if dist < p.min_range {
+                        let (nx, ny) = (dx / dist.max(f32::EPSILON), dy / dist.max(f32::EPSILON));
+                        (enemy.x + nx * p.speed * dt, enemy.y + ny * p.speed * dt, nx, ny, behavior.move_timer)
+                    } else {
+                        idle
+                    }
                 }
+                None => idle,
             }
-            (enemy.x, enemy.y, behavior.move_dir_x, behavior.move_dir_y, behavior.move_timer)
         }
     }
 }

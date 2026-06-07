@@ -136,7 +136,7 @@ pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {
     let weapon_stats = weapon_item.and_then(|i| ctx.db.weapon().weapon_id().find(&i.item_id));
     match weapon_stats {
         Some(w) => (w.damage as f32 * (1.0 + stats.strength as f32 * 0.02)).max(1.0) as u32,
-        None => 1,
+        None => 0,
     }
 }
 

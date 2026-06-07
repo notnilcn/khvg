@@ -15,10 +15,20 @@ namespace SpacetimeDB.Types
     {
         [DataMember(Name = "speed")]
         public float Speed;
+        [DataMember(Name = "active_duration")]
+        public float ActiveDuration;
+        [DataMember(Name = "pause_duration")]
+        public float PauseDuration;
 
-        public ChaseParams(float Speed)
+        public ChaseParams(
+            float Speed,
+            float ActiveDuration,
+            float PauseDuration
+        )
         {
             this.Speed = Speed;
+            this.ActiveDuration = ActiveDuration;
+            this.PauseDuration = PauseDuration;
         }
 
         public ChaseParams()

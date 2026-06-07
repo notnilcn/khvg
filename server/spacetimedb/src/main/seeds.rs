@@ -36,11 +36,13 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Enemy".to_string(),
         max_hp: 100,
+        simulation_range: 210.0,
+        aggro_lock_seconds: 15.0,
         phases: vec![
-            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 25.0, change_interval: 2.0 }), vec![
+            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 30.0, active_duration: 2.5, pause_duration: 1.5 }), vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 0.0, "Bullet", 0.0),
-                ], true), 1.0),
+                    seq_single(PatternType::Ring(RingParams { speed: 70.0, count: 8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.0, 0.0),
+                ], true), 1.8),
             ]),
         ],
     });
@@ -49,11 +51,16 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         texture_id: "Archer".to_string(),
         display_name: "Archer".to_string(),
         max_hp: 100,
+        simulation_range: 660.0,
+        aggro_lock_seconds: 25.0,
         phases: vec![
-            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 30.0, change_interval: 1.5 }), vec![
+            make_phase(0, 0.0, MovementBehavior::Flee(FleeParams { speed: 40.0, min_range: 180.0, active_duration: 2.0, pause_duration: 1.5 }), vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Straight(StraightParams { speed: 100.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 0.0, "Arrow", 0.0),
-                ], true), 0.75),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 200.0, count: 3, speed_variance: 20.0, angle_jitter: 0.05 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 0.0),
+                ], true), 1.2),
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Shotgun(ShotgunParams { speed: 130.0, count: 5, spread: 0.4, speed_variance: 20.0, lifetime_variance: 0.4 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 0.0),
+                ], true), 2.2),
             ]),
         ],
     });
@@ -63,70 +70,24 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Test Boss".to_string(),
         max_hp: 1000,
+        simulation_range: 684.0,
+        aggro_lock_seconds: 30.0,
         phases: vec![
             make_phase(0, 0.0, MovementBehavior::Stationary, vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 20.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 40.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 60.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 80.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 100.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 120.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 140.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 160.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 180.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 200.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 220.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 240.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 260.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 280.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 300.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 320.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 50.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 340.0, "Bullet", 0.0),
+                    seq_single(PatternType::Explosion(ExplosionParams { speed: 90.0, count: 16, speed_variance: 30.0, lifetime_variance: 0.8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 3.0, 0.0),
+                ], true), 0.5),
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Curtain(CurtainParams { speed: 110.0, count: 9, angle_span: 1.4, gap_index: 4 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 3.0, 0.0),
+                ], true), 2.0),
+            ]),
+            make_phase(1, 0.5, MovementBehavior::Chase(ChaseParams { speed: 50.0, active_duration: 3.0, pause_duration: 1.5 }), vec![
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Volley(VolleyParams { speed: 160.0, count: 6, speed_variance: 20.0, angle_jitter: 0.08 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.5, 0.0),
                 ], true), 1.0),
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 90.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 180.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 270.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 10.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 100.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 190.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 280.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 20.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 110.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 200.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 290.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 30.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 120.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 210.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 300.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 40.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 130.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 220.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 310.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 50.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 140.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 230.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 320.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 60.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 150.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 240.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 330.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 70.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 160.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 250.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 340.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 80.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 170.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 260.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 350.0, "Arrow", 0.1),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 90.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 180.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 270.0, "Arrow", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 35.0, count: 1 }), EnemyTarget::Idle, 0.0, 0.0, 360.0, "Arrow", 0.1),
-                ], true), 1.0),
+                    seq_single(PatternType::Ring(RingParams { speed: 140.0, count: 20 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.5, 0.0),
+                ], true), 1.8),
             ]),
         ],
     });
@@ -138,10 +99,12 @@ pub fn seed_stress_enemies(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Low Stress".to_string(),
         max_hp: 100,
+        simulation_range: 180.0,
+        aggro_lock_seconds: 20.0,
         phases: vec![
-            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 20.0, change_interval: 3.0 }), vec![
+            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 20.0, active_duration: 3.0, pause_duration: 1.0 }), vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Ring(RingParams { speed: 60.0, count: 8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 0.0),
+                    seq_single(PatternType::Ring(RingParams { speed: 60.0, count: 8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.0, 0.0),
                 ], true), 0.3),
             ]),
         ],
@@ -152,13 +115,15 @@ pub fn seed_stress_enemies(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Med Stress".to_string(),
         max_hp: 150,
+        simulation_range: 450.0,
+        aggro_lock_seconds: 20.0,
         phases: vec![
-            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 35.0, change_interval: 2.0 }), vec![
+            make_phase(0, 0.0, MovementBehavior::Wander(WanderParams { speed: 35.0, active_duration: 2.0, pause_duration: 1.0 }), vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Ring(RingParams { speed: 80.0, count: 16 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 0.0),
+                    seq_single(PatternType::Ring(RingParams { speed: 80.0, count: 16 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.0, 0.0),
                 ], true), 0.8),
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Straight(StraightParams { speed: 120.0, count: 3 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 0.0, "Arrow", 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 120.0, count: 3, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.5, 0.0),
                 ], true), 1.5),
             ]),
         ],
@@ -169,23 +134,25 @@ pub fn seed_stress_enemies(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "High Stress".to_string(),
         max_hp: 200,
+        simulation_range: 375.0,
+        aggro_lock_seconds: 20.0,
         phases: vec![
-            make_phase(0, 0.0, MovementBehavior::Chase(ChaseParams { speed: 50.0 }), vec![
+            make_phase(0, 0.0, MovementBehavior::Chase(ChaseParams { speed: 50.0, active_duration: 4.0, pause_duration: 1.0 }), vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Ring(RingParams { speed: 60.0, count: 24 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 0.0),
+                    seq_single(PatternType::Ring(RingParams { speed: 60.0, count: 24 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.0, 0.0),
                 ], true), 1.5),
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Burst(BurstParams { speed: 100.0, count: 8, spread: 1.05 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 0.0, "Arrow", 0.0),
+                    seq_single(PatternType::Shotgun(ShotgunParams { speed: 100.0, count: 8, spread: 1.05, speed_variance: 0.0, lifetime_variance: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.5, 0.0),
                 ], true), 2.0),
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 0.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 45.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 90.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 135.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 180.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 225.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 270.0, "Bullet", 0.0),
-                    seq_single(PatternType::Straight(StraightParams { speed: 80.0, count: 1 }), EnemyTarget::NearestPlayer, 0.0, 0.0, 315.0, "Bullet", 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 80.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Bullet", 3.0, 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 80.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 45.0, "Bullet", 3.0, 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 80.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 90.0, "Bullet", 3.0, 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 80.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 135.0, "Bullet", 3.0, 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 80.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 180.0, "Bullet", 3.0, 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 80.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 225.0, "Bullet", 3.0, 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 80.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 270.0, "Bullet", 3.0, 0.0),
+                    seq_single(PatternType::Volley(VolleyParams { speed: 80.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 315.0, "Bullet", 3.0, 0.0),
                 ], true), 2.5),
             ]),
         ],
@@ -235,12 +202,12 @@ pub fn make_sequence(steps: Vec<SequenceStep>, loop_sequence: bool) -> AttackSeq
     AttackSequence { steps, loop_sequence }
 }
 
-pub fn seq_single(pattern_type: PatternType, target: EnemyTarget, origin_offset_x: f32, origin_offset_y: f32, base_angle_offset: f32, texture_id: &str, wait: f32) -> SequenceStep {
-    SequenceStep::Single(SequenceSingle { pattern_type, target, origin_offset_x, origin_offset_y, base_angle_offset, texture_id: texture_id.to_string(), wait })
+pub fn seq_single(pattern_type: PatternType, target: EnemyTarget, origin_offset_x: f32, origin_offset_y: f32, base_angle_offset: f32, texture_id: &str, lifetime: f32, wait: f32) -> SequenceStep {
+    SequenceStep::Single(SequenceSingle { pattern_type, target, origin_offset_x, origin_offset_y, base_angle_offset, texture_id: texture_id.to_string(), lifetime, wait })
 }
 
-pub fn seq_repeat(pattern_type: PatternType, target: EnemyTarget, origin_offset_x: f32, origin_offset_y: f32, base_angle_offset: f32, texture_id: &str, interval: f32, count: u32, wait: f32) -> SequenceStep {
-    SequenceStep::Repeat(SequenceRepeat { pattern_type, target, origin_offset_x, origin_offset_y, base_angle_offset, texture_id: texture_id.to_string(), interval, count, wait })
+pub fn seq_repeat(pattern_type: PatternType, target: EnemyTarget, origin_offset_x: f32, origin_offset_y: f32, base_angle_offset: f32, texture_id: &str, lifetime: f32, interval: f32, count: u32, wait: f32) -> SequenceStep {
+    SequenceStep::Repeat(SequenceRepeat { pattern_type, target, origin_offset_x, origin_offset_y, base_angle_offset, texture_id: texture_id.to_string(), lifetime, interval, count, wait })
 }
 
 pub trait Seed: Sized {

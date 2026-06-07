@@ -43,6 +43,8 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<EnemyTemplate, string> TextureId { get; }
         public global::SpacetimeDB.Col<EnemyTemplate, string> DisplayName { get; }
         public global::SpacetimeDB.Col<EnemyTemplate, uint> MaxHp { get; }
+        public global::SpacetimeDB.Col<EnemyTemplate, float> SimulationRange { get; }
+        public global::SpacetimeDB.Col<EnemyTemplate, float> AggroLockSeconds { get; }
         public global::SpacetimeDB.Col<EnemyTemplate, System.Collections.Generic.List<PhaseDef>> Phases { get; }
 
         public EnemyTemplateCols(string tableName)
@@ -51,6 +53,8 @@ namespace SpacetimeDB.Types
             TextureId = new global::SpacetimeDB.Col<EnemyTemplate, string>(tableName, "texture_id");
             DisplayName = new global::SpacetimeDB.Col<EnemyTemplate, string>(tableName, "display_name");
             MaxHp = new global::SpacetimeDB.Col<EnemyTemplate, uint>(tableName, "max_hp");
+            SimulationRange = new global::SpacetimeDB.Col<EnemyTemplate, float>(tableName, "simulation_range");
+            AggroLockSeconds = new global::SpacetimeDB.Col<EnemyTemplate, float>(tableName, "aggro_lock_seconds");
             Phases = new global::SpacetimeDB.Col<EnemyTemplate, System.Collections.Generic.List<PhaseDef>>(tableName, "phases");
         }
     }

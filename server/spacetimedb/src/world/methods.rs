@@ -7,7 +7,6 @@ pub const DEFAULT_CHUNK_COLS: i32 = 30;
 pub const DEFAULT_CHUNK_ROWS: i32 = 30;
 pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 32.0;
 pub const DEFAULT_AOI_CHUNK_RADIUS: i32 = 3;
-pub const ENEMY_SIMULATION_RANGE: f32 = 640.0;
 pub const BEHAVIOR_TICK_DT: f32 = 0.1;
 
 pub fn hex_area(hex_radius: i32) -> i32 {

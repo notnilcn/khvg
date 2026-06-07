@@ -1,22 +1,19 @@
 use spacetimedb::{table, Identity, ScheduleAt, SpacetimeType, Timestamp};
 use super::reducers::{tick_enemy_behavior, tick_enemy_spawn};
 
-#[derive(SpacetimeType, Clone)] pub struct StraightParams { pub speed: f32, pub count: u32 }
-#[derive(SpacetimeType, Clone)] pub struct SineParams { pub speed: f32, pub count: u32, pub amplitude: f32, pub frequency: f32 }
-#[derive(SpacetimeType, Clone)] pub struct HomingParams { pub speed: f32, pub count: u32, pub turn_rate: f32 }
 #[derive(SpacetimeType, Clone)] pub struct RingParams { pub speed: f32, pub count: u32 }
-#[derive(SpacetimeType, Clone)] pub struct SpiralParams { pub speed: f32, pub count: u32, pub arms: u32, pub rotation_speed: f32 }
-#[derive(SpacetimeType, Clone)] pub struct BurstParams { pub speed: f32, pub count: u32, pub spread: f32 }
+#[derive(SpacetimeType, Clone)] pub struct VolleyParams { pub speed: f32, pub count: u32, pub speed_variance: f32, pub angle_jitter: f32 }
+#[derive(SpacetimeType, Clone)] pub struct CurtainParams { pub speed: f32, pub count: u32, pub angle_span: f32, pub gap_index: u32 }
+#[derive(SpacetimeType, Clone)] pub struct ShotgunParams { pub speed: f32, pub count: u32, pub spread: f32, pub speed_variance: f32, pub lifetime_variance: f32 }
+#[derive(SpacetimeType, Clone)] pub struct ExplosionParams { pub speed: f32, pub count: u32, pub speed_variance: f32, pub lifetime_variance: f32 }
 
-#[derive(SpacetimeType, Clone)] pub struct LinearParams { pub dir_x: f32, pub dir_y: f32, pub speed: f32 }
-#[derive(SpacetimeType, Clone)] pub struct WanderParams { pub speed: f32, pub change_interval: f32 }
-#[derive(SpacetimeType, Clone)] pub struct ChaseParams { pub speed: f32 }
-#[derive(SpacetimeType, Clone)] pub struct FleeParams { pub speed: f32, pub min_range: f32 }
+#[derive(SpacetimeType, Clone)] pub struct WanderParams { pub speed: f32, pub active_duration: f32, pub pause_duration: f32 }
+#[derive(SpacetimeType, Clone)] pub struct ChaseParams { pub speed: f32, pub active_duration: f32, pub pause_duration: f32 }
+#[derive(SpacetimeType, Clone)] pub struct FleeParams { pub speed: f32, pub min_range: f32, pub active_duration: f32, pub pause_duration: f32 }
 
 #[derive(SpacetimeType, Clone)]
 pub enum MovementBehavior {
     Stationary,
-    Linear(LinearParams),
     Wander(WanderParams),
     Chase(ChaseParams),
     Flee(FleeParams),
@@ -24,20 +21,17 @@ pub enum MovementBehavior {
 
 #[derive(SpacetimeType, Clone)]
 pub enum PatternType {
-    Straight(StraightParams),
-    Sine(SineParams),
-    Homing(HomingParams),
     Ring(RingParams),
-    Spiral(SpiralParams),
-    Burst(BurstParams),
+    Volley(VolleyParams),
+    Curtain(CurtainParams),
+    Shotgun(ShotgunParams),
+    Explosion(ExplosionParams),
 }
 
 #[derive(SpacetimeType, Clone)]
 pub enum EnemyTarget {
     Idle,
-    NearestPlayer,
-    NearestCluster,
-    SpecificPlayer(Option<Identity>),
+    AggroTarget,
 }
 
 #[derive(SpacetimeType, Clone)]
@@ -48,6 +42,7 @@ pub struct SequenceSingle {
     pub origin_offset_y: f32,
     pub base_angle_offset: f32,
     pub texture_id: String,
+    pub lifetime: f32,
     pub wait: f32,
 }
 
@@ -59,6 +54,7 @@ pub struct SequenceRepeat {
     pub origin_offset_y: f32,
     pub base_angle_offset: f32,
     pub texture_id: String,
+    pub lifetime: f32,
     pub interval: f32,
     pub count: u32,
     pub wait: f32,
@@ -117,6 +113,8 @@ pub struct EnemyTemplate {
     pub texture_id: String,
     pub display_name: String,
     pub max_hp: u32,
+    pub simulation_range: f32,
+    pub aggro_lock_seconds: f32,
     pub phases: Vec<PhaseDef>,
 }
 
@@ -127,6 +125,11 @@ pub struct EnemyBehavior {
     pub template_id: String,
     pub display_name: String,
     pub max_hp: u32,
+    pub simulation_range: f32,
+    pub aggro_lock_seconds: f32,
+    pub aggro_target: Option<Identity>,
+    pub aggro_locked_until: Timestamp,
+    pub was_simulating: bool,
     pub phases: Vec<PhaseInstance>,
     pub move_dir_x: f32,
     pub move_dir_y: f32,
@@ -175,6 +178,7 @@ pub struct BulletPatternEvent {
     pub pattern_type: PatternType,
     pub target: Option<Identity>,
     pub texture_id: String,
+    pub lifetime: f32,
     #[index(btree)]
     pub chunk_index: i64,
 }

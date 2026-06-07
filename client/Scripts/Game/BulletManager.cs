@@ -68,6 +68,7 @@ public partial class BulletManager : Node
 
         directionalData.SetMeta("event_id", bulletPattern.EventId);
         directionalData.SetMeta("enemy_id", bulletPattern.EnemyId);
+        directionalData.Set("max_life_time", bulletPattern.Lifetime);
         ApplyBulletTexture(directionalData, bulletPattern.TextureId);
 
         if (bulletPattern.PatternType is PatternType.Straight(var straight))
