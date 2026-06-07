@@ -70,24 +70,38 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Test Boss".to_string(),
         max_hp: 1000,
-        simulation_range: 684.0,
+        simulation_range: 790.0,
         aggro_lock_seconds: 30.0,
         phases: vec![
+            // Phase 0 (100% HP): turret — Ring read cleanly with no movement noise
             make_phase(0, 0.0, MovementBehavior::Stationary, vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Explosion(ExplosionParams { speed: 90.0, count: 16, speed_variance: 30.0, lifetime_variance: 0.8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 3.0, 0.0),
-                ], true), 0.5),
+                    seq_single(PatternType::Ring(RingParams { speed: 130.0, count: 24 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.5, 0.0),
+                ], true), 1.0),
+            ]),
+            // Phase 1 (<=80% HP): patrols while sweeping an aimed fan — repositioning shifts where the gap lands
+            make_phase(1, 0.8, MovementBehavior::Wander(WanderParams { speed: 40.0, active_duration: 2.5, pause_duration: 1.5 }), vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Curtain(CurtainParams { speed: 110.0, count: 9, angle_span: 1.4, gap_index: 4 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 3.0, 0.0),
+                    seq_single(PatternType::Curtain(CurtainParams { speed: 120.0, count: 11, angle_span: 1.6, gap_index: 5 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 3.0, 0.0),
+                ], true), 0.6),
+            ]),
+            // Phase 2 (<=60% HP): rusher — closes the gap while spraying jittered aimed shots
+            make_phase(2, 0.6, MovementBehavior::Chase(ChaseParams { speed: 55.0, active_duration: 3.0, pause_duration: 1.0 }), vec![
+                make_attack(make_sequence(vec![
+                    seq_single(PatternType::Volley(VolleyParams { speed: 180.0, count: 5, speed_variance: 25.0, angle_jitter: 0.07 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.2, 0.0),
                 ], true), 2.0),
             ]),
-            make_phase(1, 0.5, MovementBehavior::Chase(ChaseParams { speed: 50.0, active_duration: 3.0, pause_duration: 1.5 }), vec![
+            // Phase 3 (<=40% HP): kiter — keeps its distance while peppering with randomized pellets
+            make_phase(3, 0.4, MovementBehavior::Flee(FleeParams { speed: 45.0, min_range: 200.0, active_duration: 2.0, pause_duration: 1.0 }), vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Volley(VolleyParams { speed: 160.0, count: 6, speed_variance: 20.0, angle_jitter: 0.08 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.5, 0.0),
-                ], true), 1.0),
+                    seq_single(PatternType::Shotgun(ShotgunParams { speed: 120.0, count: 7, spread: 0.8, speed_variance: 25.0, lifetime_variance: 0.5 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.2, 0.0),
+                ], true), 0.8),
+            ]),
+            // Phase 4 (<=20% HP): plants itself and erupts in a randomized 360° nova — desperation finale
+            make_phase(4, 0.2, MovementBehavior::Stationary, vec![
                 make_attack(make_sequence(vec![
-                    seq_single(PatternType::Ring(RingParams { speed: 140.0, count: 20 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.5, 0.0),
-                ], true), 1.8),
+                    seq_single(PatternType::Explosion(ExplosionParams { speed: 100.0, count: 20, speed_variance: 35.0, lifetime_variance: 0.9 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 3.0, 0.0),
+                ], true), 0.5),
             ]),
         ],
     });

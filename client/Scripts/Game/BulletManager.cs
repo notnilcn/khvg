@@ -71,18 +71,16 @@ public partial class BulletManager : Node
         directionalData.Set("max_life_time", bulletPattern.Lifetime);
         ApplyBulletTexture(directionalData, bulletPattern.TextureId);
 
-        if (bulletPattern.PatternType is PatternType.Straight(var straight))
-            SpawnStraight(origin, straight, baseAngle);
-        else if (bulletPattern.PatternType is PatternType.Ring(var ring))
+        if (bulletPattern.PatternType is PatternType.Ring(var ring))
             SpawnRing(origin, ring, baseAngle);
-        else if (bulletPattern.PatternType is PatternType.Sine(var sine))
-            SpawnSine(origin, sine, baseAngle);
-        else if (bulletPattern.PatternType is PatternType.Burst(var burst))
-            SpawnBurst(origin, burst, baseAngle);
-        else if (bulletPattern.PatternType is PatternType.Spiral(var spiral))
-            SpawnSpiral(origin, spiral, baseAngle);
-        else if (bulletPattern.PatternType is PatternType.Homing(var homing))
-            SpawnHoming(origin, homing, baseAngle);
+        else if (bulletPattern.PatternType is PatternType.Volley(var volley))
+            SpawnVolley(origin, volley, baseAngle, bulletPattern.EventId, bulletPattern.Lifetime);
+        else if (bulletPattern.PatternType is PatternType.Curtain(var curtain))
+            SpawnCurtain(origin, curtain, baseAngle);
+        else if (bulletPattern.PatternType is PatternType.Shotgun(var shotgun))
+            SpawnShotgun(origin, shotgun, baseAngle, bulletPattern.EventId, bulletPattern.Lifetime);
+        else if (bulletPattern.PatternType is PatternType.Explosion(var explosion))
+            SpawnExplosion(origin, explosion, baseAngle, bulletPattern.EventId, bulletPattern.Lifetime);
     }
 
     public void SpawnDirectional(Vector2 origin, Vector2 direction)
@@ -124,13 +122,33 @@ public partial class BulletManager : Node
                 .Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
     }
 
-    private void SpawnStraight(Vector2 origin, StraightParams p, float baseAngle)
+    // Deterministic PRNG (SplitMix64) mirroring the server's hash technique in enemy/methods.rs,
+    // seeded by event_id so every client (and the future audit script) derives identical pellet trajectories.
+    private static ulong SplitMix64(ulong seed)
     {
-        SetSpeed(p.Speed);
-        var transforms = new Godot.Collections.Array<Transform2D>();
-        for (int i = 0; i < p.Count; i++)
-            transforms.Add(new Transform2D(baseAngle, origin));
-        directionalData.Set("transforms", transforms);
+        ulong h = (seed ^ (seed >> 30)) * 0xbf58476d1ce4e5b9UL;
+        h = (h ^ (h >> 27)) * 0x94d049bb133111ebUL;
+        return h ^ (h >> 31);
+    }
+
+    private static float HashToUnit(ulong h) => (h >> 11) / (float)(1UL << 53);
+
+    private static ulong PelletSeed(ulong eventId, uint pelletIndex, uint stream)
+    {
+        unchecked
+        {
+            return SplitMix64(eventId + pelletIndex * 0x9E3779B97F4A7C15UL + stream * 0xBF58476D1CE4E5B9UL);
+        }
+    }
+
+    private static float Jitter(ulong eventId, uint pelletIndex, uint stream, float magnitude) =>
+        (HashToUnit(PelletSeed(eventId, pelletIndex, stream)) * 2f - 1f) * magnitude;
+
+    private void SpawnSingle(Vector2 origin, float angle, float speed, float lifetime)
+    {
+        directionalData.Set("max_life_time", lifetime);
+        SetSpeed(speed);
+        directionalData.Set("transforms", new Godot.Collections.Array<Transform2D> { new(angle, origin) });
         blastBullets.Call("spawn_directional_bullets", directionalData);
     }
 
@@ -145,49 +163,57 @@ public partial class BulletManager : Node
         blastBullets.Call("spawn_directional_bullets", directionalData);
     }
 
-    private void SpawnSine(Vector2 origin, SineParams p, float baseAngle)
+    private void SpawnVolley(Vector2 origin, VolleyParams p, float baseAngle, ulong eventId, float lifetime)
     {
+        for (uint i = 0; i < p.Count; i++)
+        {
+            float speed = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
+            float angle = baseAngle + Jitter(eventId, i, 1, p.AngleJitter);
+            SpawnSingle(origin, angle, speed, lifetime);
+        }
+    }
+
+    private void SpawnCurtain(Vector2 origin, CurtainParams p, float baseAngle)
+    {
+        if (p.Count == 0) return;
         SetSpeed(p.Speed);
         var transforms = new Godot.Collections.Array<Transform2D>();
-        float angleStep = p.Count > 1 ? Mathf.Tau / p.Count : 0f;
-        for (int i = 0; i < p.Count; i++)
-            transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
+        float angleStep  = p.Count > 1 ? p.AngleSpan / (p.Count - 1) : 0f;
+        float startAngle = baseAngle - p.AngleSpan * 0.5f;
+        for (uint i = 0; i < p.Count; i++)
+        {
+            if (i == p.GapIndex) continue;
+            transforms.Add(new Transform2D(startAngle + angleStep * i, origin));
+        }
         directionalData.Set("transforms", transforms);
         blastBullets.Call("spawn_directional_bullets", directionalData);
     }
 
-    private void SpawnBurst(Vector2 origin, BurstParams p, float baseAngle)
+    private void SpawnShotgun(Vector2 origin, ShotgunParams p, float baseAngle, ulong eventId, float lifetime)
     {
-        SetSpeed(p.Speed);
-        var transforms = new Godot.Collections.Array<Transform2D>();
+        if (p.Count == 0) return;
         float halfSpread = p.Spread * 0.5f;
         float angleStep  = p.Count > 1 ? p.Spread / (p.Count - 1) : 0f;
-        for (int i = 0; i < p.Count; i++)
-            transforms.Add(new Transform2D(baseAngle - halfSpread + angleStep * i, origin));
-        directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        for (uint i = 0; i < p.Count; i++)
+        {
+            float angle          = baseAngle - halfSpread + angleStep * i;
+            float speed          = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
+            float pelletLifetime = lifetime + Jitter(eventId, i, 1, p.LifetimeVariance);
+            SpawnSingle(origin, angle, speed, pelletLifetime);
+        }
     }
 
-    private void SpawnSpiral(Vector2 origin, SpiralParams p, float baseAngle)
+    private void SpawnExplosion(Vector2 origin, ExplosionParams p, float baseAngle, ulong eventId, float lifetime)
     {
-        SetSpeed(p.Speed);
-        var transforms = new Godot.Collections.Array<Transform2D>();
-        float angleStep = Mathf.Tau / p.Arms;
-        for (int i = 0; i < p.Arms; i++)
-            transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
-        directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
-    }
-
-    private void SpawnHoming(Vector2 origin, HomingParams p, float baseAngle)
-    {
-        SetSpeed(p.Speed);
-        var transforms = new Godot.Collections.Array<Transform2D>();
-        float angleStep = p.Count > 1 ? Mathf.Tau / p.Count : 0f;
-        for (int i = 0; i < p.Count; i++)
-            transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
-        directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        if (p.Count == 0) return;
+        float angleStep = Mathf.Tau / p.Count;
+        for (uint i = 0; i < p.Count; i++)
+        {
+            float angle          = baseAngle + angleStep * i;
+            float speed          = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
+            float pelletLifetime = lifetime + Jitter(eventId, i, 1, p.LifetimeVariance);
+            SpawnSingle(origin, angle, speed, pelletLifetime);
+        }
     }
 
     public override void _ExitTree()
