@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://uxmyt6slkohj"]
 
-[ext_resource type="Texture2D" uid="uid://df6f8fn5g1l8h" path="res://Assets/2D/Tiny Swords (Free Pack)/Units/Black Units/Archer/Archer_Idle.png" id="1_1q200"]
-[ext_resource type="Texture2D" uid="uid://d4joimvhjrqd" path="res://Assets/2D/Tiny Swords (Free Pack)/Units/Black Units/Archer/Archer_Run.png" id="2_sdgb6"]
+[ext_resource type="Texture2D" uid="uid://bhsgmja36xe5e" path="res://Assets/2D/Tiny Swords (Free Pack)/Units/Black Units/Archer/Archer_Idle.png" id="1_1q200"]
+[ext_resource type="Texture2D" uid="uid://cpryf6rcraddn" path="res://Assets/2D/Tiny Swords (Free Pack)/Units/Black Units/Archer/Archer_Run.png" id="2_sdgb6"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ob8ea"]
 atlas = ExtResource("1_1q200")
