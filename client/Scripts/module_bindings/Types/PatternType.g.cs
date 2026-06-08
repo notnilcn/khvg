@@ -9,11 +9,10 @@ namespace SpacetimeDB.Types
 {
     [SpacetimeDB.Type]
     public partial record PatternType : SpacetimeDB.TaggedEnum<(
-        StraightParams Straight,
-        SineParams Sine,
-        HomingParams Homing,
         RingParams Ring,
-        SpiralParams Spiral,
-        BurstParams Burst
+        VolleyParams Volley,
+        CurtainParams Curtain,
+        ShotgunParams Shotgun,
+        ExplosionParams Explosion
     )>;
 }

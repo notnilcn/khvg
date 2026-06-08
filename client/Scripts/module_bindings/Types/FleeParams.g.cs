@@ -17,14 +17,22 @@ namespace SpacetimeDB.Types
         public float Speed;
         [DataMember(Name = "min_range")]
         public float MinRange;
+        [DataMember(Name = "active_duration")]
+        public float ActiveDuration;
+        [DataMember(Name = "pause_duration")]
+        public float PauseDuration;
 
         public FleeParams(
             float Speed,
-            float MinRange
+            float MinRange,
+            float ActiveDuration,
+            float PauseDuration
         )
         {
             this.Speed = Speed;
             this.MinRange = MinRange;
+            this.ActiveDuration = ActiveDuration;
+            this.PauseDuration = PauseDuration;
         }
 
         public FleeParams()

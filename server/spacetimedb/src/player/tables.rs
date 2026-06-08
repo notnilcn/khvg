@@ -1,20 +1,10 @@
 use spacetimedb::{table, SpacetimeType, Identity, Timestamp};
-
-#[derive(SpacetimeType, Clone)]
-pub enum SlotKind {
-    Weapon,
-    Ability,
-    Armor,
-    Accessory,
-    Backpack,
-    Consumable,
-}
+use crate::world::tables::ItemType;
 
 #[derive(SpacetimeType, Clone)]
 pub struct InventorySlot {
-    pub kind: SlotKind,
-    pub index: u8,
-    pub item_id: String,
+    pub allowed_types: Vec<ItemType>,
+    pub item_id: Option<String>,
 }
 
 #[table(accessor = logged_in_player, public)]
@@ -43,6 +33,8 @@ pub struct PlayerProfile {
     pub player_id: Identity,
     pub profile_name: String,
     pub texture_id: String,
+    pub aim_assist: bool,
+    pub lock_on: bool,
 }
 
 #[table(accessor = player_data, public)]

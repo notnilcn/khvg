@@ -1,6 +1,7 @@
 use spacetimedb::{ViewContext, Query, AnonymousViewContext};
 use crate::player::views::nearby_indices;
-use crate::enemy::tables::*;
+use crate::enemy::def_tables::*;
+use crate::enemy::instance_tables::*;
 
 #[spacetimedb::view(accessor = nearby_enemies, public)]
 fn nearby_enemies(ctx: &ViewContext) -> impl Query<Enemy> {

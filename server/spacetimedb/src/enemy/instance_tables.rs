@@ -1,0 +1,131 @@
+use spacetimedb::{table, Identity, ScheduleAt, SpacetimeType, Timestamp};
+use super::reducers::{tick_enemy_behavior, tick_enemy_spawn};
+use super::def_tables::{PatternType, EnemyTarget};
+
+#[derive(SpacetimeType, Clone)]
+pub enum SequenceStepRef {
+    Single(u64),
+    Repeat(u64),
+    Multi(u64),
+}
+
+#[table(accessor = repeat_step_instance, public)]
+pub struct RepeatStepInstance {
+    #[primary_key] #[auto_inc] pub repeat_id: u64,
+    pub pattern_type: PatternType,
+    pub target: EnemyTarget,
+    pub offset_x: f32,
+    pub offset_y: f32,
+    pub base_angle_offset: f32,
+    pub texture_id: String,
+    pub lifetime: f32,
+    pub repeat_interval: f32,
+    pub repeat_target: u32,
+    pub next_step_delay: f32,
+    pub repeat_count: u32,
+}
+
+#[table(accessor = enemy_sequence_step, public)]
+pub struct EnemySequenceStep {
+    #[primary_key] #[auto_inc] pub step_id: u64,
+    #[index(btree)] pub attack_id: u64,
+    pub step_index: u32,
+    pub step: SequenceStepRef,
+}
+
+#[table(accessor = enemy_attack, public)]
+pub struct EnemyAttack {
+    #[primary_key] #[auto_inc] pub attack_id: u64,
+    #[index(btree)] pub phase_id: u64,
+    pub attack_index: u32,
+    pub step_index: u32,
+    pub step_timer: Timestamp,
+    pub step_waiting: bool,
+    pub start_delaying: bool,
+}
+
+#[table(accessor = enemy_phases, public)]
+pub struct EnemyPhase {
+    #[primary_key] #[auto_inc] pub phase_id: u64,
+    #[index(btree)] pub behavior_id: u64,
+    pub phase_index: u8,
+    pub hp_threshold: f32,
+    pub movement_def_id: u64,
+    pub phase_loop_delay: f32,
+    pub phase_waiting: bool,
+    pub phase_loop_timer: Timestamp,
+    pub move_cycle_started_at: Timestamp,
+}
+
+#[table(accessor = enemy_behavior, public)]
+pub struct EnemyBehavior {
+    #[primary_key] #[auto_inc]
+    pub behavior_id: u64,
+    pub aggro_target: Option<Identity>,
+    pub aggro_locked_until: Timestamp,
+    pub was_simulating: bool,
+    pub active_phase_index: u8,
+    pub velocity_x: f32,
+    pub velocity_y: f32,
+}
+
+#[table(accessor = enemy, public)]
+pub struct Enemy {
+    #[primary_key] #[auto_inc]
+    pub enemy_id: u64,
+    pub template_id: String,
+    pub behavior_id: u64,
+    pub x: f32,
+    pub y: f32,
+    pub spawn_time: Timestamp,
+    pub hp: u32,
+    pub phase: u8,
+    pub is_elite: bool,
+    pub immortal: bool,
+    #[index(btree)]
+    pub chunk_index: i64,
+}
+
+#[spacetimedb::table(accessor = enemy_spawn_schedule, scheduled(tick_enemy_spawn))]
+pub struct EnemySpawnSchedule {
+    #[primary_key] #[auto_inc]
+    pub scheduled_id: u64,
+    pub scheduled_at: ScheduleAt,
+}
+
+#[spacetimedb::table(accessor = enemy_behavior_schedule, scheduled(tick_enemy_behavior))]
+pub struct EnemyBehaviorSchedule {
+    #[primary_key] #[auto_inc]
+    pub scheduled_id: u64,
+    pub scheduled_at: ScheduleAt,
+}
+
+#[table(accessor = enemy_zone, public)]
+pub struct EnemyZone {
+    #[primary_key] #[auto_inc]
+    pub zone_id: u64,
+    pub center_chunk_q: i32,
+    pub center_chunk_r: i32,
+    pub chunk_radius: i32,
+    pub spawn_radius: f32,
+    pub template_ids: Vec<String>,
+    pub max_enemies: u32,
+}
+
+#[table(accessor = bullet_pattern_event, public, event)]
+pub struct BulletPatternEvent {
+    #[primary_key] #[auto_inc]
+    pub event_id: u64,
+    pub enemy_id: u64,
+    pub origin_x: f32,
+    pub origin_y: f32,
+    pub origin_offset_x: f32,
+    pub origin_offset_y: f32,
+    pub base_angle_offset: f32,
+    pub pattern_type: PatternType,
+    pub target: Option<Identity>,
+    pub texture_id: String,
+    pub lifetime: f32,
+    #[index(btree)]
+    pub chunk_index: i64,
+}

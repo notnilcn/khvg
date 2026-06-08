@@ -15,47 +15,40 @@ namespace SpacetimeDB.Types
     {
         [DataMember(Name = "behavior_id")]
         public ulong BehaviorId;
-        [DataMember(Name = "template_id")]
-        public string TemplateId;
-        [DataMember(Name = "display_name")]
-        public string DisplayName;
-        [DataMember(Name = "max_hp")]
-        public uint MaxHp;
-        [DataMember(Name = "phases")]
-        public System.Collections.Generic.List<PhaseInstance> Phases;
-        [DataMember(Name = "move_dir_x")]
-        public float MoveDirX;
-        [DataMember(Name = "move_dir_y")]
-        public float MoveDirY;
-        [DataMember(Name = "move_timer")]
-        public SpacetimeDB.Timestamp MoveTimer;
+        [DataMember(Name = "aggro_target")]
+        public SpacetimeDB.Identity? AggroTarget;
+        [DataMember(Name = "aggro_locked_until")]
+        public SpacetimeDB.Timestamp AggroLockedUntil;
+        [DataMember(Name = "was_simulating")]
+        public bool WasSimulating;
+        [DataMember(Name = "active_phase_index")]
+        public byte ActivePhaseIndex;
+        [DataMember(Name = "velocity_x")]
+        public float VelocityX;
+        [DataMember(Name = "velocity_y")]
+        public float VelocityY;
 
         public EnemyBehavior(
             ulong BehaviorId,
-            string TemplateId,
-            string DisplayName,
-            uint MaxHp,
-            System.Collections.Generic.List<PhaseInstance> Phases,
-            float MoveDirX,
-            float MoveDirY,
-            SpacetimeDB.Timestamp MoveTimer
+            SpacetimeDB.Identity? AggroTarget,
+            SpacetimeDB.Timestamp AggroLockedUntil,
+            bool WasSimulating,
+            byte ActivePhaseIndex,
+            float VelocityX,
+            float VelocityY
         )
         {
             this.BehaviorId = BehaviorId;
-            this.TemplateId = TemplateId;
-            this.DisplayName = DisplayName;
-            this.MaxHp = MaxHp;
-            this.Phases = Phases;
-            this.MoveDirX = MoveDirX;
-            this.MoveDirY = MoveDirY;
-            this.MoveTimer = MoveTimer;
+            this.AggroTarget = AggroTarget;
+            this.AggroLockedUntil = AggroLockedUntil;
+            this.WasSimulating = WasSimulating;
+            this.ActivePhaseIndex = ActivePhaseIndex;
+            this.VelocityX = VelocityX;
+            this.VelocityY = VelocityY;
         }
 
         public EnemyBehavior()
         {
-            this.TemplateId = "";
-            this.DisplayName = "";
-            this.Phases = new();
         }
     }
 }

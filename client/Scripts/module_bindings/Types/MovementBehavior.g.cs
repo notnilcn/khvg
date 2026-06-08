@@ -10,7 +10,6 @@ namespace SpacetimeDB.Types
     [SpacetimeDB.Type]
     public partial record MovementBehavior : SpacetimeDB.TaggedEnum<(
         SpacetimeDB.Unit Stationary,
-        LinearParams Linear,
         WanderParams Wander,
         ChaseParams Chase,
         FleeParams Flee

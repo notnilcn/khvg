@@ -3,8 +3,11 @@ use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
 use crate::player::methods::*;
-use crate::enemy::tables::*;
+use crate::enemy::def_tables::*;
+use crate::enemy::instance_tables::*;
 use crate::enemy::methods::build_enemy_behavior;
+
+const STRESS_TEMPLATE_IDS: &[&str] = &["LowStress", "MedStress", "HighStress"];
 
 #[spacetimedb::reducer]
 pub fn claim_admin(ctx: &ReducerContext) -> Result<(), String> {
@@ -60,11 +63,13 @@ pub fn give_item(ctx: &ReducerContext, target_username: String, profile_name: St
     let profile = find_profile_by_name(ctx, target_id, &profile_name)
         .ok_or_else(|| format!("Profile '{}' not found.", profile_name))?;
     let inv = ctx.db.player_inventory().profile_id().find(&profile.profile_id).ok_or("Inventory not found.")?;
-    let next_index = inv.slots.iter()
-        .filter(|s| matches!(s.kind, SlotKind::Backpack))
-        .map(|s| s.index).max().map(|i| i + 1).unwrap_or(0);
+    let empty_slot = inv.slots.iter().enumerate()
+        .skip(14).take(9)
+        .find(|(_, s)| s.item_id.is_none())
+        .map(|(i, _)| i)
+        .ok_or("No empty general slots available.")?;
     let mut slots = inv.slots.clone();
-    slots.push(InventorySlot { kind: SlotKind::Backpack, index: next_index, item_id });
+    slots[empty_slot].item_id = Some(item_id);
     ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
     Ok(())
 }
@@ -77,7 +82,11 @@ pub fn remove_item(ctx: &ReducerContext, target_username: String, profile_name: 
     let profile = find_profile_by_name(ctx, target_id, &profile_name)
         .ok_or_else(|| format!("Profile '{}' not found.", profile_name))?;
     let inv = ctx.db.player_inventory().profile_id().find(&profile.profile_id).ok_or("Inventory not found.")?;
-    let slots: Vec<InventorySlot> = inv.slots.iter().filter(|s| s.item_id != item_id).cloned().collect();
+    let slots: Vec<InventorySlot> = inv.slots.iter().map(|s| {
+        if s.item_id.as_deref() == Some(item_id.as_str()) {
+            InventorySlot { item_id: None, ..s.clone() }
+        } else { s.clone() }
+    }).collect();
     ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
     Ok(())
 }
@@ -94,12 +103,12 @@ pub fn upsert_texture_entry(ctx: &ReducerContext, entry: TextureEntry) -> Result
 }
 
 #[spacetimedb::reducer]
-pub fn upsert_item_stats(ctx: &ReducerContext, stats: ItemStats) -> Result<(), String> {
+pub fn upsert_item(ctx: &ReducerContext, item: Item) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    if ctx.db.item_stats().item_id().find(&stats.item_id).is_some() {
-        ctx.db.item_stats().item_id().update(stats);
+    if ctx.db.item().item_id().find(&item.item_id).is_some() {
+        ctx.db.item().item_id().update(item);
     } else {
-        ctx.db.item_stats().insert(stats);
+        ctx.db.item().insert(item);
     }
     Ok(())
 }
