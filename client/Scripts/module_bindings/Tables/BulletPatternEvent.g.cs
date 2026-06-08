@@ -59,6 +59,7 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<BulletPatternEvent, PatternType> PatternType { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, SpacetimeDB.Identity> Target { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, string> TextureId { get; }
+        public global::SpacetimeDB.Col<BulletPatternEvent, float> Lifetime { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, long> ChunkIndex { get; }
 
         public BulletPatternEventCols(string tableName)
@@ -73,6 +74,7 @@ namespace SpacetimeDB.Types
             PatternType = new global::SpacetimeDB.Col<BulletPatternEvent, PatternType>(tableName, "pattern_type");
             Target = new global::SpacetimeDB.Col<BulletPatternEvent, SpacetimeDB.Identity>(tableName, "target");
             TextureId = new global::SpacetimeDB.Col<BulletPatternEvent, string>(tableName, "texture_id");
+            Lifetime = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "lifetime");
             ChunkIndex = new global::SpacetimeDB.Col<BulletPatternEvent, long>(tableName, "chunk_index");
         }
     }

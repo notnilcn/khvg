@@ -33,6 +33,8 @@ namespace SpacetimeDB.Types
         public SpacetimeDB.Identity? Target;
         [DataMember(Name = "texture_id")]
         public string TextureId;
+        [DataMember(Name = "lifetime")]
+        public float Lifetime;
         [DataMember(Name = "chunk_index")]
         public long ChunkIndex;
 
@@ -47,6 +49,7 @@ namespace SpacetimeDB.Types
             PatternType PatternType,
             SpacetimeDB.Identity? Target,
             string TextureId,
+            float Lifetime,
             long ChunkIndex
         )
         {
@@ -60,6 +63,7 @@ namespace SpacetimeDB.Types
             this.PatternType = PatternType;
             this.Target = Target;
             this.TextureId = TextureId;
+            this.Lifetime = Lifetime;
             this.ChunkIndex = ChunkIndex;
         }
 

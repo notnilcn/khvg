@@ -15,16 +15,20 @@ namespace SpacetimeDB.Types
     {
         [DataMember(Name = "speed")]
         public float Speed;
-        [DataMember(Name = "change_interval")]
-        public float ChangeInterval;
+        [DataMember(Name = "active_duration")]
+        public float ActiveDuration;
+        [DataMember(Name = "pause_duration")]
+        public float PauseDuration;
 
         public WanderParams(
             float Speed,
-            float ChangeInterval
+            float ActiveDuration,
+            float PauseDuration
         )
         {
             this.Speed = Speed;
-            this.ChangeInterval = ChangeInterval;
+            this.ActiveDuration = ActiveDuration;
+            this.PauseDuration = PauseDuration;
         }
 
         public WanderParams()

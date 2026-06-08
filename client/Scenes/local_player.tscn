@@ -1,19 +1,22 @@
 [gd_scene format=3 uid="uid://bbjjh55yrwyfn"]
 
-[ext_resource type="Script" uid="uid://t75xafvl7xab" path="res://Scripts/Characters/LocalPlayer.cs" id="1_h1vum"]
-[ext_resource type="PackedScene" uid="uid://dud7eg6a4d3k1" path="res://Assets/3D/characters/Knight.fbx" id="2_h1vum"]
+[ext_resource type="Script" uid="uid://kf13rwr5hlhp" path="res://Scripts/Players/Local/LocalPlayer.cs" id="1_h1vum"]
+[ext_resource type="Script" uid="uid://bddvxb8xqsltm" path="res://Scripts/Players/Local/LocalPlayerCombat.cs" id="2_h1vum"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mrxaf"]
 
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
-KnightScene = ExtResource("2_h1vum")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=170833701]
-position = Vector2(-4, -2)
+scale = Vector2(0.5, 0.5)
 animation = &""
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=273656135]
 shape = SubResource("CapsuleShape2D_mrxaf")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=207238916]
+zoom = Vector2(0.75, 0.75)
+
+[node name="Combat" type="Node2D" parent="." unique_id=1107745331]
+script = ExtResource("2_h1vum")

@@ -35,7 +35,7 @@ pub fn create_profile(ctx: &ReducerContext, profile_name: String, texture_id: St
         return Err(format!("Profile '{}' already exists.", profile_name));
     }
     ctx.db.player_profile().insert(PlayerProfile {
-        profile_id: 0, player_id: ctx.sender(), profile_name, texture_id,
+        profile_id: 0, player_id: ctx.sender(), profile_name, texture_id, aim_assist: false, lock_on: false,
     });
     Ok(())
 }
@@ -133,16 +133,22 @@ pub fn gain_xp(ctx: &ReducerContext, amount: u32) -> Result<(), String> {
 #[spacetimedb::reducer]
 pub fn update_inventory(ctx: &ReducerContext, slots: Vec<InventorySlot>) -> Result<(), String> {
     let profile_id = require_in_world(ctx)?;
-    if slots.iter().filter(|s| matches!(s.kind, SlotKind::Backpack)).count() > 12 {
-        return Err("Too many backpack slots.".to_string());
-    }
-    if slots.iter().filter(|s| matches!(s.kind, SlotKind::Accessory)).count() > 3 {
-        return Err("Too many accessory slots.".to_string());
-    }
-    if slots.iter().filter(|s| matches!(s.kind, SlotKind::Consumable)).count() > 8 {
-        return Err("Too many consumable slots.".to_string());
-    }
     let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
+    if slots.len() != inv.slots.len() {
+        return Err("Inventory size cannot be changed this way.".to_string());
+    }
+    for (i, (new_slot, existing_slot)) in slots.iter().zip(inv.slots.iter()).enumerate() {
+        if new_slot.allowed_types != existing_slot.allowed_types {
+            return Err(format!("Slot {} allowed types cannot be changed.", i));
+        }
+        if let Some(item_id) = &new_slot.item_id {
+            let item = ctx.db.item().item_id().find(item_id)
+                .ok_or_else(|| format!("Item '{}' not found.", item_id))?;
+            if !new_slot.allowed_types.contains(&item.item_type) {
+                return Err(format!("Item '{}' is not allowed in slot {}.", item_id, i));
+            }
+        }
+    }
     ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
     recompute_stats(ctx, profile_id);
     Ok(())
@@ -153,15 +159,15 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
     let profile_id = require_in_world(ctx)?;
     let drop = ctx.db.loot_drop().drop_id().find(&drop_id).ok_or("Drop not found.")?;
     if drop.item_id.is_empty() { return Ok(()); }
+    let drop_item_id = drop.item_id.clone();
     let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
-    if inv.slots.iter().filter(|s| matches!(s.kind, SlotKind::Backpack)).count() >= 12 {
-        return Err("Backpack full.".to_string());
-    }
-    let next_index = inv.slots.iter()
-        .filter(|s| matches!(s.kind, SlotKind::Backpack))
-        .map(|s| s.index).max().map(|i| i + 1).unwrap_or(0);
+    let empty_slot = inv.slots.iter().enumerate()
+        .skip(14).take(9)
+        .find(|(_, s)| s.item_id.is_none())
+        .map(|(i, _)| i)
+        .ok_or("No empty slots available.")?;
     let mut slots = inv.slots.clone();
-    slots.push(InventorySlot { kind: SlotKind::Backpack, index: next_index, item_id: drop.item_id });
+    slots[empty_slot].item_id = Some(drop_item_id);
     ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
     ctx.db.loot_drop().drop_id().delete(&drop_id);
     Ok(())

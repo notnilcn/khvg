@@ -2,6 +2,7 @@ use spacetimedb::{ReducerContext, Table};
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
+use crate::world::tables::ItemType;
 
 pub fn require_logged_in(ctx: &ReducerContext) -> Result<(), String> {
     if ctx.db.logged_in_player().player_id().find(ctx.sender()).is_none() {
@@ -60,13 +61,25 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     let mut str_pct = 0f32; let mut wis_pct = 0f32; let mut dex_pct = 0f32;
     let mut def_pct = 0f32; let mut vit_pct = 0f32; let mut spd_pct = 0f32;
     for slot in &inv.slots {
-        let item = match ctx.db.item_stats().item_id().find(&slot.item_id) { Some(i) => i, None => continue };
-        str_flat += item.str_bonus_add as i32; str_pct += item.str_bonus_mult;
-        wis_flat += item.wis_bonus_add as i32; wis_pct += item.wis_bonus_mult;
-        dex_flat += item.dex_bonus_add as i32; dex_pct += item.dex_bonus_mult;
-        def_flat += item.def_bonus_add as i32; def_pct += item.def_bonus_mult;
-        vit_flat += item.vit_bonus_add as i32; vit_pct += item.vit_bonus_mult;
-        spd_flat += item.spd_bonus_add as i32; spd_pct += item.spd_bonus_mult;
+        let item_id = match &slot.item_id { Some(id) => id, None => continue };
+        let item = match ctx.db.item().item_id().find(item_id) { Some(i) => i, None => continue };
+        match item.item_type {
+            ItemType::Armor => {
+                if let Some(a) = ctx.db.armor().armor_id().find(&item.item_id) {
+                    def_flat += a.defense_bonus;
+                    vit_flat += a.vitality_bonus;
+                }
+            }
+            ItemType::Accessory => {
+                if let Some(a) = ctx.db.accessory().accessory_id().find(&item.item_id) {
+                    str_flat += a.strength_bonus;
+                    wis_flat += a.wisdom_bonus;
+                    dex_flat += a.dexterity_bonus;
+                    spd_flat += a.speed_bonus;
+                }
+            }
+            _ => {}
+        }
     }
     let new_stats = PlayerStats {
         profile_id,
@@ -84,6 +97,13 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     }
 }
 
+fn weapon_slot(item_id: Option<String>) -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Weapon], item_id } }
+fn hotbar_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Ability, ItemType::Consumable], item_id: None } }
+fn accessory_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Accessory], item_id: None } }
+fn armor_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Armor], item_id: None } }
+fn general_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Weapon, ItemType::Ability, ItemType::Armor, ItemType::Accessory, ItemType::Consumable], item_id: None } }
+fn bag_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Bag], item_id: None } }
+
 pub fn scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     if ctx.db.player_data().profile_id().find(&profile_id).is_none() {
         ctx.db.player_data().insert(PlayerData {
@@ -91,7 +111,18 @@ pub fn scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
         });
     }
     if ctx.db.player_inventory().profile_id().find(&profile_id).is_none() {
-        ctx.db.player_inventory().insert(PlayerInventory { profile_id, slots: Vec::new() });
+        ctx.db.player_inventory().insert(PlayerInventory {
+            profile_id,
+            slots: vec![
+                weapon_slot(Some("StarterShotgun".to_string())), // 0: weapon
+                hotbar_slot(), hotbar_slot(), hotbar_slot(), hotbar_slot(), hotbar_slot(), // 1-5: hotbar
+                accessory_slot(), accessory_slot(), accessory_slot(), accessory_slot(), // 6-9: accessories
+                armor_slot(), armor_slot(), armor_slot(), armor_slot(), // 10-13: armor
+                general_slot(), general_slot(), general_slot(), general_slot(), general_slot(), // 14-18
+                general_slot(), general_slot(), general_slot(), general_slot(), // 19-22: general
+                bag_slot(), // 23: bag
+            ],
+        });
     }
     recompute_stats(ctx, profile_id);
 }
@@ -99,17 +130,13 @@ pub fn scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
 pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {
     let stats = match ctx.db.player_stats().profile_id().find(&profile_id) { Some(s) => s, None => return 1 };
     let inv = match ctx.db.player_inventory().profile_id().find(&profile_id) { Some(i) => i, None => return 1 };
-    let weapon_slot = inv.slots.iter().find(|s| matches!(s.kind, SlotKind::Weapon));
-    let item = weapon_slot.and_then(|s| ctx.db.item_stats().item_id().find(&s.item_id));
-    match item {
-        Some(i) => {
-            let dmg = i.base_damage as f32
-                + (stats.strength * i.str_damage_add) as f32
-                + (stats.wisdom * i.wis_damage_add) as f32
-                + (stats.dexterity * i.dex_damage_add) as f32;
-            dmg.max(1.0) as u32
-        }
-        None => 1,
+    let weapon_item = inv.slots.get(0)
+        .and_then(|s| s.item_id.as_ref())
+        .and_then(|id| ctx.db.item().item_id().find(id));
+    let weapon_stats = weapon_item.and_then(|i| ctx.db.weapon().weapon_id().find(&i.item_id));
+    match weapon_stats {
+        Some(w) => (w.damage as f32 * (1.0 + stats.strength as f32 * 0.02)).max(1.0) as u32,
+        None => 0,
     }
 }
 

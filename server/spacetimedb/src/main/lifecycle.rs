@@ -1,10 +1,10 @@
 use spacetimedb::{ReducerContext, Table, ScheduleAt, TimeDuration};
 use std::time::Duration;
 use crate::world::methods::*;
-use crate::world::tables::*;
 use crate::player::tables::*;
-use crate::enemy::tables::*;
-use super::seeds::{seed_default_textures, seed_default_enemies, seed_test_boss};
+use crate::enemy::def_tables::*;
+use crate::enemy::instance_tables::*;
+use super::seeds::{seed_default_textures, seed_default_enemies, seed_default_items, seed_test_boss_p2, seed_test_boss_p3, seed_test_boss_p4, seed_test_boss_p5, seed_test_boss_p6};
 use super::admin::internal_add_chunks;
 
 #[spacetimedb::reducer(init)]
@@ -19,7 +19,12 @@ pub fn init(ctx: &ReducerContext) {
     });
     seed_default_textures(ctx);
     seed_default_enemies(ctx);
-    seed_test_boss(ctx);
+    seed_test_boss_p2(ctx);
+    seed_test_boss_p3(ctx);
+    seed_test_boss_p4(ctx);
+    seed_test_boss_p5(ctx);
+    seed_test_boss_p6(ctx);
+    seed_default_items(ctx);
     let _ = internal_add_chunks(ctx, DEFAULT_CHUNK_HEX_RADIUS, DEFAULT_CHUNK_COLS, DEFAULT_CHUNK_ROWS, DEFAULT_HEX_OUTER_RADIUS);
 }
 
@@ -41,6 +46,7 @@ pub fn client_connected(ctx: &ReducerContext) {
             profile_id: 0, player_id: ctx.sender(),
             profile_name: "Knight".to_string(),
             texture_id: "Knight".to_string(),
+            aim_assist: false, lock_on: false,
         });
         log::info!("New player: {:?}", ctx.sender());
     }
