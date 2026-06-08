@@ -17,27 +17,30 @@ namespace SpacetimeDB.Types
         public byte PhaseIndex;
         [DataMember(Name = "hp_threshold")]
         public float HpThreshold;
-        [DataMember(Name = "movement")]
-        public MovementBehavior Movement;
+        [DataMember(Name = "movement_def_id")]
+        public ulong MovementDefId;
+        [DataMember(Name = "phase_loop_delay")]
+        public float PhaseLoopDelay;
         [DataMember(Name = "attacks")]
-        public System.Collections.Generic.List<AttackDef> Attacks;
+        public System.Collections.Generic.List<AttackSequence> Attacks;
 
         public PhaseDef(
             byte PhaseIndex,
             float HpThreshold,
-            MovementBehavior Movement,
-            System.Collections.Generic.List<AttackDef> Attacks
+            ulong MovementDefId,
+            float PhaseLoopDelay,
+            System.Collections.Generic.List<AttackSequence> Attacks
         )
         {
             this.PhaseIndex = PhaseIndex;
             this.HpThreshold = HpThreshold;
-            this.Movement = Movement;
+            this.MovementDefId = MovementDefId;
+            this.PhaseLoopDelay = PhaseLoopDelay;
             this.Attacks = Attacks;
         }
 
         public PhaseDef()
         {
-            this.Movement = null!;
             this.Attacks = new();
         }
     }

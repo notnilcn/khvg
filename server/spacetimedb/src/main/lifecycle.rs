@@ -1,10 +1,10 @@
 use spacetimedb::{ReducerContext, Table, ScheduleAt, TimeDuration};
 use std::time::Duration;
 use crate::world::methods::*;
-use crate::world::tables::*;
 use crate::player::tables::*;
-use crate::enemy::tables::*;
-use super::seeds::{seed_default_textures, seed_default_enemies, seed_stress_enemies, seed_default_items};
+use crate::enemy::def_tables::*;
+use crate::enemy::instance_tables::*;
+use super::seeds::{seed_default_textures, seed_default_enemies, seed_default_items, seed_test_boss_p2, seed_test_boss_p3, seed_test_boss_p4, seed_test_boss_p5, seed_test_boss_p6};
 use super::admin::internal_add_chunks;
 
 #[spacetimedb::reducer(init)]
@@ -19,7 +19,11 @@ pub fn init(ctx: &ReducerContext) {
     });
     seed_default_textures(ctx);
     seed_default_enemies(ctx);
-    seed_stress_enemies(ctx);
+    seed_test_boss_p2(ctx);
+    seed_test_boss_p3(ctx);
+    seed_test_boss_p4(ctx);
+    seed_test_boss_p5(ctx);
+    seed_test_boss_p6(ctx);
     seed_default_items(ctx);
     let _ = internal_add_chunks(ctx, DEFAULT_CHUNK_HEX_RADIUS, DEFAULT_CHUNK_COLS, DEFAULT_CHUNK_ROWS, DEFAULT_HEX_OUTER_RADIUS);
 }

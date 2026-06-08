@@ -3,7 +3,8 @@ use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
 use crate::player::methods::*;
-use crate::enemy::tables::*;
+use crate::enemy::def_tables::*;
+use crate::enemy::instance_tables::*;
 use crate::enemy::methods::build_enemy_behavior;
 
 const STRESS_TEMPLATE_IDS: &[&str] = &["LowStress", "MedStress", "HighStress"];
@@ -194,65 +195,6 @@ pub fn clear_chunks(ctx: &ReducerContext) -> Result<(), String> {
         ctx.db.building_tile().tile_id().delete(&tile.tile_id);
     }
     log::info!("clear_chunks: {} tiles deleted.", count);
-    Ok(())
-}
-
-#[spacetimedb::reducer]
-pub fn spawn_stress_test(ctx: &ReducerContext, low: u32, med: u32, high: u32, spread_radius: f32) -> Result<(), String> {
-    //if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let chunk_cols = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
-    let chunk_rows = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(1);
-    let us = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros() as u64;
-
-    let counts = [("LowStress", low), ("MedStress", med), ("HighStress", high)];
-    let mut spawn_index: u64 = 0;
-
-    for (template_id, count) in counts {
-        if count == 0 { continue; }
-        let template = match ctx.db.enemy_template().template_id().find(&template_id.to_string()) {
-            Some(t) => t,
-            None => { log::warn!("spawn_stress_test: template '{}' not found, skipping.", template_id); continue; }
-        };
-        for _ in 0..count {
-            let h = spawn_index.wrapping_add(us);
-            let h = (h ^ (h >> 30)).wrapping_mul(0xbf58476d1ce4e5b9);
-            let h = (h ^ (h >> 27)).wrapping_mul(0x94d049bb133111eb);
-            let h = h ^ (h >> 31);
-            let angle  = (h >> 11) as f32 / (1u64 << 53) as f32 * std::f32::consts::TAU;
-            let h2     = h.wrapping_mul(0x9e3779b97f4a7c15);
-            let radius = ((h2 >> 11) as f32 / (1u64 << 53) as f32).sqrt() * spread_radius;
-            let (x, y) = wrap_world_pos(radius * angle.cos(), radius * angle.sin(), chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
-            let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
-            let chunk_index = spiral_chunk_index(cq, cr);
-            let inserted_behavior = ctx.db.enemy_behavior().insert(build_enemy_behavior(ctx, &template));
-            ctx.db.enemy().insert(Enemy {
-                enemy_id: 0, template_id: template.template_id.clone(),
-                behavior_id: inserted_behavior.behavior_id,
-                x, y, spawn_time: ctx.timestamp,
-                hp: template.max_hp, phase: 0, is_elite: false, immortal: false, chunk_index,
-            });
-            spawn_index += 1;
-        }
-    }
-    log::info!("spawn_stress_test: spawned {} low, {} med, {} high.", low, med, high);
-    Ok(())
-}
-
-#[spacetimedb::reducer]
-pub fn clear_stress_test(ctx: &ReducerContext) -> Result<(), String> {
-    //if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    let enemies: Vec<Enemy> = ctx.db.enemy().iter()
-        .filter(|e| STRESS_TEMPLATE_IDS.contains(&e.template_id.as_str()))
-        .collect();
-    let count = enemies.len();
-    for enemy in enemies {
-        ctx.db.enemy_behavior().behavior_id().delete(&enemy.behavior_id);
-        ctx.db.enemy().enemy_id().delete(&enemy.enemy_id);
-    }
-    log::info!("clear_stress_test: removed {} stress test enemies.", count);
     Ok(())
 }
 

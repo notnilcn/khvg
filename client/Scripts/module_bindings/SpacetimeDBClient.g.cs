@@ -41,7 +41,10 @@ namespace SpacetimeDB.Types
             AddTable(BulletPatternEvent = new(conn));
             AddTable(Consumable = new(conn));
             AddTable(Enemy = new(conn));
+            AddTable(EnemyAttack = new(conn));
             AddTable(EnemyBehavior = new(conn));
+            AddTable(EnemyPhases = new(conn));
+            AddTable(EnemySequenceStep = new(conn));
             AddTable(EnemyTemplate = new(conn));
             AddTable(EnemyTemplates = new(conn));
             AddTable(EnemyZone = new(conn));
@@ -57,6 +60,8 @@ namespace SpacetimeDB.Types
             AddTable(LoggedInPlayer = new(conn));
             AddTable(LootDrop = new(conn));
             AddTable(MapConfig = new(conn));
+            AddTable(MovementDef = new(conn));
+            AddTable(MultiStepDef = new(conn));
             AddTable(NearbyEnemies = new(conn));
             AddTable(NearbyRemotePlayers = new(conn));
             AddTable(NearbyRemotePlayersProfiles = new(conn));
@@ -65,6 +70,9 @@ namespace SpacetimeDB.Types
             AddTable(PlayerPosition = new(conn));
             AddTable(PlayerProfile = new(conn));
             AddTable(PlayerStats = new(conn));
+            AddTable(RepeatStepDef = new(conn));
+            AddTable(RepeatStepInstance = new(conn));
+            AddTable(SingleStepDef = new(conn));
             AddTable(TextureEntry = new(conn));
             AddTable(Weapon = new(conn));
         }
@@ -577,7 +585,10 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.BulletPatternEvent().ToSql(),
             new QueryBuilder().From.Consumable().ToSql(),
             new QueryBuilder().From.Enemy().ToSql(),
+            new QueryBuilder().From.EnemyAttack().ToSql(),
             new QueryBuilder().From.EnemyBehavior().ToSql(),
+            new QueryBuilder().From.EnemyPhases().ToSql(),
+            new QueryBuilder().From.EnemySequenceStep().ToSql(),
             new QueryBuilder().From.EnemyTemplate().ToSql(),
             new QueryBuilder().From.EnemyTemplates().ToSql(),
             new QueryBuilder().From.EnemyZone().ToSql(),
@@ -593,6 +604,8 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.LoggedInPlayer().ToSql(),
             new QueryBuilder().From.LootDrop().ToSql(),
             new QueryBuilder().From.MapConfig().ToSql(),
+            new QueryBuilder().From.MovementDef().ToSql(),
+            new QueryBuilder().From.MultiStepDef().ToSql(),
             new QueryBuilder().From.NearbyEnemies().ToSql(),
             new QueryBuilder().From.NearbyRemotePlayers().ToSql(),
             new QueryBuilder().From.NearbyRemotePlayersProfiles().ToSql(),
@@ -601,6 +614,9 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.PlayerPosition().ToSql(),
             new QueryBuilder().From.PlayerProfile().ToSql(),
             new QueryBuilder().From.PlayerStats().ToSql(),
+            new QueryBuilder().From.RepeatStepDef().ToSql(),
+            new QueryBuilder().From.RepeatStepInstance().ToSql(),
+            new QueryBuilder().From.SingleStepDef().ToSql(),
             new QueryBuilder().From.TextureEntry().ToSql(),
             new QueryBuilder().From.Weapon().ToSql(),
         }
@@ -623,7 +639,10 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<BulletPatternEvent, BulletPatternEventCols, BulletPatternEventIxCols> BulletPatternEvent() => new("bullet_pattern_event", new BulletPatternEventCols("bullet_pattern_event"), new BulletPatternEventIxCols("bullet_pattern_event"));
         public global::SpacetimeDB.Table<Consumable, ConsumableCols, ConsumableIxCols> Consumable() => new("consumable", new ConsumableCols("consumable"), new ConsumableIxCols("consumable"));
         public global::SpacetimeDB.Table<Enemy, EnemyCols, EnemyIxCols> Enemy() => new("enemy", new EnemyCols("enemy"), new EnemyIxCols("enemy"));
+        public global::SpacetimeDB.Table<EnemyAttack, EnemyAttackCols, EnemyAttackIxCols> EnemyAttack() => new("enemy_attack", new EnemyAttackCols("enemy_attack"), new EnemyAttackIxCols("enemy_attack"));
         public global::SpacetimeDB.Table<EnemyBehavior, EnemyBehaviorCols, EnemyBehaviorIxCols> EnemyBehavior() => new("enemy_behavior", new EnemyBehaviorCols("enemy_behavior"), new EnemyBehaviorIxCols("enemy_behavior"));
+        public global::SpacetimeDB.Table<EnemyPhase, EnemyPhasesCols, EnemyPhasesIxCols> EnemyPhases() => new("enemy_phases", new EnemyPhasesCols("enemy_phases"), new EnemyPhasesIxCols("enemy_phases"));
+        public global::SpacetimeDB.Table<EnemySequenceStep, EnemySequenceStepCols, EnemySequenceStepIxCols> EnemySequenceStep() => new("enemy_sequence_step", new EnemySequenceStepCols("enemy_sequence_step"), new EnemySequenceStepIxCols("enemy_sequence_step"));
         public global::SpacetimeDB.Table<EnemyTemplate, EnemyTemplateCols, EnemyTemplateIxCols> EnemyTemplate() => new("enemy_template", new EnemyTemplateCols("enemy_template"), new EnemyTemplateIxCols("enemy_template"));
         public global::SpacetimeDB.Table<EnemyTemplate, EnemyTemplatesCols, EnemyTemplatesIxCols> EnemyTemplates() => new("enemy_templates", new EnemyTemplatesCols("enemy_templates"), new EnemyTemplatesIxCols("enemy_templates"));
         public global::SpacetimeDB.Table<EnemyZone, EnemyZoneCols, EnemyZoneIxCols> EnemyZone() => new("enemy_zone", new EnemyZoneCols("enemy_zone"), new EnemyZoneIxCols("enemy_zone"));
@@ -639,6 +658,8 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<LoggedInPlayer, LoggedInPlayerCols, LoggedInPlayerIxCols> LoggedInPlayer() => new("logged_in_player", new LoggedInPlayerCols("logged_in_player"), new LoggedInPlayerIxCols("logged_in_player"));
         public global::SpacetimeDB.Table<LootDrop, LootDropCols, LootDropIxCols> LootDrop() => new("loot_drop", new LootDropCols("loot_drop"), new LootDropIxCols("loot_drop"));
         public global::SpacetimeDB.Table<MapConfig, MapConfigCols, MapConfigIxCols> MapConfig() => new("map_config", new MapConfigCols("map_config"), new MapConfigIxCols("map_config"));
+        public global::SpacetimeDB.Table<MovementDef, MovementDefCols, MovementDefIxCols> MovementDef() => new("movement_def", new MovementDefCols("movement_def"), new MovementDefIxCols("movement_def"));
+        public global::SpacetimeDB.Table<MultiStepDef, MultiStepDefCols, MultiStepDefIxCols> MultiStepDef() => new("multi_step_def", new MultiStepDefCols("multi_step_def"), new MultiStepDefIxCols("multi_step_def"));
         public global::SpacetimeDB.Table<Enemy, NearbyEnemiesCols, NearbyEnemiesIxCols> NearbyEnemies() => new("nearby_enemies", new NearbyEnemiesCols("nearby_enemies"), new NearbyEnemiesIxCols("nearby_enemies"));
         public global::SpacetimeDB.Table<PlayerPosition, NearbyRemotePlayersCols, NearbyRemotePlayersIxCols> NearbyRemotePlayers() => new("nearby_remote_players", new NearbyRemotePlayersCols("nearby_remote_players"), new NearbyRemotePlayersIxCols("nearby_remote_players"));
         public global::SpacetimeDB.Table<PlayerProfile, NearbyRemotePlayersProfilesCols, NearbyRemotePlayersProfilesIxCols> NearbyRemotePlayersProfiles() => new("nearby_remote_players_profiles", new NearbyRemotePlayersProfilesCols("nearby_remote_players_profiles"), new NearbyRemotePlayersProfilesIxCols("nearby_remote_players_profiles"));
@@ -647,6 +668,9 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<PlayerPosition, PlayerPositionCols, PlayerPositionIxCols> PlayerPosition() => new("player_position", new PlayerPositionCols("player_position"), new PlayerPositionIxCols("player_position"));
         public global::SpacetimeDB.Table<PlayerProfile, PlayerProfileCols, PlayerProfileIxCols> PlayerProfile() => new("player_profile", new PlayerProfileCols("player_profile"), new PlayerProfileIxCols("player_profile"));
         public global::SpacetimeDB.Table<PlayerStats, PlayerStatsCols, PlayerStatsIxCols> PlayerStats() => new("player_stats", new PlayerStatsCols("player_stats"), new PlayerStatsIxCols("player_stats"));
+        public global::SpacetimeDB.Table<RepeatStepDef, RepeatStepDefCols, RepeatStepDefIxCols> RepeatStepDef() => new("repeat_step_def", new RepeatStepDefCols("repeat_step_def"), new RepeatStepDefIxCols("repeat_step_def"));
+        public global::SpacetimeDB.Table<RepeatStepInstance, RepeatStepInstanceCols, RepeatStepInstanceIxCols> RepeatStepInstance() => new("repeat_step_instance", new RepeatStepInstanceCols("repeat_step_instance"), new RepeatStepInstanceIxCols("repeat_step_instance"));
+        public global::SpacetimeDB.Table<SingleStepDef, SingleStepDefCols, SingleStepDefIxCols> SingleStepDef() => new("single_step_def", new SingleStepDefCols("single_step_def"), new SingleStepDefIxCols("single_step_def"));
         public global::SpacetimeDB.Table<TextureEntry, TextureEntryCols, TextureEntryIxCols> TextureEntry() => new("texture_entry", new TextureEntryCols("texture_entry"), new TextureEntryIxCols("texture_entry"));
         public global::SpacetimeDB.Table<Weapon, WeaponCols, WeaponIxCols> Weapon() => new("weapon", new WeaponCols("weapon"), new WeaponIxCols("weapon"));
     }
@@ -734,7 +758,6 @@ namespace SpacetimeDB.Types
                 Reducer.ChangeStats args => Reducers.InvokeChangeStats(eventContext, args),
                 Reducer.ClaimAdmin args => Reducers.InvokeClaimAdmin(eventContext, args),
                 Reducer.ClearChunks args => Reducers.InvokeClearChunks(eventContext, args),
-                Reducer.ClearStressTest args => Reducers.InvokeClearStressTest(eventContext, args),
                 Reducer.CreateProfile args => Reducers.InvokeCreateProfile(eventContext, args),
                 Reducer.DeleteProfile args => Reducers.InvokeDeleteProfile(eventContext, args),
                 Reducer.DespawnEnemy args => Reducers.InvokeDespawnEnemy(eventContext, args),
@@ -751,7 +774,6 @@ namespace SpacetimeDB.Types
                 Reducer.ReportMovement args => Reducers.InvokeReportMovement(eventContext, args),
                 Reducer.SetUsername args => Reducers.InvokeSetUsername(eventContext, args),
                 Reducer.SpawnEnemy args => Reducers.InvokeSpawnEnemy(eventContext, args),
-                Reducer.SpawnStressTest args => Reducers.InvokeSpawnStressTest(eventContext, args),
                 Reducer.ToggleDebug args => Reducers.InvokeToggleDebug(eventContext, args),
                 Reducer.UpdateInventory args => Reducers.InvokeUpdateInventory(eventContext, args),
                 Reducer.UpsertEnemyTemplate args => Reducers.InvokeUpsertEnemyTemplate(eventContext, args),
