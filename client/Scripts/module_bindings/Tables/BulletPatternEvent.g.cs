@@ -51,6 +51,7 @@ namespace SpacetimeDB.Types
     {
         public global::SpacetimeDB.Col<BulletPatternEvent, ulong> EventId { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, ulong> EnemyId { get; }
+        public global::SpacetimeDB.Col<BulletPatternEvent, SequenceStepRef> SourceStep { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginX { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginY { get; }
         public global::SpacetimeDB.Col<BulletPatternEvent, float> OriginOffsetX { get; }
@@ -66,6 +67,7 @@ namespace SpacetimeDB.Types
         {
             EventId = new global::SpacetimeDB.Col<BulletPatternEvent, ulong>(tableName, "event_id");
             EnemyId = new global::SpacetimeDB.Col<BulletPatternEvent, ulong>(tableName, "enemy_id");
+            SourceStep = new global::SpacetimeDB.Col<BulletPatternEvent, SequenceStepRef>(tableName, "source_step");
             OriginX = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_x");
             OriginY = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_y");
             OriginOffsetX = new global::SpacetimeDB.Col<BulletPatternEvent, float>(tableName, "origin_offset_x");

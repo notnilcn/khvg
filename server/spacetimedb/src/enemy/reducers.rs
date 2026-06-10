@@ -2,7 +2,6 @@ use spacetimedb::{ReducerContext, Table, ScheduleAt, TimeDuration, log_stopwatch
 use std::time::Duration;
 use crate::world::methods::*;
 use crate::world::tables::*;
-use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
@@ -11,7 +10,7 @@ use crate::enemy::methods::*;
 pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
     if ctx.db.enemy().iter().next().is_some() { return; } // temporary: one enemy at a time
 
-    let template = match ctx.db.enemy_template().template_id().find(&"TestBoss".to_string()) {
+    let template = match ctx.db.enemy_template().template_id().find(&"Enemy".to_string()) {
         Some(t) => t,
         None => return,
     };
@@ -85,11 +84,12 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             begin_phase_cycle(ctx, &mut phase, phase_def);
         }
 
-        for (pt, step_target, ox, oy, bao, tex, lifetime) in tick_phase(ctx, &mut phase, phase_def) {
+        for (pt, step_target, ox, oy, bao, tex, lifetime, source_step) in tick_phase(ctx, &mut phase, phase_def) {
             // bullets_fired += 1;
             let target = resolve_step_target(step_target, behavior.aggro_target);
             ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
                 event_id: 0, enemy_id: enemy.enemy_id,
+                source_step,
                 origin_x: enemy.x, origin_y: enemy.y,
                 origin_offset_x: ox, origin_offset_y: oy,
                 base_angle_offset: bao,
@@ -121,7 +121,9 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
 
 #[spacetimedb::reducer]
 pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
-    let profile_id = require_in_world(ctx)?;
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+
     let enemy = match ctx.db.enemy().enemy_id().find(&enemy_id) {
         Some(e) => e,
         None => return Ok(()),

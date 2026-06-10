@@ -63,7 +63,7 @@ public partial class Enemy : CharacterBody2D
     private void OnBulletPatternInsert(EventContext _, BulletPatternEvent bulletPattern)
     {
         if (bulletPattern.EnemyId != EnemyId) return;
-        BulletManager.Instance.Spawn(bulletPattern);
+        BulletManager.Instance.SpawnEnemyBullet(bulletPattern);
     }
 
     public override void _ExitTree()

@@ -1,9 +1,12 @@
+use log::Log;
 use spacetimedb::{ReducerContext, Table};
 use std::time::Duration;
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
 use crate::player::methods::*;
+use crate::enemy::def_tables::*;
+use crate::enemy::instance_tables::*;
 
 #[spacetimedb::reducer]
 pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String> {
@@ -58,44 +61,30 @@ pub fn delete_profile(ctx: &ReducerContext, profile_id: u64) -> Result<(), Strin
 #[spacetimedb::reducer]
 pub fn join_world(ctx: &ReducerContext, profile_id: u64) -> Result<(), String> {
     let lobby = require_in_lobby(ctx)?;
-    let profile = ctx.db.player_profile().profile_id().find(&profile_id)
-        .ok_or("Profile not found.")?;
-    if profile.player_id != ctx.sender() {
-        return Err("Not your profile.".to_string());
-    }
+    let profile = ctx.db.player_profile().profile_id().find(&profile_id).ok_or("Profile not found.")?;
+    if profile.player_id != ctx.sender() { return Err("Not your profile.".to_string()); }
+
     ctx.db.logged_out_player().player_id().delete(ctx.sender());
-    ctx.db.logged_in_player().insert(LoggedInPlayer {
-        player_id: lobby.player_id, username: lobby.username, is_admin: lobby.is_admin, profile_id,
-    });
-    scaffold_profile(ctx, profile_id);
-    if ctx.db.player_position().profile_id().find(&profile_id).is_none() {
-        let cfg = ctx.db.map_config().id().find(&0u32);
-        let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-        let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-        let (cq, cr) = world_to_chunk(0.0, 0.0, chunk_hex_radius, hex_outer_radius);
-        let chunk_index = spiral_chunk_index(cq, cr);
-        ctx.db.player_position().insert(PlayerPosition {
-            profile_id, player_id: ctx.sender(), x: 0.0, y: 0.0, rotation: 0.0, chunk_index,
-        });
-    }
+    ctx.db.logged_in_player().insert(LoggedInPlayer {player_id: lobby.player_id, username: lobby.username, is_admin: lobby.is_admin, profile_id});
+    try_scaffold_profile(ctx, profile_id);
+    
     log::info!("Player {:?} joined world with profile {}", ctx.sender(), profile_id);
     Ok(())
 }
 
 #[spacetimedb::reducer]
 pub fn leave_world(ctx: &ReducerContext) -> Result<(), String> {
-    let p = ctx.db.logged_in_player().player_id().find(ctx.sender())
-        .ok_or("Not in world.")?;
+    let player = ctx.db.logged_in_player().player_id().find(ctx.sender()).ok_or("Not in world.")?;
     ctx.db.logged_in_player().player_id().delete(ctx.sender());
-    ctx.db.logged_out_player().insert(LoggedOutPlayer {
-        player_id: p.player_id, username: p.username, is_admin: p.is_admin,
-    });
+    ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: player.player_id, username: player.username, is_admin: player.is_admin});
     Ok(())
 }
 
 #[spacetimedb::reducer]
 pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> Result<(), String> {
-    let profile_id = require_in_world(ctx)?;
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+
     let pos = ctx.db.player_position().profile_id().find(&profile_id)
         .ok_or_else(|| format!("Position not found for profile {}", profile_id))?;
     let cfg = ctx.db.map_config().id().find(&0u32);
@@ -111,28 +100,10 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
 }
 
 #[spacetimedb::reducer]
-pub fn gain_xp(ctx: &ReducerContext, amount: u32) -> Result<(), String> {
-    let profile_id = require_in_world(ctx)?;
-    const MAX_XP_PER_GAIN: u32 = 500;
-    if amount == 0 { return Ok(()); }
-    if amount > MAX_XP_PER_GAIN {
-        return Err(format!("XP gain {} exceeds per-call maximum of {}.", amount, MAX_XP_PER_GAIN));
-    }
-    let data = ctx.db.player_data().profile_id().find(&profile_id).ok_or("Player data not found.")?;
-    let old_level = data.level;
-    let new_xp = data.xp + amount;
-    let new_level = compute_level(new_xp);
-    let new_max_hp = (BASE_MAX_HP + (new_level as i32 - 1) * HP_PER_LEVEL) as u32;
-    let heal = (new_level - old_level) * HP_PER_LEVEL as u32;
-    let new_hp = (data.hp + heal).min(new_max_hp);
-    ctx.db.player_data().profile_id().update(PlayerData { level: new_level, xp: new_xp, hp: new_hp, max_hp: new_max_hp, ..data });
-    if new_level != old_level { recompute_stats(ctx, profile_id); }
-    Ok(())
-}
-
-#[spacetimedb::reducer]
 pub fn update_inventory(ctx: &ReducerContext, slots: Vec<InventorySlot>) -> Result<(), String> {
-    let profile_id = require_in_world(ctx)?;
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+
     let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
     if slots.len() != inv.slots.len() {
         return Err("Inventory size cannot be changed this way.".to_string());
@@ -155,8 +126,41 @@ pub fn update_inventory(ctx: &ReducerContext, slots: Vec<InventorySlot>) -> Resu
 }
 
 #[spacetimedb::reducer]
+pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+
+    let base_damage = match attack {
+        SequenceStepRef::Single(def_id) => ctx.db.single_step_def().def_id().find(&def_id).map(|s| s.damage),
+        SequenceStepRef::Repeat(repeat_id) => ctx.db.repeat_step_instance().repeat_id().find(&repeat_id).map(|r| r.damage),
+        SequenceStepRef::Multi(multi_ref) => ctx.db.multi_step_def().def_id().find(&multi_ref.def_id).and_then(|m| m.shots.get(multi_ref.shot_index as usize).map(|s| s.damage)),
+    }.ok_or("Attack step not found.")?;
+
+    let damage = compute_incoming_damage(ctx, profile_id, base_damage);
+    let data = ctx.db.player_data().profile_id().find(&profile_id).ok_or("Player data not found.")?;
+    let new_hp = data.hp.saturating_sub(damage);
+    match new_hp {
+        0 => {
+            ctx.db.player_data().profile_id().delete(profile_id);
+            ctx.db.player_inventory().profile_id().delete(profile_id);
+            ctx.db.player_stats().profile_id().delete(profile_id);
+            ctx.db.player_position().profile_id().delete(profile_id);
+
+            ctx.db.logged_in_player().player_id().delete(ctx.sender());
+            ctx.db.logged_out_player().insert(LoggedOutPlayer {player_id: ctx.sender(), username: player.username, is_admin: player.is_admin});
+        },
+        _ =>  { ctx.db.player_data().profile_id().update(PlayerData { hp: new_hp, ..data }); }
+            
+    }
+
+    Ok(()) 
+}
+
+#[spacetimedb::reducer]
 pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
-    let profile_id = require_in_world(ctx)?;
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+
     let drop = ctx.db.loot_drop().drop_id().find(&drop_id).ok_or("Drop not found.")?;
     if drop.item_id.is_empty() { return Ok(()); }
     let drop_item_id = drop.item_id.clone();

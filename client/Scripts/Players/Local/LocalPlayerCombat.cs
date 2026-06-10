@@ -21,7 +21,7 @@ public partial class LocalPlayerCombat : Node2D
         var player = GetParent<LocalPlayer>();
         player.InventoryChanged += OnInventoryChanged;
         player.AimSettingsChanged += OnAimSettingsChanged;
-        _playerRadius = (player.GetNode<CollisionShape2D>("CollisionShape2D").Shape as CapsuleShape2D)?.Radius ?? 0f;
+        _playerRadius = (player.GetNode<CollisionShape2D>("Collider").Shape as CapsuleShape2D)?.Radius ?? 0f;
         OnAimSettingsChanged();
 
         var conn = GameManager.Instance.Conn;

@@ -42,6 +42,7 @@ public partial class LocalPlayer : CharacterBody2D
 	private readonly List<InventorySlot> inventorySlots = new();
 
 	private AnimatedSprite2D sprite = null!;
+	private Area2D bulletCollider = null!;
 	private float reportTimer = 0f;
 	private const float ReportInterval = 0.1f;
 
@@ -63,7 +64,8 @@ public partial class LocalPlayer : CharacterBody2D
 	public override void _Ready()
 	{
 		Local  = this;
-		sprite = GetNode<AnimatedSprite2D>("AnimatedSprite2D");
+		sprite = GetNode<AnimatedSprite2D>("Sprite");
+		bulletCollider = GetNode<Area2D>("BulletCollider");
 
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;

@@ -11,10 +11,8 @@ pub fn require_logged_in(ctx: &ReducerContext) -> Result<(), String> {
     Ok(())
 }
 
-pub fn require_in_world(ctx: &ReducerContext) -> Result<u64, String> {
-    ctx.db.logged_in_player().player_id().find(ctx.sender())
-        .map(|p| p.profile_id)
-        .ok_or_else(|| "Not in world.".to_string())
+pub fn require_in_world(ctx: &ReducerContext) -> Result<LoggedInPlayer, String> {
+    ctx.db.logged_in_player().player_id().find(ctx.sender()).ok_or_else(|| "Not in world.".to_string())
 }
 
 pub fn require_in_lobby(ctx: &ReducerContext) -> Result<LoggedOutPlayer, String> {
@@ -58,8 +56,7 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     let (base_str, base_wis, base_dex, base_def, base_vit, base_spd) = compute_base_stats(data.level);
     let mut str_flat = 0i32; let mut wis_flat = 0i32; let mut dex_flat = 0i32;
     let mut def_flat = 0i32; let mut vit_flat = 0i32; let mut spd_flat = 0i32;
-    let mut str_pct = 0f32; let mut wis_pct = 0f32; let mut dex_pct = 0f32;
-    let mut def_pct = 0f32; let mut vit_pct = 0f32; let mut spd_pct = 0f32;
+
     for slot in &inv.slots {
         let item_id = match &slot.item_id { Some(id) => id, None => continue };
         let item = match ctx.db.item().item_id().find(item_id) { Some(i) => i, None => continue };
@@ -82,14 +79,14 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         }
     }
     let new_stats = PlayerStats {
-        profile_id,
-        strength: ((base_str + str_flat) as f32 * (1.0 + str_pct)) as i32,
-        wisdom: ((base_wis + wis_flat) as f32 * (1.0 + wis_pct)) as i32,
-        dexterity: ((base_dex + dex_flat) as f32 * (1.0 + dex_pct)) as i32,
-        defense: ((base_def + def_flat) as f32 * (1.0 + def_pct)) as i32,
-        vitality: ((base_vit + vit_flat) as f32 * (1.0 + vit_pct)) as i32,
-        speed: ((base_spd + spd_flat) as f32 * (1.0 + spd_pct)) as i32,
+        profile_id, strength: (base_str + str_flat) as i32,
+        wisdom: (base_wis + wis_flat) as i32,
+        dexterity: (base_dex + dex_flat) as i32,
+        defense: (base_def + def_flat) as i32,
+        vitality: (base_vit + vit_flat) as i32,
+        speed: (base_spd + spd_flat) as i32
     };
+
     if ctx.db.player_stats().profile_id().find(&profile_id).is_some() {
         ctx.db.player_stats().profile_id().update(new_stats);
     } else {
@@ -104,12 +101,13 @@ fn armor_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType:
 fn general_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Weapon, ItemType::Ability, ItemType::Armor, ItemType::Accessory, ItemType::Consumable], item_id: None } }
 fn bag_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Bag], item_id: None } }
 
-pub fn scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
+pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     if ctx.db.player_data().profile_id().find(&profile_id).is_none() {
         ctx.db.player_data().insert(PlayerData {
             profile_id, level: 1, xp: 0, hp: BASE_MAX_HP as u32, max_hp: BASE_MAX_HP as u32,
         });
     }
+
     if ctx.db.player_inventory().profile_id().find(&profile_id).is_none() {
         ctx.db.player_inventory().insert(PlayerInventory {
             profile_id,
@@ -124,7 +122,21 @@ pub fn scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
             ],
         });
     }
-    recompute_stats(ctx, profile_id);
+    
+    if ctx.db.player_stats().profile_id().find(&profile_id).is_none() {
+        let inventory = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Player inventory not found but should exist");
+        // Use Base Inventory To Compute Default Spawn Stats
+        ctx.db.player_stats().insert(PlayerStats { profile_id, strength: 1, wisdom: 1, dexterity: 1, defense: 1, vitality: 1, speed: 25});
+    }
+
+    if ctx.db.player_position().profile_id().find(&profile_id).is_none() {
+        let cfg = ctx.db.map_config().id().find(&0u32);
+        let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
+        let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+        let (cq, cr) = world_to_chunk(0.0, 0.0, chunk_hex_radius, hex_outer_radius);
+        let chunk_index = spiral_chunk_index(cq, cr);
+        ctx.db.player_position().insert(PlayerPosition { profile_id, player_id: ctx.sender(), x: 0.0, y: 0.0, rotation: 0.0, chunk_index});
+    }
 }
 
 pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {
@@ -138,6 +150,11 @@ pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {
         Some(w) => (w.damage as f32 * (1.0 + stats.strength as f32 * 0.02)).max(1.0) as u32,
         None => 0,
     }
+}
+
+pub fn compute_incoming_damage(ctx: &ReducerContext, profile_id: u64, base_damage: u32) -> u32 {
+    let stats = match ctx.db.player_stats().profile_id().find(&profile_id) { Some(s) => s, None => return base_damage.max(1) };
+    (base_damage as f32 * (1.0 - stats.defense as f32 * 0.02)).max(1.0) as u32
 }
 
 pub fn internal_gain_xp(ctx: &ReducerContext, profile_id: u64, amount: u32) {

@@ -49,6 +49,7 @@ pub struct SingleStepDef {
     pub base_angle_offset: f32,
     pub texture_id: String,
     pub lifetime: f32,
+    pub damage: u32,
     pub next_step_delay: f32,
 }
 
@@ -62,6 +63,7 @@ pub struct RepeatStepDef {
     pub base_angle_offset: f32,
     pub texture_id: String,
     pub lifetime: f32,
+    pub damage: u32,
     pub repeat_interval: f32,
     pub repeat_target: u32,
     pub next_step_delay: f32,
@@ -76,6 +78,7 @@ pub struct MultiShot {
     pub base_angle_offset: f32,
     pub texture_id: String,
     pub lifetime: f32,
+    pub damage: u32,
 }
 
 #[table(accessor = multi_step_def, public)]

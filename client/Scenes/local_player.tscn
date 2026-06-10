@@ -5,18 +5,27 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mrxaf"]
 
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_h1vum"]
+
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=170833701]
+[node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=170833701]
 scale = Vector2(0.5, 0.5)
 animation = &""
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=273656135]
+[node name="Collider" type="CollisionShape2D" parent="." unique_id=273656135]
 shape = SubResource("CapsuleShape2D_mrxaf")
 
-[node name="Camera2D" type="Camera2D" parent="." unique_id=207238916]
+[node name="Camera" type="Camera2D" parent="." unique_id=207238916]
 zoom = Vector2(0.75, 0.75)
 
 [node name="Combat" type="Node2D" parent="." unique_id=1107745331]
 script = ExtResource("2_h1vum")
+
+[node name="BulletCollider" type="Area2D" parent="." unique_id=845473755]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BulletCollider" unique_id=797334021]
+shape = SubResource("CapsuleShape2D_h1vum")

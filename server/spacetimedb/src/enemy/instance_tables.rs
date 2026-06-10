@@ -6,7 +6,13 @@ use super::def_tables::{PatternType, EnemyTarget};
 pub enum SequenceStepRef {
     Single(u64),
     Repeat(u64),
-    Multi(u64),
+    Multi(MultiStepRef),
+}
+
+#[derive(SpacetimeType, Clone)]
+pub struct MultiStepRef {
+    pub def_id: u64,
+    pub shot_index: u32
 }
 
 #[table(accessor = repeat_step_instance, public)]
@@ -19,6 +25,7 @@ pub struct RepeatStepInstance {
     pub base_angle_offset: f32,
     pub texture_id: String,
     pub lifetime: f32,
+    pub damage: u32,
     pub repeat_interval: f32,
     pub repeat_target: u32,
     pub next_step_delay: f32,
@@ -117,6 +124,7 @@ pub struct BulletPatternEvent {
     #[primary_key] #[auto_inc]
     pub event_id: u64,
     pub enemy_id: u64,
+    pub source_step: SequenceStepRef,
     pub origin_x: f32,
     pub origin_y: f32,
     pub origin_offset_x: f32,

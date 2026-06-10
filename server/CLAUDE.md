@@ -1,3 +1,31 @@
+# Server Module Map
+
+`server/spacetimedb/src/` is split into four modules: `enemy/`, `player/`, `world/`, `main/`. Each gameplay module has `mod.rs`, `methods.rs` (pure helpers/math), `reducers.rs`, and `views.rs` (currently empty placeholders — views not yet implemented; clients subscribe to public tables directly).
+
+### `enemy/`
+- `def_tables.rs` — static template data: `PatternType` variants (Ring, Volley, Curtain, Shotgun, Explosion, ...) + their param structs, `MovementBehavior` (+ Wander/Chase/Flee params), `EnemyTarget`, attack sequence step defs (`SingleStepDef`, `RepeatStepDef`, `MultiStepDef`, `AttackSequence`, `PhaseDef`), `EnemyTemplate` table
+- `instance_tables.rs` — runtime data: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, `EnemyZone`, `BulletPatternEvent` (event table), `EnemySpawnSchedule`/`EnemyBehaviorSchedule` (scheduled tick types)
+- `reducers.rs` — `tick_enemy_spawn`, `tick_enemy_behavior` (scheduled), `report_enemy_hit`
+- `methods.rs` — aggro/targeting, phase/sequence ticking (`tick_phase`, `tick_sequence`), movement (`apply_movement`), zone spawning (`spawn_from_zones`)
+
+### `player/`
+- `tables.rs` — `LoggedInPlayer`/`LoggedOutPlayer` (login state), `PlayerProfile`, `PlayerData` (level/xp/hp), `PlayerStats`, `PlayerInventory`, `PlayerPosition`, `LootDrop`, `InventorySlot`
+- `reducers.rs` — `set_username`, `create_profile`, `delete_profile`, `join_world`, `leave_world`, `report_movement`, `gain_xp`, `update_inventory`, `report_hit`, `pickup_drop`
+- `methods.rs` — guards (`require_logged_in`, `require_in_world`, `require_in_lobby`, `is_admin`), stat/level math (`xp_for_level`, `compute_level`, `compute_base_stats`, `recompute_stats`), `compute_player_damage`/`compute_incoming_damage`, `scaffold_profile`, `find_profile_by_name`
+
+### `world/`
+- `tables.rs` — `MapConfig`, `BuildingTile`, `TextureEntry`, item definitions (`Item`, `Weapon`, `Armor`, `Artifact`, `Accessory`, `Consumable`), `WeaponPattern`/`ItemType` enums
+- `reducers.rs` — `place_building`, `remove_building`
+- `methods.rs` — hex math: `world_to_hex`, `hex_to_world`, `small_to_big`, `hexmod`/`inv_hexmod`, `chunk_center_hex`, `world_to_chunk`, `wrap_world_pos`/`wrap_chunk_coords`, `spiral_chunk_index`, `surrounding_chunk_indices`
+
+### `main/`
+- `lifecycle.rs` — `init`, `client_connected`, `client_disconnected`
+- `admin.rs` — admin-only reducers: `claim_admin`/`release_admin`, `change_stats`, `give_item`/`remove_item`, `upsert_texture_entry`/`upsert_item`/`upsert_enemy_template`, `spawn_enemy`/`despawn_enemy`, `add_chunks`/`clear_chunks`, `find_player_by_username`
+- `seeds.rs` — `seed_default_textures/enemies/items`, test boss seeds, seed-building helpers (`make_phase`, `make_sequence`, `seq_single`/`seq_repeat`/`seq_multi`, `multi_shot`)
+- `debug.rs` — `PlayerPositionDebug` table + `tick_player_position_debug`, `toggle_debug`
+
+---
+
 # SpacetimeDB Rules (All Languages)
 
 ## Migrating from 1.0 to 2.0?

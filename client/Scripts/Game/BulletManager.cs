@@ -7,46 +7,47 @@ public partial class BulletManager : Node
     public static BulletManager Instance { get; private set; } = null!;
 
     private Node blastBullets = null!;
-    private GodotObject directionalData = null!;
-    private GodotObject playerBulletData = null!;
+    private GodotObject EnemyBulletSpawner = null!;
+    private GodotObject PlayerBulletSpawner = null!;
     private readonly System.Collections.Generic.Dictionary<string, Texture2D?> bulletTextureCache = [];
 
     public override void _Ready()
     {
         Instance = this;
         blastBullets = GetChild(0);
-        SetupDirectionalBullets();
-        SetupPlayerBulletData();
+        SetupEnemyBullets();
+        SetupPlayerBullets();
+        blastBullets.Connect("area_entered", Callable.From<GodotObject, GodotObject, int, Resource, Transform2D>(OnEnemyBulletAreaEntered));
     }
 
-    private void SetupDirectionalBullets()
+    private void SetupEnemyBullets()
     {
-        directionalData = ClassDB.Instantiate("DirectionalBulletsData2D").AsGodotObject();
-        directionalData.Set("texture_size", new Vector2(8, 8));
-        directionalData.Call("set_collision_layer_from_array", new Godot.Collections.Array { 3 });
-        directionalData.Call("set_collision_mask_from_array", new Godot.Collections.Array { 2 });
-        directionalData.Set("collision_shape_size", new Vector2(4, 4));
-        directionalData.Set("max_life_time", 8.0f);
+        EnemyBulletSpawner = ClassDB.Instantiate("DirectionalBulletsData2D").AsGodotObject();
+        EnemyBulletSpawner.Set("texture_size", new Vector2(8, 8));
+        EnemyBulletSpawner.Call("set_collision_layer_from_array", new Godot.Collections.Array { 2 });
+        EnemyBulletSpawner.Call("set_collision_mask_from_array", new Godot.Collections.Array { 2 });
+        EnemyBulletSpawner.Set("collision_shape_size", new Vector2(4, 4));
     }
 
-    private void SetupPlayerBulletData()
+    private void OnEnemyBulletAreaEntered(GodotObject hitTargetArea, GodotObject bulletsInstance, int bulletIndex, Resource bulletsCustomData, Transform2D bulletTransform)
     {
-        playerBulletData = ClassDB.Instantiate("DirectionalBulletsData2D").AsGodotObject();
-        playerBulletData.Set("texture_size", new Vector2(8, 8));
-        playerBulletData.Call("set_collision_layer_from_array", new Godot.Collections.Array());
-        playerBulletData.Call("set_collision_mask_from_array", new Godot.Collections.Array());
-        playerBulletData.Set("collision_shape_size", Vector2.Zero);
+        if (bulletsCustomData is not BulletData data) return;
+        GameManager.Instance.Conn?.Reducers.ReportHit(data.SourceStep);
+    }
+
+    private void SetupPlayerBullets()
+    {
+        PlayerBulletSpawner = ClassDB.Instantiate("DirectionalBulletsData2D").AsGodotObject();
+        PlayerBulletSpawner.Set("texture_size", new Vector2(8, 8));
     }
 
     public void SpawnPlayerBullet(Vector2 origin, float angle, float lifetime, float speed, string textureId)
     {
-        ApplyBulletTexture(playerBulletData, textureId);
-        playerBulletData.Set("max_life_time", lifetime);
-        playerBulletData.Set("all_bullet_speed_data",
-            ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject()
-                .Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
-        playerBulletData.Set("transforms", new Godot.Collections.Array<Transform2D> { new(angle, origin) });
-        blastBullets.Call("spawn_directional_bullets", playerBulletData);
+        ApplyBulletTexture(PlayerBulletSpawner, textureId);
+        PlayerBulletSpawner.Set("max_life_time", lifetime);
+        PlayerBulletSpawner.Set("all_bullet_speed_data", ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject().Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
+        PlayerBulletSpawner.Set("transforms", new Godot.Collections.Array<Transform2D> { new(angle, origin) });
+        blastBullets.Call("spawn_directional_bullets", PlayerBulletSpawner);
     }
 
     private void ApplyBulletTexture(GodotObject data, string textureId)
@@ -61,15 +62,14 @@ public partial class BulletManager : Node
             data.Call("set_textures", new Godot.Collections.Array<Texture2D> { tex });
     }
 
-    public void Spawn(BulletPatternEvent bulletPattern)
+    public void SpawnEnemyBullet(BulletPatternEvent bulletPattern)
     {
         var origin    = new Vector2(bulletPattern.OriginX, bulletPattern.OriginY) + new Vector2(bulletPattern.OriginOffsetX, bulletPattern.OriginOffsetY);
         var baseAngle = ResolveTargetAngle(origin, bulletPattern.Target) + Mathf.DegToRad(bulletPattern.BaseAngleOffset);
 
-        directionalData.SetMeta("event_id", bulletPattern.EventId);
-        directionalData.SetMeta("enemy_id", bulletPattern.EnemyId);
-        directionalData.Set("max_life_time", bulletPattern.Lifetime);
-        ApplyBulletTexture(directionalData, bulletPattern.TextureId);
+        EnemyBulletSpawner.Set("bullets_custom_data", new BulletData { SourceStep = bulletPattern.SourceStep });
+        EnemyBulletSpawner.Set("max_life_time", bulletPattern.Lifetime);
+        ApplyBulletTexture(EnemyBulletSpawner, bulletPattern.TextureId);
 
         if (bulletPattern.PatternType is PatternType.Ring(var ring))
             SpawnRing(origin, ring, baseAngle);
@@ -85,8 +85,8 @@ public partial class BulletManager : Node
 
     public void SpawnDirectional(Vector2 origin, Vector2 direction)
     {
-        directionalData.Set("transforms", new Godot.Collections.Array<Transform2D> { new(direction.Angle(), origin) });
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        EnemyBulletSpawner.Set("transforms", new Godot.Collections.Array<Transform2D> { new(direction.Angle(), origin) });
+        blastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
     }
 
     private static float ResolveTargetAngle(Vector2 origin, SpacetimeDB.Identity? target)
@@ -117,9 +117,7 @@ public partial class BulletManager : Node
 
     private void SetSpeed(float speed)
     {
-        directionalData.Set("all_bullet_speed_data",
-            ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject()
-                .Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
+        EnemyBulletSpawner.Set("all_bullet_speed_data",ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject().Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
     }
 
     // Deterministic PRNG (SplitMix64) mirroring the server's hash technique in enemy/methods.rs,
@@ -146,10 +144,10 @@ public partial class BulletManager : Node
 
     private void SpawnSingle(Vector2 origin, float angle, float speed, float lifetime)
     {
-        directionalData.Set("max_life_time", lifetime);
+        EnemyBulletSpawner.Set("max_life_time", lifetime);
         SetSpeed(speed);
-        directionalData.Set("transforms", new Godot.Collections.Array<Transform2D> { new(angle, origin) });
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        EnemyBulletSpawner.Set("transforms", new Godot.Collections.Array<Transform2D> { new(angle, origin) });
+        blastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
     }
 
     private void SpawnRing(Vector2 origin, RingParams p, float baseAngle)
@@ -159,8 +157,8 @@ public partial class BulletManager : Node
         float angleStep = Mathf.Tau / p.Count;
         for (int i = 0; i < p.Count; i++)
             transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
-        directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        EnemyBulletSpawner.Set("transforms", transforms);
+        blastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
     }
 
     private void SpawnVolley(Vector2 origin, VolleyParams p, float baseAngle, ulong eventId, float lifetime)
@@ -185,8 +183,8 @@ public partial class BulletManager : Node
             if (i == p.GapIndex) continue;
             transforms.Add(new Transform2D(startAngle + angleStep * i, origin));
         }
-        directionalData.Set("transforms", transforms);
-        blastBullets.Call("spawn_directional_bullets", directionalData);
+        EnemyBulletSpawner.Set("transforms", transforms);
+        blastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
     }
 
     private void SpawnShotgun(Vector2 origin, ShotgunParams p, float baseAngle, ulong eventId, float lifetime)

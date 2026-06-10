@@ -17,6 +17,8 @@ namespace SpacetimeDB.Types
         public ulong EventId;
         [DataMember(Name = "enemy_id")]
         public ulong EnemyId;
+        [DataMember(Name = "source_step")]
+        public SequenceStepRef SourceStep;
         [DataMember(Name = "origin_x")]
         public float OriginX;
         [DataMember(Name = "origin_y")]
@@ -41,6 +43,7 @@ namespace SpacetimeDB.Types
         public BulletPatternEvent(
             ulong EventId,
             ulong EnemyId,
+            SequenceStepRef SourceStep,
             float OriginX,
             float OriginY,
             float OriginOffsetX,
@@ -55,6 +58,7 @@ namespace SpacetimeDB.Types
         {
             this.EventId = EventId;
             this.EnemyId = EnemyId;
+            this.SourceStep = SourceStep;
             this.OriginX = OriginX;
             this.OriginY = OriginY;
             this.OriginOffsetX = OriginOffsetX;
@@ -69,6 +73,7 @@ namespace SpacetimeDB.Types
 
         public BulletPatternEvent()
         {
+            this.SourceStep = null!;
             this.PatternType = null!;
             this.TextureId = "";
         }

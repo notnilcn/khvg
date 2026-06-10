@@ -39,6 +39,7 @@ public partial class GameManager : Node
 	private CanvasLayer? lobbyLayer;
 	private Button? joinButton;
 	private SubscriptionHandle? lobbySub;
+	private SubscriptionHandle? gameSub;
 
 	public override void _Ready()
 	{
@@ -160,7 +161,12 @@ public partial class GameManager : Node
 			.AddQuery(q => q.From.AllConsumables())
 			.Subscribe();
 
-		lobbySub = conn.SubscriptionBuilder()
+		SubscribeLobby();
+	}
+
+	private void SubscribeLobby()
+	{
+		lobbySub = Conn!.SubscriptionBuilder()
 			.AddQuery(q => q.From.LocalLobbyPlayer())
 			.AddQuery(q => q.From.LocalPlayerProfiles())
 			.OnApplied(OnLobbySubApplied)
@@ -169,7 +175,7 @@ public partial class GameManager : Node
 
 	private void SubscribeGame()
 	{
-		Conn!.SubscriptionBuilder()
+		gameSub = Conn!.SubscriptionBuilder()
 			.AddQuery(q => q.From.LocalPlayer())
 			.AddQuery(q => q.From.LocalPlayerData())
 			.AddQuery(q => q.From.LocalPlayerStats())
@@ -232,6 +238,13 @@ public partial class GameManager : Node
 		if (bulletManager != null && IsInstanceValid(bulletManager))
 			bulletManager.QueueFree();
 		bulletManager = null;
+
+		if (Conn?.IsActive != true) return;
+
+		ShowLobby();
+		SubscribeLobby();
+		gameSub?.Unsubscribe();
+		gameSub = null;
 	}
 
 	private void OnNearbyRemotePlayerInsert(EventContext _, PlayerPosition position)
