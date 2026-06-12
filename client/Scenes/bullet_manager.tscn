@@ -1,11 +1,8 @@
 [gd_scene format=3 uid="uid://simxqrad34gm"]
 
 [ext_resource type="Script" uid="uid://cl7qy3eeo4jep" path="res://Scripts/Game/BulletManager.cs" id="1_hr8h3"]
-[ext_resource type="Texture2D" uid="uid://k8ogv1pc7fsl" path="res://Textures/Attacks/Bullet.png" id="2_tjakt"]
-[ext_resource type="Texture2D" uid="uid://dxfpswl2ajumh" path="res://Textures/Attacks/Arrow.png" id="3_1tun6"]
 
 [node name="BulletManager" type="Node2D" unique_id=469550103]
 script = ExtResource("1_hr8h3")
-BulletTextures = [ExtResource("2_tjakt"), ExtResource("3_1tun6")]
 
 [node name="BlastBullets" type="BulletFactory2D" parent="." unique_id=1590443171]

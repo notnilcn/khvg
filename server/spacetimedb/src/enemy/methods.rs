@@ -40,6 +40,9 @@ pub fn seconds_since(ctx: &ReducerContext, since: Timestamp) -> f32 {
     now.saturating_sub(then) as f32 / 1_000_000.0
 }
 
+// Deterministic PRNG (SplitMix64) — mirrors BulletManager.cs's SplitMix64/HashToUnit on the
+// client, so Wander directions and bullet pellet jitter can be reproduced from an event/enemy
+// id alone, with no shared RNG state between server and clients.
 pub fn splitmix64(seed: u64) -> u64 {
     let h = (seed ^ (seed >> 30)).wrapping_mul(0xbf58476d1ce4e5b9);
     let h = (h ^ (h >> 27)).wrapping_mul(0x94d049bb133111eb);
@@ -119,6 +122,8 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
                 let step_ref = match step_def {
                     SequenceStepDef::Single(def_id) => SequenceStepRef::Single(*def_id),
                     SequenceStepDef::Multi(def_id) => SequenceStepRef::Multi(MultiStepRef { def_id: *def_id, shot_index: 0 }),
+                    // RepeatStepDef is shared template data; each enemy gets its own
+                    // RepeatStepInstance so repeat_count can advance independently.
                     SequenceStepDef::Repeat(def_id) => {
                         let r = match ctx.db.repeat_step_def().def_id().find(def_id) {
                             Some(r) => r,
@@ -214,6 +219,9 @@ pub fn begin_phase_cycle(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def
 
 pub type BulletStepEvent = (PatternType, EnemyTarget, f32, f32, f32, String, f32, SequenceStepRef);
 
+// Per-tick entry point for one phase. Advances every attack sequence in the phase by at
+// most one step each, collecting any bullet events fired this tick. Once all attacks have
+// exhausted their steps, the phase loop restarts via begin_phase_cycle.
 pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &PhaseDef) -> Vec<BulletStepEvent> {
     if phase.phase_waiting {
         if ctx.timestamp < phase.phase_loop_timer + Duration::from_secs_f32(phase.phase_loop_delay) {
@@ -240,6 +248,11 @@ pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &Phas
     events
 }
 
+// Advances one attack by at most one step transition per call. Step progress
+// (step_index/step_waiting/step_timer) is persisted on the EnemyAttack row between ticks.
+// Single/Multi: fire once, then optionally wait `next_step_delay` before moving to the next
+// step. Repeat: re-fire on `repeat_interval` until `repeat_count` reaches `repeat_target`,
+// then behaves like the others.
 pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def: &AttackSequence) -> Vec<BulletStepEvent> {
     if attack_def.steps.is_empty() {
         return vec![];
@@ -349,6 +362,9 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
     vec![]
 }
 
+// Picks the highest phase_index whose hp_threshold has been crossed (hp_pct <= threshold).
+// Phases are authored in descending-threshold order, but we take the max defensively in
+// case that ordering assumption is ever violated.
 pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 {
     let hp_pct = hp as f32 / max_hp as f32;
     let mut phase = 0u8;
@@ -372,6 +388,8 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
         MovementBehavior::Wander(p) => {
             let (active, cycle_index) = cycle_phase(ctx, phase.move_cycle_started_at, p.active_duration, p.pause_duration);
             if !active { return idle; }
+            // New deterministic direction each active cycle, derived from enemy_id + cycle_index
+            // so the path is reproducible (for audits) without storing any extra state.
             let angle = hash_to_unit(splitmix64(enemy.enemy_id.wrapping_add(cycle_index))) * std::f32::consts::TAU;
             let (dir_x, dir_y) = (angle.cos(), angle.sin());
             (enemy.x + dir_x * p.speed * dt, enemy.y + dir_y * p.speed * dt, dir_x, dir_y)
@@ -411,6 +429,8 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
     }
 }
 
+// Forward-looking: not yet called from any reducer. Will replace tick_enemy_spawn's hardcoded
+// single-enemy spawn once EnemyZone configs are authored (next-steps.md Task 5).
 #[allow(dead_code)]
 pub fn spawn_from_zones(ctx: &ReducerContext) {
     let cfg = ctx.db.map_config().id().find(&0u32);

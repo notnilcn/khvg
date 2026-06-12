@@ -8,6 +8,8 @@ pub const DEFAULT_CHUNK_ROWS: i32 = 30;
 pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 32.0;
 pub const DEFAULT_AOI_CHUNK_RADIUS: i32 = 3;
 pub const BEHAVIOR_TICK_DT: f32 = 0.1;
+pub const LOOT_DROP_EXPIRY: u64 = 300;
+pub const CONSUMABLE_EFFECT_TICK_SECONDS: f32 = 1.0;
 
 pub fn hex_area(hex_radius: i32) -> i32 {
     Hex::range_count(hex_radius as u32) as i32
@@ -27,19 +29,6 @@ pub fn hex_to_world(hq: i32, hr: i32, r_outer: f32) -> (f32, f32) {
     let layout = HexLayout { orientation: HexOrientation::Pointy, scale: Vec2::splat(r_outer), origin: Vec2::ZERO };
     let pos = layout.hex_to_world_pos(Hex::new(hq, hr));
     (pos.x, pos.y)
-}
-
-// Small hex (q, r) → chunk (cq, cr).
-pub fn small_to_big(hq: i32, hr: i32, _area: i32, shift: i32) -> (i32, i32) {
-    let radius = ((shift - 2) / 3) as u32;
-    let chunk = Hex::new(hq, hr).to_lower_res(radius);
-    (chunk.x, chunk.y)
-}
-
-// Compact local index m ∈ [0, area) for a small hex within its chunk.
-pub fn hexmod(hq: i32, hr: i32, _area: i32, shift: i32) -> i32 {
-    let radius = ((shift - 2) / 3) as u32;
-    Hex::new(hq, hr).to_hexmod_coordinates(radius) as i32
 }
 
 pub fn chunk_center_hex(cq: i32, cr: i32, hex_radius: i32) -> (i32, i32) {
@@ -80,6 +69,10 @@ pub fn wrap_chunk_coords(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: i32) -> 
     (cq.rem_euclid(chunk_cols), cr.rem_euclid(chunk_rows))
 }
 
+// Torus wrap in continuous space. If the position's chunk coord wrapped around the grid
+// (cqw != cq), shift x/y by `laps` world-space periods — the period vector for one full lap
+// in q (or r) is the world position of the hex at chunk (chunk_cols, 0) (or (0, chunk_rows)),
+// i.e. how far one full grid traversal moves you in continuous coordinates.
 pub fn wrap_world_pos(x: f32, y: f32, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> (f32, f32) {
     if chunk_cols <= 0 || chunk_rows <= 0 { return (x, y); }
     let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);

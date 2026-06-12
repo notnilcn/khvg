@@ -1,69 +1,47 @@
 # Next Steps
 
-## 1. System Overview Refresh + Server Cleanup
+## 3. Inventory UI — Other Sections + Toggle Menu
 
-A lot of server-side systems have changed since `system-overview.md` was last written (profile-based player model, item schema split into Item/Weapon/Armor/Accessory/Artifact/Consumable, views, etc.).
+Done so far:
 
-- Rewrite `system-overview.md` to reflect the current tables, reducers, and views on both server and client.
-- Audit server logic for leftover functionality from before the schema redesign that no longer fits (dead code, stale fields, mismatched assumptions).
-- Update any logic that doesn't integrate cleanly with current systems.
-- Add code comments to existing server logic where it helps future readability (only where the WHY is non-obvious, per global no-comments-by-default rule).
+- Hotbar rendering (weapon slot 0 + consumable slots 1–5) via `InventorySlotUI` (`SlotIndex` + `Icon`) and `LocalPlayerInventory.UpdateSection`, driven by `LocalPlayer.GetSlotItemId`.
+- Hotbar keys 1–5 (`Hotbar1`–`Hotbar5` input actions) call `use_item(slot_index)` when the slot isn't empty.
 
----
+Remaining:
 
-## 2. Inventory Server Logic
-
-New slot layout (24 slots total):
-
-| Indices | Zone | Allowed types | Behavior |
-|---|---|---|---|
-| 0 | Weapon | Weapon | equip (recompute) |
-| 1–5 | Hotbar | Consumable only | use (`use_item`) |
-| 6–9 | Accessory | Accessory | equip (recompute) |
-| 10–13 | Armor | Armor | equip (recompute) |
-| 14–15 | Artifact | Ability | equip (recompute, no-op for now) |
-| 16–22 | General | everything except Bag | storage |
-| 23 | Bag | Bag | deferred (no logic yet) |
-
-New/changed reducers (replacing `update_inventory` entirely):
-
-- **`pickup_drop(drop_id)`** — rewrite: scan general slots (16–22) first for an empty type-compatible slot, then fall back to scanning all other slots in index order. If nothing fits, `Err` and the drop stays on the ground. Calls `recompute_stats`.
-- **`drop_item(slot_index)`** — new: removes item from slot, inserts a `LootDrop` at the player's current position/chunk with a new `LOOT_DROP_EXPIRY` constant, calls `recompute_stats`.
-- **`swap_slots(from_index, to_index)`** — new: bidirectional type-compatibility check (each occupied side's item must be allowed by the other slot; empty side trivially passes). Either check fails → `Err`, atomic reject, nothing changes. Calls `recompute_stats`.
-- **`use_item(slot_index)`** — new: only `ItemType::Consumable` is usable (else `Err`). Applies `Consumable` effect, clears the slot (no stacking), calls `recompute_stats`.
-- **Remove `update_inventory`** — unused by client, had a multiset-validation hole; the four reducers above become the only mutation paths.
-
-Schema changes:
-
-- `Consumable.effect: String` → typed `ConsumableEffect` enum (matches the no-string-parsing convention used for `PatternType`/`WeaponPattern`). v1: `Heal` variant restores HP via `potency`, capped at `max_hp`.
-- `recompute_stats` keeps its `_ => {}` fallback for `ItemType::Ability` (artifact) — extension point for passive on-equip artifact effects once real artifacts are designed; no new infra needed yet.
-- New `LOOT_DROP_EXPIRY` constant in `world/methods.rs`.
-- Updated slot-builder helpers in `player/methods.rs` (`artifact_slot()`, consumable-only hotbar slot, trimmed general count).
-
-Note: this changes inventory shape, so existing player rows need a `--clear-database` republish.
+- Build UI for the other sections (Accessory 6–9, Armor 10–13, Artifact 14–15, General 16–22, Bag 23) using the same `InventorySlotUI` + `UpdateSection` pattern — just needs nodes laid out and assigned in the inspector.
+- Inventory becomes a toggle menu: a keybind (TBD) opens/closes a `Control` containing all the non-hotbar sections.
+- While the menu is open, the standalone screen-space hotbar hides and a second "menu hotbar" (visually integrated with the rest of the menu) becomes the active one. Both sets of `InventorySlotUI` nodes reference slot indices 1–5 — only one set is visible/interactive at a time.
+- Drag-and-drop between slots calls `swap_slots(from_index, to_index)` using each `InventorySlotUI.SlotIndex`.
 
 ---
 
-## 3. Client Inventory/Hotbar UI
+## 4. Drop Item + Loot Despawn + Pickup Lock
 
-- Build UI to view all inventory zones (weapon, hotbar/consumables, accessory, armor, artifact, general, bag) with item icons and stats.
-- Wire UI actions to the new reducers: drag/swap → `swap_slots`, drop → `drop_item`, use → `use_item`.
-- Stats panel reflects `LocalPlayerStats.OnUpdate` in real time.
-- Find temporary art assets for item icons and test the full flow with real items equipped/swapped/used.
+- Right-click on the hovered slot (in the open menu) calls `drop_item(slot_index)`.
+- New scheduled reducer to expire `LootDrop` rows past `expires_at` (the field already exists from step 2). Client already reacts to `LootDrop.OnDelete` (`GameManager.OnDropDelete` frees the `Drop` node), so this is purely a server-side scheduled cleanup.
+- Pickup lock: the player who dropped an item shouldn't instantly re-pick it up. Add `dropped_by: Option<Identity>` to `LootDrop`, set by `drop_item`. Client-side in `Drop.cs`: if `DroppedBy == LocalIdentity`, run a 5s timer on spawn during which `OnBodyEntered` ignores the local player.
 
 ---
 
-## 4. Loot Pickups + Enemy Reward Drops
+## 5. Item Stats Sidebar
 
-Depends on 1 and 2 being done first.
+- Hovering/clicking a slot in the open menu shows its stats in a sidebar.
+- Derive on hover rather than storing on `InventorySlotUI`: resolve `GetSlotItemId(slotIndex)` → `Item` → typed data (`Weapon`/`Armor`/`Accessory`/`Artifact`/`Consumable`) via the existing `GameManager` caches — same resolution `LocalPlayer.ResolveSlotAt` already does for `GeneralSlots`.
+- Decide per-item-type display format (weapon stats vs. armor bonuses vs. consumable effect description) once the sidebar UI exists.
 
-- Define drop tables per enemy template (item type, drop chance, quantity range) in seed data — not hardcoded.
+---
+
+## 6. More Test Items + Loot Drop/Pickup Integration
+
+- Seed more `Item`/`Weapon`/`Armor`/`Accessory`/`Artifact`/`Consumable` entries for variety across all slot types.
+- Define drop tables per `EnemyTemplate` (item type, drop chance, quantity range) in seed data — not hardcoded.
 - On enemy death, insert `LootDrop` row(s); server-authoritative allocation if multiple players are involved (not every participant guaranteed a drop).
-- Confirm end-to-end: enemy dies → loot row inserted → client picks up via `pickup_drop` → inventory updated → stats recomputed.
+- Confirm end-to-end: enemy dies → `LootDrop` inserted → client spawns `Drop` → player walks in → `pickup_drop` → inventory updated → stats recomputed.
 
 ---
 
-## 5. World Zones + Dynamic Enemy Spawning + Procedural World Gen
+## 7. World Zones + Dynamic Enemy Spawning + Procedural World Gen
 
 - Replace the current hardcoded single-enemy spawn with a world zone configuration system (`EnemyZone` table already exists — wire it up properly).
 - Enemy spawning driven by zone config across the whole world, not a fixed test spot.

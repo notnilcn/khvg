@@ -28,6 +28,7 @@ namespace SpacetimeDB.Types
         public RemoteTables(DbConnection conn)
         {
             AddTable(Accessory = new(conn));
+            AddTable(ActiveConsumableEffect = new(conn));
             AddTable(AllAccessories = new(conn));
             AddTable(AllArmor = new(conn));
             AddTable(AllArtifacts = new(conn));
@@ -572,6 +573,7 @@ namespace SpacetimeDB.Types
         internal static string[] AllTablesSqlQueries() => new string[]
         {
             new QueryBuilder().From.Accessory().ToSql(),
+            new QueryBuilder().From.ActiveConsumableEffect().ToSql(),
             new QueryBuilder().From.AllAccessories().ToSql(),
             new QueryBuilder().From.AllArmor().ToSql(),
             new QueryBuilder().From.AllArtifacts().ToSql(),
@@ -626,6 +628,7 @@ namespace SpacetimeDB.Types
     public sealed class From
     {
         public global::SpacetimeDB.Table<Accessory, AccessoryCols, AccessoryIxCols> Accessory() => new("accessory", new AccessoryCols("accessory"), new AccessoryIxCols("accessory"));
+        public global::SpacetimeDB.Table<ActiveConsumableEffect, ActiveConsumableEffectCols, ActiveConsumableEffectIxCols> ActiveConsumableEffect() => new("active_consumable_effect", new ActiveConsumableEffectCols("active_consumable_effect"), new ActiveConsumableEffectIxCols("active_consumable_effect"));
         public global::SpacetimeDB.Table<Accessory, AllAccessoriesCols, AllAccessoriesIxCols> AllAccessories() => new("all_accessories", new AllAccessoriesCols("all_accessories"), new AllAccessoriesIxCols("all_accessories"));
         public global::SpacetimeDB.Table<Armor, AllArmorCols, AllArmorIxCols> AllArmor() => new("all_armor", new AllArmorCols("all_armor"), new AllArmorIxCols("all_armor"));
         public global::SpacetimeDB.Table<Artifact, AllArtifactsCols, AllArtifactsIxCols> AllArtifacts() => new("all_artifacts", new AllArtifactsCols("all_artifacts"), new AllArtifactsIxCols("all_artifacts"));
@@ -761,6 +764,7 @@ namespace SpacetimeDB.Types
                 Reducer.CreateProfile args => Reducers.InvokeCreateProfile(eventContext, args),
                 Reducer.DeleteProfile args => Reducers.InvokeDeleteProfile(eventContext, args),
                 Reducer.DespawnEnemy args => Reducers.InvokeDespawnEnemy(eventContext, args),
+                Reducer.DropItem args => Reducers.InvokeDropItem(eventContext, args),
                 Reducer.GiveItem args => Reducers.InvokeGiveItem(eventContext, args),
                 Reducer.JoinWorld args => Reducers.InvokeJoinWorld(eventContext, args),
                 Reducer.LeaveWorld args => Reducers.InvokeLeaveWorld(eventContext, args),
@@ -774,11 +778,12 @@ namespace SpacetimeDB.Types
                 Reducer.ReportMovement args => Reducers.InvokeReportMovement(eventContext, args),
                 Reducer.SetUsername args => Reducers.InvokeSetUsername(eventContext, args),
                 Reducer.SpawnEnemy args => Reducers.InvokeSpawnEnemy(eventContext, args),
+                Reducer.SwapSlots args => Reducers.InvokeSwapSlots(eventContext, args),
                 Reducer.ToggleDebug args => Reducers.InvokeToggleDebug(eventContext, args),
-                Reducer.UpdateInventory args => Reducers.InvokeUpdateInventory(eventContext, args),
                 Reducer.UpsertEnemyTemplate args => Reducers.InvokeUpsertEnemyTemplate(eventContext, args),
                 Reducer.UpsertItem args => Reducers.InvokeUpsertItem(eventContext, args),
                 Reducer.UpsertTextureEntry args => Reducers.InvokeUpsertTextureEntry(eventContext, args),
+                Reducer.UseItem args => Reducers.InvokeUseItem(eventContext, args),
                 _ => throw new ArgumentOutOfRangeException("Reducer", $"Unknown reducer {reducer}")
             };
         }

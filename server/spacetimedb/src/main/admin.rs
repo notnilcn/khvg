@@ -7,8 +7,6 @@ use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 use crate::enemy::methods::build_enemy_behavior;
 
-const STRESS_TEMPLATE_IDS: &[&str] = &["LowStress", "MedStress", "HighStress"];
-
 #[spacetimedb::reducer]
 pub fn claim_admin(ctx: &ReducerContext) -> Result<(), String> {
     let any_admin = ctx.db.logged_in_player().iter().any(|p| p.is_admin)
@@ -64,7 +62,7 @@ pub fn give_item(ctx: &ReducerContext, target_username: String, profile_name: St
         .ok_or_else(|| format!("Profile '{}' not found.", profile_name))?;
     let inv = ctx.db.player_inventory().profile_id().find(&profile.profile_id).ok_or("Inventory not found.")?;
     let empty_slot = inv.slots.iter().enumerate()
-        .skip(14).take(9)
+        .skip(GENERAL_SLOT_START).take(GENERAL_SLOT_COUNT)
         .find(|(_, s)| s.item_id.is_none())
         .map(|(i, _)| i)
         .ok_or("No empty general slots available.")?;

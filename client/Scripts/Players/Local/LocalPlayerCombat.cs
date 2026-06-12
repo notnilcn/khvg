@@ -153,9 +153,8 @@ public partial class LocalPlayerCombat : Node2D
 
     private void FireSingle(Vector2 origin, Vector2 aimDir)
     {
-        BulletManager.Instance.SpawnPlayerBullet(origin, aimDir.Angle(), _weapon!.Range / _weapon.BulletSpeed, _weapon.BulletSpeed, _weapon.ProjectileTextureId);
-        for (int i = 0; i < (int)_weapon.ZoneCount; i++)
-            SpawnZone(origin + aimDir * _zoneStep * (i + 0.5f), _zoneStep * 0.5f, (i + 0.5f) * _zoneStep / _weapon.BulletSpeed);
+        BulletManager.Instance.SpawnPlayerBullet(origin, aimDir.Angle(), _weapon!.Range / _weapon.ProjectileSpeed, _weapon.ProjectileSpeed, _weapon.ProjectileTextureId);
+        SpawnZonesAlong(origin, aimDir.Angle(), _weapon.Range, _weapon.ProjectileSpeed);
     }
 
     private void FireTriple(Vector2 origin, Vector2 aimDir)
@@ -165,11 +164,13 @@ public partial class LocalPlayerCombat : Node2D
         float halfSpread = _weapon.SpreadAngle * 0.5f;
         float angleStep = shotCount > 1 ? _weapon.SpreadAngle / (shotCount - 1) : 0f;
 
+        var angles = new float[shotCount];
         for (int b = 0; b < shotCount; b++)
-        {
-            float angle = baseAngle + (-halfSpread + angleStep * b);
-            SpawnBulletWithZones(origin, angle);
-        }
+            angles[b] = baseAngle + (-halfSpread + angleStep * b);
+
+        BulletManager.Instance.SpawnPlayerBullets(origin, angles, _weapon.Range / _weapon.ProjectileSpeed, _weapon.ProjectileSpeed, _weapon.ProjectileTextureId);
+        foreach (var angle in angles)
+            SpawnZonesAlong(origin, angle, _weapon.Range, _weapon.ProjectileSpeed);
     }
 
     private void FireCluster(Vector2 origin, Vector2 aimDir)
@@ -182,7 +183,7 @@ public partial class LocalPlayerCombat : Node2D
         {
             float angle = baseAngle + (float)GD.RandRange(-halfSpread, halfSpread);
             float pelletRange = (float)GD.RandRange(_weapon.Range * 0.5f, _weapon.Range);
-            float pelletSpeed = (float)GD.RandRange(_weapon.BulletSpeed * 0.8f, _weapon.BulletSpeed * 1.1f);
+            float pelletSpeed = (float)GD.RandRange(_weapon.ProjectileSpeed * 0.8f, _weapon.ProjectileSpeed * 1.1f);
             SpawnBulletWithZones(origin, angle, pelletRange, pelletSpeed);
         }
     }
@@ -190,12 +191,17 @@ public partial class LocalPlayerCombat : Node2D
     private void SpawnBulletWithZones(Vector2 origin, float angle, float range = -1f, float speed = -1f)
     {
         float r = range > 0f ? range : _weapon!.Range;
-        float s = speed > 0f ? speed : _weapon!.BulletSpeed;
-        int zoneCount = Mathf.Max(1, Mathf.RoundToInt(r / _zoneStep));
-        var dir = Vector2.Right.Rotated(angle);
+        float s = speed > 0f ? speed : _weapon!.ProjectileSpeed;
         BulletManager.Instance.SpawnPlayerBullet(origin, angle, r / s, s, _weapon!.ProjectileTextureId);
+        SpawnZonesAlong(origin, angle, r, s);
+    }
+
+    private void SpawnZonesAlong(Vector2 origin, float angle, float range, float speed)
+    {
+        int zoneCount = Mathf.Max(1, Mathf.RoundToInt(range / _zoneStep));
+        var dir = Vector2.Right.Rotated(angle);
         for (int i = 0; i < zoneCount; i++)
-            SpawnZone(origin + dir * _zoneStep * (i + 0.5f), _zoneStep * 0.5f, (i + 0.5f) * _zoneStep / s);
+            SpawnZone(origin + dir * _zoneStep * (i + 0.5f), _zoneStep * 0.5f, (i + 0.5f) * _zoneStep / speed);
     }
 
     private void SpawnZone(Vector2 pos, float radius, float delay)

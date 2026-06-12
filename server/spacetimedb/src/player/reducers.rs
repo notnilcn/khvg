@@ -1,6 +1,5 @@
-use log::Log;
-use spacetimedb::{ReducerContext, Table};
 use std::time::Duration;
+use spacetimedb::{ReducerContext, Table};
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
@@ -54,7 +53,11 @@ pub fn delete_profile(ctx: &ReducerContext, profile_id: u64) -> Result<(), Strin
     ctx.db.player_data().profile_id().delete(&profile_id);
     ctx.db.player_stats().profile_id().delete(&profile_id);
     ctx.db.player_inventory().profile_id().delete(&profile_id);
+    ctx.db.player_position().profile_id().delete(&profile_id);
     ctx.db.player_profile().profile_id().delete(&profile_id);
+    for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
+        ctx.db.active_consumable_effect().effect_id().delete(&active.effect_id);
+    }
     Ok(())
 }
 
@@ -100,32 +103,6 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
 }
 
 #[spacetimedb::reducer]
-pub fn update_inventory(ctx: &ReducerContext, slots: Vec<InventorySlot>) -> Result<(), String> {
-    let player = require_in_world(ctx)?;
-    let profile_id = player.profile_id;
-
-    let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
-    if slots.len() != inv.slots.len() {
-        return Err("Inventory size cannot be changed this way.".to_string());
-    }
-    for (i, (new_slot, existing_slot)) in slots.iter().zip(inv.slots.iter()).enumerate() {
-        if new_slot.allowed_types != existing_slot.allowed_types {
-            return Err(format!("Slot {} allowed types cannot be changed.", i));
-        }
-        if let Some(item_id) = &new_slot.item_id {
-            let item = ctx.db.item().item_id().find(item_id)
-                .ok_or_else(|| format!("Item '{}' not found.", item_id))?;
-            if !new_slot.allowed_types.contains(&item.item_type) {
-                return Err(format!("Item '{}' is not allowed in slot {}.", item_id, i));
-            }
-        }
-    }
-    ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
-    recompute_stats(ctx, profile_id);
-    Ok(())
-}
-
-#[spacetimedb::reducer]
 pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
@@ -145,6 +122,9 @@ pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), S
             ctx.db.player_inventory().profile_id().delete(profile_id);
             ctx.db.player_stats().profile_id().delete(profile_id);
             ctx.db.player_position().profile_id().delete(profile_id);
+            for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
+                ctx.db.active_consumable_effect().effect_id().delete(&active.effect_id);
+            }
 
             ctx.db.logged_in_player().player_id().delete(ctx.sender());
             ctx.db.logged_out_player().insert(LoggedOutPlayer {player_id: ctx.sender(), username: player.username, is_admin: player.is_admin});
@@ -163,16 +143,118 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
 
     let drop = ctx.db.loot_drop().drop_id().find(&drop_id).ok_or("Drop not found.")?;
     if drop.item_id.is_empty() { return Ok(()); }
-    let drop_item_id = drop.item_id.clone();
+    let item = ctx.db.item().item_id().find(&drop.item_id).ok_or("Item not found.")?;
     let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
-    let empty_slot = inv.slots.iter().enumerate()
-        .skip(14).take(9)
-        .find(|(_, s)| s.item_id.is_none())
+
+    let general_range = GENERAL_SLOT_START..GENERAL_SLOT_START + GENERAL_SLOT_COUNT;
+    let target = inv.slots.iter().enumerate()
+        .skip(GENERAL_SLOT_START).take(GENERAL_SLOT_COUNT)
+        .find(|(_, s)| s.item_id.is_none() && s.allowed_types.contains(&item.item_type))
+        .or_else(|| inv.slots.iter().enumerate()
+            .filter(|(i, _)| !general_range.contains(i))
+            .find(|(_, s)| s.item_id.is_none() && s.allowed_types.contains(&item.item_type)))
         .map(|(i, _)| i)
-        .ok_or("No empty slots available.")?;
+        .ok_or("No suitable slot available.")?;
+
     let mut slots = inv.slots.clone();
-    slots[empty_slot].item_id = Some(drop_item_id);
+    slots[target].item_id = Some(drop.item_id.clone());
     ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
     ctx.db.loot_drop().drop_id().delete(&drop_id);
+    recompute_stats(ctx, profile_id);
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+    let slot_index = slot_index as usize;
+
+    let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
+    let slot = inv.slots.get(slot_index).ok_or("Invalid slot index.")?;
+    let item_id = slot.item_id.clone().ok_or("Slot is empty.")?;
+    let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+
+    let mut slots = inv.slots.clone();
+    slots[slot_index].item_id = None;
+    ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
+
+    ctx.db.loot_drop().insert(LootDrop {
+        drop_id: 0, item_id, x: pos.x, y: pos.y, chunk_index: pos.chunk_index,
+        expires_at: ctx.timestamp + Duration::from_secs(LOOT_DROP_EXPIRY),
+    });
+    recompute_stats(ctx, profile_id);
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+    let (from_index, to_index) = (from_index as usize, to_index as usize);
+
+    let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
+    if from_index == to_index { return Ok(()); }
+    let from = inv.slots.get(from_index).ok_or("Invalid slot index.")?.clone();
+    let to = inv.slots.get(to_index).ok_or("Invalid slot index.")?.clone();
+
+    if let Some(item_id) = &from.item_id {
+        let item = ctx.db.item().item_id().find(item_id).ok_or("Item not found.")?;
+        if !to.allowed_types.contains(&item.item_type) {
+            return Err(format!("Item '{}' is not allowed in slot {}.", item_id, to_index));
+        }
+    }
+    if let Some(item_id) = &to.item_id {
+        let item = ctx.db.item().item_id().find(item_id).ok_or("Item not found.")?;
+        if !from.allowed_types.contains(&item.item_type) {
+            return Err(format!("Item '{}' is not allowed in slot {}.", item_id, from_index));
+        }
+    }
+
+    let mut slots = inv.slots.clone();
+    slots[from_index].item_id = to.item_id;
+    slots[to_index].item_id = from.item_id;
+    ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
+    recompute_stats(ctx, profile_id);
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn tick_active_consumable_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule) {
+    let mut affected_profiles = Vec::new();
+    for active in ctx.db.active_consumable_effect().iter() {
+        let remaining = active.remaining - CONSUMABLE_EFFECT_TICK_SECONDS;
+        if remaining <= 0.0 {
+            ctx.db.active_consumable_effect().effect_id().delete(&active.effect_id);
+            affected_profiles.push(active.profile_id);
+        } else {
+            ctx.db.active_consumable_effect().effect_id().update(ActiveConsumableEffect { remaining, ..active });
+        }
+    }
+    for profile_id in affected_profiles {
+        recompute_stats(ctx, profile_id);
+    }
+}
+
+#[spacetimedb::reducer]
+pub fn use_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+    let slot_index = slot_index as usize;
+
+    let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
+    let slot = inv.slots.get(slot_index).ok_or("Invalid slot index.")?;
+    let item_id = slot.item_id.clone().ok_or("Slot is empty.")?;
+    let item = ctx.db.item().item_id().find(&item_id).ok_or("Item not found.")?;
+    if item.item_type != ItemType::Consumable {
+        return Err("Only consumable items can be used.".to_string());
+    }
+    let consumable = ctx.db.consumable().consumable_id().find(&item_id).ok_or("Consumable data not found.")?;
+    apply_consumable_effect(ctx, profile_id, &consumable);
+
+    let mut slots = inv.slots.clone();
+    slots[slot_index].item_id = None;
+    ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
+    recompute_stats(ctx, profile_id);
     Ok(())
 }

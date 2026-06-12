@@ -1,7 +1,6 @@
 use spacetimedb::{ReducerContext, Table};
 use crate::world::tables::*;
 use crate::enemy::def_tables::*;
-use crate::enemy::instance_tables::*;
 
 pub fn seed_default_textures(ctx: &ReducerContext) {
     TextureEntry::seed(ctx, TextureEntry {
@@ -20,14 +19,39 @@ pub fn seed_default_textures(ctx: &ReducerContext) {
         kind: TextureKind::Player,
     });
     TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Bullet".to_string(),
-        res_path: "res://Textures/Attacks/Bullet.png".to_string(),
-        kind: TextureKind::Bullet,
+        texture_id: "Arrow".to_string(),
+        res_path: "res://Textures/Attacks/Arrow.tres".to_string(),
+        kind: TextureKind::Projectile,
     });
     TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Arrow".to_string(),
-        res_path: "res://Textures/Attacks/Arrow.png".to_string(),
-        kind: TextureKind::Bullet,
+        texture_id: "Helmet".to_string(),
+        res_path: "res://Textures/Items/Armor/Helmet.tres".to_string(),
+        kind: TextureKind::Item,
+    });
+    TextureEntry::seed(ctx, TextureEntry {
+        texture_id: "Hat".to_string(),
+        res_path: "res://Textures/Items/Accesories/Hat.tres".to_string(),
+        kind: TextureKind::Item,
+    });
+    TextureEntry::seed(ctx, TextureEntry {
+        texture_id: "Skull".to_string(),
+        res_path: "res://Textures/Items/Artifacts/Skull.tres".to_string(),
+        kind: TextureKind::Item,
+    });
+    TextureEntry::seed(ctx, TextureEntry {
+        texture_id: "Bag".to_string(),
+        res_path: "res://Textures/Items/Bags/Bag.tres".to_string(),
+        kind: TextureKind::Item,
+    });
+    TextureEntry::seed(ctx, TextureEntry {
+        texture_id: "Bread".to_string(),
+        res_path: "res://Textures/Items/Consumables/Bread.tres".to_string(),
+        kind: TextureKind::Item,
+    });
+    TextureEntry::seed(ctx, TextureEntry {
+        texture_id: "Bow".to_string(),
+        res_path: "res://Textures/Items/Weapons/Bow.tres".to_string(),
+        kind: TextureKind::Item,
     });
 }
 
@@ -42,7 +66,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Wander(WanderParams { speed: 30.0, active_duration: 2.5, pause_duration: 1.5 }), 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Ring(RingParams { speed: 70.0, count: 8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.0, 10, 0.9),
+                    seq_single(ctx, PatternType::Ring(RingParams { speed: 70.0, count: 8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.9),
                 ], 0.0),
             ]),
         ],
@@ -77,7 +101,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
             // Phase 0 (100% HP): turret — Ring read cleanly with no movement noise
             make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Ring(RingParams { speed: 130.0, count: 24 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.5, 10, 0.0),
+                    seq_single(ctx, PatternType::Ring(RingParams { speed: 130.0, count: 24 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.5, 10, 0.0),
                 ], 0.0),
             ]),
             // Phase 1 (<=80% HP): patrols while sweeping an aimed fan — repositioning shifts where the gap lands
@@ -101,7 +125,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
             // Phase 4 (<=20% HP): plants itself and erupts in a randomized 360° nova — desperation finale
             make_phase(ctx, 4, 0.2, MovementBehavior::Stationary, 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Explosion(ExplosionParams { speed: 100.0, count: 20, speed_variance: 35.0, lifetime_variance: 0.9 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 3.0, 10, 0.0),
+                    seq_single(ctx, PatternType::Explosion(ExplosionParams { speed: 100.0, count: 20, speed_variance: 35.0, lifetime_variance: 0.9 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 3.0, 10, 0.0),
                 ], 0.0),
             ]),
         ],
@@ -119,12 +143,12 @@ pub fn seed_test_boss_p2(ctx: &ReducerContext) {
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Ring(RingParams { speed: 50.0, count: 6 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.0, 10, 0.5),
+                    seq_single(ctx, PatternType::Ring(RingParams { speed: 50.0, count: 6 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.5),
                     seq_multi(ctx, vec![
                         multi_shot(PatternType::Shotgun(ShotgunParams { speed: 50.0, count: 25, spread: 100.0_f32.to_radians(), speed_variance: 0.0, lifetime_variance: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10),
                         multi_shot(PatternType::Shotgun(ShotgunParams { speed: 50.0, count: 14, spread: 12.5_f32.to_radians(), speed_variance: 0.0, lifetime_variance: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10),
                     ], 0.5),
-                    seq_repeat(ctx, PatternType::Ring(RingParams { speed: 50.0, count: 6 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Bullet", 2.0, 10, 0.5, 2, 0.5),
+                    seq_repeat(ctx, PatternType::Ring(RingParams { speed: 50.0, count: 6 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.5, 2, 0.5),
                 ], 0.0),
             ]),
         ],
@@ -132,7 +156,7 @@ pub fn seed_test_boss_p2(ctx: &ReducerContext) {
 }
 
 pub fn seed_test_boss_p3(ctx: &ReducerContext) {
-    let bullet = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 65.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, angle, "Bullet", 2.0, 10);
+    let bullet = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 65.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, angle, "Arrow", 2.0, 10);
     let bullet_many = |offset: f32, wait: f32| seq_multi(ctx, vec![bullet(offset), bullet(offset + 60.0), bullet(offset + 120.0), bullet(offset + 180.0), bullet(offset + 240.0), bullet(offset + 300.0)], wait);
     let arrow = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 50.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, angle, "Arrow", 2.0, 10);
     let arrow_many = |offset: f32, wait: f32| seq_multi(ctx, vec![arrow(offset), arrow(offset + 60.0), arrow(offset + 120.0), arrow(offset + 180.0), arrow(offset + 240.0), arrow(offset + 300.0)], wait);
@@ -163,7 +187,7 @@ pub fn seed_test_boss_p3(ctx: &ReducerContext) {
 }
 
 fn seed_test_boss_p3_clone(ctx: &ReducerContext, template_id: &str, display_name: &str) {
-    let bullet = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 50.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, angle, "Bullet", 2.0, 10);
+    let bullet = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 50.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, angle, "Arrow", 2.0, 10);
     let bullet_many = |offset: f32| seq_multi(ctx, vec![bullet(offset), bullet(offset + 60.0), bullet(offset + 120.0), bullet(offset + 180.0), bullet(offset + 240.0), bullet(offset + 300.0)], 0.1);
     let arrow = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 50.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, angle, "Arrow", 2.0, 10);
     let arrow_many = |offset: f32| seq_multi(ctx, vec![arrow(offset), arrow(offset + 60.0), arrow(offset + 120.0), arrow(offset + 180.0), arrow(offset + 240.0), arrow(offset + 300.0)], 0.1);
@@ -194,14 +218,8 @@ pub fn seed_test_boss_p4(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "T
 pub fn seed_test_boss_p5(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "TestBossP5", "Test Boss P5"); }
 pub fn seed_test_boss_p6(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "TestBossP6", "Test Boss P6"); }
 
-pub fn seed_default_items(ctx: &ReducerContext) {
-    seed_weapon(ctx, "StarterBow",     "Starter Bow",     "Arrow",  "Arrow",  10, 150.0, 4.0, 300.0,  3, 25, false, WeaponPattern::Triple,  0.35);
-    seed_weapon(ctx, "StarterRifle",   "Starter Rifle",   "Bullet", "Bullet", 60, 500.0, 0.8, 700.0,  1, 50, true, WeaponPattern::Single,  0.0);
-    seed_weapon(ctx, "StarterShotgun", "Starter Shotgun", "Arrow", "Arrow", 30, 100.0, 1.5, 250.0, 8, 25, false, WeaponPattern::Cluster, 1.05);
-}
-
-pub fn seed_weapon(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, projectile_texture_id: &str, damage: u32, range: f32, fire_rate: f32, bullet_speed: f32, shot_count: u32, zone_count: u32, pierce: bool, pattern: WeaponPattern, spread_angle: f32) {
-    Weapon::seed(ctx, Weapon { weapon_id: item_id.to_string(), damage, range, fire_rate, bullet_speed, shot_count, zone_count, pierce, projectile_texture_id: projectile_texture_id.to_string(), pattern, spread_angle });
+pub fn seed_weapon(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, projectile_texture_id: &str, damage: u32, range: f32, fire_rate: f32, projectile_speed: f32, shot_count: u32, zone_count: u32, pierce: bool, pattern: WeaponPattern, spread_angle: f32) {
+    Weapon::seed(ctx, Weapon { weapon_id: item_id.to_string(), damage, range, fire_rate, projectile_speed, shot_count, zone_count, pierce, projectile_texture_id: projectile_texture_id.to_string(), pattern, spread_angle });
     Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Weapon });
 }
 
@@ -210,9 +228,9 @@ pub fn seed_armor(ctx: &ReducerContext, item_id: &str, display_name: &str, textu
     Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Armor });
 }
 
-pub fn seed_ability(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, cooldown: f32, duration: f32, potency: f32) {
-    Artifact::seed(ctx, Artifact { artifact_id: item_id.to_string(), cooldown, duration, potency });
-    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Ability });
+pub fn seed_artifact(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, effect: ArtifactEffect) {
+    Artifact::seed(ctx, Artifact { artifact_id: item_id.to_string(), effect });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Artifact });
 }
 
 pub fn seed_accessory(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, strength_bonus: i32, wisdom_bonus: i32, dexterity_bonus: i32, speed_bonus: i32) {
@@ -220,9 +238,18 @@ pub fn seed_accessory(ctx: &ReducerContext, item_id: &str, display_name: &str, t
     Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Accessory });
 }
 
-pub fn seed_consumable(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, effect: &str, potency: f32, duration: f32) {
-    Consumable::seed(ctx, Consumable { consumable_id: item_id.to_string(), effect: effect.to_string(), potency, duration });
+pub fn seed_consumable(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, effect: ConsumableEffect, potency: f32, duration: f32) {
+    Consumable::seed(ctx, Consumable { consumable_id: item_id.to_string(), effect, potency, duration });
     Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Consumable });
+}
+
+pub fn seed_world_items(ctx: &ReducerContext) {
+    seed_armor(ctx, "Helmet", "Helmet", "Helmet", 2, 1, 10);
+    seed_accessory(ctx, "Hat", "Hat", "Hat", 0, 1, 1, 1);
+    seed_artifact(ctx, "Skull", "Skull", "Skull", ArtifactEffect::Strength(0.10));
+    Item::seed(ctx, Item { item_id: "Bag".to_string(), display_name: "Bag".to_string(), texture_id: "Bag".to_string(), item_type: ItemType::Bag });
+    seed_consumable(ctx, "Bread", "Bread", "Bread", ConsumableEffect::Heal, 20.0, 0.0);
+    seed_weapon(ctx, "Bow", "Bow", "Bow", "Arrow", 10, 150.0, 4.0, 300.0, 3, 25, false, WeaponPattern::Triple, 0.35);
 }
 
 pub fn make_phase(ctx: &ReducerContext, phase_index: u8, hp_threshold: f32, movement: MovementBehavior, phase_loop_delay: f32, attacks: Vec<AttackSequence>) -> PhaseDef {

@@ -1,5 +1,6 @@
-use spacetimedb::{table, SpacetimeType, Identity, Timestamp};
-use crate::world::tables::ItemType;
+use spacetimedb::{table, SpacetimeType, Identity, Timestamp, ScheduleAt};
+use crate::world::tables::{ItemType, ConsumableBuffEffect};
+use super::reducers::tick_active_consumable_effects;
 
 #[derive(SpacetimeType, Clone)]
 pub struct InventorySlot {
@@ -76,6 +77,23 @@ pub struct PlayerPosition {
     pub rotation: f32,
     #[index(btree)]
     pub chunk_index: i64,
+}
+
+#[table(accessor = active_consumable_effect, public)]
+pub struct ActiveConsumableEffect {
+    #[primary_key] #[auto_inc]
+    pub effect_id: u64,
+    #[index(btree)]
+    pub profile_id: u64,
+    pub effect: ConsumableBuffEffect,
+    pub remaining: f32,
+}
+
+#[table(accessor = consumable_effect_schedule, scheduled(tick_active_consumable_effects))]
+pub struct ConsumableEffectSchedule {
+    #[primary_key] #[auto_inc]
+    pub scheduled_id: u64,
+    pub scheduled_at: ScheduleAt,
 }
 
 #[table(accessor = loot_drop, public)]

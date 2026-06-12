@@ -4,7 +4,7 @@ use spacetimedb::{table, Identity, SpacetimeType};
 pub enum TextureKind {
     Player,
     Enemy,
-    Bullet,
+    Projectile,
     Item,
     Environment,
 }
@@ -53,7 +53,7 @@ pub enum WeaponPattern {
 #[derive(SpacetimeType, Clone, PartialEq)]
 pub enum ItemType {
     Weapon,
-    Ability,
+    Artifact,
     Armor,
     Accessory,
     Bag,
@@ -76,7 +76,7 @@ pub struct Weapon {
     pub damage: u32,
     pub range: f32,
     pub fire_rate: f32,
-    pub bullet_speed: f32,
+    pub projectile_speed: f32,
     pub shot_count: u32,
     pub zone_count: u32,
     pub pierce: bool,
@@ -94,13 +94,21 @@ pub struct Armor {
     pub hp_bonus: u32,
 }
 
+#[derive(SpacetimeType, Clone, PartialEq)]
+pub enum ArtifactEffect {
+    Strength(f32),
+    Wisdom(f32),
+    Dexterity(f32),
+    Defense(f32),
+    Vitality(f32),
+    Speed(f32),
+}
+
 #[table(accessor = artifact, public)]
 pub struct Artifact {
     #[primary_key]
     pub artifact_id: String,
-    pub cooldown: f32,
-    pub duration: f32,
-    pub potency: f32,
+    pub effect: ArtifactEffect,
 }
 
 #[table(accessor = accessory, public)]
@@ -113,11 +121,27 @@ pub struct Accessory {
     pub speed_bonus: i32,
 }
 
+#[derive(SpacetimeType, Clone, PartialEq)]
+pub enum ConsumableBuffEffect {
+    Strength(f32),
+    Wisdom(f32),
+    Dexterity(f32),
+    Defense(f32),
+    Vitality(f32),
+    Speed(f32),
+}
+
+#[derive(SpacetimeType, Clone, PartialEq)]
+pub enum ConsumableEffect {
+    Heal,
+    Buff(ConsumableBuffEffect),
+}
+
 #[table(accessor = consumable, public)]
 pub struct Consumable {
     #[primary_key]
     pub consumable_id: String,
-    pub effect: String,
+    pub effect: ConsumableEffect,
     pub potency: f32,
     pub duration: f32,
 }

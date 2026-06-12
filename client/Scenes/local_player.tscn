@@ -2,10 +2,28 @@
 
 [ext_resource type="Script" uid="uid://kf13rwr5hlhp" path="res://Scripts/Players/Local/LocalPlayer.cs" id="1_h1vum"]
 [ext_resource type="Script" uid="uid://bddvxb8xqsltm" path="res://Scripts/Players/Local/LocalPlayerCombat.cs" id="2_h1vum"]
+[ext_resource type="Script" uid="uid://qxrq17k705ef" path="res://Scripts/Players/Local/LocalPlayerInventory.cs" id="3_b1nyi"]
+[ext_resource type="Script" uid="uid://701vhi4srkpg" path="res://Scripts/Players/Local/InventorySlotUI.cs" id="4_7ophi"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mrxaf"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_h1vum"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1vum"]
+bg_color = Color(0.4115005, 0.4115005, 0.4115005, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.23096949, 0.23096949, 0.23096949, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
 
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
@@ -29,3 +47,178 @@ collision_mask = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BulletCollider" unique_id=797334021]
 shape = SubResource("CapsuleShape2D_h1vum")
+
+[node name="InventoryCanvas" type="CanvasLayer" parent="." unique_id=1521195768]
+
+[node name="Inventory" type="Control" parent="InventoryCanvas" unique_id=375106985 node_paths=PackedStringArray("HotbarSlots")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("3_b1nyi")
+HotbarSlots = [NodePath("Hotbar/Slot0"), NodePath("Hotbar/Slot1"), NodePath("Hotbar/Slot2"), NodePath("Hotbar/Slot3"), NodePath("Hotbar/Slot4"), NodePath("Hotbar/Slot5")]
+
+[node name="Hotbar" type="HBoxContainer" parent="InventoryCanvas/Inventory" unique_id=1852483177]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -41.0
+offset_top = -40.0
+offset_right = 41.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 6
+
+[node name="Slot0" type="Panel" parent="InventoryCanvas/Inventory/Hotbar" unique_id=581933243 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("4_7ophi")
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/Inventory/Hotbar/Slot0" unique_id=1056446447]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Slot1" type="Panel" parent="InventoryCanvas/Inventory/Hotbar" unique_id=821817778 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("4_7ophi")
+SlotIndex = 1
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/Inventory/Hotbar/Slot1" unique_id=782528158]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Slot2" type="Panel" parent="InventoryCanvas/Inventory/Hotbar" unique_id=1102005494 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("4_7ophi")
+SlotIndex = 2
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/Inventory/Hotbar/Slot2" unique_id=635868162]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Slot3" type="Panel" parent="InventoryCanvas/Inventory/Hotbar" unique_id=2049080542 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("4_7ophi")
+SlotIndex = 3
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/Inventory/Hotbar/Slot3" unique_id=1837313331]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Slot4" type="Panel" parent="InventoryCanvas/Inventory/Hotbar" unique_id=485332424 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("4_7ophi")
+SlotIndex = 4
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/Inventory/Hotbar/Slot4" unique_id=841152112]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Slot5" type="Panel" parent="InventoryCanvas/Inventory/Hotbar" unique_id=1006042676 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("4_7ophi")
+SlotIndex = 5
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/Inventory/Hotbar/Slot5" unique_id=1812894480]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)

@@ -49,8 +49,8 @@ public partial class LocalPlayer : CharacterBody2D
 	// Slot 0: weapon only
 	public Weapon? EquippedWeapon => GetSlotItem(0, GameManager.Instance.GetWeapon);
 
-	// Slots 1-5: ability/consumable mixed
-	public IReadOnlyList<ResolvedSlot> HotbarSlots => BuildResolvedSlots(1, 5);
+	// Slots 1-5: consumables only hotbar
+	public IReadOnlyList<Consumable?> HotbarSlots => BuildTypedSlots(1, 5, GameManager.Instance.GetConsumable);
 
 	// Slots 6-9: accessories only
 	public IReadOnlyList<Accessory?> AccessorySlots => BuildTypedSlots(6, 4, GameManager.Instance.GetAccessory);
@@ -58,8 +58,13 @@ public partial class LocalPlayer : CharacterBody2D
 	// Slots 10-13: armor only
 	public IReadOnlyList<Armor?> ArmorSlots => BuildTypedSlots(10, 4, GameManager.Instance.GetArmor);
 
-	// Slots 14-22: general mixed
-	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(14, 9);
+	// Slots 14-15: artifact only
+	public IReadOnlyList<Artifact?> ArtifactSlots => BuildTypedSlots(14, 2, GameManager.Instance.GetArtifact);
+
+	// Slots 16-22: general mixed
+	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(16, 7);
+
+	//public Bag? GetSlotItem(0, GameManager.Instance.GetWeapon);
 
 	public override void _Ready()
 	{
@@ -93,9 +98,9 @@ public partial class LocalPlayer : CharacterBody2D
 			if (resPath != null)
 				sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
 			EmitSignal("AimSettingsChanged");
-		}
-			
+		}	
 	}
+
 
 	public override void _PhysicsProcess(double delta)
 	{
@@ -137,6 +142,39 @@ public partial class LocalPlayer : CharacterBody2D
 	{
 		inventorySlots.Clear();
 		inventorySlots.AddRange(inventory.Slots);
+		GD.Print($"Equipped Weapon: {(EquippedWeapon is not null ? EquippedWeapon.WeaponId : "None")}");
+
+		// 1. Hotbar Consumables (Slots 1-5)
+		for (int i = 0; i < HotbarSlots.Count; i++)
+		{
+			var item = HotbarSlots[i];
+			GD.Print($"Hotbar Slot {i + 1}: {(item is not null ? item.ConsumableId : "None")}"); // Replace ConsumableId with your actual property name
+		}
+
+		// 2. Accessories (Slots 6-9)
+		for (int i = 0; i < AccessorySlots.Count; i++)
+		{
+			var item = AccessorySlots[i];
+			GD.Print($"Accessory Slot {i + 6}: {(item is not null ? item.AccessoryId : "None")}"); // Replace AccessoryId with your actual property name
+		}
+
+		// 3. Armor (Slots 10-13)
+		for (int i = 0; i < ArmorSlots.Count; i++)
+		{
+			var item = ArmorSlots[i];
+			GD.Print($"Armor Slot {i + 10}: {(item is not null ? item.ArmorId : "None")}"); // Replace ArmorId with your actual property name
+		}
+
+		// 4. Artifacts (Slots 14-15)
+		for (int i = 0; i < ArtifactSlots.Count; i++)
+		{
+			var item = ArtifactSlots[i];
+			GD.Print($"Artifact Slot {i + 14}: {(item is not null ? item.ArtifactId : "None")}"); // Replace ArtifactId with your actual property name
+		}
+
+		// 5. General Mixed Slots (Slots 16-22) - Count Only
+		GD.Print($"General Slots Count: {GeneralSlots.Count}");
+
 		EmitSignal("InventoryChanged");
 	}
 
@@ -174,7 +212,7 @@ public partial class LocalPlayer : CharacterBody2D
 			Slot       = slot,
 			Item       = item,
 			Weapon     = item.ItemType == ItemType.Weapon     ? GameManager.Instance.GetWeapon(slot.ItemId)     : null,
-			Artifact   = item.ItemType == ItemType.Ability    ? GameManager.Instance.GetArtifact(slot.ItemId)   : null,
+			Artifact   = item.ItemType == ItemType.Artifact   ? GameManager.Instance.GetArtifact(slot.ItemId)   : null,
 			Consumable = item.ItemType == ItemType.Consumable ? GameManager.Instance.GetConsumable(slot.ItemId) : null,
 			Armor      = item.ItemType == ItemType.Armor      ? GameManager.Instance.GetArmor(slot.ItemId)      : null,
 			Accessory  = item.ItemType == ItemType.Accessory  ? GameManager.Instance.GetAccessory(slot.ItemId)  : null,
@@ -187,6 +225,8 @@ public partial class LocalPlayer : CharacterBody2D
 		var itemId = inventorySlots[index].ItemId;
 		return itemId != null ? resolver(itemId) : null;
 	}
+
+	public string? GetSlotItemId(int index) => index < inventorySlots.Count ? inventorySlots[index].ItemId : null;
 
 	public override void _ExitTree()
 	{

@@ -11,6 +11,11 @@ public partial class BulletManager : Node
     private GodotObject PlayerBulletSpawner = null!;
     private readonly System.Collections.Generic.Dictionary<string, Texture2D?> bulletTextureCache = [];
 
+    // Arrow.tres art faces up-right (-45 degrees) instead of Vector2.Right, so compensate before BlastBullets2D applies its own trajectory rotation.
+    private const float ProjectileTextureAngleOffset = Mathf.Pi / 4f;
+
+    private static Transform2D BulletTransform(float angle, Vector2 origin) => new(angle, origin);
+
     public override void _Ready()
     {
         Instance = this;
@@ -41,12 +46,21 @@ public partial class BulletManager : Node
         PlayerBulletSpawner.Set("texture_size", new Vector2(8, 8));
     }
 
-    public void SpawnPlayerBullet(Vector2 origin, float angle, float lifetime, float speed, string textureId)
+    public void SpawnPlayerBullet(Vector2 origin, float angle, float lifetime, float speed, string textureId) =>
+        SpawnPlayerBullets(origin, [angle], lifetime, speed, textureId);
+
+    public void SpawnPlayerBullets(Vector2 origin, float[] angles, float lifetime, float speed, string textureId)
     {
         ApplyBulletTexture(PlayerBulletSpawner, textureId);
         PlayerBulletSpawner.Set("max_life_time", lifetime);
         PlayerBulletSpawner.Set("all_bullet_speed_data", ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject().Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
-        PlayerBulletSpawner.Set("transforms", new Godot.Collections.Array<Transform2D> { new(angle, origin) });
+        var transforms = new Godot.Collections.Array<Transform2D>();
+        foreach (var angle in angles)
+        
+            transforms.Add(BulletTransform(angle, origin));
+        
+                  
+        PlayerBulletSpawner.Set("transforms", transforms);
         blastBullets.Call("spawn_directional_bullets", PlayerBulletSpawner);
     }
 
@@ -55,7 +69,8 @@ public partial class BulletManager : Node
         if (!bulletTextureCache.TryGetValue(textureId, out var tex))
         {
             var resPath = GameManager.Instance.GetResPath(textureId);
-            tex = resPath != null ? GD.Load<Texture2D>(resPath) : null;
+            var frame = resPath != null ? GD.Load<SpriteFrames>(resPath)?.GetFrameTexture("default", 0) : null;
+            tex = frame != null ? ImageTexture.CreateFromImage(frame.GetImage()) : null;
             bulletTextureCache[textureId] = tex;
         }
         if (tex != null)
@@ -81,12 +96,6 @@ public partial class BulletManager : Node
             SpawnShotgun(origin, shotgun, baseAngle, bulletPattern.EventId, bulletPattern.Lifetime);
         else if (bulletPattern.PatternType is PatternType.Explosion(var explosion))
             SpawnExplosion(origin, explosion, baseAngle, bulletPattern.EventId, bulletPattern.Lifetime);
-    }
-
-    public void SpawnDirectional(Vector2 origin, Vector2 direction)
-    {
-        EnemyBulletSpawner.Set("transforms", new Godot.Collections.Array<Transform2D> { new(direction.Angle(), origin) });
-        blastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
     }
 
     private static float ResolveTargetAngle(Vector2 origin, SpacetimeDB.Identity? target)
@@ -146,7 +155,7 @@ public partial class BulletManager : Node
     {
         EnemyBulletSpawner.Set("max_life_time", lifetime);
         SetSpeed(speed);
-        EnemyBulletSpawner.Set("transforms", new Godot.Collections.Array<Transform2D> { new(angle, origin) });
+        EnemyBulletSpawner.Set("transforms", new Godot.Collections.Array<Transform2D> { BulletTransform(angle, origin) });
         blastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
     }
 
@@ -156,7 +165,7 @@ public partial class BulletManager : Node
         var transforms = new Godot.Collections.Array<Transform2D>();
         float angleStep = Mathf.Tau / p.Count;
         for (int i = 0; i < p.Count; i++)
-            transforms.Add(new Transform2D(baseAngle + angleStep * i, origin));
+            transforms.Add(BulletTransform(baseAngle + angleStep * i, origin));
         EnemyBulletSpawner.Set("transforms", transforms);
         blastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
     }
@@ -181,7 +190,7 @@ public partial class BulletManager : Node
         for (uint i = 0; i < p.Count; i++)
         {
             if (i == p.GapIndex) continue;
-            transforms.Add(new Transform2D(startAngle + angleStep * i, origin));
+            transforms.Add(BulletTransform(startAngle + angleStep * i, origin));
         }
         EnemyBulletSpawner.Set("transforms", transforms);
         blastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);

@@ -1,4 +1,4 @@
-use spacetimedb::{ReducerContext, Table, ScheduleAt, TimeDuration, log_stopwatch};
+use spacetimedb::{ReducerContext, Table};
 use std::time::Duration;
 use crate::world::methods::*;
 use crate::world::tables::*;
@@ -31,20 +31,13 @@ pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
 
 #[spacetimedb::reducer]
 pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
-    // let reducer_timer = log_stopwatch::LogStopwatch::new("Enemy Behavior Reducer Completed");
-
     let cfg = ctx.db.map_config().id().find(&0u32);
     let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
     let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
     let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
     let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
 
-    // let mut total = 0u32;
-    // let mut simulated = 0u32;
-    // let mut bullets_fired = 0u32;
-
     for enemy in ctx.db.enemy().iter() {
-        //total += 1;
         let mut behavior = match ctx.db.enemy_behavior().behavior_id().find(&enemy.behavior_id) {
             Some(b) => b,
             None => continue,
@@ -59,8 +52,9 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             }
             continue;
         }
-        // simulated += 1;
 
+        // Only retarget on the tick an enemy *enters* simulation range — avoids
+        // recomputing aggro every 100ms for an enemy already mid-fight.
         if !behavior.was_simulating {
             let (aggro_target, aggro_locked_until) = recompute_aggro(ctx, enemy.x, enemy.y, template.aggro_lock_seconds);
             behavior.aggro_target = aggro_target;
@@ -78,6 +72,8 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             None => continue,
         };
 
+        // enemy.phase is advanced by report_enemy_hit when HP crosses a threshold;
+        // detect that transition here and reset the new phase's attack sequences.
         let mut active_phase_index = behavior.active_phase_index;
         if enemy.phase != active_phase_index {
             active_phase_index = enemy.phase;
@@ -85,7 +81,6 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         }
 
         for (pt, step_target, ox, oy, bao, tex, lifetime, source_step) in tick_phase(ctx, &mut phase, phase_def) {
-            // bullets_fired += 1;
             let target = resolve_step_target(step_target, behavior.aggro_target);
             ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
                 event_id: 0, enemy_id: enemy.enemy_id,
@@ -111,12 +106,6 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         });
         ctx.db.enemy().enemy_id().update(Enemy { x: new_x, y: new_y, chunk_index, ..enemy });
     }
-
-    // if total > 0 {
-    //     log::info!("tick_enemy_behavior: {}/{} enemies simulated, {} bullets fired this tick", simulated, total, bullets_fired);
-    // }
-
-    // reducer_timer.end();
 }
 
 #[spacetimedb::reducer]
