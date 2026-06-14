@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://bbjjh55yrwyfn" path="res://Scenes/local_player.tscn" id="2_jjvhh"]
 [ext_resource type="PackedScene" uid="uid://8oytx5u0vik3" path="res://Scenes/non_local_player.tscn" id="3_kry3j"]
 [ext_resource type="PackedScene" uid="uid://djjulhvulxtyc" path="res://Scenes/default_enemy.tscn" id="4_jjvhh"]
+[ext_resource type="PackedScene" uid="uid://i7v5ssc1g45q" path="res://Scenes/drop.tscn" id="5_6bp64"]
 [ext_resource type="PackedScene" uid="uid://simxqrad34gm" path="res://Scenes/bullet_manager.tscn" id="5_21xkr"]
 [ext_resource type="Texture2D" uid="uid://btfkqgxlaioo5" path="res://Assets/2D/Tiny Swords (Free Pack)/Terrain/Tileset/Tilemap_color1.png" id="5_kry3j"]
 
@@ -711,6 +712,7 @@ script = ExtResource("1_8gbba")
 LocalPlayerScene = ExtResource("2_jjvhh")
 NonLocalPlayerScene = ExtResource("3_kry3j")
 EnemyScene = ExtResource("4_jjvhh")
+DropScene = ExtResource("5_6bp64")
 BulletManagerScene = ExtResource("5_21xkr")
 
 [node name="TileMap" type="TileMap" parent="." unique_id=1894941861]

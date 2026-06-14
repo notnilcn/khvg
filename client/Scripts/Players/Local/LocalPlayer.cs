@@ -49,20 +49,20 @@ public partial class LocalPlayer : CharacterBody2D
 	// Slot 0: weapon only
 	public Weapon? EquippedWeapon => GetSlotItem(0, GameManager.Instance.GetWeapon);
 
-	// Slots 1-5: consumables only hotbar
-	public IReadOnlyList<Consumable?> HotbarSlots => BuildTypedSlots(1, 5, GameManager.Instance.GetConsumable);
+	// Slots 1-4: consumables only hotbar
+	public IReadOnlyList<Consumable?> HotbarSlots => BuildTypedSlots(1, 4, GameManager.Instance.GetConsumable);
 
-	// Slots 6-9: accessories only
-	public IReadOnlyList<Accessory?> AccessorySlots => BuildTypedSlots(6, 4, GameManager.Instance.GetAccessory);
+	// Slots 5-8: accessories only
+	public IReadOnlyList<Accessory?> AccessorySlots => BuildTypedSlots(5, 4, GameManager.Instance.GetAccessory);
 
-	// Slots 10-13: armor only
-	public IReadOnlyList<Armor?> ArmorSlots => BuildTypedSlots(10, 4, GameManager.Instance.GetArmor);
+	// Slots 9-12: armor only
+	public IReadOnlyList<Armor?> ArmorSlots => BuildTypedSlots(9, 4, GameManager.Instance.GetArmor);
 
-	// Slots 14-15: artifact only
-	public IReadOnlyList<Artifact?> ArtifactSlots => BuildTypedSlots(14, 2, GameManager.Instance.GetArtifact);
+	// Slots 13-14: artifact only
+	public IReadOnlyList<Artifact?> ArtifactSlots => BuildTypedSlots(13, 2, GameManager.Instance.GetArtifact);
 
-	// Slots 16-22: general mixed
-	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(16, 7);
+	// Slots 15-22: general mixed
+	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(15, 8);
 
 	//public Bag? GetSlotItem(0, GameManager.Instance.GetWeapon);
 
@@ -144,35 +144,35 @@ public partial class LocalPlayer : CharacterBody2D
 		inventorySlots.AddRange(inventory.Slots);
 		GD.Print($"Equipped Weapon: {(EquippedWeapon is not null ? EquippedWeapon.WeaponId : "None")}");
 
-		// 1. Hotbar Consumables (Slots 1-5)
+		// 1. Hotbar Consumables (Slots 1-4)
 		for (int i = 0; i < HotbarSlots.Count; i++)
 		{
 			var item = HotbarSlots[i];
 			GD.Print($"Hotbar Slot {i + 1}: {(item is not null ? item.ConsumableId : "None")}"); // Replace ConsumableId with your actual property name
 		}
 
-		// 2. Accessories (Slots 6-9)
+		// 2. Accessories (Slots 5-8)
 		for (int i = 0; i < AccessorySlots.Count; i++)
 		{
 			var item = AccessorySlots[i];
-			GD.Print($"Accessory Slot {i + 6}: {(item is not null ? item.AccessoryId : "None")}"); // Replace AccessoryId with your actual property name
+			GD.Print($"Accessory Slot {i + 5}: {(item is not null ? item.AccessoryId : "None")}"); // Replace AccessoryId with your actual property name
 		}
 
-		// 3. Armor (Slots 10-13)
+		// 3. Armor (Slots 9-12)
 		for (int i = 0; i < ArmorSlots.Count; i++)
 		{
 			var item = ArmorSlots[i];
-			GD.Print($"Armor Slot {i + 10}: {(item is not null ? item.ArmorId : "None")}"); // Replace ArmorId with your actual property name
+			GD.Print($"Armor Slot {i + 9}: {(item is not null ? item.ArmorId : "None")}"); // Replace ArmorId with your actual property name
 		}
 
-		// 4. Artifacts (Slots 14-15)
+		// 4. Artifacts (Slots 13-14)
 		for (int i = 0; i < ArtifactSlots.Count; i++)
 		{
 			var item = ArtifactSlots[i];
-			GD.Print($"Artifact Slot {i + 14}: {(item is not null ? item.ArtifactId : "None")}"); // Replace ArtifactId with your actual property name
+			GD.Print($"Artifact Slot {i + 13}: {(item is not null ? item.ArtifactId : "None")}"); // Replace ArtifactId with your actual property name
 		}
 
-		// 5. General Mixed Slots (Slots 16-22) - Count Only
+		// 5. General Mixed Slots (Slots 15-22) - Count Only
 		GD.Print($"General Slots Count: {GeneralSlots.Count}");
 
 		EmitSignal("InventoryChanged");

@@ -25,6 +25,8 @@ namespace SpacetimeDB.Types
         public long ChunkIndex;
         [DataMember(Name = "expires_at")]
         public SpacetimeDB.Timestamp ExpiresAt;
+        [DataMember(Name = "dropped_by")]
+        public SpacetimeDB.Identity? DroppedBy;
 
         public LootDrop(
             ulong DropId,
@@ -32,7 +34,8 @@ namespace SpacetimeDB.Types
             float X,
             float Y,
             long ChunkIndex,
-            SpacetimeDB.Timestamp ExpiresAt
+            SpacetimeDB.Timestamp ExpiresAt,
+            SpacetimeDB.Identity? DroppedBy
         )
         {
             this.DropId = DropId;
@@ -41,6 +44,7 @@ namespace SpacetimeDB.Types
             this.Y = Y;
             this.ChunkIndex = ChunkIndex;
             this.ExpiresAt = ExpiresAt;
+            this.DroppedBy = DroppedBy;
         }
 
         public LootDrop()

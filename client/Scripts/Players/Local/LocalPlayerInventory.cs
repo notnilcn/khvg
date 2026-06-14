@@ -3,23 +3,40 @@ using Godot;
 
 public partial class LocalPlayerInventory : Control
 {
-    private static readonly string[] HotbarActions = ["Hotbar1", "Hotbar2", "Hotbar3", "Hotbar4", "Hotbar5"];
+    private static readonly string[] HotbarActions = ["Hotbar1", "Hotbar2", "Hotbar3", "Hotbar4"];
 
     [Export] public Godot.Collections.Array<InventorySlotUI> HotbarSlots { get; set; } = [];
     [Export] public Godot.Collections.Array<InventorySlotUI> ArmorSlots { get; set; } = [];
     [Export] public Godot.Collections.Array<InventorySlotUI> AccessorySlots { get; set; } = [];
     [Export] public Godot.Collections.Array<InventorySlotUI> ArtifactSlots { get; set; } = [];
     [Export] public Godot.Collections.Array<InventorySlotUI> GeneralSlots { get; set; } = [];
+    [Export] public Godot.Collections.Array<InventorySlotUI> InventoryHotbarSlots { get; set; } = [];
+
+    private Control backpack = null!;
+    private Control hotbar = null!;
 
     public override void _Ready()
     {
+        backpack = GetNode<Control>("Backpack");
+        hotbar = GetNode<Control>("Hotbar");
+        backpack.Visible = false;
+
         if (Owner is not LocalPlayer player) return;
         player.InventoryChanged += OnInventoryChanged;
     }
 
+    public override void _Input(InputEvent @event)
+    {
+        if (@event is not InputEventKey { Pressed: true, Echo: false } key || key.PhysicalKeycode != Key.Tab) return;
+
+        backpack.Visible = !backpack.Visible;
+        hotbar.Visible = !hotbar.Visible;
+        GetViewport().SetInputAsHandled();
+    }
+
     public override void _Process(double delta)
     {
-        if (Owner is not LocalPlayer player) return;
+        if (Owner is not LocalPlayer player || !hotbar.Visible) return;
 
         for (int i = 0; i < HotbarActions.Length; i++)
         {
@@ -39,6 +56,7 @@ public partial class LocalPlayerInventory : Control
         UpdateSection(player, AccessorySlots);
         UpdateSection(player, ArtifactSlots);
         UpdateSection(player, GeneralSlots);
+        UpdateSection(player, InventoryHotbarSlots);
     }
 
     private static void UpdateSection(LocalPlayer player, Godot.Collections.Array<InventorySlotUI> slots)

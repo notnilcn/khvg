@@ -96,3 +96,17 @@ fn nearby_remote_players_profiles(ctx: &ViewContext) -> impl Query<PlayerProfile
         .left_semijoin(ctx.from.logged_in_player(), |profile, player| profile.profile_id.eq(player.profile_id))
         .build()
 }
+
+#[spacetimedb::view(accessor = nearby_loot_drops, public)]
+fn nearby_loot_drops(ctx: &ViewContext) -> impl Query<LootDrop> {
+    let empty = ctx.from.loot_drop().r#where(|d| d.drop_id.eq(u64::MAX)).build();
+    let indices = match nearby_indices(ctx) {
+        Some(i) if !i.is_empty() => i,
+        _ => return empty,
+    };
+    ctx.from.loot_drop().r#where(move |d| {
+        let mut cond = d.chunk_index.eq(indices[0]);
+        for &idx in &indices[1..] { cond = cond.or(d.chunk_index.eq(idx)); }
+        cond
+    }).build()
+}

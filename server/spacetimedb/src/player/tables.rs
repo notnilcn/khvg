@@ -106,4 +106,5 @@ pub struct LootDrop {
     #[index(btree)]
     pub chunk_index: i64,
     pub expires_at: Timestamp,
+    pub dropped_by: Option<Identity>,
 }

@@ -120,8 +120,8 @@ public partial class GameManager : Node
 		conn.Db.NearbyRemotePlayers.OnDelete += OnNearbyRemotePlayerDelete;
 		conn.Db.NearbyEnemies.OnInsert += OnEnemyInsert;
 		conn.Db.NearbyEnemies.OnDelete += OnEnemyDelete;
-		conn.Db.LootDrop.OnInsert += OnDropInsert;
-		conn.Db.LootDrop.OnDelete += OnDropDelete;
+		conn.Db.NearbyLootDrops.OnInsert += OnDropInsert;
+		conn.Db.NearbyLootDrops.OnDelete += OnDropDelete;
 
 		conn.Db.AllTextures.OnInsert += (_, texture) => textureCache[texture.TextureId] = texture.ResPath;
 		conn.Db.AllTextures.OnUpdate += (_, _, texture) => textureCache[texture.TextureId] = texture.ResPath;
@@ -186,6 +186,7 @@ public partial class GameManager : Node
 			.AddQuery(q => q.From.NearbyRemotePlayers())
 			.AddQuery(q => q.From.NearbyRemotePlayersProfiles())
 			.AddQuery(q => q.From.NearbyEnemies())
+			.AddQuery(q => q.From.NearbyLootDrops())
 			.AddQuery(q => q.From.EnemyTemplates())
 			.AddQuery(q => q.From.BulletPatternEvent())
 			.AddQuery(q => q.From.MapConfig())
@@ -288,9 +289,13 @@ public partial class GameManager : Node
 
 	private void OnDropInsert(EventContext _, LootDrop lootDrop)
 	{
+		GD.Print("Drop Inserted");
 		if (drops.ContainsKey(lootDrop.DropId)) return;
+		GD.Print("Drop Being Instantiated");
 		var node = DropScene.Instantiate<Drop>();
 		node.DropId = lootDrop.DropId;
+		node.ItemId = lootDrop.ItemId;
+		node.DroppedBy = lootDrop.DroppedBy;
 		node.GlobalPosition = new Vector2(lootDrop.X, lootDrop.Y);
 		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
 		drops[lootDrop.DropId] = node;

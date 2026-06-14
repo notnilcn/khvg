@@ -64,6 +64,7 @@ namespace SpacetimeDB.Types
             AddTable(MovementDef = new(conn));
             AddTable(MultiStepDef = new(conn));
             AddTable(NearbyEnemies = new(conn));
+            AddTable(NearbyLootDrops = new(conn));
             AddTable(NearbyRemotePlayers = new(conn));
             AddTable(NearbyRemotePlayersProfiles = new(conn));
             AddTable(PlayerData = new(conn));
@@ -609,6 +610,7 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.MovementDef().ToSql(),
             new QueryBuilder().From.MultiStepDef().ToSql(),
             new QueryBuilder().From.NearbyEnemies().ToSql(),
+            new QueryBuilder().From.NearbyLootDrops().ToSql(),
             new QueryBuilder().From.NearbyRemotePlayers().ToSql(),
             new QueryBuilder().From.NearbyRemotePlayersProfiles().ToSql(),
             new QueryBuilder().From.PlayerData().ToSql(),
@@ -664,6 +666,7 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<MovementDef, MovementDefCols, MovementDefIxCols> MovementDef() => new("movement_def", new MovementDefCols("movement_def"), new MovementDefIxCols("movement_def"));
         public global::SpacetimeDB.Table<MultiStepDef, MultiStepDefCols, MultiStepDefIxCols> MultiStepDef() => new("multi_step_def", new MultiStepDefCols("multi_step_def"), new MultiStepDefIxCols("multi_step_def"));
         public global::SpacetimeDB.Table<Enemy, NearbyEnemiesCols, NearbyEnemiesIxCols> NearbyEnemies() => new("nearby_enemies", new NearbyEnemiesCols("nearby_enemies"), new NearbyEnemiesIxCols("nearby_enemies"));
+        public global::SpacetimeDB.Table<LootDrop, NearbyLootDropsCols, NearbyLootDropsIxCols> NearbyLootDrops() => new("nearby_loot_drops", new NearbyLootDropsCols("nearby_loot_drops"), new NearbyLootDropsIxCols("nearby_loot_drops"));
         public global::SpacetimeDB.Table<PlayerPosition, NearbyRemotePlayersCols, NearbyRemotePlayersIxCols> NearbyRemotePlayers() => new("nearby_remote_players", new NearbyRemotePlayersCols("nearby_remote_players"), new NearbyRemotePlayersIxCols("nearby_remote_players"));
         public global::SpacetimeDB.Table<PlayerProfile, NearbyRemotePlayersProfilesCols, NearbyRemotePlayersProfilesIxCols> NearbyRemotePlayersProfiles() => new("nearby_remote_players_profiles", new NearbyRemotePlayersProfilesCols("nearby_remote_players_profiles"), new NearbyRemotePlayersProfilesIxCols("nearby_remote_players_profiles"));
         public global::SpacetimeDB.Table<PlayerData, PlayerDataCols, PlayerDataIxCols> PlayerData() => new("player_data", new PlayerDataCols("player_data"), new PlayerDataIxCols("player_data"));

@@ -133,8 +133,8 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     }
 }
 
-pub const GENERAL_SLOT_START: usize = 16;
-pub const GENERAL_SLOT_COUNT: usize = 7;
+pub const GENERAL_SLOT_START: usize = 15;
+pub const GENERAL_SLOT_COUNT: usize = 8;
 
 fn weapon_slot(item_id: Option<String>) -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Weapon], item_id } }
 fn hotbar_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Consumable], item_id: None } }
@@ -154,17 +154,17 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     if ctx.db.player_inventory().profile_id().find(&profile_id).is_none() {
         let mut slots = vec![
             weapon_slot(Some("Bow".to_string())), // 0: weapon
-            hotbar_slot(), hotbar_slot(), hotbar_slot(), hotbar_slot(), hotbar_slot(), // 1-5: hotbar (consumable)
-            accessory_slot(), accessory_slot(), accessory_slot(), accessory_slot(), // 6-9: accessories
-            armor_slot(), armor_slot(), armor_slot(), armor_slot(), // 10-13: armor
-            artifact_slot(), artifact_slot(), // 14-15: artifact
-            general_slot(), general_slot(), general_slot(), general_slot(), general_slot(), general_slot(), general_slot(), // 16-22: general
+            hotbar_slot(), hotbar_slot(), hotbar_slot(), hotbar_slot(), // 1-4: hotbar (consumable)
+            accessory_slot(), accessory_slot(), accessory_slot(), accessory_slot(), // 5-8: accessories
+            armor_slot(), armor_slot(), armor_slot(), armor_slot(), // 9-12: armor
+            artifact_slot(), artifact_slot(), // 13-14: artifact
+            general_slot(), general_slot(), general_slot(), general_slot(), general_slot(), general_slot(), general_slot(), general_slot(), // 15-22: general
             bag_slot(), // 23: bag
         ];
         slots[1].item_id = Some("Bread".to_string());
-        slots[6].item_id = Some("Hat".to_string());
-        slots[10].item_id = Some("Helmet".to_string());
-        slots[14].item_id = Some("Skull".to_string());
+        slots[5].item_id = Some("Hat".to_string());
+        slots[9].item_id = Some("Helmet".to_string());
+        slots[13].item_id = Some("Skull".to_string());
         slots[23].item_id = Some("Bag".to_string());
         ctx.db.player_inventory().insert(PlayerInventory { profile_id, slots });
     }

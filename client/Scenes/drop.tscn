@@ -1,0 +1,16 @@
+[gd_scene format=3 uid="uid://i7v5ssc1g45q"]
+
+[ext_resource type="Script" uid="uid://bnc70m8tlxmif" path="res://Scripts/Items/Drop.cs" id="1_lbfjw"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5vi7l"]
+
+[node name="Drop" type="Node2D" unique_id=1237467754 node_paths=PackedStringArray("PickupArea")]
+script = ExtResource("1_lbfjw")
+PickupArea = NodePath("Collider")
+
+[node name="Collider" type="Area2D" parent="." unique_id=1023584969]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Collider" unique_id=352744609]
+shape = SubResource("CircleShape2D_5vi7l")
+
+[node name="Texture" type="Sprite2D" parent="." unique_id=2030667601]

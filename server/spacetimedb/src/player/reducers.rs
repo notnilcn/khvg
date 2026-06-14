@@ -182,6 +182,7 @@ pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
     ctx.db.loot_drop().insert(LootDrop {
         drop_id: 0, item_id, x: pos.x, y: pos.y, chunk_index: pos.chunk_index,
         expires_at: ctx.timestamp + Duration::from_secs(LOOT_DROP_EXPIRY),
+        dropped_by: Some(ctx.sender()),
     });
     recompute_stats(ctx, profile_id);
     Ok(())
