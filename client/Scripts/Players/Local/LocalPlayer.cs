@@ -20,6 +20,7 @@ public partial class LocalPlayer : CharacterBody2D
 {
 	[Signal] public delegate void InventoryChangedEventHandler();
 	[Signal] public delegate void AimSettingsChangedEventHandler();
+	[Signal] public delegate void StatsChangedEventHandler();
 
 	public static LocalPlayer? Local { get; private set; }
 
@@ -36,7 +37,7 @@ public partial class LocalPlayer : CharacterBody2D
 	public int Vitality { get; private set; }
 	public int Speed { get; private set; }
 
-	private const float SpeedPerStat = 4f;
+	private const float SpeedPerStat = 10f;
 	private const float WrapSnapThreshold = 50f;
 
 	private readonly List<InventorySlot> inventorySlots = new();
@@ -142,39 +143,6 @@ public partial class LocalPlayer : CharacterBody2D
 	{
 		inventorySlots.Clear();
 		inventorySlots.AddRange(inventory.Slots);
-		GD.Print($"Equipped Weapon: {(EquippedWeapon is not null ? EquippedWeapon.WeaponId : "None")}");
-
-		// 1. Hotbar Consumables (Slots 1-4)
-		for (int i = 0; i < HotbarSlots.Count; i++)
-		{
-			var item = HotbarSlots[i];
-			GD.Print($"Hotbar Slot {i + 1}: {(item is not null ? item.ConsumableId : "None")}"); // Replace ConsumableId with your actual property name
-		}
-
-		// 2. Accessories (Slots 5-8)
-		for (int i = 0; i < AccessorySlots.Count; i++)
-		{
-			var item = AccessorySlots[i];
-			GD.Print($"Accessory Slot {i + 5}: {(item is not null ? item.AccessoryId : "None")}"); // Replace AccessoryId with your actual property name
-		}
-
-		// 3. Armor (Slots 9-12)
-		for (int i = 0; i < ArmorSlots.Count; i++)
-		{
-			var item = ArmorSlots[i];
-			GD.Print($"Armor Slot {i + 9}: {(item is not null ? item.ArmorId : "None")}"); // Replace ArmorId with your actual property name
-		}
-
-		// 4. Artifacts (Slots 13-14)
-		for (int i = 0; i < ArtifactSlots.Count; i++)
-		{
-			var item = ArtifactSlots[i];
-			GD.Print($"Artifact Slot {i + 13}: {(item is not null ? item.ArtifactId : "None")}"); // Replace ArtifactId with your actual property name
-		}
-
-		// 5. General Mixed Slots (Slots 15-22) - Count Only
-		GD.Print($"General Slots Count: {GeneralSlots.Count}");
-
 		EmitSignal("InventoryChanged");
 	}
 
@@ -183,6 +151,8 @@ public partial class LocalPlayer : CharacterBody2D
 		Level = data.Level;
 		Hp    = data.Hp;
 		MaxHp = data.MaxHp;
+		EmitSignal("StatsChanged");
+		GD.Print("Data Changed Signal");
 	}
 
 	private void ApplyStats(PlayerStats stats)
@@ -193,6 +163,8 @@ public partial class LocalPlayer : CharacterBody2D
 		Defense   = stats.Defense;
 		Vitality  = stats.Vitality;
 		Speed     = stats.Speed;
+		EmitSignal("StatsChanged");
+		GD.Print("Stats Changed Signal");
 	}
 
 	private IReadOnlyList<ResolvedSlot> BuildResolvedSlots(int startIndex, int count) =>
@@ -201,7 +173,7 @@ public partial class LocalPlayer : CharacterBody2D
 	private IReadOnlyList<T?> BuildTypedSlots<T>(int startIndex, int count, System.Func<string, T?> resolver) where T : class =>
 		Enumerable.Range(startIndex, count).Select(i => GetSlotItem(i, resolver)).ToList();
 
-	private ResolvedSlot ResolveSlotAt(int index)
+	public ResolvedSlot ResolveSlotAt(int index)
 	{
 		if (index >= inventorySlots.Count) return new ResolvedSlot();
 		var slot = inventorySlots[index];

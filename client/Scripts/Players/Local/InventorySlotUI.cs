@@ -16,6 +16,8 @@ public partial class InventorySlotUI : Control
             inBackpack = true;
             break;
         }
+        MouseEntered += () => ItemStatsSidebar.Instance?.ShowSlot(SlotIndex);
+        MouseExited += () => ItemStatsSidebar.Instance?.Clear();
     }
 
     public override void _GuiInput(InputEvent @event)

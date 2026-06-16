@@ -41,35 +41,7 @@ pub fn compute_level(total_xp: u32) -> u32 {
 
 pub fn compute_base_stats(level: u32) -> (i32, i32, i32, i32, i32, i32) {
     let bonus = (level as i32) - 1;
-    (1 + bonus, 1 + bonus, 1 + bonus, 1 + bonus, 1 + bonus, 25 + bonus)
-}
-
-struct StatMults { str_mult: f32, wis_mult: f32, dex_mult: f32, def_mult: f32, vit_mult: f32, spd_mult: f32 }
-
-impl StatMults {
-    fn new() -> Self { Self { str_mult: 1.0, wis_mult: 1.0, dex_mult: 1.0, def_mult: 1.0, vit_mult: 1.0, spd_mult: 1.0 } }
-
-    fn apply_artifact(&mut self, effect: &ArtifactEffect) {
-        match effect {
-            ArtifactEffect::Strength(pct) => self.str_mult += pct,
-            ArtifactEffect::Wisdom(pct) => self.wis_mult += pct,
-            ArtifactEffect::Dexterity(pct) => self.dex_mult += pct,
-            ArtifactEffect::Defense(pct) => self.def_mult += pct,
-            ArtifactEffect::Vitality(pct) => self.vit_mult += pct,
-            ArtifactEffect::Speed(pct) => self.spd_mult += pct,
-        }
-    }
-
-    fn apply_consumable_buff(&mut self, effect: &ConsumableBuffEffect) {
-        match effect {
-            ConsumableBuffEffect::Strength(pct) => self.str_mult += pct,
-            ConsumableBuffEffect::Wisdom(pct) => self.wis_mult += pct,
-            ConsumableBuffEffect::Dexterity(pct) => self.dex_mult += pct,
-            ConsumableBuffEffect::Defense(pct) => self.def_mult += pct,
-            ConsumableBuffEffect::Vitality(pct) => self.vit_mult += pct,
-            ConsumableBuffEffect::Speed(pct) => self.spd_mult += pct,
-        }
-    }
+    (10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus)
 }
 
 pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
@@ -84,9 +56,9 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     let (base_str, base_wis, base_dex, base_def, base_vit, base_spd) = compute_base_stats(data.level);
     let mut str_flat = 0i32; let mut wis_flat = 0i32; let mut dex_flat = 0i32;
     let mut def_flat = 0i32; let mut vit_flat = 0i32; let mut spd_flat = 0i32;
-    let mut mults = StatMults::new();
 
     for slot in &inv.slots {
+        if slot.allowed_types.len() != 1 { continue; }
         let item_id = match &slot.item_id { Some(id) => id, None => continue };
         let item = match ctx.db.item().item_id().find(item_id) { Some(i) => i, None => continue };
         match item.item_type {
@@ -106,7 +78,14 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
             }
             ItemType::Artifact => {
                 if let Some(a) = ctx.db.artifact().artifact_id().find(&item.item_id) {
-                    mults.apply_artifact(&a.effect);
+                    match a.effect {
+                        ArtifactEffect::Strength(v)  => str_flat += v as i32,
+                        ArtifactEffect::Wisdom(v)    => wis_flat += v as i32,
+                        ArtifactEffect::Dexterity(v) => dex_flat += v as i32,
+                        ArtifactEffect::Defense(v)   => def_flat += v as i32,
+                        ArtifactEffect::Vitality(v)  => vit_flat += v as i32,
+                        ArtifactEffect::Speed(v)     => spd_flat += v as i32,
+                    }
                 }
             }
             _ => {}
@@ -114,16 +93,24 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     }
 
     for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id) {
-        mults.apply_consumable_buff(&active.effect);
+        match active.effect {
+            ConsumableBuffEffect::Strength(v)  => str_flat += v as i32,
+            ConsumableBuffEffect::Wisdom(v)    => wis_flat += v as i32,
+            ConsumableBuffEffect::Dexterity(v) => dex_flat += v as i32,
+            ConsumableBuffEffect::Defense(v)   => def_flat += v as i32,
+            ConsumableBuffEffect::Vitality(v)  => vit_flat += v as i32,
+            ConsumableBuffEffect::Speed(v)     => spd_flat += v as i32,
+        }
     }
 
     let new_stats = PlayerStats {
-        profile_id, strength: ((base_str + str_flat) as f32 * mults.str_mult) as i32,
-        wisdom: ((base_wis + wis_flat) as f32 * mults.wis_mult) as i32,
-        dexterity: ((base_dex + dex_flat) as f32 * mults.dex_mult) as i32,
-        defense: ((base_def + def_flat) as f32 * mults.def_mult) as i32,
-        vitality: ((base_vit + vit_flat) as f32 * mults.vit_mult) as i32,
-        speed: ((base_spd + spd_flat) as f32 * mults.spd_mult) as i32
+        profile_id,
+        strength: base_str + str_flat,
+        wisdom: base_wis + wis_flat,
+        dexterity: base_dex + dex_flat,
+        defense: base_def + def_flat,
+        vitality: base_vit + vit_flat,
+        speed: base_spd + spd_flat,
     };
 
     if ctx.db.player_stats().profile_id().find(&profile_id).is_some() {
@@ -191,14 +178,14 @@ pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {
         .and_then(|id| ctx.db.item().item_id().find(id));
     let weapon_stats = weapon_item.and_then(|i| ctx.db.weapon().weapon_id().find(&i.item_id));
     match weapon_stats {
-        Some(w) => (w.damage as f32 * (1.0 + stats.strength as f32 * 0.02)).max(1.0) as u32,
+        Some(w) => (w.damage as f32 * (1.0 + stats.strength as f32 * 0.002)).max(1.0) as u32,
         None => 0,
     }
 }
 
 pub fn compute_incoming_damage(ctx: &ReducerContext, profile_id: u64, base_damage: u32) -> u32 {
     let stats = match ctx.db.player_stats().profile_id().find(&profile_id) { Some(s) => s, None => return base_damage.max(1) };
-    (base_damage as f32 * (1.0 - stats.defense as f32 * 0.02)).max(1.0) as u32
+    (base_damage as f32 * (1.0 - stats.defense as f32 * 0.002)).max(1.0) as u32
 }
 
 pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable: &Consumable) {

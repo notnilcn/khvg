@@ -65,6 +65,7 @@ pub struct Item {
     #[primary_key]
     pub item_id: String,
     pub display_name: String,
+    pub description: String,
     pub texture_id: String,
     pub item_type: ItemType,
 }

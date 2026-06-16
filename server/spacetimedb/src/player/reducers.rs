@@ -148,10 +148,10 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
 
     let general_range = GENERAL_SLOT_START..GENERAL_SLOT_START + GENERAL_SLOT_COUNT;
     let target = inv.slots.iter().enumerate()
-        .skip(GENERAL_SLOT_START).take(GENERAL_SLOT_COUNT)
+        .filter(|(i, _)| !general_range.contains(i))
         .find(|(_, s)| s.item_id.is_none() && s.allowed_types.contains(&item.item_type))
         .or_else(|| inv.slots.iter().enumerate()
-            .filter(|(i, _)| !general_range.contains(i))
+            .skip(GENERAL_SLOT_START).take(GENERAL_SLOT_COUNT)
             .find(|(_, s)| s.item_id.is_none() && s.allowed_types.contains(&item.item_type)))
         .map(|(i, _)| i)
         .ok_or("No suitable slot available.")?;

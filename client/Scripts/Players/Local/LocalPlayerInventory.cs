@@ -12,14 +12,14 @@ public partial class LocalPlayerInventory : Control
     [Export] public Godot.Collections.Array<InventorySlotUI> GeneralSlots { get; set; } = [];
     [Export] public Godot.Collections.Array<InventorySlotUI> InventoryHotbarSlots { get; set; } = [];
 
-    private Control backpack = null!;
+    private Control menuLayout = null!;
     private Control hotbar = null!;
 
     public override void _Ready()
     {
-        backpack = GetNode<Control>("Backpack");
+        menuLayout = GetNode<Control>("Menu");
         hotbar = GetNode<Control>("Hotbar");
-        backpack.Visible = false;
+        menuLayout.Visible = false;
 
         if (Owner is not LocalPlayer player) return;
         player.InventoryChanged += OnInventoryChanged;
@@ -29,7 +29,7 @@ public partial class LocalPlayerInventory : Control
     {
         if (@event is not InputEventKey { Pressed: true, Echo: false } key || key.PhysicalKeycode != Key.Tab) return;
 
-        backpack.Visible = !backpack.Visible;
+        menuLayout.Visible = !menuLayout.Visible;
         hotbar.Visible = !hotbar.Visible;
         GetViewport().SetInputAsHandled();
     }

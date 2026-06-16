@@ -218,38 +218,38 @@ pub fn seed_test_boss_p4(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "T
 pub fn seed_test_boss_p5(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "TestBossP5", "Test Boss P5"); }
 pub fn seed_test_boss_p6(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "TestBossP6", "Test Boss P6"); }
 
-pub fn seed_weapon(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, projectile_texture_id: &str, damage: u32, range: f32, fire_rate: f32, projectile_speed: f32, shot_count: u32, zone_count: u32, pierce: bool, pattern: WeaponPattern, spread_angle: f32) {
+pub fn seed_weapon(ctx: &ReducerContext, item_id: &str, display_name: &str, description: &str, texture_id: &str, projectile_texture_id: &str, damage: u32, range: f32, fire_rate: f32, projectile_speed: f32, shot_count: u32, zone_count: u32, pierce: bool, pattern: WeaponPattern, spread_angle: f32) {
     Weapon::seed(ctx, Weapon { weapon_id: item_id.to_string(), damage, range, fire_rate, projectile_speed, shot_count, zone_count, pierce, projectile_texture_id: projectile_texture_id.to_string(), pattern, spread_angle });
-    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Weapon });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), description: description.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Weapon });
 }
 
-pub fn seed_armor(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, defense_bonus: i32, vitality_bonus: i32, hp_bonus: u32) {
+pub fn seed_armor(ctx: &ReducerContext, item_id: &str, display_name: &str, description: &str, texture_id: &str, defense_bonus: i32, vitality_bonus: i32, hp_bonus: u32) {
     Armor::seed(ctx, Armor { armor_id: item_id.to_string(), defense_bonus, vitality_bonus, hp_bonus });
-    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Armor });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), description: description.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Armor });
 }
 
-pub fn seed_artifact(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, effect: ArtifactEffect) {
+pub fn seed_artifact(ctx: &ReducerContext, item_id: &str, display_name: &str, description: &str, texture_id: &str, effect: ArtifactEffect) {
     Artifact::seed(ctx, Artifact { artifact_id: item_id.to_string(), effect });
-    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Artifact });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), description: description.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Artifact });
 }
 
-pub fn seed_accessory(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, strength_bonus: i32, wisdom_bonus: i32, dexterity_bonus: i32, speed_bonus: i32) {
+pub fn seed_accessory(ctx: &ReducerContext, item_id: &str, display_name: &str, description: &str, texture_id: &str, strength_bonus: i32, wisdom_bonus: i32, dexterity_bonus: i32, speed_bonus: i32) {
     Accessory::seed(ctx, Accessory { accessory_id: item_id.to_string(), strength_bonus, wisdom_bonus, dexterity_bonus, speed_bonus });
-    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Accessory });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), description: description.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Accessory });
 }
 
-pub fn seed_consumable(ctx: &ReducerContext, item_id: &str, display_name: &str, texture_id: &str, effect: ConsumableEffect, potency: f32, duration: f32) {
+pub fn seed_consumable(ctx: &ReducerContext, item_id: &str, display_name: &str, description: &str, texture_id: &str, effect: ConsumableEffect, potency: f32, duration: f32) {
     Consumable::seed(ctx, Consumable { consumable_id: item_id.to_string(), effect, potency, duration });
-    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Consumable });
+    Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), description: description.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Consumable });
 }
 
 pub fn seed_world_items(ctx: &ReducerContext) {
-    seed_armor(ctx, "Helmet", "Helmet", "Helmet", 2, 1, 10);
-    seed_accessory(ctx, "Hat", "Hat", "Hat", 0, 1, 1, 1);
-    seed_artifact(ctx, "Skull", "Skull", "Skull", ArtifactEffect::Strength(0.10));
-    Item::seed(ctx, Item { item_id: "Bag".to_string(), display_name: "Bag".to_string(), texture_id: "Bag".to_string(), item_type: ItemType::Bag });
-    seed_consumable(ctx, "Bread", "Bread", "Bread", ConsumableEffect::Heal, 20.0, 0.0);
-    seed_weapon(ctx, "Bow", "Bow", "Bow", "Arrow", 10, 150.0, 4.0, 300.0, 3, 25, false, WeaponPattern::Triple, 0.35);
+    seed_armor(ctx, "Helmet", "Helmet", "A sturdy iron helmet. Increases defense and vitality.", "Helmet", 5, 3, 15);
+    seed_accessory(ctx, "Hat", "Hat", "A traveler's hat. Slightly boosts wisdom, dexterity, and speed.", "Hat", 0, 2, 2, 2);
+    seed_artifact(ctx, "Skull", "Skull", "An ancient skull radiating dark energy. Adds raw strength.", "Skull", ArtifactEffect::Strength(5.0));
+    Item::seed(ctx, Item { item_id: "Bag".to_string(), display_name: "Bag".to_string(), description: "Expands your carrying capacity.".to_string(), texture_id: "Bag".to_string(), item_type: ItemType::Bag });
+    seed_consumable(ctx, "Bread", "Bread", "Freshly baked bread. Restores a small amount of HP.", "Bread", ConsumableEffect::Heal, 25.0, 0.0);
+    seed_weapon(ctx, "Bow", "Bow", "A light recurve bow. Fires three arrows in a spread.", "Bow", "Arrow", 10, 150.0, 4.0, 300.0, 3, 25, false, WeaponPattern::Triple, 0.35);
 }
 
 pub fn make_phase(ctx: &ReducerContext, phase_index: u8, hp_threshold: f32, movement: MovementBehavior, phase_loop_delay: f32, attacks: Vec<AttackSequence>) -> PhaseDef {
