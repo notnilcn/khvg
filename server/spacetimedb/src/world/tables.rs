@@ -17,6 +17,13 @@ pub struct MapConfig {
     pub chunk_cols: i32,
     pub chunk_rows: i32,
     pub hex_outer_radius: f32,
+    // World-space displacement of one full torus lap in each axis — same vectors wrap_world_pos
+    // uses internally. Exposed so clients can pick the correct wrapped copy of distant tiles/
+    // entities when rendering near a chunk-grid seam, without re-deriving the hex-of-hexes math.
+    pub lap_q_x: f32,
+    pub lap_q_y: f32,
+    pub lap_r_x: f32,
+    pub lap_r_y: f32,
 }
 
 #[table(accessor = building_tile, public)]

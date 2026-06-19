@@ -3,16 +3,20 @@ use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
 
-pub(crate) fn nearby_indices(ctx: &ViewContext) -> Option<Vec<i64>> {
+// Keys off PlayerChunk instead of PlayerPosition — PlayerChunk is only written when the
+// player's chunk actually changes, so views built on this only recompute on real chunk
+// crossings instead of on every report_movement call (10Hz).
+pub(crate) fn nearby_indices_from_chunk(ctx: &ViewContext, rings: i32) -> Option<Vec<i64>> {
     let profile_id = ctx.db.logged_in_player().player_id().find(ctx.sender())?.profile_id;
-    let pos = ctx.db.player_position().profile_id().find(&profile_id)?;
+    let chunk = ctx.db.player_chunk().profile_id().find(&profile_id)?;
     let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
     let chunk_cols = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
     let chunk_rows = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(1);
-    let (cq, cr) = world_to_chunk(pos.x, pos.y, chunk_hex_radius, hex_outer_radius);
-    Some(surrounding_chunk_indices(cq, cr, chunk_cols, chunk_rows, None))
+    Some(surrounding_chunk_indices(chunk.chunk_q, chunk.chunk_r, chunk_cols, chunk_rows, Some(rings)))
+}
+
+pub(crate) fn nearby_indices(ctx: &ViewContext) -> Option<Vec<i64>> {
+    nearby_indices_from_chunk(ctx, DEFAULT_AOI_CHUNK_RADIUS)
 }
 
 #[spacetimedb::view(accessor = local_player, public)]

@@ -13,7 +13,7 @@ public partial class RemotePlayer : Node2D
 	private const float WrapSnapThreshold = 50f;
 	private const float SpeedPerStat      = 4f;
 
-	private Vector2 snapPosition;
+	private Vector2 canonicalPosition;
 	private Vector2 snapVelocity;
 	private float   timeSinceSnap;
 	private float   targetRotation;
@@ -21,7 +21,7 @@ public partial class RemotePlayer : Node2D
 
 	public override void _Ready()
 	{
-		snapPosition   = GlobalPosition;
+		canonicalPosition = GlobalPosition;
 		snapVelocity   = Vector2.Zero;
 		timeSinceSnap  = 0f;
 		targetRotation = Rotation;
@@ -45,9 +45,10 @@ public partial class RemotePlayer : Node2D
 	public override void _Process(double delta)
 	{
 		timeSinceSnap += (float)delta;
-		var extrapolated = snapPosition + snapVelocity * timeSinceSnap;
-		var moving = GlobalPosition.DistanceSquaredTo(extrapolated) > 1f;
-		GlobalPosition = GlobalPosition.Lerp(extrapolated, LerpSpeed * (float)delta);
+		var canonicalExtrapolated = canonicalPosition + snapVelocity * timeSinceSnap;
+		var nearest = TorusMath.NearestCandidate(canonicalExtrapolated, GlobalPosition, GameManager.Instance.LapQ, GameManager.Instance.LapR);
+		var moving = GlobalPosition.DistanceSquaredTo(nearest) > 1f;
+		GlobalPosition = GlobalPosition.Lerp(nearest, LerpSpeed * (float)delta);
 		Rotation       = Mathf.LerpAngle(Rotation, targetRotation, LerpSpeed * (float)delta);
 		if (sprite?.SpriteFrames != null)
 			sprite.Play(moving ? "Walk" : "Idle");
@@ -57,13 +58,16 @@ public partial class RemotePlayer : Node2D
 	{
 		if (position.PlayerId != PlayerId) return;
 
-		var serverPos = new Vector2(position.X, position.Y);
-		if (GlobalPosition.DistanceSquaredTo(serverPos) > WrapSnapThreshold * WrapSnapThreshold)
-			GlobalPosition = serverPos;
-
-		snapPosition   = serverPos;
+		canonicalPosition = new Vector2(position.X, position.Y);
 		timeSinceSnap  = 0f;
 		targetRotation = position.Rotation;
+
+		// Only an instant correction if even the nearest wrapped copy is still far away — a real
+		// desync (lag/teleport), not a routine wrap (which the per-frame candidate pick already
+		// handles smoothly without ever needing to snap).
+		var nearest = TorusMath.NearestCandidate(canonicalPosition, GlobalPosition, GameManager.Instance.LapQ, GameManager.Instance.LapR);
+		if (GlobalPosition.DistanceSquaredTo(nearest) > WrapSnapThreshold * WrapSnapThreshold)
+			GlobalPosition = nearest;
 
 		var stats = GameManager.Instance.Conn?.Db.PlayerStats.ProfileId.Find(ProfileId);
 		float speed  = (stats?.Speed ?? 0) * SpeedPerStat;

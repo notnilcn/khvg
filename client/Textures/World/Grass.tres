@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" format=3 uid="uid://c52gckx8hh6hl"]
+
+[ext_resource type="Texture2D" uid="uid://t1bt27qsx31p" path="res://Assets/Pixel Art Top Down - Basic v1/Texture/TX Tileset Grass.png" id="1_vg5ia"]
+
+[resource]
+atlas = ExtResource("1_vg5ia")
+region = Rect2(0, 0, 128, 128)

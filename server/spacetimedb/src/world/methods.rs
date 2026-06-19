@@ -1,15 +1,47 @@
+use std::collections::HashMap;
 use hexx::{Hex, HexLayout, HexOrientation, Vec2};
+use spacetimedb::{ReducerContext, Table};
+use crate::world::tables::*;
+use crate::world::def_tables::*;
+use crate::world::instance_tables::*;
 
 pub const BASE_MAX_HP: i32 = 100;
 pub const HP_PER_LEVEL: i32 = 5;
 pub const DEFAULT_CHUNK_HEX_RADIUS: i32 = 5;
-pub const DEFAULT_CHUNK_COLS: i32 = 30;
-pub const DEFAULT_CHUNK_ROWS: i32 = 30;
-pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 32.0;
+pub const DEFAULT_CHUNK_COLS: i32 = 10;
+pub const DEFAULT_CHUNK_ROWS: i32 = 10;
+pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 96.0;
 pub const DEFAULT_AOI_CHUNK_RADIUS: i32 = 3;
+pub const DEFAULT_TERRAIN_AOI_CHUNK_RADIUS: i32 = 2;
+pub const DEFAULT_BIOME_SEED_COUNT: u32 = 18;
+pub const DEFAULT_REGION_SEED_COUNT_PER_BIOME: u32 = 5;
 pub const BEHAVIOR_TICK_DT: f32 = 0.1;
 pub const LOOT_DROP_EXPIRY: u64 = 300;
 pub const CONSUMABLE_EFFECT_TICK_SECONDS: f32 = 1.0;
+
+// Deterministic PRNG (SplitMix64) — mirrors BulletManager.cs's SplitMix64/HashToUnit on the
+// client, so Wander directions and bullet pellet jitter can be reproduced from an event/enemy
+// id alone, with no shared RNG state between server and clients. Also drives world gen so the
+// same (world_id, seed) pair always produces the same layout.
+pub fn splitmix64(seed: u64) -> u64 {
+    let h = (seed ^ (seed >> 30)).wrapping_mul(0xbf58476d1ce4e5b9);
+    let h = (h ^ (h >> 27)).wrapping_mul(0x94d049bb133111eb);
+    h ^ (h >> 31)
+}
+
+pub fn hash_to_unit(h: u64) -> f32 {
+    (h >> 11) as f32 / (1u64 << 53) as f32
+}
+
+pub fn next_unit(seed: u64, draw: &mut u64) -> f32 {
+    let v = hash_to_unit(splitmix64(seed.wrapping_add(*draw)));
+    *draw += 1;
+    v
+}
+
+pub fn pick_index(len: usize, seed: u64, draw: &mut u64) -> usize {
+    ((next_unit(seed, draw) * len as f32) as usize).min(len.saturating_sub(1))
+}
 
 pub fn hex_area(hex_radius: i32) -> i32 {
     Hex::range_count(hex_radius as u32) as i32
@@ -99,4 +131,196 @@ pub fn surrounding_chunk_indices(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: 
             if seen.insert(idx) { Some(idx) } else { None }
         })
         .collect()
+}
+
+pub struct HexCell {
+    pub hex_q: i32,
+    pub hex_r: i32,
+    pub chunk_index: i64,
+    pub world_x: f32,
+    pub world_y: f32,
+}
+
+pub fn enumerate_world_hexes(chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> Vec<HexCell> {
+    let area = hex_area(chunk_hex_radius);
+    let shift = hex_shift(chunk_hex_radius);
+    let mut cells = Vec::with_capacity((chunk_cols * chunk_rows * area).max(0) as usize);
+    for cr in 0..chunk_rows {
+        for cq in 0..chunk_cols {
+            let chunk_index = spiral_chunk_index(cq, cr);
+            let (cx, cz) = chunk_center_hex(cq, cr, chunk_hex_radius);
+            for m in 0..area {
+                let (rx, rz) = inv_hexmod(m, chunk_hex_radius, shift);
+                let hex_q = cx + rx;
+                let hex_r = cz + rz;
+                let (world_x, world_y) = hex_to_world(hex_q, hex_r, hex_outer_radius);
+                cells.push(HexCell { hex_q, hex_r, chunk_index, world_x, world_y });
+            }
+        }
+    }
+    cells
+}
+
+pub fn validate_weights_sum_100(weights: &[f32]) -> Result<(), String> {
+    let sum: f32 = weights.iter().sum();
+    if (sum - 100.0).abs() > 0.5 {
+        return Err(format!("Weights must sum to 100%, got {:.2}%", sum));
+    }
+    Ok(())
+}
+
+// Distributes `total_seeds` across entries proportional to their weight (each nonzero-weight
+// entry gets at least 1), so weighted Voronoi areas roughly match the authored percentages.
+pub fn proportional_seed_counts(weights: &[f32], total_seeds: u32) -> Vec<u32> {
+    weights.iter().map(|w| {
+        let raw = (w / 100.0) * total_seeds as f32;
+        raw.round().max(if *w > 0.0 { 1.0 } else { 0.0 }) as u32
+    }).collect()
+}
+
+pub fn nearest_seed_index(x: f32, y: f32, seeds: &[(f32, f32)]) -> usize {
+    seeds.iter().enumerate()
+        .map(|(i, &(sx, sy))| (i, (sx - x).powi(2) + (sy - y).powi(2)))
+        .min_by(|a, b| a.1.partial_cmp(&b.1).unwrap())
+        .map(|(i, _)| i)
+        .unwrap()
+}
+
+pub fn clear_world_geometry(ctx: &ReducerContext) {
+    for region in ctx.db.biome_region().iter() {
+        ctx.db.biome_region().region_id().delete(&region.region_id);
+    }
+    for tile in ctx.db.triangle_tile().iter() {
+        ctx.db.triangle_tile().tile_id().delete(&tile.tile_id);
+    }
+}
+
+fn write_triangle_tiles(ctx: &ReducerContext, cell: &HexCell, biome_id: &str, region_id: u64, texture_ids: &[String], seed: u64, draw: &mut u64) {
+    for tri_index in 0..6u8 {
+        let texture_id = if texture_ids.is_empty() { String::new() } else { texture_ids[pick_index(texture_ids.len(), seed, draw)].clone() };
+        let rotation = pick_index(3, seed, draw) as u8;
+        ctx.db.triangle_tile().insert(TriangleTile {
+            tile_id: 0, hex_q: cell.hex_q, hex_r: cell.hex_r, tri_index, chunk_index: cell.chunk_index,
+            texture_id, rotation, biome_id: biome_id.to_string(), region_id,
+        });
+    }
+}
+
+pub fn internal_generate_world_proc(ctx: &ReducerContext, world_id: String, seed: u64) -> Result<(), String> {
+    let world = ctx.db.world_def().world_id().find(&world_id).ok_or_else(|| format!("WorldDef '{}' not found.", world_id))?;
+    if world.biome_weights.is_empty() { return Err("WorldDef has no biome_weights.".to_string()); }
+    validate_weights_sum_100(&world.biome_weights.iter().map(|b| b.weight).collect::<Vec<_>>())?;
+
+    let cfg = ctx.db.map_config().id().find(&0u32).ok_or("MapConfig not found — call add_chunks first.")?;
+    let cells = enumerate_world_hexes(cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
+    if cells.is_empty() { return Err("World has no hexes — call add_chunks first.".to_string()); }
+
+    clear_world_geometry(ctx);
+    let mut draw: u64 = 0;
+
+    let weights: Vec<f32> = world.biome_weights.iter().map(|b| b.weight).collect();
+    let counts = proportional_seed_counts(&weights, DEFAULT_BIOME_SEED_COUNT);
+    let mut biome_seed_positions: Vec<(f32, f32)> = Vec::new();
+    let mut biome_seed_ids: Vec<String> = Vec::new();
+    for (bw, count) in world.biome_weights.iter().zip(counts.iter()) {
+        for _ in 0..*count {
+            let cell = &cells[pick_index(cells.len(), seed, &mut draw)];
+            biome_seed_positions.push((cell.world_x, cell.world_y));
+            biome_seed_ids.push(bw.biome_id.clone());
+        }
+    }
+    if biome_seed_positions.is_empty() { return Err("No biome seeds placed.".to_string()); }
+
+    let mut cells_by_biome: HashMap<String, Vec<&HexCell>> = HashMap::new();
+    for cell in &cells {
+        let idx = nearest_seed_index(cell.world_x, cell.world_y, &biome_seed_positions);
+        cells_by_biome.entry(biome_seed_ids[idx].clone()).or_default().push(cell);
+    }
+
+    for (biome_id, biome_cells) in cells_by_biome {
+        let biome_def = match ctx.db.biome_def().biome_id().find(&biome_id) {
+            Some(b) => b,
+            None => continue,
+        };
+        if biome_def.region_weights.is_empty() || biome_cells.is_empty() { continue; }
+        validate_weights_sum_100(&biome_def.region_weights.iter().map(|r| r.weight).collect::<Vec<_>>())?;
+
+        let region_weights: Vec<f32> = biome_def.region_weights.iter().map(|r| r.weight).collect();
+        let region_counts = proportional_seed_counts(&region_weights, DEFAULT_REGION_SEED_COUNT_PER_BIOME);
+
+        let mut region_seed_positions: Vec<(f32, f32)> = Vec::new();
+        let mut region_ids: Vec<u64> = Vec::new();
+        for (rw, count) in biome_def.region_weights.iter().zip(region_counts.iter()) {
+            let region_def = match ctx.db.biome_region_def().region_def_id().find(&rw.region_def_id) {
+                Some(r) => r,
+                None => continue,
+            };
+            for _ in 0..*count {
+                let cell = &biome_cells[pick_index(biome_cells.len(), seed, &mut draw)];
+                let inserted = ctx.db.biome_region().insert(BiomeRegion {
+                    region_id: 0, biome_id: biome_id.clone(),
+                    center_hex_q: cell.hex_q, center_hex_r: cell.hex_r,
+                    enemy_template_ids: region_def.enemy_template_ids.clone(),
+                    max_enemies: region_def.max_enemies, spawn_radius: region_def.spawn_radius,
+                });
+                region_seed_positions.push((cell.world_x, cell.world_y));
+                region_ids.push(inserted.region_id);
+            }
+        }
+        if region_seed_positions.is_empty() { continue; }
+
+        for cell in &biome_cells {
+            let idx = nearest_seed_index(cell.world_x, cell.world_y, &region_seed_positions);
+            write_triangle_tiles(ctx, cell, &biome_id, region_ids[idx], &biome_def.texture_ids, seed, &mut draw);
+        }
+    }
+
+    Ok(())
+}
+
+pub fn internal_generate_world_manual(ctx: &ReducerContext, biomes: Vec<ManualBiomeInput>) -> Result<(), String> {
+    if biomes.is_empty() { return Err("No biomes provided.".to_string()); }
+    let cfg = ctx.db.map_config().id().find(&0u32).ok_or("MapConfig not found — call add_chunks first.")?;
+    let cells = enumerate_world_hexes(cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
+    if cells.is_empty() { return Err("World has no hexes — call add_chunks first.".to_string()); }
+
+    clear_world_geometry(ctx);
+    let seed = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros() as u64;
+    let mut draw: u64 = 0;
+
+    let biome_seed_positions: Vec<(f32, f32)> = biomes.iter()
+        .map(|b| hex_to_world(b.center_hex_q, b.center_hex_r, cfg.hex_outer_radius))
+        .collect();
+
+    let mut cells_by_biome: Vec<Vec<&HexCell>> = vec![Vec::new(); biomes.len()];
+    for cell in &cells {
+        let idx = nearest_seed_index(cell.world_x, cell.world_y, &biome_seed_positions);
+        cells_by_biome[idx].push(cell);
+    }
+
+    for (biome_idx, biome_input) in biomes.iter().enumerate() {
+        let biome_cells = &cells_by_biome[biome_idx];
+        if biome_input.regions.is_empty() || biome_cells.is_empty() { continue; }
+
+        let region_seed_positions: Vec<(f32, f32)> = biome_input.regions.iter()
+            .map(|r| hex_to_world(r.center_hex_q, r.center_hex_r, cfg.hex_outer_radius))
+            .collect();
+        let mut region_ids: Vec<u64> = Vec::with_capacity(biome_input.regions.len());
+        for region in &biome_input.regions {
+            let inserted = ctx.db.biome_region().insert(BiomeRegion {
+                region_id: 0, biome_id: biome_input.biome_id.clone(),
+                center_hex_q: region.center_hex_q, center_hex_r: region.center_hex_r,
+                enemy_template_ids: region.enemy_template_ids.clone(),
+                max_enemies: region.max_enemies, spawn_radius: region.spawn_radius,
+            });
+            region_ids.push(inserted.region_id);
+        }
+
+        for cell in biome_cells {
+            let idx = nearest_seed_index(cell.world_x, cell.world_y, &region_seed_positions);
+            write_triangle_tiles(ctx, cell, &biome_input.biome_id, region_ids[idx], &biome_input.texture_ids, seed, &mut draw);
+        }
+    }
+
+    Ok(())
 }

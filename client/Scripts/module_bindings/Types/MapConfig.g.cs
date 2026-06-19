@@ -23,13 +23,25 @@ namespace SpacetimeDB.Types
         public int ChunkRows;
         [DataMember(Name = "hex_outer_radius")]
         public float HexOuterRadius;
+        [DataMember(Name = "lap_q_x")]
+        public float LapQX;
+        [DataMember(Name = "lap_q_y")]
+        public float LapQY;
+        [DataMember(Name = "lap_r_x")]
+        public float LapRX;
+        [DataMember(Name = "lap_r_y")]
+        public float LapRY;
 
         public MapConfig(
             uint Id,
             int ChunkHexRadius,
             int ChunkCols,
             int ChunkRows,
-            float HexOuterRadius
+            float HexOuterRadius,
+            float LapQX,
+            float LapQY,
+            float LapRX,
+            float LapRY
         )
         {
             this.Id = Id;
@@ -37,6 +49,10 @@ namespace SpacetimeDB.Types
             this.ChunkCols = ChunkCols;
             this.ChunkRows = ChunkRows;
             this.HexOuterRadius = HexOuterRadius;
+            this.LapQX = LapQX;
+            this.LapQY = LapQY;
+            this.LapRX = LapRX;
+            this.LapRY = LapRY;
         }
 
         public MapConfig()

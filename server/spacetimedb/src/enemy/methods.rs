@@ -40,19 +40,6 @@ pub fn seconds_since(ctx: &ReducerContext, since: Timestamp) -> f32 {
     now.saturating_sub(then) as f32 / 1_000_000.0
 }
 
-// Deterministic PRNG (SplitMix64) — mirrors BulletManager.cs's SplitMix64/HashToUnit on the
-// client, so Wander directions and bullet pellet jitter can be reproduced from an event/enemy
-// id alone, with no shared RNG state between server and clients.
-pub fn splitmix64(seed: u64) -> u64 {
-    let h = (seed ^ (seed >> 30)).wrapping_mul(0xbf58476d1ce4e5b9);
-    let h = (h ^ (h >> 27)).wrapping_mul(0x94d049bb133111eb);
-    h ^ (h >> 31)
-}
-
-pub fn hash_to_unit(h: u64) -> f32 {
-    (h >> 11) as f32 / (1u64 << 53) as f32
-}
-
 // Returns (is_in_active_phase, cycle_index) for a move/pause cycle measured from `since`.
 pub fn cycle_phase(ctx: &ReducerContext, since: Timestamp, active_duration: f32, pause_duration: f32) -> (bool, u64) {
     let cycle = (active_duration + pause_duration).max(f32::EPSILON);

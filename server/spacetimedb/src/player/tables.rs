@@ -79,6 +79,17 @@ pub struct PlayerPosition {
     pub chunk_index: i64,
 }
 
+// Written only when the player's chunk actually changes (unlike PlayerPosition, which updates
+// every report_movement call at 10Hz) — views that key off this instead of PlayerPosition only
+// recompute on real chunk crossings, not on every movement tick.
+#[table(accessor = player_chunk, public)]
+pub struct PlayerChunk {
+    #[primary_key]
+    pub profile_id: u64,
+    pub chunk_q: i32,
+    pub chunk_r: i32,
+}
+
 #[table(accessor = active_consumable_effect, public)]
 pub struct ActiveConsumableEffect {
     #[primary_key] #[auto_inc]

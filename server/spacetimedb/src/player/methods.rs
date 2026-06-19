@@ -168,6 +168,14 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
         let chunk_index = spiral_chunk_index(cq, cr);
         ctx.db.player_position().insert(PlayerPosition { profile_id, player_id: ctx.sender(), x: 0.0, y: 0.0, rotation: 0.0, chunk_index});
     }
+
+    if ctx.db.player_chunk().profile_id().find(&profile_id).is_none() {
+        let cfg = ctx.db.map_config().id().find(&0u32);
+        let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
+        let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+        let (cq, cr) = world_to_chunk(0.0, 0.0, chunk_hex_radius, hex_outer_radius);
+        ctx.db.player_chunk().insert(PlayerChunk { profile_id, chunk_q: cq, chunk_r: cr });
+    }
 }
 
 pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {

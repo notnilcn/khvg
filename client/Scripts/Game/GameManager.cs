@@ -13,6 +13,8 @@ public partial class GameManager : Node
 	public DbConnection? Conn { get; private set; }
 	public Identity? LocalIdentity { get; private set; }
 	public string Username { get; private set; } = "";
+	public Vector2 LapQ { get; private set; } = Vector2.Zero;
+	public Vector2 LapR { get; private set; } = Vector2.Zero;
 
 	[Export] public string Host { get; set; } = "http://127.0.0.1:3000";
 	[Export] public string DbName { get; set; } = "bullethell";
@@ -25,6 +27,7 @@ public partial class GameManager : Node
 
 	private LocalPlayer? localPlayer;
 	private BulletManager? bulletManager;
+	private TerrainManager? terrainOverlay;
 	private readonly Dictionary<string, RemotePlayer> remotePlayers = new();
 	private readonly Dictionary<ulong, Enemy> enemies = new();
 	private readonly Dictionary<ulong, Drop> drops = new();
@@ -123,6 +126,9 @@ public partial class GameManager : Node
 		conn.Db.NearbyLootDrops.OnInsert += OnDropInsert;
 		conn.Db.NearbyLootDrops.OnDelete += OnDropDelete;
 
+		conn.Db.MapConfig.OnInsert += (_, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
+		conn.Db.MapConfig.OnUpdate += (_, _, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
+
 		conn.Db.AllTextures.OnInsert += (_, texture) => textureCache[texture.TextureId] = texture.ResPath;
 		conn.Db.AllTextures.OnUpdate += (_, _, texture) => textureCache[texture.TextureId] = texture.ResPath;
 		conn.Db.AllTextures.OnDelete += (_, texture) => textureCache.Remove(texture.TextureId);
@@ -187,11 +193,18 @@ public partial class GameManager : Node
 			.AddQuery(q => q.From.NearbyRemotePlayersProfiles())
 			.AddQuery(q => q.From.NearbyEnemies())
 			.AddQuery(q => q.From.NearbyLootDrops())
+			.AddQuery(q => q.From.NearbyTerrainTiles())
 			.AddQuery(q => q.From.EnemyTemplates())
 			.AddQuery(q => q.From.BulletPatternEvent())
 			.AddQuery(q => q.From.MapConfig())
 			.OnApplied(OnGameSubApplied)
+			.OnError(OnGameSubError)
 			.Subscribe();
+	}
+
+	private void OnGameSubError(ErrorContext ctx, Exception e)
+	{
+		GD.PrintErr($"[GameManager] Game subscription error: {e.Message}");
 	}
 
 	private void OnConnectError(Exception e)
@@ -229,6 +242,11 @@ public partial class GameManager : Node
 			bulletManager = BulletManagerScene.Instantiate<BulletManager>();
 			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, bulletManager);
 		}
+		if (terrainOverlay == null)
+		{
+			terrainOverlay = new TerrainManager();
+			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, terrainOverlay);
+		}
 	}
 
 	private void OnLocalPlayerDelete(EventContext _, LoggedInPlayer loggedInPlayer)
@@ -239,6 +257,9 @@ public partial class GameManager : Node
 		if (bulletManager != null && IsInstanceValid(bulletManager))
 			bulletManager.QueueFree();
 		bulletManager = null;
+		if (terrainOverlay != null && IsInstanceValid(terrainOverlay))
+			terrainOverlay.QueueFree();
+		terrainOverlay = null;
 
 		if (Conn?.IsActive != true) return;
 

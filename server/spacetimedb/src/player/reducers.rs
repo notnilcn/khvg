@@ -99,6 +99,12 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
     let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
     let chunk_index = spiral_chunk_index(cq, cr);
     ctx.db.player_position().profile_id().update(PlayerPosition { x, y, rotation, chunk_index, ..pos });
+
+    if let Some(chunk) = ctx.db.player_chunk().profile_id().find(&profile_id) {
+        if (chunk.chunk_q, chunk.chunk_r) != (cq, cr) {
+            ctx.db.player_chunk().profile_id().update(PlayerChunk { chunk_q: cq, chunk_r: cr, ..chunk });
+        }
+    }
     Ok(())
 }
 

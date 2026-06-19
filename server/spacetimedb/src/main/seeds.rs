@@ -1,5 +1,6 @@
 use spacetimedb::{ReducerContext, Table};
 use crate::world::tables::*;
+use crate::world::def_tables::*;
 use crate::enemy::def_tables::*;
 
 pub fn seed_default_textures(ctx: &ReducerContext) {
@@ -52,6 +53,16 @@ pub fn seed_default_textures(ctx: &ReducerContext) {
         texture_id: "Bow".to_string(),
         res_path: "res://Textures/Items/Weapons/Bow.tres".to_string(),
         kind: TextureKind::Item,
+    });
+    TextureEntry::seed(ctx, TextureEntry {
+        texture_id: "Grass".to_string(),
+        res_path: "res://Textures/World/Grass.tres".to_string(),
+        kind: TextureKind::Environment,
+    });
+    TextureEntry::seed(ctx, TextureEntry {
+        texture_id: "Flowers".to_string(),
+        res_path: "res://Textures/World/Flowers.tres".to_string(),
+        kind: TextureKind::Environment,
     });
 }
 
@@ -243,6 +254,27 @@ pub fn seed_consumable(ctx: &ReducerContext, item_id: &str, display_name: &str, 
     Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), description: description.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Consumable });
 }
 
+pub fn seed_world_defs(ctx: &ReducerContext) {
+    BiomeRegionDef::seed(ctx, BiomeRegionDef {
+        region_def_id: "PlainsRegion".to_string(),
+        display_name: "Plains".to_string(),
+        enemy_template_ids: vec!["Enemy".to_string()],
+        max_enemies: 5,
+        spawn_radius: 300.0,
+    });
+    BiomeDef::seed(ctx, BiomeDef {
+        biome_id: "Grassland".to_string(),
+        display_name: "Grassland".to_string(),
+        texture_ids: vec!["Grass".to_string(), "Flowers".to_string()],
+        region_weights: vec![RegionWeight { region_def_id: "PlainsRegion".to_string(), weight: 100.0 }],
+    });
+    WorldDef::seed(ctx, WorldDef {
+        world_id: "World".to_string(),
+        display_name: "Default World".to_string(),
+        biome_weights: vec![BiomeWeight { biome_id: "Grassland".to_string(), weight: 100.0 }],
+    });
+}
+
 pub fn seed_world_items(ctx: &ReducerContext) {
     seed_armor(ctx, "Helmet", "Helmet", "A sturdy iron helmet. Increases defense and vitality.", "Helmet", 5, 3, 15);
     seed_accessory(ctx, "Hat", "Hat", "A traveler's hat. Slightly boosts wisdom, dexterity, and speed.", "Hat", 0, 2, 2, 2);
@@ -370,6 +402,36 @@ impl Seed for EnemyTemplate {
             ctx.db.enemy_template().template_id().update(data);
         } else {
             ctx.db.enemy_template().insert(data);
+        }
+    }
+}
+
+impl Seed for WorldDef {
+    fn seed(ctx: &ReducerContext, data: WorldDef) {
+        if ctx.db.world_def().world_id().find(&data.world_id).is_some() {
+            ctx.db.world_def().world_id().update(data);
+        } else {
+            ctx.db.world_def().insert(data);
+        }
+    }
+}
+
+impl Seed for BiomeDef {
+    fn seed(ctx: &ReducerContext, data: BiomeDef) {
+        if ctx.db.biome_def().biome_id().find(&data.biome_id).is_some() {
+            ctx.db.biome_def().biome_id().update(data);
+        } else {
+            ctx.db.biome_def().insert(data);
+        }
+    }
+}
+
+impl Seed for BiomeRegionDef {
+    fn seed(ctx: &ReducerContext, data: BiomeRegionDef) {
+        if ctx.db.biome_region_def().region_def_id().find(&data.region_def_id).is_some() {
+            ctx.db.biome_region_def().region_def_id().update(data);
+        } else {
+            ctx.db.biome_region_def().insert(data);
         }
     }
 }

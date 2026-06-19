@@ -44,6 +44,10 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<MapConfig, int> ChunkCols { get; }
         public global::SpacetimeDB.Col<MapConfig, int> ChunkRows { get; }
         public global::SpacetimeDB.Col<MapConfig, float> HexOuterRadius { get; }
+        public global::SpacetimeDB.Col<MapConfig, float> LapQX { get; }
+        public global::SpacetimeDB.Col<MapConfig, float> LapQY { get; }
+        public global::SpacetimeDB.Col<MapConfig, float> LapRX { get; }
+        public global::SpacetimeDB.Col<MapConfig, float> LapRY { get; }
 
         public MapConfigCols(string tableName)
         {
@@ -52,6 +56,10 @@ namespace SpacetimeDB.Types
             ChunkCols = new global::SpacetimeDB.Col<MapConfig, int>(tableName, "chunk_cols");
             ChunkRows = new global::SpacetimeDB.Col<MapConfig, int>(tableName, "chunk_rows");
             HexOuterRadius = new global::SpacetimeDB.Col<MapConfig, float>(tableName, "hex_outer_radius");
+            LapQX = new global::SpacetimeDB.Col<MapConfig, float>(tableName, "lap_q_x");
+            LapQY = new global::SpacetimeDB.Col<MapConfig, float>(tableName, "lap_q_y");
+            LapRX = new global::SpacetimeDB.Col<MapConfig, float>(tableName, "lap_r_x");
+            LapRY = new global::SpacetimeDB.Col<MapConfig, float>(tableName, "lap_r_y");
         }
     }
 

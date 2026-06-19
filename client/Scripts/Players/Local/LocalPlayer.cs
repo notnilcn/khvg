@@ -129,11 +129,17 @@ public partial class LocalPlayer : CharacterBody2D
 
 	private void OnPositionUpdate(EventContext _, PlayerPosition old, PlayerPosition position)
 	{
+		// We never force our own GlobalPosition to match the server's wrapped report directly —
+		// it stays a continuous, unbounded local reference frame (our own physics already
+		// integrate it that way). We only check whether the nearest *wrapped copy* of the
+		// server's position is still far from us: if even that's far, it's a real desync
+		// (lag/rubber-band/correction), not a routine wrap, and worth a hard correction.
 		var serverPos = new Vector2(position.X, position.Y);
-		if (GlobalPosition.DistanceSquaredTo(serverPos) > WrapSnapThreshold * WrapSnapThreshold)
+		var nearest = TorusMath.NearestCandidate(serverPos, GlobalPosition, GameManager.Instance.LapQ, GameManager.Instance.LapR);
+		if (GlobalPosition.DistanceSquaredTo(nearest) > WrapSnapThreshold * WrapSnapThreshold)
 		{
-			GD.Print($"[Wrap] {GlobalPosition} → {serverPos} (dist={GlobalPosition.DistanceTo(serverPos):F1})");
-			GlobalPosition = serverPos;
+			GD.Print($"[Desync] {GlobalPosition} → {nearest} (dist={GlobalPosition.DistanceTo(nearest):F1})");
+			GlobalPosition = nearest;
 		}
 	}
 

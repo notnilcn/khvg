@@ -1,6 +1,7 @@
 use spacetimedb::{ReducerContext, Identity, Table};
 use crate::world::methods::*;
 use crate::world::tables::*;
+use crate::world::def_tables::*;
 use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::enemy::def_tables::*;
@@ -170,10 +171,15 @@ pub fn internal_add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_co
             }
         }
     }
+    let (pq_hq, pq_hr) = chunk_center_hex(chunk_cols, 0, chunk_hex_radius);
+    let (pr_hq, pr_hr) = chunk_center_hex(0, chunk_rows, chunk_hex_radius);
+    let (lap_q_x, lap_q_y) = hex_to_world(pq_hq, pq_hr, hex_outer_radius);
+    let (lap_r_x, lap_r_y) = hex_to_world(pr_hq, pr_hr, hex_outer_radius);
+    let cfg = MapConfig { id: 0, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius, lap_q_x, lap_q_y, lap_r_x, lap_r_y };
     if ctx.db.map_config().id().find(&0u32).is_some() {
-        ctx.db.map_config().id().update(MapConfig { id: 0, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius });
+        ctx.db.map_config().id().update(cfg);
     } else {
-        ctx.db.map_config().insert(MapConfig { id: 0, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius });
+        ctx.db.map_config().insert(cfg);
     }
     log::info!("add_chunks: {} tiles inserted ({} chunks, area {})", chunk_cols * chunk_rows * area, chunk_cols * chunk_rows, area);
     Ok(())
@@ -194,6 +200,51 @@ pub fn clear_chunks(ctx: &ReducerContext) -> Result<(), String> {
     }
     log::info!("clear_chunks: {} tiles deleted.", count);
     Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn upsert_world_def(ctx: &ReducerContext, def: WorldDef) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if ctx.db.world_def().world_id().find(&def.world_id).is_some() {
+        ctx.db.world_def().world_id().update(def);
+    } else {
+        ctx.db.world_def().insert(def);
+    }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn upsert_biome_def(ctx: &ReducerContext, def: BiomeDef) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if ctx.db.biome_def().biome_id().find(&def.biome_id).is_some() {
+        ctx.db.biome_def().biome_id().update(def);
+    } else {
+        ctx.db.biome_def().insert(def);
+    }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn upsert_biome_region_def(ctx: &ReducerContext, def: BiomeRegionDef) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if ctx.db.biome_region_def().region_def_id().find(&def.region_def_id).is_some() {
+        ctx.db.biome_region_def().region_def_id().update(def);
+    } else {
+        ctx.db.biome_region_def().insert(def);
+    }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn generate_world_proc(ctx: &ReducerContext, world_id: String, seed: u64) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    internal_generate_world_proc(ctx, world_id, seed)
+}
+
+#[spacetimedb::reducer]
+pub fn generate_world_manual(ctx: &ReducerContext, biomes: Vec<ManualBiomeInput>) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    internal_generate_world_manual(ctx, biomes)
 }
 
 pub fn find_player_by_username(ctx: &ReducerContext, lookup: &str) -> Option<Identity> {
