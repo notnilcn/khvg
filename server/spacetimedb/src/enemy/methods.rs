@@ -17,34 +17,44 @@ fn nearby_player_position_chunks(ctx: &ReducerContext, x: f32, y: f32, rings: i3
     surrounding_chunk_indices(cq, cr, chunk_cols, chunk_rows, Some(rings))
 }
 
-// Gates actual gameplay behavior (aggro/attacks), so it needs the exact distance, not just chunk
-// membership. 1 ring covers the largest authored simulation_range (790) against the default
-// chunk size — if simulation_range is ever raised past that, recheck the ring math first.
+// Gates actual gameplay behavior (movement via move_sim_factor, attacks via attack_sim_factor,
+// both multiples of CAMERA_VIEW_RADIUS — see world::methods), so it needs the exact distance,
+// not just chunk membership. 1 ring covers a couple times CAMERA_VIEW_RADIUS against the
+// default chunk size — if a template's factor ever pushes its range past that, recheck the
+// ring math first.
 const SIMULATION_CHUNK_RINGS: i32 = 1;
 
 pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
     let range_sq = range * range;
     nearby_player_position_chunks(ctx, x, y, SIMULATION_CHUNK_RINGS).iter().any(|idx| {
-        ctx.db.player_position().chunk_index().filter(idx).any(|pos| {
-            let dx = pos.x - x;
-            let dy = pos.y - y;
-            dx * dx + dy * dy <= range_sq
-        })
+        ctx.db.player_position().chunk_index().filter(idx)
+            // PlayerPosition outlives a logout/disconnect (only deleted on profile delete or
+            // death), so without this an enemy near a logged-out player's last known position
+            // would simulate/spawn forever against a ghost.
+            .filter(|pos| ctx.db.logged_in_player().profile_id().find(&pos.profile_id).is_some())
+            .any(|pos| {
+                let dx = pos.x - x;
+                let dy = pos.y - y;
+                dx * dx + dy * dy <= range_sq
+            })
     })
 }
 
-// One ring past DEFAULT_AOI_CHUNK_RADIUS (2) — a player isn't subscribed to a chunk until
-// they're within 2 rings of it, so gating spawns at 3 rings gives a 1-ring head start before
-// the spawn is even visible to them. Presence-only: exact distance doesn't matter here, only
-// whether anyone is in the neighborhood yet.
-const SPAWN_LOOKAHEAD_CHUNK_RINGS: i32 = 3;
+// Matches DEFAULT_AOI_CHUNK_RADIUS (2) — subscription range, not actual screen range, so even
+// at the same ring count a player is only ever *subscribed* to a chunk's data here, not looking
+// at it: the real camera view (~240-427 world units, see CAMERA_VIEW_RADIUS) is far short of a
+// full 2-ring chunk neighborhood, so there's still a natural buffer before anything is visible.
+// Presence-only: exact distance doesn't matter, only whether anyone is in the neighborhood yet.
+const SPAWN_LOOKAHEAD_CHUNK_RINGS: i32 = 2;
 
 pub fn has_player_near_spawn_point(ctx: &ReducerContext, x: f32, y: f32) -> bool {
     nearby_player_position_chunks(ctx, x, y, SPAWN_LOOKAHEAD_CHUNK_RINGS).iter()
-        .any(|idx| ctx.db.player_position().chunk_index().filter(idx).next().is_some())
+        .any(|idx| ctx.db.player_position().chunk_index().filter(idx)
+            .any(|pos| ctx.db.logged_in_player().profile_id().find(&pos.profile_id).is_some()))
 }
 
 pub fn find_player_pos_by_id(ctx: &ReducerContext, id: Identity) -> Option<(f32, f32)> {
+    ctx.db.logged_in_player().player_id().find(id)?;
     ctx.db.player_position().iter().find(|p| p.player_id == id).map(|p| (p.x, p.y))
 }
 
@@ -447,6 +457,8 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
     let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
     let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
     let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
+    let lap_q            = cfg.as_ref().map(|c| (c.lap_q_x, c.lap_q_y)).unwrap_or((0.0, 0.0));
+    let lap_r            = cfg.as_ref().map(|c| (c.lap_r_x, c.lap_r_y)).unwrap_or((0.0, 0.0));
 
     for region in ctx.db.biome_region().iter() {
         let (center_x, center_y) = hex_to_world(region.center_hex_q, region.center_hex_r, hex_outer_radius);
@@ -454,8 +466,11 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
         if !has_player_near_spawn_point(ctx, center_x, center_y) { continue; }
 
         let spawn_radius_sq = region.spawn_radius * region.spawn_radius;
+        // wrapped_distance_sq, not a plain Euclidean check: a spawn offset can cross a lap seam
+        // and get wrapped to the far side of the map even when the region's own center doesn't,
+        // and a plain distance check would then never find its own children, defeating the cap.
         let live_count = ctx.db.enemy().iter()
-            .filter(|e| region.enemy_template_ids.contains(&e.template_id) && (e.x - center_x).powi(2) + (e.y - center_y).powi(2) <= spawn_radius_sq)
+            .filter(|e| region.enemy_template_ids.contains(&e.template_id) && wrapped_distance_sq(e.x, e.y, center_x, center_y, lap_q, lap_r) <= spawn_radius_sq)
             .count() as u32;
 
         if live_count >= region.max_enemies || region.enemy_template_ids.is_empty() { continue; }
@@ -467,8 +482,11 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
             None => continue,
         };
 
-        let angle_hash = region.region_id.wrapping_mul(0x9e3779b97f4a7c15).wrapping_add(us);
-        let angle = (angle_hash as f32 / u64::MAX as f32) * std::f32::consts::TAU;
+        // splitmix64 + hash_to_unit, not a raw cast — region_id.wrapping_mul(..).wrapping_add(us)
+        // produces a value near u64::MAX, and `us` only advances it by ~2e6 per tick; casting
+        // straight to f32 has a rounding granularity far coarser than that at this magnitude, so
+        // the angle was silently freezing for long stretches instead of varying tick to tick.
+        let angle = hash_to_unit(splitmix64(region.region_id.wrapping_add(us))) * std::f32::consts::TAU;
         let spawn_x = center_x + angle.cos() * region.spawn_radius * 0.5;
         let spawn_y = center_y + angle.sin() * region.spawn_radius * 0.5;
         let (spawn_x, spawn_y) = wrap_world_pos(spawn_x, spawn_y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);

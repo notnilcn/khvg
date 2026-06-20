@@ -28,14 +28,14 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             Some(t) => t,
             None => continue,
         };
-        if !has_player_in_simulation_range(ctx, enemy.x, enemy.y, template.simulation_range) {
+        if !has_player_in_simulation_range(ctx, enemy.x, enemy.y, template.move_sim_factor * CAMERA_VIEW_RADIUS) {
             if behavior.was_simulating {
                 ctx.db.enemy_behavior().behavior_id().update(EnemyBehavior { was_simulating: false, ..behavior });
             }
             continue;
         }
 
-        // Only retarget on the tick an enemy *enters* simulation range — avoids
+        // Only retarget on the tick an enemy *enters* move range — avoids
         // recomputing aggro every 100ms for an enemy already mid-fight.
         if !behavior.was_simulating {
             let (aggro_target, aggro_locked_until) = recompute_aggro(ctx, enemy.x, enemy.y, template.aggro_lock_seconds);
@@ -62,18 +62,23 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             begin_phase_cycle(ctx, &mut phase, phase_def);
         }
 
-        for (pt, step_target, ox, oy, bao, tex, lifetime, source_step) in tick_phase(ctx, &mut phase, phase_def) {
-            let target = resolve_step_target(step_target, behavior.aggro_target);
-            ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
-                event_id: 0, enemy_id: enemy.enemy_id,
-                source_step,
-                origin_x: enemy.x, origin_y: enemy.y,
-                origin_offset_x: ox, origin_offset_y: oy,
-                base_angle_offset: bao,
-                pattern_type: pt,
-                target, texture_id: tex, lifetime,
-                chunk_index: enemy.chunk_index,
-            });
+        // Movement runs from move_sim_factor so the enemy is already approaching by the time
+        // it's close — but it only opens fire once a player is within attack_sim_factor, so it
+        // never shoots from off-screen.
+        if has_player_in_simulation_range(ctx, enemy.x, enemy.y, template.attack_sim_factor * CAMERA_VIEW_RADIUS) {
+            for (pt, step_target, ox, oy, bao, tex, lifetime, source_step) in tick_phase(ctx, &mut phase, phase_def) {
+                let target = resolve_step_target(step_target, behavior.aggro_target);
+                ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
+                    event_id: 0, enemy_id: enemy.enemy_id,
+                    source_step,
+                    origin_x: enemy.x, origin_y: enemy.y,
+                    origin_offset_x: ox, origin_offset_y: oy,
+                    base_angle_offset: bao,
+                    pattern_type: pt,
+                    target, texture_id: tex, lifetime,
+                    chunk_index: enemy.chunk_index,
+                });
+            }
         }
 
         let (new_x, new_y, new_dir_x, new_dir_y) = apply_movement(ctx, &enemy, &behavior, &phase);

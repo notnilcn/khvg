@@ -116,7 +116,10 @@ pub struct EnemyTemplate {
     pub texture_id: String,
     pub display_name: String,
     pub max_hp: u32,
-    pub simulation_range: f32,
+    // Multiples of CAMERA_VIEW_RADIUS, not absolute world units — so every template stays
+    // correctly scaled if the client's camera/viewport ever changes.
+    pub move_sim_factor: f32,
+    pub attack_sim_factor: f32,
     pub aggro_lock_seconds: f32,
     pub phases: Vec<PhaseDef>,
 }

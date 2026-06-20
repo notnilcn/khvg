@@ -13,6 +13,14 @@ pub const DEFAULT_CHUNK_ROWS: i32 = 10;
 pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 48.0;
 pub const DEFAULT_AOI_CHUNK_RADIUS: i32 = 2;
 pub const DEFAULT_TERRAIN_AOI_CHUNK_RADIUS: i32 = 2;
+pub const CLIENT_VIEWPORT_HEIGHT_PX: f32 = 360.0;
+pub const CLIENT_CAMERA_ZOOM: f32 = 0.75;
+// Half the visible height in world units (the tighter of the two screen axes, since the
+// viewport is wider than tall) — a circular range expressed as a multiple of this is
+// guaranteed visible from every direction, not just sideways. Update CLIENT_CAMERA_ZOOM/
+// CLIENT_VIEWPORT_HEIGHT_PX if the client's camera (local_player.tscn) or base resolution
+// (project.godot) ever change, and every range defined off this follows automatically.
+pub const CAMERA_VIEW_RADIUS: f32 = (CLIENT_VIEWPORT_HEIGHT_PX / CLIENT_CAMERA_ZOOM) / 2.0;
 pub const DEFAULT_BIOME_SEED_COUNT: u32 = 18;
 pub const DEFAULT_REGION_SEED_COUNT_PER_BIOME: u32 = 5;
 pub const BEHAVIOR_TICK_DT: f32 = 0.1;
@@ -118,6 +126,25 @@ pub fn wrap_world_pos(x: f32, y: f32, chunk_hex_radius: i32, chunk_cols: i32, ch
     let (pr_x, pr_y) = hex_to_world(pr_hq, pr_hr, hex_outer_radius);
     (x + laps_q as f32 * pq_x + laps_r as f32 * pr_x,
      y + laps_q as f32 * pq_y + laps_r as f32 * pr_y)
+}
+
+// Squared distance between two world points, accounting for torus wrap — mirrors the client's
+// TorusMath.NearestCandidate. Needed whenever code compares a stored (already-wrapped) position
+// against a point computed from a region/chunk center that hasn't been wrapped itself: an offset
+// from that center can cross a lap seam even when the center's own chunk is canonical, so a plain
+// Euclidean distance can silently never match — checking all 9 lap-shift combinations always
+// finds the true nearest copy regardless of which side of a seam either point landed on.
+pub fn wrapped_distance_sq(x1: f32, y1: f32, x2: f32, y2: f32, lap_q: (f32, f32), lap_r: (f32, f32)) -> f32 {
+    let mut best = f32::MAX;
+    for lq in -1..=1 {
+        for lr in -1..=1 {
+            let cx = x2 + lq as f32 * lap_q.0 + lr as f32 * lap_r.0;
+            let cy = y2 + lq as f32 * lap_q.1 + lr as f32 * lap_r.1;
+            let d = (cx - x1).powi(2) + (cy - y1).powi(2);
+            if d < best { best = d; }
+        }
+    }
+    best
 }
 
 pub fn surrounding_chunk_indices(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: i32, rings: Option<i32>) -> Vec<i64> {

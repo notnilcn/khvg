@@ -21,8 +21,10 @@ namespace SpacetimeDB.Types
         public string DisplayName;
         [DataMember(Name = "max_hp")]
         public uint MaxHp;
-        [DataMember(Name = "simulation_range")]
-        public float SimulationRange;
+        [DataMember(Name = "move_sim_factor")]
+        public float MoveSimFactor;
+        [DataMember(Name = "attack_sim_factor")]
+        public float AttackSimFactor;
         [DataMember(Name = "aggro_lock_seconds")]
         public float AggroLockSeconds;
         [DataMember(Name = "phases")]
@@ -33,7 +35,8 @@ namespace SpacetimeDB.Types
             string TextureId,
             string DisplayName,
             uint MaxHp,
-            float SimulationRange,
+            float MoveSimFactor,
+            float AttackSimFactor,
             float AggroLockSeconds,
             System.Collections.Generic.List<PhaseDef> Phases
         )
@@ -42,7 +45,8 @@ namespace SpacetimeDB.Types
             this.TextureId = TextureId;
             this.DisplayName = DisplayName;
             this.MaxHp = MaxHp;
-            this.SimulationRange = SimulationRange;
+            this.MoveSimFactor = MoveSimFactor;
+            this.AttackSimFactor = AttackSimFactor;
             this.AggroLockSeconds = AggroLockSeconds;
             this.Phases = Phases;
         }

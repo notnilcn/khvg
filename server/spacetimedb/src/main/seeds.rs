@@ -72,7 +72,8 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Enemy".to_string(),
         max_hp: 100,
-        simulation_range: 210.0,
+        move_sim_factor: 1.5,
+        attack_sim_factor: 0.85,
         aggro_lock_seconds: 15.0,
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Wander(WanderParams { speed: 30.0, active_duration: 2.5, pause_duration: 1.5 }), 0.0, vec![
@@ -87,7 +88,8 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         texture_id: "Archer".to_string(),
         display_name: "Archer".to_string(),
         max_hp: 100,
-        simulation_range: 660.0,
+        move_sim_factor: 2.0,
+        attack_sim_factor: 1.05,
         aggro_lock_seconds: 25.0,
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Flee(FleeParams { speed: 40.0, min_range: 180.0, active_duration: 2.0, pause_duration: 1.5 }), 0.0, vec![
@@ -106,7 +108,8 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Test Boss".to_string(),
         max_hp: 1000,
-        simulation_range: 790.0,
+        move_sim_factor: 2.75,
+        attack_sim_factor: 1.35,
         aggro_lock_seconds: 30.0,
         phases: vec![
             // Phase 0 (100% HP): turret — Ring read cleanly with no movement noise
@@ -149,7 +152,8 @@ pub fn seed_test_boss_p2(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Test Boss P2".to_string(),
         max_hp: 100,
-        simulation_range: 790.0,
+        move_sim_factor: 2.75,
+        attack_sim_factor: 1.35,
         aggro_lock_seconds: 30.0,
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
@@ -177,7 +181,8 @@ pub fn seed_test_boss_p3(ctx: &ReducerContext) {
         texture_id: "Enemy".to_string(),
         display_name: "Test Boss P3".to_string(),
         max_hp: 100,
-        simulation_range: 790.0,
+        move_sim_factor: 2.75,
+        attack_sim_factor: 1.35,
         aggro_lock_seconds: 30.0,
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
@@ -208,7 +213,8 @@ fn seed_test_boss_p3_clone(ctx: &ReducerContext, template_id: &str, display_name
         texture_id: "Enemy".to_string(),
         display_name: display_name.to_string(),
         max_hp: 100,
-        simulation_range: 790.0,
+        move_sim_factor: 2.75,
+        attack_sim_factor: 1.35,
         aggro_lock_seconds: 30.0,
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
