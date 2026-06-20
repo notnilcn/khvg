@@ -51,7 +51,6 @@ namespace SpacetimeDB.Types
             AddTable(EnemySequenceStep = new(conn));
             AddTable(EnemyTemplate = new(conn));
             AddTable(EnemyTemplates = new(conn));
-            AddTable(EnemyZone = new(conn));
             AddTable(Item = new(conn));
             AddTable(LocalLobbyPlayer = new(conn));
             AddTable(LocalPlayer = new(conn));
@@ -604,7 +603,6 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.EnemySequenceStep().ToSql(),
             new QueryBuilder().From.EnemyTemplate().ToSql(),
             new QueryBuilder().From.EnemyTemplates().ToSql(),
-            new QueryBuilder().From.EnemyZone().ToSql(),
             new QueryBuilder().From.Item().ToSql(),
             new QueryBuilder().From.LocalLobbyPlayer().ToSql(),
             new QueryBuilder().From.LocalPlayer().ToSql(),
@@ -667,7 +665,6 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<EnemySequenceStep, EnemySequenceStepCols, EnemySequenceStepIxCols> EnemySequenceStep() => new("enemy_sequence_step", new EnemySequenceStepCols("enemy_sequence_step"), new EnemySequenceStepIxCols("enemy_sequence_step"));
         public global::SpacetimeDB.Table<EnemyTemplate, EnemyTemplateCols, EnemyTemplateIxCols> EnemyTemplate() => new("enemy_template", new EnemyTemplateCols("enemy_template"), new EnemyTemplateIxCols("enemy_template"));
         public global::SpacetimeDB.Table<EnemyTemplate, EnemyTemplatesCols, EnemyTemplatesIxCols> EnemyTemplates() => new("enemy_templates", new EnemyTemplatesCols("enemy_templates"), new EnemyTemplatesIxCols("enemy_templates"));
-        public global::SpacetimeDB.Table<EnemyZone, EnemyZoneCols, EnemyZoneIxCols> EnemyZone() => new("enemy_zone", new EnemyZoneCols("enemy_zone"), new EnemyZoneIxCols("enemy_zone"));
         public global::SpacetimeDB.Table<Item, ItemCols, ItemIxCols> Item() => new("item", new ItemCols("item"), new ItemIxCols("item"));
         public global::SpacetimeDB.Table<LoggedOutPlayer, LocalLobbyPlayerCols, LocalLobbyPlayerIxCols> LocalLobbyPlayer() => new("local_lobby_player", new LocalLobbyPlayerCols("local_lobby_player"), new LocalLobbyPlayerIxCols("local_lobby_player"));
         public global::SpacetimeDB.Table<LoggedInPlayer, LocalPlayerCols, LocalPlayerIxCols> LocalPlayer() => new("local_player", new LocalPlayerCols("local_player"), new LocalPlayerIxCols("local_player"));

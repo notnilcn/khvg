@@ -107,18 +107,6 @@ pub struct EnemyBehaviorSchedule {
     pub scheduled_at: ScheduleAt,
 }
 
-#[table(accessor = enemy_zone, public)]
-pub struct EnemyZone {
-    #[primary_key] #[auto_inc]
-    pub zone_id: u64,
-    pub center_chunk_q: i32,
-    pub center_chunk_r: i32,
-    pub chunk_radius: i32,
-    pub spawn_radius: f32,
-    pub template_ids: Vec<String>,
-    pub max_enemies: u32,
-}
-
 #[table(accessor = bullet_pattern_event, public, event)]
 pub struct BulletPatternEvent {
     #[primary_key] #[auto_inc]

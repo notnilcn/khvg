@@ -74,7 +74,7 @@ BitCraft-style dual coordinate system. Two grids coexist independently:
 x = R * sqrt(3) * (q + r/2)
 y = R * 1.5 * r
 ```
-Hex size `R` (`hex_outer_radius` in `MapConfig`, default 32.0) must be chosen once and never changed — it invalidates all stored coordinates.
+Hex size `R` (`hex_outer_radius` in `MapConfig`, set via `DEFAULT_HEX_OUTER_RADIUS` in `world/methods.rs`) is free to change during dev since `bullet build` wipes data on every publish. Only continuous positions (`PlayerPosition`, enemy/bullet spawns) are radius-dependent — stored hex coordinates (`hex_q`/`hex_r`) are not. Once live data accumulates in production, changing it without a wipe/migration would desync continuous positions from the grid.
 
 ### Chunk index formula (hex spiral) — must match on server and all clients
 

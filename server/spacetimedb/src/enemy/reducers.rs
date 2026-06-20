@@ -8,25 +8,7 @@ use crate::enemy::instance_tables::*;
 use crate::enemy::methods::*;
 #[spacetimedb::reducer]
 pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
-    if ctx.db.enemy().iter().next().is_some() { return; } // temporary: one enemy at a time
-
-    let template = match ctx.db.enemy_template().template_id().find(&"Enemy".to_string()) {
-        Some(t) => t,
-        None => return,
-    };
-
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let (cq, cr) = world_to_chunk(0.0, 0.0, chunk_hex_radius, hex_outer_radius);
-    let chunk_index = spiral_chunk_index(cq, cr);
-    let inserted_behavior = build_enemy_behavior(ctx, &template);
-
-    ctx.db.enemy().insert(Enemy {
-        enemy_id: 0, template_id: template.template_id, behavior_id: inserted_behavior.behavior_id,
-        x: 0.0, y: 0.0, spawn_time: ctx.timestamp,
-        hp: template.max_hp, phase: 0, is_elite: false, immortal: false, chunk_index,
-    });
+    spawn_from_biome_regions(ctx);
 }
 
 #[spacetimedb::reducer]
@@ -46,7 +28,7 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             Some(t) => t,
             None => continue,
         };
-        if !has_player_in_range(ctx, enemy.x, enemy.y, template.simulation_range) {
+        if !has_player_in_simulation_range(ctx, enemy.x, enemy.y, template.simulation_range) {
             if behavior.was_simulating {
                 ctx.db.enemy_behavior().behavior_id().update(EnemyBehavior { was_simulating: false, ..behavior });
             }

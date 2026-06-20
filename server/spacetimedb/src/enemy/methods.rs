@@ -2,21 +2,46 @@ use spacetimedb::{ReducerContext, Identity, Table, Timestamp};
 use std::time::Duration;
 use crate::world::methods::*;
 use crate::world::tables::*;
+use crate::world::instance_tables::*;
 use crate::player::tables::*;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 
-pub fn has_player_in_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
+fn nearby_player_position_chunks(ctx: &ReducerContext, x: f32, y: f32, rings: i32) -> Vec<i64> {
+    let cfg = ctx.db.map_config().id().find(&0u32);
+    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
+    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
+    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
+    let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
+    surrounding_chunk_indices(cq, cr, chunk_cols, chunk_rows, Some(rings))
+}
+
+// Gates actual gameplay behavior (aggro/attacks), so it needs the exact distance, not just chunk
+// membership. 1 ring covers the largest authored simulation_range (790) against the default
+// chunk size — if simulation_range is ever raised past that, recheck the ring math first.
+const SIMULATION_CHUNK_RINGS: i32 = 1;
+
+pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
     let range_sq = range * range;
-    ctx.db.logged_in_player().iter().any(|p| {
-        ctx.db.player_position().profile_id().find(&p.profile_id)
-            .map(|pos| {
-                let dx = pos.x - x;
-                let dy = pos.y - y;
-                dx * dx + dy * dy <= range_sq
-            })
-            .unwrap_or(false)
+    nearby_player_position_chunks(ctx, x, y, SIMULATION_CHUNK_RINGS).iter().any(|idx| {
+        ctx.db.player_position().chunk_index().filter(idx).any(|pos| {
+            let dx = pos.x - x;
+            let dy = pos.y - y;
+            dx * dx + dy * dy <= range_sq
+        })
     })
+}
+
+// One ring past DEFAULT_AOI_CHUNK_RADIUS (2) — a player isn't subscribed to a chunk until
+// they're within 2 rings of it, so gating spawns at 3 rings gives a 1-ring head start before
+// the spawn is even visible to them. Presence-only: exact distance doesn't matter here, only
+// whether anyone is in the neighborhood yet.
+const SPAWN_LOOKAHEAD_CHUNK_RINGS: i32 = 3;
+
+pub fn has_player_near_spawn_point(ctx: &ReducerContext, x: f32, y: f32) -> bool {
+    nearby_player_position_chunks(ctx, x, y, SPAWN_LOOKAHEAD_CHUNK_RINGS).iter()
+        .any(|idx| ctx.db.player_position().chunk_index().filter(idx).next().is_some())
 }
 
 pub fn find_player_pos_by_id(ctx: &ReducerContext, id: Identity) -> Option<(f32, f32)> {
@@ -416,40 +441,36 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
     }
 }
 
-// Forward-looking: not yet called from any reducer. Will replace tick_enemy_spawn's hardcoded
-// single-enemy spawn once EnemyZone configs are authored (next-steps.md Task 5).
-#[allow(dead_code)]
-pub fn spawn_from_zones(ctx: &ReducerContext) {
+pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
     let cfg = ctx.db.map_config().id().find(&0u32);
     let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
     let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
     let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
     let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
 
-    for zone in ctx.db.enemy_zone().iter() {
-        let (center_hq, center_hr) = chunk_center_hex(zone.center_chunk_q, zone.center_chunk_r, chunk_hex_radius);
-        let (center_x, center_y) = hex_to_world(center_hq, center_hr, hex_outer_radius);
+    for region in ctx.db.biome_region().iter() {
+        let (center_x, center_y) = hex_to_world(region.center_hex_q, region.center_hex_r, hex_outer_radius);
 
-        if !has_player_in_range(ctx, center_x, center_y, zone.spawn_radius) { continue; }
+        if !has_player_near_spawn_point(ctx, center_x, center_y) { continue; }
 
-        let spawn_radius_sq = zone.spawn_radius * zone.spawn_radius;
+        let spawn_radius_sq = region.spawn_radius * region.spawn_radius;
         let live_count = ctx.db.enemy().iter()
-            .filter(|e| zone.template_ids.contains(&e.template_id) && (e.x - center_x).powi(2) + (e.y - center_y).powi(2) <= spawn_radius_sq)
+            .filter(|e| region.enemy_template_ids.contains(&e.template_id) && (e.x - center_x).powi(2) + (e.y - center_y).powi(2) <= spawn_radius_sq)
             .count() as u32;
 
-        if live_count >= zone.max_enemies || zone.template_ids.is_empty() { continue; }
+        if live_count >= region.max_enemies || region.enemy_template_ids.is_empty() { continue; }
 
         let us = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros() as u64;
-        let template_idx = (zone.zone_id ^ (us / 1_000_000)) as usize % zone.template_ids.len();
-        let template = match ctx.db.enemy_template().template_id().find(&zone.template_ids[template_idx]) {
+        let template_idx = (region.region_id ^ (us / 1_000_000)) as usize % region.enemy_template_ids.len();
+        let template = match ctx.db.enemy_template().template_id().find(&region.enemy_template_ids[template_idx]) {
             Some(t) => t,
             None => continue,
         };
 
-        let angle_hash = zone.zone_id.wrapping_mul(0x9e3779b97f4a7c15).wrapping_add(us);
+        let angle_hash = region.region_id.wrapping_mul(0x9e3779b97f4a7c15).wrapping_add(us);
         let angle = (angle_hash as f32 / u64::MAX as f32) * std::f32::consts::TAU;
-        let spawn_x = center_x + angle.cos() * zone.spawn_radius * 0.5;
-        let spawn_y = center_y + angle.sin() * zone.spawn_radius * 0.5;
+        let spawn_x = center_x + angle.cos() * region.spawn_radius * 0.5;
+        let spawn_y = center_y + angle.sin() * region.spawn_radius * 0.5;
         let (spawn_x, spawn_y) = wrap_world_pos(spawn_x, spawn_y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
 
         let (cq, cr) = world_to_chunk(spawn_x, spawn_y, chunk_hex_radius, hex_outer_radius);

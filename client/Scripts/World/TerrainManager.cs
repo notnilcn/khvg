@@ -16,8 +16,13 @@ public partial class TerrainManager : Node2D
 	private readonly Dictionary<(int Q, int R), List<TriangleTile>> _tilesByHex = new();
 	private readonly Dictionary<string, Texture2D> _textureCache = new();
 
+	private readonly Dictionary<(int TriIndex, int Rotation, string TextureId), ArrayMesh> _meshCache = new();
+	private readonly Dictionary<(int TriIndex, int Rotation, string TextureId), MultiMeshInstance2D> _batches = new();
+	private readonly HashSet<(int TriIndex, int Rotation, string TextureId)> _activeBatchKeys = new();
+
 	private Vector2 _camPos = Vector2.Zero;
 	private Vector2 _camZoom = Vector2.One;
+	private bool _dirty;
 
 	public override void _Ready()
 	{
@@ -31,11 +36,21 @@ public partial class TerrainManager : Node2D
 
 		var cam = GetViewport().GetCamera2D();
 		if (cam == null) return;
-		if (cam.GlobalPosition != _camPos || cam.Zoom != _camZoom)
+
+		var camMoved = cam.GlobalPosition != _camPos || cam.Zoom != _camZoom;
+		if (camMoved)
 		{
 			_camPos = cam.GlobalPosition;
 			_camZoom = cam.Zoom;
-			QueueRedraw();
+		}
+
+		// Tile-change callbacks only set _dirty — actually rebuilding here means a whole burst
+		// of inserts/deletes from one chunk crossing collapses into a single rebuild per frame,
+		// instead of one rebuild per individual tile event.
+		if (camMoved || _dirty)
+		{
+			_dirty = false;
+			RebuildVisibleInstances();
 		}
 	}
 
@@ -44,8 +59,8 @@ public partial class TerrainManager : Node2D
 		var conn = GameManager.Instance?.Conn;
 		if (conn == null) return;
 
-		conn.Db.MapConfig.OnInsert += (_, row) => { _outerRadius = row.HexOuterRadius; QueueRedraw(); };
-		conn.Db.MapConfig.OnUpdate += (_, _, row) => { _outerRadius = row.HexOuterRadius; QueueRedraw(); };
+		conn.Db.MapConfig.OnInsert += (_, row) => { _outerRadius = row.HexOuterRadius; InvalidateMeshes(); };
+		conn.Db.MapConfig.OnUpdate += (_, _, row) => { _outerRadius = row.HexOuterRadius; InvalidateMeshes(); };
 		var cfg = conn.Db.MapConfig.Id.Find(0u);
 		if (cfg != null)
 			_outerRadius = cfg.HexOuterRadius;
@@ -58,7 +73,7 @@ public partial class TerrainManager : Node2D
 			AddTile(tile);
 
 		_subscribed = true;
-		QueueRedraw();
+		RebuildVisibleInstances();
 	}
 
 	private void AddTile(TriangleTile tile)
@@ -84,23 +99,35 @@ public partial class TerrainManager : Node2D
 	private void OnTileInsert(EventContext _, TriangleTile tile)
 	{
 		AddTile(tile);
-		QueueRedraw();
+		_dirty = true;
 	}
 
 	private void OnTileUpdate(EventContext _, TriangleTile old, TriangleTile tile)
 	{
 		RemoveTile(old.TileId);
 		AddTile(tile);
-		QueueRedraw();
+		_dirty = true;
 	}
 
 	private void OnTileDelete(EventContext _, TriangleTile tile)
 	{
 		RemoveTile(tile.TileId);
-		QueueRedraw();
+		_dirty = true;
 	}
 
-	public override void _Draw()
+	// Outer radius only changes in dev — wipe cached meshes/batches so the next rebuild
+	// recreates everything at the new scale instead of patching stale Multimesh state.
+	private void InvalidateMeshes()
+	{
+		_meshCache.Clear();
+		foreach (var batch in _batches.Values)
+			batch.QueueFree();
+		_batches.Clear();
+		_activeBatchKeys.Clear();
+		RebuildVisibleInstances();
+	}
+
+	private void RebuildVisibleInstances()
 	{
 		var cam = GetViewport().GetCamera2D();
 		if (cam == null) return;
@@ -113,9 +140,11 @@ public partial class TerrainManager : Node2D
 		var lapQ = GameManager.Instance?.LapQ ?? Vector2.Zero;
 		var lapR = GameManager.Instance?.LapR ?? Vector2.Zero;
 
+		var grouped = new Dictionary<(int TriIndex, int Rotation, string TextureId), List<Vector2>>();
+
 		// Iterate everything cached (not a camera-window hex lookup) since chunks near a torus
 		// seam are stored at their canonical (raw, far-away) position — we need to pick whichever
-		// wrapped copy of each hex is actually near the camera before we can cull/draw it.
+		// wrapped copy of each hex is actually near the camera before we can cull it.
 		foreach (var ((q, r), tiles) in _tilesByHex)
 		{
 			var canonicalCenter = HexToWorld(q, r);
@@ -125,34 +154,86 @@ public partial class TerrainManager : Node2D
 				continue;
 
 			foreach (var tile in tiles)
-				DrawTriangle(tile, center);
+			{
+				var key = (tile.TriIndex, tile.Rotation, tile.TextureId);
+				if (!grouped.TryGetValue(key, out var positions))
+					grouped[key] = positions = new List<Vector2>();
+				positions.Add(center);
+			}
 		}
+
+		foreach (var (key, positions) in grouped)
+		{
+			var multimesh = GetOrCreateBatch(key.TriIndex, key.Rotation, key.TextureId).Multimesh;
+			multimesh.InstanceCount = positions.Count;
+			for (var i = 0; i < positions.Count; i++)
+				multimesh.SetInstanceTransform2D(i, new Transform2D(0f, positions[i]));
+			_activeBatchKeys.Add(key);
+		}
+
+		// Zero out batches that had instances last rebuild but none this time, so they stop
+		// drawing stale positions instead of being destroyed and recreated every pass.
+		_activeBatchKeys.RemoveWhere(key =>
+		{
+			if (grouped.ContainsKey(key)) return false;
+			_batches[key].Multimesh.InstanceCount = 0;
+			return true;
+		});
 	}
 
-	private void DrawTriangle(TriangleTile tile, Vector2 center)
+	private MultiMeshInstance2D GetOrCreateBatch(int triIndex, int rotation, string textureId)
 	{
-		float angleA = Mathf.DegToRad(30f + 60f * tile.TriIndex);
-		float angleB = Mathf.DegToRad(30f + 60f * ((tile.TriIndex + 1) % 6));
-		var vA = center + _outerRadius * new Vector2(Mathf.Cos(angleA), Mathf.Sin(angleA));
-		var vB = center + _outerRadius * new Vector2(Mathf.Cos(angleB), Mathf.Sin(angleB));
-		Vector2[] points = [center, vA, vB];
+		var key = (triIndex, rotation, textureId);
+		if (_batches.TryGetValue(key, out var existing))
+			return existing;
 
-		var texture = GetTexture(tile.TextureId);
-		if (texture == null)
-		{
-			DrawPolygon(points, [FallbackColor]);
-			return;
-		}
+		var (baseTexture, uvRegion) = ResolveTexture(GetTexture(textureId));
+		var multimesh = new MultiMesh { TransformFormat = MultiMesh.TransformFormatEnum.Transform2D, Mesh = GetOrBuildMesh(triIndex, rotation, textureId, uvRegion) };
+		var batch = new MultiMeshInstance2D { Multimesh = multimesh };
+
+		if (baseTexture != null)
+			batch.Texture = baseTexture;
+		else
+			batch.Modulate = FallbackColor;
+
+		AddChild(batch);
+		_batches[key] = batch;
+		return batch;
+	}
+
+	private ArrayMesh GetOrBuildMesh(int triIndex, int rotation, string textureId, Rect2 uvRegion)
+	{
+		var key = (triIndex, rotation, textureId);
+		if (_meshCache.TryGetValue(key, out var cached))
+			return cached;
+
+		float angleA = Mathf.DegToRad(30f + 60f * triIndex);
+		float angleB = Mathf.DegToRad(30f + 60f * ((triIndex + 1) % 6));
+		var vA = _outerRadius * new Vector2(Mathf.Cos(angleA), Mathf.Sin(angleA));
+		var vB = _outerRadius * new Vector2(Mathf.Cos(angleB), Mathf.Sin(angleB));
 
 		// Square textures don't tile naturally onto a triangular wedge — sample the texture as
 		// if it covered the whole hex, so each wedge shows the slice geometrically under it.
 		// `rotation` (0/1/2 = 0/120/240 deg) spins that sampling to vary the look from one texture.
-		float rotOffset = Mathf.DegToRad(120f * tile.Rotation);
-		Vector2 UvFor(float angle) => new Vector2(0.5f, 0.5f) + 0.5f * new Vector2(Mathf.Cos(angle - rotOffset), Mathf.Sin(angle - rotOffset));
-		Vector2[] uvs = [new Vector2(0.5f, 0.5f), UvFor(angleA), UvFor(angleB)];
-		Color[] white = [Colors.White];
+		float rotOffset = Mathf.DegToRad(120f * rotation);
+		Vector2 LocalUvFor(float angle) => new Vector2(0.5f, 0.5f) + 0.5f * new Vector2(Mathf.Cos(angle - rotOffset), Mathf.Sin(angle - rotOffset));
+		// AtlasTexture's region crop isn't honored by MultiMeshInstance2D's raw mesh UVs (only
+		// Sprite2D/draw_polygon-style paths remap for it), so we bake the crop into the UVs
+		// ourselves and bind the underlying sheet instead of the AtlasTexture wrapper.
+		Vector2 RemapUv(Vector2 local) => uvRegion.Position + local * uvRegion.Size;
 
-		DrawPolygon(points, white, uvs, texture);
+		var vertices = new[] { Vector3.Zero, new Vector3(vA.X, vA.Y, 0f), new Vector3(vB.X, vB.Y, 0f) };
+		var uvs = new[] { RemapUv(new Vector2(0.5f, 0.5f)), RemapUv(LocalUvFor(angleA)), RemapUv(LocalUvFor(angleB)) };
+
+		var arrays = new Godot.Collections.Array();
+		arrays.Resize((int)Mesh.ArrayType.Max);
+		arrays[(int)Mesh.ArrayType.Vertex] = vertices;
+		arrays[(int)Mesh.ArrayType.TexUV] = uvs;
+
+		var mesh = new ArrayMesh();
+		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+		_meshCache[key] = mesh;
+		return mesh;
 	}
 
 	private Texture2D? GetTexture(string textureId)
@@ -164,6 +245,17 @@ public partial class TerrainManager : Node2D
 		var tex = GD.Load<Texture2D>(resPath);
 		_textureCache[textureId] = tex;
 		return tex;
+	}
+
+	private static (Texture2D? Base, Rect2 UvRegion) ResolveTexture(Texture2D? texture)
+	{
+		if (texture is AtlasTexture atlas && atlas.Atlas != null)
+		{
+			var size = atlas.Atlas.GetSize();
+			var region = atlas.Region;
+			return (atlas.Atlas, new Rect2(region.Position / size, region.Size / size));
+		}
+		return (texture, new Rect2(0f, 0f, 1f, 1f));
 	}
 
 	private Vector2 HexToWorld(int q, int r)
