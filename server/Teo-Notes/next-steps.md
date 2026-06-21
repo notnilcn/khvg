@@ -1,59 +1,50 @@
 # Next Steps
 
-## Recently Completed (reference only)
 
-- **World generation pipeline** — `BiomeDef`/`BiomeRegionDef` config tables, `BiomeRegion`/`TriangleTile` output tables, `generate_world_proc`/`generate_world_manual` reducers. Fully implemented in `world/tables.rs`, `world/def_tables.rs`, `world/instance_tables.rs`, `world/methods.rs`. Read the source for exact fields/flow — this file no longer carries a parallel schema dump.
-- **Enemy spawning migrated off `EnemyZone`** — deleted that table; `spawn_from_biome_regions` (renamed from dead-code `spawn_from_zones`) iterates `BiomeRegion` and is now actually wired into `tick_enemy_spawn`.
-- **Enemy simulation split into move/attack ranges** — `EnemyTemplate.move_sim_factor`/`attack_sim_factor`, multiples of `CAMERA_VIEW_RADIUS` (derived from the client's actual viewport/zoom in `world/methods.rs`) rather than hardcoded world units. Movement starts from farther away; attacks only fire once a player is within camera view (+ small lead-in), so nothing shoots from off-screen.
-- **Fixed: ghost-position spawning** — `has_player_in_simulation_range`/`has_player_near_spawn_point`/`find_player_pos_by_id` were reading `PlayerPosition` without checking `LoggedInPlayer`. Since logout/disconnect preserves `PlayerPosition` (by design, for next login), a departed player's last position kept triggering spawns/simulation forever. Fixed by filtering to currently-logged-in profiles, same pattern `find_nearest_player_id` already used.
-- **Fixed: region spawn cap wasn't torus-wrap-aware** — `live_count` compared enemy positions to a region's center with plain Euclidean distance, but the actual spawn position goes through `wrap_world_pos`. A region sitting near a lap seam could have its spawn offset wrap to the far side of the map, permanently invisible to its own cap check → unbounded spawning. Fixed with `wrapped_distance_sq` (checks all 9 lap-shift combinations, mirrors the client's `TorusMath.NearestCandidate`).
-- **Fixed: spawn angle was silently frozen** — `angle_hash as f32 / u64::MAX as f32` lost so much precision that the angle didn't visibly change for long stretches (f32's rounding granularity at that magnitude is far coarser than how much the per-tick hash actually moved). Switched to `hash_to_unit(splitmix64(...))`, the same deterministic-PRNG pattern already used for Wander movement and world-gen.
-- **AOI tightened** — `DEFAULT_AOI_CHUNK_RADIUS` 3→2 (now matches `DEFAULT_TERRAIN_AOI_CHUNK_RADIUS`, since there's no point subscribing players/enemies/loot further out than terrain itself renders). `SPAWN_LOOKAHEAD_CHUNK_RINGS` 2 (matches AOI — still a real lead-time buffer since AOI subscription range is itself well past actual camera view distance). `SIMULATION_CHUNK_RINGS` 1 (tight, exact-distance gate for movement/attack checks).
+## 9. Texture Assignment Rules
 
----
+Ground texture selection per triangle wedge — server in `world/methods.rs` (`write_triangle_tiles`), `world/def_tables.rs`, `world/instance_tables.rs`; client rendering in `client/Scripts/World/TerrainManager.cs`.
 
-## 8. Enemy Spawning & Chunk Granularity (Open)
+### Implemented
 
-Investigating the bugs above surfaced a structural mismatch, not just code defects:
+- **Per-biome config, not per-texture** — `BiomeDef.ground_textures: Vec<GroundTextureConfig>` / `overlay_textures: Vec<OverlayTextureConfig>` carry `chance`, `tags`, `allowed_rotations` (plus `scale` for overlays) directly. Deliberately *not* on `TextureEntry` — the same texture_id can be a ground texture in one biome and an overlay in another, with different tags/rotations/chance/scale each time. `TextureEntry` only holds `texture_id`/`res_path`/`kind` now.
+- **Layering compatibility** — `LayeringRule { overlay_tag, allowed_base_tag }` (global, allow-list — default deny, since most overlay/base pairs don't make sense). E.g. `HalfStones` (`light_debris`) is allowed on both `Grass` (`soft`) and `Flowers` (`delicate`); `FullStones` (`heavy_debris`) only on `Grass`.
+- **Overlay chance** — `OverlayTextureConfig.chance` (0-100%, doesn't need to sum to 100 — `weighted_pick_with_remainder` treats any shortfall as "no overlay," and scales down proportionally if compatible overlays' chances sum past 100). A base with fewer compatible overlays naturally ends up with a lower overall chance of getting one — no separate per-base modifier needed.
+- **Rotation rules** — `allowed_rotations: Vec<u8>` on both ground and overlay configs, empty = all 3 allowed. Base and overlay each draw their rotation independently — no cross-layer interaction to reason about.
+- **Frequency** — `GroundTextureConfig.chance`, weighted-random (`weighted_pick_index`), not required to sum to 100.
+- **Client rendering** — overlay batches are a parallel set to base batches (`_overlayBatches`, sharing `_meshCache` since mesh geometry never depends on layer), drawn at `ZIndex = 1` vs base's `0` (both still under the whole-node `ZIndex = -10`) so overlay reliably draws above base regardless of batch-creation order. Overlay scale is applied per-instance around the wedge's own centroid (not the mesh's local origin / hex center), so a smaller overlay stays visually centered in its triangle instead of shrinking toward one corner.
+- **Per-wedge texture UV mapping** (`GetOrBuildMesh`) — each wedge fits the *whole* texture to its own bounding box, then crops to the triangle shape, instead of slicing a thin pie-wedge out of one texture shared across all 6 wedges of a hex. A triangle only has 3 vertices to a square's 4 corners, so at most ~50% of the source image is reachable this way — still far more than the old hex-wide slice (~17%). Accepted trade-off: a whole hex now shows this crop repeated/rotated 6 times instead of reading as one continuous image — source art should be composed knowing it'll be seen as independent triangular crops, not as one image split across a hex.
 
-- **Region spawn placement should be pure-random within the region**, not a fixed-radius ring. Current formula (`center + cos/sin(angle) * spawn_radius * 0.5`) only varies angle — every enemy from a region lands on the exact same circle. Should pick a random point inside the disc (or some other natural distribution), not just a random direction at a fixed distance.
+### Deliberately not built yet
+- **Noise-based distribution** — simplex noise per-region so same textures cluster spatially instead of scattering uniformly.
+- **Biome border textures** — restricted texture set (1/3, 2/3 coverage shapes) for triangles adjacent to a different biome.
 
-- **`chunk_hex_radius` is too coarse relative to `CAMERA_VIEW_RADIUS`.** A chunk is currently ~915 world units across; the camera only sees ~240-427. That means any chunk-bucket-based proximity check (AOI, spawn lookahead, simulation range) is checking an area 2-4x bigger than what's actually relevant, so "N rings of chunks" doesn't track real "can I see/reach this" distance. Fix: shrink `chunk_hex_radius` (not `hex_outer_radius` — that's tile visual size, leave it alone) so one chunk is closer to one screen-width, paired with growing `chunk_cols`/`chunk_rows` proportionally to keep the total world size the same.
+### Adjacency Rules (Speced, Not Built — Next, Before Decor)
 
-- **Region count/density needs to scale with the (finer) chunk grid.** With only 5 regions on a 10×10 chunk grid, a 2-ring lookahead already covers ~19% of the entire map — so "in lookahead range" ends up true almost regardless of where a player stands, even though the actual region might be thousands of world-units away (only "close" because of torus wraparound at the chunk-bucket level). Shrinking chunk size alone doesn't fix this unless region count/spread also scales up — this is really a map-design-pass concern, not a constant to tune in isolation.
+Three relationship types, kept as separate explicit mechanisms rather than one generic "any tag near any tag" pool, so a rule written for one relationship can't accidentally fire for another just because two unrelated things happen to share a tag string:
 
-These three are coupled — solve them together when doing the real map-layout pass, not as one-off constant tweaks.
+1. **Overlay-on-base, vertical, same tile** — `LayeringRule`, already built (see above).
+2. **Base-to-base, lateral, neighboring tiles** — new `BaseAdjacencyRule { tag_a, tag_b }`, deny-list (default allow — most neighboring base textures are fine, only specific clashing pairs get blocked). E.g. swamp should never sit directly next to sand.
+3. **Overlay-to-overlay, lateral, neighboring tiles** — new `OverlayAdjacencyRule { tag_a, tag_b }`, same deny-list shape, kept separate from (2) so the same tag string can never cross-apply between base and overlay rules.
 
----
+**Why this is more than two new tables**: `write_triangle_tiles` currently rolls each of a hex's 6 wedges completely independently, with zero neighbor-awareness. Adjacency has to be checked at the **wedge level**, not the hex level — Teo's call, since art is drawn per-triangle and needs to follow triangle-level rules. A wedge's neighbors are *mostly* the other two wedges in the *same* hex (a hex can already show up to 6 different ground textures today, one per wedge); only one of a wedge's three edges crosses into a different hex. Enforcing this needs:
+- A defined generation order, so "already-decided neighbors" is well-defined at the point a wedge gets rolled.
+- A wedge-neighbor lookup: 2 same-hex neighbors (always), 1 cross-hex neighbor (hex-direction math + the opposite wedge index on the far side of that shared edge).
+- Retry-on-conflict when a rolled candidate violates a rule against an already-decided neighbor.
+- A fallback for "no candidate is fully compatible": write an empty `texture_id`/`overlay_texture_id` rather than silently accepting a violation. `TerrainManager` already renders a missing texture as a solid fallback-color triangle (existing code), so this gives free, impossible-to-miss visibility into how often/where rules conflict while tuning, instead of quietly papering over it. If blank tiles turn out to be common enough that this isn't an acceptable dev experience, revisit toward "least rule violations" instead — but that needs a way to weigh a base-adjacency violation against an overlay-adjacency violation, not worth solving until it's a real problem.
 
-## 9. Texture Assignment Rules (Next Step After Core Gen)
+Generation only runs at publish time, never live, so the added per-publish compute cost here is a non-issue.
 
-Current gen picks textures uniformly at random from the region's `texture_ids`. To produce natural-looking terrain, rules need to be layered on top. No new tables required — add rule fields to existing def tables and manual structs; the gen algorithm gains a texture-selection pass that consults them before writing each `TriangleTile`.
+Sequencing: speced now, built before decor — decor's own adjacency rules (decor-to-decor, decor-to-ground) extend this same wedge/hex-neighbor machinery once it exists, rather than inventing a second neighbor-awareness system.
 
-### Planned rule types
-
-- **Frequency weights** — parallel `texture_weights: Vec<f32>` alongside `texture_ids` on `BiomeDef`, `BiomeRegionDef`, and the manual input structs. Controls how often each texture is chosen (e.g. grass 60%, flower 20%, rock 20%).
-
-- **Allowed rotations per texture** — parallel `texture_allowed_rotations: Vec<Vec<u8>>` (indexed to `texture_ids`). Some textures don't look right at all three rotations — this restricts which values 0/1/2 are valid for each.
-
-- **Noise-based distribution** — use simplex noise seeded per-region (with `seed` from `generate_world_proc`) to cluster textures spatially rather than scatter them randomly. The noise value at each triangle's world position selects a texture from the weighted list, so similar textures group together naturally.
-
-- **Biome border textures** — triangles whose hex is adjacent to a different biome get a restricted texture set (the 1/3 and 2/3 coverage triangle shapes designed for biome edges). Interior triangles use full-coverage textures. Requires a neighbor-biome lookup pass during gen.
-
-- **Adjacency rules / tags** — tag textures (e.g. `"ground"`, `"feature"`, `"border"`) and define which tags can appear adjacent. Prevents unnatural clustering (e.g. two feature textures side by side). Requires a second pass over already-placed triangles during gen.
-
-### Ground Z-Layers (Overlays)
-
-A dirt path painted over grass on the same triangle is a second texture layer with the same footprint as the base layer, not a spatial feature. No positional sort needed — the overlay's footprint is always 100% coincident with the base layer, so draw order is static (overlay batch always renders after the base batch, same node-order/z_index approach as decor-after-floor). Needs an `overlay_texture_id` (or small `Vec<String>` for stacked overlays) per region/biome def, rendered via its own MMI batch keyed the same way as the base layer (`TriIndex`, `Rotation`, `TextureId`).
-
-### Decor Generation Rules (Open — Next Design Pass)
+### Decor Generation Rules (Open — Next Design Pass, Builds On Adjacency Rules Above)
 
 Decor (trees, rocks, etc.) needs its own version of the texture-assignment rules above, scoped to per-hex placement rather than per-triangle:
-- Which decor textures are valid per biome/region, plus frequency weights (same shape as `texture_weights` above)
-- Decor-to-decor adjacency (e.g. don't place two trees in adjacent hexes)
+- Which decor textures are valid per biome/region, plus frequency weights (same shape as ground/overlay configs above)
+- Decor-to-decor adjacency (e.g. don't place two trees in adjacent hexes) — reuses the neighbor-awareness built for adjacency rules above, not a separate mechanism
 - Decor-to-ground adjacency (e.g. no trees on sand texture)
 
-Not yet speced — revisit once core texture rules (above) are in and proven out.
+Not yet speced in detail — revisit once the adjacency-rules work above is in and proven out.
 
 ### Decor & Cliff Rendering (Client — Depth/Y-Sort)
 
@@ -73,3 +64,7 @@ Active play space stays fully flat — no elevation data anywhere; biome/region 
 - Visual-only elevation (no enforced collision/sightline) is worse than no elevation — bullets/enemies passing through what's clearly drawn as solid terrain is a visible inconsistency, not a neutral cosmetic choice.
 
 Future direction, if revisited: asymmetric elevation — players can cross/shoot from elevated terrain, enemies are blocked by it (movement collision only, same solid/non-solid flag every other obstacle already uses). Enemy bullets are naturally constrained by enemy *position* (no separate occlusion system needed), giving players a positioning advantage without needing full bilateral line-of-sight math. Procgen-side this would extend cleanly off the planned biome-border pass above (same neighbor lookup, also tagging the boundary as elevated) plus a new lightweight collision-edge table (same pattern as `BuildingTile`); the real new work is the enemy-avoidance AI, not procgen or rendering — both of those already extend the systems planned/built above.
+
+### Region Spawn Trigger Uses Center Distance, Not Region Footprint — Not Yet Remedied
+
+`has_player_near_spawn_point` and the actual spawn-cap/placement disc (`enemy/methods.rs`, `enemy/reducers.rs`) are both anchored to a region's `(center_hex_q, center_hex_r)` point + `spawn_radius`, not to the region's real (possibly irregular) Voronoi cell of `TriangleTile`s. With few/large regions this means a player can be standing on ground visually tagged as belonging to a region yet be far enough from its center to never trigger spawning there. Real fix would anchor both the trigger and placement to the region's actual tile footprint (`TriangleTile.region_id`) instead of a circle — deferred for now since more regions (smaller Voronoi cells, closer to their own centers) should shrink the practical impact; revisit if it's still a problem once real region content exists.

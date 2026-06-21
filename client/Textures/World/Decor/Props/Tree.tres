@@ -1,0 +1,7 @@
+[gd_resource type="AtlasTexture" format=3 uid="uid://bsrgtl8kjqi4p"]
+
+[ext_resource type="Texture2D" uid="uid://dup3t5or8jeqt" path="res://Assets/Pixel Art Top Down - Basic v1/Texture/TX Plant.png" id="1_0lrwx"]
+
+[resource]
+atlas = ExtResource("1_0lrwx")
+region = Rect2(24, 16, 112, 136)

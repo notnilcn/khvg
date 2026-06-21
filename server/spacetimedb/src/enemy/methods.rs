@@ -1,5 +1,6 @@
 use spacetimedb::{ReducerContext, Identity, Table, Timestamp};
 use std::time::Duration;
+use crate::main::global::*;
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::world::instance_tables::*;
@@ -17,13 +18,6 @@ fn nearby_player_position_chunks(ctx: &ReducerContext, x: f32, y: f32, rings: i3
     surrounding_chunk_indices(cq, cr, chunk_cols, chunk_rows, Some(rings))
 }
 
-// Gates actual gameplay behavior (movement via move_sim_factor, attacks via attack_sim_factor,
-// both multiples of CAMERA_VIEW_RADIUS — see world::methods), so it needs the exact distance,
-// not just chunk membership. 1 ring covers a couple times CAMERA_VIEW_RADIUS against the
-// default chunk size — if a template's factor ever pushes its range past that, recheck the
-// ring math first.
-const SIMULATION_CHUNK_RINGS: i32 = 1;
-
 pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
     let range_sq = range * range;
     nearby_player_position_chunks(ctx, x, y, SIMULATION_CHUNK_RINGS).iter().any(|idx| {
@@ -39,13 +33,6 @@ pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, rang
             })
     })
 }
-
-// Matches DEFAULT_AOI_CHUNK_RADIUS (2) — subscription range, not actual screen range, so even
-// at the same ring count a player is only ever *subscribed* to a chunk's data here, not looking
-// at it: the real camera view (~240-427 world units, see CAMERA_VIEW_RADIUS) is far short of a
-// full 2-ring chunk neighborhood, so there's still a natural buffer before anything is visible.
-// Presence-only: exact distance doesn't matter, only whether anyone is in the neighborhood yet.
-const SPAWN_LOOKAHEAD_CHUNK_RINGS: i32 = 2;
 
 pub fn has_player_near_spawn_point(ctx: &ReducerContext, x: f32, y: f32) -> bool {
     nearby_player_position_chunks(ctx, x, y, SPAWN_LOOKAHEAD_CHUNK_RINGS).iter()
@@ -482,13 +469,18 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
             None => continue,
         };
 
-        // splitmix64 + hash_to_unit, not a raw cast — region_id.wrapping_mul(..).wrapping_add(us)
+        // next_unit draws (splitmix64 + hash_to_unit), not a raw cast — region_id.wrapping_add(us)
         // produces a value near u64::MAX, and `us` only advances it by ~2e6 per tick; casting
         // straight to f32 has a rounding granularity far coarser than that at this magnitude, so
-        // the angle was silently freezing for long stretches instead of varying tick to tick.
-        let angle = hash_to_unit(splitmix64(region.region_id.wrapping_add(us))) * std::f32::consts::TAU;
-        let spawn_x = center_x + angle.cos() * region.spawn_radius * 0.5;
-        let spawn_y = center_y + angle.sin() * region.spawn_radius * 0.5;
+        // a single-draw angle was silently freezing for long stretches instead of varying tick to
+        // tick. sqrt(u) on the radius draw, not a raw scale, so points are uniform over the disc's
+        // area instead of bunching toward the center.
+        let seed = region.region_id.wrapping_add(us);
+        let mut draw = 0u64;
+        let radius = region.spawn_radius * next_unit(seed, &mut draw).sqrt();
+        let angle = next_unit(seed, &mut draw) * std::f32::consts::TAU;
+        let spawn_x = center_x + angle.cos() * radius;
+        let spawn_y = center_y + angle.sin() * radius;
         let (spawn_x, spawn_y) = wrap_world_pos(spawn_x, spawn_y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
 
         let (cq, cr) = world_to_chunk(spawn_x, spawn_y, chunk_hex_radius, hex_outer_radius);

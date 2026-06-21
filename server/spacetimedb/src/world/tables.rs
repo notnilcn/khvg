@@ -50,6 +50,16 @@ pub struct TextureEntry {
     pub kind: TextureKind,
 }
 
+// Allow-list: an overlay tagged `overlay_tag` may be layered on a base tagged `allowed_base_tag`.
+// Default is deny — most overlay/base pairs don't make sense, so compatibility is opt-in.
+#[table(accessor = layering_rule, public)]
+pub struct LayeringRule {
+    #[primary_key] #[auto_inc]
+    pub rule_id: u64,
+    pub overlay_tag: String,
+    pub allowed_base_tag: String,
+}
+
 #[derive(SpacetimeType, Clone, PartialEq)]
 pub enum WeaponPattern {
     Single,

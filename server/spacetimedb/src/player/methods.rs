@@ -1,4 +1,5 @@
 use spacetimedb::{ReducerContext, Table};
+use crate::main::global::*;
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
@@ -119,9 +120,6 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         ctx.db.player_stats().insert(new_stats);
     }
 }
-
-pub const GENERAL_SLOT_START: usize = 15;
-pub const GENERAL_SLOT_COUNT: usize = 8;
 
 fn weapon_slot(item_id: Option<String>) -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Weapon], item_id } }
 fn hotbar_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Consumable], item_id: None } }

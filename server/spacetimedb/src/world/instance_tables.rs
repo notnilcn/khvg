@@ -23,6 +23,12 @@ pub struct TriangleTile {
     pub chunk_index: i64,
     pub texture_id: String,
     pub rotation: u8,
+    // None when no overlay was rolled for this triangle. overlay_rotation/overlay_scale are
+    // unused when None. overlay_scale is copied from the biome's OverlayTextureConfig at
+    // generation time so the client can render it without joining back through BiomeDef.
+    pub overlay_texture_id: Option<String>,
+    pub overlay_rotation: u8,
+    pub overlay_scale: f32,
     pub biome_id: String,
     pub region_id: u64,
 }

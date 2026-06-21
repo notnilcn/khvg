@@ -3,67 +3,46 @@ use crate::world::tables::*;
 use crate::world::def_tables::*;
 use crate::enemy::def_tables::*;
 
+fn texture(texture_id: &str, res_path: &str, kind: TextureKind) -> TextureEntry {
+    TextureEntry { texture_id: texture_id.to_string(), res_path: res_path.to_string(), kind }
+}
+
 pub fn seed_default_textures(ctx: &ReducerContext) {
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Enemy".to_string(),
-        res_path: "res://Textures/Enemies/Knight.tres".to_string(),
-        kind: TextureKind::Enemy,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Archer".to_string(),
-        res_path: "res://Textures/Enemies/Archer.tres".to_string(),
-        kind: TextureKind::Enemy,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Knight".to_string(),
-        res_path: "res://Textures/Players/Knight.tres".to_string(),
-        kind: TextureKind::Player,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Arrow".to_string(),
-        res_path: "res://Textures/Attacks/Arrow.tres".to_string(),
-        kind: TextureKind::Projectile,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Helmet".to_string(),
-        res_path: "res://Textures/Items/Armor/Helmet.tres".to_string(),
-        kind: TextureKind::Item,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Hat".to_string(),
-        res_path: "res://Textures/Items/Accesories/Hat.tres".to_string(),
-        kind: TextureKind::Item,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Skull".to_string(),
-        res_path: "res://Textures/Items/Artifacts/Skull.tres".to_string(),
-        kind: TextureKind::Item,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Bag".to_string(),
-        res_path: "res://Textures/Items/Bags/Bag.tres".to_string(),
-        kind: TextureKind::Item,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Bread".to_string(),
-        res_path: "res://Textures/Items/Consumables/Bread.tres".to_string(),
-        kind: TextureKind::Item,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Bow".to_string(),
-        res_path: "res://Textures/Items/Weapons/Bow.tres".to_string(),
-        kind: TextureKind::Item,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Grass".to_string(),
-        res_path: "res://Textures/World/Grass.tres".to_string(),
-        kind: TextureKind::Environment,
-    });
-    TextureEntry::seed(ctx, TextureEntry {
-        texture_id: "Flowers".to_string(),
-        res_path: "res://Textures/World/Flowers.tres".to_string(),
-        kind: TextureKind::Environment,
-    });
+    TextureEntry::seed(ctx, texture("Enemy", "res://Textures/Enemies/Knight.tres", TextureKind::Enemy));
+    TextureEntry::seed(ctx, texture("Archer", "res://Textures/Enemies/Archer.tres", TextureKind::Enemy));
+    TextureEntry::seed(ctx, texture("Knight", "res://Textures/Players/Knight.tres", TextureKind::Player));
+    TextureEntry::seed(ctx, texture("Arrow", "res://Textures/Attacks/Arrow.tres", TextureKind::Projectile));
+    TextureEntry::seed(ctx, texture("Helmet", "res://Textures/Items/Armor/Helmet.tres", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Hat", "res://Textures/Items/Accesories/Hat.tres", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Skull", "res://Textures/Items/Artifacts/Skull.tres", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Bag", "res://Textures/Items/Bags/Bag.tres", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Bread", "res://Textures/Items/Consumables/Bread.tres", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Bow", "res://Textures/Items/Weapons/Bow.tres", TextureKind::Item));
+
+    TextureEntry::seed(ctx, texture("Grass", "res://Textures/World/Ground/Grass.tres", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("Flowers", "res://Textures/World/Ground/Flowers.tres", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("HalfStones", "res://Textures/World/Ground/HalfStones.tres", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("FullStones", "res://Textures/World/Ground/FullStones.tres", TextureKind::Environment));
+
+    TextureEntry::seed(ctx, texture("Tree", "res://Textures/World/Decor/Props/Tree.tres", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("TreeShadow", "res://Textures/World/Decor/Shadows/Tree.tres", TextureKind::Environment));
+}
+
+// Allow-list of overlay/base tag pairs — absence of a rule means that overlay never layers on
+// that base. Clear-and-reinsert (no natural pair key to upsert against) so this stays correct
+// across republishes.
+pub fn seed_layering_rules(ctx: &ReducerContext) {
+    for rule in ctx.db.layering_rule().iter() {
+        ctx.db.layering_rule().rule_id().delete(&rule.rule_id);
+    }
+    let rules = [
+        ("light_debris", "soft"),     // HalfStones on Grass
+        ("light_debris", "delicate"), // HalfStones on Flowers
+        ("heavy_debris", "soft"),     // FullStones on Grass (not Flowers — no rule for that pair)
+    ];
+    for (overlay_tag, allowed_base_tag) in rules {
+        ctx.db.layering_rule().insert(LayeringRule { rule_id: 0, overlay_tag: overlay_tag.to_string(), allowed_base_tag: allowed_base_tag.to_string() });
+    }
 }
 
 pub fn seed_default_enemies(ctx: &ReducerContext) {
@@ -271,12 +250,23 @@ pub fn seed_world_defs(ctx: &ReducerContext) {
     BiomeDef::seed(ctx, BiomeDef {
         biome_id: "Grassland".to_string(),
         display_name: "Grassland".to_string(),
-        texture_ids: vec!["Grass".to_string(), "Flowers".to_string()],
+        ground_textures: vec![
+            GroundTextureConfig { texture_id: "Grass".to_string(), chance: 70.0, tags: vec!["soft".to_string()], allowed_rotations: vec![] },
+            GroundTextureConfig { texture_id: "Flowers".to_string(), chance: 20.0, tags: vec!["delicate".to_string()], allowed_rotations: vec![] },
+        ],
+        // Chances don't need to sum to 100 — see weighted_pick_with_remainder. Grass is tagged
+        // "soft" so both overlays below are eligible on it (max 35% chance of some overlay);
+        // Flowers is "delicate", and LayeringRule has no heavy_debris+delicate rule, so only
+        // HalfStones is eligible there (tops out at 25%).
+        overlay_textures: vec![
+            OverlayTextureConfig { texture_id: "HalfStones".to_string(), chance: 25.0, scale: 0.6, tags: vec!["light_debris".to_string()], allowed_rotations: vec![] },
+            OverlayTextureConfig { texture_id: "FullStones".to_string(), chance: 10.0, scale: 0.8, tags: vec!["heavy_debris".to_string()], allowed_rotations: vec![] },
+        ],
         region_weights: vec![RegionWeight { region_def_id: "PlainsRegion".to_string(), weight: 100.0 }],
     });
     WorldDef::seed(ctx, WorldDef {
-        world_id: "World".to_string(),
-        display_name: "Default World".to_string(),
+        world_id: "Earth".to_string(),
+        display_name: "Earth".to_string(),
         biome_weights: vec![BiomeWeight { biome_id: "Grassland".to_string(), weight: 100.0 }],
     });
 }

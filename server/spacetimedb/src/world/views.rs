@@ -1,6 +1,6 @@
 use spacetimedb::{AnonymousViewContext, ViewContext, Query};
 use crate::world::tables::*;
-use crate::world::methods::DEFAULT_TERRAIN_AOI_CHUNK_RADIUS;
+use crate::main::global::DEFAULT_TERRAIN_AOI_CHUNK_RADIUS;
 use crate::world::instance_tables::*;
 use crate::player::views::nearby_indices_from_chunk;
 

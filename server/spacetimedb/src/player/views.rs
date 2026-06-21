@@ -1,4 +1,5 @@
 use spacetimedb::{ViewContext, Query};
+use crate::main::global::*;
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;

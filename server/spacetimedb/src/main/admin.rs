@@ -1,4 +1,5 @@
 use spacetimedb::{ReducerContext, Identity, Table};
+use crate::main::global::*;
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::world::def_tables::*;

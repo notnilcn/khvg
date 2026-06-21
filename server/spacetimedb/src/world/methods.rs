@@ -1,31 +1,10 @@
 use std::collections::HashMap;
 use hexx::{Hex, HexLayout, HexOrientation, Vec2};
 use spacetimedb::{ReducerContext, Table};
+use crate::main::global::*;
 use crate::world::tables::*;
 use crate::world::def_tables::*;
 use crate::world::instance_tables::*;
-
-pub const BASE_MAX_HP: i32 = 100;
-pub const HP_PER_LEVEL: i32 = 5;
-pub const DEFAULT_CHUNK_HEX_RADIUS: i32 = 5;
-pub const DEFAULT_CHUNK_COLS: i32 = 10;
-pub const DEFAULT_CHUNK_ROWS: i32 = 10;
-pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 48.0;
-pub const DEFAULT_AOI_CHUNK_RADIUS: i32 = 2;
-pub const DEFAULT_TERRAIN_AOI_CHUNK_RADIUS: i32 = 2;
-pub const CLIENT_VIEWPORT_HEIGHT_PX: f32 = 360.0;
-pub const CLIENT_CAMERA_ZOOM: f32 = 0.75;
-// Half the visible height in world units (the tighter of the two screen axes, since the
-// viewport is wider than tall) — a circular range expressed as a multiple of this is
-// guaranteed visible from every direction, not just sideways. Update CLIENT_CAMERA_ZOOM/
-// CLIENT_VIEWPORT_HEIGHT_PX if the client's camera (local_player.tscn) or base resolution
-// (project.godot) ever change, and every range defined off this follows automatically.
-pub const CAMERA_VIEW_RADIUS: f32 = (CLIENT_VIEWPORT_HEIGHT_PX / CLIENT_CAMERA_ZOOM) / 2.0;
-pub const DEFAULT_BIOME_SEED_COUNT: u32 = 18;
-pub const DEFAULT_REGION_SEED_COUNT_PER_BIOME: u32 = 5;
-pub const BEHAVIOR_TICK_DT: f32 = 0.1;
-pub const LOOT_DROP_EXPIRY: u64 = 300;
-pub const CONSUMABLE_EFFECT_TICK_SECONDS: f32 = 1.0;
 
 // Deterministic PRNG (SplitMix64) — mirrors BulletManager.cs's SplitMix64/HashToUnit on the
 // client, so Wander directions and bullet pellet jitter can be reproduced from an event/enemy
@@ -49,6 +28,38 @@ pub fn next_unit(seed: u64, draw: &mut u64) -> f32 {
 
 pub fn pick_index(len: usize, seed: u64, draw: &mut u64) -> usize {
     ((next_unit(seed, draw) * len as f32) as usize).min(len.saturating_sub(1))
+}
+
+// Weighted-random index, e.g. picking a ground texture by its relative GroundTextureConfig.chance.
+// Weights don't need to sum to anything in particular. Falls back to index 0 if every weight
+// is zero (bad content data) rather than dividing by zero.
+pub fn weighted_pick_index(weights: &[f32], seed: u64, draw: &mut u64) -> usize {
+    let total: f32 = weights.iter().sum();
+    if total <= 0.0 { return 0; }
+    let roll = next_unit(seed, draw) * total;
+    let mut cumulative = 0.0;
+    for (i, w) in weights.iter().enumerate() {
+        cumulative += w;
+        if roll < cumulative { return i; }
+    }
+    weights.len() - 1
+}
+
+// Like weighted_pick_index, but `chances` are percentages (0-100) that don't have to add up to
+// 100 — e.g. picking which overlay (if any) lands on a tile. Anything left under 100 after
+// summing is real "pick nothing" probability (None); anything over 100 is scaled down so it
+// still fits, rather than overflowing past a guaranteed pick.
+pub fn weighted_pick_with_remainder(chances: &[f32], seed: u64, draw: &mut u64) -> Option<usize> {
+    let total: f32 = chances.iter().sum();
+    if total <= 0.0 { return None; }
+    let scale = if total > 100.0 { 100.0 / total } else { 1.0 };
+    let roll = next_unit(seed, draw) * 100.0;
+    let mut cumulative = 0.0;
+    for (i, c) in chances.iter().enumerate() {
+        cumulative += c * scale;
+        if roll < cumulative { return Some(i); }
+    }
+    None
 }
 
 pub fn hex_area(hex_radius: i32) -> i32 {
@@ -196,15 +207,6 @@ pub fn validate_weights_sum_100(weights: &[f32]) -> Result<(), String> {
     Ok(())
 }
 
-// Distributes `total_seeds` across entries proportional to their weight (each nonzero-weight
-// entry gets at least 1), so weighted Voronoi areas roughly match the authored percentages.
-pub fn proportional_seed_counts(weights: &[f32], total_seeds: u32) -> Vec<u32> {
-    weights.iter().map(|w| {
-        let raw = (w / 100.0) * total_seeds as f32;
-        raw.round().max(if *w > 0.0 { 1.0 } else { 0.0 }) as u32
-    }).collect()
-}
-
 pub fn nearest_seed_index(x: f32, y: f32, seeds: &[(f32, f32)]) -> usize {
     seeds.iter().enumerate()
         .map(|(i, &(sx, sy))| (i, (sx - x).powi(2) + (sy - y).powi(2)))
@@ -222,13 +224,47 @@ pub fn clear_world_geometry(ctx: &ReducerContext) {
     }
 }
 
-fn write_triangle_tiles(ctx: &ReducerContext, cell: &HexCell, biome_id: &str, region_id: u64, texture_ids: &[String], seed: u64, draw: &mut u64) {
+fn pick_rotation(allowed_rotations: &[u8], seed: u64, draw: &mut u64) -> u8 {
+    if allowed_rotations.is_empty() { pick_index(3, seed, draw) as u8 }
+    else { allowed_rotations[pick_index(allowed_rotations.len(), seed, draw)] }
+}
+
+fn overlay_compatible_with_base(ctx: &ReducerContext, overlay_tags: &[String], base_tags: &[String]) -> bool {
+    ctx.db.layering_rule().iter().any(|r| overlay_tags.contains(&r.overlay_tag) && base_tags.contains(&r.allowed_base_tag))
+}
+
+fn write_triangle_tiles(ctx: &ReducerContext, cell: &HexCell, biome_id: &str, region_id: u64, ground_textures: &[GroundTextureConfig], overlay_textures: &[OverlayTextureConfig], seed: u64, draw: &mut u64) {
+    if ground_textures.is_empty() { return; }
+    let ground_chances: Vec<f32> = ground_textures.iter().map(|g| g.chance).collect();
+
     for tri_index in 0..6u8 {
-        let texture_id = if texture_ids.is_empty() { String::new() } else { texture_ids[pick_index(texture_ids.len(), seed, draw)].clone() };
-        let rotation = pick_index(3, seed, draw) as u8;
+        let ground = &ground_textures[weighted_pick_index(&ground_chances, seed, draw)];
+        let rotation = pick_rotation(&ground.allowed_rotations, seed, draw);
+
+        // Eligible: tag-compatible with the just-chosen ground texture (LayeringRule). A base
+        // with fewer compatible overlays naturally ends up with a lower overall overlay chance —
+        // no separate per-base modifier needed.
+        let eligible: Vec<&OverlayTextureConfig> = overlay_textures.iter()
+            .filter(|o| overlay_compatible_with_base(ctx, &o.tags, &ground.tags))
+            .collect();
+
+        let mut overlay_texture_id: Option<String> = None;
+        let mut overlay_rotation: u8 = 0;
+        let mut overlay_scale: f32 = 0.0;
+        if !eligible.is_empty() {
+            let chances: Vec<f32> = eligible.iter().map(|o| o.chance).collect();
+            if let Some(i) = weighted_pick_with_remainder(&chances, seed, draw) {
+                let overlay = eligible[i];
+                overlay_rotation = pick_rotation(&overlay.allowed_rotations, seed, draw);
+                overlay_texture_id = Some(overlay.texture_id.clone());
+                overlay_scale = overlay.scale;
+            }
+        }
+
         ctx.db.triangle_tile().insert(TriangleTile {
             tile_id: 0, hex_q: cell.hex_q, hex_r: cell.hex_r, tri_index, chunk_index: cell.chunk_index,
-            texture_id, rotation, biome_id: biome_id.to_string(), region_id,
+            texture_id: ground.texture_id.clone(), rotation, overlay_texture_id, overlay_rotation, overlay_scale,
+            biome_id: biome_id.to_string(), region_id,
         });
     }
 }
@@ -245,18 +281,17 @@ pub fn internal_generate_world_proc(ctx: &ReducerContext, world_id: String, seed
     clear_world_geometry(ctx);
     let mut draw: u64 = 0;
 
-    let weights: Vec<f32> = world.biome_weights.iter().map(|b| b.weight).collect();
-    let counts = proportional_seed_counts(&weights, DEFAULT_BIOME_SEED_COUNT);
+    // One Voronoi seed per defined entry, full stop — no count multiplier. A WorldDef with a
+    // single biome_weights entry produces exactly one biome patch (trivially the whole map);
+    // repeating the same biome_id across multiple entries is how you'd deliberately author
+    // several disconnected patches of it.
     let mut biome_seed_positions: Vec<(f32, f32)> = Vec::new();
     let mut biome_seed_ids: Vec<String> = Vec::new();
-    for (bw, count) in world.biome_weights.iter().zip(counts.iter()) {
-        for _ in 0..*count {
-            let cell = &cells[pick_index(cells.len(), seed, &mut draw)];
-            biome_seed_positions.push((cell.world_x, cell.world_y));
-            biome_seed_ids.push(bw.biome_id.clone());
-        }
+    for bw in &world.biome_weights {
+        let cell = &cells[pick_index(cells.len(), seed, &mut draw)];
+        biome_seed_positions.push((cell.world_x, cell.world_y));
+        biome_seed_ids.push(bw.biome_id.clone());
     }
-    if biome_seed_positions.is_empty() { return Err("No biome seeds placed.".to_string()); }
 
     let mut cells_by_biome: HashMap<String, Vec<&HexCell>> = HashMap::new();
     for cell in &cells {
@@ -272,33 +307,29 @@ pub fn internal_generate_world_proc(ctx: &ReducerContext, world_id: String, seed
         if biome_def.region_weights.is_empty() || biome_cells.is_empty() { continue; }
         validate_weights_sum_100(&biome_def.region_weights.iter().map(|r| r.weight).collect::<Vec<_>>())?;
 
-        let region_weights: Vec<f32> = biome_def.region_weights.iter().map(|r| r.weight).collect();
-        let region_counts = proportional_seed_counts(&region_weights, DEFAULT_REGION_SEED_COUNT_PER_BIOME);
-
+        // Same one-seed-per-entry rule as biomes above, scoped to this biome's own cells.
         let mut region_seed_positions: Vec<(f32, f32)> = Vec::new();
         let mut region_ids: Vec<u64> = Vec::new();
-        for (rw, count) in biome_def.region_weights.iter().zip(region_counts.iter()) {
+        for rw in &biome_def.region_weights {
             let region_def = match ctx.db.biome_region_def().region_def_id().find(&rw.region_def_id) {
                 Some(r) => r,
                 None => continue,
             };
-            for _ in 0..*count {
-                let cell = &biome_cells[pick_index(biome_cells.len(), seed, &mut draw)];
-                let inserted = ctx.db.biome_region().insert(BiomeRegion {
-                    region_id: 0, biome_id: biome_id.clone(),
-                    center_hex_q: cell.hex_q, center_hex_r: cell.hex_r,
-                    enemy_template_ids: region_def.enemy_template_ids.clone(),
-                    max_enemies: region_def.max_enemies, spawn_radius: region_def.spawn_radius,
-                });
-                region_seed_positions.push((cell.world_x, cell.world_y));
-                region_ids.push(inserted.region_id);
-            }
+            let cell = &biome_cells[pick_index(biome_cells.len(), seed, &mut draw)];
+            let inserted = ctx.db.biome_region().insert(BiomeRegion {
+                region_id: 0, biome_id: biome_id.clone(),
+                center_hex_q: cell.hex_q, center_hex_r: cell.hex_r,
+                enemy_template_ids: region_def.enemy_template_ids.clone(),
+                max_enemies: region_def.max_enemies, spawn_radius: region_def.spawn_radius,
+            });
+            region_seed_positions.push((cell.world_x, cell.world_y));
+            region_ids.push(inserted.region_id);
         }
         if region_seed_positions.is_empty() { continue; }
 
         for cell in &biome_cells {
             let idx = nearest_seed_index(cell.world_x, cell.world_y, &region_seed_positions);
-            write_triangle_tiles(ctx, cell, &biome_id, region_ids[idx], &biome_def.texture_ids, seed, &mut draw);
+            write_triangle_tiles(ctx, cell, &biome_id, region_ids[idx], &biome_def.ground_textures, &biome_def.overlay_textures, seed, &mut draw);
         }
     }
 
@@ -345,7 +376,7 @@ pub fn internal_generate_world_manual(ctx: &ReducerContext, biomes: Vec<ManualBi
 
         for cell in biome_cells {
             let idx = nearest_seed_index(cell.world_x, cell.world_y, &region_seed_positions);
-            write_triangle_tiles(ctx, cell, &biome_input.biome_id, region_ids[idx], &biome_input.texture_ids, seed, &mut draw);
+            write_triangle_tiles(ctx, cell, &biome_input.biome_id, region_ids[idx], &biome_input.ground_textures, &biome_input.overlay_textures, seed, &mut draw);
         }
     }
 

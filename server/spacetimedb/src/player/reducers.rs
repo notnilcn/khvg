@@ -1,5 +1,6 @@
 use std::time::Duration;
 use spacetimedb::{ReducerContext, Table};
+use crate::main::global::*;
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
