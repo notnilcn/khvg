@@ -17,10 +17,13 @@ DropScene = ExtResource("5_6bp64")
 BulletManagerScene = ExtResource("5_21xkr")
 PlayerProfileScene = ExtResource("7_6bp64")
 
-[node name="CharSlots" type="Panel" parent="." unique_id=830571812]
+[node name="CharSlots" type="Control" parent="." unique_id=596879783]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 640.0
+offset_bottom = 360.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -42,6 +45,14 @@ grow_vertical = 2
 layout_mode = 2
 text = "BACK"
 
+[node name="Create" type="Button" parent="CharSlots/Panel" unique_id=905359419]
+layout_mode = 0
+offset_left = 570.0
+offset_top = 4.0
+offset_right = 636.0
+offset_bottom = 35.0
+text = "CREATE"
+
 [node name="ScrollContainer" type="ScrollContainer" parent="CharSlots" unique_id=309753524]
 layout_mode = 0
 offset_top = 40.0
@@ -51,3 +62,44 @@ horizontal_scroll_mode = 0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CharSlots/ScrollContainer" unique_id=448056636]
 layout_mode = 2
+
+[node name="CreateProfilePanel" type="CenterContainer" parent="CharSlots" unique_id=1410878703]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="CharSlots/CreateProfilePanel" unique_id=201201879]
+custom_minimum_size = Vector2(250, 120)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CharSlots/CreateProfilePanel/Panel" unique_id=1804071094]
+layout_mode = 0
+offset_top = 2.0
+offset_right = 250.0
+offset_bottom = 32.0
+text = "Create Profile"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="CharSlots/CreateProfilePanel/Panel" unique_id=1917810007]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 38.0
+offset_right = 225.0
+offset_bottom = 69.0
+placeholder_text = "Profile Name =^.^="
+
+[node name="Create" type="Button" parent="CharSlots/CreateProfilePanel/Panel" unique_id=1419748032]
+layout_mode = 0
+offset_left = 92.0
+offset_top = 80.0
+offset_right = 158.0
+offset_bottom = 111.0
+text = "CREATE"
+
+[connection signal="pressed" from="CharSlots/Panel/Create" to="." method="OnCreatePanelPressed"]
+[connection signal="pressed" from="CharSlots/CreateProfilePanel/Panel/Create" to="." method="OnCreatePressed"]

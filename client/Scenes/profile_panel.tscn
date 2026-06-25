@@ -18,6 +18,14 @@ offset_right = 636.0
 offset_bottom = 35.0
 text = "JOIN"
 
+[node name="Delete" type="Button" parent="." unique_id=1302725742]
+layout_mode = 0
+offset_left = 517.0
+offset_top = 4.0
+offset_right = 582.0
+offset_bottom = 35.0
+text = "DELETE"
+
 [node name="Name" type="Label" parent="." unique_id=2109304863]
 layout_mode = 0
 offset_left = 41.0

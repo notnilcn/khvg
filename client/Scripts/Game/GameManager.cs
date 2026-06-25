@@ -59,8 +59,9 @@ public partial class GameManager : Node
 			profile_panel.GetNode<Label>("Name").Text = profile.ProfileName;
 			profile_panel.GetNode<Label>("ID").Text = profile.ProfileId.ToString();
 			profile_panel.GetNode<Button>("Join").Pressed += () => OnJoinPressed(profile);
+			profile_panel.GetNode<Button>("Delete").Pressed += () => OnDeletePressed(profile);
 			GetNode("CharSlots/ScrollContainer/VBoxContainer").AddChild(profile_panel);
-			GD.Print($"Successfully synced a profile: {profile.ProfileName}");
+			GD.Print($"Successfully synced a profile: {profile.ProfileName}, TextureID: {profile.TextureId}");
 		};
 	}
 
@@ -83,7 +84,7 @@ public partial class GameManager : Node
 
 	private void OnJoinPressed(PlayerProfile profile)
 	{
-		if (Conn == null) return;
+		if (Conn == null || GetNode<Control>("CharSlots/CreateProfilePanel").Visible) return;
 		// var profile = Conn.Db.LocalPlayerProfiles.Iter()
 		// 	.FirstOrDefault(p => p.ProfileName == "Knight");
 		// if (profile == null)
@@ -96,6 +97,27 @@ public partial class GameManager : Node
 		SubscribeGame();
 		lobbySub?.Unsubscribe();
 		lobbySub = null;
+	}
+
+	private void OnDeletePressed(PlayerProfile profile)
+	{
+		if (Conn == null || GetNode<Control>("CharSlots/CreateProfilePanel").Visible) return;
+		Conn.Reducers.DeleteProfile(profile.ProfileId);
+		foreach (Control x in GetNode<Control>("CharSlots/ScrollContainer/VBoxContainer").GetChildren()){
+			if (x.GetNode<Label>("ID").Text.ToInt() == (int)profile.ProfileId) x.QueueFree();
+		}
+	}
+
+	private void OnCreatePanelPressed()
+	{
+		GetNode<Control>("CharSlots/CreateProfilePanel").Visible = !GetNode<Control>("CharSlots/CreateProfilePanel").Visible;
+	}
+
+	private void OnCreatePressed()
+	{
+		if (Conn == null || !GetNode<Control>("CharSlots/CreateProfilePanel").Visible) return;
+		if (GetNode<LineEdit>("CharSlots/CreateProfilePanel/Panel/LineEdit").Text.Length > 0) Conn.Reducers.CreateProfile(GetNode<LineEdit>("CharSlots/CreateProfilePanel/Panel/LineEdit").Text, "Knight");
+		GetNode<Control>("CharSlots/CreateProfilePanel").Hide();
 	}
 
 	// ── Connection ────────────────────────────────────────────────────────────
