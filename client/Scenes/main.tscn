@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://djjulhvulxtyc" path="res://Scenes/default_enemy.tscn" id="4_jjvhh"]
 [ext_resource type="PackedScene" uid="uid://i7v5ssc1g45q" path="res://Scenes/drop.tscn" id="5_6bp64"]
 [ext_resource type="PackedScene" uid="uid://simxqrad34gm" path="res://Scenes/bullet_manager.tscn" id="5_21xkr"]
+[ext_resource type="PackedScene" uid="uid://dcn402bshd83k" path="res://Scenes/profile_panel.tscn" id="7_6bp64"]
 
 [node name="Main" type="Node2D" unique_id=24548255]
 script = ExtResource("1_8gbba")
@@ -14,3 +15,39 @@ NonLocalPlayerScene = ExtResource("3_kry3j")
 EnemyScene = ExtResource("4_jjvhh")
 DropScene = ExtResource("5_6bp64")
 BulletManagerScene = ExtResource("5_21xkr")
+PlayerProfileScene = ExtResource("7_6bp64")
+
+[node name="CharSlots" type="Panel" parent="." unique_id=830571812]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="CharSlots" unique_id=994970302]
+custom_minimum_size = Vector2(640, 40)
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 40.0
+
+[node name="CenterContainer" type="CenterContainer" parent="CharSlots/Panel" unique_id=721847161]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="CharSlots/Panel/CenterContainer" unique_id=136170636]
+layout_mode = 2
+text = "BACK"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CharSlots" unique_id=309753524]
+layout_mode = 0
+offset_top = 40.0
+offset_right = 640.0
+offset_bottom = 360.0
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CharSlots/ScrollContainer" unique_id=448056636]
+layout_mode = 2

@@ -24,6 +24,7 @@ public partial class GameManager : Node
 	[Export] public PackedScene EnemyScene { get; set; } = null!;
 	[Export] public PackedScene DropScene { get; set; } = null!;
 	[Export] public PackedScene BulletManagerScene { get; set; } = null!;
+	[Export] public PackedScene PlayerProfileScene { get; set; } = null!;
 
 	private LocalPlayer? localPlayer;
 	private BulletManager? bulletManager;
@@ -51,6 +52,16 @@ public partial class GameManager : Node
 		Connect(Host, DbName);
 		ShowLobby();
 		AddChild(new DebugOverlay());
+		if (Conn == null) return;
+		Conn.Db.LocalPlayerProfiles.OnInsert += (ctx, profile) => 
+		{
+			Control profile_panel = PlayerProfileScene.Instantiate<Control>();
+			profile_panel.GetNode<Label>("Name").Text = profile.ProfileName;
+			profile_panel.GetNode<Label>("ID").Text = profile.ProfileId.ToString();
+			profile_panel.GetNode<Button>("Join").Pressed += () => OnJoinPressed(profile);
+			GetNode("CharSlots/ScrollContainer/VBoxContainer").AddChild(profile_panel);
+			GD.Print($"Successfully synced a profile: {profile.ProfileName}");
+		};
 	}
 
 	public override void _Process(double delta)
@@ -62,33 +73,24 @@ public partial class GameManager : Node
 
 	public void ShowLobby()
 	{
-		lobbyLayer = new CanvasLayer();
-		joinButton = new Button { Text = "Join World" };
-		joinButton.Pressed += OnJoinPressed;
-		lobbyLayer.AddChild(joinButton);
-		AddChild(lobbyLayer);
+		GetNode<Control>("CharSlots").Show();
 	}
 
 	private void HideLobby()
 	{
-		if (lobbyLayer == null) return;
-		joinButton!.Disabled = true;
-		lobbyLayer.Visible = false;
-		lobbyLayer.QueueFree();
-		lobbyLayer = null;
-		joinButton = null;
+		GetNode<Control>("CharSlots").Hide();
 	}
 
-	private void OnJoinPressed()
+	private void OnJoinPressed(PlayerProfile profile)
 	{
 		if (Conn == null) return;
-		var profile = Conn.Db.LocalPlayerProfiles.Iter()
-			.FirstOrDefault(p => p.ProfileName == "Knight");
-		if (profile == null)
-		{
-			GD.PrintErr("[GameManager] Knight profile not found — not yet synced or missing.");
-			return;
-		}
+		// var profile = Conn.Db.LocalPlayerProfiles.Iter()
+		// 	.FirstOrDefault(p => p.ProfileName == "Knight");
+		// if (profile == null)
+		// {
+		// 	GD.PrintErr("[GameManager] Knight profile not found — not yet synced or missing.");
+		// 	return;
+		// }
 		HideLobby();
 		Conn.Reducers.JoinWorld(profile.ProfileId);
 		SubscribeGame();
