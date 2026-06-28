@@ -25,6 +25,14 @@ public partial class TerrainManager : Node2D
 	private readonly Dictionary<(int TriIndex, int Rotation, string TextureId), MultiMeshInstance2D> _overlayBatches = new();
 	private readonly HashSet<(int TriIndex, int Rotation, string TextureId)> _activeOverlayBatchKeys = new();
 
+	private readonly Dictionary<ulong, HexDecor> _decorById = new();
+	// Decor is a plain rectangular sprite, not a UV-cropped wedge, so unlike _meshCache its mesh
+	// only depends on which texture it is — rotation/position are per-instance transforms, not
+	// separate UVs.
+	private readonly Dictionary<string, ArrayMesh> _decorMeshCache = new();
+	private readonly Dictionary<string, MultiMeshInstance2D> _decorBatches = new();
+	private readonly HashSet<string> _activeDecorBatchKeys = new();
+
 	private Vector2 _camPos = Vector2.Zero;
 	private Vector2 _camZoom = Vector2.One;
 	private bool _dirty;
@@ -77,6 +85,13 @@ public partial class TerrainManager : Node2D
 		foreach (var tile in conn.Db.NearbyTerrainTiles.Iter())
 			AddTile(tile);
 
+		conn.Db.NearbyHexDecor.OnInsert += OnDecorInsert;
+		conn.Db.NearbyHexDecor.OnUpdate += OnDecorUpdate;
+		conn.Db.NearbyHexDecor.OnDelete += OnDecorDelete;
+
+		foreach (var decor in conn.Db.NearbyHexDecor.Iter())
+			_decorById[decor.DecorId] = decor;
+
 		_subscribed = true;
 		RebuildVisibleInstances();
 	}
@@ -120,6 +135,24 @@ public partial class TerrainManager : Node2D
 		_dirty = true;
 	}
 
+	private void OnDecorInsert(EventContext _, HexDecor decor)
+	{
+		_decorById[decor.DecorId] = decor;
+		_dirty = true;
+	}
+
+	private void OnDecorUpdate(EventContext _, HexDecor old, HexDecor decor)
+	{
+		_decorById[decor.DecorId] = decor;
+		_dirty = true;
+	}
+
+	private void OnDecorDelete(EventContext _, HexDecor decor)
+	{
+		_decorById.Remove(decor.DecorId);
+		_dirty = true;
+	}
+
 	// Outer radius only changes in dev — wipe cached meshes/batches so the next rebuild
 	// recreates everything at the new scale instead of patching stale Multimesh state.
 	private void InvalidateMeshes()
@@ -133,6 +166,11 @@ public partial class TerrainManager : Node2D
 			batch.QueueFree();
 		_overlayBatches.Clear();
 		_activeOverlayBatchKeys.Clear();
+		_decorMeshCache.Clear();
+		foreach (var batch in _decorBatches.Values)
+			batch.QueueFree();
+		_decorBatches.Clear();
+		_activeDecorBatchKeys.Clear();
 		RebuildVisibleInstances();
 	}
 
@@ -151,6 +189,8 @@ public partial class TerrainManager : Node2D
 
 		var grouped = new Dictionary<(int TriIndex, int Rotation, string TextureId), List<Vector2>>();
 		var overlayGrouped = new Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale)>>();
+		var decorGrouped = new Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>();
+		var decorShadowGrouped = new Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>();
 
 		// Iterate everything cached (not a camera-window hex lookup) since chunks near a torus
 		// seam are stored at their canonical (raw, far-away) position — we need to pick whichever
@@ -178,6 +218,19 @@ public partial class TerrainManager : Node2D
 			}
 		}
 
+		foreach (var decor in _decorById.Values)
+		{
+			var canonicalCenter = HexToWorld(decor.HexQ, decor.HexR);
+			var center = TorusMath.NearestCandidate(canonicalCenter, _camPos, lapQ, lapR);
+			if (center.X < worldMin.X - margin || center.X > worldMax.X + margin ||
+				center.Y < worldMin.Y - margin || center.Y > worldMax.Y + margin)
+				continue;
+
+			var rotationRadians = Mathf.DegToRad(decor.RotationDegrees);
+			AddDecorInstance(decorGrouped, decor.TextureId, center, rotationRadians, decor.HexR);
+			AddDecorInstance(decorShadowGrouped, decor.ShadowTextureId, center, rotationRadians, decor.HexR);
+		}
+
 		foreach (var (key, positions) in grouped)
 		{
 			var multimesh = GetOrCreateBatch(_batches, key.TriIndex, key.Rotation, key.TextureId, zIndex: 0).Multimesh;
@@ -203,6 +256,12 @@ public partial class TerrainManager : Node2D
 			_activeOverlayBatchKeys.Add(key);
 		}
 
+		// Shadow drawn at a lower ZIndex than the prop itself, both above ground/overlay (0/1).
+		foreach (var (textureId, instances) in decorShadowGrouped)
+			WriteDecorInstances(textureId, instances, zIndex: 2);
+		foreach (var (textureId, instances) in decorGrouped)
+			WriteDecorInstances(textureId, instances, zIndex: 3);
+
 		// Zero out batches that had instances last rebuild but none this time, so they stop
 		// drawing stale positions instead of being destroyed and recreated every pass.
 		_activeBatchKeys.RemoveWhere(key =>
@@ -217,6 +276,33 @@ public partial class TerrainManager : Node2D
 			_overlayBatches[key].Multimesh.InstanceCount = 0;
 			return true;
 		});
+		_activeDecorBatchKeys.RemoveWhere(key =>
+		{
+			if (decorGrouped.ContainsKey(key) || decorShadowGrouped.ContainsKey(key)) return false;
+			_decorBatches[key].Multimesh.InstanceCount = 0;
+			return true;
+		});
+	}
+
+	private static void AddDecorInstance(Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>> grouped, string textureId, Vector2 position, float rotationRadians, int hexR)
+	{
+		if (string.IsNullOrEmpty(textureId)) return;
+		if (!grouped.TryGetValue(textureId, out var list))
+			grouped[textureId] = list = new List<(Vector2, float, int)>();
+		list.Add((position, rotationRadians, hexR));
+	}
+
+	// Sorts by hex row so nearer (larger world-Y) decor draws after, covering farther decor of
+	// the same texture — cross-texture decor sorting (e.g. tree vs. rock) needs a shared atlas
+	// per next-steps.md, out of scope here.
+	private void WriteDecorInstances(string textureId, List<(Vector2 Position, float RotationRadians, int HexR)> instances, int zIndex)
+	{
+		instances.Sort((a, b) => a.HexR.CompareTo(b.HexR));
+		var multimesh = GetOrCreateDecorBatch(textureId, zIndex).Multimesh;
+		multimesh.InstanceCount = instances.Count;
+		for (var i = 0; i < instances.Count; i++)
+			multimesh.SetInstanceTransform2D(i, new Transform2D(instances[i].RotationRadians, instances[i].Position));
+		_activeDecorBatchKeys.Add(textureId);
 	}
 
 	private MultiMeshInstance2D GetOrCreateBatch(Dictionary<(int TriIndex, int Rotation, string TextureId), MultiMeshInstance2D> batches, int triIndex, int rotation, string textureId, int zIndex)
@@ -237,6 +323,60 @@ public partial class TerrainManager : Node2D
 		AddChild(batch);
 		batches[key] = batch;
 		return batch;
+	}
+
+	private MultiMeshInstance2D GetOrCreateDecorBatch(string textureId, int zIndex)
+	{
+		if (_decorBatches.TryGetValue(textureId, out var existing))
+			return existing;
+
+		var rawTexture = GetTexture(textureId);
+		var (resolvedTexture, uvRegion) = ResolveTexture(rawTexture);
+		var multimesh = new MultiMesh { TransformFormat = MultiMesh.TransformFormatEnum.Transform2D, Mesh = GetOrBuildDecorMesh(textureId, rawTexture?.GetSize() ?? Vector2.Zero, uvRegion) };
+		var batch = new MultiMeshInstance2D { Multimesh = multimesh, ZIndex = zIndex };
+
+		if (resolvedTexture != null)
+			batch.Texture = resolvedTexture;
+		else
+			batch.Modulate = FallbackColor;
+
+		AddChild(batch);
+		_decorBatches[textureId] = batch;
+		return batch;
+	}
+
+	// Decor is a plain rectangular sprite (not a UV-cropped wedge), anchored bottom-center — the
+	// prop's "feet" — rather than its geometric center, so a placement's rotation swings the
+	// sprite around its ground-contact point and a tall canopy doesn't appear to float off the
+	// hex center it's planted at.
+	private ArrayMesh GetOrBuildDecorMesh(string textureId, Vector2 size, Rect2 uvRegion)
+	{
+		if (_decorMeshCache.TryGetValue(textureId, out var cached))
+			return cached;
+
+		var halfWidth = size.X / 2f;
+		var vertices = new[]
+		{
+			new Vector3(-halfWidth, -size.Y, 0f), new Vector3(halfWidth, -size.Y, 0f),
+			new Vector3(halfWidth, 0f, 0f), new Vector3(-halfWidth, 0f, 0f),
+		};
+		var uvs = new[]
+		{
+			uvRegion.Position, uvRegion.Position + new Vector2(uvRegion.Size.X, 0f),
+			uvRegion.Position + uvRegion.Size, uvRegion.Position + new Vector2(0f, uvRegion.Size.Y),
+		};
+		var indices = new[] { 0, 1, 2, 0, 2, 3 };
+
+		var arrays = new Godot.Collections.Array();
+		arrays.Resize((int)Mesh.ArrayType.Max);
+		arrays[(int)Mesh.ArrayType.Vertex] = vertices;
+		arrays[(int)Mesh.ArrayType.TexUV] = uvs;
+		arrays[(int)Mesh.ArrayType.Index] = indices;
+
+		var mesh = new ArrayMesh();
+		mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);
+		_decorMeshCache[textureId] = mesh;
+		return mesh;
 	}
 
 	// The mesh's local origin (Vector2.Zero) is the hex center, not the wedge's own centroid —
@@ -340,5 +480,8 @@ public partial class TerrainManager : Node2D
 		conn.Db.NearbyTerrainTiles.OnInsert -= OnTileInsert;
 		conn.Db.NearbyTerrainTiles.OnUpdate -= OnTileUpdate;
 		conn.Db.NearbyTerrainTiles.OnDelete -= OnTileDelete;
+		conn.Db.NearbyHexDecor.OnInsert -= OnDecorInsert;
+		conn.Db.NearbyHexDecor.OnUpdate -= OnDecorUpdate;
+		conn.Db.NearbyHexDecor.OnDelete -= OnDecorDelete;
 	}
 }
