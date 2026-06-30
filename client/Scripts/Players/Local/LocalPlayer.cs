@@ -108,11 +108,21 @@ public partial class LocalPlayer : CharacterBody2D
 
 	public override void _PhysicsProcess(double delta)
 	{
-		var input = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
+		var raw = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
+		float yaw  = CameraController2D.Instance?.GetRotationOffset() ?? 0f;
+		var rot2d = new Vector2(raw.X, raw.Y).Rotated(yaw);
+		var input = new Vector2(rot2d.X, rot2d.Y);
 
-		Rotation = 0f; //GlobalPosition.AngleToPoint(GetGlobalMousePosition());
+		// Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
 
 		Velocity = input * Speed * SpeedPerStat;
+
+		if (Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down"))
+		{
+			sprite.Rotation = yaw;
+		}
+
+
 		MoveAndSlide();
 
 		if (sprite.SpriteFrames != null)
@@ -122,7 +132,7 @@ public partial class LocalPlayer : CharacterBody2D
 		if (reportTimer >= ReportInterval)
 		{
 			reportTimer = 0f;
-			GameManager.Instance.Conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, Rotation);
+			GameManager.Instance.Conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, yaw);
 		}
 	}
 
