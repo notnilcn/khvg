@@ -7,6 +7,9 @@
 [ext_resource type="PackedScene" uid="uid://i7v5ssc1g45q" path="res://Scenes/drop.tscn" id="5_6bp64"]
 [ext_resource type="PackedScene" uid="uid://simxqrad34gm" path="res://Scenes/bullet_manager.tscn" id="5_21xkr"]
 [ext_resource type="PackedScene" uid="uid://dcn402bshd83k" path="res://Scenes/profile_panel.tscn" id="7_6bp64"]
+[ext_resource type="Script" uid="uid://c3l165fibt4wq" path="res://Scripts/World/HexGridOverlay2D.cs" id="8_344ge"]
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="9_ynf5e"]
+[ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/Game/CameraController2D.cs" id="10_hptm8"]
 
 [node name="Main" type="Node2D" unique_id=24548255]
 script = ExtResource("1_8gbba")
@@ -100,6 +103,24 @@ offset_top = 80.0
 offset_right = 158.0
 offset_bottom = 111.0
 text = "CREATE"
+
+[node name="HexGridOverlay2D" type="Node2D" parent="." unique_id=596614871]
+visible = false
+script = ExtResource("8_344ge")
+
+[node name="MainCamera2D" type="Camera2D" parent="." unique_id=1285666996]
+top_level = true
+position = Vector2(320, 180)
+ignore_rotation = false
+
+[node name="PhantomCameraHost" type="Node" parent="MainCamera2D" unique_id=856034263]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("9_ynf5e")
+metadata/_custom_type_script = "uid://bd046eokvcnu2"
+
+[node name="CameraController2D" type="Node2D" parent="." unique_id=1135188737]
+script = ExtResource("10_hptm8")
 
 [connection signal="pressed" from="CharSlots/Panel/Create" to="." method="OnCreatePanelPressed"]
 [connection signal="pressed" from="CharSlots/CreateProfilePanel/Panel/Create" to="." method="OnCreatePressed"]

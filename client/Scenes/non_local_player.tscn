@@ -1,12 +1,12 @@
 [gd_scene format=3 uid="uid://8oytx5u0vik3"]
 
 [ext_resource type="Script" uid="uid://cvwfgrgnsmcte" path="res://Scripts/Players/Remote/RemotePlayer.cs" id="1_v7aue"]
-[ext_resource type="PackedScene" uid="uid://cw8y35bqkygin" path="res://Assets/3D/characters/Ranger.fbx" id="2_v7aue"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_3srne"]
 
 [node name="NonLocalPlayer" type="Node2D" unique_id=538548655]
 script = ExtResource("1_v7aue")
-PlayerModelScene = ExtResource("2_v7aue")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1561664506]
 position = Vector2(-6, -18)
-animation = &""
+sprite_frames = SubResource("SpriteFrames_3srne")

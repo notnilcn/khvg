@@ -6,6 +6,10 @@
 [ext_resource type="Script" uid="uid://701vhi4srkpg" path="res://Scripts/Players/Local/InventorySlotUI.cs" id="4_7ophi"]
 [ext_resource type="Script" uid="uid://blemhphivh11e" path="res://Scripts/Players/Local/PlayerStatsSidebar.cs" id="5_rmvjh"]
 [ext_resource type="Script" uid="uid://fs5pxnesqgbg" path="res://Scripts/Players/Local/ItemStatsSidebar.cs" id="6_rmvjh"]
+[ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="7_g7ri8"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="8_tfukw"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rmvjh"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mrxaf"]
 
@@ -59,17 +63,22 @@ expand_margin_top = 3.0
 expand_margin_right = 3.0
 expand_margin_bottom = 3.0
 
+[sub_resource type="Resource" id="Resource_0dny4"]
+script = ExtResource("8_tfukw")
+
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=170833701]
 scale = Vector2(0.5, 0.5)
-animation = &""
+sprite_frames = SubResource("SpriteFrames_rmvjh")
 
 [node name="Collider" type="CollisionShape2D" parent="." unique_id=273656135]
 shape = SubResource("CapsuleShape2D_mrxaf")
 
 [node name="Camera" type="Camera2D" parent="." unique_id=207238916]
+visible = false
+ignore_rotation = false
 zoom = Vector2(0.75, 0.75)
 
 [node name="Combat" type="Node2D" parent="." unique_id=1107745331]
@@ -1051,3 +1060,13 @@ offset_top = 10.0
 offset_right = 24.0
 offset_bottom = 30.0
 pivot_offset = Vector2(10, 10)
+
+[node name="LocalPlayerPhantomCamera2D" type="Node2D" parent="." unique_id=2115189460 node_paths=PackedStringArray("follow_target")]
+unique_name_in_owner = true
+top_level = true
+script = ExtResource("7_g7ri8")
+follow_mode = 2
+follow_target = NodePath("..")
+tween_resource = SubResource("Resource_0dny4")
+rotate_with_target = true
+metadata/_custom_type_script = "uid://bhexx6mj1xv3q"

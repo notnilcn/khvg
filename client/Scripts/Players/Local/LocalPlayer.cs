@@ -73,6 +73,9 @@ public partial class LocalPlayer : CharacterBody2D
 		sprite = GetNode<AnimatedSprite2D>("Sprite");
 		bulletCollider = GetNode<Area2D>("BulletCollider");
 
+		var pcamNode = GetNode<Node2D>("%LocalPlayerPhantomCamera2D");
+		CameraController2D.Instance?.RegisterCamera(pcamNode);
+
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
 
@@ -107,7 +110,7 @@ public partial class LocalPlayer : CharacterBody2D
 	{
 		var input = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
 
-		Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
+		Rotation = 0f; //GlobalPosition.AngleToPoint(GetGlobalMousePosition());
 
 		Velocity = input * Speed * SpeedPerStat;
 		MoveAndSlide();
