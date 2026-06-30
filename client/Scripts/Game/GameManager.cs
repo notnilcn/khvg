@@ -220,6 +220,7 @@ public partial class GameManager : Node
 			.AddQuery(q => q.From.NearbyEnemies())
 			.AddQuery(q => q.From.NearbyLootDrops())
 			.AddQuery(q => q.From.NearbyTerrainTiles())
+			.AddQuery(q => q.From.NearbyHexDecor())
 			.AddQuery(q => q.From.EnemyTemplates())
 			.AddQuery(q => q.From.BulletPatternEvent())
 			.AddQuery(q => q.From.MapConfig())

@@ -54,3 +54,19 @@ fn nearby_terrain_tiles(ctx: &ViewContext) -> impl Query<TriangleTile> {
         })
         .build()
 }
+
+#[spacetimedb::view(accessor = nearby_hex_decor, public)]
+fn nearby_hex_decor(ctx: &ViewContext) -> impl Query<HexDecor> {
+    let empty = ctx.from.hex_decor().r#where(|d| d.decor_id.eq(u64::MAX)).build();
+    let indices = match nearby_indices_from_chunk(ctx, DEFAULT_TERRAIN_AOI_CHUNK_RADIUS) {
+        Some(i) if !i.is_empty() => i,
+        _ => return empty,
+    };
+    ctx.from.hex_decor()
+        .r#where(move |d| {
+            let mut cond = d.chunk_index.eq(indices[0]);
+            for &idx in &indices[1..] { cond = cond.or(d.chunk_index.eq(idx)); }
+            cond
+        })
+        .build()
+}

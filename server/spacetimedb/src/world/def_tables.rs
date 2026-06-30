@@ -54,6 +54,18 @@ pub struct OverlayTextureConfig {
     pub allowed_rotations: Vec<u8>,
 }
 
+// Per-hex decor (trees, rocks, ...) — same shape/chance model as ground/overlay configs, just
+// scoped to a whole hex instead of a wedge. `shadow_texture_id` is a separate paired sprite
+// (rotates together with texture_id as one unit) rather than derived by naming convention, since
+// it's data-driven like everything else here.
+#[derive(SpacetimeType, Clone)]
+pub struct DecorConfig {
+    pub texture_id: String,
+    pub shadow_texture_id: String,
+    pub chance: f32,
+    pub tags: Vec<String>,
+}
+
 #[table(accessor = biome_def, public)]
 pub struct BiomeDef {
     #[primary_key]
@@ -62,6 +74,22 @@ pub struct BiomeDef {
     pub ground_textures: Vec<GroundTextureConfig>,
     pub overlay_textures: Vec<OverlayTextureConfig>,
     pub region_weights: Vec<RegionWeight>,
+    // Spatial frequency for the noise field that drives ground-texture clustering (see
+    // value_noise2d in world::methods) — lower scale means larger patches. <= 0 disables
+    // clustering and falls back to a plain per-wedge random pick.
+    pub ground_noise_scale: f32,
+    // Same idea as ground_noise_scale, but for overlay presence+type — clusters debris into
+    // denser/sparser regions instead of an independent roll per wedge. Uses a different noise
+    // field than ground_noise_scale (see OVERLAY_NOISE_SEED_OFFSET) so debris patches don't just
+    // trace the ground-texture boundary. <= 0 disables clustering.
+    pub overlay_noise_scale: f32,
+    pub decor_configs: Vec<DecorConfig>,
+    // Clusters decor presence into denser/sparser regions (forest clumps etc.) on its own
+    // decorrelated noise field (see DECOR_NOISE_SEED_OFFSET). <= 0 disables clustering.
+    pub decor_noise_scale: f32,
+    // Minimum hex distance required between any two placed decor, regardless of type — e.g. 1
+    // means no two decor in directly-adjacent hexes. <= 0 disables the separation check.
+    pub decor_min_separation: i32,
 }
 
 #[table(accessor = biome_region_def, public)]
@@ -92,4 +120,9 @@ pub struct ManualBiomeInput {
     pub ground_textures: Vec<GroundTextureConfig>,
     pub overlay_textures: Vec<OverlayTextureConfig>,
     pub regions: Vec<ManualRegionInput>,
+    pub ground_noise_scale: f32,
+    pub overlay_noise_scale: f32,
+    pub decor_configs: Vec<DecorConfig>,
+    pub decor_noise_scale: f32,
+    pub decor_min_separation: i32,
 }

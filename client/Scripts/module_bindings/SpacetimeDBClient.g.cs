@@ -38,12 +38,14 @@ namespace SpacetimeDB.Types
             AddTable(AllWeapons = new(conn));
             AddTable(Armor = new(conn));
             AddTable(Artifact = new(conn));
+            AddTable(BaseAdjacencyRule = new(conn));
             AddTable(BiomeDef = new(conn));
             AddTable(BiomeRegion = new(conn));
             AddTable(BiomeRegionDef = new(conn));
             AddTable(BuildingTile = new(conn));
             AddTable(BulletPatternEvent = new(conn));
             AddTable(Consumable = new(conn));
+            AddTable(DecorGroundRule = new(conn));
             AddTable(Enemy = new(conn));
             AddTable(EnemyAttack = new(conn));
             AddTable(EnemyBehavior = new(conn));
@@ -51,6 +53,7 @@ namespace SpacetimeDB.Types
             AddTable(EnemySequenceStep = new(conn));
             AddTable(EnemyTemplate = new(conn));
             AddTable(EnemyTemplates = new(conn));
+            AddTable(HexDecor = new(conn));
             AddTable(Item = new(conn));
             AddTable(LayeringRule = new(conn));
             AddTable(LocalLobbyPlayer = new(conn));
@@ -67,10 +70,12 @@ namespace SpacetimeDB.Types
             AddTable(MovementDef = new(conn));
             AddTable(MultiStepDef = new(conn));
             AddTable(NearbyEnemies = new(conn));
+            AddTable(NearbyHexDecor = new(conn));
             AddTable(NearbyLootDrops = new(conn));
             AddTable(NearbyRemotePlayers = new(conn));
             AddTable(NearbyRemotePlayersProfiles = new(conn));
             AddTable(NearbyTerrainTiles = new(conn));
+            AddTable(OverlayAdjacencyRule = new(conn));
             AddTable(PlayerChunk = new(conn));
             AddTable(PlayerData = new(conn));
             AddTable(PlayerInventory = new(conn));
@@ -591,12 +596,14 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.AllWeapons().ToSql(),
             new QueryBuilder().From.Armor().ToSql(),
             new QueryBuilder().From.Artifact().ToSql(),
+            new QueryBuilder().From.BaseAdjacencyRule().ToSql(),
             new QueryBuilder().From.BiomeDef().ToSql(),
             new QueryBuilder().From.BiomeRegion().ToSql(),
             new QueryBuilder().From.BiomeRegionDef().ToSql(),
             new QueryBuilder().From.BuildingTile().ToSql(),
             new QueryBuilder().From.BulletPatternEvent().ToSql(),
             new QueryBuilder().From.Consumable().ToSql(),
+            new QueryBuilder().From.DecorGroundRule().ToSql(),
             new QueryBuilder().From.Enemy().ToSql(),
             new QueryBuilder().From.EnemyAttack().ToSql(),
             new QueryBuilder().From.EnemyBehavior().ToSql(),
@@ -604,6 +611,7 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.EnemySequenceStep().ToSql(),
             new QueryBuilder().From.EnemyTemplate().ToSql(),
             new QueryBuilder().From.EnemyTemplates().ToSql(),
+            new QueryBuilder().From.HexDecor().ToSql(),
             new QueryBuilder().From.Item().ToSql(),
             new QueryBuilder().From.LayeringRule().ToSql(),
             new QueryBuilder().From.LocalLobbyPlayer().ToSql(),
@@ -620,10 +628,12 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.MovementDef().ToSql(),
             new QueryBuilder().From.MultiStepDef().ToSql(),
             new QueryBuilder().From.NearbyEnemies().ToSql(),
+            new QueryBuilder().From.NearbyHexDecor().ToSql(),
             new QueryBuilder().From.NearbyLootDrops().ToSql(),
             new QueryBuilder().From.NearbyRemotePlayers().ToSql(),
             new QueryBuilder().From.NearbyRemotePlayersProfiles().ToSql(),
             new QueryBuilder().From.NearbyTerrainTiles().ToSql(),
+            new QueryBuilder().From.OverlayAdjacencyRule().ToSql(),
             new QueryBuilder().From.PlayerChunk().ToSql(),
             new QueryBuilder().From.PlayerData().ToSql(),
             new QueryBuilder().From.PlayerInventory().ToSql(),
@@ -654,12 +664,14 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<Weapon, AllWeaponsCols, AllWeaponsIxCols> AllWeapons() => new("all_weapons", new AllWeaponsCols("all_weapons"), new AllWeaponsIxCols("all_weapons"));
         public global::SpacetimeDB.Table<Armor, ArmorCols, ArmorIxCols> Armor() => new("armor", new ArmorCols("armor"), new ArmorIxCols("armor"));
         public global::SpacetimeDB.Table<Artifact, ArtifactCols, ArtifactIxCols> Artifact() => new("artifact", new ArtifactCols("artifact"), new ArtifactIxCols("artifact"));
+        public global::SpacetimeDB.Table<BaseAdjacencyRule, BaseAdjacencyRuleCols, BaseAdjacencyRuleIxCols> BaseAdjacencyRule() => new("base_adjacency_rule", new BaseAdjacencyRuleCols("base_adjacency_rule"), new BaseAdjacencyRuleIxCols("base_adjacency_rule"));
         public global::SpacetimeDB.Table<BiomeDef, BiomeDefCols, BiomeDefIxCols> BiomeDef() => new("biome_def", new BiomeDefCols("biome_def"), new BiomeDefIxCols("biome_def"));
         public global::SpacetimeDB.Table<BiomeRegion, BiomeRegionCols, BiomeRegionIxCols> BiomeRegion() => new("biome_region", new BiomeRegionCols("biome_region"), new BiomeRegionIxCols("biome_region"));
         public global::SpacetimeDB.Table<BiomeRegionDef, BiomeRegionDefCols, BiomeRegionDefIxCols> BiomeRegionDef() => new("biome_region_def", new BiomeRegionDefCols("biome_region_def"), new BiomeRegionDefIxCols("biome_region_def"));
         public global::SpacetimeDB.Table<BuildingTile, BuildingTileCols, BuildingTileIxCols> BuildingTile() => new("building_tile", new BuildingTileCols("building_tile"), new BuildingTileIxCols("building_tile"));
         public global::SpacetimeDB.Table<BulletPatternEvent, BulletPatternEventCols, BulletPatternEventIxCols> BulletPatternEvent() => new("bullet_pattern_event", new BulletPatternEventCols("bullet_pattern_event"), new BulletPatternEventIxCols("bullet_pattern_event"));
         public global::SpacetimeDB.Table<Consumable, ConsumableCols, ConsumableIxCols> Consumable() => new("consumable", new ConsumableCols("consumable"), new ConsumableIxCols("consumable"));
+        public global::SpacetimeDB.Table<DecorGroundRule, DecorGroundRuleCols, DecorGroundRuleIxCols> DecorGroundRule() => new("decor_ground_rule", new DecorGroundRuleCols("decor_ground_rule"), new DecorGroundRuleIxCols("decor_ground_rule"));
         public global::SpacetimeDB.Table<Enemy, EnemyCols, EnemyIxCols> Enemy() => new("enemy", new EnemyCols("enemy"), new EnemyIxCols("enemy"));
         public global::SpacetimeDB.Table<EnemyAttack, EnemyAttackCols, EnemyAttackIxCols> EnemyAttack() => new("enemy_attack", new EnemyAttackCols("enemy_attack"), new EnemyAttackIxCols("enemy_attack"));
         public global::SpacetimeDB.Table<EnemyBehavior, EnemyBehaviorCols, EnemyBehaviorIxCols> EnemyBehavior() => new("enemy_behavior", new EnemyBehaviorCols("enemy_behavior"), new EnemyBehaviorIxCols("enemy_behavior"));
@@ -667,6 +679,7 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<EnemySequenceStep, EnemySequenceStepCols, EnemySequenceStepIxCols> EnemySequenceStep() => new("enemy_sequence_step", new EnemySequenceStepCols("enemy_sequence_step"), new EnemySequenceStepIxCols("enemy_sequence_step"));
         public global::SpacetimeDB.Table<EnemyTemplate, EnemyTemplateCols, EnemyTemplateIxCols> EnemyTemplate() => new("enemy_template", new EnemyTemplateCols("enemy_template"), new EnemyTemplateIxCols("enemy_template"));
         public global::SpacetimeDB.Table<EnemyTemplate, EnemyTemplatesCols, EnemyTemplatesIxCols> EnemyTemplates() => new("enemy_templates", new EnemyTemplatesCols("enemy_templates"), new EnemyTemplatesIxCols("enemy_templates"));
+        public global::SpacetimeDB.Table<HexDecor, HexDecorCols, HexDecorIxCols> HexDecor() => new("hex_decor", new HexDecorCols("hex_decor"), new HexDecorIxCols("hex_decor"));
         public global::SpacetimeDB.Table<Item, ItemCols, ItemIxCols> Item() => new("item", new ItemCols("item"), new ItemIxCols("item"));
         public global::SpacetimeDB.Table<LayeringRule, LayeringRuleCols, LayeringRuleIxCols> LayeringRule() => new("layering_rule", new LayeringRuleCols("layering_rule"), new LayeringRuleIxCols("layering_rule"));
         public global::SpacetimeDB.Table<LoggedOutPlayer, LocalLobbyPlayerCols, LocalLobbyPlayerIxCols> LocalLobbyPlayer() => new("local_lobby_player", new LocalLobbyPlayerCols("local_lobby_player"), new LocalLobbyPlayerIxCols("local_lobby_player"));
@@ -683,10 +696,12 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<MovementDef, MovementDefCols, MovementDefIxCols> MovementDef() => new("movement_def", new MovementDefCols("movement_def"), new MovementDefIxCols("movement_def"));
         public global::SpacetimeDB.Table<MultiStepDef, MultiStepDefCols, MultiStepDefIxCols> MultiStepDef() => new("multi_step_def", new MultiStepDefCols("multi_step_def"), new MultiStepDefIxCols("multi_step_def"));
         public global::SpacetimeDB.Table<Enemy, NearbyEnemiesCols, NearbyEnemiesIxCols> NearbyEnemies() => new("nearby_enemies", new NearbyEnemiesCols("nearby_enemies"), new NearbyEnemiesIxCols("nearby_enemies"));
+        public global::SpacetimeDB.Table<HexDecor, NearbyHexDecorCols, NearbyHexDecorIxCols> NearbyHexDecor() => new("nearby_hex_decor", new NearbyHexDecorCols("nearby_hex_decor"), new NearbyHexDecorIxCols("nearby_hex_decor"));
         public global::SpacetimeDB.Table<LootDrop, NearbyLootDropsCols, NearbyLootDropsIxCols> NearbyLootDrops() => new("nearby_loot_drops", new NearbyLootDropsCols("nearby_loot_drops"), new NearbyLootDropsIxCols("nearby_loot_drops"));
         public global::SpacetimeDB.Table<PlayerPosition, NearbyRemotePlayersCols, NearbyRemotePlayersIxCols> NearbyRemotePlayers() => new("nearby_remote_players", new NearbyRemotePlayersCols("nearby_remote_players"), new NearbyRemotePlayersIxCols("nearby_remote_players"));
         public global::SpacetimeDB.Table<PlayerProfile, NearbyRemotePlayersProfilesCols, NearbyRemotePlayersProfilesIxCols> NearbyRemotePlayersProfiles() => new("nearby_remote_players_profiles", new NearbyRemotePlayersProfilesCols("nearby_remote_players_profiles"), new NearbyRemotePlayersProfilesIxCols("nearby_remote_players_profiles"));
         public global::SpacetimeDB.Table<TriangleTile, NearbyTerrainTilesCols, NearbyTerrainTilesIxCols> NearbyTerrainTiles() => new("nearby_terrain_tiles", new NearbyTerrainTilesCols("nearby_terrain_tiles"), new NearbyTerrainTilesIxCols("nearby_terrain_tiles"));
+        public global::SpacetimeDB.Table<OverlayAdjacencyRule, OverlayAdjacencyRuleCols, OverlayAdjacencyRuleIxCols> OverlayAdjacencyRule() => new("overlay_adjacency_rule", new OverlayAdjacencyRuleCols("overlay_adjacency_rule"), new OverlayAdjacencyRuleIxCols("overlay_adjacency_rule"));
         public global::SpacetimeDB.Table<PlayerChunk, PlayerChunkCols, PlayerChunkIxCols> PlayerChunk() => new("player_chunk", new PlayerChunkCols("player_chunk"), new PlayerChunkIxCols("player_chunk"));
         public global::SpacetimeDB.Table<PlayerData, PlayerDataCols, PlayerDataIxCols> PlayerData() => new("player_data", new PlayerDataCols("player_data"), new PlayerDataIxCols("player_data"));
         public global::SpacetimeDB.Table<PlayerInventory, PlayerInventoryCols, PlayerInventoryIxCols> PlayerInventory() => new("player_inventory", new PlayerInventoryCols("player_inventory"), new PlayerInventoryIxCols("player_inventory"));

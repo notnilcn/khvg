@@ -26,7 +26,10 @@ pub fn seed_default_textures(ctx: &ReducerContext) {
 
     TextureEntry::seed(ctx, texture("Tree", "res://Textures/World/Decor/Props/Tree.tres", TextureKind::Environment));
     TextureEntry::seed(ctx, texture("TreeShadow", "res://Textures/World/Decor/Shadows/Tree.tres", TextureKind::Environment));
-}
+
+    TextureEntry::seed(ctx, texture("Rock", "res://Textures/World/Decor/Props/Rock.tres", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("RockShadow", "res://Textures/World/Decor/Shadows/Rock.tres", TextureKind::Environment));
+}   
 
 // Allow-list of overlay/base tag pairs — absence of a rule means that overlay never layers on
 // that base. Clear-and-reinsert (no natural pair key to upsert against) so this stays correct
@@ -42,6 +45,34 @@ pub fn seed_layering_rules(ctx: &ReducerContext) {
     ];
     for (overlay_tag, allowed_base_tag) in rules {
         ctx.db.layering_rule().insert(LayeringRule { rule_id: 0, overlay_tag: overlay_tag.to_string(), allowed_base_tag: allowed_base_tag.to_string() });
+    }
+}
+
+// Deny-lists for tiles that may never sit laterally next to each other — see BaseAdjacencyRule/
+// OverlayAdjacencyRule. Empty for now: the current ground texture set (Grass/Flowers/FullStones/
+// HalfStones) has no clashing pairs yet; there are no overlays in use. Clear-and-reinsert like
+// seed_layering_rules, so this stays correct across republishes once pairs are added.
+pub fn seed_adjacency_rules(ctx: &ReducerContext) {
+    for rule in ctx.db.base_adjacency_rule().iter() {
+        ctx.db.base_adjacency_rule().rule_id().delete(&rule.rule_id);
+    }
+    for rule in ctx.db.overlay_adjacency_rule().iter() {
+        ctx.db.overlay_adjacency_rule().rule_id().delete(&rule.rule_id);
+    }
+}
+
+// Deny-list for which decor may sit in a hex carrying a given ground/overlay tag — see
+// DecorGroundRule. Trees and rocks are grass/flowers-only — neither spawns on a HalfStones wedge.
+pub fn seed_decor_ground_rules(ctx: &ReducerContext) {
+    for rule in ctx.db.decor_ground_rule().iter() {
+        ctx.db.decor_ground_rule().rule_id().delete(&rule.rule_id);
+    }
+    let rules = [
+        ("tall", "light_stone"),  // Tree denied on HalfStones
+        ("solid", "light_stone"), // Rock denied on HalfStones
+    ];
+    for (decor_tag, denied_base_tag) in rules {
+        ctx.db.decor_ground_rule().insert(DecorGroundRule { rule_id: 0, decor_tag: decor_tag.to_string(), denied_base_tag: denied_base_tag.to_string() });
     }
 }
 
@@ -239,35 +270,105 @@ pub fn seed_consumable(ctx: &ReducerContext, item_id: &str, display_name: &str, 
     Item::seed(ctx, Item { item_id: item_id.to_string(), display_name: display_name.to_string(), description: description.to_string(), texture_id: texture_id.to_string(), item_type: ItemType::Consumable });
 }
 
-pub fn seed_world_defs(ctx: &ReducerContext) {
+// Mixed melee/ranged spawn pool, uniform across every region for now — no info yet suggesting
+// density or radius should vary per region.
+fn seed_region_def(ctx: &ReducerContext, region_def_id: &str, display_name: &str) {
     BiomeRegionDef::seed(ctx, BiomeRegionDef {
-        region_def_id: "PlainsRegion".to_string(),
-        display_name: "Plains".to_string(),
-        enemy_template_ids: vec!["Enemy".to_string()],
+        region_def_id: region_def_id.to_string(),
+        display_name: display_name.to_string(),
+        enemy_template_ids: vec!["Enemy".to_string(), "Archer".to_string()],
         max_enemies: 5,
         spawn_radius: 300.0,
     });
+}
+
+// Demo content for now: just the 3 floor textures (Grass/Flowers/HalfStones — FullStones is
+// parked, see below) at different frequencies per biome, no decor (mechanism stays built and
+// working — DecorConfig/HexDecor/DecorGroundRule, TerrainManager rendering — just nothing
+// seeded into the world right now: 2D top-down decor collision/walkability isn't decided yet,
+// and the current decor art doesn't read well enough to be worth it yet either).
+pub fn seed_world_defs(ctx: &ReducerContext) {
+    seed_region_def(ctx, "GrasslandRegion1", "Grassland I");
+    seed_region_def(ctx, "GrasslandRegion2", "Grassland II");
+    seed_region_def(ctx, "GrasslandRegion3", "Grassland III");
+    seed_region_def(ctx, "MeadowRegion1", "Meadow I");
+    seed_region_def(ctx, "MeadowRegion2", "Meadow II");
+    seed_region_def(ctx, "HighlandsRegion1", "Highlands I");
+    seed_region_def(ctx, "HighlandsRegion2", "Highlands II");
+    seed_region_def(ctx, "HighlandsRegion3", "Highlands III");
+    seed_region_def(ctx, "HighlandsRegion4", "Highlands IV");
+
+    // Grass-dominant, a bit of flowers, rare stone.
     BiomeDef::seed(ctx, BiomeDef {
         biome_id: "Grassland".to_string(),
         display_name: "Grassland".to_string(),
         ground_textures: vec![
-            GroundTextureConfig { texture_id: "Grass".to_string(), chance: 70.0, tags: vec!["soft".to_string()], allowed_rotations: vec![] },
+            GroundTextureConfig { texture_id: "Grass".to_string(), chance: 75.0, tags: vec!["soft".to_string()], allowed_rotations: vec![] },
             GroundTextureConfig { texture_id: "Flowers".to_string(), chance: 20.0, tags: vec!["delicate".to_string()], allowed_rotations: vec![] },
+            GroundTextureConfig { texture_id: "HalfStones".to_string(), chance: 5.0, tags: vec!["light_stone".to_string()], allowed_rotations: vec![] },
         ],
-        // Chances don't need to sum to 100 — see weighted_pick_with_remainder. Grass is tagged
-        // "soft" so both overlays below are eligible on it (max 35% chance of some overlay);
-        // Flowers is "delicate", and LayeringRule has no heavy_debris+delicate rule, so only
-        // HalfStones is eligible there (tops out at 25%).
-        overlay_textures: vec![
-            OverlayTextureConfig { texture_id: "HalfStones".to_string(), chance: 25.0, scale: 0.6, tags: vec!["light_debris".to_string()], allowed_rotations: vec![] },
-            OverlayTextureConfig { texture_id: "FullStones".to_string(), chance: 10.0, scale: 0.8, tags: vec!["heavy_debris".to_string()], allowed_rotations: vec![] },
+        overlay_textures: vec![],
+        region_weights: vec![
+            RegionWeight { region_def_id: "GrasslandRegion1".to_string(), weight: 34.0 },
+            RegionWeight { region_def_id: "GrasslandRegion2".to_string(), weight: 33.0 },
+            RegionWeight { region_def_id: "GrasslandRegion3".to_string(), weight: 33.0 },
         ],
-        region_weights: vec![RegionWeight { region_def_id: "PlainsRegion".to_string(), weight: 100.0 }],
+        ground_noise_scale: 0.006,
+        overlay_noise_scale: 0.004,
+        decor_configs: vec![],
+        decor_noise_scale: 0.004,
+        decor_min_separation: 1,
+    });
+    // Flower-dominant, grass fills the gaps, rare stone.
+    BiomeDef::seed(ctx, BiomeDef {
+        biome_id: "Meadow".to_string(),
+        display_name: "Meadow".to_string(),
+        ground_textures: vec![
+            GroundTextureConfig { texture_id: "Flowers".to_string(), chance: 55.0, tags: vec!["delicate".to_string()], allowed_rotations: vec![] },
+            GroundTextureConfig { texture_id: "Grass".to_string(), chance: 40.0, tags: vec!["soft".to_string()], allowed_rotations: vec![] },
+            GroundTextureConfig { texture_id: "HalfStones".to_string(), chance: 5.0, tags: vec!["light_stone".to_string()], allowed_rotations: vec![] },
+        ],
+        overlay_textures: vec![],
+        region_weights: vec![
+            RegionWeight { region_def_id: "MeadowRegion1".to_string(), weight: 50.0 },
+            RegionWeight { region_def_id: "MeadowRegion2".to_string(), weight: 50.0 },
+        ],
+        ground_noise_scale: 0.006,
+        overlay_noise_scale: 0.004,
+        decor_configs: vec![],
+        decor_noise_scale: 0.004,
+        decor_min_separation: 1,
+    });
+    // Still grass-dominant, but noticeably more stone presence than the other two biomes.
+    BiomeDef::seed(ctx, BiomeDef {
+        biome_id: "Highlands".to_string(),
+        display_name: "Highlands".to_string(),
+        ground_textures: vec![
+            GroundTextureConfig { texture_id: "Grass".to_string(), chance: 55.0, tags: vec!["soft".to_string()], allowed_rotations: vec![] },
+            GroundTextureConfig { texture_id: "Flowers".to_string(), chance: 25.0, tags: vec!["delicate".to_string()], allowed_rotations: vec![] },
+            GroundTextureConfig { texture_id: "HalfStones".to_string(), chance: 20.0, tags: vec!["light_stone".to_string()], allowed_rotations: vec![] },
+        ],
+        overlay_textures: vec![],
+        region_weights: vec![
+            RegionWeight { region_def_id: "HighlandsRegion1".to_string(), weight: 25.0 },
+            RegionWeight { region_def_id: "HighlandsRegion2".to_string(), weight: 25.0 },
+            RegionWeight { region_def_id: "HighlandsRegion3".to_string(), weight: 25.0 },
+            RegionWeight { region_def_id: "HighlandsRegion4".to_string(), weight: 25.0 },
+        ],
+        ground_noise_scale: 0.006,
+        overlay_noise_scale: 0.004,
+        decor_configs: vec![],
+        decor_noise_scale: 0.004,
+        decor_min_separation: 1,
     });
     WorldDef::seed(ctx, WorldDef {
         world_id: "Earth".to_string(),
         display_name: "Earth".to_string(),
-        biome_weights: vec![BiomeWeight { biome_id: "Grassland".to_string(), weight: 100.0 }],
+        biome_weights: vec![
+            BiomeWeight { biome_id: "Grassland".to_string(), weight: 40.0 },
+            BiomeWeight { biome_id: "Meadow".to_string(), weight: 30.0 },
+            BiomeWeight { biome_id: "Highlands".to_string(), weight: 30.0 },
+        ],
     });
 }
 

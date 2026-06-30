@@ -60,6 +60,41 @@ pub struct LayeringRule {
     pub allowed_base_tag: String,
 }
 
+// Deny-list: tag_a and tag_b may never sit in laterally neighboring tiles (same-hex or
+// cross-hex). Default is allow — most neighboring base textures are fine, only specific
+// clashing pairs (e.g. swamp next to sand) get blocked. Symmetric: a row blocks tag_a next to
+// tag_b in either direction, so only one row is needed per clashing pair.
+#[table(accessor = base_adjacency_rule, public)]
+pub struct BaseAdjacencyRule {
+    #[primary_key] #[auto_inc]
+    pub rule_id: u64,
+    pub tag_a: String,
+    pub tag_b: String,
+}
+
+// Same shape and symmetry as BaseAdjacencyRule, kept as a separate table (rather than one rule
+// type for both layers) so the same tag string can never cross-apply between a base-to-base rule
+// and an overlay-to-overlay rule just because they share a tag name.
+#[table(accessor = overlay_adjacency_rule, public)]
+pub struct OverlayAdjacencyRule {
+    #[primary_key] #[auto_inc]
+    pub rule_id: u64,
+    pub tag_a: String,
+    pub tag_b: String,
+}
+
+// Deny-list: decor tagged decor_tag may never be placed in a hex where any of its 6 wedges
+// carries denied_base_tag (ground OR overlay tag) — not symmetric like the adjacency rules
+// above, since this relates two different kinds of tag (decor vs. ground/overlay), not two
+// occurrences of the same kind.
+#[table(accessor = decor_ground_rule, public)]
+pub struct DecorGroundRule {
+    #[primary_key] #[auto_inc]
+    pub rule_id: u64,
+    pub decor_tag: String,
+    pub denied_base_tag: String,
+}
+
 #[derive(SpacetimeType, Clone, PartialEq)]
 pub enum WeaponPattern {
     Single,

@@ -32,3 +32,21 @@ pub struct TriangleTile {
     pub biome_id: String,
     pub region_id: u64,
 }
+
+// One decor prop per hex, at most — separation rules mean two decor can never be close enough
+// for multiple-per-hex to come up. Unlike TriangleTile, a hex with no decor simply has no row
+// here rather than a blank placeholder, since decor is optional content, not a required fill.
+#[table(accessor = hex_decor, public)]
+pub struct HexDecor {
+    #[primary_key] #[auto_inc]
+    pub decor_id: u64,
+    pub hex_q: i32,
+    pub hex_r: i32,
+    #[index(btree)]
+    pub chunk_index: i64,
+    pub texture_id: String,
+    pub shadow_texture_id: String,
+    pub rotation_degrees: f32,
+    pub biome_id: String,
+    pub region_id: u64,
+}
