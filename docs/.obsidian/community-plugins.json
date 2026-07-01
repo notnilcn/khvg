@@ -1,11 +1,11 @@
 [
-  "custom-sort",
-  "obsidian-underline",
-  "block-link-plus",
-  "code-styler",
-  "system3-relay",
-  "obsidian-custom-file-extensions-plugin",
-  "html-viewer",
   "obsidian-wrap-with-shortcuts",
+  "discord-export",
+  "obsidian-git",
+  "obsidian-custom-file-extensions-plugin",
+  "block-link-plus",
+  "flexplorer",
+  "forwardslash-asterisk-blocks",
+  "html-viewer",
   "automatic-table-of-contents"
 ]

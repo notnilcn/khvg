@@ -4,4 +4,4 @@ Passing whether an enemy is elite into the [`_spawn_single_enemy(is_elite)`](<sp
 
 
 # Area of Interest
-Looping over every single `existing_peer_id: int in Global.players.keys()` and sending them whenever a client spawns in is inefficient. 
+

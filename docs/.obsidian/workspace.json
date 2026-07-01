@@ -1,82 +1,41 @@
 {
   "main": {
-    "id": "37d718731ee5cd94",
+    "id": "3ab8ffec116109ce",
     "type": "split",
     "children": [
       {
-        "id": "0fe4e385a2314fc2",
+        "id": "bee72e902ee8a7d3",
         "type": "tabs",
         "children": [
           {
-            "id": "f7aef3a82d46a5e6",
+            "id": "3b093b58be963569",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
+                "file": "Game Design Docs/01 Art.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "World grid notes"
-            }
-          },
-          {
-            "id": "baf4c6fc7a11f41d",
-            "type": "leaf",
-            "state": {
-              "type": "html-view",
-              "state": {
-                "file": "docs/Resources and dependencies/hex-grid/Hexagonal Grids.html"
-              },
-              "icon": "file-code",
-              "title": "Hexagonal Grids.html"
-            }
-          },
-          {
-            "id": "ccf2250b685ae439",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Overviews"
-            }
-          },
-          {
-            "id": "878da29cac7554fa",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Overviews"
+              "title": "01 Art"
             }
           }
-        ],
-        "currentTab": 2
+        ]
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "9e6e612bda9276a2",
+    "id": "c3fe43fa7d3936e6",
     "type": "split",
     "children": [
       {
-        "id": "a31ccfb03fcc4c92",
+        "id": "7801236760a4af0e",
         "type": "tabs",
         "children": [
           {
-            "id": "702b0ddb37d08ea9",
+            "id": "0232ad4a834a7c3a",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -89,12 +48,12 @@
             }
           },
           {
-            "id": "1a199ca0ef466ae3",
+            "id": "5c5b0e34f5fe40a3",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "look",
+                "query": "overviews",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -106,7 +65,7 @@
             }
           },
           {
-            "id": "d7d1bbc5efcce987",
+            "id": "704bf025c7455911",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -119,22 +78,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 363.5
+    "width": 395.5
   },
   "right": {
-    "id": "060b9ccb0c4fedf3",
+    "id": "3348e97cb465f954",
     "type": "split",
     "children": [
       {
-        "id": "8dc5b426f41e901a",
+        "id": "7fd527f126caf050",
         "type": "tabs",
         "children": [
           {
-            "id": "a0ec55b96a2eb2d2",
+            "id": "7c1fb5546cbfa9d7",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "docs/Notes/002 Game Development/Features to implement list.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -144,24 +104,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for Features to implement list"
             }
           },
           {
-            "id": "f4299f886cc77be2",
+            "id": "7bb79a408af1ccc0",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "docs/Notes/002 Game Development/Features to implement list.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links"
+              "title": "Outgoing links from Features to implement list"
             }
           },
           {
-            "id": "980c05003454c49d",
+            "id": "df1bad74e30cd027",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -176,7 +137,7 @@
             }
           },
           {
-            "id": "6ad309eacaf5bb0b",
+            "id": "6d2221042ee88913",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -190,17 +151,18 @@
             }
           },
           {
-            "id": "9fd231dfabdf672d",
+            "id": "04485e0e0cfd5729",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
+                "file": "docs/Notes/002 Game Development/Features to implement list.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of Features to implement list"
             }
           }
         ]
@@ -212,64 +174,63 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "system3-relay:Relay": false,
-      "custom-sort:Toggle custom sorting": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ccf2250b685ae439",
+  "active": "0232ad4a834a7c3a",
   "lastOpenFiles": [
-    "client/Scenes/main.tscn4642844062.tmp",
-    "client/Scenes/main.tscn4642041603.tmp",
-    "client/Scenes/main.tscn4630967613.tmp",
-    "client/Scenes/main.tscn4562911037.tmp",
-    "client/Scenes/main.tscn4539489007.tmp",
-    "client/Scenes/main.tscn4538536738.tmp",
-    "client/Scenes/main.tscn4534656436.tmp",
-    "client/Scenes/main.tscn3285000133.tmp",
-    "client/Scenes/main.tscn3274537265.tmp",
-    "client/Scenes/main.tscn3273896904.tmp",
-    "client/Scenes/main.tscn3256690761.tmp",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Lore.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Gameplay.md",
-    "CLAUDE.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 5.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 4.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 3.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 1.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 2.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/000 Spacetimedb overview.md",
-    "Boobookitty.md",
-    "Pursuit of jade.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
-    "g.md",
-    "CLAUDE - Copy.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Overview.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/00 Overview.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Classes/Untitled.md",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/rivers/waterless/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/coast/waterless/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/yellow/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/red/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/neutral/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/green/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/units/blue/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/roads/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/rivers/hexagons_medieval.png",
-    "client/Assets/KayKit_Medieval_Hexagon_Pack/tiles/coast/hexagons_medieval.png",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes-Clintons-Framework-16.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes-GCW10HP236-0219-2.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes-GCW10HP236-0219.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/01 Enemy AI.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/00 Dungeons & Bosses general notes.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/Murcian ripoff.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Dungeons, bosses, & enemies/Nest ripoff.md"
+    "Game Design Docs/00 Executive Summary.md",
+    "Game Design Docs/01 Art.md",
+    "Game Design Docs/Art/Art style 2D.md",
+    "Game Design Docs/Art/Art style 3D.md",
+    "Game Design Docs/Art/Hollow Knight References.md",
+    "Game Design Docs/99 (outdated) Game Design Document.md",
+    "README.md",
+    "00 Executive Summary.md",
+    "Game Design Docs/Classes/ART/gatherer (str) & (art).md",
+    "Game Design Docs/Classes/ART/crafter (dex) & (str) & (art).md",
+    "Game Design Docs/Classes/Other or Undeveloped/summoner.md",
+    "Game Design Docs/Classes/ART/enchanter (wis) & (art).md",
+    "Game Design Docs/Classes/Other or Undeveloped/sorcerer.md",
+    "Game Design Docs/Classes/DPS/warrior (str) & (dps).md",
+    "Game Design Docs/Classes/DPS/wizard (wis) & (dps).md",
+    "Game Design Docs/Classes/DPS/archer (dex ≳ (str == wis)) & (dps).md",
+    "Game Design Docs/Classes/DPS/(dex) & (dps).md",
+    "Game Design Docs/Classes/SUP/thief (dex ≳ wis) & (sup ≳ dps).md",
+    "Game Design Docs/Classes/SUP/trickster (wis ≳ dex) & (sup).md",
+    "Game Design Docs/Classes/SUP/paladin (wis == str) & (sup ≳ dps).md",
+    "Game Design Docs/Classes/SUP/healer (wis) & (sup).md",
+    "Game Design Docs/Classes/SUP/tank (str) & (sup).md",
+    "Game Design Docs/Classes/Other or Undeveloped",
+    "Game Design Docs/Classes/ART",
+    "Game Design Docs/Classes/DPS",
+    "Game Design Docs/Classes/SUP",
+    "Game Design Docs/Classes/00 Overview.md",
+    "Game Design Docs/Classes",
+    "Game Design Docs/Art",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/zflpdhs2u7lg1.jpeg",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/subreddit-right-rail-client-css-5Lh6s9LI.css",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/suspense-CgVjpP8x.js.download",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/styles__ltr.css",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/saved_resource.html",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_xwfwyccwkz6a1.jpg",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_sdj2v59z2gvf1.jpg",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_sd2vb5hgol951.png",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_r444nzn1e0871.png",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_0efnphg5y7fa1.png",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/nhisjil4u7lg1.jpeg",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/itpwblkbu7lg1.jpeg",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/how-to-perma-the-150atk-on-battle-god-seal.png",
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/gYNzD9Alfqvo7JifgOpzRNFNOqf2CFzcirlQK_oqmCQ.png",
+    "Game Design Docs/05 Biomes.md",
+    "Game Design Docs/04 Lore.md",
+    "Game Design Docs/03 Classes.md"
   ]
 }

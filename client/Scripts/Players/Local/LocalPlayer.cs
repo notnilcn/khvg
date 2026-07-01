@@ -119,7 +119,7 @@ public partial class LocalPlayer : CharacterBody2D
 
 		if (Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down"))
 		{
-			sprite.Rotation = yaw;
+			Rotation = yaw;
 		}
 
 
@@ -132,7 +132,7 @@ public partial class LocalPlayer : CharacterBody2D
 		if (reportTimer >= ReportInterval)
 		{
 			reportTimer = 0f;
-			GameManager.Instance.Conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, yaw);
+			GameManager.Instance.Conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, Rotation);
 		}
 	}
 
