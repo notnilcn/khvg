@@ -31,11 +31,6 @@ public partial class CameraController2D : Node2D
 	public override void _Process(double delta)
     {
         if (_pcam2D == null) return;
-        // if (_followTarget != null && _cameraTarget != null)
-        // {
-        //     var p = _followTarget.GlobalPosition;
-        //     _cameraTarget.GlobalPosition = new Vector2(p.X, p.Y);
-        // }
 
         if (Input.IsActionPressed("Camera_Left"))
 		{

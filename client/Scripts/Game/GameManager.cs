@@ -292,6 +292,8 @@ public partial class GameManager : Node
 
 		ShowLobby();
 		SubscribeLobby();
+		var pcamNode = GetNode<Node2D>("%MainMenuPhantomCamera2D");
+		CameraController2D.Instance?.RegisterCamera(pcamNode);
 		gameSub?.Unsubscribe();
 		gameSub = null;
 	}

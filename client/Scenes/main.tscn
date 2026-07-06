@@ -10,6 +10,12 @@
 [ext_resource type="Script" uid="uid://c3l165fibt4wq" path="res://Scripts/World/HexGridOverlay2D.cs" id="8_344ge"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="9_ynf5e"]
 [ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/Game/CameraController2D.cs" id="10_hptm8"]
+[ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="11_6iyac"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="12_fdnlq"]
+
+[sub_resource type="Resource" id="Resource_jkdf5"]
+script = ExtResource("12_fdnlq")
+duration = 0.0
 
 [node name="Main" type="Node2D" unique_id=24548255]
 script = ExtResource("1_8gbba")
@@ -120,6 +126,13 @@ metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
 [node name="CameraController2D" type="Node2D" parent="." unique_id=1135188737]
 script = ExtResource("10_hptm8")
+
+[node name="MainMenuPhantomCamera2D" type="Node2D" parent="." unique_id=891273475]
+unique_name_in_owner = true
+position = Vector2(320, 180)
+script = ExtResource("11_6iyac")
+tween_resource = SubResource("Resource_jkdf5")
+metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 
 [connection signal="pressed" from="CharSlots/Panel/Create" to="." method="OnCreatePanelPressed"]
 [connection signal="pressed" from="CharSlots/CreateProfilePanel/Panel/Create" to="." method="OnCreatePressed"]
