@@ -4,7 +4,8 @@ using SpacetimeDB.Types;
 
 public partial class LocalPlayerCombat : Node2D
 {
-    private Weapon? _weapon;
+    private WeaponBehavior? _weapon;
+    private string? _weaponItemId;
     private float _fireTimer;
     private float _firePeriod;
     private float _zoneStep;
@@ -121,9 +122,17 @@ public partial class LocalPlayerCombat : Node2D
 
     private void OnInventoryChanged()
     {
-        var newWeapon = LocalPlayer.Local?.EquippedWeapon;
-        if (newWeapon?.WeaponId == _weapon?.WeaponId) return;
-        _weapon = newWeapon;
+        var newWeaponItem = LocalPlayer.Local?.EquippedWeapon;
+        if (newWeaponItem?.ItemId == _weaponItemId) return;
+        _weaponItemId = newWeaponItem?.ItemId;
+        _weapon = null;
+        if (newWeaponItem != null)
+        {
+            foreach (var behavior in newWeaponItem.Behaviors)
+            {
+                if (behavior is ItemBehavior.Weapon(var weapon)) { _weapon = weapon; break; }
+            }
+        }
         if (_weapon == null || _weapon.ZoneCount == 0) { _fireTimer = 0f; return; }
         _fireTimer = _firePeriod;
         _firePeriod = 1f / Mathf.Max(0.001f, _weapon.FireRate);

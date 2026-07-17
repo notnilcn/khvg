@@ -3,7 +3,7 @@ use crate::main::global::*;
 use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
-use crate::world::tables::ItemType;
+use crate::item::tables::*;
 
 pub fn require_logged_in(ctx: &ReducerContext) -> Result<(), String> {
     if ctx.db.logged_in_player().player_id().find(ctx.sender()).is_none() {
@@ -45,6 +45,48 @@ pub fn compute_base_stats(level: u32) -> (i32, i32, i32, i32, i32, i32) {
     (10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus)
 }
 
+pub fn compute_base_max_hp(level: u32) -> i32 {
+    BASE_MAX_HP + (level as i32 - 1) * HP_PER_LEVEL
+}
+
+fn stat_index(stat: StatKind) -> usize {
+    match stat {
+        StatKind::Strength => 0,
+        StatKind::Wisdom => 1,
+        StatKind::Dexterity => 2,
+        StatKind::Defense => 3,
+        StatKind::Vitality => 4,
+        StatKind::Speed => 5,
+        StatKind::Hp => 6,
+    }
+}
+
+fn buff_to_modifier(effect: &ConsumableBuffEffect) -> StatModifier {
+    let (stat, amount) = match effect {
+        ConsumableBuffEffect::Strength(v) => (StatKind::Strength, *v),
+        ConsumableBuffEffect::Wisdom(v) => (StatKind::Wisdom, *v),
+        ConsumableBuffEffect::Dexterity(v) => (StatKind::Dexterity, *v),
+        ConsumableBuffEffect::Defense(v) => (StatKind::Defense, *v),
+        ConsumableBuffEffect::Vitality(v) => (StatKind::Vitality, *v),
+        ConsumableBuffEffect::Speed(v) => (StatKind::Speed, *v),
+    };
+    StatModifier { stat, amount, mode: StatMode::Flat }
+}
+
+pub fn weapon_behavior(item: &Item) -> Option<&WeaponBehavior> {
+    item.behaviors.iter().find_map(|b| match b {
+        ItemBehavior::Weapon(w) => Some(w),
+        _ => None,
+    })
+}
+
+pub fn consumable_behavior(item: &Item) -> Option<&ConsumableBehavior> {
+    item.behaviors.iter().find_map(|b| match b {
+        ItemBehavior::Consumable(c) => Some(c),
+        _ => None,
+    })
+}
+
 pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     let data = match ctx.db.player_data().profile_id().find(&profile_id) {
         Some(d) => d,
@@ -55,63 +97,42 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         None => return,
     };
     let (base_str, base_wis, base_dex, base_def, base_vit, base_spd) = compute_base_stats(data.level);
-    let mut str_flat = 0i32; let mut wis_flat = 0i32; let mut dex_flat = 0i32;
-    let mut def_flat = 0i32; let mut vit_flat = 0i32; let mut spd_flat = 0i32;
+
+    let mut flat = [0f32; 7];
+    let mut mult = [0f32; 7];
+    let mut fold_modifier = |m: &StatModifier| {
+        let idx = stat_index(m.stat);
+        match m.mode {
+            StatMode::Flat => flat[idx] += m.amount,
+            StatMode::Mult => mult[idx] += m.amount,
+        }
+    };
 
     for slot in &inv.slots {
-        if slot.allowed_types.len() != 1 { continue; }
+        if slot.allowed_slots.len() != 1 { continue; }
         let item_id = match &slot.item_id { Some(id) => id, None => continue };
         let item = match ctx.db.item().item_id().find(item_id) { Some(i) => i, None => continue };
-        match item.item_type {
-            ItemType::Armor => {
-                if let Some(a) = ctx.db.armor().armor_id().find(&item.item_id) {
-                    def_flat += a.defense_bonus;
-                    vit_flat += a.vitality_bonus;
-                }
-            }
-            ItemType::Accessory => {
-                if let Some(a) = ctx.db.accessory().accessory_id().find(&item.item_id) {
-                    str_flat += a.strength_bonus;
-                    wis_flat += a.wisdom_bonus;
-                    dex_flat += a.dexterity_bonus;
-                    spd_flat += a.speed_bonus;
-                }
-            }
-            ItemType::Artifact => {
-                if let Some(a) = ctx.db.artifact().artifact_id().find(&item.item_id) {
-                    match a.effect {
-                        ArtifactEffect::Strength(v)  => str_flat += v as i32,
-                        ArtifactEffect::Wisdom(v)    => wis_flat += v as i32,
-                        ArtifactEffect::Dexterity(v) => dex_flat += v as i32,
-                        ArtifactEffect::Defense(v)   => def_flat += v as i32,
-                        ArtifactEffect::Vitality(v)  => vit_flat += v as i32,
-                        ArtifactEffect::Speed(v)     => spd_flat += v as i32,
-                    }
-                }
-            }
-            _ => {}
+        for m in &item.stat_modifiers {
+            fold_modifier(m);
         }
     }
 
     for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id) {
-        match active.effect {
-            ConsumableBuffEffect::Strength(v)  => str_flat += v as i32,
-            ConsumableBuffEffect::Wisdom(v)    => wis_flat += v as i32,
-            ConsumableBuffEffect::Dexterity(v) => dex_flat += v as i32,
-            ConsumableBuffEffect::Defense(v)   => def_flat += v as i32,
-            ConsumableBuffEffect::Vitality(v)  => vit_flat += v as i32,
-            ConsumableBuffEffect::Speed(v)     => spd_flat += v as i32,
-        }
+        fold_modifier(&active.modifier);
     }
+
+    let resolve = |idx: usize, base: i32| -> i32 {
+        ((base as f32 + flat[idx]) * (1.0 + mult[idx])).round() as i32
+    };
 
     let new_stats = PlayerStats {
         profile_id,
-        strength: base_str + str_flat,
-        wisdom: base_wis + wis_flat,
-        dexterity: base_dex + dex_flat,
-        defense: base_def + def_flat,
-        vitality: base_vit + vit_flat,
-        speed: base_spd + spd_flat,
+        strength: resolve(0, base_str),
+        wisdom: resolve(1, base_wis),
+        dexterity: resolve(2, base_dex),
+        defense: resolve(3, base_def),
+        vitality: resolve(4, base_vit),
+        speed: resolve(5, base_spd),
     };
 
     if ctx.db.player_stats().profile_id().find(&profile_id).is_some() {
@@ -119,15 +140,21 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     } else {
         ctx.db.player_stats().insert(new_stats);
     }
+
+    let new_max_hp = resolve(6, compute_base_max_hp(data.level)).max(1) as u32;
+    if new_max_hp != data.max_hp || data.hp > new_max_hp {
+        let new_hp = data.hp.min(new_max_hp);
+        ctx.db.player_data().profile_id().update(PlayerData { max_hp: new_max_hp, hp: new_hp, ..data });
+    }
 }
 
-fn weapon_slot(item_id: Option<String>) -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Weapon], item_id } }
-fn hotbar_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Consumable], item_id: None } }
-fn accessory_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Accessory], item_id: None } }
-fn armor_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Armor], item_id: None } }
-fn artifact_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Artifact], item_id: None } }
-fn general_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Weapon, ItemType::Artifact, ItemType::Armor, ItemType::Accessory, ItemType::Consumable], item_id: None } }
-fn bag_slot() -> InventorySlot { InventorySlot { allowed_types: vec![ItemType::Bag], item_id: None } }
+fn weapon_slot(item_id: Option<String>) -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Weapon], item_id } }
+fn hotbar_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Consumable], item_id: None } }
+fn accessory_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Accessory], item_id: None } }
+fn armor_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Armor], item_id: None } }
+fn artifact_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Artifact], item_id: None } }
+fn general_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Weapon, EquipSlot::Artifact, EquipSlot::Armor, EquipSlot::Accessory, EquipSlot::Consumable], item_id: None } }
+fn bag_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Bag], item_id: None } }
 
 pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     if ctx.db.player_data().profile_id().find(&profile_id).is_none() {
@@ -182,8 +209,8 @@ pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {
     let weapon_item = inv.slots.get(0)
         .and_then(|s| s.item_id.as_ref())
         .and_then(|id| ctx.db.item().item_id().find(id));
-    let weapon_stats = weapon_item.and_then(|i| ctx.db.weapon().weapon_id().find(&i.item_id));
-    match weapon_stats {
+    let weapon = weapon_item.as_ref().and_then(|i| weapon_behavior(i));
+    match weapon {
         Some(w) => (w.damage as f32 * (1.0 + stats.strength as f32 * 0.002)).max(1.0) as u32,
         None => 0,
     }
@@ -194,7 +221,7 @@ pub fn compute_incoming_damage(ctx: &ReducerContext, profile_id: u64, base_damag
     (base_damage as f32 * (1.0 - stats.defense as f32 * 0.002)).max(1.0) as u32
 }
 
-pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable: &Consumable) {
+pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable: &ConsumableBehavior) {
     match &consumable.effect {
         ConsumableEffect::Heal => {
             if let Some(data) = ctx.db.player_data().profile_id().find(&profile_id) {
@@ -204,7 +231,7 @@ pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable
         }
         ConsumableEffect::Buff(effect) => {
             ctx.db.active_consumable_effect().insert(ActiveConsumableEffect {
-                effect_id: 0, profile_id, effect: effect.clone(), remaining: consumable.duration,
+                effect_id: 0, profile_id, modifier: buff_to_modifier(effect), remaining: consumable.duration,
             });
             recompute_stats(ctx, profile_id);
         }
@@ -216,12 +243,12 @@ pub fn internal_gain_xp(ctx: &ReducerContext, profile_id: u64, amount: u32) {
     let old_level = data.level;
     let new_xp = data.xp + amount;
     let new_level = compute_level(new_xp);
-    let new_max_hp = (BASE_MAX_HP + (new_level as i32 - 1) * HP_PER_LEVEL) as u32;
-    // Heal by the max_hp increase on top of current HP, so leveling up while hurt
-    // doesn't fully restore (or waste) the gained health.
+    // Heal by the level-derived max_hp increase on top of current HP, so leveling up while
+    // hurt doesn't fully restore (or waste) the gained health. recompute_stats folds in any
+    // item-derived Hp bonus and clamps hp to the final max_hp afterward.
     let heal = (new_level - old_level) * HP_PER_LEVEL as u32;
-    let new_hp = (data.hp + heal).min(new_max_hp);
-    ctx.db.player_data().profile_id().update(PlayerData { level: new_level, xp: new_xp, hp: new_hp, max_hp: new_max_hp, ..data });
+    let new_hp = data.hp + heal;
+    ctx.db.player_data().profile_id().update(PlayerData { level: new_level, xp: new_xp, hp: new_hp, ..data });
     if new_level != old_level { recompute_stats(ctx, profile_id); }
 }
 

@@ -5,52 +5,7 @@ Game genre is bullet-hell mmo (similar to Realm of the Mad God), with future pla
 
 The game will probably be high fantasy.
 
-## Rotmg videos
-RotMG description and general feel:
-just watch the videos.
-### Group videos
-![RotMG: RedMagePOW Clip Compilation 2](<https://youtu.be/-sCk434v3zg&t=41>)
-
-![RotMG: RedMagePOW Clip Complilation](<https://www.youtube.com/watch?v=FqACs109eIE>)
-
-![RotMG - omo Full Skip Voids](<https://youtu.be/UuDYmAeUrDw&t=14>)
-
-![RotMG : Full Skip Lost Hall#1](<https://www.youtube.com/watch?v=w0_A4fmIwJ8>)
-
-![RotMG Lost Halls Void Speedrun ft. Marble Seal drop (08:52:01)](<https://www.youtube.com/watch?v=RHZxqIjksfc>)
-
-![(rotmg o3) Fastest Sorc 2 million top damage (5:48)](<https://www.youtube.com/watch?v=885sidnkIps>)
-
-![Completing My First Marble Colossus Ever! - Rotmg Lost Halls Progression!](<https://www.youtube.com/watch?v=audTKsu6qTA>)
-
-![RotMG Lost Halls 3 man full skip run](<https://www.youtube.com/watch?v=ZRKva2qU9kE>)
-
-![Rotmg - WR Void led by BigDort (5:42)](<https://www.youtube.com/watch?v=uvYRJ30DF5c>)
-
-![Rotmg - Bad players get world record Oryx 3 (2:29.39)](<https://www.youtube.com/watch?v=rgSjmhpQGM8>)
-
-![Oryx 3 - Gemsbok mini RotMG](<https://www.youtube.com/watch?v=fNIsiBib2jc>)
-
-![Oryx 3 - Beisa mini RotMG](<https://www.youtube.com/watch?v=eHdOlBJWA8Q>)
-
-![Oryx 3 - Leucoryx mini (with 3rd counter) RotMG](<https://www.youtube.com/watch?v=QiUTa-oDBxo>)
-
-![Oryx 3 - Dammah mini RotMG](<https://www.youtube.com/watch?v=-mdb-6HktkQ>)
-
-### Solo videos
-![out](<https://youtu.be/Psh3f2np4Ok?si=zOuCcC2gKdqe38fy&t=660>)
-
-![RotMG - lvl 1 Kitsune Umi gearless consumableless solo](<https://www.youtube.com/watch?v=IGowzviaTUA>)
-
-![RotMG Solo Plagued Nest WR (3:21)](<https://www.youtube.com/watch?v=mau4t3P7Hpw>)
-
-![RotMG - Secluded Thicket no-hit Solo](<https://www.youtube.com/watch?v=9CWy2cQJn34>)
-
-![RotMG - Murcian No Hit](<https://www.youtube.com/watch?v=-eOg3N7OKLY>)
-
-![my best t8 petless solo void run](<https://youtu.be/mJUmuELLeYc&t=485>)
-
-# **Overview of [lore](<04 Lore.md>) and [lore-relevant gameplay things](<00 Executive Summary.md>)**
+# **Overview of [lore](<04 Lore.md>) and [lore-relevant gameplay things](<01 Executive Summary.md>)**
 **<u>The lore is entirely shaped by the gameplay</u>**.
 #### **Gameplay things that shape the lore**
 - Safe hubs (similar to RotMG's nexus) ^safe-hubs

@@ -13,23 +13,23 @@ namespace SpacetimeDB.Types
     [DataContract]
     public sealed partial class InventorySlot
     {
-        [DataMember(Name = "allowed_types")]
-        public System.Collections.Generic.List<ItemType> AllowedTypes;
+        [DataMember(Name = "allowed_slots")]
+        public System.Collections.Generic.List<EquipSlot> AllowedSlots;
         [DataMember(Name = "item_id")]
         public string? ItemId;
 
         public InventorySlot(
-            System.Collections.Generic.List<ItemType> AllowedTypes,
+            System.Collections.Generic.List<EquipSlot> AllowedSlots,
             string? ItemId
         )
         {
-            this.AllowedTypes = AllowedTypes;
+            this.AllowedSlots = AllowedSlots;
             this.ItemId = ItemId;
         }
 
         public InventorySlot()
         {
-            this.AllowedTypes = new();
+            this.AllowedSlots = new();
         }
     }
 }

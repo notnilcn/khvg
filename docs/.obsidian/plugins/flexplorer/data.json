@@ -5,6 +5,8 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "scripts",
+        "CLAUDE.md",
         "Game Design Docs",
         "Old Notes",
         "attachments",
@@ -1328,6 +1330,7 @@
     "Old Notes": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "Reasons to play the game",
         "Monetisation",
@@ -1335,8 +1338,7 @@
         "Dungeons, bosses, & enemies",
         "002 Game Development",
         "001 Explaining Game Code"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "Old Notes/001 Explaining Game Code": {
       "isPinned": false,
@@ -1789,22 +1791,22 @@
     "Game Design Docs": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
-        "00 Executive Summary.md",
-        "01 Art.md",
-        "Art",
+        "01 Executive Summary.md",
         "02 Gameplay.md",
-        "03 Classes.md",
+        "03 Class system, Item system, and Equipment system.md",
         "Classes",
         "04 Lore.md",
+        "Art",
         "05 Biomes.md",
         "99 (outdated) Game Design Document.md"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "Old Notes/Dungeons, bosses, & enemies": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "Puppet Master's Theatre ripoff.md",
         "Nest ripoff.md",
@@ -1813,8 +1815,7 @@
         "Fungal Cavern ripoff.md",
         "00 Dungeons & Bosses general notes.md",
         "01 Enemy AI.md"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "Old Notes/Dungeons, bosses, & enemies/01 Enemy AI.md": {
       "isPinned": false,
@@ -1847,11 +1848,11 @@
     "Old Notes/General Gameplay Loop": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "001 On Spawn.md",
         "000 On account creation.md"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "Old Notes/General Gameplay Loop/000 On account creation.md": {
       "isPinned": false,
@@ -1864,13 +1865,13 @@
     "Old Notes/Monetisation": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "Cosmetic Gacha.md",
         "Subscription to automatically collect daily login rewards.md",
         "Consumables.md",
         "Across account.md"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "Old Notes/Monetisation/Across account.md": {
       "isPinned": false,
@@ -1891,11 +1892,11 @@
     "Old Notes/Reasons to play the game": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "Build specialisation.md",
         "Group Coordination.md"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "Old Notes/Reasons to play the game/Group Coordination.md": {
       "isPinned": false,
@@ -1905,15 +1906,7 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Game Design Docs/00 Executive Summary.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "Game Design Docs/02 Gameplay.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/03 Classes.md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1932,12 +1925,12 @@
     "Game Design Docs/Art": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "Art style 2D.md",
         "Hollow Knight References.md",
         "Art style 3D.md"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "Game Design Docs/Art/Art style 3D.md": {
       "isPinned": false,
@@ -1954,96 +1947,31 @@
     "Game Design Docs/Classes": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
+        "Balancing details",
         "Other or Undeveloped",
-        "ART",
-        "DPS",
-        "SUP",
-        "00 Overview.md"
-      ],
-      "sortOrder": "custom"
-    },
-    "Game Design Docs/Classes/00 Overview.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/SUP": {
-      "isPinned": false,
-      "isHidden": false,
-      "customOrder": [
-        "thief (dex ≳ wis) & (sup ≳ dps).md",
-        "trickster (wis ≳ dex) & (sup).md",
-        "paladin (wis == str) & (sup ≳ dps).md",
-        "healer (wis) & (sup).md",
-        "tank (str) & (sup).md"
-      ],
-      "sortOrder": "custom"
-    },
-    "Game Design Docs/Classes/DPS": {
-      "isPinned": false,
-      "isHidden": false,
-      "customOrder": [
-        "warrior (str) & (dps).md",
-        "wizard (wis) & (dps).md",
-        "archer (dex ≳ (str == wis)) & (dps).md",
-        "(dex) & (dps).md"
-      ],
-      "sortOrder": "custom"
+        "ART"
+      ]
     },
     "Game Design Docs/Classes/ART": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "gatherer (str) & (art).md",
         "crafter (dex) & (str) & (art).md",
         "enchanter (wis) & (art).md"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "Game Design Docs/Classes/Other or Undeveloped": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "summoner.md",
         "sorcerer.md"
-      ],
-      "sortOrder": "custom"
-    },
-    "Game Design Docs/Classes/SUP/tank (str) & (sup).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/SUP/healer (wis) & (sup).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/SUP/paladin (wis == str) & (sup ≳ dps).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/SUP/trickster (wis ≳ dex) & (sup).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/SUP/thief (dex ≳ wis) & (sup ≳ dps).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/DPS/(dex) & (dps).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/DPS/archer (dex ≳ (str == wis)) & (dps).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/DPS/wizard (wis) & (dps).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/DPS/warrior (str) & (dps).md": {
-      "isPinned": false,
-      "isHidden": false
+      ]
     },
     "Game Design Docs/Classes/Other or Undeveloped/sorcerer.md": {
       "isPinned": false,
@@ -2065,7 +1993,39 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Game Design Docs/01 Art.md": {
+    "Game Design Docs/01 Executive Summary.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Classes/Balancing details": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "Overview.md"
+      ]
+    },
+    "Game Design Docs/Classes/Balancing details/Overview.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "CLAUDE.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "scripts": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "discord_sync.py"
+      ],
+      "sortOrder": "custom"
+    },
+    "scripts/discord_sync.py": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/03 Class system, Item system, and Equipment system.md": {
       "isPinned": false,
       "isHidden": false
     }

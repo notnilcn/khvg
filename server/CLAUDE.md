@@ -14,14 +14,20 @@
 - `methods.rs` — guards (`require_logged_in`, `require_in_world`, `require_in_lobby`, `is_admin`), stat/level math (`xp_for_level`, `compute_level`, `compute_base_stats`, `recompute_stats`), `compute_player_damage`/`compute_incoming_damage`, `scaffold_profile`, `find_profile_by_name`
 
 ### `world/`
-- `tables.rs` — `MapConfig`, `BuildingTile`, `TextureEntry`, item definitions (`Item`, `Weapon`, `Armor`, `Artifact`, `Accessory`, `Consumable`), `WeaponPattern`/`ItemType` enums
+- `tables.rs` — `MapConfig`, `BuildingTile`, `TextureEntry`, `TextureKind`, layering/adjacency/decor-ground rule tables
 - `reducers.rs` — `place_building`, `remove_building`
 - `methods.rs` — hex math: `world_to_hex`, `hex_to_world`, `small_to_big`, `hexmod`/`inv_hexmod`, `chunk_center_hex`, `world_to_chunk`, `wrap_world_pos`/`wrap_chunk_coords`, `spiral_chunk_index`, `surrounding_chunk_indices`
 
+### `item/`
+- `tables.rs` — static item catalog: `Item`, `Weapon`, `Armor`, `Artifact`, `Accessory`, `Consumable`, `WeaponPattern`/`ItemType`/`ArtifactEffect`/`ConsumableBuffEffect`/`ConsumableEffect` enums
+- `reducers.rs` — admin catalog reducers: `give_item`, `remove_item`, `upsert_item`
+- `views.rs` — `all_items`, `all_weapons`, `all_armor`, `all_artifacts`, `all_accessories`, `all_consumables`
+- `seeds.rs` — `seed_weapon`/`seed_armor`/`seed_artifact`/`seed_accessory`/`seed_consumable`, `seed_world_items`, `impl Seed for Item/Weapon/Armor/Artifact/Accessory/Consumable`
+
 ### `main/`
 - `lifecycle.rs` — `init`, `client_connected`, `client_disconnected`
-- `admin.rs` — admin-only reducers: `claim_admin`/`release_admin`, `change_stats`, `give_item`/`remove_item`, `upsert_texture_entry`/`upsert_item`/`upsert_enemy_template`, `spawn_enemy`/`despawn_enemy`, `add_chunks`/`clear_chunks`, `find_player_by_username`
-- `seeds.rs` — `seed_default_textures/enemies/items`, test boss seeds, seed-building helpers (`make_phase`, `make_sequence`, `seq_single`/`seq_repeat`/`seq_multi`, `multi_shot`)
+- `admin.rs` — admin-only reducers: `claim_admin`/`release_admin`, `change_stats`, `upsert_texture_entry`/`upsert_enemy_template`, `spawn_enemy`/`despawn_enemy`, `add_chunks`/`clear_chunks`, `find_player_by_username`
+- `seeds.rs` — `seed_default_textures/enemies`, test boss seeds, seed-building helpers (`make_phase`, `make_sequence`, `seq_single`/`seq_repeat`/`seq_multi`, `multi_shot`)
 - `debug.rs` — `PlayerPositionDebug` table + `tick_player_position_debug`, `toggle_debug`
 
 ---

@@ -8,20 +8,35 @@
         "type": "tabs",
         "children": [
           {
-            "id": "3b093b58be963569",
+            "id": "76d8f0015445b633",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Game Design Docs/01 Art.md",
+                "file": "Game Design Docs/01 Executive Summary.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01 Art"
+              "title": "01 Executive Summary"
+            }
+          },
+          {
+            "id": "cc0862031acb2e37",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Game Design Docs/01 Executive Summary.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "01 Executive Summary"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -164,13 +179,23 @@
               "icon": "lucide-list",
               "title": "Outline of Features to implement list"
             }
+          },
+          {
+            "id": "60af7437a2563ca7",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -184,42 +209,45 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "0232ad4a834a7c3a",
+  "active": "cc0862031acb2e37",
   "lastOpenFiles": [
-    "Game Design Docs/00 Executive Summary.md",
+    "Game Design Docs/02 Gameplay.md",
+    "Game Design Docs/03 Class system, Item system, and Equipment system.md",
+    "Game Design Docs/04 Lore.md",
+    "Game Design Docs/05 Biomes.md",
+    "Game Design Docs/01 Executive Summary.md",
+    "scripts/discord_sync.py.tmp.70616.fda9d26a137e",
+    "scripts/discord_sync.py.tmp.70616.45be1e90cdb6",
+    "New folder",
+    "scripts/discord_sync.py",
+    "scripts/discord-sync.py",
+    "scripts/CLAUDE.md",
+    "workflows",
+    "scripts",
+    "discord_sync",
+    "CLAUDE.md",
+    "Game Design Docs/CLAUDE.md",
+    "Game Design Docs/Classes/ART/gatherer (str) & (art).md",
+    "Game Design Docs/Classes/ART/crafter (dex) & (str) & (art).md",
+    "Game Design Docs/Classes/ART/enchanter (wis) & (art).md",
+    "Game Design Docs/Classes/SUP/Trickster (wis ≳ dex) & (sup).md",
+    "Game Design Docs/Classes/SUP/Tank (str) & (sup).md",
+    "Game Design Docs/Classes/SUP/Paladin (wis == str) & (sup ≳ dps).md",
+    "Game Design Docs/Classes/SUP/Healer (wis) & (sup).md",
+    "Game Design Docs/Classes/DPS/Wizard (wis) & (dps).md",
+    "Game Design Docs/Classes/DPS/Archer (dex) & (dps).md",
+    "Game Design Docs/Classes/DPS/Warrior (str) & (dps).md",
+    "Game Design Docs/Classes/Balancing details/Overview.md",
+    "Game Design Docs/Classes/Balancing details",
+    "Game Design Docs/Classes/SUP/thief (dex ≳ wis) & (sup ≳ dps).md",
+    "Game Design Docs/Classes/DPS/archer (dex ≳ (str == wis)) & (dps).md",
+    "Game Design Docs/Classes/00 Overview.md",
+    "Game Design Docs/99 (outdated) Game Design Document.md",
     "Game Design Docs/01 Art.md",
     "Game Design Docs/Art/Art style 2D.md",
     "Game Design Docs/Art/Art style 3D.md",
-    "Game Design Docs/Art/Hollow Knight References.md",
-    "Game Design Docs/99 (outdated) Game Design Document.md",
-    "README.md",
-    "00 Executive Summary.md",
-    "Game Design Docs/Classes/ART/gatherer (str) & (art).md",
-    "Game Design Docs/Classes/ART/crafter (dex) & (str) & (art).md",
-    "Game Design Docs/Classes/Other or Undeveloped/summoner.md",
-    "Game Design Docs/Classes/ART/enchanter (wis) & (art).md",
-    "Game Design Docs/Classes/Other or Undeveloped/sorcerer.md",
-    "Game Design Docs/Classes/DPS/warrior (str) & (dps).md",
-    "Game Design Docs/Classes/DPS/wizard (wis) & (dps).md",
-    "Game Design Docs/Classes/DPS/archer (dex ≳ (str == wis)) & (dps).md",
-    "Game Design Docs/Classes/DPS/(dex) & (dps).md",
-    "Game Design Docs/Classes/SUP/thief (dex ≳ wis) & (sup ≳ dps).md",
-    "Game Design Docs/Classes/SUP/trickster (wis ≳ dex) & (sup).md",
-    "Game Design Docs/Classes/SUP/paladin (wis == str) & (sup ≳ dps).md",
-    "Game Design Docs/Classes/SUP/healer (wis) & (sup).md",
-    "Game Design Docs/Classes/SUP/tank (str) & (sup).md",
     "Game Design Docs/Classes/Other or Undeveloped",
-    "Game Design Docs/Classes/ART",
-    "Game Design Docs/Classes/DPS",
-    "Game Design Docs/Classes/SUP",
-    "Game Design Docs/Classes/00 Overview.md",
-    "Game Design Docs/Classes",
-    "Game Design Docs/Art",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/zflpdhs2u7lg1.jpeg",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/subreddit-right-rail-client-css-5Lh6s9LI.css",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/suspense-CgVjpP8x.js.download",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/styles__ltr.css",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/saved_resource.html",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_xwfwyccwkz6a1.jpg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_sdj2v59z2gvf1.jpg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_sd2vb5hgol951.png",
@@ -228,9 +256,6 @@
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/nhisjil4u7lg1.jpeg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/itpwblkbu7lg1.jpeg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/how-to-perma-the-150atk-on-battle-god-seal.png",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/gYNzD9Alfqvo7JifgOpzRNFNOqf2CFzcirlQK_oqmCQ.png",
-    "Game Design Docs/05 Biomes.md",
-    "Game Design Docs/04 Lore.md",
-    "Game Design Docs/03 Classes.md"
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/gYNzD9Alfqvo7JifgOpzRNFNOqf2CFzcirlQK_oqmCQ.png"
   ]
 }

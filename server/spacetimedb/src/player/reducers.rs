@@ -5,6 +5,7 @@ use crate::world::methods::*;
 use crate::world::tables::*;
 use crate::player::tables::*;
 use crate::player::methods::*;
+use crate::item::tables::*;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 
@@ -156,10 +157,10 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
     let general_range = GENERAL_SLOT_START..GENERAL_SLOT_START + GENERAL_SLOT_COUNT;
     let target = inv.slots.iter().enumerate()
         .filter(|(i, _)| !general_range.contains(i))
-        .find(|(_, s)| s.item_id.is_none() && s.allowed_types.contains(&item.item_type))
+        .find(|(_, s)| s.item_id.is_none() && s.allowed_slots.contains(&item.equip_slot))
         .or_else(|| inv.slots.iter().enumerate()
             .skip(GENERAL_SLOT_START).take(GENERAL_SLOT_COUNT)
-            .find(|(_, s)| s.item_id.is_none() && s.allowed_types.contains(&item.item_type)))
+            .find(|(_, s)| s.item_id.is_none() && s.allowed_slots.contains(&item.equip_slot)))
         .map(|(i, _)| i)
         .ok_or("No suitable slot available.")?;
 
@@ -208,13 +209,13 @@ pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Resul
 
     if let Some(item_id) = &from.item_id {
         let item = ctx.db.item().item_id().find(item_id).ok_or("Item not found.")?;
-        if !to.allowed_types.contains(&item.item_type) {
+        if !to.allowed_slots.contains(&item.equip_slot) {
             return Err(format!("Item '{}' is not allowed in slot {}.", item_id, to_index));
         }
     }
     if let Some(item_id) = &to.item_id {
         let item = ctx.db.item().item_id().find(item_id).ok_or("Item not found.")?;
-        if !from.allowed_types.contains(&item.item_type) {
+        if !from.allowed_slots.contains(&item.equip_slot) {
             return Err(format!("Item '{}' is not allowed in slot {}.", item_id, from_index));
         }
     }
@@ -254,10 +255,9 @@ pub fn use_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
     let slot = inv.slots.get(slot_index).ok_or("Invalid slot index.")?;
     let item_id = slot.item_id.clone().ok_or("Slot is empty.")?;
     let item = ctx.db.item().item_id().find(&item_id).ok_or("Item not found.")?;
-    if item.item_type != ItemType::Consumable {
-        return Err("Only consumable items can be used.".to_string());
-    }
-    let consumable = ctx.db.consumable().consumable_id().find(&item_id).ok_or("Consumable data not found.")?;
+    let consumable = consumable_behavior(&item)
+        .ok_or("Only consumable items can be used.")?
+        .clone();
     apply_consumable_effect(ctx, profile_id, &consumable);
 
     let mut slots = inv.slots.clone();

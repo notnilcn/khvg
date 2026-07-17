@@ -1,0 +1,80 @@
+[gd_scene format=3 uid="uid://oq20q8miyvsa"]
+
+[ext_resource type="Script" uid="uid://bro3o5k5uwsye" path="res://Scripts/World/WorldRenderer3D.cs" id="1_1j568"]
+[ext_resource type="Script" uid="uid://dkpcix6ryvuwm" path="res://Scripts/World/HexGridOverlay3D.cs" id="1_5pobv"]
+[ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="2_rwaib"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_1j568"]
+[ext_resource type="PackedScene" uid="uid://bm6owd1yaoyxg" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_purple.tscn" id="3_03i3r"]
+[ext_resource type="PackedScene" uid="uid://765ipyrj6pyx" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_pink.tscn" id="4_bgqy3"]
+[ext_resource type="PackedScene" uid="uid://r8xdalncce6g" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grey.tscn" id="5_7lipw"]
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="5_30yqp"]
+[ext_resource type="Shader" uid="uid://bkpmcww3kos7g" path="res://Scripts/World/edge_detection.gdshader" id="9_bgqy3"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kqqpj"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_5pobv"]
+sky_material = SubResource("ProceduralSkyMaterial_kqqpj")
+
+[sub_resource type="Environment" id="Environment_e0ebs"]
+background_mode = 2
+sky = SubResource("Sky_5pobv")
+tonemap_mode = 2
+
+[sub_resource type="Resource" id="Resource_30yqp"]
+script = ExtResource("3_1j568")
+
+[sub_resource type="QuadMesh" id="QuadMesh_03i3r"]
+flip_faces = true
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7lipw"]
+shader = ExtResource("9_bgqy3")
+shader_parameter/edge_color = Color(0.4, 0.4, 0.4, 1)
+shader_parameter/resolution = Vector2(800, 600)
+
+[node name="World3D" type="Node3D" unique_id=1360330812]
+script = ExtResource("1_1j568")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1996365010]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=746145806]
+environment = SubResource("Environment_e0ebs")
+
+[node name="HexGridOverlay3D" type="Node3D" parent="." unique_id=494588043]
+script = ExtResource("1_5pobv")
+PurpleTileScene = ExtResource("3_03i3r")
+PinkTileScene = ExtResource("4_bgqy3")
+GreyTileScene = ExtResource("5_7lipw")
+TileScaleMultiplier = 0.8
+
+[node name="PhantomCamera3D" type="Node3D" parent="." unique_id=526330480]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
+script = ExtResource("2_rwaib")
+follow_mode = 6
+tween_resource = SubResource("Resource_30yqp")
+host_layers = 2
+follow_distance = 200.0
+spring_length = 200.0
+metadata/_custom_type_script = "uid://csjccrhj5wnx7"
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1778573569]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
+top_level = true
+
+[node name="PhantomCameraHost" type="Node" parent="Camera3D" unique_id=390949796]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("5_30yqp")
+host_layers = 2
+metadata/_custom_type_script = "uid://bd046eokvcnu2"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Camera3D" unique_id=1629275119]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 8.742278e-06, -200)
+visible = false
+extra_cull_margin = 16384.0
+mesh = SubResource("QuadMesh_03i3r")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("ShaderMaterial_7lipw")

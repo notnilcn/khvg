@@ -72,3 +72,7 @@ Reason for this is cus my world is going to be a hexagonal grid that wraps aroun
 I have no lore for this.
 I feel like it'd be boring if the torus world was linked to the apocalypse event. Maybe the world was always a torus and the inhabitants don't know any better so they just take it as fact.
 Maybe you could have like way points on hexagons in the inner-diameter. The in game lore reason for how the waypoints work is that they're going through the donut hole. Fits in with the current lore about how setting long range world teleportation is what destroyed the world; the hexagons that're on the inner diameter are closer together which means teleportation along the inner diameter won't be catastrophic.
+
+
+
+

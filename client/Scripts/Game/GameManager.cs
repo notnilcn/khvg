@@ -1,5 +1,6 @@
 #nullable enable
 using Godot;
+using PhantomCamera;
 using SpacetimeDB;
 using SpacetimeDB.Types;
 using System;
@@ -34,22 +35,20 @@ public partial class GameManager : Node
 	private readonly Dictionary<ulong, Drop> drops = new();
 	private readonly Dictionary<string, string> textureCache = new();
 	private readonly Dictionary<string, SpacetimeDB.Types.Item> itemCache = new();
-	private readonly Dictionary<string, SpacetimeDB.Types.Weapon> weaponCache = new();
-	private readonly Dictionary<string, SpacetimeDB.Types.Armor> armorCache = new();
-	private readonly Dictionary<string, SpacetimeDB.Types.Artifact> artifactCache = new();
-	private readonly Dictionary<string, SpacetimeDB.Types.Accessory> accessoryCache = new();
-	private readonly Dictionary<string, SpacetimeDB.Types.Consumable> consumableCache = new();
 
 	private CanvasLayer? lobbyLayer;
 	private Button? joinButton;
 	private SubscriptionHandle? lobbySub;
 	private SubscriptionHandle? gameSub;
+	private PhantomCamera2D? _mainMenuPCam2D;
 
 	public override void _Ready()
 	{
 		if (Instance != null) return;
 		Instance = this;
 		Connect(Host, DbName);
+		var mainMenuPCam2D = GetNode<Node2D>("%MainMenuPhantomCamera2D");
+		_mainMenuPCam2D = mainMenuPCam2D.AsPhantomCamera2D();
 		ShowLobby();
 		AddChild(new DebugOverlay());
 		if (Conn == null) return;
@@ -60,7 +59,7 @@ public partial class GameManager : Node
 			profile_panel.GetNode<Label>("ID").Text = profile.ProfileId.ToString();
 			profile_panel.GetNode<Button>("Join").Pressed += () => OnJoinPressed(profile);
 			profile_panel.GetNode<Button>("Delete").Pressed += () => OnDeletePressed(profile);
-			GetNode("CharSlots/ScrollContainer/VBoxContainer").AddChild(profile_panel);
+			GetNode("%CharSlots/ScrollContainer/VBoxContainer").AddChild(profile_panel);
 			GD.Print($"Successfully synced a profile: {profile.ProfileName}, TextureID: {profile.TextureId}");
 		};
 	}
@@ -73,18 +72,22 @@ public partial class GameManager : Node
 	// ── Lobby ─────────────────────────────────────────────────────────────────
 
 	public void ShowLobby()
-	{
-		GetNode<Control>("CharSlots").Show();
+    {
+        GetNode<Control>("%CharSlots").Show();
+		if (_mainMenuPCam2D == null) return;
+		_mainMenuPCam2D.Priority = 60;
 	}
 
 	private void HideLobby()
 	{
-		GetNode<Control>("CharSlots").Hide();
+		GetNode<Control>("%CharSlots").Hide();
+		if (_mainMenuPCam2D == null) return;
+		_mainMenuPCam2D.Priority = 0;
 	}
 
 	private void OnJoinPressed(PlayerProfile profile)
 	{
-		if (Conn == null || GetNode<Control>("CharSlots/CreateProfilePanel").Visible) return;
+		if (Conn == null || GetNode<Control>("%CharSlots/CreateProfilePanel").Visible) return;
 		// var profile = Conn.Db.LocalPlayerProfiles.Iter()
 		// 	.FirstOrDefault(p => p.ProfileName == "Knight");
 		// if (profile == null)
@@ -101,23 +104,23 @@ public partial class GameManager : Node
 
 	private void OnDeletePressed(PlayerProfile profile)
 	{
-		if (Conn == null || GetNode<Control>("CharSlots/CreateProfilePanel").Visible) return;
+		if (Conn == null || GetNode<Control>("%CharSlots/CreateProfilePanel").Visible) return;
 		Conn.Reducers.DeleteProfile(profile.ProfileId);
-		foreach (Control x in GetNode<Control>("CharSlots/ScrollContainer/VBoxContainer").GetChildren()){
+		foreach (Control x in GetNode<Control>("%CharSlots/ScrollContainer/VBoxContainer").GetChildren()){
 			if (x.GetNode<Label>("ID").Text.ToInt() == (int)profile.ProfileId) x.QueueFree();
 		}
 	}
 
 	private void OnCreatePanelPressed()
 	{
-		GetNode<Control>("CharSlots/CreateProfilePanel").Visible = !GetNode<Control>("CharSlots/CreateProfilePanel").Visible;
+		GetNode<Control>("%CharSlots/CreateProfilePanel").Visible = !GetNode<Control>("%CharSlots/CreateProfilePanel").Visible;
 	}
 
 	private void OnCreatePressed()
 	{
-		if (Conn == null || !GetNode<Control>("CharSlots/CreateProfilePanel").Visible) return;
-		if (GetNode<LineEdit>("CharSlots/CreateProfilePanel/Panel/LineEdit").Text.Length > 0) Conn.Reducers.CreateProfile(GetNode<LineEdit>("CharSlots/CreateProfilePanel/Panel/LineEdit").Text, "Knight");
-		GetNode<Control>("CharSlots/CreateProfilePanel").Hide();
+		if (Conn == null || !GetNode<Control>("%CharSlots/CreateProfilePanel").Visible) return;
+		if (GetNode<LineEdit>("%CharSlots/CreateProfilePanel/Panel/LineEdit").Text.Length > 0) Conn.Reducers.CreateProfile(GetNode<LineEdit>("%CharSlots/CreateProfilePanel/Panel/LineEdit").Text, "Knight");
+		GetNode<Control>("%CharSlots/CreateProfilePanel").Hide();
 	}
 
 	// ── Connection ────────────────────────────────────────────────────────────
@@ -163,34 +166,9 @@ public partial class GameManager : Node
 		conn.Db.AllItems.OnUpdate += (_, _, item) => itemCache[item.ItemId] = item;
 		conn.Db.AllItems.OnDelete += (_, item) => itemCache.Remove(item.ItemId);
 
-		conn.Db.AllWeapons.OnInsert += (_, weapon) => weaponCache[weapon.WeaponId] = weapon;
-		conn.Db.AllWeapons.OnUpdate += (_, _, weapon) => weaponCache[weapon.WeaponId] = weapon;
-		conn.Db.AllWeapons.OnDelete += (_, weapon) => weaponCache.Remove(weapon.WeaponId);
-
-		conn.Db.AllArmor.OnInsert += (_, armor) => armorCache[armor.ArmorId] = armor;
-		conn.Db.AllArmor.OnUpdate += (_, _, armor) => armorCache[armor.ArmorId] = armor;
-		conn.Db.AllArmor.OnDelete += (_, armor) => armorCache.Remove(armor.ArmorId);
-
-		conn.Db.AllArtifacts.OnInsert += (_, artifact) => artifactCache[artifact.ArtifactId] = artifact;
-		conn.Db.AllArtifacts.OnUpdate += (_, _, artifact) => artifactCache[artifact.ArtifactId] = artifact;
-		conn.Db.AllArtifacts.OnDelete += (_, artifact) => artifactCache.Remove(artifact.ArtifactId);
-
-		conn.Db.AllAccessories.OnInsert += (_, accessory) => accessoryCache[accessory.AccessoryId] = accessory;
-		conn.Db.AllAccessories.OnUpdate += (_, _, accessory) => accessoryCache[accessory.AccessoryId] = accessory;
-		conn.Db.AllAccessories.OnDelete += (_, accessory) => accessoryCache.Remove(accessory.AccessoryId);
-
-		conn.Db.AllConsumables.OnInsert += (_, consumable) => consumableCache[consumable.ConsumableId] = consumable;
-		conn.Db.AllConsumables.OnUpdate += (_, _, consumable) => consumableCache[consumable.ConsumableId] = consumable;
-		conn.Db.AllConsumables.OnDelete += (_, consumable) => consumableCache.Remove(consumable.ConsumableId);
-
 		conn.SubscriptionBuilder()
 			.AddQuery(q => q.From.AllTextures())
 			.AddQuery(q => q.From.AllItems())
-			.AddQuery(q => q.From.AllWeapons())
-			.AddQuery(q => q.From.AllArmor())
-			.AddQuery(q => q.From.AllArtifacts())
-			.AddQuery(q => q.From.AllAccessories())
-			.AddQuery(q => q.From.AllConsumables())
 			.Subscribe();
 
 		SubscribeLobby();
@@ -292,8 +270,6 @@ public partial class GameManager : Node
 
 		ShowLobby();
 		SubscribeLobby();
-		var pcamNode = GetNode<Node2D>("%MainMenuPhantomCamera2D");
-		CameraController2D.Instance?.RegisterCamera(pcamNode);
 		gameSub?.Unsubscribe();
 		gameSub = null;
 	}
@@ -369,11 +345,6 @@ public partial class GameManager : Node
 		textureCache.TryGetValue(textureId, out var path) ? path : null;
 
 	public Item? GetItem(string itemId) => itemCache.TryGetValue(itemId, out var item) ? item : null;
-	public Weapon? GetWeapon(string itemId) => weaponCache.TryGetValue(itemId, out var weapon) ? weapon : null;
-	public Armor? GetArmor(string itemId) => armorCache.TryGetValue(itemId, out var armor) ? armor : null;
-	public Artifact? GetArtifact(string itemId) => artifactCache.TryGetValue(itemId, out var artifact) ? artifact : null;
-	public Accessory? GetAccessory(string itemId) => accessoryCache.TryGetValue(itemId, out var accessory) ? accessory : null;
-	public Consumable? GetConsumable(string itemId) => consumableCache.TryGetValue(itemId, out var consumable) ? consumable : null;
 
 	public override void _ExitTree()
 	{

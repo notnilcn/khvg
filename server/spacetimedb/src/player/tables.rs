@@ -1,10 +1,10 @@
 use spacetimedb::{table, SpacetimeType, Identity, Timestamp, ScheduleAt};
-use crate::world::tables::{ItemType, ConsumableBuffEffect};
+use crate::item::tables::{EquipSlot, StatModifier};
 use super::reducers::tick_active_consumable_effects;
 
 #[derive(SpacetimeType, Clone)]
 pub struct InventorySlot {
-    pub allowed_types: Vec<ItemType>,
+    pub allowed_slots: Vec<EquipSlot>,
     pub item_id: Option<String>,
 }
 
@@ -96,7 +96,7 @@ pub struct ActiveConsumableEffect {
     pub effect_id: u64,
     #[index(btree)]
     pub profile_id: u64,
-    pub effect: ConsumableBuffEffect,
+    pub modifier: StatModifier,
     pub remaining: f32,
 }
 

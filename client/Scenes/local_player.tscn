@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://kf13rwr5hlhp" path="res://Scripts/Players/Local/LocalPlayer.cs" id="1_h1vum"]
 [ext_resource type="Script" uid="uid://bddvxb8xqsltm" path="res://Scripts/Players/Local/LocalPlayerCombat.cs" id="2_h1vum"]
+[ext_resource type="PackedScene" uid="uid://cykergoh5hpjr" path="res://Assets/3D/characters/Knight.fbx" id="2_tfukw"]
 [ext_resource type="Script" uid="uid://qxrq17k705ef" path="res://Scripts/Players/Local/LocalPlayerInventory.cs" id="3_b1nyi"]
 [ext_resource type="Script" uid="uid://701vhi4srkpg" path="res://Scripts/Players/Local/InventorySlotUI.cs" id="4_7ophi"]
 [ext_resource type="Script" uid="uid://blemhphivh11e" path="res://Scripts/Players/Local/PlayerStatsSidebar.cs" id="5_rmvjh"]
@@ -69,6 +70,7 @@ duration = 0.0
 
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
+KnightScene = ExtResource("2_tfukw")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=170833701]
 scale = Vector2(0.5, 0.5)
@@ -1066,7 +1068,6 @@ pivot_offset = Vector2(10, 10)
 unique_name_in_owner = true
 top_level = true
 script = ExtResource("7_g7ri8")
-priority = 60
 follow_mode = 2
 follow_target = NodePath("../BulletCollider")
 tween_resource = SubResource("Resource_0dny4")

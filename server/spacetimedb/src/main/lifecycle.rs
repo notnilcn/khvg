@@ -4,8 +4,9 @@ use crate::main::global::*;
 use crate::world::methods::*;
 use crate::player::tables::*;
 use crate::enemy::instance_tables::*;
-use super::seeds::{seed_default_textures, seed_layering_rules, seed_adjacency_rules, seed_decor_ground_rules, seed_default_enemies, seed_world_items, seed_world_defs, seed_test_boss_p2, seed_test_boss_p3, seed_test_boss_p4, seed_test_boss_p5, seed_test_boss_p6};
+use super::seeds::{seed_default_textures, seed_layering_rules, seed_adjacency_rules, seed_decor_ground_rules, seed_default_enemies, seed_world_defs, seed_test_boss_p2, seed_test_boss_p3, seed_test_boss_p4, seed_test_boss_p5, seed_test_boss_p6};
 use super::admin::internal_add_chunks;
+use crate::item::seeds::seed_world_items;
 
 #[spacetimedb::reducer(init)]
 pub fn init(ctx: &ReducerContext) {

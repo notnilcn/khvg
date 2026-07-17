@@ -8,11 +8,6 @@ public class ResolvedSlot
 {
 	public InventorySlot? Slot { get; init; }
 	public Item? Item { get; init; }
-	public Weapon? Weapon { get; init; }
-	public Artifact? Artifact { get; init; }
-	public Consumable? Consumable { get; init; }
-	public Armor? Armor { get; init; }
-	public Accessory? Accessory { get; init; }
 	public bool IsEmpty => Item == null;
 }
 
@@ -21,6 +16,7 @@ public partial class LocalPlayer : CharacterBody2D
 	[Signal] public delegate void InventoryChangedEventHandler();
 	[Signal] public delegate void AimSettingsChangedEventHandler();
 	[Signal] public delegate void StatsChangedEventHandler();
+	[Export] public PackedScene? KnightScene { get; set; }
 
 	public static LocalPlayer? Local { get; private set; }
 
@@ -41,40 +37,45 @@ public partial class LocalPlayer : CharacterBody2D
 	private const float WrapSnapThreshold = 50f;
 
 	private readonly List<InventorySlot> inventorySlots = new();
-
+	private CharacterModel3D? _model3D;
 	private AnimatedSprite2D sprite = null!;
 	private Area2D bulletCollider = null!;
 	private float reportTimer = 0f;
 	private const float ReportInterval = 0.1f;
 
 	// Slot 0: weapon only
-	public Weapon? EquippedWeapon => GetSlotItem(0, GameManager.Instance.GetWeapon);
+	public Item? EquippedWeapon => GetSlotItem(0, GameManager.Instance.GetItem);
 
 	// Slots 1-4: consumables only hotbar
-	public IReadOnlyList<Consumable?> HotbarSlots => BuildTypedSlots(1, 4, GameManager.Instance.GetConsumable);
+	public IReadOnlyList<Item?> HotbarSlots => BuildTypedSlots(1, 4, GameManager.Instance.GetItem);
 
 	// Slots 5-8: accessories only
-	public IReadOnlyList<Accessory?> AccessorySlots => BuildTypedSlots(5, 4, GameManager.Instance.GetAccessory);
+	public IReadOnlyList<Item?> AccessorySlots => BuildTypedSlots(5, 4, GameManager.Instance.GetItem);
 
 	// Slots 9-12: armor only
-	public IReadOnlyList<Armor?> ArmorSlots => BuildTypedSlots(9, 4, GameManager.Instance.GetArmor);
+	public IReadOnlyList<Item?> ArmorSlots => BuildTypedSlots(9, 4, GameManager.Instance.GetItem);
 
 	// Slots 13-14: artifact only
-	public IReadOnlyList<Artifact?> ArtifactSlots => BuildTypedSlots(13, 2, GameManager.Instance.GetArtifact);
+	public IReadOnlyList<Item?> ArtifactSlots => BuildTypedSlots(13, 2, GameManager.Instance.GetItem);
 
 	// Slots 15-22: general mixed
 	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(15, 8);
-
-	//public Bag? GetSlotItem(0, GameManager.Instance.GetWeapon);
 
 	public override void _Ready()
 	{
 		Local  = this;
 		sprite = GetNode<AnimatedSprite2D>("Sprite");
 		bulletCollider = GetNode<Area2D>("BulletCollider");
+		var worldRenderer3D = WorldRenderer3D.Instance;
+		if (KnightScene != null && worldRenderer3D != null)
+		{
+			_model3D = new CharacterModel3D(KnightScene, GlobalPosition, worldRenderer3D);
+			worldRenderer3D.SetCameraFollowTarget(_model3D.Node);
+		}
 
 		var pcamNode = GetNode<Node2D>("%LocalPlayerPhantomCamera2D");
 		CameraController2D.Instance?.RegisterCamera(pcamNode);
+		
 
 		var conn = GameManager.Instance.Conn;
 		if (conn == null) return;
@@ -102,14 +103,14 @@ public partial class LocalPlayer : CharacterBody2D
 			if (resPath != null)
 				sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
 			EmitSignal("AimSettingsChanged");
-		}	
+		}
 	}
 
 
 	public override void _PhysicsProcess(double delta)
 	{
 		var raw = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
-		float yaw  = CameraController2D.Instance?.GetRotationOffset() ?? 0f;
+		float yaw  = CameraRig.Instance?.Yaw ?? 0f;
 		var rot2d = new Vector2(raw.X, raw.Y).Rotated(yaw);
 		var input = new Vector2(rot2d.X, rot2d.Y);
 
@@ -124,6 +125,7 @@ public partial class LocalPlayer : CharacterBody2D
 
 
 		MoveAndSlide();
+		_model3D?.SyncFrom2D(GlobalPosition, Rotation);
 
 		if (sprite.SpriteFrames != null)
 			sprite.Play(input != Vector2.Zero ? "Walk" : "Idle");
@@ -198,16 +200,7 @@ public partial class LocalPlayer : CharacterBody2D
 		var slot = inventorySlots[index];
 		if (slot.ItemId == null) return new ResolvedSlot { Slot = slot };
 		var item = GameManager.Instance.GetItem(slot.ItemId);
-		if (item == null) return new ResolvedSlot { Slot = slot };
-		return new ResolvedSlot {
-			Slot       = slot,
-			Item       = item,
-			Weapon     = item.ItemType == ItemType.Weapon     ? GameManager.Instance.GetWeapon(slot.ItemId)     : null,
-			Artifact   = item.ItemType == ItemType.Artifact   ? GameManager.Instance.GetArtifact(slot.ItemId)   : null,
-			Consumable = item.ItemType == ItemType.Consumable ? GameManager.Instance.GetConsumable(slot.ItemId) : null,
-			Armor      = item.ItemType == ItemType.Armor      ? GameManager.Instance.GetArmor(slot.ItemId)      : null,
-			Accessory  = item.ItemType == ItemType.Accessory  ? GameManager.Instance.GetAccessory(slot.ItemId)  : null,
-		};
+		return new ResolvedSlot { Slot = slot, Item = item };
 	}
 
 	private T? GetSlotItem<T>(int index, System.Func<string, T?> resolver) where T : class
@@ -229,5 +222,7 @@ public partial class LocalPlayer : CharacterBody2D
 		conn.Db.LocalPlayerPosition.OnUpdate        -= OnPositionUpdate;
 		conn.Db.LocalPlayerInventory.OnUpdate       -= OnInventoryUpdate;
 		conn.Db.LocalPlayerActiveProfile.OnUpdate   -= OnActiveProfileUpdate;
+		_model3D?.Dispose();
+		WorldRenderer3D.Instance?.ClearCameraFollowTarget();
 	}
 }
