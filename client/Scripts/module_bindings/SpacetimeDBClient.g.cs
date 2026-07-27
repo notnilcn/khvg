@@ -28,6 +28,7 @@ namespace SpacetimeDB.Types
         public RemoteTables(DbConnection conn)
         {
             AddTable(ActiveConsumableEffect = new(conn));
+            AddTable(AllEnchantments = new(conn));
             AddTable(AllItems = new(conn));
             AddTable(AllTextures = new(conn));
             AddTable(BaseAdjacencyRule = new(conn));
@@ -37,6 +38,7 @@ namespace SpacetimeDB.Types
             AddTable(BuildingTile = new(conn));
             AddTable(BulletPatternEvent = new(conn));
             AddTable(DecorGroundRule = new(conn));
+            AddTable(Enchantment = new(conn));
             AddTable(Enemy = new(conn));
             AddTable(EnemyAttack = new(conn));
             AddTable(EnemyBehavior = new(conn));
@@ -576,6 +578,7 @@ namespace SpacetimeDB.Types
         internal static string[] AllTablesSqlQueries() => new string[]
         {
             new QueryBuilder().From.ActiveConsumableEffect().ToSql(),
+            new QueryBuilder().From.AllEnchantments().ToSql(),
             new QueryBuilder().From.AllItems().ToSql(),
             new QueryBuilder().From.AllTextures().ToSql(),
             new QueryBuilder().From.BaseAdjacencyRule().ToSql(),
@@ -585,6 +588,7 @@ namespace SpacetimeDB.Types
             new QueryBuilder().From.BuildingTile().ToSql(),
             new QueryBuilder().From.BulletPatternEvent().ToSql(),
             new QueryBuilder().From.DecorGroundRule().ToSql(),
+            new QueryBuilder().From.Enchantment().ToSql(),
             new QueryBuilder().From.Enemy().ToSql(),
             new QueryBuilder().From.EnemyAttack().ToSql(),
             new QueryBuilder().From.EnemyBehavior().ToSql(),
@@ -634,6 +638,7 @@ namespace SpacetimeDB.Types
     public sealed class From
     {
         public global::SpacetimeDB.Table<ActiveConsumableEffect, ActiveConsumableEffectCols, ActiveConsumableEffectIxCols> ActiveConsumableEffect() => new("active_consumable_effect", new ActiveConsumableEffectCols("active_consumable_effect"), new ActiveConsumableEffectIxCols("active_consumable_effect"));
+        public global::SpacetimeDB.Table<Enchantment, AllEnchantmentsCols, AllEnchantmentsIxCols> AllEnchantments() => new("all_enchantments", new AllEnchantmentsCols("all_enchantments"), new AllEnchantmentsIxCols("all_enchantments"));
         public global::SpacetimeDB.Table<Item, AllItemsCols, AllItemsIxCols> AllItems() => new("all_items", new AllItemsCols("all_items"), new AllItemsIxCols("all_items"));
         public global::SpacetimeDB.Table<TextureEntry, AllTexturesCols, AllTexturesIxCols> AllTextures() => new("all_textures", new AllTexturesCols("all_textures"), new AllTexturesIxCols("all_textures"));
         public global::SpacetimeDB.Table<BaseAdjacencyRule, BaseAdjacencyRuleCols, BaseAdjacencyRuleIxCols> BaseAdjacencyRule() => new("base_adjacency_rule", new BaseAdjacencyRuleCols("base_adjacency_rule"), new BaseAdjacencyRuleIxCols("base_adjacency_rule"));
@@ -643,6 +648,7 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Table<BuildingTile, BuildingTileCols, BuildingTileIxCols> BuildingTile() => new("building_tile", new BuildingTileCols("building_tile"), new BuildingTileIxCols("building_tile"));
         public global::SpacetimeDB.Table<BulletPatternEvent, BulletPatternEventCols, BulletPatternEventIxCols> BulletPatternEvent() => new("bullet_pattern_event", new BulletPatternEventCols("bullet_pattern_event"), new BulletPatternEventIxCols("bullet_pattern_event"));
         public global::SpacetimeDB.Table<DecorGroundRule, DecorGroundRuleCols, DecorGroundRuleIxCols> DecorGroundRule() => new("decor_ground_rule", new DecorGroundRuleCols("decor_ground_rule"), new DecorGroundRuleIxCols("decor_ground_rule"));
+        public global::SpacetimeDB.Table<Enchantment, EnchantmentCols, EnchantmentIxCols> Enchantment() => new("enchantment", new EnchantmentCols("enchantment"), new EnchantmentIxCols("enchantment"));
         public global::SpacetimeDB.Table<Enemy, EnemyCols, EnemyIxCols> Enemy() => new("enemy", new EnemyCols("enemy"), new EnemyIxCols("enemy"));
         public global::SpacetimeDB.Table<EnemyAttack, EnemyAttackCols, EnemyAttackIxCols> EnemyAttack() => new("enemy_attack", new EnemyAttackCols("enemy_attack"), new EnemyAttackIxCols("enemy_attack"));
         public global::SpacetimeDB.Table<EnemyBehavior, EnemyBehaviorCols, EnemyBehaviorIxCols> EnemyBehavior() => new("enemy_behavior", new EnemyBehaviorCols("enemy_behavior"), new EnemyBehaviorIxCols("enemy_behavior"));
@@ -767,6 +773,7 @@ namespace SpacetimeDB.Types
             return reducer switch
             {
                 Reducer.AddChunks args => Reducers.InvokeAddChunks(eventContext, args),
+                Reducer.ApplyEnchantment args => Reducers.InvokeApplyEnchantment(eventContext, args),
                 Reducer.ChangeStats args => Reducers.InvokeChangeStats(eventContext, args),
                 Reducer.ClaimAdmin args => Reducers.InvokeClaimAdmin(eventContext, args),
                 Reducer.ClearChunks args => Reducers.InvokeClearChunks(eventContext, args),
@@ -783,6 +790,7 @@ namespace SpacetimeDB.Types
                 Reducer.PlaceBuilding args => Reducers.InvokePlaceBuilding(eventContext, args),
                 Reducer.ReleaseAdmin args => Reducers.InvokeReleaseAdmin(eventContext, args),
                 Reducer.RemoveBuilding args => Reducers.InvokeRemoveBuilding(eventContext, args),
+                Reducer.RemoveEnchantment args => Reducers.InvokeRemoveEnchantment(eventContext, args),
                 Reducer.RemoveItem args => Reducers.InvokeRemoveItem(eventContext, args),
                 Reducer.ReportEnemyHit args => Reducers.InvokeReportEnemyHit(eventContext, args),
                 Reducer.ReportHit args => Reducers.InvokeReportHit(eventContext, args),
@@ -793,6 +801,7 @@ namespace SpacetimeDB.Types
                 Reducer.ToggleDebug args => Reducers.InvokeToggleDebug(eventContext, args),
                 Reducer.UpsertBiomeDef args => Reducers.InvokeUpsertBiomeDef(eventContext, args),
                 Reducer.UpsertBiomeRegionDef args => Reducers.InvokeUpsertBiomeRegionDef(eventContext, args),
+                Reducer.UpsertEnchantment args => Reducers.InvokeUpsertEnchantment(eventContext, args),
                 Reducer.UpsertEnemyTemplate args => Reducers.InvokeUpsertEnemyTemplate(eventContext, args),
                 Reducer.UpsertItem args => Reducers.InvokeUpsertItem(eventContext, args),
                 Reducer.UpsertTextureEntry args => Reducers.InvokeUpsertTextureEntry(eventContext, args),

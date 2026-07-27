@@ -4,9 +4,7 @@
 [ext_resource type="Script" uid="uid://dkpcix6ryvuwm" path="res://Scripts/World/HexGridOverlay3D.cs" id="1_5pobv"]
 [ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="2_rwaib"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_1j568"]
-[ext_resource type="PackedScene" uid="uid://bm6owd1yaoyxg" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_purple.tscn" id="3_03i3r"]
-[ext_resource type="PackedScene" uid="uid://765ipyrj6pyx" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_pink.tscn" id="4_bgqy3"]
-[ext_resource type="PackedScene" uid="uid://r8xdalncce6g" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grey.tscn" id="5_7lipw"]
+[ext_resource type="PackedScene" uid="uid://bh20s8vjtrd21" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grass.fbx" id="3_374ew"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="5_30yqp"]
 [ext_resource type="Shader" uid="uid://bkpmcww3kos7g" path="res://Scripts/World/edge_detection.gdshader" id="9_bgqy3"]
 
@@ -21,6 +19,65 @@ sky_material = SubResource("ProceduralSkyMaterial_kqqpj")
 background_mode = 2
 sky = SubResource("Sky_5pobv")
 tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kfxi6"]
+albedo_color = Color(0.29411766, 0, 1, 1)
+
+[sub_resource type="PackedScene" id="PackedScene_03i3r"]
+_bundled = {
+"base_scene": 0,
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array()],
+"names": PackedStringArray("hex_grass", "hex_grass", "surface_material_override/0"),
+"node_count": 2,
+"node_ids": PackedInt32Array(562220799, 5254225),
+"node_paths": [NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 2147483647, 0, -1, 0, 0, 1073741824, -1, 2147483647, 262145, -1, 1, 2, 1, 0),
+"variants": [ExtResource("3_374ew"), SubResource("StandardMaterial3D_kfxi6")],
+"version": 3
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ke0rt"]
+albedo_color = Color(1, 0, 1, 1)
+
+[sub_resource type="PackedScene" id="PackedScene_bgqy3"]
+_bundled = {
+"base_scene": 0,
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array()],
+"names": PackedStringArray("hex_grass", "hex_grass", "surface_material_override/0"),
+"node_count": 2,
+"node_ids": PackedInt32Array(562220799, 5254225),
+"node_paths": [NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 2147483647, 0, -1, 0, 0, 1073741824, -1, 2147483647, 262145, -1, 1, 2, 1, 0),
+"variants": [ExtResource("3_374ew"), SubResource("StandardMaterial3D_ke0rt")],
+"version": 3
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_8exd3"]
+albedo_color = Color(0.35692272, 0.35692272, 0.35692272, 1)
+rim_enabled = true
+rim = 0.0
+
+[sub_resource type="PackedScene" id="PackedScene_7lipw"]
+_bundled = {
+"base_scene": 0,
+"conn_count": 0,
+"conns": PackedInt32Array(),
+"editable_instances": [],
+"id_paths": [PackedInt32Array()],
+"names": PackedStringArray("hex_grass", "hex_grass", "surface_material_override/0"),
+"node_count": 2,
+"node_ids": PackedInt32Array(562220799, 5254225),
+"node_paths": [NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 2147483647, 0, -1, 0, 0, 1073741824, -1, 2147483647, 262145, -1, 1, 2, 1, 0),
+"variants": [ExtResource("3_374ew"), SubResource("StandardMaterial3D_8exd3")],
+"version": 3
+}
 
 [sub_resource type="Resource" id="Resource_30yqp"]
 script = ExtResource("3_1j568")
@@ -44,9 +101,9 @@ environment = SubResource("Environment_e0ebs")
 
 [node name="HexGridOverlay3D" type="Node3D" parent="." unique_id=494588043]
 script = ExtResource("1_5pobv")
-PurpleTileScene = ExtResource("3_03i3r")
-PinkTileScene = ExtResource("4_bgqy3")
-GreyTileScene = ExtResource("5_7lipw")
+PurpleTileScene = SubResource("PackedScene_03i3r")
+PinkTileScene = SubResource("PackedScene_bgqy3")
+GreyTileScene = SubResource("PackedScene_7lipw")
 TileScaleMultiplier = 0.8
 
 [node name="PhantomCamera3D" type="Node3D" parent="." unique_id=526330480]

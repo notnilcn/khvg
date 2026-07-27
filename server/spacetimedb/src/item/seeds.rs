@@ -15,6 +15,7 @@ pub fn seed_world_items(ctx: &ReducerContext) {
             StatModifier { stat: StatKind::Hp, amount: 15.0, mode: StatMode::Flat },
         ],
         behaviors: vec![],
+        max_enchantments: 2,
     });
 
     Item::seed(ctx, Item {
@@ -29,6 +30,7 @@ pub fn seed_world_items(ctx: &ReducerContext) {
             StatModifier { stat: StatKind::Speed, amount: 2.0, mode: StatMode::Flat },
         ],
         behaviors: vec![],
+        max_enchantments: 1,
     });
 
     Item::seed(ctx, Item {
@@ -41,6 +43,7 @@ pub fn seed_world_items(ctx: &ReducerContext) {
             StatModifier { stat: StatKind::Strength, amount: 5.0, mode: StatMode::Flat },
         ],
         behaviors: vec![],
+        max_enchantments: 3,
     });
 
     Item::seed(ctx, Item {
@@ -51,6 +54,7 @@ pub fn seed_world_items(ctx: &ReducerContext) {
         equip_slot: EquipSlot::Bag,
         stat_modifiers: vec![],
         behaviors: vec![],
+        max_enchantments: 0,
     });
 
     Item::seed(ctx, Item {
@@ -65,6 +69,7 @@ pub fn seed_world_items(ctx: &ReducerContext) {
             potency: 25.0,
             duration: 0.0,
         })],
+        max_enchantments: 0,
     });
 
     Item::seed(ctx, Item {
@@ -86,6 +91,64 @@ pub fn seed_world_items(ctx: &ReducerContext) {
             pattern: WeaponPattern::Triple,
             spread_angle: 0.35,
         })],
+        max_enchantments: 2,
+    });
+}
+
+pub fn seed_world_enchantments(ctx: &ReducerContext) {
+    Enchantment::seed(ctx, Enchantment {
+        enchantment_id: "bear".to_string(),
+        display_name: "Bear".to_string(),
+        description: "Grants the strength of a bear.".to_string(),
+        texture_id: "bear".to_string(),
+        stat_modifiers: vec![
+            StatModifier { stat: StatKind::Strength, amount: 3.0, mode: StatMode::Flat },
+        ],
+        allowed_slots: vec![EquipSlot::Armor, EquipSlot::Artifact],
+    });
+
+    Enchantment::seed(ctx, Enchantment {
+        enchantment_id: "swift".to_string(),
+        display_name: "Swift".to_string(),
+        description: "Lightens the wearer's step.".to_string(),
+        texture_id: "swift".to_string(),
+        stat_modifiers: vec![
+            StatModifier { stat: StatKind::Speed, amount: 2.0, mode: StatMode::Flat },
+        ],
+        allowed_slots: vec![EquipSlot::Weapon, EquipSlot::Artifact, EquipSlot::Armor, EquipSlot::Accessory, EquipSlot::Bag, EquipSlot::Consumable],
+    });
+
+    Enchantment::seed(ctx, Enchantment {
+        enchantment_id: "eagle_eye".to_string(),
+        display_name: "Eagle Eye".to_string(),
+        description: "Sharpens aim and reflexes.".to_string(),
+        texture_id: "eagle_eye".to_string(),
+        stat_modifiers: vec![
+            StatModifier { stat: StatKind::Dexterity, amount: 3.0, mode: StatMode::Flat },
+        ],
+        allowed_slots: vec![EquipSlot::Weapon, EquipSlot::Accessory],
+    });
+
+    Enchantment::seed(ctx, Enchantment {
+        enchantment_id: "iron_skin".to_string(),
+        display_name: "Iron Skin".to_string(),
+        description: "Hardens the body like iron.".to_string(),
+        texture_id: "iron_skin".to_string(),
+        stat_modifiers: vec![
+            StatModifier { stat: StatKind::Defense, amount: 2.0, mode: StatMode::Flat },
+        ],
+        allowed_slots: vec![EquipSlot::Armor],
+    });
+
+    Enchantment::seed(ctx, Enchantment {
+        enchantment_id: "vampiric".to_string(),
+        display_name: "Vampiric".to_string(),
+        description: "Drains a sliver of life from the world around you.".to_string(),
+        texture_id: "vampiric".to_string(),
+        stat_modifiers: vec![
+            StatModifier { stat: StatKind::Vitality, amount: 0.05, mode: StatMode::Mult },
+        ],
+        allowed_slots: vec![EquipSlot::Artifact],
     });
 }
 

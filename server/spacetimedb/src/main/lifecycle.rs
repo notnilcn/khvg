@@ -6,7 +6,7 @@ use crate::player::tables::*;
 use crate::enemy::instance_tables::*;
 use super::seeds::{seed_default_textures, seed_layering_rules, seed_adjacency_rules, seed_decor_ground_rules, seed_default_enemies, seed_world_defs, seed_test_boss_p2, seed_test_boss_p3, seed_test_boss_p4, seed_test_boss_p5, seed_test_boss_p6};
 use super::admin::internal_add_chunks;
-use crate::item::seeds::seed_world_items;
+use crate::item::seeds::{seed_world_items, seed_world_enchantments};
 
 #[spacetimedb::reducer(init)]
 pub fn init(ctx: &ReducerContext) {
@@ -33,6 +33,7 @@ pub fn init(ctx: &ReducerContext) {
     seed_test_boss_p5(ctx);
     seed_test_boss_p6(ctx);
     seed_world_items(ctx);
+    seed_world_enchantments(ctx);
     seed_world_defs(ctx);
     let _ = internal_add_chunks(ctx, DEFAULT_CHUNK_HEX_RADIUS, DEFAULT_CHUNK_COLS, DEFAULT_CHUNK_ROWS, DEFAULT_HEX_OUTER_RADIUS);
     let _ = internal_generate_world_proc(ctx, "Earth".to_string(), 0);

@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<!-- saved from url=(0063)https://www.redblobgames.com/grids/hexagons/implementation.html -->
+<html lang="en"><div id="in-page-channel-node-id" data-channel-name="in_page_channel_1TRPWI"></div><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+
+<title>Implementation of Hex Grids</title>
+<link rel="canonical" href="https://www.redblobgames.com/grids/hexagons/implementation.html">
+<!--DO NOT EDIT: generated from redblobgames/grids/hexagons/implementation.bxml-->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preload" as="image" href="https://www.redblobgames.com/img/transparent-blob.png">
+<link rel="alternate" type="application/atom+xml" title="Blog posts" href="https://www.redblobgames.com/blog/posts.xml">
+<meta name="theme-color" content="hsl(0,50%,45%)">
+<meta name="citation_title" content="Implementation of Hex Grids">
+<meta name="citation_author" content="Patel, Amit J.">
+<meta name="citation_publication_date" content="2015">
+<meta name="citation_technical_report_institution" content="Red Blob Games">
+<meta name="citation_fulltext_html_url" content="https://www.redblobgames.com/grids/hexagons/implementation.html">
+<meta property="og:title" content="Red Blob Games: Implementation of Hex Grids">
+<meta property="og:url" content="https://www.redblobgames.com/grids/hexagons/implementation.html">
+  <style>@keyframes slide-in-one-tap {
+  from {
+    transform: translateY(80px);
+  }
+  to {
+    transform: translateY(0px);
+  }
+}
+
+.trust-hide-gracefully {
+  opacity: 0;
+}
+
+.trust-wallet-one-tap .hidden {
+    display: none;
+  }
+
+.trust-wallet-one-tap .semibold {
+    font-weight: 500;
+  }
+
+.trust-wallet-one-tap .binance-plex {
+    font-family: 'Binance';
+  }
+
+.trust-wallet-one-tap .rounded-full {
+    border-radius: 50%;
+  }
+
+.trust-wallet-one-tap .flex {
+    display: flex;
+  }
+
+.trust-wallet-one-tap .flex-col {
+    flex-direction: column;
+  }
+
+.trust-wallet-one-tap .items-center {
+    align-items: center;
+  }
+
+.trust-wallet-one-tap .space-between {
+    justify-content: space-between;
+  }
+
+.trust-wallet-one-tap .justify-center {
+    justify-content: center;
+  }
+
+.trust-wallet-one-tap .w-full {
+    width: 100%;
+  }
+
+.trust-wallet-one-tap .box {
+    transition: all 0.5s cubic-bezier(0, 0, 0, 1.43);
+    animation: slide-in-one-tap 0.5s cubic-bezier(0, 0, 0, 1.43);
+    width: 384px;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.25);
+    position: fixed;
+    right: 30px;
+    bottom: 30px;
+    z-index: 1020;
+  }
+
+.trust-wallet-one-tap .header {
+    gap: 15px;
+    border-bottom: 1px solid #e6e6e6;
+    padding: 10px 18px;
+  }
+
+.trust-wallet-one-tap .header .left-items {
+      gap: 15px;
+    }
+
+.trust-wallet-one-tap .header .title {
+      color: #1e2329;
+      font-size: 18px;
+      font-weight: 600;
+      line-height: 28px;
+    }
+
+.trust-wallet-one-tap .header .subtitle {
+      color: #474d57;
+      font-size: 14px;
+      line-height: 20px;
+    }
+
+.trust-wallet-one-tap .header .close {
+      color: #1e2329;
+      cursor: pointer;
+    }
+
+.trust-wallet-one-tap .body {
+    padding: 9px 18px;
+    gap: 10px;
+  }
+
+.trust-wallet-one-tap .body .right-items {
+      gap: 10px;
+      width: 100%;
+    }
+
+.trust-wallet-one-tap .body .right-items .wallet-title {
+        color: #1e2329;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 20px;
+      }
+
+.trust-wallet-one-tap .body .right-items .wallet-subtitle {
+        color: #474d57;
+        font-size: 14px;
+        line-height: 20px;
+      }
+
+.trust-wallet-one-tap .connect-indicator {
+    gap: 15px;
+    padding: 8px 0;
+  }
+
+.trust-wallet-one-tap .connect-indicator .flow-icon {
+      color: #474d57;
+    }
+
+.trust-wallet-one-tap .loading-color {
+    color: #fff;
+  }
+
+.trust-wallet-one-tap .button {
+    border-radius: 50px;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    background-color: rgb(5, 0, 255);
+    border-color: rgb(229, 231, 235);
+    cursor: pointer;
+    text-align: center;
+    height: 45px;
+  }
+
+.trust-wallet-one-tap .button .button-text {
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      line-height: 20px;
+    }
+
+.trust-wallet-one-tap .footer {
+    margin: 20px 30px;
+  }
+
+.trust-wallet-one-tap .check-icon {
+    color: #fff;
+  }
+
+@font-face {
+  font-family: 'Binance';
+  src: url(chrome-extension://egjidjbpglichdcondbcbdnbeeppgdph/fonts/BinancePlex-Regular.otf) format('opentype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Binance';
+  src: url(chrome-extension://egjidjbpglichdcondbcbdnbeeppgdph/fonts/BinancePlex-Medium.otf) format('opentype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Binance';
+  src: url(chrome-extension://egjidjbpglichdcondbcbdnbeeppgdph/fonts/BinancePlex-SemiBold.otf) format('opentype');
+  font-weight: 600;
+  font-style: normal;
+}
+
+/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIndlYnBhY2s6Ly8uL2FwcC9zcmMvb25lVGFwL3N0eWxlLmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTtFQUNFO0lBQ0UsMkJBQTJCO0VBQzdCO0VBQ0E7SUFDRSwwQkFBMEI7RUFDNUI7QUFDRjs7QUFFQTtFQUNFLFVBQVU7QUFDWjs7QUFHRTtJQUNFLGFBQWE7RUFDZjs7QUFFQTtJQUNFLGdCQUFnQjtFQUNsQjs7QUFFQTtJQUNFLHNCQUFzQjtFQUN4Qjs7QUFFQTtJQUNFLGtCQUFrQjtFQUNwQjs7QUFFQTtJQUNFLGFBQWE7RUFDZjs7QUFFQTtJQUNFLHNCQUFzQjtFQUN4Qjs7QUFFQTtJQUNFLG1CQUFtQjtFQUNyQjs7QUFFQTtJQUNFLDhCQUE4QjtFQUNoQzs7QUFFQTtJQUNFLHVCQUF1QjtFQUN6Qjs7QUFFQTtJQUNFLFdBQVc7RUFDYjs7QUFFQTtJQUNFLGdEQUFnRDtJQUNoRCw0REFBNEQ7SUFDNUQsWUFBWTtJQUNaLG1CQUFtQjtJQUNuQixnQkFBZ0I7SUFDaEIsK0NBQStDO0lBQy9DLGVBQWU7SUFDZixXQUFXO0lBQ1gsWUFBWTtJQUNaLGFBQWE7RUFDZjs7QUFFQTtJQUNFLFNBQVM7SUFDVCxnQ0FBZ0M7SUFDaEMsa0JBQWtCO0VBdUJwQjs7QUFyQkU7TUFDRSxTQUFTO0lBQ1g7O0FBRUE7TUFDRSxjQUFjO01BQ2QsZUFBZTtNQUNmLGdCQUFnQjtNQUNoQixpQkFBaUI7SUFDbkI7O0FBRUE7TUFDRSxjQUFjO01BQ2QsZUFBZTtNQUNmLGlCQUFpQjtJQUNuQjs7QUFFQTtNQUNFLGNBQWM7TUFDZCxlQUFlO0lBQ2pCOztBQUdGO0lBQ0UsaUJBQWlCO0lBQ2pCLFNBQVM7RUFtQlg7O0FBakJFO01BQ0UsU0FBUztNQUNULFdBQVc7SUFjYjs7QUFaRTtRQUNFLGNBQWM7UUFDZCxlQUFlO1FBQ2YsZ0JBQWdCO1FBQ2hCLGlCQUFpQjtNQUNuQjs7QUFFQTtRQUNFLGNBQWM7UUFDZCxlQUFlO1FBQ2YsaUJBQWlCO01BQ25COztBQUlKO0lBQ0UsU0FBUztJQUNULGNBQWM7RUFLaEI7O0FBSEU7TUFDRSxjQUFjO0lBQ2hCOztBQUdGO0lBQ0UsV0FBVztFQUNiOztBQUVBO0lBQ0UsbUJBQW1CO0lBQ25CLDhCQUE4QjtJQUM5QixtQkFBbUI7SUFDbkIsZ0NBQWdDO0lBQ2hDLGdDQUFnQztJQUNoQyxlQUFlO0lBQ2Ysa0JBQWtCO0lBQ2xCLFlBQVk7RUFRZDs7QUFORTtNQUNFLFdBQVc7TUFDWCxlQUFlO01BQ2YsZ0JBQWdCO01BQ2hCLGlCQUFpQjtJQUNuQjs7QUFHRjtJQUNFLGlCQUFpQjtFQUNuQjs7QUFFQTtJQUNFLFdBQVc7RUFDYjs7QUFHRjtFQUNFLHNCQUFzQjtFQUN0QiwrREFBMEU7RUFDMUUsZ0JBQWdCO0VBQ2hCLGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLHNCQUFzQjtFQUN0QiwrREFBeUU7RUFDekUsZ0JBQWdCO0VBQ2hCLGtCQUFrQjtBQUNwQjs7QUFFQTtFQUNFLHNCQUFzQjtFQUN0QiwrREFBMkU7RUFDM0UsZ0JBQWdCO0VBQ2hCLGtCQUFrQjtBQUNwQiIsInNvdXJjZXNDb250ZW50IjpbIkBrZXlmcmFtZXMgc2xpZGUtaW4tb25lLXRhcCB7XG4gIGZyb20ge1xuICAgIHRyYW5zZm9ybTogdHJhbnNsYXRlWSg4MHB4KTtcbiAgfVxuICB0byB7XG4gICAgdHJhbnNmb3JtOiB0cmFuc2xhdGVZKDBweCk7XG4gIH1cbn1cblxuLnRydXN0LWhpZGUtZ3JhY2VmdWxseSB7XG4gIG9wYWNpdHk6IDA7XG59XG5cbi50cnVzdC13YWxsZXQtb25lLXRhcCB7XG4gIC5oaWRkZW4ge1xuICAgIGRpc3BsYXk6IG5vbmU7XG4gIH1cblxuICAuc2VtaWJvbGQge1xuICAgIGZvbnQtd2VpZ2h0OiA1MDA7XG4gIH1cblxuICAuYmluYW5jZS1wbGV4IHtcbiAgICBmb250LWZhbWlseTogJ0JpbmFuY2UnO1xuICB9XG5cbiAgLnJvdW5kZWQtZnVsbCB7XG4gICAgYm9yZGVyLXJhZGl1czogNTAlO1xuICB9XG5cbiAgLmZsZXgge1xuICAgIGRpc3BsYXk6IGZsZXg7XG4gIH1cblxuICAuZmxleC1jb2wge1xuICAgIGZsZXgtZGlyZWN0aW9uOiBjb2x1bW47XG4gIH1cblxuICAuaXRlbXMtY2VudGVyIHtcbiAgICBhbGlnbi1pdGVtczogY2VudGVyO1xuICB9XG5cbiAgLnNwYWNlLWJldHdlZW4ge1xuICAgIGp1c3RpZnktY29udGVudDogc3BhY2UtYmV0d2VlbjtcbiAgfVxuXG4gIC5qdXN0aWZ5LWNlbnRlciB7XG4gICAganVzdGlmeS1jb250ZW50OiBjZW50ZXI7XG4gIH1cblxuICAudy1mdWxsIHtcbiAgICB3aWR0aDogMTAwJTtcbiAgfVxuXG4gIC5ib3gge1xuICAgIHRyYW5zaXRpb246IGFsbCAwLjVzIGN1YmljLWJlemllcigwLCAwLCAwLCAxLjQzKTtcbiAgICBhbmltYXRpb246IHNsaWRlLWluLW9uZS10YXAgMC41cyBjdWJpYy1iZXppZXIoMCwgMCwgMCwgMS40Myk7XG4gICAgd2lkdGg6IDM4NHB4O1xuICAgIGJvcmRlci1yYWRpdXM6IDE1cHg7XG4gICAgYmFja2dyb3VuZDogI2ZmZjtcbiAgICBib3gtc2hhZG93OiAwcHggMnB4IDRweCAwcHggcmdiYSgwLCAwLCAwLCAwLjI1KTtcbiAgICBwb3NpdGlvbjogZml4ZWQ7XG4gICAgcmlnaHQ6IDMwcHg7XG4gICAgYm90dG9tOiAzMHB4O1xuICAgIHotaW5kZXg6IDEwMjA7XG4gIH1cblxuICAuaGVhZGVyIHtcbiAgICBnYXA6IDE1cHg7XG4gICAgYm9yZGVyLWJvdHRvbTogMXB4IHNvbGlkICNlNmU2ZTY7XG4gICAgcGFkZGluZzogMTBweCAxOHB4O1xuXG4gICAgLmxlZnQtaXRlbXMge1xuICAgICAgZ2FwOiAxNXB4O1xuICAgIH1cblxuICAgIC50aXRsZSB7XG4gICAgICBjb2xvcjogIzFlMjMyOTtcbiAgICAgIGZvbnQtc2l6ZTogMThweDtcbiAgICAgIGZvbnQtd2VpZ2h0OiA2MDA7XG4gICAgICBsaW5lLWhlaWdodDogMjhweDtcbiAgICB9XG5cbiAgICAuc3VidGl0bGUge1xuICAgICAgY29sb3I6ICM0NzRkNTc7XG4gICAgICBmb250LXNpemU6IDE0cHg7XG4gICAgICBsaW5lLWhlaWdodDogMjBweDtcbiAgICB9XG5cbiAgICAuY2xvc2Uge1xuICAgICAgY29sb3I6ICMxZTIzMjk7XG4gICAgICBjdXJzb3I6IHBvaW50ZXI7XG4gICAgfVxuICB9XG5cbiAgLmJvZHkge1xuICAgIHBhZGRpbmc6IDlweCAxOHB4O1xuICAgIGdhcDogMTBweDtcblxuICAgIC5yaWdodC1pdGVtcyB7XG4gICAgICBnYXA6IDEwcHg7XG4gICAgICB3aWR0aDogMTAwJTtcblxuICAgICAgLndhbGxldC10aXRsZSB7XG4gICAgICAgIGNvbG9yOiAjMWUyMzI5O1xuICAgICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICAgIGZvbnQtd2VpZ2h0OiA2MDA7XG4gICAgICAgIGxpbmUtaGVpZ2h0OiAyMHB4O1xuICAgICAgfVxuXG4gICAgICAud2FsbGV0LXN1YnRpdGxlIHtcbiAgICAgICAgY29sb3I6ICM0NzRkNTc7XG4gICAgICAgIGZvbnQtc2l6ZTogMTRweDtcbiAgICAgICAgbGluZS1oZWlnaHQ6IDIwcHg7XG4gICAgICB9XG4gICAgfVxuICB9XG5cbiAgLmNvbm5lY3QtaW5kaWNhdG9yIHtcbiAgICBnYXA6IDE1cHg7XG4gICAgcGFkZGluZzogOHB4IDA7XG5cbiAgICAuZmxvdy1pY29uIHtcbiAgICAgIGNvbG9yOiAjNDc0ZDU3O1xuICAgIH1cbiAgfVxuXG4gIC5sb2FkaW5nLWNvbG9yIHtcbiAgICBjb2xvcjogI2ZmZjtcbiAgfVxuXG4gIC5idXR0b24ge1xuICAgIGJvcmRlci1yYWRpdXM6IDUwcHg7XG4gICAgb3V0bGluZTogMnB4IHNvbGlkIHRyYW5zcGFyZW50O1xuICAgIG91dGxpbmUtb2Zmc2V0OiAycHg7XG4gICAgYmFja2dyb3VuZC1jb2xvcjogcmdiKDUsIDAsIDI1NSk7XG4gICAgYm9yZGVyLWNvbG9yOiByZ2IoMjI5LCAyMzEsIDIzNSk7XG4gICAgY3Vyc29yOiBwb2ludGVyO1xuICAgIHRleHQtYWxpZ246IGNlbnRlcjtcbiAgICBoZWlnaHQ6IDQ1cHg7XG5cbiAgICAuYnV0dG9uLXRleHQge1xuICAgICAgY29sb3I6ICNmZmY7XG4gICAgICBmb250LXNpemU6IDE2cHg7XG4gICAgICBmb250LXdlaWdodDogNjAwO1xuICAgICAgbGluZS1oZWlnaHQ6IDIwcHg7XG4gICAgfVxuICB9XG5cbiAgLmZvb3RlciB7XG4gICAgbWFyZ2luOiAyMHB4IDMwcHg7XG4gIH1cblxuICAuY2hlY2staWNvbiB7XG4gICAgY29sb3I6ICNmZmY7XG4gIH1cbn1cblxuQGZvbnQtZmFjZSB7XG4gIGZvbnQtZmFtaWx5OiAnQmluYW5jZSc7XG4gIHNyYzogdXJsKCcuL2ZvbnRzL2JpbmFuY2VQbGV4L0JpbmFuY2VQbGV4LVJlZ3VsYXIub3RmJykgZm9ybWF0KCdvcGVudHlwZScpO1xuICBmb250LXdlaWdodDogNDAwO1xuICBmb250LXN0eWxlOiBub3JtYWw7XG59XG5cbkBmb250LWZhY2Uge1xuICBmb250LWZhbWlseTogJ0JpbmFuY2UnO1xuICBzcmM6IHVybCgnLi9mb250cy9iaW5hbmNlUGxleC9CaW5hbmNlUGxleC1NZWRpdW0ub3RmJykgZm9ybWF0KCdvcGVudHlwZScpO1xuICBmb250LXdlaWdodDogNTAwO1xuICBmb250LXN0eWxlOiBub3JtYWw7XG59XG5cbkBmb250LWZhY2Uge1xuICBmb250LWZhbWlseTogJ0JpbmFuY2UnO1xuICBzcmM6IHVybCgnLi9mb250cy9iaW5hbmNlUGxleC9CaW5hbmNlUGxleC1TZW1pQm9sZC5vdGYnKSBmb3JtYXQoJ29wZW50eXBlJyk7XG4gIGZvbnQtd2VpZ2h0OiA2MDA7XG4gIGZvbnQtc3R5bGU6IG5vcm1hbDtcbn1cbiJdLCJzb3VyY2VSb290IjoiIn0= */</style><style>
+  .imageye-selected {
+    outline: 2px solid black !important;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5) !important;
+  }
+</style></head><body class="gameprog"><x:citation xmlns:x="http://local/" year="2015"></x:citation>
+<style>:root{--hue: 0}:root{--bgurl: url(/img/transparent-blob.png)}body{--serif: "Iowan Old Style", Cambria, Georgia, serif;--sans-serif: "Avenir Next", Candara, Ubuntu, "Fira Sans", system-ui, "Segoe UI", sans-serif;--monospace: "Roboto Mono", "Cascadia Mono", Consolas, monospace, "Segoe UI Symbol", Symbol;--body-width: calc(100vw - 2.25rem) ;--font-size: calc(.625rem + 1vw) ;--line-height: calc(1.5 * var(--font-size));font-family:var(--sans-serif);font-size:var(--font-size);font-size-adjust:ex-height .48;line-height:1.5em;min-height:95%}svg{font-size-adjust:none}@media(min-width:34.375em){body{--body-width: min(20.6rem + 33vw, 41.25rem);--font-size: calc(var(--body-width) / 33)}}main{font-family:var(--serif)}h1,h2,h3,h4,h5,h6,figcaption,.sans-serif{font-family:var(--sans-serif);text-wrap:balance;text-wrap:pretty}tt,code,kbd,samp,pre{font-family:var(--monospace);font-size:.9em}pre :is(tt,code,kbd,samp){font-size:unset}#table-of-contents{background-color:#fff;padding-left:1em;width:18em;float:right}#table-of-contents:after{clear:right}nav,#table-of-contents{font-family:var(--sans-serif);font-size:calc(var(--font-size) / 1.25);a{text-decoration-color:hsl(var(--hue),20%,90%)}}@media screen{header,section>h2{text-shadow:0px 2px 5px rgba(0,0,0,.8);text-rendering:optimizeLegibility}}h1{font-size:2em;margin:0;line-height:calc(1.5 * var(--line-height));.subheading{font-size:.5em;line-height:var(--line-height)}}sup,sub{position:relative;vertical-align:baseline;font-size:.75em;line-height:0;padding-left:.125em}sup{top:-.5em}sub{bottom:-.25em}details summary{cursor:pointer}*{box-sizing:border-box}html,body{margin:0;padding:0}html{background-color:#e4e4e0;color:#000}body{background-color:#fff;color:#333}header{display:block;text-align:center}header>h1{padding-top:var(--line-height)}@media screen{header,footer,.divider,section>h2{color:#fff;background-color:hsl(var(--hue),50%,45%);background-image:var(--bgurl),var(--bgurl),linear-gradient(180deg,hsl(var(--hue),50%,45%),hsl(var(--hue),75%,30%));background-position:0 0,16px 16px;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;a{color:hsl(var(--hue),40%,90%);background:unset;text-decoration:none;&:hover{background-color:#00000080;text-decoration:underline}}}}footer,.divider{a{text-decoration:underline}}main{margin-inline:0;padding-inline:0}section{margin:var(--line-height) 0}section>*{width:var(--body-width);max-width:100%}.comments{width:calc(1.5 * var(--body-width));max-width:100%}@media screen{.comments,.below-divider{background-color:#e6e6e5}}.comments{padding-bottom:1.25em;font-size:1em;.comment-author{text-shadow:1px 1px 3px #fff}}section>h2{--h2-margin: 3em;margin:var(--line-height) auto;padding:calc(var(--line-height) / 2 - 1px) 0;font-size:1.25em;width:calc(2 * var(--h2-margin) + var(--body-width));max-width:100%;>span{display:inline-block;margin-left:var(--h2-margin)}a.anchor{float:right;width:calc(var(--h2-margin));text-align:center;color:hsl(var(--hue),50%,45%)}&:hover a.anchor{color:hsl(var(--hue),20%,80%)}}h3{--h2-margin: 3em;margin:var(--line-height) auto;font-size:1.125em;a.anchor{float:right;width:calc(var(--h2-margin));text-align:center;color:hsl(var(--hue),20%,80%);@media(min-width:34.375em){margin-right:calc(0em - var(--h2-margin))}}}h4 a.anchor,h5 a.anchor,h6 a.anchor{padding-left:1em;color:hsl(var(--hue),20%,80%)}h3:hover a.anchor,h4:hover a.anchor,h5:hover a.anchor,h6:hover a.anchor{color:hsl(var(--hue),50%,40%)}header nav{display:block;ul{display:flex;flex-flow:row wrap;justify-content:center;line-height:1;margin:0;li{display:inline-block;padding:.1em .3em;text-align:center;flex:0 0 4em;align-self:center;white-space:nowrap;a{display:block;font-weight:700;text-decoration:none}}}}header,.divider,section>h2{border-bottom:1px solid #000}.divider,section>h2{border-top:1px solid #000}.divider{min-height:calc(2 * var(--line-height));text-align:center}.below-divider{padding-top:var(--line-height);border-bottom:1px solid black;>p:first-child{font-size:1.25em;text-align:center;margin-top:0}}footer{--footer-padding-y: calc(var(--line-height) / 2);--footer-padding-x: var(--font-size);padding:var(--footer-padding-y) var(--footer-padding-x);border-top:1px solid #000}footer>div>div>address{display:block}@media(min-width:50em){footer>div{margin:0 auto;display:flex;flex-flow:row wrap;justify-content:center;max-width:calc(2 * var(--body-width));width:calc(100vw - 2 * var(--footer-padding-x))}footer>div>div:nth-child(1){flex:0 1 20em;align-self:center;text-align:left}footer>div>div:nth-child(2){flex:1 1 20em;align-self:center;text-align:right}footer>div>div>p,footer>div>div>div{margin-top:0}}h2:target{animation:target-attention .4s 1;font-size:2em}@keyframes target-attention{0%{transform:scale(1.1)}to{transform:scale(1.1)}}div:target{border:1px dashed #888}kbd kbd{padding:.1em .4em;margin:0 .1em .2em;font-size:.75em;white-space:nowrap;background-color:#ddd;color:#242;border:1px solid rgba(0,0,0,.2);border-radius:.2em;box-shadow:inset 0 0 1px 1px #fff,0 2px #0000004d}samp,kbd{background-color:#f3f3f2}code,samp{color:#442}kbd{margin:0 .4em;color:#252}section li::marker{font-family:var(--sans-serif);color:hsl(var(--hue),50%,40%)}main ::target-text{background-color:hsl(var(--hue),20%,80%);color:#000}img{max-width:100%;height:auto;-ms-interpolation-mode:bicubic}section figcaption{font-size:.75em;line-height:1.1;text-align:center}a{color:hsl(var(--hue),50%,45%);text-decoration-color:hsl(var(--hue),20%,80%);text-underline-offset:.25em;&:hover{text-decoration:underline;text-decoration-color:hsl(var(--hue),50%,45%);background:hsla(var(--hue),50%,50%,.1)}}:focus-visible{outline-color:hsl(var(--hue),50%,45%)}.draft{font-family:var(--serif);font-size:calc(4 * var(--font-size));letter-spacing:-.1em;color:#eee;opacity:.5;text-align:center;transform:rotate(-5deg);line-height:1;position:absolute;top:0;height:0;left:25%;width:50%;pointer-events:none}@media(min-width:34.375em){section p,section li{hanging-punctuation:first last;hyphens:auto;hyphenate-limit-chars:7}code,kbd,pre{hyphens:none}}nav,.section-number,address,time{font-variant-numeric:oldstyle-nums}.w-auto,section>.w-auto{width:auto}.w-full,section>.w-full{width:100%}.w-150b,section>.w-150b{width:calc(1.5 * var(--body-width))}.select-none{user-select:none;-webkit-user-select:none}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-sm{font-size:.875em}.font-sans{font-family:var(--sans-serif)}.font-serif{font-family:var(--serif)}.font-mono{font-family:var(--monospace)}.normal-nums{font-variant-numeric:normal}.oldstyle-nums{font-variant-numeric:oldstyle-nums}p,figure,ul,ol{margin:var(--line-height) 0}header>*,section>*,footer>*,main>address,.comments{margin-inline:auto}figure{text-align:center;pre{text-align:left}img,svg,canvas{max-width:100%;touch-action:manipulation}}:is(li,dd)>:is(ul,ol,p){margin-block:0}dt{font-weight:700}pre{width:var(--body-width);max-width:100%;line-height:1.4;overflow:auto;border-block:1px solid #ccc;border-inline-width:0}footer pre{border-block:unset}pre.simple,.comments pre{overflow:auto;width:calc(var(--body-width) * 1.2);border:none;background:transparent;background-color:transparent;box-shadow:none}pre.snippet,pre.src{border-top-style:dashed;border-bottom-style:dashed}section>pre:only-child{padding-bottom:var(--font-size);border-bottom:1px solid rgba(0,0,0,.5)}blockquote{font-style:italic;text-wrap:balance}table.standard2024{font-family:var(--sans-serif);font-size:.875em;border:2px solid white;border-collapse:collapse;overflow-x:auto;th{background-color:#e8e8e3;border:2px solid white;padding:0 .5em}td{background-color:#fff;border:1px solid hsl(60,5%,95%);border-right-color:#babaab;padding:0 .5em}thead{border-bottom:2px solid hsl(60,10%,70%);th{background:linear-gradient(to top,#e8e8e3,#f4f4f1,#fafaf9)}}}table.standard{font-family:var(--sans-serif);font-size:.875em;border-block:2px solid hsl(var(--hue),10%,50%);border-collapse:collapse;overflow-x:auto;text-align:left;td,th{border-bottom:1px solid hsl(60,5%,95%);padding:0 .5em}:is(td,th):not(:last-child){border-right:1px solid hsl(60,10%,70%)}td{background-color:hsl(var(--hue),10%,97%);border-bottom-color:#fff}tbody,thead{border-bottom:2px solid hsl(var(--hue),10%,50%);vertical-align:bottom}tfoot{border-top:2px solid hsl(var(--hue),10%,50%);vertical-align:bottom}thead th{background:linear-gradient(to top,hsl(var(--hue),10%,85%),hsl(var(--hue),15%,87%),hsl(var(--hue),15%,90%));border-bottom:unset}tbody th{background-color:hsl(var(--hue),10%,95%);border-bottom:1px solid white}tr:hover :is(td,th){background-color:hsl(var(--hue),25%,93%)}}aside,p.note,div.note>p{width:calc(var(--body-width) - 2em);padding:1em;background:#eee;border:1px solid #ddd;box-shadow:0 8px 6px -6px #0006}tt,code{padding:0 2px}pre :is(tt,code){padding:unset}main>address,section>address,section>time{display:block;width:var(--body-width);max-width:100%;font-family:var(--sans-serif);text-align:right}form{margin:0}input{accent-color:hsl(var(--hue),50%,50%)}input[type=text]{max-width:100%;border:1px solid rgba(0,0,0,.7);background-color:#f8f8f4;color:#000;text-align:center;font-weight:700;&:focus{background-color:#fffff4}}input::placeholder{color:#aaa}input[type=search][name=q]{box-shadow:inset 0 .1em .3em #00000080;border-radius:.6em;padding:.3em .6em;border-width:0}button{touch-action:manipulation;cursor:pointer;user-select:none}.TODO{color:#bf4040;background:#e8e3e3;border:1px solid hsl(0,50%,50%);margin-left:.5ex}.DONE{color:#4040bf;background:#e3e3e8;border:1px solid hsl(240,50%,50%)}.src{.constant{font-style:oblique}.comment-delimiter,.nxml-comment-delimiter{color:#48f}.comment,.nxml-comment-content{color:#069}.builtin{color:#508b20}.warning{color:#c00}.function-name{color:#268bd2;font-weight:700}.variable-name{font-weight:700;color:#5c3d5c}.type{color:#6c71c4}.constant-face{color:#d33682}.doc{color:#666;background-color:#e2e6e8}.string{color:#888}.preprocessor{color:#859900}.negation-char,.sh-escaped-newline{color:red}.todo{color:#fff;background:#dc322f}.note{color:#fff;background:#2aa198}.hack{color:#fff;background:#859900}.operator{color:#000;font-weight:700}.paren{color:#a0a090;font-weight:700}.keyword{color:#679;font-weight:700}.minor-control-construct{color:#406abf;font-weight:700}.major-control-construct{color:#bf4040}}.src-cpp{.constant{color:#999}}.src-emacs-lisp{.paren{color:#c9c9c4}}.src-sh{.string,.comment{color:inherit}}.src-python{.highlight-indentation{border-right:2px solid #eeeeee}}.src-css{.css-selector{color:#478547}.css-property{color:#406abf}}.src-xml{.nxml-element-prefix{color:#bf40bf}.nxml-element-local-name{color:#406abf;font-weight:400}.nxml-attribute-local-name{color:#478547}.nxml-element-colon{color:#a3adc2}.nxml-tag-delimiter,.nxml-tag-slash{color:#9cabc9;font-weight:700}}table.standard td.left,table.standard th.left{text-align:left}table.standard td.center,table.standard th.center{text-align:center}table.standard td.right,table.standard th.right{text-align:right}@media screen{*[class^=section-number]{color:hsl(var(--hue),20%,50%)}h2 .section-number{display:inline-block;margin-left:0;padding-left:.5em;text-align:center;width:var(--h2-margin);color:hsl(var(--hue),50%,80%)}h2 .section-number+span{margin-left:0}h3>.section-number{float:left;text-align:center;width:2.7em;margin-right:.3em;color:hsl(var(--hue),25%,90%);background:hsl(var(--hue),50%,50%);background-image:var(--bgurl),var(--bgurl);background-position:0 0,16px 16px;border-radius:.25em;text-shadow:0px 2px 5px rgba(0,0,0,.8)}@media(min-width:34.375em){h3>.section-number{height:2em;margin-left:-3em;margin-top:-.3em;padding-top:.3em;border-block:1px solid black}h3>a.anchor{background:url(https://www.redblobgames.com/img/svg-blob-mini.svg) no-repeat center center;background-size:2cap 2cap}h3:hover>a.anchor{background:none}}}.print-endnote{display:none}@media print{@page{margin:.5in}body{--font-size: 14pt;--serif: "Book Antiqua", "Times New Roman", serif;--sans-serif: "Helvetica", sans-serif;--monospace: "Courier", "Courier New", monospace}h2,h3{page-break-after:avoid}figure{page-break-inside:avoid}p,li{orphans:5;widows:5}section p a,section li a{text-decoration:underline;text-decoration-color:#ddd}header nav,.comments{display:none}.print-endnote{display:unset}.print-endnote li{list-style-type:none;word-break:break-all}.print-endnote img{width:2.5em;vertical-align:bottom}}
+/*! CSS Copyright 2007-2026 by amitp@cs.stanford.edu (Amit J. Patel)  */
+/*! I don't mind if you copy my stylesheet.  However, I'd appreciate it if you gave me credit. */
+
+@media print{header::before{position:absolute;right:0;top:0;content:url(https://chart.apis.google.com/chart?chs=120x120&cht=qr&chl=https%3A%2F%2Fwww.redblobgames.com%2Fgrids%2Fhexagons%2Fimplementation.html);}}
+	  
+  figure { display: grid; grid-column-gap: 0.25em; grid: auto-flow / repeat(auto-fit, minmax(7em, 1fr)); }
+  canvas { background-color: hsl(60, 5%, 95%); border: 1px solid hsl(60, 5%, 90%); }
+</style>
+<script>function $l(s,e,d){d=document;if(d.location.hostname!='localhost'){e=d.createElement('script');e.async=true;e.src=s;e.dataset.timestamp=+new Date();d.body.appendChild(e)}}</script>
+
+
+<header><h1>Implementation of Hex Grids</h1>
+<div class="subheading">
+                &nbsp;from <a href="https://www.redblobgames.com/">Red Blob Games</a>
+</div>
+<nav><search><form action="https://www.google.com/search" target="_blank">
+<ul> <li><a href="https://www.redblobgames.com/">Home</a></li> <li><a href="https://www.redblobgames.com/blog/">Blog</a></li> <li><a href="https://pinboard.in/u:amitp/t:gamedev/">Links</a></li> <li><a href="https://bsky.app/profile/redblobgames.com">Bluesky</a></li> <li><a rel="me" href="http://www-cs-students.stanford.edu/~amitp/">About</a></li> <li>&nbsp;</li> <li><input type="search" name="q" placeholder="Search" size="8"></li>
+</ul>
+<input type="hidden" name="hq" value="site:www.redblobgames.com OR site:theory.stanford.edu/~amitp/ OR site:www-cs-students.stanford.edu/~amitp/ OR site:amitp.blogspot.com OR site:simblob.blogspot.com">
+</form></search></nav></header><main>
+<address> 6 May 2015</address>
+<nav id="table-of-contents" role="doc-toc">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents" role="doc-toc">
+<ul>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex">1. Hex coordinates</a>
+<ul>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-equality">1.1. Equality</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-arithmetic">1.2. Coordinate arithmetic</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-distance">1.3. Distance</a></li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#layout">2. Layout</a>
+<ul>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-to-pixel">2.1. Hex to screen</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#pixel-to-hex">2.2. Screen to hex</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-geometry">2.3. Drawing a hex</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#layout-examples">2.4. Layout examples</a></li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#fractionalhex">3. Fractional Hex</a>
+<ul>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#rounding">3.1. Hex rounding</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#line-drawing">3.2. Line drawing</a></li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#map">4. Map</a>
+<ul>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#map-storage">4.1. Map storage</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#map-shapes">4.2. Map shapes</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#map-optimized-storage">4.3. Optimized storage</a></li>
+</ul>
+</li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#rotation">5. Rotation</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#offset">6. Offset coordinates</a></li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#notes">7. Notes</a>
+<ul>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#cube-vs-axial">7.1. Cube vs Axial</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#cpp">7.2. C++</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#dynamic-typing">7.3. Python, Javascript</a></li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#code">8. Source Code</a>
+<ul>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#codegen">8.1. Code from this page</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party">8.2. Other libraries</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</nav>
+<section>
+
+
+<div class="note" id="org05a9cd2">
+<p>
+Note: this article is a companion guide to my <a href="https://www.redblobgames.com/grids/hexagons/">guide to hex grids</a>. The data structures and functions here implement the math and algorithms described on that page.
+</p>
+
+</div>
+
+<p>
+The <a href="https://www.redblobgames.com/grids/hexagons/">main page</a> covers the <em>theory</em> for hex grid algorithms and math. Now let’s write a library to handle hex grids. The first thing to think about is what the core concepts will be.
+</p>
+
+<ul class="org-ul">
+<li>Since most of the algorithms work with cube coordinates, I’ll need a data structure for cube coordinates, along with algorithms that work with them. I’ll call this the <strong>Hex</strong> class.</li>
+<li>For some games I want to show coordinates to the player, and those will probably <em>not</em> be cube, but instead axial or offset, so I’ll need a data structure for the player-visible coordinate system, as well as functions for converting back and forth. <em>Cube and axial are basically the same</em> so I’m not going to bother implementing a separate axial system, and I’ll reuse <strong>Hex</strong>. For offset coordinates, I’ll make a separate data structure <strong>Offset</strong>.</li>
+<li>A grid map will likely need additional storage for terrain, objects, units, etc. A 2D array can be used but it’s not always straightforward, so I’ll create a <strong>Map</strong> class for this.</li>
+<li>To draw hexes on the screen, I need a way to convert hex coordinates into screen space. I’ll call this the <strong>Layout</strong> class. The main article doesn’t cover some of the additional features I want:
+<ul class="org-ul">
+<li>Support y-axis pointing down (common in 2D libraries) as well as y-axis pointing up (common in 3D libraries). The main article only covers y-axis pointing down.</li>
+<li>Support stretched or squashed hexes, which are common with pixel graphics. The main article only supports equilateral hexes.</li>
+<li>Support the 0,0 hex being located on the screen anywhere. The main article always places the 0,0 hex at x=0, y=0.</li>
+</ul>
+</li>
+<li>I also need a way to convert mouse clicks and other pixel coordinates back into hex coordinates. I will put this into the <strong>Layout</strong> class. The same things I need to deal with for hex to screen (y-axis direction, stretch/squash, origin) have to be dealt with for screen to hex, so it makes sense to put them together.</li>
+<li>The main article doesn’t distinguish hexes that have integer coordinates from those with fractional coordinates. I’ll define a second class <strong>FractionalHex</strong> for the two algorithms where I want to have floating point coordinates: linear interpolation and rounding.</li>
+<li>Once I have coordinates and the <code>neighbors</code> function implemented I can use all <em>graph algorithms</em> including movement range and pathfinding. I cover pathfinding for graphs <a href="https://www.redblobgames.com/pathfinding/a-star/introduction.html">on another page</a> and won’t duplicate that code here.</li>
+</ul>
+
+<p>
+I’m going to use C++ for the code samples.
+</p>
+
+<div class="note" id="orgf9b373d">
+<p>
+You can <a href="https://www.redblobgames.com/grids/hexagons/implementation.html#code">download the code samples</a> in C++, Python, C#, Haxe, Java, JavaScript, TypeScript, Lua.  <strong>These samples are a “recipe”</strong> to use and adapt, as opposed to a ready-to-use library.  I also maintain a list of  <a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party">libraries</a> based on these recipes.
+</p>
+
+</div>
+</section>
+
+
+<section><h2 id="hex">
+<span class="section-number">&nbsp;1&nbsp; </span><span><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex">Hex coordinates</a></span><a class="anchor" href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex">#</a>
+</h2>
+<p>
+On the main page, I treat Cube and Axial systems separately. Cube coordinates derived from x,y,z cartesian coordinates, and use three axes q,r,s 120° apart, where q+r+s = 0. Axial coordinates have two axes q,r that are 120° apart.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">Hex</span> { <span class="comment-delimiter">// </span><span class="comment">Cube storage, cube constructor
+</span>    <span class="keyword">const</span> <span class="type">int</span> <span class="variable-name">q</span>, <span class="variable-name">r</span>, <span class="variable-name">s</span>;
+    <span class="function-name">Hex</span>(<span class="type">int</span> <span class="variable-name">q_</span>, <span class="type">int</span> <span class="variable-name">r_</span>, <span class="type">int</span> <span class="variable-name">s_</span>): q(q_), r(r_), s(s_) {
+        assert (q + r + s == 0);
+    }
+};
+</pre>
+</div>
+
+<p>
+Pretty simple. Here’s a class that stores axial coordinates internally, but uses cube coordinates for the interface:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">Hex</span> { <span class="comment-delimiter">// </span><span class="comment">Axial storage, cube constructor
+</span>    <span class="keyword">const</span> <span class="type">int</span> <span class="variable-name">q_</span>, <span class="variable-name">r_</span>;
+    <span class="function-name">Hex</span>(<span class="type">int</span> <span class="variable-name">q</span>, <span class="type">int</span> <span class="variable-name">r</span>, <span class="type">int</span> <span class="variable-name">s</span>): q_(q), r_(r) {
+        assert (q + r + s == 0);
+    }
+
+    <span class="keyword">inline</span> <span class="type">int</span> <span class="function-name">q</span>() { <span class="keyword">return</span> q_; }
+    <span class="keyword">inline</span> <span class="type">int</span> <span class="function-name">r</span>() { <span class="keyword">return</span> r_; }
+    <span class="keyword">inline</span> <span class="type">int</span> <span class="function-name">s</span>() { <span class="keyword">return</span> - q_ - r_; }
+};
+</pre>
+</div>
+
+<p>
+These two classes are effectively equivalent. The first one stores <code>s</code> explicitly and the second one uses accessors and calculates <code>s</code> when needed. <strong>Cube and Axial are essentially the same system</strong>, so I’m not going to write a separate class for each. However <strong>the labels on this page are different</strong>. On the main page, the axial/cube relationship is q→x, r→z, but here I am making q→q, r→r. And that means on the main page cube coordinates are (q, -q-r, r) but on this page cube coordinates are (q, r, -q-r). <em>This makes my two pages inconsistent</em> and I plan to update the main page to match this page.
+</p>
+
+<p>
+Yet another style is to calculate <code>s</code> in the constructor instead of passing it in:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">Hex</span> { <span class="comment-delimiter">// </span><span class="comment">Cube storage, axial constructor
+</span>    <span class="keyword">const</span> <span class="type">int</span> <span class="variable-name">q</span>, <span class="variable-name">r</span>, <span class="variable-name">s</span>;
+    <span class="function-name">Hex</span>(<span class="type">int</span> <span class="variable-name">q_</span>, <span class="type">int</span> <span class="variable-name">r_</span>): q(q_), r(r_), s(-q_ - r_) {}
+};
+</pre>
+</div>
+
+<p>
+An advantage of the axial constructor style is that more than half the time, you’re doing this anyway at the call site. You’ll have <code>q</code> and <code>r</code> and not <code>s</code>, so you’ll pass in <code>-q-r</code> for the third parameter. You can also combine this with the second style (axial storage), and store only <code>q</code> and <code>r</code>, and calculate <code>s</code> in an accessor.
+</p>
+
+<p>
+Yet another style is to use an array instead of named fields:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">Hex</span> { <span class="comment-delimiter">// </span><span class="comment">Vector storage, cube constructor
+</span>    <span class="keyword">const</span> <span class="type">int</span> <span class="variable-name">v</span>[3];
+    <span class="function-name">Hex</span>(<span class="type">int</span> <span class="variable-name">q</span>, <span class="type">int</span> <span class="variable-name">r</span>, <span class="type">int</span> <span class="variable-name">s</span>): v{q, r, s} {
+        assert (q + r + s == 0);
+    }
+
+    <span class="keyword">inline</span> <span class="type">int</span> <span class="function-name">q</span>() { <span class="keyword">return</span> v[0]; }
+    <span class="keyword">inline</span> <span class="type">int</span> <span class="function-name">r</span>() { <span class="keyword">return</span> v[1]; }
+    <span class="keyword">inline</span> <span class="type">int</span> <span class="function-name">s</span>() { <span class="keyword">return</span> v[2]; }
+};
+</pre>
+</div>
+
+<p>
+An advantage of this style is that you start seeing patterns where <code>q</code>, <code>r</code>, <code>s</code> are all treated the same way. You can write loops to handle them uniformly instead of duplicating code. You might use SIMD instructions on CPU. You might use <code>vec3</code> on the GPU. When you read the equality, <code>hex_add</code>, <code>hex_subtract</code>, <code>hex_scale</code>, <code>hex_length</code>, <code>hex_round</code>, and <code>hex_lerp</code> functions below, you’ll see how it might be useful to treat the coordinates uniformly. When you read <code>hex_to_pixel</code> and <code>pixel_to_hex</code> you’ll see that vector and matrix operations (CPU or GPU) can be used with hex coordinates when expressed this way.
+</p>
+
+<p>
+Programming is full of tradeoffs. For this page, I want to focus on simplicity and readability, not performance or abstraction, so I’m going to use the first style: cube storage, cube constructor. I find it easiest to understand the algorithms in this style. However, I like all of these styles, and wouldn’t hesitate to choose any of them, as long as things are consistent in the project. In a language with multiple constructors, I’d include <em>both</em> the axial and cube constructors for convenience. In C++, the <code>int</code> could instead be a template parameter. In C or C++11, the <code>int v[]</code> style and the <code>int q, r, s</code> style can be <a href="https://www.reedbeta.com/blog/on-vector-math-libraries/">merged with a union</a><sup class="print-endnote">[1]</sup>. A template parameter <code>w</code> can also be used to distinguish between positions and vectors. Putting all of these together:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> <span class="type">Number</span>, <span class="type">int</span> <span class="variable-name">w</span>&gt;
+<span class="keyword">struct</span> <span class="type">_Hex</span> { <span class="comment-delimiter">// </span><span class="comment">Both storage types, both constructors
+</span>    <span class="keyword">union</span> {
+        <span class="keyword">const</span> <span class="type">Number</span> <span class="variable-name">v</span>[3];
+        <span class="keyword">struct</span> { <span class="keyword">const</span> <span class="type">Number</span> <span class="variable-name">q</span>, <span class="variable-name">r</span>, <span class="variable-name">s</span>; };
+    };
+
+    <span class="function-name">Hex</span>(<span class="type">Number</span> <span class="variable-name">q_</span>, <span class="type">Number</span> <span class="variable-name">r_</span>): v{q_, r_, -q_ - r_} {}
+    <span class="function-name">Hex</span>(<span class="type">Number</span> <span class="variable-name">q_</span>, <span class="type">Number</span> <span class="variable-name">r_</span>, <span class="type">Number</span> <span class="variable-name">s_</span>): v{q_, r_, s_} {}
+};
+<span class="keyword">typedef</span> <span class="type">_Hex</span>&lt;<span class="type">int</span>, 1&gt; <span class="type">Hex</span>;
+<span class="keyword">typedef</span> <span class="type">_Hex</span>&lt;<span class="type">int</span>, 0&gt; <span class="type">HexDifference</span>;
+<span class="keyword">typedef</span> <span class="type">_Hex</span>&lt;<span class="type">double</span>, 1&gt; <span class="type">FractionalHex</span>;
+<span class="keyword">typedef</span> <span class="type">_Hex</span>&lt;<span class="type">double</span>, 0&gt; <span class="type">FractionalHexDifference</span>;
+</pre>
+</div>
+
+<p>
+I didn’t use this C++-specific style on this page because I want to make translation to other languages straightforward.
+</p>
+
+<p>
+Another design alternative is to use the <code>x</code>, <code>y</code>, <code>z</code> names so that you can make hex coordinates and cartesian coordinates reuse the same data structures. If you’re already using a vector library for geometry, you can reuse that for hex coordinates, and then use a matrix library for representing hex-to-pixel and pixel-to-hex operations.
+</p>
+
+<h3 id="hex-equality">
+<span class="section-number">&nbsp;1.1&nbsp;</span><span>Equality</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-equality">#</a>
+</h3>
+<p>
+Equality and inequality is straightforward: two hexes are equal if their coordinates are equal. In C++, use <kbd>operator ==</kbd>; in Python, define a method <code>__eq__</code>; in Java, define a method <code>equals()</code>. Use the language’s standard style if possible.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">bool</span> <span class="keyword">operator</span> <span class="function-name">==</span> (<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">Hex</span> <span class="variable-name">b</span>) {
+    <span class="keyword">return</span> a.q == b.q &amp;&amp; a.r == b.r &amp;&amp; a.s == b.s;
+}
+
+<span class="type">bool</span> <span class="keyword">operator</span> <span class="function-name">!=</span> (<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">Hex</span> <span class="variable-name">b</span>) {
+    <span class="keyword">return</span> <span class="negation-char">!</span>(a == b);
+}
+</pre>
+</div>
+
+<h3 id="hex-arithmetic">
+<span class="section-number">&nbsp;1.2&nbsp;</span><span>Coordinate arithmetic</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-arithmetic">#</a>
+</h3>
+<p>
+Since cube coordinates come from 3D cartesian coordinates, I automatically get things like addition, subtraction, multiplication, and division. For example, you can have <code>Hex(2, 0, -2)</code> that represents two steps northeast, and add that to location <code>Hex(3,  -5, 2)</code> the obvious way: <code>Hex(2 + 3, 0 + -5, -2 + -2)</code>. With other coordinate systems like offset coordinates, you can’t do that and get what you want. These operations are what you’d implement with 3D cartesian vectors, but I am using <code>q</code>, <code>r</code>, <code>s</code> names in this class instead of <code>x</code>, <code>y</code>, <code>z</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">Hex</span> <span class="function-name">hex_add</span>(<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">Hex</span> <span class="variable-name">b</span>) {
+    <span class="keyword">return</span> Hex(a.q + b.q, a.r + b.r, a.s + b.s);
+}
+
+<span class="type">Hex</span> <span class="function-name">hex_subtract</span>(<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">Hex</span> <span class="variable-name">b</span>) {
+    <span class="keyword">return</span> Hex(a.q - b.q, a.r - b.r, a.s - b.s);
+}
+
+<span class="type">Hex</span> <span class="function-name">hex_multiply</span>(<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">int</span> <span class="variable-name">k</span>) {
+    <span class="keyword">return</span> Hex(a.q * k, a.r * k, a.s * k);
+}
+</pre>
+</div>
+
+
+<p>
+An alternate design is to reuse an existing vec3 class from your geometry library to represent axial/cube coordinates, and in that case you won’t have to write these functions.
+</p>
+
+<h3 id="hex-distance">
+<span class="section-number">&nbsp;1.3&nbsp;</span><span>Distance</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-distance">#</a>
+</h3>
+<p>
+The distance between two hexes is the length of the line between them. Both the distance and length operations can come in handy. It looks like <a href="https://www.redblobgames.com/grids/hexagons/#distances">the distance function from the main article</a>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">int</span> <span class="function-name">hex_length</span>(<span class="type">Hex</span> <span class="variable-name">hex</span>) {
+    <span class="keyword">return</span> <span class="type">int</span>((abs(hex.q) + abs(hex.r) + abs(hex.s)) / 2);
+}
+
+<span class="type">int</span> <span class="function-name">hex_distance</span>(<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">Hex</span> <span class="variable-name">b</span>) {
+    <span class="keyword">return</span> hex_length(hex_subtract(a, b));
+}
+</pre>
+</div>
+
+<h4 id="hex-neighbors">
+<span><span class="section-number-4">1.3.1.</span> Neighbors</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-neighbors">#</a>
+</h4>
+<p>
+With distance, I defined two functions: length works on one argument and distance works with two. The same is true with neighbors. The direction function is with one argument and the neighbor function is with two. It looks like <a href="https://www.redblobgames.com/grids/hexagons/#neighbors">the neighbors function from the main article</a>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">const</span> <span class="type">vector</span>&lt;<span class="type">Hex</span>&gt; <span class="variable-name">hex_directions</span> = {
+    Hex(1, 0, -1), Hex(1, -1, 0), Hex(0, -1, 1), 
+    Hex(-1, 0, 1), Hex(-1, 1, 0), Hex(0, 1, -1)
+};
+
+<span class="type">Hex</span> <span class="function-name">hex_direction</span>(<span class="type">int</span> <span class="variable-name">direction</span> <span class="comment-delimiter">/* </span><span class="comment">0 to 5</span><span class="comment-delimiter"> */</span>) {
+    assert (0 &lt;= direction &amp;&amp; direction &lt; 6);
+    <span class="keyword">return</span> hex_directions[direction];
+}
+
+<span class="type">Hex</span> <span class="function-name">hex_neighbor</span>(<span class="type">Hex</span> <span class="variable-name">hex</span>, <span class="type">int</span> <span class="variable-name">direction</span>) {
+    <span class="keyword">return</span> hex_add(hex, hex_direction(direction));
+}
+</pre>
+</div>
+
+<p>
+To make directions outside the range 0..5 work, use <code>hex_directions[(6 + (direction % 6)) % 6]</code>. Yeah, it’s ugly, but it will work with negative directions too. (Side note: it would’ve been nice to have a <a href="https://stackoverflow.com/questions/4003232/how-to-code-a-modulo-operator-in-c-c-obj-c-that-handles-negative-numbers">modulo operator</a><sup class="print-endnote">[2]</sup> in C++.)
+</p>
+</section>
+
+
+<section><h2 id="layout">
+<span class="section-number">&nbsp;2&nbsp; </span><span><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#layout">Layout</a></span><a class="anchor" href="https://www.redblobgames.com/grids/hexagons/implementation.html#layout">#</a>
+</h2>
+<p>
+The next major piece of functionality I need is a way to convert between hex coordinates and screen coordinates. There’s a <em>pointy top</em> layout and a <em>flat top</em> hex layout. The conversion uses a matrix as well as the inverse of the matrix, so I need a way to store those. Also, for drawing the corners, pointy top starts at 30° and flat top starts at 0°, so I need a place to store that too.
+</p>
+
+<p>
+I’m going to define an <strong>Orientation</strong> helper class to store these: the 2×2 forward matrix, the 2×2 inverse matrix, and the starting angle:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">Orientation</span> {
+    <span class="keyword">const</span> <span class="type">double</span> <span class="variable-name">f0</span>, <span class="variable-name">f1</span>, <span class="variable-name">f2</span>, <span class="variable-name">f3</span>;
+    <span class="keyword">const</span> <span class="type">double</span> <span class="variable-name">b0</span>, <span class="variable-name">b1</span>, <span class="variable-name">b2</span>, <span class="variable-name">b3</span>;
+    <span class="keyword">const</span> <span class="type">double</span> <span class="variable-name">start_angle</span>; <span class="comment-delimiter">// </span><span class="comment">in multiples of 60°
+</span>    <span class="function-name">Orientation</span>(<span class="type">double</span> <span class="variable-name">f0_</span>, <span class="type">double</span> <span class="variable-name">f1_</span>, <span class="type">double</span> <span class="variable-name">f2_</span>, <span class="type">double</span> <span class="variable-name">f3_</span>,
+                <span class="type">double</span> <span class="variable-name">b0_</span>, <span class="type">double</span> <span class="variable-name">b1_</span>, <span class="type">double</span> <span class="variable-name">b2_</span>, <span class="type">double</span> <span class="variable-name">b3_</span>,
+                <span class="type">double</span> <span class="variable-name">start_angle_</span>)
+    : f0(f0_), f1(f1_), f2(f2_), f3(f3_),
+      b0(b0_), b1(b1_), b2(b2_), b3(b3_),
+      start_angle(start_angle_) {}
+};
+</pre>
+</div>
+
+<p>
+There are only two orientations, so I’m going to make constants for them:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">const</span> <span class="type">Orientation</span> <span class="variable-name">layout_pointy</span>
+  = Orientation(sqrt(3.0), sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0,
+                sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0,
+                0.5);
+<span class="keyword">const</span> <span class="type">Orientation</span> <span class="variable-name">layout_flat</span>
+  = Orientation(3.0 / 2.0, 0.0, sqrt(3.0) / 2.0, sqrt(3.0),
+                2.0 / 3.0, 0.0, -1.0 / 3.0, sqrt(3.0) / 3.0,
+                0.0);
+</pre>
+</div>
+
+<p>
+Now I will use them for the layout class:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">Layout</span> {
+    <span class="keyword">const</span> <span class="type">Orientation</span> <span class="variable-name">orientation</span>;
+    <span class="keyword">const</span> <span class="type">Point</span> <span class="variable-name">size</span>;
+    <span class="keyword">const</span> <span class="type">Point</span> <span class="variable-name">origin</span>;
+    <span class="function-name">Layout</span>(<span class="type">Orientation</span> <span class="variable-name">orientation_</span>, <span class="type">Point</span> <span class="variable-name">size_</span>, <span class="type">Point</span> <span class="variable-name">origin_</span>)
+    : orientation(orientation_), size(size_), origin(origin_) {}
+};
+</pre>
+</div>
+
+<p>
+Oh, hm, I guess I need a minimal <strong>Point</strong> class. If your graphics/geometry library already provides one, use that.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">Point</span> {
+    <span class="keyword">const</span> <span class="type">double</span> <span class="variable-name">x</span>, <span class="variable-name">y</span>;
+    <span class="function-name">Point</span>(<span class="type">double</span> <span class="variable-name">x_</span>, <span class="type">double</span> <span class="variable-name">y_</span>): x(x_), y(y_) {}
+};
+</pre>
+</div>
+
+<p>
+Side note: observe how many of these are arrays of numbers underneath. Hex is int[3]. Orientation is an angle, a double, and two matrices, each double[4] or double[2][2]. Point is double[2]. Layout is an Orientation and two Points. Later on the page, FractionalHex is double[3], and OffsetCoord is int[2]. I use structs instead of arrays of numbers because giving a <em>name</em> to things helps me understand them, and also helps with type checking. However, an alternate design choice is to reuse a standard vector library for all of these types, and then use standard matrix multiply for the layout. You can then use your library’s matrix inverse to calculate the inverse matrix. Using arrays of numbers (or a numeric array class) instead of separate structs with names will allow you to reuse more code. I chose not to do that but I think it’s a reasonable choice.
+</p>
+
+<p>
+Ok, now I’m ready to write the layout algorithms.
+</p>
+
+<h3 id="hex-to-pixel">
+<span class="section-number">&nbsp;2.1&nbsp;</span><span>Hex to screen</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-to-pixel">#</a>
+</h3>
+<p>
+The main article has <a href="https://www.redblobgames.com/grids/hexagons/#hex-to-pixel">two versions of axial hex-to-pixel</a>, one for each orientation. The code is essentially the same except the numbers are different, so for this implementation I’ve put the numbers from the matrix into the Orientation class, as <code>f0</code> through <code>f3</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">Point</span> <span class="function-name">hex_to_pixel</span>(<span class="type">Layout</span> <span class="variable-name">layout</span>, <span class="type">Hex</span> <span class="variable-name">h</span>) {
+    <span class="keyword">const</span> <span class="type">Orientation</span>&amp; <span class="variable-name">M</span> = layout.orientation;
+    <span class="type">double</span> <span class="variable-name">x</span> = (M.f0 * h.q + M.f1 * h.r) * layout.size.x;
+    <span class="type">double</span> <span class="variable-name">y</span> = (M.f2 * h.q + M.f3 * h.r) * layout.size.y;
+    <span class="keyword">return</span> Point(x + layout.origin.x, y + layout.origin.y);
+}
+</pre>
+</div>
+
+<p>
+The main article has two optional steps:
+</p>
+
+<ul class="org-ul">
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/#hex-to-pixel-mod-origin">Non-zero origin</a> representing the <em>center</em> of the q=0,r=0 hexagon. I store this in <code>layout.origin</code>. It’s a <em>translate</em> transformation. If you don’t need this, set it to <code>Point(0, 0)</code>.</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/#hex-to-pixel-mod-pixelsize">Non-uniform scaling</a>, especially for matching pixel sprite sizes. I store this in <code>layout.size</code>. It’s a <em>scale</em> transform. If you need uniform scaling, set it to <code>Point(size, size)</code>.</li>
+</ul>
+
+<p>
+I’ll show some uses of these in the <a href="https://www.redblobgames.com/grids/hexagons/implementation.html#layout-examples">2.4</a> section below.
+</p>
+
+<h3 id="pixel-to-hex">
+<span class="section-number">&nbsp;2.2&nbsp;</span><span>Screen to hex</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#pixel-to-hex">#</a>
+</h3>
+<p>
+The main article has <a href="https://www.redblobgames.com/grids/hexagons/#pixel-to-hex">two versions of axial pixel-to-hex</a>, one for each orientation. Again, the code is the same except for the numbers, which are the inverse of the matrix. I put the matrix inverse into the Orientation class, as <code>b0</code> through <code>b3</code>, and used it here. In the forward direction, to go from hex coordinates to screen coordinates I <em>first</em> multiply by the matrix, <em>then</em> multiply by the size, <em>then</em> add the origin. To go in the reverse direction, I have to undo these. <em>First</em> undo the origin by subtracting it, <em>then</em> undo the size by dividing by it, <em>then</em> undo the matrix multiply by multiplying by the inverse:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">FractionalHex</span> <span class="function-name">pixel_to_hex_fractional</span>(<span class="type">Layout</span> <span class="variable-name">layout</span>, <span class="type">Point</span> <span class="variable-name">p</span>) {
+    <span class="keyword">const</span> <span class="type">Orientation</span>&amp; <span class="variable-name">M</span> = layout.orientation;
+    <span class="type">Point</span> <span class="variable-name">pt</span> = Point((p.x - layout.origin.x) / layout.size.x, 
+                     (p.y - layout.origin.y) / layout.size.y);
+    <span class="type">double</span> <span class="variable-name">q</span> = M.b0 * pt.x + M.b1 * pt.y;
+    <span class="type">double</span> <span class="variable-name">r</span> = M.b2 * pt.x + M.b3 * pt.y;
+    <span class="keyword">return</span> FractionalHex(q, r, -q - r);
+}
+</pre>
+</div>
+
+<p>
+There’s a complication here: I start with integer hex coordinates to go to screen coordinates, but when going in reverse, I have no guarantee that the screen location will be exactly at a hexagon center. Instead of getting back an integer hex coordinate, I get back a floating point value (type <code>double</code>), which means I return a <strong>FractionalHex</strong> instead of a <strong>Hex</strong>. To get back to the integer, I need to <a href="https://www.redblobgames.com/grids/hexagons/#rounding">round</a> it to the nearest hex. I’ll implement that in a bit.
+</p>
+
+<h3 id="hex-geometry">
+<span class="section-number">&nbsp;2.3&nbsp;</span><span>Drawing a hex</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#hex-geometry">#</a>
+</h3>
+<p>
+To draw a hex, I need to know where each corner is relative to the center of the hex. With the flat top orientation, the corners are at 0°, 60°, 120°, 180°, 240°, 300°. With pointy top, they’re at 30°, 90°, 150°, 210°, 270°, 330°. I encode that in the Orientation class’s <code>start_angle</code> value, either 0.0 for 0° or 0.5 for 30°.
+</p>
+
+<p>
+Once I know where the corners are relative to the center, I can calculate the corners in screen locations by adding the center to each corner, and putting the coordinates into an array.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">Point</span> <span class="function-name">hex_corner_offset</span>(<span class="type">Layout</span> <span class="variable-name">layout</span>, <span class="type">int</span> <span class="variable-name">corner</span>) {
+    <span class="type">Point</span> <span class="variable-name">size</span> = layout.size;
+    <span class="type">double</span> <span class="variable-name">angle</span> = 2.0 * M_PI *
+             (layout.orientation.start_angle + corner) / 6;
+    <span class="keyword">return</span> Point(size.x * cos(angle), size.y * sin(angle));
+}
+
+<span class="type">vector</span>&lt;<span class="type">Point</span>&gt; <span class="function-name">polygon_corners</span>(<span class="type">Layout</span> <span class="variable-name">layout</span>, <span class="type">Hex</span> <span class="variable-name">h</span>) {
+    <span class="type">vector</span>&lt;<span class="type">Point</span>&gt; <span class="variable-name">corners</span> = {};
+    <span class="type">Point</span> <span class="variable-name">center</span> = hex_to_pixel(layout, h);
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = 0; i &lt; 6; i++) {
+        <span class="type">Point</span> <span class="variable-name">offset</span> = hex_corner_offset(layout, i);
+        corners.push_back(Point(center.x + offset.x,
+                                center.y + offset.y));
+    }
+    <span class="keyword">return</span> corners;
+}
+</pre>
+</div>
+
+<h3 id="layout-examples">
+<span class="section-number">&nbsp;2.4&nbsp;</span><span>Layout examples</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#layout-examples">#</a>
+</h3>
+<p>
+Ok, let’s try it out! I have written Hex, Orientation, Layout, and Point and the functions that go with each. That’s enough for me to draw hexes. I’m going to use the Javascript version of these functions to draw some hexes in the browser. 
+</p>
+
+<p>
+Let’s try the two orientations, <kbd>layout_pointy</kbd> and <kbd>layout_flat</kbd>:
+</p>
+
+<figure>
+<canvas id="layout-test-orientation-pointy" width="375" height="250"></canvas>
+<canvas id="layout-test-orientation-flat" width="375" height="250"></canvas>
+</figure>
+
+<p>
+Let’s try uniform scaling of <code>size</code>: <kbd>Point(10, 10)</kbd>, <kbd>Point(25, 25)</kbd>, and <kbd>Point(50, 50)</kbd>. When the two values are the same, we get <em>regular</em> hexagons. The <code>size</code> value is half the height for pointy-top hexagons and half the width for flat-top hexagons.
+</p>
+
+<figure>
+<canvas id="layout-test-size-1" width="250" height="250"></canvas>
+<canvas id="layout-test-size-2" width="250" height="250"></canvas>
+<canvas id="layout-test-size-3" width="250" height="250"></canvas>
+</figure>
+
+<p>
+But sometimes we want to stretch the hexagons to <strong>fit sprite assets</strong>, so my <code>size</code> has a separate <code>x</code> and <code>y</code> scaling. From <a href="https://www.redblobgames.com/grids/hexagons/#basics">the main page</a>, we can use these calculations:
+</p>
+
+<ul class="org-ul">
+<li>for <em>flat top</em> art sprites <code>W✕H</code>, set <code>size</code> to <kbd>Point(W/2, H/sqrt(3))</kbd>. The example fits 100✕100 sprites that are slightly taller.</li>
+<li>for <em>pointy top</em> art sprites <code>W✕H</code>, set <code>size</code> to <kbd>Point(W/sqrt(3), H/2)</kbd>. The example fits 100✕100 sprites that are slightly wider.</li>
+</ul>
+
+<figure>
+<canvas id="layout-test-size-tall" width="375" height="312"></canvas>
+<canvas id="layout-test-size-wide" width="375" height="312"></canvas>
+</figure>
+
+<p>
+Another thing we can do with <code>size</code> is to <strong>flip the r axis</strong>. Compare <code>size</code> set to  <kbd>Point(25, 25)</kbd> and set to <kbd>Point(25, -25)</kbd>. This is also useful if your y-axis grows upwards, as you can choose whether to make the <code>r</code> coordinate grow upwards with <code>y</code> (positive <code>size.y</code>) or downwards opposite of <code>y</code> (negative <code>size.y</code>).
+</p>
+
+<figure>
+<canvas id="layout-test-y-down" width="375" height="250"></canvas>
+<canvas id="layout-test-y-up" width="375" height="250"></canvas>
+</figure>
+
+<p>
+The <code>origin</code> is occasionally useful too. I usually set it to <kbd>Point(0, 0)</kbd>. That puts the <em>center</em> of the q=0,r=0 hexagon  at x=0,y=0. But if we want the <strong>top left</strong> of that hexagon to be at x=0,y=0 then:
+</p>
+
+<ul class="org-ul">
+<li>for <em>flat top</em> hexes, set <code>origin</code> to <kbd>Point(size.x, size.y * sqrt(3)/2)</kbd>:</li>
+</ul>
+
+<figure>
+<canvas id="layout-test-origin-flat-centered" width="375" height="312"></canvas>
+<canvas id="layout-test-origin-flat-topleft" width="375" height="312"></canvas>
+</figure>
+
+<ul class="org-ul">
+<li>for <em>pointy top</em> hexes, set <code>origin</code> to <kbd>Point(size.x * sqrt(3)/2, size.y)</kbd>:</li>
+</ul>
+
+<figure>
+<canvas id="layout-test-origin-pointy-centered" width="375" height="312"></canvas>
+<canvas id="layout-test-origin-pointy-topleft" width="375" height="312"></canvas>
+</figure>
+
+<p>
+I think the above diagrams are a reasonable set of tests for the <code>orientation</code>, <code>size</code>, and <code>origin</code>. It shows that the <code>Layout</code> class can handle a wide variety of needs, without having to make different variants of the <strong>Hex</strong> class.
+</p>
+
+<p>
+An alternate (simpler) implementation would be to always set <code>origin</code> to 0,0 and set <code>size</code> to 1,1. Then <em>chain</em> simpler transforms together by using vector operations on the cartesian coordinates:
+</p>
+
+<dl class="org-dl">
+<dt>hex→pixel</dt>
+<dd>first hex→cartesian, then <em>scale</em> the cartesian coordinate by multiplying by the desired scale, and then <em>translate</em> it to the desired origin.</dd>
+<dt>pixel→hex</dt>
+<dd>first <em>undo</em> the translate by subtracting the origin, then <em>undo</em> the scale by dividing by the scale, then run cartesian→hex.</dd>
+</dl>
+</section>
+
+
+<section><h2 id="fractionalhex">
+<span class="section-number">&nbsp;3&nbsp; </span><span><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#fractionalhex">Fractional Hex</a></span><a class="anchor" href="https://www.redblobgames.com/grids/hexagons/implementation.html#fractionalhex">#</a>
+</h2>
+<p>
+For pixel-to-hex I need fractional hex coordinates. It looks like the <strong>Hex</strong> class, but uses <code>double</code> instead of <code>int</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">FractionalHex</span> {
+    <span class="keyword">const</span> <span class="type">double</span> <span class="variable-name">q</span>, <span class="variable-name">r</span>, <span class="variable-name">s</span>;
+    <span class="function-name">FractionalHex</span>(<span class="type">double</span> <span class="variable-name">q_</span>, <span class="type">double</span> <span class="variable-name">r_</span>, <span class="type">double</span> <span class="variable-name">s_</span>)
+    : q(q_), r(r_), s(s_) {}
+};
+</pre>
+</div>
+
+<h3 id="rounding">
+<span class="section-number">&nbsp;3.1&nbsp;</span><span>Hex rounding</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#rounding">#</a>
+</h3>
+<p>
+Rounding turns a fractional hex coordinate into the nearest integer hex coordinate. The algorithm is straight out of the <a href="https://www.redblobgames.com/grids/hexagons/#rounding">main article</a>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">Hex</span> <span class="function-name">hex_round</span>(<span class="type">FractionalHex</span> <span class="variable-name">h</span>) {
+    <span class="type">int</span> <span class="variable-name">q</span> = <span class="type">int</span>(round(h.q));
+    <span class="type">int</span> <span class="variable-name">r</span> = <span class="type">int</span>(round(h.r));
+    <span class="type">int</span> <span class="variable-name">s</span> = <span class="type">int</span>(round(h.s));
+    <span class="type">double</span> <span class="variable-name">q_diff</span> = abs(q - h.q);
+    <span class="type">double</span> <span class="variable-name">r_diff</span> = abs(r - h.r);
+    <span class="type">double</span> <span class="variable-name">s_diff</span> = abs(s - h.s);
+    <span class="keyword">if</span> (q_diff &gt; r_diff <span class="keyword">and</span> q_diff &gt; s_diff) {
+        q = -r - s;
+    } <span class="keyword">else</span> <span class="keyword">if</span> (r_diff &gt; s_diff) {
+        r = -q - s;
+    } <span class="keyword">else</span> {
+        s = -q - r;
+    }
+    <span class="keyword">return</span> Hex(q, r, s);
+}
+</pre>
+</div>
+
+<p>
+In the <a href="https://www.redblobgames.com/grids/hexagons/implementation.html#pixel-to-hex">Screen to hex</a> section I wrote a function that turns a pixel coordinate into a <em>fractional</em> hex coordinate. Rounding turns that into a regular hex coordinate:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">Hex</span> <span class="function-name">pixel_to_hex_rounded</span>(<span class="type">Layout</span> <span class="variable-name">layout</span>, <span class="type">Point</span> <span class="variable-name">p</span>) {
+    <span class="keyword">return</span> hex_round(pixel_to_hex_fractional(layout, p));
+}
+</pre>
+</div>
+
+<h3 id="line-drawing">
+<span class="section-number">&nbsp;3.2&nbsp;</span><span>Line drawing</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#line-drawing">#</a>
+</h3>
+<p>
+To draw a line, I linearly interpolate between two hexes, and then round it to the nearest hex. To linearly interpolate between hex coordinates  I linearly interpolate each of the components (<code>q</code>, <code>r</code>, <code>s</code>) independently:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">float</span> <span class="function-name">lerp</span>(<span class="type">double</span> <span class="variable-name">a</span>, <span class="type">double</span> <span class="variable-name">b</span>, <span class="type">double</span> <span class="variable-name">t</span>) {
+    <span class="keyword">return</span> a * (1-t) + b * t;
+    <span class="comment-delimiter">/* </span><span class="comment">better for floating point precision than
+       a + (b - a) * t, which is what I usually write</span><span class="comment-delimiter"> */</span>
+}
+
+<span class="type">FractionalHex</span> <span class="function-name">hex_lerp</span>(<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">Hex</span> <span class="variable-name">b</span>, <span class="type">double</span> <span class="variable-name">t</span>) {
+    <span class="keyword">return</span> FractionalHex(lerp(a.q, b.q, t),
+                         lerp(a.r, b.r, t),
+                         lerp(a.s, b.s, t));
+}
+</pre>
+</div>
+
+<p>
+Line drawing is not too bad once I have linear interpolation:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">vector</span>&lt;<span class="type">Hex</span>&gt; <span class="function-name">hex_linedraw</span>(<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">Hex</span> <span class="variable-name">b</span>) {
+    <span class="type">int</span> <span class="variable-name">N</span> = hex_distance(a, b);
+    <span class="type">vector</span>&lt;<span class="type">Hex</span>&gt; <span class="variable-name">results</span> = {};
+    <span class="type">double</span> <span class="variable-name">step</span> = 1.0 / max(N, 1);
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = 0; i &lt;= N; i++) {
+        results.push_back(hex_round(hex_lerp(a, b, step * i)));
+    }
+    <span class="keyword">return</span> results;
+}
+</pre>
+</div>
+
+<p>
+I needed to stick that <code>max(N, 1)</code> bit in there to handle lines with length 0 (when A == B).
+</p>
+
+<p>
+Sometimes the <code>hex_lerp</code> will output a point that’s <em>on an edge</em>. On some systems, the rounding code will push that to one side or the other, somewhat unpredictably and inconsistently. To make it always push these points in the same direction, add an “epsilon” value to <code>a</code>. This will “nudge” things in the same direction when it’s on an edge, and leave other points unaffected.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">vector</span>&lt;<span class="type">Hex</span>&gt; <span class="function-name">hex_linedraw</span>(<span class="type">Hex</span> <span class="variable-name">a</span>, <span class="type">Hex</span> <span class="variable-name">b</span>) {
+    <span class="type">int</span> <span class="variable-name">N</span> = hex_distance(a, b);
+    <span class="type">FractionalHex</span> <span class="variable-name">a_nudge</span>(a.q + 1e-6, a.r + 1e-6, a.s - 2e-6);
+    <span class="type">FractionalHex</span> <span class="variable-name">b_nudge</span>(b.q + 1e-6, b.r + 1e-6, b.s - 2e-6);
+    <span class="type">vector</span>&lt;<span class="type">Hex</span>&gt; <span class="variable-name">results</span> = {};
+    <span class="type">double</span> <span class="variable-name">step</span> = 1.0 / max(N, 1);
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">i</span> = 0; i &lt;= N; i++) {
+        results.push_back(
+            hex_round(hex_lerp(a_nudge, b_nudge, step * i)));
+    }
+    <span class="keyword">return</span> results;
+}
+</pre>
+</div>
+
+<p>
+The nudge is not always needed. You might try without it first.
+</p>
+
+<p>
+For a different approach, see <a href="https://github.com/chad-autry/zig-zag/blob/master/index.js">chad-autry’s zig-zag library</a><sup class="print-endnote">[3]</sup>.
+</p>
+</section>
+
+
+<section><h2 id="map">
+<span class="section-number">&nbsp;4&nbsp; </span><span><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#map">Map</a></span><a class="anchor" href="https://www.redblobgames.com/grids/hexagons/implementation.html#map">#</a>
+</h2>
+<p>
+There are <em>two</em> related problems to solve: how to <strong>generate a shape</strong> and how to <strong>store map data</strong>. Let’s start with storing map data.
+</p>
+
+<h3 id="map-storage">
+<span class="section-number">&nbsp;4.1&nbsp;</span><span>Map storage</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#map-storage">#</a>
+</h3>
+<p>
+The simplest way to store a map is to use a hash table. In C++, in order to use <code>unordered_map&lt;Hex,_&gt;</code> or <code>unordered_set&lt;Hex&gt;</code> I need to define a hash function for <code>Hex</code>. It would’ve been nice if C++ made it easier to define this, but it’s not too bad. I hash the <code>q</code> and <code>r</code> fields (I can skip <code>s</code> because it’s redundant), and combine them using the algorithm from Boost’s <code>hash_combine</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">namespace</span> <span class="constant">std</span> {
+    <span class="keyword">template</span> &lt;&gt; <span class="keyword">struct</span> <span class="type">hash</span>&lt;<span class="type">Hex</span>&gt; {
+        <span class="type">size_t</span> <span class="keyword">operator</span><span class="function-name">()</span>(<span class="keyword">const</span> <span class="type">Hex</span>&amp; <span class="variable-name">h</span>) <span class="keyword">const</span> {
+            <span class="type">hash</span>&lt;<span class="type">int</span>&gt; <span class="variable-name">int_hash</span>;
+            <span class="type">size_t</span> <span class="variable-name">hq</span> = int_hash(h.q);
+            <span class="type">size_t</span> <span class="variable-name">hr</span> = int_hash(h.r);
+            <span class="keyword">return</span> hq ^ (hr + 0x9e3779b9 + (hq &lt;&lt; 6) + (hq &gt;&gt; 2));
+        }
+    };
+}
+</pre>
+</div>
+
+<p>
+Here’s an example of making a map with a <code>float</code> height at each hex:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">unordered_map</span>&lt;Hex, <span class="type">float</span>&gt; <span class="variable-name">heights</span>;
+heights[Hex(1, -2, 3)] = 4.3;
+cout &lt;&lt; heights[Hex(1, -2, 3)];
+</pre>
+</div>
+
+<p>
+The hash table by itself isn’t that useful. I need to combine it with something that creates a map shape. In graph terms, I need something that creates the nodes.
+</p>
+
+<h3 id="map-shapes">
+<span class="section-number">&nbsp;4.2&nbsp;</span><span>Map shapes</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#map-shapes">#</a>
+</h3>
+<p>
+In this section I write some loops that will produce various shapes of maps. You can use these loops to make a set of hex coordinates for your map, or fill in a map data structure, or iterate over the locations in the map. I’ll write sample code that fills in a set of hex coordinates.
+</p>
+
+<h4 id="shape-parallelogram">
+<span><span class="section-number-4">4.2.1.</span> Parallelograms</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#shape-parallelogram">#</a>
+</h4>
+<p>
+With axial/cube coordinates, a straightforward loop over coordinates will produce a parallelogram map instead of a rectangular one.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">unordered_set</span>&lt;Hex&gt; <span class="variable-name">map</span>;
+<span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">q</span> = q1; q &lt;= q2; q++) {
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = r1; r &lt;= r2; r++) {
+        map.insert(Hex(q, r, -q-r)));
+    }
+}
+</pre>
+</div>
+
+<p>
+There are three coordinates, and the loop requires you choose any two of them: (q,r), (s,q), or (r,s) lead to these pointy top maps, respectively:
+</p>
+
+<figure>
+<canvas id="shape-pointy-parallelogram-qr" width="250" height="250"></canvas>
+<canvas id="shape-pointy-parallelogram-sq" width="250" height="250"></canvas>
+<canvas id="shape-pointy-parallelogram-rs" width="250" height="250"></canvas>
+</figure>
+
+<p>
+And these flat top maps:
+</p>
+
+<figure>
+<canvas id="shape-flat-parallelogram-qr" width="250" height="250"></canvas>
+<canvas id="shape-flat-parallelogram-sq" width="250" height="250"></canvas>
+<canvas id="shape-flat-parallelogram-rs" width="250" height="250"></canvas>
+</figure>
+
+<h4 id="shape-triangle">
+<span><span class="section-number-4">4.2.2.</span> Triangles</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#shape-triangle">#</a>
+</h4>
+<p>
+There are two directions for triangles to face, and the loop depends on which direction you use. Assuming the y axis points down, with pointy top these triangles face south/northwest/northeast, and with flat top these triangles face east/northwest/southwest.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">unordered_set</span>&lt;Hex&gt; <span class="variable-name">map</span>;
+<span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">q</span> = 0; q &lt;= map_size; q++) {
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = 0; r &lt;= map_size - q; r++) {
+        map.insert(Hex(q, r, -q-r));
+    }
+}
+</pre>
+</div>
+
+<figure>
+<canvas id="shape-pointy-triangle-1" width="312" height="218"></canvas>
+<canvas id="shape-pointy-triangle-2" width="312" height="218"></canvas>
+</figure>
+
+<p>
+With pointy top these triangles face north/southwest/southeast and with flat top these triangles face west/northeast/southeast:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">unordered_set</span>&lt;Hex&gt; <span class="variable-name">map</span>;
+<span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">q</span> = 0; q &lt;= map_size; q++) {
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = map_size - q; r &lt;= map_size; r++) {
+        map.insert(Hex(q, r, -q-r));
+    }
+}
+</pre>
+</div>
+
+<figure>
+<canvas id="shape-flat-triangle-1" width="312" height="218"></canvas>
+<canvas id="shape-flat-triangle-2" width="312" height="218"></canvas>
+</figure>
+
+<p>
+If your flip your y-axis, then it’ll switch north and south here, as you might expect.
+</p>
+
+<h4 id="shape-hexagon">
+<span><span class="section-number-4">4.2.3.</span> Hexagons</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#shape-hexagon">#</a>
+</h4>
+<p>
+Generating a hexagonal shape map is described <a href="https://www.redblobgames.com/grids/hexagons/#range">on the main page</a>.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">unordered_set</span>&lt;Hex&gt; <span class="variable-name">map</span>;
+<span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">q</span> = -N; q &lt;= N; q++) {
+    <span class="type">int</span> <span class="variable-name">r1</span> = max(-N, -q - N);
+    <span class="type">int</span> <span class="variable-name">r2</span> = min( N, -q + N);
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = r1; r &lt;= r2; r++) {
+        map.insert(Hex(q, r, -q-r));
+    }
+}
+</pre>
+</div>
+
+<p>
+Here’s what I get for pointy top and flat top orientations:
+</p>
+
+<figure>
+<canvas id="shape-pointy-hexagon" width="250" height="250"></canvas>
+<canvas id="shape-flat-hexagon" width="250" height="250"></canvas>
+</figure>
+
+<h4 id="shape-rectangle">
+<span><span class="section-number-4">4.2.4.</span> Rectangles</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#shape-rectangle">#</a>
+</h4>
+<p>
+With axial/cube coordinates, getting rectangular maps is a little trickier! The <a href="https://www.redblobgames.com/grids/hexagons/#map-storage">main article</a> gives a clue but I don’t actually show the code. The code depends on whether using flat top or pointy top hexes. The trick is to loop over offset coordinates and then convert those to axial. Let’s start with <strong>pointy top hexes</strong>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">unordered_set</span>&lt;Hex&gt; <span class="variable-name">map</span>;
+<span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = top; r &lt;= bottom; r++) { <span class="comment-delimiter">// </span><span class="comment">pointy top
+</span>    <span class="type">int</span> <span class="variable-name">r_offset</span> = floor(r/2.0); <span class="comment-delimiter">// </span><span class="comment">or r&gt;&gt;1
+</span>    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">q</span> = left - r_offset; q &lt;= right - r_offset; q++) {
+        map.insert(Hex(q, r, -q-r));
+    }
+}
+</pre>
+</div>
+
+<p>
+That loop can produce grids like these:
+</p>
+
+<figure>
+  <div>
+    <canvas id="shape-pointy-rectangle-topleft" width="375" height="250"></canvas>
+    <br>
+    <code>left=0 right=6 top=0 bottom=4</code>
+  </div>
+  <div>
+    <canvas id="shape-pointy-rectangle-centered" width="375" height="250"></canvas>
+    <br>
+    <code>left=-3 right=+3 top=-2 bottom=+2</code>
+  </div>
+</figure>
+
+<p>
+The left/right/top/bottom are essentially <em>offset coordinates</em>, as offset coordinates are a more natural fit for rectangular maps.
+</p>
+
+<p>
+How about <strong>flat top hexes</strong>? 
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">unordered_set</span>&lt;Hex&gt; <span class="variable-name">map</span>;
+<span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">q</span> = left; q &lt;= right; q++) { <span class="comment-delimiter">// </span><span class="comment">flat top
+</span>    <span class="type">int</span> <span class="variable-name">q_offset</span> = floor(q/2.0); <span class="comment-delimiter">// </span><span class="comment">or q&gt;&gt;1
+</span>    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = top - q_offset; r &lt;= bottom - q_offset; r++) {
+        map.insert(Hex(q, r, -q-r));
+    }
+}
+</pre>
+</div>
+
+<figure>
+  <div>
+    <canvas id="shape-flat-rectangle-topleft" width="312" height="262"></canvas>
+    <br>
+    <code>left=0 right=6 top=0 bottom=4</code>
+  </div>
+  <div>
+    <canvas id="shape-flat-rectangle-centered" width="312" height="262"></canvas>
+    <br>
+    <code>left=-3 right=+3 top=-2 bottom=+2</code>
+  </div>
+</figure>
+
+<p>
+You might also need to experiment to get exactly the map you want. Try setting the offset to <code>floor((q+1)/2.0)</code> or <code>floor((q-1)/2.0)</code> instead of <code>floor(q/2.0)</code> for example, and the boundary will change slightly.
+</p>
+
+<h3 id="map-optimized-storage">
+<span class="section-number">&nbsp;4.3&nbsp;</span><span>Optimized storage</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#map-optimized-storage">#</a>
+</h3>
+<p>
+The hash table approach is pretty generic and works with any shape of map, including weird shapes and shapes with holes. You can view it as a type of node-and-edge graph structure, storing the nodes but explicitly but calculating the edges on the fly with the <code>hex_neighbor</code> function.
+</p>
+
+<p>
+A different way to store the node-and-edge graph structure is to calculate all the edges ahead of time and store them explicitly. Give each node an integer id and then use an array of arrays to store neighbors. Or make each node an object and use a field to store a list of neighbors. These graph structures are also generic and work with any shape of map. You can also use any graph algorithm on them, such as movement range, distance map, or pathfinding. Storing the edges implicitly works well when the map is regular or is being edited; storing them explicitly can work well when the map is irregularly shaped (boundary, walls, holes) and isn’t changing frequently.
+</p>
+
+<p>
+Some map shapes also allow a compact 2D or 1D array. The <a href="https://www.redblobgames.com/grids/hexagons/#map-storage">main article</a> gives a visual explanation. Here, I’ll give an explanation based on code.  The main idea is that for all the map shapes, there is a nested loop of the form
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">a</span> = a1; a &lt; a2; a++) {
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">b</span> = b1; b &lt; b2; b++) {
+        ...
+    }
+}
+</pre>
+</div>
+
+<p>
+For compact map storage, I’ll make an array of arrays, and index it with <code>array[a-a1][b-b1]</code>. I <em>subtract where the loop starts</em> so that the first index will be 0. For example, here’s the code for a rectangular shape <strong>with pointy top hexes</strong>: (for flat top hexes, the loop is different)
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = top; r &lt;= bottom; r++) {
+    <span class="type">int</span> <span class="variable-name">r_offset</span> = floor(r/2.0);
+    <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">q</span> = left - r_offset; q &lt;= right - r_offset; q++) {
+        map.insert(Hex(q, r, -q-r));
+    }
+}
+</pre>
+</div>
+
+<p>
+For pointy top hexes, variable <code>a</code> is <code>r</code>, and <code>b</code> is <code>q</code>. Value <code>a1</code> (where the <code>r</code> loop starts) is <code>top</code> and <code>b1</code> (where the <code>q</code> loop starts) is <code>left - floor(r/2.0)</code>. That means the array will be indexed <code>array[r-top][q-(left-floor(r/2.0))]</code> which simplifies to <code>array[r-top][q-left+floor(r/2.0)]</code>. Note that <code>floor(r/2.0)</code> can be written <code>r&gt;&gt;1</code>.
+</p>
+
+<p>
+The second thing I need to know is the <em>size</em> of the arrays. I need <code>a2-a1</code> arrays, and the size of each should be <code>b2-b1</code>. Be sure to check for off-by-1 errors: if the loop is written <kbd>a &lt;= a2</kbd> then you’ll want <code>a2-a1+1</code> arrays, and similarly for <kbd>b &lt;= b2</kbd>. I can build these arrays using C++ vectors using this pattern:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">vector</span>&lt;<span class="type">vector</span>&lt;T&gt;&gt; <span class="function-name">map</span>(a2-a1);
+<span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">a</span> = a1; a &lt; a2; a++) {
+    map.emplace_back(b2-b1);
+}
+</pre>
+</div>
+
+<p>
+For the rectangle example, <code>a2-a1</code> becomes <code>bottom-top+1</code> and <code>b2-b1</code> becomes <code>right-left+1</code>:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">int</span> <span class="variable-name">height</span> = bottom - top + 1;
+<span class="type">vector</span>&lt;<span class="type">vector</span>&lt;T&gt;&gt; <span class="function-name">map</span>(height);
+<span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = 0; r &lt; height; r++) {
+    <span class="type">int</span> <span class="variable-name">width</span> = right - left + 1;
+    map.emplace_back(width);
+}
+</pre>
+</div>
+
+<p>
+I can encapsulate all of this into a Map class:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">template</span>&lt;<span class="keyword">class</span> <span class="type">T</span>&gt; <span class="keyword">class</span> <span class="type">RectangularPointyTopMap</span> {
+    <span class="type">vector</span>&lt;<span class="type">vector</span>&lt;<span class="type">T</span>&gt;&gt; <span class="variable-name">map</span>;
+
+    <span class="type">int</span> <span class="variable-name">left_</span>, <span class="variable-name">top_</span>;
+  <span class="keyword">public</span>:
+    <span class="function-name">RectangularPointyTopMap</span>(<span class="type">int</span> <span class="variable-name">left</span>, <span class="type">int</span> <span class="variable-name">top</span>, <span class="type">int</span> <span class="variable-name">right</span>, <span class="type">int</span> <span class="variable-name">bottom</span>)
+                 : left_(left), top_(top) 
+    {
+        <span class="type">int</span> <span class="variable-name">height</span> = bottom - top + 1;
+        map.resize(height);
+        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable-name">r</span> = 0; r &lt; height; r++) {
+            <span class="type">int</span> <span class="variable-name">width</span> = right - left + 1;
+            map.emplace_back(width);
+        }
+    }
+
+    <span class="keyword">inline</span> <span class="type">T</span>&amp; <span class="function-name">at</span>(<span class="type">int</span> <span class="variable-name">q</span>, <span class="type">int</span> <span class="variable-name">r</span>) {
+        <span class="keyword">return</span> map[r - top_][q - left_ + (r &gt;&gt; 1)];
+    }
+};
+</pre>
+</div>
+
+<p>
+For the other map shapes, it’s only slightly more complicated, but the same pattern applies: I have to <em>study the loop that created the map</em> in order to figure out the <em>size</em> and <em>array access</em> for the map.
+</p>
+
+<p>
+1D arrays are trickier and I won’t try to tackle them here. In practice, <strong>I rarely use array storage</strong> for hex maps, except when the maps are large, and my code is written in C++. Although it’s more compact, it almost never makes a difference in practice in my projects. For most of my projects, I use a hash table and/or graph representation. It gives me the most flexibility and reusability. I only need the more compact storage when storage size matters.
+</p>
+</section>
+
+
+<section><h2 id="rotation">
+<span class="section-number">&nbsp;5&nbsp; </span><span><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#rotation">Rotation</a></span><a class="anchor" href="https://www.redblobgames.com/grids/hexagons/implementation.html#rotation">#</a>
+</h2>
+<p>
+There are two one-step rotation functions, but which is “left” and which is “right” depends on your map orientation. You may have to swap these.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="type">Hex</span> <span class="function-name">hex_rotate_left</span>(<span class="type">Hex</span> <span class="variable-name">a</span>)
+{
+    <span class="keyword">return</span> Hex(-a.s, -a.q, -a.r);
+}
+
+<span class="type">Hex</span> <span class="function-name">hex_rotate_right</span>(<span class="type">Hex</span> <span class="variable-name">a</span>)
+{
+    <span class="keyword">return</span> Hex(-a.r, -a.s, -a.q);
+}
+</pre>
+</div>
+
+<p>
+Note that these are slightly different from the <a href="https://www.redblobgames.com/grids/hexagons/#rotation">main page</a> because q,r,s don’t quite line up with x,y,z.
+</p>
+
+<p>
+If you think of the coordinates <em>v</em> in vector format, these operations are 3x3 matrix multiplies, M times <em>v</em>, where M = [0 0 -1; -1 0 0; 0 -1 0]. The matrix inverse M<sup>-1</sup> = [0 -1 0; 0 0 -1; -1 0 0] rotates in the opposite direction. Raising the matrix to a power M<sup><em>k</em></sup> rotates <em>k</em> times. You can precomputate all the rotation matrices, or combine the matrix with other operations such as translate, scale, etc.
+</p>
+</section>
+
+
+<section><h2 id="offset">
+<span class="section-number">&nbsp;6&nbsp; </span><span><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#offset">Offset coordinates</a></span><a class="anchor" href="https://www.redblobgames.com/grids/hexagons/implementation.html#offset">#</a>
+</h2>
+<p>
+I use the names <code>q</code> and <code>r</code> for cube/axial coordinates, and <code>col</code> and <code>row</code> for offset coordinates:
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">struct</span> <span class="type">OffsetCoord</span> {
+    <span class="keyword">const</span> <span class="type">int</span> <span class="variable-name">col</span>, <span class="variable-name">row</span>;
+    <span class="function-name">OffsetCoord</span>(<span class="type">int</span> <span class="variable-name">col_</span>, <span class="type">int</span> <span class="variable-name">row_</span>): col(col_), row(row_) {}
+};
+</pre>
+</div>
+
+<p>
+I’m expecting that I’ll use the cube/axial <strong>Hex</strong> class everywhere, except for displaying to the player. That’s where offset coordinates will be useful. That means the only operations I need are converting <strong>Hex</strong> to <strong>OffsetCoord</strong> and back.
+</p>
+
+<p>
+There are four offset types: odd-r, even-r, odd-q, even-q. The “r” types are used with with pointy top hexagons and the “q” types are used with flat top. Whether it’s even or odd can be encoded as an offset direction <strong>+1</strong> or <strong>-1</strong>. For pointy top, the offset direction tells us whether to slide alternate rows right or left. For flat top, the offset direction tells us whether to slide alternate columns up or down.
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span class="keyword">const</span> <span class="type">int</span> <span class="variable-name">EVEN</span> = +1;
+<span class="keyword">const</span> <span class="type">int</span> <span class="variable-name">ODD</span> = -1;
+
+<span class="type">OffsetCoord</span> <span class="function-name">qoffset_from_cube</span>(<span class="type">int</span> <span class="variable-name">offset</span>, <span class="type">Hex</span> <span class="variable-name">h</span>) {
+    assert(offset == EVEN || offset == ODD);
+    <span class="type">int</span> <span class="variable-name">col</span> = h.q;
+    <span class="type">int</span> <span class="variable-name">row</span> = h.r + <span class="type">int</span>((h.q + offset * (h.q &amp; 1)) / 2);
+    <span class="keyword">return</span> OffsetCoord(col, row);
+}
+
+<span class="type">Hex</span> <span class="function-name">qoffset_to_cube</span>(<span class="type">int</span> <span class="variable-name">offset</span>, <span class="type">OffsetCoord</span> <span class="variable-name">h</span>) {
+    assert(offset == EVEN || offset == ODD);
+    <span class="type">int</span> <span class="variable-name">q</span> = h.col;
+    <span class="type">int</span> <span class="variable-name">r</span> = h.row - <span class="type">int</span>((h.col + offset * (h.col &amp; 1)) / 2);
+    <span class="type">int</span> <span class="variable-name">s</span> = -q - r;
+    <span class="keyword">return</span> Hex(q, r, s);
+}
+
+<span class="type">OffsetCoord</span> <span class="function-name">roffset_from_cube</span>(<span class="type">int</span> <span class="variable-name">offset</span>, <span class="type">Hex</span> <span class="variable-name">h</span>) {
+    assert(offset == EVEN || offset == ODD);
+    <span class="type">int</span> <span class="variable-name">col</span> = h.q + <span class="type">int</span>((h.r + offset * (h.r &amp; 1)) / 2);
+    <span class="type">int</span> <span class="variable-name">row</span> = h.r;
+    <span class="keyword">return</span> OffsetCoord(col, row);
+}
+
+<span class="type">Hex</span> <span class="function-name">roffset_to_cube</span>(<span class="type">int</span> <span class="variable-name">offset</span>, <span class="type">OffsetCoord</span> <span class="variable-name">h</span>) {
+    assert(offset == EVEN || offset == ODD);
+    <span class="type">int</span> <span class="variable-name">q</span> = h.col - <span class="type">int</span>((h.row + offset * (h.row &amp; 1)) / 2);
+    <span class="type">int</span> <span class="variable-name">r</span> = h.row;
+    <span class="type">int</span> <span class="variable-name">s</span> = -q - r;
+    <span class="keyword">return</span> Hex(q, r, s);
+}
+</pre>
+</div>
+
+<p>
+If you’re only using even or odd, you can hard-code the value of <code>offset</code> into the code, making it simpler and faster. Alternatively, <code>offset</code> can be a template parameter so that the compiler can inline and optimize it.
+</p>
+
+<p>
+For offset coordinates I need to know if a row/col is even or odd. I use <code>a&amp;1</code> (<a href="https://en.wikipedia.org/wiki/Bitwise_operation#AND">bitwise and</a><sup class="print-endnote">[4]</sup>) instead of <code>a%2</code> return 0 or +1. Why?
+</p>
+
+<ul class="org-ul">
+<li>On systems using <a href="https://en.wikipedia.org/wiki/Two&#39;s_complement">two’s complement</a><sup class="print-endnote">[5]</sup> representation, which is just about every system out there, <code>a&amp;1</code> returns 0 for even <code>a</code> and 1 for odd <code>a</code>. This is what I want. It’s not strictly portable, but <a href="https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0907r0.html">should work everywhere in practice</a><sup class="print-endnote">[6]</sup>.</li>
+<li>The <code>%</code> remainder operator has <a href="https://en.wikipedia.org/wiki/Modulo#Variants_of_the_definition">multiple variants</a><sup class="print-endnote">[7]</sup>: floored, euclidean, truncated, rounded, and ceiling.
+<ul class="org-ul">
+<li>With floored or euclidean, <code>(-1) % 2</code> is +1</li>
+<li>With truncated, <code>(-1) % 2</code> is -1. <em>This will cause the algorithms on this page to break for negative coordinates</em>.</li>
+</ul>
+</li>
+<li>If you know that your coordinate <code>a</code> will never be negative, you can safely use <code>a%2</code>.</li>
+<li>If you know your language uses floored or euclidean, you can safely use <code>a%2</code>. <a href="https://en.wikipedia.org/wiki/Modulo#In_programming_languages">Wikipedia’s list</a><sup class="print-endnote">[8]</sup> shows:
+<ul class="org-ul">
+<li>Use floored <code>%</code> in Python, Lua 5, Raku.</li>
+<li>Do not use truncated <code>%</code> in C, C++, C#, Objective C, Java, Javascript, Rust, Scala, Swift, Zig, Godot, Haxe, Perl, Ruby.</li>
+<li>Some languages offer both remainder and modulo. Use <code>mod</code> in Ada, Common Lisp, COBOL, CSS, Elixir, Elm, Haskell, Julia, Kotlin, Matlab, Prolog, Ruby, Standard ML, Clojure. Sometimes this function has a different name: Godot (<code>posmod</code>), Scheme (<code>remainder</code>), Rust (<code>rem_euclid</code>).</li>
+</ul>
+</li>
+<li>If you don’t have <code>a&amp;1</code> available:
+<ul class="org-ul">
+<li>either define an evenodd function: <code>abs(a) % 2</code> works only for 2.</li>
+<li>or define a modulo function: <code>(a % b + b) % b</code> works for any positive <code>b</code>, including 2.</li>
+</ul>
+</li>
+</ul>
+
+<p>
+Also, in many (all?) languages, <code>&amp;</code> has lower precedence than <code>+</code> so be sure to parenthesize <code>a&amp;1</code>.
+</p>
+</section>
+
+
+<section><h2 id="notes">
+<span class="section-number">&nbsp;7&nbsp; </span><span><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#notes">Notes</a></span><a class="anchor" href="https://www.redblobgames.com/grids/hexagons/implementation.html#notes">#</a>
+</h2>
+<ul class="org-ul">
+<li>In languages that don’t support <code>a&gt;&gt;1</code>, you can use <code>floor(a/2)</code> instead.</li>
+<li>Most of the functions are small and should be inlined in languages that support it.</li>
+<li>Operator overloading is sometimes abused, but might be nice for the arithmetic Hex operations <code>hex_add</code>, <code>hex_subtract</code>, <code>hex_scale</code>. I didn’t use it here.</li>
+<li>I wrote this code in module style, but you might prefer to write it as class style, where the functions are static or class methods. In some languages, class style is the only choice. Some of the methods might be better as instance methods.</li>
+<li>In languages that support more than one constructor, or optional arguments, it might be handy to have both the two-argument axial constructor and the three-argument cube constructor.</li>
+</ul>
+
+<h3 id="cube-vs-axial">
+<span class="section-number">&nbsp;7.1&nbsp;</span><span>Cube vs Axial</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#cube-vs-axial">#</a>
+</h3>
+<p>
+Cube coordinates are three numbers, but one can be computed from the others. Whether you want to store the third one as a field or compute it in an accessor is primarily a code style decision. If performance is the main concern, the cost of the accessor vs the cost of the computation will matter most. In languages like C++ where accessors are inlined away, save the memory (accessing RAM is expensive) and use an accessor. In languages like Python where accessors are expensive, save the function call (function calls are expensive) and store the third coordinate in a field.
+</p>
+
+<p>
+Also take a look at the paper <a href="https://web.archive.org/web/20170924024146/http://web.cs.ucla.edu/~tianyi.zhang/perfdiff.pdf">Analyzing Performance Differences between Multiple Code Versions</a><sup class="print-endnote">[9]</sup> (Kalbarczyk et al) which found axial and cube to be faster than offset for line of sight, distance, and other algorithms, but slower than offset for displaying offset coordinates (as expected). I can’t find their code though.
+</p>
+
+<p>
+If performance matters, the best thing to do is to <em>actually measure it</em>.
+</p>
+
+<h3 id="cpp">
+<span class="section-number">&nbsp;7.2&nbsp;</span><span>C++</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#cpp">#</a>
+</h3>
+<ul class="org-ul">
+<li>These are all value types, cheap to copy and pass around. For a bit more compactness, if your maps are small you can use an int16 or int8 for the Hex and Offset class. If you’re computing <code>s</code> in an accessor, storing <code>q</code> and <code>r</code> (or <code>col</code> and <code>row</code>) as int16 will let you fit the entire coordinate into 32 bits.</li>
+<li>As written, these classes have a non-default constructor, so they won’t count as a POD trivial type, although I think they count as a POD standard-layout type. Switch to a default constructor and use struct initialization if you’d like them to be a POD trivial type.</li>
+<li>I could have written a template class <code>Hex&lt;&gt;</code> and instantiated it as <code>Hex&lt;int&gt;</code> and <code>Hex&lt;double&gt;</code>. I decided not to because I expect that many of the readers will be translating the code to another language.</li>
+</ul>
+
+<h3 id="dynamic-typing">
+<span class="section-number">&nbsp;7.3&nbsp;</span><span>Python, Javascript</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#dynamic-typing">#</a>
+</h3>
+<ul class="org-ul">
+<li>Python and other dynamically typed languages don’t need Hex and FractionalHex to be separate. You can write the FractionalHex functions to work with Hex instead, and skip the FractionalHex class.</li>
+</ul>
+</section>
+
+
+<section><h2 id="code">
+<span class="section-number">&nbsp;8&nbsp; </span><span><a href="https://www.redblobgames.com/grids/hexagons/implementation.html#code">Source Code</a></span><a class="anchor" href="https://www.redblobgames.com/grids/hexagons/implementation.html#code">#</a>
+</h2>
+
+<h3 id="codegen">
+<span class="section-number">&nbsp;8.1&nbsp;</span><span>Code from this page</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#codegen">#</a>
+</h3>
+<p>
+I have some unoptimized incomplete code in several languages, with some unit tests too, but no documentation or examples. Feel free to use these as a starting point writing your hex grid library:
+</p>
+
+<ul class="org-ul">
+<li><a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib.cpp">C++</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib.py">Python</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib.cs">C#</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/codegen/output/Tests.hx">Haxe</a></li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/codegen/output/Tests.java">Java</a></li>
+<li>Javascript <a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib-functions.js">top-level functions</a> or <a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib.js">with classes</a> or <a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib-module.js">with es6 modules</a>
+</li>
+<li><a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib.ts">Typescript</a></li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib.lua">Lua</a> 5.2; see <a href="https://www.redblobgames.com/grids/hexagons/codegen/OutputLua.hx">source</a> for notes about 5.1 and 5.3</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/codegen/output/lib.rs">Rust</a> ; not entirely idiomatic Rust</li>
+</ul>
+
+<p>
+Caveat: this is <em>procedurally generated code</em> (<a href="https://simblob.blogspot.com/2015/03/hex-grids-code-generation.html">yes, really!</a><sup class="print-endnote">[10]</sup>) and doesn’t follow the best style and idiom recommendations for each language. It’d be cool to add C, Objective C, Racket, Ruby, Haskell, Swift, and others, but I don’t know when I might have time to do that.
+</p>
+
+<p>
+My procedural code generator is kinda awful but if you want to take a look at it, it’s <a href="https://www.redblobgames.com/grids/hexagons/codegen/codegen.zip">codegen.zip</a>.
+</p>
+
+<p>
+[Changed 2016-07-20] I changed the winding direction for <code>hex_corner_offset</code> to match that of <code>hex_neighbor</code>; this should not matter in theory but it’s nice for them to match.
+</p>
+
+<p>
+[Changed 2018-03-10] I changed the Java, C#, and Typescript output to use instance methods instead of static methods. I added a precondition invariant check to make sure q+r+s == 0 when you call the Hex constructor. This should help catch bugs sooner.
+</p>
+
+<h3 id="third-party">
+<span class="section-number">&nbsp;8.2&nbsp;</span><span>Other libraries</span><a class="anchor" aria-hidden="true" href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party">#</a>
+</h3>
+<p>
+It’s worth looking at these libraries, some of which include source code:
+</p>
+
+<ul class="org-ul">
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-csharp">#</a>&nbsp;<span id="third-party-csharp">Unity and C#</span>
+<ul class="org-ul">
+<li>
+<a href="http://gamelogic.co.za/grids/">GameLogic Grids</a><sup class="print-endnote">[11]</sup> - Unity - includes hexagons but also many other grid types</li>
+<li>
+<a href="https://www.boristhebrave.com/docs/sylves/1/articles/grids/">Sylves</a><sup class="print-endnote">[12]</sup> - C# - includes hexagons but also many other grid types</li>
+<li>
+<a href="https://github.com/pgeerkens/HexGridUtilitiesForGames">Hex-Grid Utilities</a><sup class="print-endnote">[13]</sup> - C# - includes field of view, pathfinding, WinForms</li>
+<li>
+<a href="https://github.com/akhra/HexCoord">akhra/HexCoord</a><sup class="print-endnote">[14]</sup> - C# / Unity</li>
+<li>
+<a href="https://github.com/DigitalMachinist/HexGrid">DigitalMachinist/HexGrid</a><sup class="print-endnote">[15]</sup> - C#</li>
+<li>
+<a href="https://github.com/Amaranthos/UnityHexGrid/">Amaranthos/UnityHexGrid</a><sup class="print-endnote">[16]</sup> - C# / Unity</li>
+<li>
+<a href="https://github.com/svejdo1/HexGrid">svejdo1/HexGrid</a><sup class="print-endnote">[17]</sup> - C#</li>
+<li>
+<a href="https://github.com/Banbury/UnityHexGrid">Banbury/UnityHexGrid</a><sup class="print-endnote">[18]</sup> - C# / Unity</li>
+<li>
+<a href="https://aurelwu.github.io/">aurelwu.github.io</a><sup class="print-endnote">[19]</sup> - Unity</li>
+<li>
+<a href="https://github.com/owenmoore/cube-coordinates">owenmoore/unity-hexagonal-grids</a><sup class="print-endnote">[20]</sup> - Unity</li>
+<li>
+<a href="https://github.com/imurashka/HexagonalLib">imurashka/HexagonalLib</a><sup class="print-endnote">[21]</sup> - C# / .NET</li>
+<li>
+<a href="https://github.com/Clpsplug/hexagonal_map">Clpsplug/hexagonal_map</a><sup class="print-endnote">[22]</sup> - C# - cube/axial coordinates</li>
+<li>
+<a href="https://github.com/juna8001/HexEngine">juna8001/HexEngine</a><sup class="print-endnote">[23]</sup> - C# / Unity</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-java">#</a>&nbsp;<span id="third-party-java">Java and JVM</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/Hexworks/mixite">Hexworks/mixite</a><sup class="print-endnote">[24]</sup> - Java</li>
+<li>
+<a href="https://github.com/timgilbert/scala-hexmap">timgilbert/scala-hexmap</a><sup class="print-endnote">[25]</sup> - Scala</li>
+<li>
+<a href="https://github.com/mraad/grid-hex">mraad/grid-hex</a><sup class="print-endnote">[26]</sup> - Scala</li>
+<li>
+<a href="https://github.com/dmccabe/khexgrid">dmccabe/khexgrid</a><sup class="print-endnote">[27]</sup> - Kotlin</li>
+<li>
+<a href="https://github.com/OfflineBrain/khexagon">OfflineBrain/khexagon</a><sup class="print-endnote">[28]</sup> - Kotlin</li>
+<li>
+<a href="https://github.com/DM-UK/HexTriCompositeGrid">DM-UK/HexTriCompositeGrid</a><sup class="print-endnote">[29]</sup> - Java, hex + triangle grid</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-objc">#</a>&nbsp;<span id="third-party-objc">Objective C</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/denizztret/ObjectiveHexagon">denizztret/ObjectiveHexagon</a><sup class="print-endnote">[30]</sup> - Objective C</li>
+<li>
+<a href="https://github.com/pkclsoft/HexLib">pkclsoft/HexLib</a><sup class="print-endnote">[31]</sup> - Objective C</li>
+<li>
+<a href="https://github.com/denizztret/ObjectiveHexagon">denizztret/ObjectiveHexagon</a><sup class="print-endnote">[32]</sup> - Objective C</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-swift">#</a>&nbsp;<span id="third-party-swift">Swift</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/MadGeorge/AmitsHexGridLibrarySwift">MadGeorge/AmitsHexGridLibrarySwift</a><sup class="print-endnote">[33]</sup> - Swift</li>
+<li>
+<a href="https://github.com/fananek/hex-grid">fananek/hex-grid</a><sup class="print-endnote">[34]</sup> - Swift</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-js">#</a>&nbsp;<span id="third-party-js">JavaScript and TypeScript</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/flauwekeul/honeycomb">flauwekeul/honeycomb</a><sup class="print-endnote">[35]</sup> - JavaScript + TypeScript, includes map shapes, line traversal, serialization</li>
+<li>
+<a href="https://github.com/mpalmerlee/HexagonTools">mpalmerlee/HexagonTools</a><sup class="print-endnote">[36]</sup> - JavaScript + Canvas</li>
+<li>
+<a href="https://github.com/RobertBrewitz/axial-hexagonal-grid">RobertBrewitz/axial-hexagonal-grid</a><sup class="print-endnote">[37]</sup> - JavaScript</li>
+<li>
+<a href="https://github.com/bodinaren/BHex.js">bodinaren/BHex.js</a><sup class="print-endnote">[38]</sup> - JavaScript</li>
+<li>
+<a href="https://github.com/Hellenic/react-hexgrid/">Hellenic/react-hexgrid</a><sup class="print-endnote">[39]</sup> - JavaScript / React</li>
+<li>
+<a href="https://github.com/vonWolfehaus/von-grid/">vonWolfehaus/von-grid</a><sup class="print-endnote">[40]</sup> - JavaScript / Three.js</li>
+<li>
+<a href="https://github.com/othree/hexagons">othree/hexagons</a><sup class="print-endnote">[41]</sup> - JavaScript - odd-r coordinates</li>
+<li>
+<a href="https://github.com/cefleet/hexAPI">cefleet/hexAPI</a><sup class="print-endnote">[42]</sup> - JavaScript</li>
+<li>
+<a href="https://github.com/njlr/solid-hex">njlr/solid-hex</a><sup class="print-endnote">[43]</sup> - JavaScript + pipeline operator</li>
+<li>
+<a href="https://github.com/aahdee/p5grid">aahdee/p5grid</a><sup class="print-endnote">[44]</sup> - JavaScript / P5.js</li>
+<li>
+<a href="https://github.com/joshuabowers/hexagonally">joshuabowers/hexagonally</a><sup class="print-endnote">[45]</sup> - TypeScript</li>
+<li>
+<a href="https://github.com/scrapcupcake/hexs6">scrapcupcake/hexs6</a><sup class="print-endnote">[46]</sup> - JavaScript</li>
+<li>
+<a href="https://github.com/euoia/hex-grid.js">euoia/hex-grid.js</a><sup class="print-endnote">[47]</sup> - JavaScript</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-python">#</a>&nbsp;<span id="third-party-python">Python</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/RedFT/Hexy">RedFT/Hexy</a><sup class="print-endnote">[48]</sup> - Python</li>
+<li>
+<a href="https://github.com/stephanh42/hexutil">stephanh42/hexutil</a><sup class="print-endnote">[49]</sup> - Python - doubled coordinates</li>
+<li>
+<a href="https://github.com/BorisTheBrave/grids">BorisTheBrave/grids</a><sup class="print-endnote">[50]</sup> - Python - hexagon, square, and triangle grids</li>
+<li>
+<a href="https://github.com/kompoth/geks">kompoth/geks</a><sup class="print-endnote">[51]</sup> - Python - with map generation, pathfinding</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-ruby">#</a>&nbsp;<span id="third-party-ruby">Ruby</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/czuger/rhex">czuger/rhex</a><sup class="print-endnote">[52]</sup> - Ruby</li>
+<li>
+<a href="https://github.com/SpeciesFileGroup/waxy">SpeciesFileGroup/waxy</a><sup class="print-endnote">[53]</sup> - Ruby</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-elm">#</a>&nbsp;<span id="third-party-elm">Elm</span>
+<ul class="org-ul">
+<li>
+<a href="https://package.elm-lang.org/packages/Voronchuk/hexagons/2.0.0">Voronchuck/hexagons</a><sup class="print-endnote">[54]</sup> - Elm</li>
+<li>
+<a href="https://github.com/danneu/elm-hex-grid">danneu/elm-hex-grid</a><sup class="print-endnote">[55]</sup> - Elm</li>
+<li>
+<a href="https://github.com/etaque/elm-hexagons">etague/elm-hexagons</a><sup class="print-endnote">[56]</sup> - Elm</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-rust">#</a>&nbsp;<span id="third-party-rust">Rust</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/alkavan/hexagon-tiles">alkavan/hexagon-tiles</a><sup class="print-endnote">[57]</sup> - Rust</li>
+<li>
+<a href="https://github.com/dpc/hex2d-rs">dpc/hex2d-rs</a><sup class="print-endnote">[58]</sup> - Rust</li>
+<li>
+<a href="https://github.com/leftiness/hex_math">leftiness/hex_math</a><sup class="print-endnote">[59]</sup> - Rust</li>
+<li>
+<a href="https://github.com/ozkriff/zemeroth">ozkriff/zemeroth</a><sup class="print-endnote">[60]</sup> - game written in Rust; hex code not separated out into its own library</li>
+<li>
+<a href="https://github.com/iancormac84/hexae">iancormac84/hexae</a><sup class="print-endnote">[61]</sup> - Rust</li>
+<li>
+<a href="https://gitlab.com/hankruiger/bestagon">hankruiger/bestagon</a><sup class="print-endnote">[62]</sup> - Rust</li>
+<li>
+<a href="https://github.com/cmarcbs7/chickenwire">cmarcbs7/chickenwire</a><sup class="print-endnote">[63]</sup> - Rust</li>
+<li>
+<a href="https://github.com/ManevilleF/hexx">ManevilleF/hexx</a><sup class="print-endnote">[64]</sup> - Rust</li>
+<li>
+<a href="https://github.com/CoCoSol007/hexing">CoCoSol007/hexing</a><sup class="print-endnote">[65]</sup> - Rust</li>
+<li>
+<a href="https://github.com/algodiva/gridava">algodiva/gridava</a><sup class="print-endnote">[66]</sup> - Rust, with tile, edge, and vertex coordinates</li>
+<li>
+<a href="https://github.com/lucidBrot/hexgridspiral">lucidBrot/hexgridspiral</a><sup class="print-endnote">[67]</sup> - Rust, with spiral and cube coordinates, rotation, wedges, movement range, reflection</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-lua">#</a>&nbsp;<span id="third-party-lua">Lua</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/icrawler/HexaMoon">icrawler/Hexamoon</a><sup class="print-endnote">[68]</sup> - Lua</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-godot">#</a>&nbsp;<span id="third-party-godot">GDScript and Godot</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/droxpopuli/HexMap">droxpopuli/HexMap</a><sup class="print-endnote">[69]</sup> - GDscript / Godot</li>
+<li>
+<a href="https://github.com/DDoop/HexTesting">DDoop/HexTesting</a><sup class="print-endnote">[70]</sup> - GDscript / Godot#</li>
+<li>
+<a href="https://github.com/romlok/godot-gdhexgrid">romlock/godot-gdhexgrid</a><sup class="print-endnote">[71]</sup> - GDscript / Godot 3</li>
+<li>
+<a href="https://github.com/HugoEnzo/HexGrid_Godot_4.0">HugoEnzo/HexGrid</a><sup class="print-endnote">[72]</sup> - GDscript / Godot 4</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-php">#</a>&nbsp;<span id="third-party-php">PHP</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/nanosch/hexopia">nanosch/hexopia</a><sup class="print-endnote">[73]</sup> - PHP</li>
+<li>
+<a href="https://github.com/Astatroth/php-hexgrid">Astatroth/php-hexgrid</a><sup class="print-endnote">[74]</sup> - PHP</li>
+</ul>
+</li>
+<li>
+<a href="https://www.redblobgames.com/grids/hexagons/implementation.html#third-party-other">#</a>&nbsp;<span id="third-party-other">Other languages</span>
+<ul class="org-ul">
+<li>
+<a href="https://github.com/mhwombat/grid/wiki">mhwombat/grid</a><sup class="print-endnote">[75]</sup> - Haskell - includes square, triangle, hexagonal, octagonal grids</li>
+<li>
+<a href="https://github.com/RyanMcNamara86/Hex">RyanMcNamara86/Hex</a><sup class="print-endnote">[76]</sup> - Haskell</li>
+<li>
+<a href="https://github.com/andeemarks/clj-hex-grid">andeemarks/clj-hex-grid</a><sup class="print-endnote">[77]</sup> - Clojure</li>
+<li>
+<a href="https://github.com/rayalex/hexgrid">rayalex/hexgrid</a><sup class="print-endnote">[78]</sup> - Elixir</li>
+<li>
+<a href="https://gist.github.com/zacharycarter/c5565930ba57af5554bb8180d566f067">zacharycarter’s gist</a><sup class="print-endnote">[79]</sup> - Nim</li>
+<li>
+<a href="https://github.com/pmcxs/hexgrid">pmcxs/hexgrid</a><sup class="print-endnote">[80]</sup> - Go</li>
+<li>
+<a href="https://github.com/hautenessa/hexagolang">hautenessa/hexagolang</a><sup class="print-endnote">[81]</sup> - Go</li>
+<li>
+<a href="https://github.com/GiovineItalia/Hexagons.jl">GiovineItalia/Hexagons.jl</a><sup class="print-endnote">[82]</sup> - Julia</li>
+<li>
+<a href="https://gitlab.com/nohkumado/hexagonal_grid">nohkumado/hexagonal_grid</a><sup class="print-endnote">[83]</sup> - Dart / Flutter</li>
+</ul>
+</li>
+</ul>
+
+<p>
+Also for Unity take a look at <a href="https://catlikecoding.com/unity/tutorials/hex-map/part-1/">CatlikeCoding’s tutorial</a><sup class="print-endnote">[84]</sup>.
+</p>
+
+
+
+
+</section>
+</main><div class="below-divider">
+<p>Email me <a class="email" rel="me" href="mailto:redblobgames@gmail.com">redblobgames@gmail.com</a>, or comment here:</p>
+<div class="print-endnote">
+<h3>Links</h3>
+<ol>
+<li>[1]:&nbsp;https://www.reedbeta.com/blog/on-vector-math-libraries/</li>
+<li>[2]:&nbsp;https://stackoverflow.com/questions/4003232/how-to-code-a-modulo-operator-in-c-c-obj-c-that-handles-negative-numbers</li>
+<li>[3]:&nbsp;https://github.com/chad-autry/zig-zag/blob/master/index.js</li>
+<li>[4]:&nbsp;https://en.wikipedia.org/wiki/Bitwise_operation#AND</li>
+<li>[5]:&nbsp;https://en.wikipedia.org/wiki/Two’s_complement</li>
+<li>[6]:&nbsp;https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0907r0.html</li>
+<li>[7]:&nbsp;https://en.wikipedia.org/wiki/Modulo#Variants_of_the_definition</li>
+<li>[8]:&nbsp;https://en.wikipedia.org/wiki/Modulo#In_programming_languages</li>
+<li>[9]:&nbsp;https://web.archive.org/web/20170924024146/http://web.cs.ucla.edu/~tianyi.zhang/perfdiff.pdf</li>
+<li>[10]:&nbsp;https://simblob.blogspot.com/2015/03/hex-grids-code-generation.html</li>
+<li>[11]:&nbsp;http://gamelogic.co.za/grids/</li>
+<li>[12]:&nbsp;https://www.boristhebrave.com/docs/sylves/1/articles/grids/</li>
+<li>[13]:&nbsp;https://github.com/pgeerkens/HexGridUtilitiesForGames</li>
+<li>[14]:&nbsp;https://github.com/akhra/HexCoord</li>
+<li>[15]:&nbsp;https://github.com/DigitalMachinist/HexGrid</li>
+<li>[16]:&nbsp;https://github.com/Amaranthos/UnityHexGrid/</li>
+<li>[17]:&nbsp;https://github.com/svejdo1/HexGrid</li>
+<li>[18]:&nbsp;https://github.com/Banbury/UnityHexGrid</li>
+<li>[19]:&nbsp;https://aurelwu.github.io/</li>
+<li>[20]:&nbsp;https://github.com/owenmoore/cube-coordinates</li>
+<li>[21]:&nbsp;https://github.com/imurashka/HexagonalLib</li>
+<li>[22]:&nbsp;https://github.com/Clpsplug/hexagonal_map</li>
+<li>[23]:&nbsp;https://github.com/juna8001/HexEngine</li>
+<li>[24]:&nbsp;https://github.com/Hexworks/mixite</li>
+<li>[25]:&nbsp;https://github.com/timgilbert/scala-hexmap</li>
+<li>[26]:&nbsp;https://github.com/mraad/grid-hex</li>
+<li>[27]:&nbsp;https://github.com/dmccabe/khexgrid</li>
+<li>[28]:&nbsp;https://github.com/OfflineBrain/khexagon</li>
+<li>[29]:&nbsp;https://github.com/DM-UK/HexTriCompositeGrid</li>
+<li>[30]:&nbsp;https://github.com/denizztret/ObjectiveHexagon</li>
+<li>[31]:&nbsp;https://github.com/pkclsoft/HexLib</li>
+<li>[32]:&nbsp;https://github.com/denizztret/ObjectiveHexagon</li>
+<li>[33]:&nbsp;https://github.com/MadGeorge/AmitsHexGridLibrarySwift</li>
+<li>[34]:&nbsp;https://github.com/fananek/hex-grid</li>
+<li>[35]:&nbsp;https://github.com/flauwekeul/honeycomb</li>
+<li>[36]:&nbsp;https://github.com/mpalmerlee/HexagonTools</li>
+<li>[37]:&nbsp;https://github.com/RobertBrewitz/axial-hexagonal-grid</li>
+<li>[38]:&nbsp;https://github.com/bodinaren/BHex.js</li>
+<li>[39]:&nbsp;https://github.com/Hellenic/react-hexgrid/</li>
+<li>[40]:&nbsp;https://github.com/vonWolfehaus/von-grid/</li>
+<li>[41]:&nbsp;https://github.com/othree/hexagons</li>
+<li>[42]:&nbsp;https://github.com/cefleet/hexAPI</li>
+<li>[43]:&nbsp;https://github.com/njlr/solid-hex</li>
+<li>[44]:&nbsp;https://github.com/aahdee/p5grid</li>
+<li>[45]:&nbsp;https://github.com/joshuabowers/hexagonally</li>
+<li>[46]:&nbsp;https://github.com/scrapcupcake/hexs6</li>
+<li>[47]:&nbsp;https://github.com/euoia/hex-grid.js</li>
+<li>[48]:&nbsp;https://github.com/RedFT/Hexy</li>
+<li>[49]:&nbsp;https://github.com/stephanh42/hexutil</li>
+<li>[50]:&nbsp;https://github.com/BorisTheBrave/grids</li>
+<li>[51]:&nbsp;https://github.com/kompoth/geks</li>
+<li>[52]:&nbsp;https://github.com/czuger/rhex</li>
+<li>[53]:&nbsp;https://github.com/SpeciesFileGroup/waxy</li>
+<li>[54]:&nbsp;https://package.elm-lang.org/packages/Voronchuk/hexagons/2.0.0</li>
+<li>[55]:&nbsp;https://github.com/danneu/elm-hex-grid</li>
+<li>[56]:&nbsp;https://github.com/etaque/elm-hexagons</li>
+<li>[57]:&nbsp;https://github.com/alkavan/hexagon-tiles</li>
+<li>[58]:&nbsp;https://github.com/dpc/hex2d-rs</li>
+<li>[59]:&nbsp;https://github.com/leftiness/hex_math</li>
+<li>[60]:&nbsp;https://github.com/ozkriff/zemeroth</li>
+<li>[61]:&nbsp;https://github.com/iancormac84/hexae</li>
+<li>[62]:&nbsp;https://gitlab.com/hankruiger/bestagon</li>
+<li>[63]:&nbsp;https://github.com/cmarcbs7/chickenwire</li>
+<li>[64]:&nbsp;https://github.com/ManevilleF/hexx</li>
+<li>[65]:&nbsp;https://github.com/CoCoSol007/hexing</li>
+<li>[66]:&nbsp;https://github.com/algodiva/gridava</li>
+<li>[67]:&nbsp;https://github.com/lucidBrot/hexgridspiral</li>
+<li>[68]:&nbsp;https://github.com/icrawler/HexaMoon</li>
+<li>[69]:&nbsp;https://github.com/droxpopuli/HexMap</li>
+<li>[70]:&nbsp;https://github.com/DDoop/HexTesting</li>
+<li>[71]:&nbsp;https://github.com/romlok/godot-gdhexgrid</li>
+<li>[72]:&nbsp;https://github.com/HugoEnzo/HexGrid_Godot_4.0</li>
+<li>[73]:&nbsp;https://github.com/nanosch/hexopia</li>
+<li>[74]:&nbsp;https://github.com/Astatroth/php-hexgrid</li>
+<li>[75]:&nbsp;https://github.com/mhwombat/grid/wiki</li>
+<li>[76]:&nbsp;https://github.com/RyanMcNamara86/Hex</li>
+<li>[77]:&nbsp;https://github.com/andeemarks/clj-hex-grid</li>
+<li>[78]:&nbsp;https://github.com/rayalex/hexgrid</li>
+<li>[79]:&nbsp;https://gist.github.com/zacharycarter/c5565930ba57af5554bb8180d566f067</li>
+<li>[80]:&nbsp;https://github.com/pmcxs/hexgrid</li>
+<li>[81]:&nbsp;https://github.com/hautenessa/hexagolang</li>
+<li>[82]:&nbsp;https://github.com/GiovineItalia/Hexagons.jl</li>
+<li>[83]:&nbsp;https://gitlab.com/nohkumado/hexagonal_grid</li>
+<li>[84]:&nbsp;https://catlikecoding.com/unity/tutorials/hex-map/part-1/</li>
+</ol>
+</div>
+<div class="comments" role="complementary">
+<div id="disqus_thread"><button style="padding:1em;width:100%" onclick="$disqus()">Load <b>126 comments</b> from Disqus</button></div>
+<script>
+var DISQUS_URL="http://www.redblobgames.com/grids/hexagons/implementation.html";
+function disqus_config(){this.page.url=DISQUS_URL}
+function $disqus(){$disqus=()=>{};$l("https://redblobgames.disqus.com/embed.js")}
+if(document.location.hash.match(/#comment/))setTimeout($disqus,0)
+else if(false) {new IntersectionObserver(e=>{if(e[0].isIntersecting)$disqus()}).observe(document.getElementById('disqus_thread'))}
+else {window.DISQUSWIDGETS={displayCount(r){let c=r?.counts?.[0]?.comments;document.querySelector("#disqus_thread b").textContent=`${c??0} comment${c!=1?'s':''}`}};$l("https://redblobgames.disqus.com/count-data.js?2="+encodeURIComponent(DISQUS_URL))}
+</script><noscript><a href="https://redblobgames.disqus.com/?url=https://www.redblobgames.com/grids/hexagons/implementation.html">View the discussion thread.</a></noscript>
+</div>
+</div><script async="" src="./Implementation of Hex Grids_files/count-data.js.download" data-timestamp="1778959705299"></script>
+<footer><div>
+<div>
+<address>
+		  Copyright © <time>2026</time> <a rel="author home copyright" href="https://www.redblobgames.com/">Red Blob Games</a><br><a href="https://www.redblobgames.com/blog/posts.xml"><svg viewBox="0 0 30 30" height="0.8em"><rect width="30" height="30" rx="5" fill="orange"></rect><circle cx="7" cy="23" r="4" fill="white"></circle><path d="M 5,5 A 20,20,0,0,1,25,25 M 5,13 A 12,12,0,0,1,17,25" fill="none" stroke="white" stroke-width="4" stroke-linecap="square"></path></svg>&nbsp;RSS Feed</a>
+</address>
+<details><summary>Citation:</summary><pre>Patel, Amit J., "Implementation of Hex Grids", 
+  Red Blob Games, 2015,
+  https://www.redblobgames.com/grids/hexagons/implementation.html</pre>
+<pre>@online{Patel-2015,
+  author       = {Patel, Amit J.}, 
+  title        = {Implementation of Hex Grids},
+  organization = {Red Blob Games},
+  year         = {2015},
+  url          = {https://www.redblobgames.com/grids/hexagons/implementation.html}
+  urldate      = {2026-05-03}
+}</pre></details>
+</div>
+<div>
+  <script src="./Implementation of Hex Grids_files/lib.js.download"></script>
+  <script src="./Implementation of Hex Grids_files/implementation.js.download"></script>
+
+<p>
+Created  6 May 2015 with <a href="https://orgmode.org/">Emacs Org-mode</a>, from <a href="https://www.redblobgames.com/grids/hexagons/implementation.org">implementation.org</a> and the helper Javascript file <a href="https://www.redblobgames.com/grids/hexagons/implementation.js">implementation.js</a>. Last modified: 28 Apr 2026
+</p>
+</div>
+</div></footer>
+
+
+</body></html>

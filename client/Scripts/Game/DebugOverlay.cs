@@ -9,17 +9,7 @@ public partial class DebugOverlay : CanvasLayer
 
 	public override void _Ready()
 	{
-		Layer = 100;
-		Visible = false;
-
-		label = new Label
-		{
-			Position = new Vector2(8, 8),
-			Modulate = Colors.White,
-		};
-		label.AddThemeColorOverride("font_outline_color", Colors.Black);
-		label.AddThemeConstantOverride("outline_size", 4);
-		AddChild(label);
+		label = GetNode<Label>("Label");
 	}
 
 	public override void _Input(InputEvent @event)

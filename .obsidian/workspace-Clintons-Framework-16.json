@@ -1,98 +1,41 @@
 {
   "main": {
-    "id": "37d718731ee5cd94",
+    "id": "34b0db7267e9a231",
     "type": "split",
     "children": [
       {
-        "id": "0fe4e385a2314fc2",
+        "id": "f564068b0fe24188",
         "type": "tabs",
         "children": [
           {
-            "id": "f7aef3a82d46a5e6",
+            "id": "2561ecc13d76e54b",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Notes/002 Game Development/Features to implement/Enemy and Player Movement.md",
+                "file": "server/spacetimedb/src/AGENTS.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Enemy and Player Movement"
-            }
-          },
-          {
-            "id": "9055346b81436cef",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "server/spacetimedb/src/main/methods.rs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "methods"
-            }
-          },
-          {
-            "id": "f8ad4144c2c0b1de",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "server/spacetimedb/src/main/reducers.rs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "reducers"
-            }
-          },
-          {
-            "id": "5118f7adb5872895",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "server/spacetimedb/src/main/tables.rs",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "tables"
-            }
-          },
-          {
-            "id": "7d9d511b1ce7c015",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "World grid notes"
+              "title": "AGENTS"
             }
           }
-        ],
-        "currentTab": 4
+        ]
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "9e6e612bda9276a2",
+    "id": "38a0539c7e5bddf1",
     "type": "split",
     "children": [
       {
-        "id": "a31ccfb03fcc4c92",
+        "id": "e51505f3fd2dd60b",
         "type": "tabs",
         "children": [
           {
-            "id": "702b0ddb37d08ea9",
+            "id": "f7679dd02995654a",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -105,12 +48,12 @@
             }
           },
           {
-            "id": "1a199ca0ef466ae3",
+            "id": "e1e07241e6bedcab",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-                "query": "pvp",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -122,7 +65,7 @@
             }
           },
           {
-            "id": "d7d1bbc5efcce987",
+            "id": "35621305741a3d3a",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -135,22 +78,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 363.5
+    "width": 371.5
   },
   "right": {
-    "id": "060b9ccb0c4fedf3",
+    "id": "90e39467ace802b5",
     "type": "split",
     "children": [
       {
-        "id": "8dc5b426f41e901a",
+        "id": "9e358375155d6bce",
         "type": "tabs",
         "children": [
           {
-            "id": "a0ec55b96a2eb2d2",
+            "id": "378873ceb14ddcf8",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "Untitled.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -160,24 +104,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for Untitled"
             }
           },
           {
-            "id": "f4299f886cc77be2",
+            "id": "a39f31166fd3be76",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "Untitled.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links"
+              "title": "Outgoing links from Untitled"
             }
           },
           {
-            "id": "980c05003454c49d",
+            "id": "72abcf488fd6e839",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -192,7 +137,7 @@
             }
           },
           {
-            "id": "6ad309eacaf5bb0b",
+            "id": "29f7221a4b1b30db",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -206,32 +151,55 @@
             }
           },
           {
-            "id": "9fd231dfabdf672d",
+            "id": "eec19402b51015df",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
+                "file": "docs/Technical Design Docs/99 End-to-End Flowchart scaffolding.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of 99 End-to-End Flowchart scaffolding"
+            }
+          },
+          {
+            "id": "42254b44e2179fa8",
+            "type": "leaf",
+            "state": {
+              "type": "tc-review-panel",
+              "state": {},
+              "icon": "message-square",
+              "title": "CriticMarkup review"
+            }
+          },
+          {
+            "id": "c2357e04485d7648",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
             }
           }
-        ]
+        ],
+        "currentTab": 6
       }
     ],
     "direction": "horizontal",
-    "width": 300,
+    "width": 542.5,
     "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
-      "system3-relay:Relay": false,
-      "custom-sort:Toggle custom sorting": false,
-      "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
+      "track-changes:Open CriticMarkup review panel": false,
+      "obsidian42-brat:BRAT": false,
+      "vscode-editor:Create Code File": false,
+      "switcher:Open quick switcher": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
@@ -239,53 +207,57 @@
       "bases:Create new base": false
     }
   },
-  "active": "7d9d511b1ce7c015",
+  "active": "2561ecc13d76e54b",
   "lastOpenFiles": [
-    "docs/Resources/hex-grid",
-    "docs/Resources",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/google-analytics.en.js.download",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/jquery.min.js.download",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks.min.js.download",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stub.en.js.download",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/powered_by_logo.svg",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(3).html",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource.html",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(2).html",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange.html",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a4c62c868ace14fce772659f8162dfd2",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/so.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/img-upvote.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/xTHKv.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/2Gn1a.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/ivtrS.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/CulEv.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/S1txm.png",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/gYnzn.jpg",
-    "docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a007be5a61f6aa8f3e85ae2fc18dd66e.png",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-    "docs/Notes/002 Game Development/Features to implement/Enemy and Player Movement.md",
-    "docs/Notes/002 Game Development/Features to implement/Enemy bullets system.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
-    "docs/Notes/002 Game Development/Features to implement list.md",
     "Untitled.md",
-    "CLAUDE.md",
-    "server/CLAUDE.md",
-    "docs/Notes/001 Explaining Game Code/999 Hard coded stuff that might be an issue later.md",
-    "docs/Resources and dependencies/hex-grid/hexmod-representation/README.md",
-    "docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/README.md",
-    "docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md",
-    "docs/Resources and dependencies/hex-grid/Implementation of Hex Grids.md",
-    "docs/Resources and dependencies/hex-grid/Hexagonal Grids.md",
-    "code_examples/HexGrid2/README.md",
-    "code_examples/HexGrid/README.md",
-    "code_examples/hexagonal_map/README.md",
-    "code_examples/HexagonalLib/README.md",
-    "code_examples/bholio/Notes/Chronological Execution Order.md",
-    "code_examples/bholio/Blackholio/README.md",
-    "code_examples/bholio/Blackholio/DEVELOP.md",
-    "code_examples/godot-blast-bullets-2d/LICENSE.md",
-    "code_examples/godot-blast-bullets-2d/README.md",
-    "code_examples/godot-blast-bullets-2d/CLAUDE.md",
-    "code_examples/example-project-blastbullets2d/addons/blastbullets2d/LICENSE.md"
+    "server/spacetimedb/src/AGENTS.md",
+    "docs/Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation",
+    "docs/Technical Design Docs/Resources and dependencies/hex-grid/Implementation of Hex Grids_files",
+    "docs/Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid",
+    "docs/Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files",
+    "docs/Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files",
+    "docs/Technical Design Docs/Resources and dependencies/hex-grid",
+    "docs/Technical Design Docs/Resources and dependencies",
+    "client/Assets/Pixel Art Top Down - Basic v1/Texture/Extra",
+    "client/Assets/Pixel Art Top Down - Basic v1/Texture",
+    "client/Assets/Pixel Art Top Down - Basic v1",
+    "docs/Game Design Docs/AGENTS.md",
+    "docs/Game Design Docs/CLAUDE - Copy.md",
+    "docs/AGENTS.md",
+    "docs/CLAUDE - Copy.md",
+    "client/Scripts/World/AGENTS.md",
+    "client/Scripts/World/CLAUDE - Copy.md",
+    "client/Scripts/module_bindings/AGENTS.md",
+    "client/Scripts/module_bindings/CLAUDE - Copy.md",
+    "client/AGENTS.md",
+    "client/CLAUDE - Copy.md",
+    "server/AGENTS.md",
+    "server/CLAUDE - Copy.md",
+    "AGENTS.md",
+    "CLAUDE - Copy.md",
+    "server/spacetimedb/src/CLAUDE.md",
+    "docs/Technical Design Docs/99 End-to-End Timeline Flowchart.md",
+    "server/spacetimedb/src/CLAUDE old - Copy.md",
+    "server/spacetimedb/src/CLAUDE old.md",
+    "client/Scripts/module_bindings/CLAUDE.md",
+    "docs/Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Stupid notes.md",
+    "client/addons/blastbullets2d/README.md",
+    "docs/Old Notes/001 Explaining Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
+    "docs/Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes/(old) 000 Opening the game & then clicking Host Game or Join Game.md",
+    "docs/Technical Design Docs/00 Roadmap.md",
+    "docs/Technical Design Docs/99 End-to-End Flowchart.canvas",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Wood Resource/Wood Resource.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree4.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree3.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree2.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 4.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree1.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 3.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 2.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 1.png",
+    "client/Assets/2D/Tiny Swords (Free Pack)/Terrain/Resources/Meat/Sheep/Sheep_Move.png",
+    "docs/Technical Design Docs/Old Technical Design Docs/99 End-to-End Flowchart.canvas",
+    "docs/Game Design Docs/Old Technical Design Docs/99 End-to-End Flowchart.canvas",
+    "docs/Untitled.canvas"
   ]
 }

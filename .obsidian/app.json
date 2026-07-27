@@ -3,5 +3,6 @@
   "attachmentFolderPath": "./Attachments",
   "showUnsupportedFiles": false,
   "readableLineLength": false,
-  "promptDelete": false
+  "promptDelete": false,
+  "showLineNumber": false
 }

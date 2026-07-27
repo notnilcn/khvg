@@ -17,7 +17,7 @@ public partial class InventorySlotUI : Control
             break;
         }
         MouseEntered += () => ItemStatsSidebar.Instance?.ShowSlot(SlotIndex);
-        MouseExited += () => ItemStatsSidebar.Instance?.Clear();
+        MouseExited += () => ItemStatsSidebar.Instance?.QueueHoverClear();
     }
 
     public override void _GuiInput(InputEvent @event)

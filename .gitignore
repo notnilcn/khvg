@@ -20,8 +20,6 @@ spacetime.local.json
 .DS_Store
 Thumbs.db
 
-2026-*.txt
-
 g.godot-editor-filesystem_cache10
 
 g.godot-editor-filesystem_update4
@@ -32,37 +30,14 @@ Untitled.base
 
 *.tmp
 
-bholio/
-
 .claude/
-
-BitCraftPublic/
-
-bmmo/bin/
-bmmo/obj/
-bmmo/spacetimedb/bin/
-bmmo/spacetimedb/obj/
-
-.gitignore
-
-example-project-blastbullets2d/
-
-*.mp4
-
-godot-blast-bullets-2d/
-*Shortcut
 
 client/Scripts/module_bindings
 
-personal_notes/
-
-# ./SpacetimeDB/
-
 client/addons/
-client-old/
-
-server3d/
-oldclient/
-clientt/
-client-old/
-client3d/
+client/Assets/3D/accesiories Assets/3D/model_presets
+client/Assets/3D/nature_decorations
+client/Assets/3D/skeletons
+client/Assets/3D/enviroment.tres
+client/Assets/3D/world_3d.tres
+code_examples/

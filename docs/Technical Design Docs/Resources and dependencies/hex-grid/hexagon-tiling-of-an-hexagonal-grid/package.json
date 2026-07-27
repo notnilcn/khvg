@@ -1,0 +1,14 @@
+{
+  "name": "@sanderevers/hexagon-tiling-of-an-hexagonal-grid",
+  "main": "47e466502e507073@1681.js",
+  "version": "1681.0.0",
+  "homepage": "https://observablehq.com/@sanderevers/hexagon-tiling-of-an-hexagonal-grid",
+  "author": {
+    "name": "Sander Evers",
+    "url": "https://observablehq.com/@sanderevers"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4 - 5"
+  }
+}

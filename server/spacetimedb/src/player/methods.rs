@@ -115,6 +115,13 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         for m in &item.stat_modifiers {
             fold_modifier(m);
         }
+        for enchantment_id in &slot.enchantment_ids {
+            if let Some(enchantment) = ctx.db.enchantment().enchantment_id().find(enchantment_id) {
+                for m in &enchantment.stat_modifiers {
+                    fold_modifier(m);
+                }
+            }
+        }
     }
 
     for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id) {
@@ -148,13 +155,13 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
     }
 }
 
-fn weapon_slot(item_id: Option<String>) -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Weapon], item_id } }
-fn hotbar_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Consumable], item_id: None } }
-fn accessory_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Accessory], item_id: None } }
-fn armor_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Armor], item_id: None } }
-fn artifact_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Artifact], item_id: None } }
-fn general_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Weapon, EquipSlot::Artifact, EquipSlot::Armor, EquipSlot::Accessory, EquipSlot::Consumable], item_id: None } }
-fn bag_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Bag], item_id: None } }
+fn weapon_slot(item_id: Option<String>) -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Weapon], item_id, enchantment_ids: vec![] } }
+fn hotbar_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Consumable], item_id: None, enchantment_ids: vec![] } }
+fn accessory_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Accessory], item_id: None, enchantment_ids: vec![] } }
+fn armor_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Armor], item_id: None, enchantment_ids: vec![] } }
+fn artifact_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Artifact], item_id: None, enchantment_ids: vec![] } }
+fn general_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Weapon, EquipSlot::Artifact, EquipSlot::Armor, EquipSlot::Accessory, EquipSlot::Consumable], item_id: None, enchantment_ids: vec![] } }
+fn bag_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Bag], item_id: None, enchantment_ids: vec![] } }
 
 pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     if ctx.db.player_data().profile_id().find(&profile_id).is_none() {

@@ -9,6 +9,8 @@ using System.Linq;
 
 public partial class GameManager : Node
 {
+	[Signal] public delegate void EnchantmentsChangedEventHandler();
+
 	public static GameManager Instance { get; private set; } = null!;
 
 	public DbConnection? Conn { get; private set; }
@@ -29,12 +31,12 @@ public partial class GameManager : Node
 
 	private LocalPlayer? localPlayer;
 	private BulletManager? bulletManager;
-	private TerrainManager? terrainOverlay;
 	private readonly Dictionary<string, RemotePlayer> remotePlayers = new();
 	private readonly Dictionary<ulong, Enemy> enemies = new();
 	private readonly Dictionary<ulong, Drop> drops = new();
 	private readonly Dictionary<string, string> textureCache = new();
 	private readonly Dictionary<string, SpacetimeDB.Types.Item> itemCache = new();
+	private readonly Dictionary<string, Enchantment> enchantmentCache = new();
 
 	private CanvasLayer? lobbyLayer;
 	private Button? joinButton;
@@ -50,7 +52,6 @@ public partial class GameManager : Node
 		var mainMenuPCam2D = GetNode<Node2D>("%MainMenuPhantomCamera2D");
 		_mainMenuPCam2D = mainMenuPCam2D.AsPhantomCamera2D();
 		ShowLobby();
-		AddChild(new DebugOverlay());
 		if (Conn == null) return;
 		Conn.Db.LocalPlayerProfiles.OnInsert += (ctx, profile) => 
 		{
@@ -166,9 +167,14 @@ public partial class GameManager : Node
 		conn.Db.AllItems.OnUpdate += (_, _, item) => itemCache[item.ItemId] = item;
 		conn.Db.AllItems.OnDelete += (_, item) => itemCache.Remove(item.ItemId);
 
+		conn.Db.AllEnchantments.OnInsert += (_, enchantment) => { enchantmentCache[enchantment.EnchantmentId] = enchantment; EmitSignal(SignalName.EnchantmentsChanged); };
+		conn.Db.AllEnchantments.OnUpdate += (_, _, enchantment) => { enchantmentCache[enchantment.EnchantmentId] = enchantment; EmitSignal(SignalName.EnchantmentsChanged); };
+		conn.Db.AllEnchantments.OnDelete += (_, enchantment) => { enchantmentCache.Remove(enchantment.EnchantmentId); EmitSignal(SignalName.EnchantmentsChanged); };
+
 		conn.SubscriptionBuilder()
 			.AddQuery(q => q.From.AllTextures())
 			.AddQuery(q => q.From.AllItems())
+			.AddQuery(q => q.From.AllEnchantments())
 			.Subscribe();
 
 		SubscribeLobby();
@@ -247,11 +253,6 @@ public partial class GameManager : Node
 			bulletManager = BulletManagerScene.Instantiate<BulletManager>();
 			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, bulletManager);
 		}
-		if (terrainOverlay == null)
-		{
-			terrainOverlay = new TerrainManager();
-			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, terrainOverlay);
-		}
 	}
 
 	private void OnLocalPlayerDelete(EventContext _, LoggedInPlayer loggedInPlayer)
@@ -262,9 +263,6 @@ public partial class GameManager : Node
 		if (bulletManager != null && IsInstanceValid(bulletManager))
 			bulletManager.QueueFree();
 		bulletManager = null;
-		if (terrainOverlay != null && IsInstanceValid(terrainOverlay))
-			terrainOverlay.QueueFree();
-		terrainOverlay = null;
 
 		if (Conn?.IsActive != true) return;
 
@@ -345,6 +343,11 @@ public partial class GameManager : Node
 		textureCache.TryGetValue(textureId, out var path) ? path : null;
 
 	public Item? GetItem(string itemId) => itemCache.TryGetValue(itemId, out var item) ? item : null;
+
+	public Enchantment? GetEnchantment(string enchantmentId) =>
+		enchantmentCache.TryGetValue(enchantmentId, out var enchantment) ? enchantment : null;
+
+	public IEnumerable<Enchantment> GetEnchantments() => enchantmentCache.Values;
 
 	public override void _ExitTree()
 	{

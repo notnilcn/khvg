@@ -6,7 +6,7 @@ using Godot;
 // write their own PhantomCamera — neither owns state and neither writes back. All camera input is
 // handled here.
 //
-// This lives in the MAIN scene tree (added by GameManager, next to DebugOverlay) — deliberately
+// This lives in the MAIN scene tree (declared in main.tscn, next to DebugOverlay) — deliberately
 // NOT inside the 3D SubViewport. A node inside the SubViewport only receives input the
 // SubViewportContainer forwards to it, so mouse-motion events never arrive there; that is why the
 // old arcball, wired inside WorldRenderer3D, silently did nothing.

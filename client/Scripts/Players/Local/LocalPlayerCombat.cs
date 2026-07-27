@@ -2,8 +2,10 @@
 using Godot;
 using SpacetimeDB.Types;
 
-public partial class LocalPlayerCombat : Node2D
+public partial class LocalPlayerCombat : Component
 {
+    [Export] public PackedScene HitZoneScene { get; set; } = null!;
+
     private WeaponBehavior? _weapon;
     private string? _weaponItemId;
     private float _fireTimer;
@@ -14,12 +16,13 @@ public partial class LocalPlayerCombat : Node2D
     private bool _lockOn;
     private Enemy? _nearestEnemy;
     private float _scanTimer;
+    private LocalPlayer player = null!;
     private const float ScanInterval = 0.5f;
     private const float AimConeHalfAngle = 0.52f;
 
-    public override void _Ready()
+    protected override void OnRegistered()
     {
-        var player = GetParent<LocalPlayer>();
+        player = (LocalPlayer)Entity;
         player.InventoryChanged += OnInventoryChanged;
         player.AimSettingsChanged += OnAimSettingsChanged;
         _playerRadius = (player.GetNode<CollisionShape2D>("Collider").Shape as CapsuleShape2D)?.Radius ?? 0f;
@@ -215,33 +218,15 @@ public partial class LocalPlayerCombat : Node2D
 
     private void SpawnZone(Vector2 pos, float radius, float delay)
     {
-        var zone = new Area2D { CollisionLayer = 0, CollisionMask = 1, Monitoring = true, Monitorable = false, TopLevel = true };
-        zone.AddChild(new CollisionShape2D { Shape = new CircleShape2D { Radius = radius } });
+        var zone = HitZoneScene.Instantiate<HitZone>();
         AddChild(zone);
         zone.GlobalPosition = pos;
-        var capturedZone = zone;
-        GetTree().CreateTimer(delay).Timeout += () =>
-        {
-            ScanZone(capturedZone);
-            capturedZone.QueueFree();
-        };
-    }
-
-    private static void ScanZone(Area2D zone)
-    {
-        if (!IsInstanceValid(zone)) return;
-        var conn = GameManager.Instance.Conn;
-        if (conn == null) return;
-        foreach (var body in zone.GetOverlappingBodies())
-        {
-            if (body is Enemy enemy)
-                conn.Reducers.ReportEnemyHit(enemy.EnemyId);
-        }
+        zone.Launch(radius, delay);
     }
 
     public override void _ExitTree()
     {
-        if (GetParent() is LocalPlayer player)
+        if (player != null)
         {
             player.InventoryChanged -= OnInventoryChanged;
             player.AimSettingsChanged -= OnAimSettingsChanged;

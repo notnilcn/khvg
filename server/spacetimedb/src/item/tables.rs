@@ -65,4 +65,16 @@ pub struct Item {
     pub equip_slot: EquipSlot,
     pub stat_modifiers: Vec<StatModifier>,
     pub behaviors: Vec<ItemBehavior>,
+    pub max_enchantments: u32,
+}
+
+#[table(accessor = enchantment, public)]
+pub struct Enchantment {
+    #[primary_key]
+    pub enchantment_id: String,
+    pub display_name: String,
+    pub description: String,
+    pub texture_id: String,
+    pub stat_modifiers: Vec<StatModifier>,
+    pub allowed_slots: Vec<EquipSlot>,
 }

@@ -27,6 +27,8 @@ namespace SpacetimeDB.Types
         public SpacetimeDB.Timestamp ExpiresAt;
         [DataMember(Name = "dropped_by")]
         public SpacetimeDB.Identity? DroppedBy;
+        [DataMember(Name = "enchantment_ids")]
+        public System.Collections.Generic.List<string> EnchantmentIds;
 
         public LootDrop(
             ulong DropId,
@@ -35,7 +37,8 @@ namespace SpacetimeDB.Types
             float Y,
             long ChunkIndex,
             SpacetimeDB.Timestamp ExpiresAt,
-            SpacetimeDB.Identity? DroppedBy
+            SpacetimeDB.Identity? DroppedBy,
+            System.Collections.Generic.List<string> EnchantmentIds
         )
         {
             this.DropId = DropId;
@@ -45,11 +48,13 @@ namespace SpacetimeDB.Types
             this.ChunkIndex = ChunkIndex;
             this.ExpiresAt = ExpiresAt;
             this.DroppedBy = DroppedBy;
+            this.EnchantmentIds = EnchantmentIds;
         }
 
         public LootDrop()
         {
             this.ItemId = "";
+            this.EnchantmentIds = new();
         }
     }
 }

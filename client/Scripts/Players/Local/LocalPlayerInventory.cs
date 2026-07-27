@@ -21,7 +21,7 @@ public partial class LocalPlayerInventory : Control
         hotbar = GetNode<Control>("Hotbar");
         menuLayout.Visible = false;
 
-        if (Owner is not LocalPlayer player) return;
+        if (this.GetAncestor<LocalPlayer>() is not { } player) return;
         player.InventoryChanged += OnInventoryChanged;
     }
 
@@ -36,7 +36,7 @@ public partial class LocalPlayerInventory : Control
 
     public override void _Process(double delta)
     {
-        if (Owner is not LocalPlayer player || !hotbar.Visible) return;
+        if (this.GetAncestor<LocalPlayer>() is not { } player || !hotbar.Visible) return;
 
         for (int i = 0; i < HotbarActions.Length; i++)
         {
@@ -49,7 +49,7 @@ public partial class LocalPlayerInventory : Control
 
     private void OnInventoryChanged()
     {
-        if (Owner is not LocalPlayer player) return;
+        if (this.GetAncestor<LocalPlayer>() is not { } player) return;
 
         UpdateSection(player, HotbarSlots);
         UpdateSection(player, ArmorSlots);
@@ -74,7 +74,7 @@ public partial class LocalPlayerInventory : Control
 
     public override void _ExitTree()
     {
-        if (Owner is LocalPlayer player)
+        if (this.GetAncestor<LocalPlayer>() is { } player)
             player.InventoryChanged -= OnInventoryChanged;
     }
 }

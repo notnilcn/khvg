@@ -11,7 +11,7 @@ public class ResolvedSlot
 	public bool IsEmpty => Item == null;
 }
 
-public partial class LocalPlayer : CharacterBody2D
+public partial class LocalPlayer : CharacterBody2D, IEntity
 {
 	[Signal] public delegate void InventoryChangedEventHandler();
 	[Signal] public delegate void AimSettingsChangedEventHandler();
@@ -19,6 +19,13 @@ public partial class LocalPlayer : CharacterBody2D
 	[Export] public PackedScene? KnightScene { get; set; }
 
 	public static LocalPlayer? Local { get; private set; }
+
+	// IEntity — LocalPlayer can't derive from Entity (it needs CharacterBody2D), so it
+	// implements the interface directly with its own registry. Component children
+	// (e.g. LocalPlayerCombat) register themselves here from their _Ready.
+	private readonly EntityRegistry componentRegistry = new();
+	public void RegisterComponent(Component component) => componentRegistry.Register(component);
+	public Component? GetComponent(System.Type type) => componentRegistry.Get(type);
 
 	public string Username { get; private set; } = "";
 	public string ProfileName { get; private set; } = "";
@@ -60,6 +67,9 @@ public partial class LocalPlayer : CharacterBody2D
 
 	// Slots 15-22: general mixed
 	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(15, 8);
+
+	// Slots that count as worn equipment (enchantable): 0 weapon, 5-8 accessories, 9-12 armor, 13-14 artifacts
+	public static bool IsEquipmentSlot(int index) => index == 0 || (index >= 5 && index <= 14);
 
 	public override void _Ready()
 	{
@@ -224,5 +234,6 @@ public partial class LocalPlayer : CharacterBody2D
 		conn.Db.LocalPlayerActiveProfile.OnUpdate   -= OnActiveProfileUpdate;
 		_model3D?.Dispose();
 		WorldRenderer3D.Instance?.ClearCameraFollowTarget();
+		CameraController2D.Instance?.UnregisterCamera();
 	}
 }

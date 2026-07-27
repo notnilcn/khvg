@@ -5,15 +5,28 @@ project-wide context.
 
 ## Files here
 
-- `WorldRenderer3D.cs` — `Node3D`; root script of `Scenes/world_3d.tscn`. Singleton
-  (`WorldRenderer3D.Instance`). Owns the `PhantomCamera3D` (fetched in `_Ready` via
-  `GetNode<Node3D>("PhantomCamera3D").AsPhantomCamera3D()`), handles camera yaw/pitch/zoom input,
-  and exposes `SetCameraFollowTarget(Node3D)` / `ClearCameraFollowTarget()`.
-- `CameraController2D.cs` — the 2D counterpart. Receives the yaw offset from `WorldRenderer3D`'s
-  arcball input via `SetRotationOffset(...)` so 2D movement stays aligned with the 3D camera.
+- `CameraRig.cs` — plain `Node`, singleton (`CameraRig.Instance`). **The one source of camera
+  truth**: owns `Yaw`/`PitchDegrees`/`Distance` and all camera input (keyboard yaw, zoom, arcball
+  drag, cursor-relative snapping). Lives in the main scene tree, deliberately *outside* the 3D
+  `SubViewport` — a node inside a `SubViewportContainer`'s `SubViewport` never receives forwarded
+  mouse-motion events, which is why an earlier version of the arcball control (previously wired
+  inside `WorldRenderer3D`) silently did nothing.
+- `WorldRenderer3D.cs` — `Node3D`; root script of `Scenes/world_3d.tscn`, inside the 3D
+  `SubViewport`. Singleton (`WorldRenderer3D.Instance`). Every frame, reads `CameraRig.Instance` and
+  writes the `PhantomCamera3D`'s rotation (`SetThirdPersonRotationDegrees`) and `SpringLength`. Holds
+  no camera state or input of its own. Exposes `SetCameraFollowTarget(Node3D)` /
+  `ClearCameraFollowTarget()`, used by `LocalPlayer` to point the 3D camera at its `CharacterModel3D`
+  (`client/Scripts/Players/CharacterModel3D.cs`) — the *only* 3D-rendered entity; remote players and
+  enemies stay 2D-only.
+- `CameraController2D.cs` — the 2D counterpart, in the main scene tree (not the SubViewport). Every
+  frame, reads `CameraRig.Instance` and writes `RotationOffset`/`Zoom` onto the registered
+  `PhantomCamera2D`. Also holds no camera state or input of its own — it does **not** receive
+  anything from `WorldRenderer3D` directly; both presenters read independently from `CameraRig`.
 - `HexGridOverlay2D.cs` / `HexGridOverlay3D.cs` — debug grid overlays.
 
-`WorldRenderer3D` and `CameraController2D` are deliberately separate scripts. Do not merge them.
+`WorldRenderer3D` and `CameraController2D` are deliberately separate scripts, both kept as thin
+per-frame readers of `CameraRig`. Do not merge them, and do not wire one to read from the other —
+`CameraRig` is the only allowed source of truth for camera state.
 
 ## Other phantom_camera gotchas
 
@@ -29,3 +42,9 @@ project-wide context.
 - Freeing the follow target is recoverable but fails quietly: `_should_follow` goes false and the
   camera silently freezes at its last position. Any code that respawns the followed model must
   reassign `follow_target`.
+- `CameraController2D.UnregisterCamera()` exists but nothing calls it (not even `LocalPlayer._ExitTree`,
+  which only clears the 3D follow target). In practice this doesn't visibly break anything today — the
+  registered `PhantomCamera2D` is a child of the `LocalPlayer` node and gets freed along with it, and
+  `GameManager.ShowLobby()` reclaims camera priority for the main-menu camera independently on death —
+  but `CameraController2D._localPlayerPCam2D` is left dangling on a freed node between death and the
+  next `RegisterCamera` call. Worth fixing opportunistically rather than assuming it's load-bearing.

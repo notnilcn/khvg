@@ -1,16 +1,17 @@
 # Server Module Map
 
-`server/spacetimedb/src/` is split into four modules: `enemy/`, `player/`, `world/`, `main/`. Each gameplay module has `mod.rs`, `methods.rs` (pure helpers/math), `reducers.rs`, and `views.rs` (currently empty placeholders — views not yet implemented; clients subscribe to public tables directly).
+`server/spacetimedb/src/` is split into four modules: `enemy/`, `player/`, `world/`, `main/`. Each gameplay module has `mod.rs`, `methods.rs` (pure helpers/math), `reducers.rs`, and `views.rs`. Most `views.rs` files are still empty placeholders (clients subscribe to public tables directly) — **`enemy/views.rs` is the exception**, see below.
 
 ### `enemy/`
 - `def_tables.rs` — static template data: `PatternType` variants (Ring, Volley, Curtain, Shotgun, Explosion, ...) + their param structs, `MovementBehavior` (+ Wander/Chase/Flee params), `EnemyTarget`, attack sequence step defs (`SingleStepDef`, `RepeatStepDef`, `MultiStepDef`, `AttackSequence`, `PhaseDef`), `EnemyTemplate` table
-- `instance_tables.rs` — runtime data: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, `EnemyZone`, `BulletPatternEvent` (event table), `EnemySpawnSchedule`/`EnemyBehaviorSchedule` (scheduled tick types)
+- `instance_tables.rs` — runtime data: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, `BulletPatternEvent` (event table), `EnemySpawnSchedule`/`EnemyBehaviorSchedule` (scheduled tick types). No `EnemyZone` table — spawn regions are `BiomeRegion`, a `world/` module table (`center_hex_q/r`, `spawn_radius`, `max_enemies`, `enemy_template_ids`, `region_id`).
 - `reducers.rs` — `tick_enemy_spawn`, `tick_enemy_behavior` (scheduled), `report_enemy_hit`
-- `methods.rs` — aggro/targeting, phase/sequence ticking (`tick_phase`, `tick_sequence`), movement (`apply_movement`), zone spawning (`spawn_from_zones`)
+- `methods.rs` — aggro/targeting, phase/sequence ticking (`tick_phase`, `tick_sequence`), movement (`apply_movement`), biome-region spawning (`spawn_from_biome_regions`)
+- `views.rs` — **implemented**, not a placeholder: `nearby_enemies` (filters `Enemy` by the caller's AOI chunk indices via the shared `nearby_indices` helper from `player/views.rs`) and `enemy_templates` (unfiltered, anonymous view of the full `EnemyTemplate` table)
 
 ### `player/`
 - `tables.rs` — `LoggedInPlayer`/`LoggedOutPlayer` (login state), `PlayerProfile`, `PlayerData` (level/xp/hp), `PlayerStats`, `PlayerInventory`, `PlayerPosition`, `LootDrop`, `InventorySlot`
-- `reducers.rs` — `set_username`, `create_profile`, `delete_profile`, `join_world`, `leave_world`, `report_movement`, `gain_xp`, `update_inventory`, `report_hit`, `pickup_drop`
+- `reducers.rs` — `set_username`, `create_profile`, `delete_profile`, `join_world`, `leave_world`, `report_movement`, `gain_xp`, `update_inventory`, `report_hit`, `pickup_drop`, `drop_item`, `swap_slots`, `use_item`, `apply_enchantment`, `remove_enchantment`
 - `methods.rs` — guards (`require_logged_in`, `require_in_world`, `require_in_lobby`, `is_admin`), stat/level math (`xp_for_level`, `compute_level`, `compute_base_stats`, `recompute_stats`), `compute_player_damage`/`compute_incoming_damage`, `scaffold_profile`, `find_profile_by_name`
 
 ### `world/`
@@ -19,14 +20,15 @@
 - `methods.rs` — hex math: `world_to_hex`, `hex_to_world`, `small_to_big`, `hexmod`/`inv_hexmod`, `chunk_center_hex`, `world_to_chunk`, `wrap_world_pos`/`wrap_chunk_coords`, `spiral_chunk_index`, `surrounding_chunk_indices`
 
 ### `item/`
-- `tables.rs` — static item catalog: `Item`, `Weapon`, `Armor`, `Artifact`, `Accessory`, `Consumable`, `WeaponPattern`/`ItemType`/`ArtifactEffect`/`ConsumableBuffEffect`/`ConsumableEffect` enums
-- `reducers.rs` — admin catalog reducers: `give_item`, `remove_item`, `upsert_item`
-- `views.rs` — `all_items`, `all_weapons`, `all_armor`, `all_artifacts`, `all_accessories`, `all_consumables`
-- `seeds.rs` — `seed_weapon`/`seed_armor`/`seed_artifact`/`seed_accessory`/`seed_consumable`, `seed_world_items`, `impl Seed for Item/Weapon/Armor/Artifact/Accessory/Consumable`
+- `tables.rs` — single unified item catalog table `Item` (`item_id`, `display_name`, `description`, `texture_id`, `equip_slot`, `stat_modifiers`, `behaviors`, `max_enchantments`); `Enchantment` table (`enchantment_id`, `display_name`, `description`, `texture_id`, `stat_modifiers`, `allowed_slots`); `EquipSlot` enum (Weapon/Artifact/Armor/Accessory/Bag/Consumable); `StatKind`/`StatMode`/`StatModifier`; `ItemBehavior` enum (`Weapon(WeaponBehavior)`, `Consumable(ConsumableBehavior)`) plus `WeaponPattern`/`ConsumableEffect`/`ConsumableBuffEffect`
+- `reducers.rs` — admin catalog reducers: `give_item`, `remove_item`, `upsert_item`, `upsert_enchantment`
+- `views.rs` — `all_items` (public subscription view clients use for the item cache; see `client/CLAUDE.md` `GameManager.cs`), `all_enchantments`
+- `seeds.rs` — `seed_world_items`, `seed_world_enchantments`, `impl Seed for Item` (`impl Seed for Enchantment` lives in `main/seeds.rs`)
 
 ### `main/`
+- `global.rs` — single home for tunable constants, grouped by subsystem: world gen/map grid (`DEFAULT_CHUNK_HEX_RADIUS`, `DEFAULT_CHUNK_COLS`/`ROWS`, `DEFAULT_HEX_OUTER_RADIUS`, `BIOME_VORONOI_SEED_BUDGET`), AoI/camera (`DEFAULT_AOI_CHUNK_RADIUS`, `DEFAULT_TERRAIN_AOI_CHUNK_RADIUS`, `CLIENT_VIEWPORT_HEIGHT_PX`, `CLIENT_CAMERA_ZOOM`, `CAMERA_VIEW_RADIUS`, `SIMULATION_CHUNK_RINGS`, `SPAWN_LOOKAHEAD_CHUNK_RINGS`), player stats (`BASE_MAX_HP`, `HP_PER_LEVEL`), inventory (`GENERAL_SLOT_START`, `GENERAL_SLOT_COUNT`), enemy sim (`BEHAVIOR_TICK_DT`), world timers (`LOOT_DROP_EXPIRY`, `CONSUMABLE_EFFECT_TICK_SECONDS`)
 - `lifecycle.rs` — `init`, `client_connected`, `client_disconnected`
-- `admin.rs` — admin-only reducers: `claim_admin`/`release_admin`, `change_stats`, `upsert_texture_entry`/`upsert_enemy_template`, `spawn_enemy`/`despawn_enemy`, `add_chunks`/`clear_chunks`, `find_player_by_username`
+- `admin.rs` — admin-only reducers (single global admin slot — `claim_admin` refuses if any `LoggedInPlayer`/`LoggedOutPlayer` already has `is_admin`; `release_admin` is the only way to free it): `claim_admin`/`release_admin`, `change_stats`, `upsert_texture_entry`/`upsert_enemy_template`, `spawn_enemy`/`despawn_enemy`, `add_chunks`/`clear_chunks`, `upsert_world_def`/`upsert_biome_def`/`upsert_biome_region_def`, `generate_world_proc`/`generate_world_manual` (admin-gated wrappers around `world::methods::internal_generate_world_proc`/`internal_generate_world_manual`, the same calls `main/lifecycle.rs`'s `init` uses to build the starting world), `find_player_by_username` (matches username, full identity hex, or identity-hex prefix)
 - `seeds.rs` — `seed_default_textures/enemies`, test boss seeds, seed-building helpers (`make_phase`, `make_sequence`, `seq_single`/`seq_repeat`/`seq_multi`, `multi_shot`)
 - `debug.rs` — `PlayerPositionDebug` table + `tick_player_position_debug`, `toggle_debug`
 

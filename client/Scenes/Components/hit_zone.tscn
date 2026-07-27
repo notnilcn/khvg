@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/HitZone.cs" id="1_hit"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hit"]
+resource_local_to_scene = true
+
+[node name="HitZone" type="Area2D"]
+collision_layer = 0
+collision_mask = 1
+monitorable = false
+top_level = true
+script = ExtResource("1_hit")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_hit")
+
+[node name="LifetimeTimer" type="Timer" parent="."]
+one_shot = true

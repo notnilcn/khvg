@@ -51,3 +51,14 @@ pub fn upsert_item(ctx: &ReducerContext, item: Item) -> Result<(), String> {
     }
     Ok(())
 }
+
+#[spacetimedb::reducer]
+pub fn upsert_enchantment(ctx: &ReducerContext, enchantment: Enchantment) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if ctx.db.enchantment().enchantment_id().find(&enchantment.enchantment_id).is_some() {
+        ctx.db.enchantment().enchantment_id().update(enchantment);
+    } else {
+        ctx.db.enchantment().insert(enchantment);
+    }
+    Ok(())
+}

@@ -4,27 +4,26 @@ This folder holds notnilcn's design notes for his bullet-hell MMO roguelike (Rea
 
 ## Working style
 
-Same rule as the rest of this codebase: **do not write large new sections in one shot**. Ask clarifying questions first, propose a small draft, and let the author correct it — these docs are him thinking out loud, and getting the nuance wrong is worse than asking.
+Use CriticMarkup syntax when making changes to these documents.
 
 When adding content, match the existing voice: informal, first-person ("I want", "I don't like", "idk"), casual profanity intact, contradictions and unresolved tangents left in rather than smoothed over.
 
 ## Structure
 
 - `01 Executive Summary.md` — high concept, demographics, inspirations, selling points
-- `02 Gameplay.md` — core loop, permadeath rules, endgame direction, RotMG reference videos
-- `03 Classes.md` — classes are **emergent from gear + stat requirements**, not fixed archetypes; defines the dex/str/wis × dps/sup/art grid and links to per-class files
-- `04 Lore.md` — currently a stub (placeholder only); lore content actually lives in `99 (outdated)...` until migrated
+- `02 Gameplay.md` — core loop, permadeath rules, damage/buff/status-condition math, endgame direction, RotMG reference videos
+- `03 Class system, Item system, and Equipment system.md` — classes are **emergent from gear + stat requirements**, not fixed archetypes; covers the dex/str/wis × dps/sup/art stat grid, the item/enchantment/swap-out system (Borderlands-inspired), and the full DPS/SUP class writeups (Archer, Warrior, Wizard, Healer, Paladin, Tank, Trickster) inline in one doc, plus older superseded "Old notes" tank-subclass sections at the bottom
+- `04 Lore.md` — now has real content: theme/message (institutions-are-good allegory), the pre-merge world and the Alice/Bob/Charlie characters, guild territory lore, torus-world waypoint lore. Overlaps with `99 (outdated)...`'s lore sections (some of it is the same material reworked) — cross-check both when touching lore
 - `05 Biomes.md` — empty stub, not yet written
-- `99 (outdated) Game Design Document.md` — original monolithic doc. Superseded by 01–05 for most topics, but still the **only** source for some content (safe hubs, tutorial hook, "players are souls in artificial bodies" lore, guild territory scope-creep notes) that hasn't been split out yet. Check here before assuming a topic is undocumented.
+- `99 (outdated) Game Design Document.md` — original monolithic doc. Superseded by 01–04 for most topics, but still the **only** source for some content (safe hubs, tutorial hook, "players are souls in artificial bodies" lore, guild safe-hub end-game competition mechanics, apocalypse-epicentre scope-creep notes) that hasn't been split out yet. Check here before assuming a topic is undocumented.
 - `Art/` — art direction references
-  - `Art style 3D.md` — primary target look: low-poly 3D + pixel-art shader (t3ssel8r-style), BitCraft-like proportions, Hollow Knight-adjacent grim-hope tone
+  - `Art style 3D.md` — primary target look: low-poly 3D + pixel-art shader (t3ssel8r-style), BitCraft-like proportions, Hollow Knight-adjacent grim-hope tone; has reference video/image examples plus "current state" (using free/open assets) and "what needs to be done" sections (both still sparse)
   - `Art style 2D.md` — empty stub (fallback 2D mode is mentioned in 01 but not detailed here yet)
-  - `Hollow Knight References.md` — just a palette reference image note
+  - `Hollow Knight References.md` — palette reference image with a clockwise legend of which Hollow Knight location each colour comes from
 - `Classes/` — per-class detail docs, organized by temperament folder (DPS / SUP / ART)
-  - `Classes/ART/` — crafter, gatherer, enchanter (all currently empty stubs)
-  - `Classes/Other or Undeveloped/` — summoner, sorcerer (both noted as "maybe just fold into wizard")
+  - `Classes/ART/` — crafter, gatherer, enchanter (all currently empty stubs — the ART temperament itself is discussed conceptually in `03 Class system...md`, but none of these three files have content yet)
+  - `Classes/Other or Undeveloped/` — summoner and sorcerer, both noted as "maybe just fold into wizard" (summoner → give wizard maces, sorcerer → give wizard sceptres); summoner file also has two unrelated devlog video embeds about enemy-vs-enemy combat, seemingly a loose research note rather than summoner content
   - `Classes/Balancing details/Overview.md` — stub with 3 bullet topics only (defence vs HP, single vs multi-shot, armor piercing)
-  - **Known gap:** `03 Classes.md` wiki-links to DPS and SUP class files (Archer, Warrior, Wizard, Healer, Paladin, Tank, Trickster) that do not currently exist as files in this folder even though the class design itself is written out in `03 Classes.md`. Don't assume they're just "empty like the ART stubs" — they're referenced-but-missing, which is different from present-but-blank.
 
 ## Conventions used in these notes
 

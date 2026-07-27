@@ -1,0 +1,53 @@
+# New things to add
+
+## Possible abilities
+- archer/gunslinger/bullet master
+	- (innate?) can toggle between charge/shotgun/piercing/etc shots
+	- big charge shot that self slows and sends a single shot that increases in damage the longer you charge
+	- big volley shot that self slows and sends a fuckton of shots that increases in damage the longer you charge (this would be especially good against low defence enemies)
+	- spawn a dummy/blackhole thing that allies can shoot at which the gunslinger can absorb and convert into a big charge/volley shot
+	- mark enemies to receive more damage
+	- quick slash that destroys enemy bullets if the slash is stronger
+	- grapple hook towards some point on the ground (can still receive damage during grapple)
+- warrior
+	- (innate?) tattoo that allows them to dodge bullets by teleporting short distances
+	- tattoo that converts all damage dealt/received into bleed
+	- tattoo that stores all damage dealt/received and negates/multiplies it if a condition is met
+- wizard
+	- spell that calls down a beam of light
+	- spell that conjures a fireball and has a long windup animation
+	- spell that summons a spire that damages surrounding enemies
+	- spell that calls down a meteor that breaks into shrapnel after it lands
+	- spell that shoots out a laser
+- healer/witch doctor
+	- summon a circle on the ground that players can't die within
+	- summon a circle on the ground that heals allies over time
+	- summon a circle on the ground that burst heals allies after n seconds
+	- summon a circle on the ground that makes allies deal more damage
+	- summon a circle on the ground that damages enemies over time
+	- summon a circle on the ground that slows enemies
+	- summon a circle on the ground that makes enemies receive more damage
+	- summon a circle on the ground that heals allies within it over time
+	- summon a circle on the ground that distributes all damage received within that circle evenly across all players
+- paladin
+	- immunity to the next single instance of damage that they receive within n seconds
+	- immunity to all damage for the next n seconds
+	- buff all allies to deal more damage
+	- buff all allies to convert damage dealt/received into bleed damage
+	- buff all allies to store all damage dealt/received and negates/multiplies it if a condition is met
+	- buff all allies to heal over time
+	- redirect all damage that party members receive over next n seconds to self
+	- store all pre-mitigated damage received over the next n seconds and release it as a smite
+- tank
+	- immunity to the next single instance of damage that they receive within n seconds
+	- immunity to all damage for the next n seconds
+	- reduce all incoming damage by a percentage for the next n seconds
+	- store pre-mitigated damage received for the next n seconds and release it as a shield bash
+	- shield bash that debuffs enemies to receive more damage and contributes to a stagger bar
+	- shield wall that absorbs all bullets that hit it
+- trickster
+	- invisibility
+	- poisons and debuffs
+	- teleport
+	- summon decoys that can take aggro
+	- sends all party members to a pocket dimension that makes them briefly invisible + immune to all damage

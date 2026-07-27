@@ -4,7 +4,7 @@ The world is in turmoil because of a bunch of wizards naively tried to implement
 # Demographic
 **Target Audience:** MMORPG players who enjoy difficult skill based games.
 **Game Style:** Bullet-hell rogue-like perma-death base-building mmo.
-**Game Inspirations:** Realm of the Mad God (gameplay), BitCraft Online (gameplay), Pixel Quest (gameplay), Hollow Knight (art style), Hollow Knight: Silksong (art style), t3ssel8r videos (art style), Clash of Clans (gameplay, deferred), Terraria, Borderlands, and Factorio: Space Age (gameplay, deferred).
+**Game Inspirations:** Realm of the Mad God (gameplay), BitCraft Online (gameplay), Pixel Quest (gameplay), Hollow Knight (art style), Hollow Knight: Silksong (art style), t3ssel8r videos (art style), Clash of Clans (gameplay, deferred), Terraria, Borderlands, and Factorio: Space Age (gameplay, deferred). Borderlands specifically for the item enchantment/modifier system (see [[03 Class system, Item system, and Equipment system]]).
 **Platform:** PC
 # Overview
 ## World building vibes
@@ -14,15 +14,20 @@ This game will use realistically-proportional low-poly 3D models that're passed 
 
 The game will predominately be viewed from a top-down angle, however, players will be able to rotate, pan, and zoom the camera along any angle, similar to other mmorpgs that use 3d models.
 
+
 ## Gameplay
 The core gameplay is heavily inspired by Realm of the Mad God, however, there will be elements of the game that are inspired by BitCraft Online, Clash of Clans, and Factorio (currently deferred).
+Level up, upgrade gear, dodge enemy bullets, land your own bullets, use your abilities, etc.
+
 
 ## Story line
 The story of this game is peripheral to the gameplay. I have ideas for a story but that's it.
 The story will follow 3 characters who played a large role in the lead up to the catastrophe. Players will be able to pick a side, however, this won't impact the gameplay. There won't be any faction PvP like in World of Warcraft.
+
+
 # Selling Points
 - **Unique gameplay:**
-  There are very little games out there that are similar to Realm of the Mad God. There are also no MMORPGs out there that take inspiration from Factorio: Space Age and Clash of Clans. There also aren't really that many unforgiving skill-based perma-death MMORPGs out there.
+  There are very little games out there that are similar to Realm of the Mad God. There are also no MMORPGs out there that take inspiration from Factorio: Space Age and Clash of Clans. There also aren't really that many unforgiving skill-based perma-death MMORPGs out there. The permadeath isn't as brutal as RotMG's - you lose your skills and stats on death, but you can still recover your items if you reach your body before the timer/dungeon closeout, so newer players aren't punished as hard. See [[02 Gameplay]].
 - **Different graphics:**
   Realm of the Mad God is a 2D game. The intention is for this game to be visually 3D. The underlying logic is still 2D though, and there is going to be support for a 2D version of the game that looks similar to Realm of the Mad God if the community wants one. Also, I feel like the low poly 3D passed through a pixel-art shader is simply just a really cool look.
 - **Actual coherent story:**
@@ -37,4 +42,3 @@ The story will follow 3 characters who played a large role in the lead up to the
   Similar to most MMORPGs, there is going to be skills for logging, fishing, mining, and crafting.
 - **Group coordination:**
   Beyond the player territories and resource management, the actual bosses and bullet patterns and phases are going to force players to coordinate. The intention is that the game is going to be both easier and harder than Realm of the Mad God.
-

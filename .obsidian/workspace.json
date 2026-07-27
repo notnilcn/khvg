@@ -1,105 +1,41 @@
 {
   "main": {
-    "id": "37d718731ee5cd94",
+    "id": "d6f9c7b8a968fedf",
     "type": "split",
     "children": [
       {
-        "id": "0fe4e385a2314fc2",
+        "id": "5d290f729fa57c0b",
         "type": "tabs",
         "children": [
           {
-            "id": "f7aef3a82d46a5e6",
+            "id": "ed636a3b616db418",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-<<<<<<< HEAD
-                "file": "Notes/003 Game Development/Features to implement/Foundations.md",
+                "file": "docs/Game Design Docs/03a Class, Item, and Equipment system (Draft).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Foundations"
-            }
-          },
-          {
-            "id": "ba7151b10a534cdf",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "Notes/003 Game Development/Features to implement list.md",
-=======
-                "file": "Notes/001 Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md",
->>>>>>> origin/Rust-Migration
-                "file": "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "World grid notes"
-            }
-          },
-          {
-            "id": "baf4c6fc7a11f41d",
-            "type": "leaf",
-            "state": {
-              "type": "html-view",
-              "state": {
-                "file": "docs/Resources and dependencies/hex-grid/Hexagonal Grids.html"
-              },
-              "icon": "file-code",
-              "title": "Hexagonal Grids.html"
-            }
-          },
-          {
-            "id": "ccf2250b685ae439",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Notes/002 Game Development/Optimizations.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Optimizations"
-            }
-          },
-          {
-            "id": "878da29cac7554fa",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Overviews"
+              "title": "03a Class, Item, and Equipment system (Draft)"
             }
           }
-        ],
-<<<<<<< HEAD
-        "currentTab": 1
-=======
-        "currentTab": 4
->>>>>>> origin/Rust-Migration
+        ]
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "9e6e612bda9276a2",
+    "id": "4b1b3908a50868d3",
     "type": "split",
     "children": [
       {
-        "id": "a31ccfb03fcc4c92",
+        "id": "b8c9cc70d8490922",
         "type": "tabs",
         "children": [
           {
-            "id": "702b0ddb37d08ea9",
+            "id": "783cec58f8ac3bd1",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -112,16 +48,12 @@
             }
           },
           {
-            "id": "1a199ca0ef466ae3",
+            "id": "fdebd5a62f3a457d",
             "type": "leaf",
             "state": {
               "type": "search",
               "state": {
-<<<<<<< HEAD
-                "query": "pdf",
-=======
-                "query": "pvp",
->>>>>>> origin/Rust-Migration
+                "query": "agents",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -133,7 +65,7 @@
             }
           },
           {
-            "id": "d7d1bbc5efcce987",
+            "id": "bfeb57ed541a4e68",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -146,22 +78,23 @@
       }
     ],
     "direction": "horizontal",
-    "width": 363.5
+    "width": 421.5
   },
   "right": {
-    "id": "060b9ccb0c4fedf3",
+    "id": "42a05c4edfa51420",
     "type": "split",
     "children": [
       {
-        "id": "8dc5b426f41e901a",
+        "id": "0fb0bf4d5bbf82db",
         "type": "tabs",
         "children": [
           {
-            "id": "a0ec55b96a2eb2d2",
+            "id": "5b92619b66fd9f02",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "docs/Game Design Docs/02 Gameplay.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -171,24 +104,25 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks"
+              "title": "Backlinks for 02 Gameplay"
             }
           },
           {
-            "id": "f4299f886cc77be2",
+            "id": "6d93b41b84d29fd5",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "docs/Game Design Docs/02 Gameplay.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links"
+              "title": "Outgoing links from 02 Gameplay"
             }
           },
           {
-            "id": "980c05003454c49d",
+            "id": "ab7a1a6cab44c81d",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -203,7 +137,7 @@
             }
           },
           {
-            "id": "6ad309eacaf5bb0b",
+            "id": "0539160d877c77db",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -217,20 +151,32 @@
             }
           },
           {
-            "id": "9fd231dfabdf672d",
+            "id": "318d248634b2136a",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
+                "file": "docs/Game Design Docs/02 Gameplay.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline"
+              "title": "Outline of 02 Gameplay"
+            }
+          },
+          {
+            "id": "f9c636c93125cc23",
+            "type": "leaf",
+            "state": {
+              "type": "tc-review-panel",
+              "state": {},
+              "icon": "message-square",
+              "title": "CriticMarkup review"
             }
           }
-        ]
+        ],
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
@@ -239,113 +185,65 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "system3-relay:Relay": false,
-      "custom-sort:Toggle custom sorting": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "vscode-editor:Create Code File": false,
+      "obsidian42-brat:BRAT": false,
+      "track-changes:Open CriticMarkup review panel": false
     }
   },
-<<<<<<< HEAD
-  "active": "ba7151b10a534cdf",
+  "active": "ed636a3b616db418",
   "lastOpenFiles": [
-    "Notes/003 Game Development/Features to implement/Foundations.md",
-    "Notes/999 Random Game Design Notes/Lore.md",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260426070151.png",
-    "Notes/999 Random Game Design Notes/Overview.md",
-    "Notes/003 Game Development/Features to implement list.md",
-    "Notes/999 Random Game Design Notes/Lore/Destroyed world.md",
-    "Notes/999 Random Game Design Notes/Lore/Forest.md",
-    "Notes/003 Game Development/Asemif/Untitled.md",
-    "Notes/003 Game Development/Retexcraft/Untitled.md",
-    "bholio/Blackholio/README.md",
-    "Notes/999 Random Game Design Notes/Classes/Tank/00 Tank classes & notes.md",
-    "Notes/999 Random Game Design Notes/Classes/Tank/Abilities.md",
-    "Notes/999 Random Game Design Notes/Classes/Tank/High defense tank.md",
-    "Notes/999 Random Game Design Notes/Classes/Support/Support classes & notes.md",
-    "Notes/999 Random Game Design Notes/Classes/Scout/Scout classes & notes.md",
-    "Notes/999 Random Game Design Notes/Classes/DPS/DPS classes & notes.md",
-    "g/VS-Like/Game/Lobby/Lobby.cs",
-    "Notes/002 Game Code/001 Opening the game/Untitled.md",
-    "Notes/002 Game Code/001 Opening the game/000 Opening the game & then clicking Host Game or Join Game 1.md",
-    "Notes/002 Game Code/001 Opening the game/001 Spawning into a server 1.md",
-    "Notes/003 Game Development/Overhaul list.md",
-    "g/VS-Like/Game/Lobby/lobby.tscn",
-    "Notes/003 Game Development/Bugs.md",
-    "Notes/003 Game Development/Optimizations.md",
-    "g/SpacetimeDB/module_bindings/Types/CharacterData.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Types/EnemySnapshot.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Types/EnemyState.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Types/PlayerAccount.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Types/PlayerInventory.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Types/PlayerPosition.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/SpacetimeDBClient.g.cs.uid",
-    "g/SpacetimeDB/module_bindings/Types/RpgStats.g.cs.uid",
-    "Notes/003 Game Development/Small stuff.md",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425123714.png",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425123250.png",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425115208.png",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425113248.png",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425113219.png",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112649.png",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112558.png",
-    "Notes/003 Game Development/Features to implement/Attachments/Pasted image 20260425112443.png",
-    "Notes/999 Random Game Design Notes/Dungeons & bosses/00 Dungeons & Bosses general notes.md",
-    "Notes/999 Resources and files/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
-    "Notes/003 Game Development/Features to implement/Untitled.md",
-    "Notes/002 Game Code/001 Opening the game/(old) 001 Spawning into a server.md"
-=======
-  "active": "c7a6cdc6336e42b3",
-  "lastOpenFiles": [
-    "clientt/Scenes/main.tscn8401333.tmp",
-    "clientt/Scenes/main.tscn5351967.tmp",
-    "clientt/project.godot2890370.tmp",
-    "clientt/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll",
-    "clientt/Scenes/main.tscn15611884.tmp",
-    "clientt/Scenes/main.tscn11177710.tmp",
-    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/libblastbullets2d.ios.template_release.single",
-    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/Info.plist",
-    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/Info.plist",
-    "clientt/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/libblastbullets2d.ios.template_debug.single",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Trees.aseprite",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Wood Resource/Wood Resource.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree4.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree3.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree2.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Tree1.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 4.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 3.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 2.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Wood/Trees/Stump 1.png",
-    "clientt/Assets/Tiny Swords (Free Pack)/Terrain/Resources/Meat/Sheep/Sheep_Move.png",
-    "clientt/addons/blastbullets2d/LICENSE.md",
-    "clientt/addons/blastbullets2d/README.md",
-    "docs/Notes/002 Game Development/Optimizations.md",
-    "client/addons/phantom_camera/CLAUDE.md",
-    "docs/Notes/002 Game Development/Shelved todo list.md",
-    "docs/Notes/002 Game Development/Small stuff.md",
-    "docs/Notes/002 Game Development/Overhaul list.md",
-    "docs/Notes/002 Game Development/Small stuff to implement.md",
-    "docs/Notes/002 Game Development/Things to fix list.md",
-    "docs/Untitled.md",
-    "CLAUDE.md",
-    "docs/todo.md",
-    "docs/Notes/002 Game Development/Features to implement/World grid notes.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Overviews.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Lore.md",
-    "docs/Notes/000 Gameplay Elements, Genre, Lore, etc/Gameplay.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 5.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 4.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 3.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 1.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 2.md",
-    "docs/Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/000 Spacetimedb overview.md",
-    "Boobookitty.md",
-    "Pursuit of jade.md"
+    "code_examples/comedot/2D Only.gdbuild",
+    "client/Scenes/default_enemy.tscn5334984082.tmp",
+    "code_examples/comedot/Scenes/Launch/Logo/IOLogoScene.tscn468261188.tmp",
+    "code_examples/comedot/Entities/Entity.tscn137860285.tmp",
+    "code_examples/comedot/Comedot for Godot Asset Store.md",
+    "code_examples/comedot/AGENTS.md",
+    "code_examples/comedot/Assets/Fonts/PixelOperator8-Bold.ttf.import12881017.tmp",
+    "code_examples/comedot/project.godot9270751.tmp",
+    "code_examples/comedot/ComedotProjectSettings.tres",
+    "code_examples/comedot/project.godot",
+    "client/Scenes/default_enemy.tscn4799031870.tmp",
+    "client/Scenes/default_enemy.tscn4794405660.tmp",
+    "client/Scenes/bullet_manager.tscn65524371.tmp",
+    "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
+    "code_examples/BitCraftPublic/CLAUDE.md",
+    "server/spacetimedb/src/plan.md",
+    "AGENTS.md",
+    "docs/Game Design Docs/03a Class, Item, and Equipment system (Draft).md",
+    "Untitled - Copy.md",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_top_left.png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_top_right.png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_top_inner_right_2.png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_top_inner_left_2.png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_top_inner_right.png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_top_inner_left.png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_side_right.png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_top_1.png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_side_left .png",
+    "code_examples/Godot-Roguelike-Tutorial/Art/v1.1 dungeon crawler 16x16 pixel pack/tiles/wall/wall_crack.png",
+    "code_examples/Godot-Roguelike-Tutorial/README.md",
+    "code_examples/comedot/Scripts/Tools/Tools.md",
+    "code_examples/comedot/Resources/Help - Resources.md",
+    "code_examples/comedot/Notes/Entity Catalog.md",
+    "code_examples/comedot/Notes/Notes.md",
+    "code_examples/comedot/Notes/Scripts Catalog.md",
+    "code_examples/comedot/Notes/Components Catalog.md",
+    "code_examples/comedot/Notes/Resources and Scenes Catalog.md",
+    "code_examples/comedot/Notes/Assets Catalog.md",
+    "code_examples/comedot/Lab/Lab.md",
+    "code_examples/comedot/Game/Start Making Your Game Here.md",
+    "code_examples/comedot/Entities/Help - Entity Templates.md",
+    "code_examples/comedot/Assets/Shaders/Godot Demo Projects Shaders.md",
+    "docs/Game Design Docs/Inspirations, research, and new things to add.md",
+    "docs/Game Design Docs/02 Gameplay.md",
+    "docs/Game Design Docs/01 Executive Summary.md",
+    "docs/Game Design Docs/Untitled.md"
   ]
 }

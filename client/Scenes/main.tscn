@@ -14,6 +14,8 @@
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="11_6iyac"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="12_fdnlq"]
 [ext_resource type="Script" uid="uid://4vtm5wwxgp2d" path="res://Scripts/World/CameraRig.cs" id="14_jkdf5"]
+[ext_resource type="Script" uid="uid://d1s8smqefva50" path="res://Scripts/World/TerrainManager.cs" id="15_terrain"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/debug_overlay.tscn" id="16_debug"]
 
 [sub_resource type="Resource" id="Resource_jkdf5"]
 script = ExtResource("12_fdnlq")
@@ -30,6 +32,7 @@ PlayerProfileScene = ExtResource("7_6bp64")
 
 [node name="CameraRig" type="Node" parent="." unique_id=429369880]
 script = ExtResource("14_jkdf5")
+PitchMax = 0.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
 visible = false
@@ -47,7 +50,7 @@ stretch_shrink = 3
 [node name="SubViewport" type="SubViewport" parent="3D/SubViewportContainer" unique_id=803652251]
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(384, 216)
+size = Vector2i(213, 120)
 render_target_update_mode = 0
 
 [node name="World3D" parent="3D/SubViewportContainer/SubViewport" unique_id=1360330812 instance=ExtResource("8_fdnlq")]
@@ -64,7 +67,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="Panel" parent="UI/CharSlots" unique_id=994970302]
-custom_minimum_size = Vector2(1152, 40)
+custom_minimum_size = Vector2(640, 40)
 layout_mode = 0
 offset_right = 640.0
 offset_bottom = 40.0
@@ -83,9 +86,9 @@ text = "BACK"
 
 [node name="Create" type="Button" parent="UI/CharSlots/Panel" unique_id=905359419]
 layout_mode = 0
-offset_left = 1082.0
+offset_left = 570.0
 offset_top = 4.0
-offset_right = 1148.0
+offset_right = 636.0
 offset_bottom = 35.0
 text = "CREATE"
 
@@ -162,6 +165,11 @@ metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 [node name="HexGridOverlay2D" type="Node2D" parent="." unique_id=596614871]
 visible = false
 script = ExtResource("8_344ge")
+
+[node name="TerrainManager" type="Node2D" parent="."]
+script = ExtResource("15_terrain")
+
+[node name="DebugOverlay" parent="." instance=ExtResource("16_debug")]
 
 [connection signal="pressed" from="UI/CharSlots/Panel/Create" to="." method="OnCreatePanelPressed"]
 [connection signal="pressed" from="UI/CharSlots/CreateProfilePanel/Panel/Create" to="." method="OnCreatePressed"]

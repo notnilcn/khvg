@@ -1,0 +1,14 @@
+{
+  "name": "@sanderevers/hexmod-representation",
+  "main": "4ec02aa4a67ac76d@842.js",
+  "version": "842.0.0",
+  "homepage": "https://observablehq.com/@sanderevers/hexmod-representation",
+  "author": {
+    "name": "Sander Evers",
+    "url": "https://observablehq.com/@sanderevers"
+  },
+  "type": "module",
+  "peerDependencies": {
+    "@observablehq/runtime": "4 - 5"
+  }
+}

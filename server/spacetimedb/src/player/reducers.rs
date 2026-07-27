@@ -166,6 +166,7 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
 
     let mut slots = inv.slots.clone();
     slots[target].item_id = Some(drop.item_id.clone());
+    slots[target].enchantment_ids = drop.enchantment_ids.clone();
     ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
     ctx.db.loot_drop().drop_id().delete(&drop_id);
     recompute_stats(ctx, profile_id);
@@ -181,16 +182,19 @@ pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
     let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
     let slot = inv.slots.get(slot_index).ok_or("Invalid slot index.")?;
     let item_id = slot.item_id.clone().ok_or("Slot is empty.")?;
+    let enchantment_ids = slot.enchantment_ids.clone();
     let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
 
     let mut slots = inv.slots.clone();
     slots[slot_index].item_id = None;
+    slots[slot_index].enchantment_ids = vec![];
     ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
 
     ctx.db.loot_drop().insert(LootDrop {
         drop_id: 0, item_id, x: pos.x, y: pos.y, chunk_index: pos.chunk_index,
         expires_at: ctx.timestamp + Duration::from_secs(LOOT_DROP_EXPIRY),
         dropped_by: Some(ctx.sender()),
+        enchantment_ids,
     });
     recompute_stats(ctx, profile_id);
     Ok(())
@@ -262,6 +266,54 @@ pub fn use_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
 
     let mut slots = inv.slots.clone();
     slots[slot_index].item_id = None;
+    ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
+    recompute_stats(ctx, profile_id);
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn apply_enchantment(ctx: &ReducerContext, slot_index: u32, enchantment_id: String) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+    let slot_index = slot_index as usize;
+
+    let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
+    let slot = inv.slots.get(slot_index).ok_or("Invalid slot index.")?;
+    let item_id = slot.item_id.clone().ok_or("Slot is empty.")?;
+    let item = ctx.db.item().item_id().find(&item_id).ok_or("Item not found.")?;
+    let enchantment = ctx.db.enchantment().enchantment_id().find(&enchantment_id)
+        .ok_or_else(|| format!("Enchantment '{}' not found.", enchantment_id))?;
+    if !enchantment.allowed_slots.contains(&item.equip_slot) {
+        return Err(format!("Enchantment '{}' cannot be applied to '{}'.", enchantment_id, item_id));
+    }
+    if slot.enchantment_ids.len() as u32 >= item.max_enchantments {
+        return Err(format!("Item '{}' cannot hold more enchantments.", item_id));
+    }
+    if slot.enchantment_ids.contains(&enchantment_id) {
+        return Err(format!("Enchantment '{}' is already applied to this item.", enchantment_id));
+    }
+
+    let mut slots = inv.slots.clone();
+    slots[slot_index].enchantment_ids.push(enchantment_id);
+    ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
+    recompute_stats(ctx, profile_id);
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn remove_enchantment(ctx: &ReducerContext, slot_index: u32, enchantment_id: String) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+    let slot_index = slot_index as usize;
+
+    let inv = ctx.db.player_inventory().profile_id().find(&profile_id).ok_or("Inventory not found.")?;
+    let slot = inv.slots.get(slot_index).ok_or("Invalid slot index.")?;
+    if !slot.enchantment_ids.contains(&enchantment_id) {
+        return Err(format!("Enchantment '{}' is not applied to this item.", enchantment_id));
+    }
+
+    let mut slots = inv.slots.clone();
+    slots[slot_index].enchantment_ids.retain(|id| id != &enchantment_id);
     ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
     recompute_stats(ctx, profile_id);
     Ok(())

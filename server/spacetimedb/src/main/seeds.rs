@@ -2,6 +2,7 @@ use spacetimedb::{ReducerContext, Table};
 use crate::world::tables::*;
 use crate::world::def_tables::*;
 use crate::enemy::def_tables::*;
+use crate::item::tables::*;
 
 fn texture(texture_id: &str, res_path: &str, kind: TextureKind) -> TextureEntry {
     TextureEntry { texture_id: texture_id.to_string(), res_path: res_path.to_string(), kind }
@@ -435,6 +436,16 @@ impl Seed for BiomeRegionDef {
             ctx.db.biome_region_def().region_def_id().update(data);
         } else {
             ctx.db.biome_region_def().insert(data);
+        }
+    }
+}
+
+impl Seed for Enchantment {
+    fn seed(ctx: &ReducerContext, data: Enchantment) {
+        if ctx.db.enchantment().enchantment_id().find(&data.enchantment_id).is_some() {
+            ctx.db.enchantment().enchantment_id().update(data);
+        } else {
+            ctx.db.enchantment().insert(data);
         }
     }
 }

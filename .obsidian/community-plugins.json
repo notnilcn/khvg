@@ -1,13 +1,10 @@
 [
-  "custom-sort",
-<<<<<<< HEAD
-=======
-  "obsidian-underline",
-  "block-link-plus",
-  "code-styler",
-  "system3-relay",
-  "obsidian-custom-file-extensions-plugin",
-  "html-viewer",
+  "flexplorer",
+  "automatic-table-of-contents",
+  "vscode-editor",
+  "obsidian42-brat",
   "obsidian-wrap-with-shortcuts",
-  "automatic-table-of-contents"
+  "track-changes",
+  "advanced-canvas",
+  "sync-embeds"
 ]

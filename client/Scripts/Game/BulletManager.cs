@@ -20,7 +20,7 @@ public partial class BulletManager : Node
     {
         Instance = this;
         blastBullets = GetChild(0);
-        SetupEnemyBullets();
+        SetupEnemyBullets(); // ^wasd
         SetupPlayerBullets();
         blastBullets.Connect("area_entered", Callable.From<GodotObject, GodotObject, int, Resource, Transform2D>(OnEnemyBulletAreaEntered));
     }

@@ -25,14 +25,17 @@ public partial class CameraController2D : Node2D
 
     public void UnregisterCamera()
     {
-        if (_localPlayerPCam2D != null) _localPlayerPCam2D.Priority = 0;
+        // The pcam is a child of LocalPlayer and may already be freed by the time this runs on death.
+        if (IsInstanceValid(_localPlayerPCam2D?.Node2D)) _localPlayerPCam2D!.Priority = 0;
         _localPlayerPCam2D = null;
     }
 
     public override void _Process(double delta)
     {
-        if (_localPlayerPCam2D == null || CameraRig.Instance == null) return;
-        _localPlayerPCam2D.RotationOffset = CameraRig.Instance.Yaw;
+        // _localPlayerPCam2D can be a dangling reference to a freed node (e.g. between LocalPlayer
+        // death and the next RegisterCamera); IsInstanceValid guards against ObjectDisposedException.
+        if (!IsInstanceValid(_localPlayerPCam2D?.Node2D) || CameraRig.Instance == null) return;
+        _localPlayerPCam2D!.RotationOffset = CameraRig.Instance.Yaw;
         var zoom = CameraRig.Instance.Zoom2D;
         _localPlayerPCam2D.Zoom = new Vector2(zoom, zoom);
     }

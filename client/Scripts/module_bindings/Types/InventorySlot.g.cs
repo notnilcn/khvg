@@ -17,19 +17,24 @@ namespace SpacetimeDB.Types
         public System.Collections.Generic.List<EquipSlot> AllowedSlots;
         [DataMember(Name = "item_id")]
         public string? ItemId;
+        [DataMember(Name = "enchantment_ids")]
+        public System.Collections.Generic.List<string> EnchantmentIds;
 
         public InventorySlot(
             System.Collections.Generic.List<EquipSlot> AllowedSlots,
-            string? ItemId
+            string? ItemId,
+            System.Collections.Generic.List<string> EnchantmentIds
         )
         {
             this.AllowedSlots = AllowedSlots;
             this.ItemId = ItemId;
+            this.EnchantmentIds = EnchantmentIds;
         }
 
         public InventorySlot()
         {
             this.AllowedSlots = new();
+            this.EnchantmentIds = new();
         }
     }
 }

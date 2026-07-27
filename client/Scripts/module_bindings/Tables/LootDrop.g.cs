@@ -56,6 +56,7 @@ namespace SpacetimeDB.Types
         public global::SpacetimeDB.Col<LootDrop, long> ChunkIndex { get; }
         public global::SpacetimeDB.Col<LootDrop, SpacetimeDB.Timestamp> ExpiresAt { get; }
         public global::SpacetimeDB.Col<LootDrop, SpacetimeDB.Identity> DroppedBy { get; }
+        public global::SpacetimeDB.Col<LootDrop, System.Collections.Generic.List<string>> EnchantmentIds { get; }
 
         public LootDropCols(string tableName)
         {
@@ -66,6 +67,7 @@ namespace SpacetimeDB.Types
             ChunkIndex = new global::SpacetimeDB.Col<LootDrop, long>(tableName, "chunk_index");
             ExpiresAt = new global::SpacetimeDB.Col<LootDrop, SpacetimeDB.Timestamp>(tableName, "expires_at");
             DroppedBy = new global::SpacetimeDB.Col<LootDrop, SpacetimeDB.Identity>(tableName, "dropped_by");
+            EnchantmentIds = new global::SpacetimeDB.Col<LootDrop, System.Collections.Generic.List<string>>(tableName, "enchantment_ids");
         }
     }
 

@@ -22,7 +22,7 @@ Here are some amazing resources (you don't have to read them, but if you do then
 - https://www.redblobgames.com/grids/hexagons/
 	- A downloaded copy of this is in [here](<Hexagonal Grids.html>).
 - https://observablehq.com/@sanderevers/hexagon-tiling-of-an-hexagonal-grid
-	- A downloaded copy of this is in [here](<47e466502e507073@1681.js>).
+	- A downloaded copy of this is in [here](<docs/Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/47e466502e507073@1681.js>).
 - https://observablehq.com/@sanderevers/hexmod-representation
 	- A downloaded copy of this is in [here](<4ec02aa4a67ac76d@842.js>).
 

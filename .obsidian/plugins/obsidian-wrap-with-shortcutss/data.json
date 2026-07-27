@@ -1,0 +1,34 @@
+{
+  "wrapperTags": [
+    {
+      "id": "w1784521375943",
+      "name": "sync",
+      "startTag": "```sync\n",
+      "endTag": "\n```"
+    },
+    {
+      "id": "w1784463885692",
+      "name": "track-changes-add",
+      "startTag": "{++",
+      "endTag": "++}"
+    },
+    {
+      "id": "w1784463993688",
+      "name": "track-changes-com",
+      "startTag": "{>>",
+      "endTag": "<<}"
+    },
+    {
+      "id": "w1784463940379",
+      "name": "track-changes-del",
+      "startTag": "{--",
+      "endTag": "--}"
+    },
+    {
+      "id": "w1784463954633",
+      "name": "track-changes-sub",
+      "startTag": "{~~",
+      "endTag": "~> ~~}"
+    }
+  ]
+}

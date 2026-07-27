@@ -14,14 +14,14 @@ public partial class PlayerStatsSidebar : Control
 
     public override void _Ready()
     {
-        if (Owner is not LocalPlayer player) return;
+        if (this.GetAncestor<LocalPlayer>() is not { } player) return;
         player.StatsChanged += HandleStatsChanged;
         HandleStatsChanged();
     }
 
     private void HandleStatsChanged()
     {
-        if (Owner is not LocalPlayer player) return;
+        if (this.GetAncestor<LocalPlayer>() is not { } player) return;
         LevelLabel.Text = $"Lv. {player.Level}";
         HpLabel.Text = $"HP: {player.Hp}/{player.MaxHp}";
         StrengthLabel.Text = $"STR: {player.Strength}";
@@ -34,7 +34,7 @@ public partial class PlayerStatsSidebar : Control
 
     public override void _ExitTree()
     {
-        if (Owner is LocalPlayer player)
+        if (this.GetAncestor<LocalPlayer>() is { } player)
             player.StatsChanged -= HandleStatsChanged;
     }
 }

@@ -6,6 +6,7 @@ use super::reducers::tick_active_consumable_effects;
 pub struct InventorySlot {
     pub allowed_slots: Vec<EquipSlot>,
     pub item_id: Option<String>,
+    pub enchantment_ids: Vec<String>,
 }
 
 #[table(accessor = logged_in_player, public)]
@@ -118,4 +119,5 @@ pub struct LootDrop {
     pub chunk_index: i64,
     pub expires_at: Timestamp,
     pub dropped_by: Option<Identity>,
+    pub enchantment_ids: Vec<String>,
 }

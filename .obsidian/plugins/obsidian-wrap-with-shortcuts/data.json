@@ -1,16 +1,28 @@
 {
   "wrapperTags": [
     {
-      "id": "w1777375816179",
-      "name": "c# commet code block",
-      "startTag": "/*\n```c# */",
-      "endTag": "/*\n```\n*/"
+      "id": "w1784252904876",
+      "name": "track-changes-add",
+      "startTag": "{++",
+      "endTag": "++}"
     },
     {
-      "id": "w1778961479631",
-      "name": "commet code block",
-      "startTag": "/*\n``` */",
-      "endTag": "/*\n```\n*/"
+      "id": "w1784253158430",
+      "name": "track-changes-comment",
+      "startTag": "{>>",
+      "endTag": "<<}"
+    },
+    {
+      "id": "w1784252865364",
+      "name": "track-changes-delete",
+      "startTag": "{--",
+      "endTag": "--}"
+    },
+    {
+      "id": "w1784253011596",
+      "name": "track-changes-replace",
+      "startTag": "{~~",
+      "endTag": "~> ~~}"
     }
   ]
 }

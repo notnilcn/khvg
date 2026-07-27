@@ -48,15 +48,25 @@ The stat distribution syntax is kinda self explanatory. If a stat isn't mentione
 Class items are going to be locked behind stat thresholds.
 ### DPS
 #### Archer
-Similar to the archer in RotMG
+Similar to the archer in RotMG? Archer's don't really make sense in a magic world though. Maybe have these people use guns instead.
 ##### Weapons
 - Bow
+- Guns?
 ##### Abilities
-- idk
+- idk{++
+- (innate?) can toggle between charge/shotgun/piercing/etc shots
+- big charge shot that self slows and sends a single shot that increases in damage the longer you charge
+- big volley shot that self slows and sends a fuckton of shots that increases in damage the longer you charge (this would be especially good against low defence enemies)
+- spawn a dummy/blackhole thing that allies can shoot at which the gunslinger can absorb and convert into a big charge/volley shot
+- mark enemies to receive more damage
+- quick slash that destroys enemy bullets if the slash is stronger
+- grapple hook towards some point on the ground (can still receive damage during grapple)++}
 #### Warrior (str) & (dps)
 ##### Weapons: Sword (similar to pixel quest)
 - Play pixel quest on roblox or look up the sword strike animation for it.
 - You could probably look to terraria for different sword ideas.
+	- Swords that send slashes
+	- 
 ##### Ability: Magic tattoos
 Similar to Witch Hat Atelier. In RotMG, the warrior's ability item is just a helmet which sucks.
 Higher grade tattoos are made from higher grade inks and whatnot. Monster blood, god ichor, special tree sap, etc.
@@ -68,7 +78,10 @@ You should probably make these items like a consumable or something. Like, to eq
 - makes their sword do more damage for the next n seconds
 	- you can be creative with it by making their sword damage burn the enemy or modifies their sword to store all the damage they deal within the next n seconds and doubles it or smth but the general gist is more damage
 	- for the "sword stores all the damage they deal within the next n seconds" thing, you could probably add a fail condition that makes it so they deal 0 damage
-- enter a windup animation to do a short teleport. Similar to the Kensei's ability from RotMG. Intention is for players to be able to dodge upcoming bullets for certain boss phases. Cracked players should be able to solo any boss with this ability.
+- enter a windup animation to do a short teleport. Similar to the Kensei's ability from RotMG. Intention is for players to be able to dodge upcoming bullets for certain boss phases. Cracked players should be able to solo any boss with this ability.{++
+- (innate?) a tattoo that just always lets them dodge bullets by teleporting short distances, instead of needing a windup - maybe this is the baseline warrior kit and the windup teleport above is a bigger/stronger version of it
+- a tattoo that converts all damage dealt *and* received into bleed (as opposed to just incoming damage)
+- a tattoo that stores all damage dealt/received over n seconds and negates/multiplies it if some condition is met - same "high risk high reward" shape as the sword-storing-damage idea above++}
 #### Wizard (wis) & (dps)
 ##### Weapons: Staffs + Wands
 - staffs/staves (similar to RotMG)
@@ -85,7 +98,10 @@ You should probably make these items like a consumable or something. Like, to eq
 - Spell that summons bullets that converge on or from or around the player's cursor
 	- [Rotmg Penetrating Blast Spell, shot pattern](<https://www.youtube.com/watch?v=-aCETL8lteA>)
 	- [WHY TABLET IS BETTER THEN PARA SPELL ( in o3)](<https://www.youtube.com/watch?v=4W4metbXxsc>)
-- Spell that forces the player to stop shooting to enter a wind up animation that sends a fireball or some shit
+- Spell that forces the player to stop shooting to enter a wind up animation that sends a fireball or some shit{++
+- Spell that summons a spire that damages surrounding enemies (mirror image of the healer's mushroom tome spire idea below, but offensive instead of healing)
+- Spell that calls down a meteor that breaks into shrapnel after it lands
+- Spell that shoots out a laser++}
 ### SUP
 #### Healer (wis) & (sup)
 ##### Weapons: Wands
@@ -98,7 +114,16 @@ Copy RotMG
 	- Back when RotMG had more players there used to be some tech around using this for group coordination because healers could direct where the melee players would have to stand, which was useful if they knew all the boss phases and shit. i remember hearing raid leaders saying "guys, push up. stop staying in the back of the group, you're safer if you push up because that's where all the mushroom tomes are. you'll heal more if you push up."
 - AoE heal
 - Targeted heal (heals player closest to cursor or heals the lowest health player that's within a radius of the cursor)
-- Debuff removal
+- Debuff removal{++
+- Witch doctor flavour on the same circle-on-the-ground idea, could all just be more mushroom tome variants:
+	- a circle that players can't die within (soft "can't drop below 1hp" zone)
+	- a circle that heals allies over time
+	- a circle that burst heals allies after n seconds
+	- a circle that makes allies deal more damage
+	- a circle that damages enemies over time
+	- a circle that slows enemies
+	- a circle that makes enemies receive more damage
+	- a circle that distributes all damage received within it evenly across all players standing in it (group-coordination tech, similar to the mushroom-tome-push-up thing above but for damage instead of healing)++}
 #### Paladin
 Similar to the paladin in RotMG.
 Paladins will have less defence than tanks but will have a higher health pool. This will make them weak against enemies that fire a large amount of low-damaging bullets, or enemies that spawn in groups or spawn a bunch of mobs.
@@ -112,7 +137,11 @@ The actual item that RotMG uses are seals but that's kinda boring. You could pro
 	- Self buff
 - Temporarily buff nearby allies to have increased health regen
 - Buff all nearby allies to deal more damage
-- Converts all damage into bleed damage
+- Converts all damage into bleed damage{++
+- Immunity to the next single instance of damage received within n seconds (weaker/cheaper version of the full invuln buff above)
+- Buff all allies to store all damage dealt/received over n seconds and negate/multiply it if a condition is met - same shape as the warrior tattoo idea
+- Redirect all damage that party members receive over the next n seconds to self - tanky "protect the healer" panic button
+- Store all pre-mitigated damage received over the next n seconds and release it as a smite - lets a paladin turn a big incoming hit into burst damage instead of just eating it++}
 #### Tank (str) & (sup)
 Similar to the knight in RotMG.
 Knights will have more defence than paladins but will have a lower health pool. The lower health pool effectively shouldn't matter if the healer is good.
@@ -125,7 +154,11 @@ There should be some end game bosses where knights will only be useful for their
 - Shield bash applies armour break debuff or expose debuff (similar to ogmur/samurai in RotMG. the expose debuff just adds like + 10% damage to all bullets that hit the enemy. I think this +10% damage ignores the enemy's defence, so weapons that shoot a lot of bullets pair well with this debuff. armor break reduces enemy defence to 0)
 - Temporarily invulnerable to all damage
 	- Self buff
-	- 
+	- {++
+- Immunity to the next single instance of damage received within n seconds (cheaper single-hit version of the full invuln above)
+- Reduce all incoming damage by a percentage for the next n seconds
+- Store pre-mitigated damage received over the next n seconds and release it as a shield bash (same "store then release" shape as the paladin smite idea)
+- Shield wall that absorbs all bullets that hit it++}
 #### Trickster (wis ≳ dex) & (sup)
 This class combines the assassin, rogue, and trickster from RotMG into one class.
 ##### Weapons: idk
@@ -137,7 +170,9 @@ Maybe make this class's magic be tied to physical items rather than magic scroll
 - Poisons and debuffs (vials of liquid? i don't like that it comes off as a consumable though)
 - Teleport (magic rocks or orbs?)
 - Decoy (magic rocks or orbs?)
-	- decoys summon a mirror image that can take aggro
+	- decoys summon a mirror image that can take aggro{++
+	- could probably do "summon decoys that can take aggro" as a separate item from the single-mirror-image teleport-decoy above - one decoy for redirecting aggro during normal fights, a bigger cooldown version for boss mechanics
+- Party-wide panic button: sends all party members to a pocket dimension that makes them briefly invisible + immune to all damage - basically a group-wide oh-shit button, would need to be on a long cooldown or it trivializes mechanics++}
 
 
 
