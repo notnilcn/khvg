@@ -1,7 +1,7 @@
 use spacetimedb::{ReducerContext, Table};
 use crate::main::global::*;
-use crate::world::methods::*;
-use crate::world::tables::*;
+use crate::world::hex::{spiral_chunk_index, world_to_chunk};
+use crate::world::tables::MapConfig;
 use crate::player::tables::*;
 use crate::item::tables::*;
 
@@ -193,48 +193,41 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     }
 
     if ctx.db.player_position().profile_id().find(&profile_id).is_none() {
-        let cfg = ctx.db.map_config().id().find(&0u32);
-        let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-        let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-        let (cq, cr) = world_to_chunk(0.0, 0.0, chunk_hex_radius, hex_outer_radius);
+        let cfg = MapConfig::load(ctx, 0, 0);
+        let (cq, cr) = world_to_chunk(0.0, 0.0, cfg.chunk_hex_radius, cfg.hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);
         ctx.db.player_position().insert(PlayerPosition { profile_id, player_id: ctx.sender(), x: 0.0, y: 0.0, rotation: 0.0, chunk_index});
     }
 
     if ctx.db.player_chunk().profile_id().find(&profile_id).is_none() {
-        let cfg = ctx.db.map_config().id().find(&0u32);
-        let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-        let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-        let (cq, cr) = world_to_chunk(0.0, 0.0, chunk_hex_radius, hex_outer_radius);
+        let cfg = MapConfig::load(ctx, 0, 0);
+        let (cq, cr) = world_to_chunk(0.0, 0.0, cfg.chunk_hex_radius, cfg.hex_outer_radius);
         ctx.db.player_chunk().insert(PlayerChunk { profile_id, chunk_q: cq, chunk_r: cr });
     }
 }
 
-pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {
-    let stats = match ctx.db.player_stats().profile_id().find(&profile_id) { Some(s) => s, None => return 1 };
-    let inv = match ctx.db.player_inventory().profile_id().find(&profile_id) { Some(i) => i, None => return 1 };
-    let weapon_item = inv.slots.get(0)
-        .and_then(|s| s.item_id.as_ref())
-        .and_then(|id| ctx.db.item().item_id().find(id));
-    let weapon = weapon_item.as_ref().and_then(|i| weapon_behavior(i));
-    match weapon {
-        Some(w) => (w.damage as f32 * (1.0 + stats.strength as f32 * 0.002)).max(1.0) as u32,
-        None => 0,
+/// Tears down every per-profile row — the inverse of try_scaffold_profile, plus PlayerStats
+/// (scaffolded lazily by recompute_stats) and any active consumable effects. This is the one
+/// shared table list for profile cleanup; callers handle the identity-level rows themselves
+/// (combat death keeps PlayerProfile and moves the player to LoggedOutPlayer; delete_profile
+/// removes PlayerProfile while the player sits in the lobby).
+pub fn teardown_profile(ctx: &ReducerContext, profile_id: u64) {
+    ctx.db.player_data().profile_id().delete(profile_id);
+    ctx.db.player_stats().profile_id().delete(profile_id);
+    ctx.db.player_inventory().profile_id().delete(profile_id);
+    ctx.db.player_position().profile_id().delete(profile_id);
+    ctx.db.player_chunk().profile_id().delete(profile_id);
+    for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
+        ctx.db.active_consumable_effect().effect_id().delete(active.effect_id);
     }
 }
 
-pub fn compute_incoming_damage(ctx: &ReducerContext, profile_id: u64, base_damage: u32) -> u32 {
-    let stats = match ctx.db.player_stats().profile_id().find(&profile_id) { Some(s) => s, None => return base_damage.max(1) };
-    (base_damage as f32 * (1.0 - stats.defense as f32 * 0.002)).max(1.0) as u32
-}
+use crate::combat::heal_player;
 
 pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable: &ConsumableBehavior) {
     match &consumable.effect {
         ConsumableEffect::Heal => {
-            if let Some(data) = ctx.db.player_data().profile_id().find(&profile_id) {
-                let new_hp = (data.hp + consumable.potency as u32).min(data.max_hp);
-                ctx.db.player_data().profile_id().update(PlayerData { hp: new_hp, ..data });
-            }
+            heal_player(ctx, profile_id, consumable.potency as u32);
         }
         ConsumableEffect::Buff(effect) => {
             ctx.db.active_consumable_effect().insert(ActiveConsumableEffect {

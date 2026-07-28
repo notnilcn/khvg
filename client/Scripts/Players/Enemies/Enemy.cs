@@ -3,22 +3,33 @@ using Godot;
 using SpacetimeDB.Types;
 using System.Linq;
 
-public partial class Enemy : CharacterBody2D
+public partial class Enemy : CharacterBody2D, IEntity
 {
     public ulong EnemyId { get; set; }
-    public uint Hp { get; private set; }
     public byte Phase { get; private set; }
     public bool IsElite { get; private set; }
 
-    private const float LerpSpeed = 10f;
-    private Vector2 canonicalPosition;
+    // IEntity — Enemy can't derive from Entity (it needs CharacterBody2D), so it implements
+    // the interface directly with its own registry; same pattern as LocalPlayer.
+    private readonly EntityRegistry componentRegistry = new();
+    public void RegisterComponent(IComponent component) => componentRegistry.Register(component);
+    public void UnregisterComponent(IComponent component) => componentRegistry.Unregister(component);
+    public IComponent? GetComponent(System.Type type) => componentRegistry.Get(type);
+    public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
+
+    private HealthComponent? HealthComponent => GetComponent<HealthComponent>();
+    private StatsComponent? StatsComponent => GetComponent<StatsComponent>();
+
+    private InterpolationComponent? interpolation;
     private AnimatedSprite2D? sprite;
+    private uint maxHp;
 
     public override void _Ready()
     {
-        canonicalPosition = GlobalPosition;
+        // Component children register themselves in their own _Ready, before this one runs.
+        interpolation = GetComponent<InterpolationComponent>();
 
-        var conn = GameManager.Instance.Conn;
+        var conn = GameManager.Conn;
         if (conn == null) return;
 
         conn.Db.NearbyEnemies.OnUpdate += OnEnemyUpdate;
@@ -27,42 +38,38 @@ public partial class Enemy : CharacterBody2D
         foreach (var row in conn.Db.NearbyEnemies.Iter())
         {
             if (row.EnemyId != EnemyId) continue;
-            canonicalPosition = new Vector2(row.X, row.Y);
-            GlobalPosition = NearestRenderPosition();
-            Hp = row.Hp;
+            interpolation?.SnapTo(new Vector2(row.X, row.Y));
             Phase = row.Phase;
             IsElite = row.IsElite;
             sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
             var template = conn.Db.EnemyTemplates.Iter().FirstOrDefault(t => t.TemplateId == row.TemplateId);
             if (template != null && sprite != null)
             {
-                var resPath = GameManager.Instance.GetResPath(template.TextureId);
+                var resPath = GameManager.GetResPath(template.TextureId);
                 if (resPath != null)
                     sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
             }
+            // The server defines the component values: max_hp from the template, hp from the live row.
+            maxHp = template?.MaxHp ?? row.Hp;
+            HealthComponent?.SetFromServer(row.Hp, maxHp);
+            if (HealthComponent != null && StatsComponent != null)
+                StatsComponent.RegisterStat(StatKind.Hp, HealthComponent.Health);
             break;
         }
     }
 
     public override void _Process(double delta)
     {
-        var targetPosition = NearestRenderPosition();
-        var moving = GlobalPosition.DistanceSquaredTo(targetPosition) > 1f;
-        GlobalPosition = GlobalPosition.Lerp(targetPosition, LerpSpeed * (float)delta);
+        var moving = interpolation?.Moving ?? false;
         if (sprite?.SpriteFrames != null)
             sprite.Play(moving ? "Walk" : "Idle");
     }
 
-    // The reference for "nearest" is our own render position rather than the camera directly —
-    // cheaper, and equivalent since the camera always tracks the local player closely.
-    private Vector2 NearestRenderPosition() =>
-        TorusMath.NearestCandidate(canonicalPosition, GlobalPosition, GameManager.Instance.LapQ, GameManager.Instance.LapR);
-
     private void OnEnemyUpdate(EventContext _, SpacetimeDB.Types.Enemy old, SpacetimeDB.Types.Enemy enemy)
     {
         if (enemy.EnemyId != EnemyId) return;
-        canonicalPosition = new Vector2(enemy.X, enemy.Y);
-        Hp = enemy.Hp;
+        interpolation?.SetTarget(new Vector2(enemy.X, enemy.Y));
+        HealthComponent?.SetFromServer(enemy.Hp, maxHp);
         Phase = enemy.Phase;
     }
 
@@ -74,7 +81,7 @@ public partial class Enemy : CharacterBody2D
 
     public override void _ExitTree()
     {
-        var conn = GameManager.Instance.Conn;
+        var conn = GameManager.Conn;
         if (conn == null) return;
         conn.Db.NearbyEnemies.OnUpdate -= OnEnemyUpdate;
         conn.Db.BulletPatternEvent.OnInsert -= OnBulletPatternInsert;

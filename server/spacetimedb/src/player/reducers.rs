@@ -1,10 +1,12 @@
 use std::time::Duration;
 use spacetimedb::{ReducerContext, Table};
 use crate::main::global::*;
-use crate::world::methods::*;
-use crate::world::tables::*;
+use crate::world::hex::{spiral_chunk_index, world_to_chunk};
+use crate::world::wrap::wrap_world_pos;
+use crate::world::tables::MapConfig;
 use crate::player::tables::*;
 use crate::player::methods::*;
+use crate::combat::deal_damage_to_player;
 use crate::item::tables::*;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
@@ -52,14 +54,8 @@ pub fn delete_profile(ctx: &ReducerContext, profile_id: u64) -> Result<(), Strin
     if profile.player_id != ctx.sender() {
         return Err("Not your profile.".to_string());
     }
-    ctx.db.player_data().profile_id().delete(&profile_id);
-    ctx.db.player_stats().profile_id().delete(&profile_id);
-    ctx.db.player_inventory().profile_id().delete(&profile_id);
-    ctx.db.player_position().profile_id().delete(&profile_id);
+    teardown_profile(ctx, profile_id);
     ctx.db.player_profile().profile_id().delete(&profile_id);
-    for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
-        ctx.db.active_consumable_effect().effect_id().delete(&active.effect_id);
-    }
     Ok(())
 }
 
@@ -92,13 +88,9 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
 
     let pos = ctx.db.player_position().profile_id().find(&profile_id)
         .ok_or_else(|| format!("Position not found for profile {}", profile_id))?;
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let chunk_cols = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
-    let chunk_rows = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
-    let (x, y) = wrap_world_pos(x, y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
-    let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (x, y) = wrap_world_pos(x, y, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
+    let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
     let chunk_index = spiral_chunk_index(cq, cr);
     ctx.db.player_position().profile_id().update(PlayerPosition { x, y, rotation, chunk_index, ..pos });
 
@@ -113,7 +105,6 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
 #[spacetimedb::reducer]
 pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), String> {
     let player = require_in_world(ctx)?;
-    let profile_id = player.profile_id;
 
     let base_damage = match attack {
         SequenceStepRef::Single(def_id) => ctx.db.single_step_def().def_id().find(&def_id).map(|s| s.damage),
@@ -121,27 +112,8 @@ pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), S
         SequenceStepRef::Multi(multi_ref) => ctx.db.multi_step_def().def_id().find(&multi_ref.def_id).and_then(|m| m.shots.get(multi_ref.shot_index as usize).map(|s| s.damage)),
     }.ok_or("Attack step not found.")?;
 
-    let damage = compute_incoming_damage(ctx, profile_id, base_damage);
-    let data = ctx.db.player_data().profile_id().find(&profile_id).ok_or("Player data not found.")?;
-    let new_hp = data.hp.saturating_sub(damage);
-    match new_hp {
-        0 => {
-            ctx.db.player_data().profile_id().delete(profile_id);
-            ctx.db.player_inventory().profile_id().delete(profile_id);
-            ctx.db.player_stats().profile_id().delete(profile_id);
-            ctx.db.player_position().profile_id().delete(profile_id);
-            for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
-                ctx.db.active_consumable_effect().effect_id().delete(&active.effect_id);
-            }
-
-            ctx.db.logged_in_player().player_id().delete(ctx.sender());
-            ctx.db.logged_out_player().insert(LoggedOutPlayer {player_id: ctx.sender(), username: player.username, is_admin: player.is_admin});
-        },
-        _ =>  { ctx.db.player_data().profile_id().update(PlayerData { hp: new_hp, ..data }); }
-            
-    }
-
-    Ok(()) 
+    deal_damage_to_player(ctx, &player, base_damage)?;
+    Ok(())
 }
 
 #[spacetimedb::reducer]

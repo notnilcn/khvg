@@ -1,4 +1,5 @@
-use spacetimedb::{table, Identity, SpacetimeType};
+use spacetimedb::{table, Identity, ReducerContext, SpacetimeType};
+use crate::main::global::{DEFAULT_CHUNK_HEX_RADIUS, DEFAULT_HEX_OUTER_RADIUS};
 
 #[derive(SpacetimeType, Clone)]
 pub enum TextureKind {
@@ -24,6 +25,28 @@ pub struct MapConfig {
     pub lap_q_y: f32,
     pub lap_r_x: f32,
     pub lap_r_y: f32,
+}
+
+impl MapConfig {
+    /// Loads the singleton MapConfig row (id 0), falling back to compile-time defaults when it
+    /// doesn't exist yet (i.e. before add_chunks has ever run). Radii fall back to the DEFAULT_*
+    /// constants and lap vectors to zero; `fallback_chunk_cols`/`fallback_chunk_rows` are
+    /// caller-chosen because call sites deliberately disagree on the degenerate grid:
+    /// 0/0 trips wrap_world_pos's `<= 0` guard (disables torus wrapping entirely), while 1/1
+    /// collapses the grid to a single chunk so wrap/AOI math still runs, degenerately.
+    pub fn load(ctx: &ReducerContext, fallback_chunk_cols: i32, fallback_chunk_rows: i32) -> MapConfig {
+        ctx.db.map_config().id().find(0u32).unwrap_or(MapConfig {
+            id: 0,
+            chunk_hex_radius: DEFAULT_CHUNK_HEX_RADIUS,
+            chunk_cols: fallback_chunk_cols,
+            chunk_rows: fallback_chunk_rows,
+            hex_outer_radius: DEFAULT_HEX_OUTER_RADIUS,
+            lap_q_x: 0.0,
+            lap_q_y: 0.0,
+            lap_r_x: 0.0,
+            lap_r_y: 0.0,
+        })
+    }
 }
 
 #[table(accessor = building_tile, public)]

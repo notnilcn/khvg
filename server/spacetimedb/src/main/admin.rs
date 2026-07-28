@@ -1,8 +1,9 @@
 use spacetimedb::{ReducerContext, Identity, Table};
-use crate::main::global::*;
-use crate::world::methods::*;
-use crate::world::tables::*;
-use crate::world::def_tables::*;
+use crate::world::hex::{chunk_center_hex, hex_area, hex_shift, hex_to_world, inv_hexmod, spiral_chunk_index, world_to_chunk};
+use crate::world::wrap::wrap_world_pos;
+use crate::world::terrain::{internal_generate_world_manual, internal_generate_world_proc};
+use crate::world::tables::{building_tile, map_config, texture_entry, BuildingTile, MapConfig, TextureEntry};
+use crate::world::def_tables::{biome_def, biome_region_def, world_def, BiomeDef, BiomeRegionDef, ManualBiomeInput, WorldDef};
 use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::enemy::def_tables::*;
@@ -82,13 +83,9 @@ pub fn spawn_enemy(ctx: &ReducerContext, template_id: String, x: f32, y: f32, is
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     let template = ctx.db.enemy_template().template_id().find(&template_id)
         .ok_or_else(|| format!("Template '{}' not found.", template_id))?;
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let chunk_cols = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(1);
-    let chunk_rows = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(1);
-    let (x, y) = wrap_world_pos(x, y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
-    let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
+    let cfg = MapConfig::load(ctx, 1, 1);
+    let (x, y) = wrap_world_pos(x, y, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
+    let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
     let chunk_index = spiral_chunk_index(cq, cr);
     let inserted_behavior = ctx.db.enemy_behavior().insert(build_enemy_behavior(ctx, &template));
     ctx.db.enemy().insert(Enemy {

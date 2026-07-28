@@ -22,23 +22,31 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 
 	// IEntity — LocalPlayer can't derive from Entity (it needs CharacterBody2D), so it
 	// implements the interface directly with its own registry. Component children
-	// (e.g. LocalPlayerCombat) register themselves here from their _Ready.
+	// (Stats, Health, Faction, Combat…) register themselves here from their _Ready.
 	private readonly EntityRegistry componentRegistry = new();
-	public void RegisterComponent(Component component) => componentRegistry.Register(component);
-	public Component? GetComponent(System.Type type) => componentRegistry.Get(type);
+	public void RegisterComponent(IComponent component) => componentRegistry.Register(component);
+	public void UnregisterComponent(IComponent component) => componentRegistry.Unregister(component);
+	public IComponent? GetComponent(System.Type type) => componentRegistry.Get(type);
+	public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
 
 	public string Username { get; private set; } = "";
 	public string ProfileName { get; private set; } = "";
 
+	// Stat/hp values live in the Health/Stats components (mirrors of server rows); these
+	// pass-throughs keep UI readers (e.g. StatsSidebarComponent) stable. GetComponent works
+	// before this node's _Ready because component children register during their own _Ready.
+	private HealthComponent? HealthComponent => GetComponent<HealthComponent>();
+	private StatsComponent? StatsComponent => GetComponent<StatsComponent>();
+
 	public uint Level { get; private set; }
-	public uint Hp { get; private set; }
-	public uint MaxHp { get; private set; }
-	public int Strength { get; private set; }
-	public int Wisdom { get; private set; }
-	public int Dexterity { get; private set; }
-	public int Defense { get; private set; }
-	public int Vitality { get; private set; }
-	public int Speed { get; private set; }
+	public uint Hp => (uint)(HealthComponent?.Hp ?? 0);
+	public uint MaxHp => (uint)(HealthComponent?.MaxHp ?? 0);
+	public int Strength => StatsComponent?.GetValue(StatKind.Strength) ?? 0;
+	public int Wisdom => StatsComponent?.GetValue(StatKind.Wisdom) ?? 0;
+	public int Dexterity => StatsComponent?.GetValue(StatKind.Dexterity) ?? 0;
+	public int Defense => StatsComponent?.GetValue(StatKind.Defense) ?? 0;
+	public int Vitality => StatsComponent?.GetValue(StatKind.Vitality) ?? 0;
+	public int Speed => StatsComponent?.GetValue(StatKind.Speed) ?? 0;
 
 	private const float SpeedPerStat = 10f;
 	private const float WrapSnapThreshold = 50f;
@@ -46,24 +54,29 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	private readonly List<InventorySlot> inventorySlots = new();
 	private CharacterModel3D? _model3D;
 	private AnimatedSprite2D sprite = null!;
-	private Area2D bulletCollider = null!;
 	private float reportTimer = 0f;
 	private const float ReportInterval = 0.1f;
 
+	// Camera components of the Main entity, cached in _Ready (per-frame access in
+	// _PhysicsProcess makes an ancestor/registry walk per call wasteful).
+	private World3DComponent? world3D;
+	private Camera2DPresenterComponent? camera2D;
+	private CameraRigComponent? cameraRig;
+
 	// Slot 0: weapon only
-	public Item? EquippedWeapon => GetSlotItem(0, GameManager.Instance.GetItem);
+	public Item? EquippedWeapon => GetSlotItem(0, GameManager.GetItem);
 
 	// Slots 1-4: consumables only hotbar
-	public IReadOnlyList<Item?> HotbarSlots => BuildTypedSlots(1, 4, GameManager.Instance.GetItem);
+	public IReadOnlyList<Item?> HotbarSlots => BuildTypedSlots(1, 4, GameManager.GetItem);
 
 	// Slots 5-8: accessories only
-	public IReadOnlyList<Item?> AccessorySlots => BuildTypedSlots(5, 4, GameManager.Instance.GetItem);
+	public IReadOnlyList<Item?> AccessorySlots => BuildTypedSlots(5, 4, GameManager.GetItem);
 
 	// Slots 9-12: armor only
-	public IReadOnlyList<Item?> ArmorSlots => BuildTypedSlots(9, 4, GameManager.Instance.GetItem);
+	public IReadOnlyList<Item?> ArmorSlots => BuildTypedSlots(9, 4, GameManager.GetItem);
 
 	// Slots 13-14: artifact only
-	public IReadOnlyList<Item?> ArtifactSlots => BuildTypedSlots(13, 2, GameManager.Instance.GetItem);
+	public IReadOnlyList<Item?> ArtifactSlots => BuildTypedSlots(13, 2, GameManager.GetItem);
 
 	// Slots 15-22: general mixed
 	public IReadOnlyList<ResolvedSlot> GeneralSlots => BuildResolvedSlots(15, 8);
@@ -75,19 +88,27 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	{
 		Local  = this;
 		sprite = GetNode<AnimatedSprite2D>("Sprite");
-		bulletCollider = GetNode<Area2D>("BulletCollider");
-		var worldRenderer3D = WorldRenderer3D.Instance;
-		if (KnightScene != null && worldRenderer3D != null)
+
+		var gameManager = this.GetAncestor<GameManager>();
+		world3D   = gameManager?.GetComponent<World3DComponent>();
+		camera2D  = gameManager?.GetComponent<Camera2DPresenterComponent>();
+		cameraRig = gameManager?.GetComponent<CameraRigComponent>();
+
+		if (KnightScene != null && world3D != null)
 		{
-			_model3D = new CharacterModel3D(KnightScene, GlobalPosition, worldRenderer3D);
-			worldRenderer3D.SetCameraFollowTarget(_model3D.Node);
+			_model3D = new CharacterModel3D(KnightScene, GlobalPosition, world3D);
+			world3D.SetCameraFollowTarget(_model3D.Node);
 		}
 
 		var pcamNode = GetNode<Node2D>("%LocalPlayerPhantomCamera2D");
-		CameraController2D.Instance?.RegisterCamera(pcamNode);
-		
+		camera2D?.RegisterCamera(pcamNode);
 
-		var conn = GameManager.Instance.Conn;
+		// comedot's shared-Stat pattern: the Stats component lists the same Stat instance
+		// the Health component owns, so all observers see one hp value.
+		if (HealthComponent != null && StatsComponent != null)
+			StatsComponent.RegisterStat(StatKind.Hp, HealthComponent.Health);
+
+		var conn = GameManager.Conn;
 		if (conn == null) return;
 
 		conn.Db.LocalPlayerData.OnUpdate            += OnDataUpdate;
@@ -96,7 +117,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		conn.Db.LocalPlayerInventory.OnUpdate       += OnInventoryUpdate;
 		conn.Db.LocalPlayerActiveProfile.OnUpdate   += OnActiveProfileUpdate;
 
-		Username = GameManager.Instance.Username;
+		Username = GameManager.Username;
 		foreach (var row in conn.Db.LocalPlayerData.Iter())
 			ApplyData(row);
 		foreach (var row in conn.Db.LocalPlayerStats.Iter())
@@ -109,7 +130,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		foreach (var profile in conn.Db.LocalPlayerActiveProfile.Iter())
 		{
 			ProfileName = profile.ProfileName;
-			var resPath = GameManager.Instance.GetResPath(profile.TextureId);
+			var resPath = GameManager.GetResPath(profile.TextureId);
 			if (resPath != null)
 				sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
 			EmitSignal("AimSettingsChanged");
@@ -120,7 +141,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	public override void _PhysicsProcess(double delta)
 	{
 		var raw = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
-		float yaw  = CameraRig.Instance?.Yaw ?? 0f;
+		float yaw  = cameraRig?.Yaw ?? 0f;
 		var rot2d = new Vector2(raw.X, raw.Y).Rotated(yaw);
 		var input = new Vector2(rot2d.X, rot2d.Y);
 
@@ -144,7 +165,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		if (reportTimer >= ReportInterval)
 		{
 			reportTimer = 0f;
-			GameManager.Instance.Conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, Rotation);
+			GameManager.Conn?.Reducers.ReportMovement(GlobalPosition.X, GlobalPosition.Y, Rotation);
 		}
 	}
 
@@ -160,7 +181,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		// server's position is still far from us: if even that's far, it's a real desync
 		// (lag/rubber-band/correction), not a routine wrap, and worth a hard correction.
 		var serverPos = new Vector2(position.X, position.Y);
-		var nearest = TorusMath.NearestCandidate(serverPos, GlobalPosition, GameManager.Instance.LapQ, GameManager.Instance.LapR);
+		var nearest = TorusMath.NearestCandidate(serverPos, GlobalPosition, GameManager.LapQ, GameManager.LapR);
 		if (GlobalPosition.DistanceSquaredTo(nearest) > WrapSnapThreshold * WrapSnapThreshold)
 		{
 			GD.Print($"[Desync] {GlobalPosition} → {nearest} (dist={GlobalPosition.DistanceTo(nearest):F1})");
@@ -180,22 +201,19 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	private void ApplyData(PlayerData data)
 	{
 		Level = data.Level;
-		Hp    = data.Hp;
-		MaxHp = data.MaxHp;
+		HealthComponent?.SetFromServer(data.Hp, data.MaxHp);
 		EmitSignal("StatsChanged");
-		GD.Print("Data Changed Signal");
 	}
 
 	private void ApplyStats(PlayerStats stats)
 	{
-		Strength  = stats.Strength;
-		Wisdom    = stats.Wisdom;
-		Dexterity = stats.Dexterity;
-		Defense   = stats.Defense;
-		Vitality  = stats.Vitality;
-		Speed     = stats.Speed;
+		StatsComponent?.SetFromServer(StatKind.Strength, stats.Strength);
+		StatsComponent?.SetFromServer(StatKind.Wisdom, stats.Wisdom);
+		StatsComponent?.SetFromServer(StatKind.Dexterity, stats.Dexterity);
+		StatsComponent?.SetFromServer(StatKind.Defense, stats.Defense);
+		StatsComponent?.SetFromServer(StatKind.Vitality, stats.Vitality);
+		StatsComponent?.SetFromServer(StatKind.Speed, stats.Speed);
 		EmitSignal("StatsChanged");
-		GD.Print("Stats Changed Signal");
 	}
 
 	private IReadOnlyList<ResolvedSlot> BuildResolvedSlots(int startIndex, int count) =>
@@ -209,7 +227,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		if (index >= inventorySlots.Count) return new ResolvedSlot();
 		var slot = inventorySlots[index];
 		if (slot.ItemId == null) return new ResolvedSlot { Slot = slot };
-		var item = GameManager.Instance.GetItem(slot.ItemId);
+		var item = GameManager.GetItem(slot.ItemId);
 		return new ResolvedSlot { Slot = slot, Item = item };
 	}
 
@@ -225,7 +243,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	public override void _ExitTree()
 	{
 		if (Local == this) Local = null;
-		var conn = GameManager.Instance.Conn;
+		var conn = GameManager.Conn;
 		if (conn == null) return;
 		conn.Db.LocalPlayerData.OnUpdate            -= OnDataUpdate;
 		conn.Db.LocalPlayerStats.OnUpdate           -= OnStatsUpdate;
@@ -233,7 +251,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		conn.Db.LocalPlayerInventory.OnUpdate       -= OnInventoryUpdate;
 		conn.Db.LocalPlayerActiveProfile.OnUpdate   -= OnActiveProfileUpdate;
 		_model3D?.Dispose();
-		WorldRenderer3D.Instance?.ClearCameraFollowTarget();
-		CameraController2D.Instance?.UnregisterCamera();
+		if (IsInstanceValid(world3D)) world3D!.ClearCameraFollowTarget();
+		if (IsInstanceValid(camera2D)) camera2D!.UnregisterCamera();
 	}
 }

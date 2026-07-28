@@ -1,9 +1,10 @@
 use spacetimedb::{ReducerContext, Table};
-use std::time::Duration;
 use crate::main::global::*;
-use crate::world::methods::*;
-use crate::world::tables::*;
+use crate::world::hex::{spiral_chunk_index, world_to_chunk};
+use crate::world::wrap::wrap_world_pos;
+use crate::world::tables::MapConfig;
 use crate::player::methods::*;
+use crate::combat::deal_damage_to_enemy;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 use crate::enemy::methods::*;
@@ -14,11 +15,9 @@ pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
 
 #[spacetimedb::reducer]
 pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
-    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (chunk_hex_radius, hex_outer_radius, chunk_cols, chunk_rows) =
+        (cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows);
 
     for enemy in ctx.db.enemy().iter() {
         let mut behavior = match ctx.db.enemy_behavior().behavior_id().find(&enemy.behavior_id) {
@@ -99,7 +98,6 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
 #[spacetimedb::reducer]
 pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
     let player = require_in_world(ctx)?;
-    let profile_id = player.profile_id;
 
     let enemy = match ctx.db.enemy().enemy_id().find(&enemy_id) {
         Some(e) => e,
@@ -107,38 +105,6 @@ pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), Strin
     };
     if enemy.immortal { return Ok(()); }
 
-    let template = ctx.db.enemy_template().template_id().find(&enemy.template_id);
-    let damage = compute_player_damage(ctx, profile_id);
-    let new_hp = enemy.hp.saturating_sub(damage);
-
-    if new_hp == 0 {
-        let xp_reward = template.as_ref().map(|t| t.max_hp / 10).unwrap_or(10);
-        delete_enemy_behavior(ctx, enemy.behavior_id);
-        ctx.db.enemy().enemy_id().delete(&enemy_id);
-        internal_gain_xp(ctx, profile_id, xp_reward);
-        return Ok(());
-    }
-
-    let new_phase = template.as_ref().map(|t| compute_phase(new_hp, t.max_hp, &t.phases)).unwrap_or(enemy.phase);
-    let aggro_lock_seconds = template.as_ref().map(|t| t.aggro_lock_seconds).unwrap_or(0.0);
-
-    if let Some(mut behavior) = ctx.db.enemy_behavior().behavior_id().find(&enemy.behavior_id) {
-        let mut changed = false;
-        if new_phase != enemy.phase {
-            let (aggro_target, aggro_locked_until) = recompute_aggro(ctx, enemy.x, enemy.y, aggro_lock_seconds);
-            behavior.aggro_target = aggro_target;
-            behavior.aggro_locked_until = aggro_locked_until;
-            changed = true;
-        } else if behavior.aggro_target != Some(ctx.sender()) && ctx.timestamp >= behavior.aggro_locked_until {
-            behavior.aggro_target = Some(ctx.sender());
-            behavior.aggro_locked_until = ctx.timestamp + Duration::from_secs_f32(aggro_lock_seconds.max(0.0));
-            changed = true;
-        }
-        if changed {
-            ctx.db.enemy_behavior().behavior_id().update(behavior);
-        }
-    }
-
-    ctx.db.enemy().enemy_id().update(Enemy { hp: new_hp, phase: new_phase, ..enemy });
+    deal_damage_to_enemy(ctx, player.profile_id, enemy);
     Ok(())
 }

@@ -44,7 +44,7 @@ pub struct GroundTextureConfig {
 // texture this overlay is compatible with (LayeringRule, via `tags`) — chances among the
 // compatible overlays for a given tile don't need to sum to 100; any chance left over after
 // summing is "no overlay", and if they sum past 100 they're scaled down proportionally rather
-// than overflowing (see weighted_pick_with_remainder in world::methods).
+// than overflowing (see weighted_pick_with_remainder in world::prng).
 #[derive(SpacetimeType, Clone)]
 pub struct OverlayTextureConfig {
     pub texture_id: String,
@@ -75,7 +75,7 @@ pub struct BiomeDef {
     pub overlay_textures: Vec<OverlayTextureConfig>,
     pub region_weights: Vec<RegionWeight>,
     // Spatial frequency for the noise field that drives ground-texture clustering (see
-    // value_noise2d in world::methods) — lower scale means larger patches. <= 0 disables
+    // value_noise2d in world::noise) — lower scale means larger patches. <= 0 disables
     // clustering and falls back to a plain per-wedge random pick.
     pub ground_noise_scale: f32,
     // Same idea as ground_noise_scale, but for overlay presence+type — clusters debris into

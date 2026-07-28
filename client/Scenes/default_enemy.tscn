@@ -1,6 +1,11 @@
 [gd_scene format=3 uid="uid://djjulhvulxtyc"]
 
 [ext_resource type="Script" uid="uid://d05mpx8xh66pk" path="res://Scripts/Players/Enemies/Enemy.cs" id="1_tincf"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Data/stats_component.tscn" id="2_stats"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Combat/health_component.tscn" id="3_health"]
+[ext_resource type="Script" uid="uid://cvf3pb2g8fcrw" path="res://Scripts/Components/Combat/FactionComponent.cs" id="4_faction"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="5_hurtbox"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="6_interp"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kjvdn"]
 
@@ -17,3 +22,20 @@ sprite_frames = SubResource("SpriteFrames_kjvdn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=9122553]
 shape = SubResource("CapsuleShape2D_hkglx")
+
+[node name="StatsComponent" parent="." unique_id=1802405848 instance=ExtResource("2_stats")]
+
+[node name="HealthComponent" parent="." unique_id=27809258 instance=ExtResource("3_health")]
+
+[node name="FactionComponent" type="Node" parent="." unique_id=1223942734]
+script = ExtResource("4_faction")
+Factions = 4
+
+[node name="DamageReceivingComponent" parent="." unique_id=951801579 instance=ExtResource("5_hurtbox")]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceivingComponent" unique_id=504799495]
+shape = SubResource("CapsuleShape2D_hkglx")
+
+[node name="InterpolationComponent" parent="." instance=ExtResource("6_interp")]

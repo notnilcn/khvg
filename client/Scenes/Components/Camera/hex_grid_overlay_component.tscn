@@ -1,0 +1,7 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/Camera/HexGridOverlayComponent.cs" id="1_hex2d"]
+
+[node name="HexGridOverlayComponent" type="Node2D"]
+visible = false
+script = ExtResource("1_hex2d")

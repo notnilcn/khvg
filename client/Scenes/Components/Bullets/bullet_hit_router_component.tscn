@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/Bullets/BulletHitRouterComponent.cs" id="1_router"]
+
+[node name="BulletHitRouterComponent" type="Node"]
+script = ExtResource("1_router")

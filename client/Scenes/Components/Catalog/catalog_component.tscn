@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/Catalog/CatalogComponent.cs" id="1_catalog"]
+
+[node name="CatalogComponent" type="Node"]
+script = ExtResource("1_catalog")

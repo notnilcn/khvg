@@ -1,12 +1,16 @@
 [gd_scene format=3 uid="uid://bbjjh55yrwyfn"]
 
 [ext_resource type="Script" uid="uid://kf13rwr5hlhp" path="res://Scripts/Players/Local/LocalPlayer.cs" id="1_h1vum"]
-[ext_resource type="Script" uid="uid://bddvxb8xqsltm" path="res://Scripts/Players/Local/LocalPlayerCombat.cs" id="2_h1vum"]
+[ext_resource type="Script" uid="uid://bddvxb8xqsltm" path="res://Scripts/Components/Weapon/CombatComponent.cs" id="2_h1vum"]
 [ext_resource type="PackedScene" uid="uid://c3lln0nygubmm" path="res://Assets/3D/characters/Knight.fbx" id="2_tfukw"]
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="7_g7ri8"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="8_tfukw"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/inventory_panel.tscn" id="9_inv"]
+[ext_resource type="PackedScene" uid="uid://cds1jjkirfii" path="res://Scenes/UI/inventory_panel.tscn" id="9_inv"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/hit_zone.tscn" id="10_hit"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Data/stats_component.tscn" id="11_stats"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Combat/health_component.tscn" id="12_health"]
+[ext_resource type="Script" uid="uid://cvf3pb2g8fcrw" path="res://Scripts/Components/Combat/FactionComponent.cs" id="13_faction"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="14_hurtbox"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_rmvjh"]
 
@@ -34,25 +38,33 @@ visible = false
 ignore_rotation = false
 zoom = Vector2(0.75, 0.75)
 
-[node name="Combat" type="Node" parent="." unique_id=1107745331]
+[node name="CombatComponent" type="Node" parent="." unique_id=1107745331]
 script = ExtResource("2_h1vum")
 HitZoneScene = ExtResource("10_hit")
 
-[node name="BulletCollider" type="Area2D" parent="." unique_id=845473755]
+[node name="StatsComponent" parent="." unique_id=754370146 instance=ExtResource("11_stats")]
+
+[node name="HealthComponent" parent="." unique_id=911255234 instance=ExtResource("12_health")]
+
+[node name="FactionComponent" type="Node" parent="." unique_id=1390010039]
+script = ExtResource("13_faction")
+Factions = 2
+
+[node name="DamageReceivingComponent" parent="." unique_id=1719362505 instance=ExtResource("14_hurtbox")]
 collision_layer = 2
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="BulletCollider" unique_id=797334021]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceivingComponent" unique_id=775089985]
 shape = SubResource("CapsuleShape2D_h1vum")
 
-[node name="InventoryCanvas" parent="." unique_id=1521195768 instance=ExtResource("9_inv")]
+[node name="InventoryCanvas" parent="." unique_id=925443749 instance=ExtResource("9_inv")]
 
 [node name="LocalPlayerPhantomCamera2D" type="Node2D" parent="." unique_id=2115189460 node_paths=PackedStringArray("follow_target")]
 unique_name_in_owner = true
 top_level = true
 script = ExtResource("7_g7ri8")
 follow_mode = 2
-follow_target = NodePath("../BulletCollider")
+follow_target = NodePath("../DamageReceivingComponent")
 tween_resource = SubResource("Resource_0dny4")
 rotate_with_target = true
 metadata/_custom_type_script = "uid://bhexx6mj1xv3q"

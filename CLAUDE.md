@@ -12,10 +12,10 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 |---|---|---|
 | Player identity, profiles, lobby, login/logout, inventory, XP/leveling | `player/` | `Game/LobbyGui.cs`, `Game/GameManager.cs`, `Players/Local/*`, `Players/Remote/RemotePlayer.cs` |
 | Enemy AI, phases, attack sequences, bullet patterns | `enemy/` | `Players/Enemies/Enemy.cs`, `Game/BulletManager.cs` |
-| World/hex grid, buildings | `world/` | `World/HexGridOverlay2D.cs` |
+| World/hex grid, buildings, terrain | `world/` | `Components/Camera/HexGridOverlayComponent.cs` (+ `HexGridOverlay3DComponent.cs`), `Components/Terrain/` |
 | Admin tools, content seeding, debug overlay, connect/disconnect lifecycle | `main/admin.rs`, `main/seeds.rs`, `main/debug.rs`, `main/lifecycle.rs` | `Game/DebugOverlay.cs` |
-| Item/weapon/armor catalog, equipping, inventory UI | `item/` | `Game/GameManager.cs` (item cache/lookup), `Players/Local/LocalPlayer.cs` (slot resolution), `Players/Local/LocalPlayerInventory.cs`, `Players/Local/InventorySlotUI.cs`, `Players/Local/ItemStatsSidebar.cs` |
-| Loot pickups | `player/` (`LootDrop`, `pickup_drop`) | `Items/Drop.cs` |
+| Item/weapon/armor catalog, equipping, inventory UI | `item/` | `Components/Catalog/CatalogComponent.cs` (item cache/lookup, behind the `GameManager` facade), `Players/Local/LocalPlayer.cs` (slot resolution), `Components/Inventory/InventoryComponent.cs`, `Components/Inventory/SlotComponent.cs`, `Components/Inventory/ItemSidebarComponent.cs` |
+| Loot pickups | `player/` (`LootDrop`, `pickup_drop`) | `Items/Drop.cs`, `Components/Interaction/PickupComponent.cs` |
 | Generated bindings — **do not read** | — | `Scripts/module_bindings/` |
 
 For a per-file breakdown of each server module, see `server/CLAUDE.md`. For a per-file breakdown of the client folders above, see `client/CLAUDE.md`.

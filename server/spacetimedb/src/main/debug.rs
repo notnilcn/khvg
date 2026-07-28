@@ -1,15 +1,13 @@
 use spacetimedb::{table, ReducerContext, Table, Identity, ScheduleAt, TimeDuration};
 use std::time::Duration;
-use crate::main::global::*;
-use crate::world::methods::*;
-use crate::world::tables::*;
+use crate::world::hex::world_to_hex;
+use crate::world::tables::MapConfig;
 use crate::player::tables::*;
 use crate::player::methods::*;
 
 #[spacetimedb::reducer]
 pub fn tick_player_position_debug(ctx: &ReducerContext, _job: PlayerPositionDebugSchedule) {
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
+    let hex_outer_radius = MapConfig::load(ctx, 0, 0).hex_outer_radius;
     let mut active_ids = std::collections::HashSet::new();
     for pos in ctx.db.player_position().iter() {
         let (hex_q, hex_r) = world_to_hex(pos.x, pos.y, hex_outer_radius);

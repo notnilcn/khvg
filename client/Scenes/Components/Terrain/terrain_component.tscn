@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/Terrain/TerrainComponent.cs" id="1_terrain"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Terrain/tile_component.tscn" id="2_tile"]
+
+[node name="TerrainComponent" type="Node2D"]
+z_index = -10
+script = ExtResource("1_terrain")
+TileScene = ExtResource("2_tile")

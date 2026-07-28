@@ -1,7 +1,7 @@
 use spacetimedb::{ReducerContext, Table, ScheduleAt, TimeDuration};
 use std::time::Duration;
 use crate::main::global::*;
-use crate::world::methods::*;
+use crate::world::terrain::internal_generate_world_proc;
 use crate::player::tables::*;
 use crate::enemy::instance_tables::*;
 use super::seeds::{seed_default_textures, seed_layering_rules, seed_adjacency_rules, seed_decor_ground_rules, seed_default_enemies, seed_world_defs, seed_test_boss_p2, seed_test_boss_p3, seed_test_boss_p4, seed_test_boss_p5, seed_test_boss_p6};

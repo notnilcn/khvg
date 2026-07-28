@@ -169,7 +169,8 @@ Do not hand-edit the output.
 `accessoryCache`/`consumableCache` (lines 38–42), their twelve `OnInsert`/`OnUpdate`/`OnDelete`
 handlers (174–192), the five `.AddQuery(q => q.From.AllWeapons())`-style subscriptions (197–201), and
 the five `GetWeapon`/`GetArmor`/... accessors (378–382). `itemCache`, `AllItems`, and `GetItem`
-survive — one cache, one subscription, one lookup.
+survive — one cache, one subscription, one lookup. (The surviving caches have since moved to
+`client/Scripts/Components/Catalog/CatalogComponent.cs`; `GameManager` is now a facade over it.)
 
 `client/Scripts/Players/Local/LocalPlayer.cs` — `ResolvedSlot` (lines 7–17) currently holds five
 mutually-exclusive nullable side-table refs of which at most one is ever non-null. It collapses to
@@ -182,16 +183,18 @@ want "the `Item` in slot N", replace `GetSlotItem`/`BuildTypedSlots` with `Item?
 equivalents and make `EquippedWeapon` an `Item?`. Delete the commented-out `Bag` line (69) rather
 than porting it.
 
-`client/Scripts/Players/Local/LocalPlayerCombat.cs` — `_weapon` becomes the `WeaponBehavior` pulled
+`client/Scripts/Components/Weapon/CombatComponent.cs` (was `Players/Local/LocalPlayerCombat.cs`) —
+`_weapon` becomes the `WeaponBehavior` pulled
 out of the equipped `Item`'s `behaviors` (mirroring the server helper from step 6). `OnInventoryChanged`
 (122–131) compares `WeaponId` for change detection; use the equipped `Item.ItemId` instead. Field
 reads inside `Fire`/`FireSingle`/etc. (133–158) are unchanged once `_weapon` is a `WeaponBehavior` —
 the field names carry over.
 
-`client/Scripts/Players/Local/ItemStatsSidebar.cs` — reads only `resolved.Item`, so it compiles
+`client/Scripts/Components/Inventory/ItemSidebarComponent.cs` (was `Players/Local/ItemStatsSidebar.cs`) —
+reads only `resolved.Item`, so it compiles
 unchanged. It is the natural place to later render `stat_modifiers`, but that is not this change.
 
-`LocalPlayerInventory.cs` and `Drop.cs` reference slots/ids only — no change.
+`Components/Inventory/InventoryComponent.cs` (was `LocalPlayerInventory.cs`) and `Items/Drop.cs` reference slots/ids only — no change.
 
 ## Verification
 
@@ -223,5 +226,5 @@ unchanged. It is the natural place to later render `stat_modifiers`, but that is
 - The procedural generator reducer — the schema above is what makes it writable.
 - `Bag` capacity as a `BagBehavior { extra_slots }` variant; `Bag` is currently a slot with no
   behavior, and `PlayerInventory.slots` is a fixed 24.
-- Rendering `stat_modifiers` in `ItemStatsSidebar`, which now has generic data to display.
+- Rendering `stat_modifiers` in `ItemSidebarComponent` (was `ItemStatsSidebar`), which now has generic data to display.
 - Per-stat btree-indexed tables if an auction-house-style query ever lands — the doc's caveat.

@@ -1,9 +1,10 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cds1jjkirfii"]
 
-[ext_resource type="Script" uid="uid://qxrq17k705ef" path="res://Scripts/Players/Local/LocalPlayerInventory.cs" id="3_b1nyi"]
-[ext_resource type="Script" uid="uid://701vhi4srkpg" path="res://Scripts/Players/Local/InventorySlotUI.cs" id="4_7ophi"]
-[ext_resource type="Script" uid="uid://blemhphivh11e" path="res://Scripts/Players/Local/PlayerStatsSidebar.cs" id="5_rmvjh"]
-[ext_resource type="Script" uid="uid://fs5pxnesqgbg" path="res://Scripts/Players/Local/ItemStatsSidebar.cs" id="6_rmvjh"]
+[ext_resource type="Script" uid="uid://qxrq17k705ef" path="res://Scripts/Components/Inventory/InventoryComponent.cs" id="3_b1nyi"]
+[ext_resource type="Script" uid="uid://701vhi4srkpg" path="res://Scripts/Components/Inventory/SlotComponent.cs" id="4_7ophi"]
+[ext_resource type="Script" uid="uid://blemhphivh11e" path="res://Scripts/Components/Inventory/StatsSidebarComponent.cs" id="5_rmvjh"]
+[ext_resource type="Script" uid="uid://fs5pxnesqgbg" path="res://Scripts/Components/Inventory/ItemSidebarComponent.cs" id="6_rmvjh"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/enchantment_row.tscn" id="7_row"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1vum"]
 bg_color = Color(0.4115005, 0.4115005, 0.4115005, 1)
@@ -53,9 +54,9 @@ expand_margin_top = 3.0
 expand_margin_right = 3.0
 expand_margin_bottom = 3.0
 
-[node name="InventoryCanvas" type="CanvasLayer"]
+[node name="InventoryCanvas" type="CanvasLayer" unique_id=193521948]
 
-[node name="Inventory" type="Control" parent="." unique_id=375106985 node_paths=PackedStringArray("HotbarSlots", "ArmorSlots", "AccessorySlots", "ArtifactSlots", "GeneralSlots", "InventoryHotbarSlots")]
+[node name="InventoryComponent" type="Control" parent="." unique_id=375106985 node_paths=PackedStringArray("HotbarSlots", "ArmorSlots", "AccessorySlots", "ArtifactSlots", "GeneralSlots", "InventoryHotbarSlots")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -70,7 +71,7 @@ ArtifactSlots = [NodePath("Menu/Backpack/Row - 6/Artifact - 13"), NodePath("Menu
 GeneralSlots = [NodePath("Menu/Backpack/Row - 3/General - 15"), NodePath("Menu/Backpack/Row - 3/General - 16"), NodePath("Menu/Backpack/Row - 3/General - 17"), NodePath("Menu/Backpack/Row - 3/General - 18"), NodePath("Menu/Backpack/Row - 4/General - 19"), NodePath("Menu/Backpack/Row - 4/General - 20"), NodePath("Menu/Backpack/Row - 4/General - 21"), NodePath("Menu/Backpack/Row - 4/General - 22")]
 InventoryHotbarSlots = [NodePath("Menu/Backpack/Row - 6/Weapon - 0"), NodePath("Menu/Backpack/Row - 5/Consumable - 1"), NodePath("Menu/Backpack/Row - 5/Consumable - 2"), NodePath("Menu/Backpack/Row - 5/Consumable - 3"), NodePath("Menu/Backpack/Row - 5/Consumable - 4")]
 
-[node name="Hotbar" type="HBoxContainer" parent="Inventory" unique_id=1852483177]
+[node name="Hotbar" type="HBoxContainer" parent="InventoryComponent" unique_id=1852483177]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -84,7 +85,7 @@ grow_vertical = 0
 pivot_offset = Vector2(63, 8)
 theme_override_constants/separation = 6
 
-[node name="Weapon - 0" type="Panel" parent="Inventory/Hotbar" unique_id=581933243 node_paths=PackedStringArray("Icon")]
+[node name="Weapon - 0" type="Panel" parent="InventoryComponent/Hotbar" unique_id=581933243 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -92,7 +93,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
 script = ExtResource("4_7ophi")
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Hotbar/Weapon - 0" unique_id=1056446447]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Hotbar/Weapon - 0" unique_id=1056446447]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -108,7 +109,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Consumable - 1" type="Panel" parent="Inventory/Hotbar" unique_id=821817778 node_paths=PackedStringArray("Icon")]
+[node name="Consumable - 1" type="Panel" parent="InventoryComponent/Hotbar" unique_id=821817778 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -117,7 +118,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 1
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Hotbar/Consumable - 1" unique_id=782528158]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Hotbar/Consumable - 1" unique_id=782528158]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -133,7 +134,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Consumable - 2" type="Panel" parent="Inventory/Hotbar" unique_id=1102005494 node_paths=PackedStringArray("Icon")]
+[node name="Consumable - 2" type="Panel" parent="InventoryComponent/Hotbar" unique_id=1102005494 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -142,7 +143,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 2
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Hotbar/Consumable - 2" unique_id=635868162]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Hotbar/Consumable - 2" unique_id=635868162]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -158,7 +159,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Consumable - 3" type="Panel" parent="Inventory/Hotbar" unique_id=2049080542 node_paths=PackedStringArray("Icon")]
+[node name="Consumable - 3" type="Panel" parent="InventoryComponent/Hotbar" unique_id=2049080542 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -167,7 +168,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 3
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Hotbar/Consumable - 3" unique_id=1837313331]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Hotbar/Consumable - 3" unique_id=1837313331]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -183,7 +184,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Consumable - 4" type="Panel" parent="Inventory/Hotbar" unique_id=485332424 node_paths=PackedStringArray("Icon")]
+[node name="Consumable - 4" type="Panel" parent="InventoryComponent/Hotbar" unique_id=485332424 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -192,7 +193,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 4
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Hotbar/Consumable - 4" unique_id=841152112]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Hotbar/Consumable - 4" unique_id=841152112]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -208,7 +209,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Menu" type="Control" parent="Inventory" unique_id=1601652152]
+[node name="Menu" type="Control" parent="InventoryComponent" unique_id=1601652152]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -217,7 +218,7 @@ grow_horizontal = 2
 grow_vertical = 2
 pivot_offset = Vector2(41, 63)
 
-[node name="Backpack" type="VBoxContainer" parent="Inventory/Menu" unique_id=357711280]
+[node name="Backpack" type="VBoxContainer" parent="InventoryComponent/Menu" unique_id=357711280]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -231,11 +232,11 @@ scale = Vector2(2, 2)
 pivot_offset = Vector2(41, 63)
 theme_override_constants/separation = 6
 
-[node name="Row - 1" type="HBoxContainer" parent="Inventory/Menu/Backpack" unique_id=1865730411]
+[node name="Row - 1" type="HBoxContainer" parent="InventoryComponent/Menu/Backpack" unique_id=1865730411]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Armor - 9" type="Panel" parent="Inventory/Menu/Backpack/Row - 1" unique_id=1286898925 node_paths=PackedStringArray("Icon")]
+[node name="Armor - 9" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 1" unique_id=1286898925 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -244,7 +245,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 9
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 1/Armor - 9" unique_id=353700178]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 1/Armor - 9" unique_id=353700178]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -260,7 +261,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Armor - 10" type="Panel" parent="Inventory/Menu/Backpack/Row - 1" unique_id=566936695 node_paths=PackedStringArray("Icon")]
+[node name="Armor - 10" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 1" unique_id=566936695 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -269,7 +270,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 10
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 1/Armor - 10" unique_id=962663702]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 1/Armor - 10" unique_id=962663702]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -285,7 +286,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Armor - 11" type="Panel" parent="Inventory/Menu/Backpack/Row - 1" unique_id=982975072 node_paths=PackedStringArray("Icon")]
+[node name="Armor - 11" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 1" unique_id=982975072 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -294,7 +295,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 11
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 1/Armor - 11" unique_id=759168509]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 1/Armor - 11" unique_id=759168509]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -310,7 +311,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Armor - 12" type="Panel" parent="Inventory/Menu/Backpack/Row - 1" unique_id=683466658 node_paths=PackedStringArray("Icon")]
+[node name="Armor - 12" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 1" unique_id=683466658 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -319,7 +320,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 12
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 1/Armor - 12" unique_id=1497952917]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 1/Armor - 12" unique_id=1497952917]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -335,11 +336,11 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Row - 2" type="HBoxContainer" parent="Inventory/Menu/Backpack" unique_id=923081837]
+[node name="Row - 2" type="HBoxContainer" parent="InventoryComponent/Menu/Backpack" unique_id=923081837]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Accessory - 5" type="Panel" parent="Inventory/Menu/Backpack/Row - 2" unique_id=1983276824 node_paths=PackedStringArray("Icon")]
+[node name="Accessory - 5" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 2" unique_id=1983276824 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -348,7 +349,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 5
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 2/Accessory - 5" unique_id=360914962]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 2/Accessory - 5" unique_id=360914962]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -364,7 +365,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Accessory - 6" type="Panel" parent="Inventory/Menu/Backpack/Row - 2" unique_id=1585559665 node_paths=PackedStringArray("Icon")]
+[node name="Accessory - 6" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 2" unique_id=1585559665 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -373,7 +374,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 6
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 2/Accessory - 6" unique_id=1026960503]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 2/Accessory - 6" unique_id=1026960503]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -389,7 +390,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Accessory - 7" type="Panel" parent="Inventory/Menu/Backpack/Row - 2" unique_id=1741661689 node_paths=PackedStringArray("Icon")]
+[node name="Accessory - 7" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 2" unique_id=1741661689 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -398,7 +399,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 7
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 2/Accessory - 7" unique_id=31639763]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 2/Accessory - 7" unique_id=31639763]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -414,7 +415,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Accessory - 8" type="Panel" parent="Inventory/Menu/Backpack/Row - 2" unique_id=272421055 node_paths=PackedStringArray("Icon")]
+[node name="Accessory - 8" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 2" unique_id=272421055 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -423,7 +424,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 8
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 2/Accessory - 8" unique_id=1231316829]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 2/Accessory - 8" unique_id=1231316829]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -439,11 +440,11 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Row - 3" type="HBoxContainer" parent="Inventory/Menu/Backpack" unique_id=1219794006]
+[node name="Row - 3" type="HBoxContainer" parent="InventoryComponent/Menu/Backpack" unique_id=1219794006]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="General - 15" type="Panel" parent="Inventory/Menu/Backpack/Row - 3" unique_id=1196010204 node_paths=PackedStringArray("Icon")]
+[node name="General - 15" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 3" unique_id=1196010204 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -452,7 +453,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 15
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 3/General - 15" unique_id=1523922451]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 3/General - 15" unique_id=1523922451]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -468,7 +469,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="General - 16" type="Panel" parent="Inventory/Menu/Backpack/Row - 3" unique_id=315218971 node_paths=PackedStringArray("Icon")]
+[node name="General - 16" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 3" unique_id=315218971 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -477,7 +478,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 16
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 3/General - 16" unique_id=375673062]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 3/General - 16" unique_id=375673062]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -493,7 +494,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="General - 17" type="Panel" parent="Inventory/Menu/Backpack/Row - 3" unique_id=1702376456 node_paths=PackedStringArray("Icon")]
+[node name="General - 17" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 3" unique_id=1702376456 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -502,7 +503,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 17
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 3/General - 17" unique_id=1321502371]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 3/General - 17" unique_id=1321502371]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -518,7 +519,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="General - 18" type="Panel" parent="Inventory/Menu/Backpack/Row - 3" unique_id=1498487618 node_paths=PackedStringArray("Icon")]
+[node name="General - 18" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 3" unique_id=1498487618 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -527,7 +528,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 18
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 3/General - 18" unique_id=139204541]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 3/General - 18" unique_id=139204541]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -543,11 +544,11 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Row - 4" type="HBoxContainer" parent="Inventory/Menu/Backpack" unique_id=930407270]
+[node name="Row - 4" type="HBoxContainer" parent="InventoryComponent/Menu/Backpack" unique_id=930407270]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="General - 19" type="Panel" parent="Inventory/Menu/Backpack/Row - 4" unique_id=149527735 node_paths=PackedStringArray("Icon")]
+[node name="General - 19" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 4" unique_id=149527735 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -556,7 +557,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 19
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 4/General - 19" unique_id=111590466]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 4/General - 19" unique_id=111590466]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -572,7 +573,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="General - 20" type="Panel" parent="Inventory/Menu/Backpack/Row - 4" unique_id=1557014756 node_paths=PackedStringArray("Icon")]
+[node name="General - 20" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 4" unique_id=1557014756 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -581,7 +582,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 20
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 4/General - 20" unique_id=2123776039]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 4/General - 20" unique_id=2123776039]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -597,7 +598,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="General - 21" type="Panel" parent="Inventory/Menu/Backpack/Row - 4" unique_id=1642535695 node_paths=PackedStringArray("Icon")]
+[node name="General - 21" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 4" unique_id=1642535695 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -606,7 +607,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 21
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 4/General - 21" unique_id=54814458]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 4/General - 21" unique_id=54814458]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -622,7 +623,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="General - 22" type="Panel" parent="Inventory/Menu/Backpack/Row - 4" unique_id=240949352 node_paths=PackedStringArray("Icon")]
+[node name="General - 22" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 4" unique_id=240949352 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -631,7 +632,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 22
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 4/General - 22" unique_id=1857366564]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 4/General - 22" unique_id=1857366564]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -647,11 +648,11 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Row - 5" type="HBoxContainer" parent="Inventory/Menu/Backpack" unique_id=1980983245]
+[node name="Row - 5" type="HBoxContainer" parent="InventoryComponent/Menu/Backpack" unique_id=1980983245]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Consumable - 1" type="Panel" parent="Inventory/Menu/Backpack/Row - 5" unique_id=1046081425 node_paths=PackedStringArray("Icon")]
+[node name="Consumable - 1" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 5" unique_id=1046081425 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -660,7 +661,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 1
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 5/Consumable - 1" unique_id=490103624]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 5/Consumable - 1" unique_id=490103624]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -676,7 +677,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Consumable - 2" type="Panel" parent="Inventory/Menu/Backpack/Row - 5" unique_id=257745054 node_paths=PackedStringArray("Icon")]
+[node name="Consumable - 2" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 5" unique_id=257745054 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -685,7 +686,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 2
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 5/Consumable - 2" unique_id=558086809]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 5/Consumable - 2" unique_id=558086809]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -701,7 +702,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Consumable - 3" type="Panel" parent="Inventory/Menu/Backpack/Row - 5" unique_id=2073369798 node_paths=PackedStringArray("Icon")]
+[node name="Consumable - 3" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 5" unique_id=2073369798 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -710,7 +711,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 3
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 5/Consumable - 3" unique_id=1519588324]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 5/Consumable - 3" unique_id=1519588324]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -726,7 +727,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Consumable - 4" type="Panel" parent="Inventory/Menu/Backpack/Row - 5" unique_id=972479707 node_paths=PackedStringArray("Icon")]
+[node name="Consumable - 4" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 5" unique_id=972479707 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -735,7 +736,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 4
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 5/Consumable - 4" unique_id=344984651]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 5/Consumable - 4" unique_id=344984651]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -751,11 +752,11 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Row - 6" type="HBoxContainer" parent="Inventory/Menu/Backpack" unique_id=1057315593]
+[node name="Row - 6" type="HBoxContainer" parent="InventoryComponent/Menu/Backpack" unique_id=1057315593]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Weapon - 0" type="Panel" parent="Inventory/Menu/Backpack/Row - 6" unique_id=1778586701 node_paths=PackedStringArray("Icon")]
+[node name="Weapon - 0" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 6" unique_id=1778586701 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -763,7 +764,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
 script = ExtResource("4_7ophi")
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 6/Weapon - 0" unique_id=1151468128]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 6/Weapon - 0" unique_id=1151468128]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -779,7 +780,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Artifact - 13" type="Panel" parent="Inventory/Menu/Backpack/Row - 6" unique_id=2009671924 node_paths=PackedStringArray("Icon")]
+[node name="Artifact - 13" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 6" unique_id=2009671924 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -788,7 +789,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 13
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 6/Artifact - 13" unique_id=1469429539]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 6/Artifact - 13" unique_id=1469429539]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -804,7 +805,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Artifact - 14" type="Panel" parent="Inventory/Menu/Backpack/Row - 6" unique_id=1110774 node_paths=PackedStringArray("Icon")]
+[node name="Artifact - 14" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 6" unique_id=1110774 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -813,7 +814,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 14
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 6/Artifact - 14" unique_id=2127438163]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 6/Artifact - 14" unique_id=2127438163]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -829,7 +830,7 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="Bag - 23" type="Panel" parent="Inventory/Menu/Backpack/Row - 6" unique_id=1464305533 node_paths=PackedStringArray("Icon")]
+[node name="Bag - 23" type="Panel" parent="InventoryComponent/Menu/Backpack/Row - 6" unique_id=1464305533 node_paths=PackedStringArray("Icon")]
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_vertical = 4
@@ -838,7 +839,7 @@ script = ExtResource("4_7ophi")
 SlotIndex = 23
 Icon = NodePath("TextureRect")
 
-[node name="TextureRect" type="TextureRect" parent="Inventory/Menu/Backpack/Row - 6/Bag - 23" unique_id=1501653578]
+[node name="TextureRect" type="TextureRect" parent="InventoryComponent/Menu/Backpack/Row - 6/Bag - 23" unique_id=1501653578]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -854,14 +855,16 @@ grow_vertical = 2
 scale = Vector2(0.75, 0.75)
 pivot_offset = Vector2(8, 8)
 
-[node name="PlayerSidebar" type="Control" parent="Inventory/Menu" unique_id=1162261805 node_paths=PackedStringArray("LevelLabel", "HpLabel", "StrengthLabel", "WisdomLabel", "DexterityLabel", "DefenseLabel", "VitalityLabel", "SpeedLabel")]
-anchors_preset = 0
-offset_left = 130.0
-offset_top = 50.0
-offset_right = 190.0
-offset_bottom = 115.0
-scale = Vector2(1.5, 1.5)
-size_flags_horizontal = 3
+[node name="StatsSidebarComponent" type="Control" parent="InventoryComponent/Menu" unique_id=1162261805 node_paths=PackedStringArray("LevelLabel", "HpLabel", "StrengthLabel", "WisdomLabel", "DexterityLabel", "DefenseLabel", "VitalityLabel", "SpeedLabel")]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -300.0
+offset_top = 40.0
+offset_right = -100.0
+offset_bottom = 304.0
+grow_horizontal = 2
 script = ExtResource("5_rmvjh")
 LevelLabel = NodePath("Panel/Level")
 HpLabel = NodePath("Panel/Health")
@@ -872,108 +875,111 @@ DefenseLabel = NodePath("Panel/Defense")
 VitalityLabel = NodePath("Panel/Vitality")
 SpeedLabel = NodePath("Panel/Speed")
 
-[node name="Panel" type="Panel" parent="Inventory/Menu/PlayerSidebar" unique_id=1295769779]
+[node name="Panel" type="Panel" parent="InventoryComponent/Menu/StatsSidebarComponent" unique_id=1295769779]
 layout_mode = 0
-offset_right = 60.0
-offset_bottom = 65.0
-pivot_offset = Vector2(30, 32.5)
+offset_right = 200.0
+offset_bottom = 264.0
+pivot_offset = Vector2(100, 132)
 theme_override_styles/panel = SubResource("StyleBoxFlat_t6pqr")
 
-[node name="Level" type="Label" parent="Inventory/Menu/PlayerSidebar/Panel" unique_id=329687630]
+[node name="Level" type="Label" parent="InventoryComponent/Menu/StatsSidebarComponent/Panel" unique_id=329687630]
 layout_mode = 0
-offset_top = 3.0
-offset_right = 60.0
-offset_bottom = 10.0
-theme_override_font_sizes/font_size = 4
+offset_top = 12.0
+offset_right = 200.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Health" type="Label" parent="Inventory/Menu/PlayerSidebar/Panel" unique_id=2039844626]
+[node name="Health" type="Label" parent="InventoryComponent/Menu/StatsSidebarComponent/Panel" unique_id=2039844626]
 layout_mode = 0
-offset_top = 10.0
-offset_right = 60.0
-offset_bottom = 17.0
-theme_override_font_sizes/font_size = 4
+offset_top = 42.0
+offset_right = 200.0
+offset_bottom = 72.0
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Strength" type="Label" parent="Inventory/Menu/PlayerSidebar/Panel" unique_id=185543596]
+[node name="Strength" type="Label" parent="InventoryComponent/Menu/StatsSidebarComponent/Panel" unique_id=185543596]
 layout_mode = 0
-offset_top = 17.0
-offset_right = 60.0
-offset_bottom = 24.0
-theme_override_font_sizes/font_size = 4
+offset_top = 72.0
+offset_right = 200.0
+offset_bottom = 102.0
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Wisdom" type="Label" parent="Inventory/Menu/PlayerSidebar/Panel" unique_id=1683875093]
+[node name="Wisdom" type="Label" parent="InventoryComponent/Menu/StatsSidebarComponent/Panel" unique_id=1683875093]
 layout_mode = 0
-offset_top = 24.0
-offset_right = 60.0
-offset_bottom = 31.0
-theme_override_font_sizes/font_size = 4
+offset_top = 102.0
+offset_right = 200.0
+offset_bottom = 132.0
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Dexterity" type="Label" parent="Inventory/Menu/PlayerSidebar/Panel" unique_id=949091831]
+[node name="Dexterity" type="Label" parent="InventoryComponent/Menu/StatsSidebarComponent/Panel" unique_id=949091831]
 layout_mode = 0
-offset_top = 31.0
-offset_right = 60.0
-offset_bottom = 38.0
-theme_override_font_sizes/font_size = 4
+offset_top = 132.0
+offset_right = 200.0
+offset_bottom = 162.0
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Defense" type="Label" parent="Inventory/Menu/PlayerSidebar/Panel" unique_id=2033000442]
+[node name="Defense" type="Label" parent="InventoryComponent/Menu/StatsSidebarComponent/Panel" unique_id=2033000442]
 layout_mode = 0
-offset_top = 38.0
-offset_right = 60.0
-offset_bottom = 45.0
-theme_override_font_sizes/font_size = 4
+offset_top = 162.0
+offset_right = 200.0
+offset_bottom = 192.0
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Vitality" type="Label" parent="Inventory/Menu/PlayerSidebar/Panel" unique_id=107073234]
+[node name="Vitality" type="Label" parent="InventoryComponent/Menu/StatsSidebarComponent/Panel" unique_id=107073234]
 layout_mode = 0
-offset_top = 45.0
-offset_right = 60.0
-offset_bottom = 52.0
-theme_override_font_sizes/font_size = 4
+offset_top = 192.0
+offset_right = 200.0
+offset_bottom = 222.0
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Speed" type="Label" parent="Inventory/Menu/PlayerSidebar/Panel" unique_id=1823475460]
+[node name="Speed" type="Label" parent="InventoryComponent/Menu/StatsSidebarComponent/Panel" unique_id=1823475460]
 layout_mode = 0
-offset_top = 52.0
-offset_right = 60.0
-offset_bottom = 59.0
-theme_override_font_sizes/font_size = 4
+offset_top = 222.0
+offset_right = 200.0
+offset_bottom = 252.0
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="ItemSidebar" type="Control" parent="Inventory/Menu" unique_id=984716298 node_paths=PackedStringArray("ItemNameLabel", "ItemIcon", "DescriptionLabel", "EmptyLabel", "DetailsScroll", "DetailsList")]
-anchors_preset = 0
-offset_left = 130.0
-offset_top = 170.0
-offset_right = 190.0
-offset_bottom = 235.0
-scale = Vector2(1.5, 1.5)
+[node name="ItemSidebarComponent" type="Control" parent="InventoryComponent/Menu" unique_id=984716298 node_paths=PackedStringArray("ItemNameLabel", "ItemIcon", "DescriptionLabel", "EmptyLabel", "DetailsScroll", "DetailsList")]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = 100.0
+offset_top = 40.0
+offset_right = 300.0
+offset_bottom = 440.0
+grow_horizontal = 2
 script = ExtResource("6_rmvjh")
 ItemNameLabel = NodePath("Panel/Name")
 ItemIcon = NodePath("Panel/Texture")
@@ -981,59 +987,60 @@ DescriptionLabel = NodePath("Panel/Description")
 EmptyLabel = NodePath("Panel/Name")
 DetailsScroll = NodePath("Panel/DetailsScroll")
 DetailsList = NodePath("Panel/DetailsScroll/DetailsList")
+EnchantmentRowScene = ExtResource("7_row")
 
-[node name="Panel" type="Panel" parent="Inventory/Menu/ItemSidebar" unique_id=1603939778]
+[node name="Panel" type="Panel" parent="InventoryComponent/Menu/ItemSidebarComponent" unique_id=1603939778]
 layout_mode = 0
-offset_right = 60.0
-offset_bottom = 65.0
-pivot_offset = Vector2(30, 32.5)
+offset_right = 200.0
+offset_bottom = 400.0
+pivot_offset = Vector2(100, 200)
 theme_override_styles/panel = SubResource("StyleBoxFlat_rmvjh")
 
-[node name="Name" type="Label" parent="Inventory/Menu/ItemSidebar/Panel" unique_id=1497775880]
+[node name="Name" type="Label" parent="InventoryComponent/Menu/ItemSidebarComponent/Panel" unique_id=1497775880]
 layout_mode = 1
-offset_left = 3.0
-offset_right = 25.0
-offset_bottom = 10.0
-pivot_offset = Vector2(11, 5)
-theme_override_font_sizes/font_size = 5
+offset_left = 6.0
+offset_top = 8.0
+offset_right = 194.0
+offset_bottom = 40.0
+pivot_offset = Vector2(94, 16)
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Description" type="Label" parent="Inventory/Menu/ItemSidebar/Panel" unique_id=1229348937]
+[node name="Description" type="Label" parent="InventoryComponent/Menu/ItemSidebarComponent/Panel" unique_id=1229348937]
 layout_mode = 1
-offset_left = 27.0
-offset_top = 12.0
-offset_right = 57.0
-offset_bottom = 28.0
-pivot_offset = Vector2(11, 5)
-pivot_offset_ratio = Vector2(15, 10)
+offset_left = 82.0
+offset_top = 44.0
+offset_right = 194.0
+offset_bottom = 112.0
+pivot_offset = Vector2(56, 34)
 theme_override_constants/line_spacing = 0
 theme_override_constants/shadow_outline_size = 1
-theme_override_font_sizes/font_size = 2
+theme_override_font_sizes/font_size = 12
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3
 uppercase = true
 
-[node name="Texture" type="TextureRect" parent="Inventory/Menu/ItemSidebar/Panel" unique_id=516922307]
+[node name="Texture" type="TextureRect" parent="InventoryComponent/Menu/ItemSidebarComponent/Panel" unique_id=516922307]
 layout_mode = 1
-offset_left = 4.0
-offset_top = 10.0
-offset_right = 24.0
-offset_bottom = 30.0
-pivot_offset = Vector2(10, 10)
+offset_left = 12.0
+offset_top = 46.0
+offset_right = 76.0
+offset_bottom = 110.0
+pivot_offset = Vector2(32, 32)
 
-[node name="DetailsScroll" type="ScrollContainer" parent="Inventory/Menu/ItemSidebar/Panel"]
+[node name="DetailsScroll" type="ScrollContainer" parent="InventoryComponent/Menu/ItemSidebarComponent/Panel" unique_id=1504871495]
 layout_mode = 0
-offset_left = 2.0
-offset_top = 31.0
-offset_right = 58.0
-offset_bottom = 64.0
+offset_left = 6.0
+offset_top = 118.0
+offset_right = 194.0
+offset_bottom = 394.0
 horizontal_scroll_mode = 0
 
-[node name="DetailsList" type="VBoxContainer" parent="Inventory/Menu/ItemSidebar/Panel/DetailsScroll"]
+[node name="DetailsList" type="VBoxContainer" parent="InventoryComponent/Menu/ItemSidebarComponent/Panel/DetailsScroll" unique_id=1839626243]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 1
+theme_override_constants/separation = 4

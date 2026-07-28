@@ -1,357 +1,60 @@
 #nullable enable
 using Godot;
-using PhantomCamera;
 using SpacetimeDB;
 using SpacetimeDB.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-public partial class GameManager : Node
+/// <summary>
+/// Root of main.tscn ("Main") and the IEntity that the scene-level components register
+/// with: ConnectionComponent, SubscriptionComponent, CatalogComponent,
+/// EntitySpawnerComponent, LobbyComponent, and the camera/overlay components. Holds no
+/// logic of its own — the static facade below delegates to those components so callers
+/// whose own entity registry can't see them (spawned entities, UI, debug overlays) can
+/// still reach the connection, catalogs, and spawner lookups without node-path walks.
+/// </summary>
+public partial class GameManager : Node2D, IEntity
 {
-	[Signal] public delegate void EnchantmentsChangedEventHandler();
+    private static GameManager? instance;
 
-	public static GameManager Instance { get; private set; } = null!;
+    // IEntity — GameManager needs Node2D (main.tscn root), so it implements the interface
+    // directly with its own registry; same pattern as LocalPlayer/Enemy.
+    private readonly EntityRegistry componentRegistry = new();
+    public void RegisterComponent(IComponent component) => componentRegistry.Register(component);
+    public void UnregisterComponent(IComponent component) => componentRegistry.Unregister(component);
+    public IComponent? GetComponent(Type type) => componentRegistry.Get(type);
+    public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
 
-	public DbConnection? Conn { get; private set; }
-	public Identity? LocalIdentity { get; private set; }
-	public string Username { get; private set; } = "";
-	public Vector2 LapQ { get; private set; } = Vector2.Zero;
-	public Vector2 LapR { get; private set; } = Vector2.Zero;
+    public override void _Ready() => instance = this;
 
-	[Export] public string Host { get; set; } = "http://127.0.0.1:3000";
-	[Export] public string DbName { get; set; } = "bullethell";
-
-	[Export] public PackedScene LocalPlayerScene { get; set; } = null!;
-	[Export] public PackedScene NonLocalPlayerScene { get; set; } = null!;
-	[Export] public PackedScene EnemyScene { get; set; } = null!;
-	[Export] public PackedScene DropScene { get; set; } = null!;
-	[Export] public PackedScene BulletManagerScene { get; set; } = null!;
-	[Export] public PackedScene PlayerProfileScene { get; set; } = null!;
-
-	private LocalPlayer? localPlayer;
-	private BulletManager? bulletManager;
-	private readonly Dictionary<string, RemotePlayer> remotePlayers = new();
-	private readonly Dictionary<ulong, Enemy> enemies = new();
-	private readonly Dictionary<ulong, Drop> drops = new();
-	private readonly Dictionary<string, string> textureCache = new();
-	private readonly Dictionary<string, SpacetimeDB.Types.Item> itemCache = new();
-	private readonly Dictionary<string, Enchantment> enchantmentCache = new();
-
-	private CanvasLayer? lobbyLayer;
-	private Button? joinButton;
-	private SubscriptionHandle? lobbySub;
-	private SubscriptionHandle? gameSub;
-	private PhantomCamera2D? _mainMenuPCam2D;
-
-	public override void _Ready()
-	{
-		if (Instance != null) return;
-		Instance = this;
-		Connect(Host, DbName);
-		var mainMenuPCam2D = GetNode<Node2D>("%MainMenuPhantomCamera2D");
-		_mainMenuPCam2D = mainMenuPCam2D.AsPhantomCamera2D();
-		ShowLobby();
-		if (Conn == null) return;
-		Conn.Db.LocalPlayerProfiles.OnInsert += (ctx, profile) => 
-		{
-			Control profile_panel = PlayerProfileScene.Instantiate<Control>();
-			profile_panel.GetNode<Label>("Name").Text = profile.ProfileName;
-			profile_panel.GetNode<Label>("ID").Text = profile.ProfileId.ToString();
-			profile_panel.GetNode<Button>("Join").Pressed += () => OnJoinPressed(profile);
-			profile_panel.GetNode<Button>("Delete").Pressed += () => OnDeletePressed(profile);
-			GetNode("%CharSlots/ScrollContainer/VBoxContainer").AddChild(profile_panel);
-			GD.Print($"Successfully synced a profile: {profile.ProfileName}, TextureID: {profile.TextureId}");
-		};
-	}
-
-	public override void _Process(double delta)
-	{
-		Conn?.FrameTick();
-	}
-
-	// ── Lobby ─────────────────────────────────────────────────────────────────
-
-	public void ShowLobby()
+    public override void _ExitTree()
     {
-        GetNode<Control>("%CharSlots").Show();
-		if (_mainMenuPCam2D == null) return;
-		_mainMenuPCam2D.Priority = 60;
-	}
+        if (instance == this) instance = null;
+    }
 
-	private void HideLobby()
-	{
-		GetNode<Control>("%CharSlots").Hide();
-		if (_mainMenuPCam2D == null) return;
-		_mainMenuPCam2D.Priority = 0;
-	}
+    // ── Static facade over the registered components ─────────────────────────
 
-	private void OnJoinPressed(PlayerProfile profile)
-	{
-		if (Conn == null || GetNode<Control>("%CharSlots/CreateProfilePanel").Visible) return;
-		// var profile = Conn.Db.LocalPlayerProfiles.Iter()
-		// 	.FirstOrDefault(p => p.ProfileName == "Knight");
-		// if (profile == null)
-		// {
-		// 	GD.PrintErr("[GameManager] Knight profile not found — not yet synced or missing.");
-		// 	return;
-		// }
-		HideLobby();
-		Conn.Reducers.JoinWorld(profile.ProfileId);
-		SubscribeGame();
-		lobbySub?.Unsubscribe();
-		lobbySub = null;
-	}
+    private static T? Get<T>() where T : class, IComponent =>
+        IsInstanceValid(instance) ? instance!.GetComponent<T>() : null;
 
-	private void OnDeletePressed(PlayerProfile profile)
-	{
-		if (Conn == null || GetNode<Control>("%CharSlots/CreateProfilePanel").Visible) return;
-		Conn.Reducers.DeleteProfile(profile.ProfileId);
-		foreach (Control x in GetNode<Control>("%CharSlots/ScrollContainer/VBoxContainer").GetChildren()){
-			if (x.GetNode<Label>("ID").Text.ToInt() == (int)profile.ProfileId) x.QueueFree();
-		}
-	}
+    public static DbConnection? Conn => Get<ConnectionComponent>()?.Conn;
+    public static string Username => Get<ConnectionComponent>()?.Username ?? "";
+    public static Vector2 LapQ => Get<SubscriptionComponent>()?.LapQ ?? Vector2.Zero;
+    public static Vector2 LapR => Get<SubscriptionComponent>()?.LapR ?? Vector2.Zero;
+    public static int EnemyCount => Get<EntitySpawnerComponent>()?.EnemyCount ?? 0;
 
-	private void OnCreatePanelPressed()
-	{
-		GetNode<Control>("%CharSlots/CreateProfilePanel").Visible = !GetNode<Control>("%CharSlots/CreateProfilePanel").Visible;
-	}
+    public static bool IsLocal(Identity id) => Get<ConnectionComponent>()?.IsLocal(id) ?? false;
+    public static Enemy? GetEnemy(ulong enemyId) => Get<EntitySpawnerComponent>()?.GetEnemy(enemyId);
+    public static string? GetResPath(string textureId) => Get<CatalogComponent>()?.GetResPath(textureId);
+    public static Item? GetItem(string itemId) => Get<CatalogComponent>()?.GetItem(itemId);
+    public static Enchantment? GetEnchantment(string enchantmentId) => Get<CatalogComponent>()?.GetEnchantment(enchantmentId);
+    public static IEnumerable<Enchantment> GetEnchantments() => Get<CatalogComponent>()?.GetEnchantments() ?? Enumerable.Empty<Enchantment>();
 
-	private void OnCreatePressed()
-	{
-		if (Conn == null || !GetNode<Control>("%CharSlots/CreateProfilePanel").Visible) return;
-		if (GetNode<LineEdit>("%CharSlots/CreateProfilePanel/Panel/LineEdit").Text.Length > 0) Conn.Reducers.CreateProfile(GetNode<LineEdit>("%CharSlots/CreateProfilePanel/Panel/LineEdit").Text, "Knight");
-		GetNode<Control>("%CharSlots/CreateProfilePanel").Hide();
-	}
-
-	// ── Connection ────────────────────────────────────────────────────────────
-
-	public void Connect(string host, string dbName)
-	{
-		// AuthToken.Init(OS.GetUserDataDir() + "/.bullethell_token_");
-		Conn = DbConnection.Builder()
-			.WithUri(host)
-			.WithDatabaseName(dbName)
-			// .WithToken(AuthToken.Token)
-			.WithToken(null)
-			.OnConnect(OnConnected)
-			.OnConnectError(OnConnectError)
-			.OnDisconnect(OnDisconnected)
-			.Build();
-	}
-
-	private void OnConnected(DbConnection conn, Identity identity, string token)
-	{
-		LocalIdentity = identity;
-		// AuthToken.SaveToken(token);
-
-		conn.Db.LocalLobbyPlayer.OnInsert += (_, p) => Username = p.Username;
-		conn.Db.LocalLobbyPlayer.OnUpdate += (_, _, p) => Username = p.Username;
-		conn.Db.LocalPlayer.OnInsert += OnLocalPlayerInsert;
-		conn.Db.LocalPlayer.OnDelete += OnLocalPlayerDelete;
-		conn.Db.NearbyRemotePlayers.OnInsert += OnNearbyRemotePlayerInsert;
-		conn.Db.NearbyRemotePlayers.OnDelete += OnNearbyRemotePlayerDelete;
-		conn.Db.NearbyEnemies.OnInsert += OnEnemyInsert;
-		conn.Db.NearbyEnemies.OnDelete += OnEnemyDelete;
-		conn.Db.NearbyLootDrops.OnInsert += OnDropInsert;
-		conn.Db.NearbyLootDrops.OnDelete += OnDropDelete;
-
-		conn.Db.MapConfig.OnInsert += (_, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
-		conn.Db.MapConfig.OnUpdate += (_, _, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
-
-		conn.Db.AllTextures.OnInsert += (_, texture) => textureCache[texture.TextureId] = texture.ResPath;
-		conn.Db.AllTextures.OnUpdate += (_, _, texture) => textureCache[texture.TextureId] = texture.ResPath;
-		conn.Db.AllTextures.OnDelete += (_, texture) => textureCache.Remove(texture.TextureId);
-
-		conn.Db.AllItems.OnInsert += (_, item) => itemCache[item.ItemId] = item;
-		conn.Db.AllItems.OnUpdate += (_, _, item) => itemCache[item.ItemId] = item;
-		conn.Db.AllItems.OnDelete += (_, item) => itemCache.Remove(item.ItemId);
-
-		conn.Db.AllEnchantments.OnInsert += (_, enchantment) => { enchantmentCache[enchantment.EnchantmentId] = enchantment; EmitSignal(SignalName.EnchantmentsChanged); };
-		conn.Db.AllEnchantments.OnUpdate += (_, _, enchantment) => { enchantmentCache[enchantment.EnchantmentId] = enchantment; EmitSignal(SignalName.EnchantmentsChanged); };
-		conn.Db.AllEnchantments.OnDelete += (_, enchantment) => { enchantmentCache.Remove(enchantment.EnchantmentId); EmitSignal(SignalName.EnchantmentsChanged); };
-
-		conn.SubscriptionBuilder()
-			.AddQuery(q => q.From.AllTextures())
-			.AddQuery(q => q.From.AllItems())
-			.AddQuery(q => q.From.AllEnchantments())
-			.Subscribe();
-
-		SubscribeLobby();
-	}
-
-	private void SubscribeLobby()
-	{
-		lobbySub = Conn!.SubscriptionBuilder()
-			.AddQuery(q => q.From.LocalLobbyPlayer())
-			.AddQuery(q => q.From.LocalPlayerProfiles())
-			.OnApplied(OnLobbySubApplied)
-			.Subscribe();
-	}
-
-	private void SubscribeGame()
-	{
-		gameSub = Conn!.SubscriptionBuilder()
-			.AddQuery(q => q.From.LocalPlayer())
-			.AddQuery(q => q.From.LocalPlayerData())
-			.AddQuery(q => q.From.LocalPlayerStats())
-			.AddQuery(q => q.From.LocalPlayerInventory())
-			.AddQuery(q => q.From.LocalPlayerPosition())
-			.AddQuery(q => q.From.LocalPlayerActiveProfile())
-			.AddQuery(q => q.From.LocalPlayerProfiles())
-			.AddQuery(q => q.From.NearbyRemotePlayers())
-			.AddQuery(q => q.From.NearbyRemotePlayersProfiles())
-			.AddQuery(q => q.From.NearbyEnemies())
-			.AddQuery(q => q.From.NearbyLootDrops())
-			.AddQuery(q => q.From.NearbyTerrainTiles())
-			.AddQuery(q => q.From.NearbyHexDecor())
-			.AddQuery(q => q.From.EnemyTemplates())
-			.AddQuery(q => q.From.BulletPatternEvent())
-			.AddQuery(q => q.From.MapConfig())
-			.OnApplied(OnGameSubApplied)
-			.OnError(OnGameSubError)
-			.Subscribe();
-	}
-
-	private void OnGameSubError(ErrorContext ctx, Exception e)
-	{
-		GD.PrintErr($"[GameManager] Game subscription error: {e.Message}");
-	}
-
-	private void OnConnectError(Exception e)
-	{
-		GD.PrintErr($"[GameManager] Connection error: {e.Message}");
-	}
-
-	private void OnDisconnected(DbConnection conn, Exception? e)
-	{
-		if (e != null)
-			GD.PrintErr($"[GameManager] Disconnected: {e.Message}");
-	}
-
-	private void OnLobbySubApplied(SubscriptionEventContext ctx)
-	{
-		GD.Print("[GameManager] Lobby subscription ready");
-	}
-
-	private void OnGameSubApplied(SubscriptionEventContext ctx)
-	{
-		GD.Print("[GameManager] Game subscription ready");
-	}
-
-	// ── Entity lifecycle ──────────────────────────────────────────────────────
-
-	private void OnLocalPlayerInsert(EventContext _, LoggedInPlayer loggedInPlayer)
-	{
-		if (localPlayer == null)
-		{
-			localPlayer = LocalPlayerScene.Instantiate<LocalPlayer>();
-			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, localPlayer);
-		}
-		if (bulletManager == null)
-		{
-			bulletManager = BulletManagerScene.Instantiate<BulletManager>();
-			GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, bulletManager);
-		}
-	}
-
-	private void OnLocalPlayerDelete(EventContext _, LoggedInPlayer loggedInPlayer)
-	{
-		if (localPlayer != null && IsInstanceValid(localPlayer))
-			localPlayer.QueueFree();
-		localPlayer = null;
-		if (bulletManager != null && IsInstanceValid(bulletManager))
-			bulletManager.QueueFree();
-		bulletManager = null;
-
-		if (Conn?.IsActive != true) return;
-
-		ShowLobby();
-		SubscribeLobby();
-		gameSub?.Unsubscribe();
-		gameSub = null;
-	}
-
-	private void OnNearbyRemotePlayerInsert(EventContext _, PlayerPosition position)
-	{
-		var key = position.PlayerId.ToString();
-		if (IsLocal(position.PlayerId) || remotePlayers.ContainsKey(key)) return;
-		var node = NonLocalPlayerScene.Instantiate<RemotePlayer>();
-		node.PlayerId = position.PlayerId;
-		node.ProfileId = position.ProfileId;
-		node.GlobalPosition = new Vector2(position.X, position.Y);
-		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
-		remotePlayers[key] = node;
-	}
-
-	private void OnNearbyRemotePlayerDelete(EventContext _, PlayerPosition position)
-	{
-		var key = position.PlayerId.ToString();
-		if (!remotePlayers.TryGetValue(key, out var node)) return;
-		remotePlayers.Remove(key);
-		if (IsInstanceValid(node))
-			node.QueueFree();
-	}
-
-	private void OnEnemyInsert(EventContext _, SpacetimeDB.Types.Enemy enemy)
-	{
-		if (enemies.ContainsKey(enemy.EnemyId)) return;
-		var node = EnemyScene.Instantiate<Enemy>();
-		node.EnemyId = enemy.EnemyId;
-		node.GlobalPosition = new Vector2(enemy.X, enemy.Y);
-		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
-		enemies[enemy.EnemyId] = node;
-	}
-
-	private void OnEnemyDelete(EventContext _, SpacetimeDB.Types.Enemy enemy)
-	{
-		if (!enemies.TryGetValue(enemy.EnemyId, out var node)) return;
-		enemies.Remove(enemy.EnemyId);
-		if (IsInstanceValid(node))
-			node.QueueFree();
-	}
-
-	private void OnDropInsert(EventContext _, LootDrop lootDrop)
-	{
-		GD.Print("Drop Inserted");
-		if (drops.ContainsKey(lootDrop.DropId)) return;
-		GD.Print("Drop Being Instantiated");
-		var node = DropScene.Instantiate<Drop>();
-		node.DropId = lootDrop.DropId;
-		node.ItemId = lootDrop.ItemId;
-		node.DroppedBy = lootDrop.DroppedBy;
-		node.GlobalPosition = new Vector2(lootDrop.X, lootDrop.Y);
-		GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
-		drops[lootDrop.DropId] = node;
-	}
-
-	private void OnDropDelete(EventContext _, LootDrop lootDrop)
-	{
-		if (!drops.TryGetValue(lootDrop.DropId, out var node)) return;
-		drops.Remove(lootDrop.DropId);
-		if (IsInstanceValid(node))
-			node.QueueFree();
-	}
-
-	// ── Helpers ───────────────────────────────────────────────────────────────
-
-	public bool IsLocal(Identity id) => LocalIdentity.HasValue && id == LocalIdentity.Value;
-	public Enemy? GetEnemy(ulong enemyId) => enemies.TryGetValue(enemyId, out var node) ? node : null;
-	public int EnemyCount => enemies.Count;
-
-	public string? GetResPath(string textureId) =>
-		textureCache.TryGetValue(textureId, out var path) ? path : null;
-
-	public Item? GetItem(string itemId) => itemCache.TryGetValue(itemId, out var item) ? item : null;
-
-	public Enchantment? GetEnchantment(string enchantmentId) =>
-		enchantmentCache.TryGetValue(enchantmentId, out var enchantment) ? enchantment : null;
-
-	public IEnumerable<Enchantment> GetEnchantments() => enchantmentCache.Values;
-
-	public override void _ExitTree()
-	{
-		if (Conn?.IsActive == true)
-			Conn.Disconnect();
-	}
+    /// Forwarded from the CatalogComponent; subscribe/unsubscribe are no-ops once Main is gone.
+    public static event Action? EnchantmentsChanged
+    {
+        add { if (Get<CatalogComponent>() is { } catalog) catalog.EnchantmentsChanged += value; }
+        remove { if (Get<CatalogComponent>() is { } catalog) catalog.EnchantmentsChanged -= value; }
+    }
 }

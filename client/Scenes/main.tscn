@@ -1,20 +1,19 @@
 [gd_scene format=3 uid="uid://bk4d3bkeqrqvu"]
 
 [ext_resource type="Script" uid="uid://cqiavfx25o6be" path="res://Scripts/Game/GameManager.cs" id="1_8gbba"]
-[ext_resource type="PackedScene" uid="uid://bbjjh55yrwyfn" path="res://Scenes/local_player.tscn" id="2_jjvhh"]
-[ext_resource type="PackedScene" uid="uid://8oytx5u0vik3" path="res://Scenes/non_local_player.tscn" id="3_kry3j"]
-[ext_resource type="PackedScene" uid="uid://djjulhvulxtyc" path="res://Scenes/default_enemy.tscn" id="4_jjvhh"]
-[ext_resource type="PackedScene" uid="uid://i7v5ssc1g45q" path="res://Scenes/drop.tscn" id="5_6bp64"]
-[ext_resource type="PackedScene" uid="uid://simxqrad34gm" path="res://Scenes/bullet_manager.tscn" id="5_21xkr"]
-[ext_resource type="PackedScene" uid="uid://dcn402bshd83k" path="res://Scenes/profile_panel.tscn" id="7_6bp64"]
-[ext_resource type="Script" uid="uid://c3l165fibt4wq" path="res://Scripts/World/HexGridOverlay2D.cs" id="8_344ge"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Connection/connection_component.tscn" id="2_conn"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Subscription/subscription_component.tscn" id="3_sub"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Catalog/catalog_component.tscn" id="4_catalog"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Spawning/entity_spawner_component.tscn" id="5_spawner"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Lobby/lobby_component.tscn" id="6_lobby"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Camera/camera_rig_component.tscn" id="7_rig"]
 [ext_resource type="PackedScene" uid="uid://oq20q8miyvsa" path="res://Scenes/world_3d.tscn" id="8_fdnlq"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Camera/camera_2d_presenter_component.tscn" id="8_presenter"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Camera/hex_grid_overlay_component.tscn" id="9_hex2d"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="9_ynf5e"]
-[ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/World/CameraController2D.cs" id="10_hptm8"]
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="11_6iyac"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="12_fdnlq"]
-[ext_resource type="Script" uid="uid://4vtm5wwxgp2d" path="res://Scripts/World/CameraRig.cs" id="14_jkdf5"]
-[ext_resource type="Script" uid="uid://d1s8smqefva50" path="res://Scripts/World/TerrainManager.cs" id="15_terrain"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Terrain/terrain_component.tscn" id="15_terrain"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/debug_overlay.tscn" id="16_debug"]
 
 [sub_resource type="Resource" id="Resource_jkdf5"]
@@ -23,15 +22,16 @@ duration = 0.0
 
 [node name="Main" type="Node2D" unique_id=24548255]
 script = ExtResource("1_8gbba")
-LocalPlayerScene = ExtResource("2_jjvhh")
-NonLocalPlayerScene = ExtResource("3_kry3j")
-EnemyScene = ExtResource("4_jjvhh")
-DropScene = ExtResource("5_6bp64")
-BulletManagerScene = ExtResource("5_21xkr")
-PlayerProfileScene = ExtResource("7_6bp64")
 
-[node name="CameraRig" type="Node" parent="." unique_id=429369880]
-script = ExtResource("14_jkdf5")
+[node name="ConnectionComponent" parent="." unique_id=1951652395 instance=ExtResource("2_conn")]
+
+[node name="SubscriptionComponent" parent="." unique_id=2063233651 instance=ExtResource("3_sub")]
+
+[node name="CatalogComponent" parent="." unique_id=1072502500 instance=ExtResource("4_catalog")]
+
+[node name="EntitySpawnerComponent" parent="." unique_id=1156729041 instance=ExtResource("5_spawner")]
+
+[node name="CameraRigComponent" parent="." unique_id=429369880 instance=ExtResource("7_rig")]
 PitchMax = 0.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
@@ -50,95 +50,15 @@ stretch_shrink = 3
 [node name="SubViewport" type="SubViewport" parent="3D/SubViewportContainer" unique_id=803652251]
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(213, 120)
+size = Vector2i(384, 216)
 render_target_update_mode = 0
 
-[node name="World3D" parent="3D/SubViewportContainer/SubViewport" unique_id=1360330812 instance=ExtResource("8_fdnlq")]
+[node name="World3DComponent" parent="3D/SubViewportContainer/SubViewport" unique_id=1360330812 instance=ExtResource("8_fdnlq")]
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=152855753]
 
-[node name="CharSlots" type="Control" parent="UI" unique_id=596879783]
-unique_name_in_owner = true
+[node name="LobbyComponent" parent="UI" unique_id=596879783 instance=ExtResource("6_lobby")]
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Panel" type="Panel" parent="UI/CharSlots" unique_id=994970302]
-custom_minimum_size = Vector2(640, 40)
-layout_mode = 0
-offset_right = 640.0
-offset_bottom = 40.0
-
-[node name="CenterContainer" type="CenterContainer" parent="UI/CharSlots/Panel" unique_id=721847161]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Button" type="Button" parent="UI/CharSlots/Panel/CenterContainer" unique_id=136170636]
-layout_mode = 2
-text = "BACK"
-
-[node name="Create" type="Button" parent="UI/CharSlots/Panel" unique_id=905359419]
-layout_mode = 0
-offset_left = 570.0
-offset_top = 4.0
-offset_right = 636.0
-offset_bottom = 35.0
-text = "CREATE"
-
-[node name="ScrollContainer" type="ScrollContainer" parent="UI/CharSlots" unique_id=309753524]
-layout_mode = 0
-offset_top = 40.0
-offset_right = 1152.0
-offset_bottom = 648.0
-horizontal_scroll_mode = 0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/CharSlots/ScrollContainer" unique_id=448056636]
-layout_mode = 2
-
-[node name="CreateProfilePanel" type="CenterContainer" parent="UI/CharSlots" unique_id=1410878703]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Panel" type="Panel" parent="UI/CharSlots/CreateProfilePanel" unique_id=201201879]
-custom_minimum_size = Vector2(250, 120)
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UI/CharSlots/CreateProfilePanel/Panel" unique_id=1804071094]
-layout_mode = 0
-offset_top = 2.0
-offset_right = 250.0
-offset_bottom = 32.0
-text = "Create Profile"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="LineEdit" type="LineEdit" parent="UI/CharSlots/CreateProfilePanel/Panel" unique_id=1917810007]
-layout_mode = 0
-offset_left = 25.0
-offset_top = 38.0
-offset_right = 225.0
-offset_bottom = 69.0
-placeholder_text = "Profile Name =^.^="
-
-[node name="Create" type="Button" parent="UI/CharSlots/CreateProfilePanel/Panel" unique_id=1419748032]
-layout_mode = 0
-offset_left = 92.0
-offset_top = 80.0
-offset_right = 158.0
-offset_bottom = 111.0
-text = "CREATE"
 
 [node name="MainCamera2D" type="Camera2D" parent="." unique_id=1285666996]
 top_level = true
@@ -151,8 +71,7 @@ process_physics_priority = 300
 script = ExtResource("9_ynf5e")
 metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
-[node name="CameraController2D" type="Node2D" parent="." unique_id=1135188737]
-script = ExtResource("10_hptm8")
+[node name="Camera2DPresenterComponent" parent="." unique_id=1135188737 instance=ExtResource("8_presenter")]
 
 [node name="MainMenuPhantomCamera2D" type="Node2D" parent="." unique_id=891273475]
 unique_name_in_owner = true
@@ -162,14 +81,8 @@ priority = 1
 tween_resource = SubResource("Resource_jkdf5")
 metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 
-[node name="HexGridOverlay2D" type="Node2D" parent="." unique_id=596614871]
-visible = false
-script = ExtResource("8_344ge")
+[node name="HexGridOverlayComponent" parent="." unique_id=596614871 instance=ExtResource("9_hex2d")]
 
-[node name="TerrainManager" type="Node2D" parent="."]
-script = ExtResource("15_terrain")
+[node name="TerrainComponent" parent="." unique_id=1575457739 instance=ExtResource("15_terrain")]
 
-[node name="DebugOverlay" parent="." instance=ExtResource("16_debug")]
-
-[connection signal="pressed" from="UI/CharSlots/Panel/Create" to="." method="OnCreatePanelPressed"]
-[connection signal="pressed" from="UI/CharSlots/CreateProfilePanel/Panel/Create" to="." method="OnCreatePressed"]
+[node name="DebugOverlay" parent="." unique_id=1183131993 instance=ExtResource("16_debug")]

@@ -1,21 +1,20 @@
 use spacetimedb::{ReducerContext, Identity, Table, Timestamp};
 use std::time::Duration;
 use crate::main::global::*;
-use crate::world::methods::*;
-use crate::world::tables::*;
+use crate::world::prng::{hash_to_unit, next_unit, splitmix64};
+use crate::world::hex::{hex_to_world, spiral_chunk_index, world_to_chunk};
+use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
+use crate::world::aoi::surrounding_chunk_indices;
+use crate::world::tables::MapConfig;
 use crate::world::instance_tables::*;
 use crate::player::tables::*;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 
 fn nearby_player_position_chunks(ctx: &ReducerContext, x: f32, y: f32, rings: i32) -> Vec<i64> {
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
-    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
-    let (cq, cr) = world_to_chunk(x, y, chunk_hex_radius, hex_outer_radius);
-    surrounding_chunk_indices(cq, cr, chunk_cols, chunk_rows, Some(rings))
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
+    surrounding_chunk_indices(cq, cr, cfg.chunk_cols, cfg.chunk_rows, Some(rings))
 }
 
 pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
@@ -172,6 +171,27 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
     }
 
     behavior
+}
+
+/// Spawn one enemy from a template: build its behavior tree (build_enemy_behavior) and insert
+/// the flat Enemy row pointing at it. The behavior tree (EnemyBehavior plus its EnemyPhase/
+/// EnemyAttack/EnemySequenceStep/RepeatStepInstance rows) is the enemy's component tree, with
+/// behavior_id/enemy_id as the entity id joining it — the Enemy row stays flat by design
+/// (structure-only refactor: no schema changes).
+pub fn spawn_enemy_archetype(ctx: &ReducerContext, template: &EnemyTemplate, x: f32, y: f32, is_elite: bool, immortal: bool, chunk_index: i64) -> Enemy {
+    let behavior = build_enemy_behavior(ctx, template);
+    ctx.db.enemy().insert(Enemy {
+        enemy_id: 0, template_id: template.template_id.clone(), behavior_id: behavior.behavior_id,
+        x, y, spawn_time: ctx.timestamp,
+        hp: template.max_hp, phase: 0, is_elite, immortal, chunk_index,
+    })
+}
+
+/// Despawn one enemy: delete the flat Enemy row together with its whole behavior tree
+/// (delete_enemy_behavior), so no orphan component rows outlive the entity.
+pub fn despawn_enemy_archetype(ctx: &ReducerContext, enemy: &Enemy) {
+    delete_enemy_behavior(ctx, enemy.behavior_id);
+    ctx.db.enemy().enemy_id().delete(enemy.enemy_id);
 }
 
 pub fn resolve_step_target(target: EnemyTarget, aggro_target: Option<Identity>) -> Option<Identity> {
@@ -439,13 +459,11 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
 }
 
 pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
-    let cfg = ctx.db.map_config().id().find(&0u32);
-    let chunk_hex_radius = cfg.as_ref().map(|c| c.chunk_hex_radius).unwrap_or(DEFAULT_CHUNK_HEX_RADIUS);
-    let hex_outer_radius = cfg.as_ref().map(|c| c.hex_outer_radius).unwrap_or(DEFAULT_HEX_OUTER_RADIUS);
-    let chunk_cols       = cfg.as_ref().map(|c| c.chunk_cols).unwrap_or(0);
-    let chunk_rows       = cfg.as_ref().map(|c| c.chunk_rows).unwrap_or(0);
-    let lap_q            = cfg.as_ref().map(|c| (c.lap_q_x, c.lap_q_y)).unwrap_or((0.0, 0.0));
-    let lap_r            = cfg.as_ref().map(|c| (c.lap_r_x, c.lap_r_y)).unwrap_or((0.0, 0.0));
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (chunk_hex_radius, hex_outer_radius, chunk_cols, chunk_rows) =
+        (cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows);
+    let lap_q = (cfg.lap_q_x, cfg.lap_q_y);
+    let lap_r = (cfg.lap_r_x, cfg.lap_r_y);
 
     for region in ctx.db.biome_region().iter() {
         let (center_x, center_y) = hex_to_world(region.center_hex_q, region.center_hex_r, hex_outer_radius);
@@ -485,12 +503,6 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
 
         let (cq, cr) = world_to_chunk(spawn_x, spawn_y, chunk_hex_radius, hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);
-        let inserted_behavior = build_enemy_behavior(ctx, &template);
-
-        ctx.db.enemy().insert(Enemy {
-            enemy_id: 0, template_id: template.template_id, behavior_id: inserted_behavior.behavior_id,
-            x: spawn_x, y: spawn_y, spawn_time: ctx.timestamp,
-            hp: template.max_hp, phase: 0, is_elite: false, immortal: false, chunk_index,
-        });
+        spawn_enemy_archetype(ctx, &template, spawn_x, spawn_y, false, false, chunk_index);
     }
 }

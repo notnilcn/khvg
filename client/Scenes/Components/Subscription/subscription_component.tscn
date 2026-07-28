@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/Subscription/SubscriptionComponent.cs" id="1_sub"]
+
+[node name="SubscriptionComponent" type="Node"]
+script = ExtResource("1_sub")

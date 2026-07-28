@@ -11,6 +11,7 @@ public partial class Entity : Node, IEntity
 {
     private readonly EntityRegistry registry = new();
 
-    public void RegisterComponent(Component component) => registry.Register(component);
-    public Component? GetComponent(Type type) => registry.Get(type);
+    public void RegisterComponent(IComponent component) => registry.Register(component);
+    public void UnregisterComponent(IComponent component) => registry.Unregister(component);
+    public IComponent? GetComponent(Type type) => registry.Get(type);
 }

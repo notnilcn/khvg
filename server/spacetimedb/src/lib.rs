@@ -3,3 +3,4 @@ mod world;
 mod player;
 mod enemy;
 mod item;
+mod combat;

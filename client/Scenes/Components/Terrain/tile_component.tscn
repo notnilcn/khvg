@@ -1,0 +1,25 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/Terrain/TileComponent.cs" id="1_tile"]
+[ext_resource type="Script" path="res://Scripts/Components/Terrain/GroundComponent.cs" id="2_ground"]
+[ext_resource type="Script" path="res://Scripts/Components/Terrain/OverlayComponent.cs" id="3_overlay"]
+[ext_resource type="Script" path="res://Scripts/Components/Terrain/DecorShadowComponent.cs" id="4_shadow"]
+[ext_resource type="Script" path="res://Scripts/Components/Terrain/DecorComponent.cs" id="5_decor"]
+
+[node name="TileComponent" type="Node2D"]
+script = ExtResource("1_tile")
+
+[node name="GroundComponent" type="Node2D" parent="."]
+script = ExtResource("2_ground")
+
+[node name="OverlayComponent" type="Node2D" parent="."]
+z_index = 1
+script = ExtResource("3_overlay")
+
+[node name="DecorShadowComponent" type="Node2D" parent="."]
+z_index = 2
+script = ExtResource("4_shadow")
+
+[node name="DecorComponent" type="Node2D" parent="."]
+z_index = 3
+script = ExtResource("5_decor")

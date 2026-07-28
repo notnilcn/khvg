@@ -5,6 +5,7 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "AGENTS.md",
         "Untitled.md",
         "CLAUDE.md",
         "client",
@@ -60,8 +61,6 @@
         "local_player.tscn",
         "lobby_gui.tscn",
         "non_local_player.tscn",
-        "pixel_art.gdshader",
-        "pixel_art.gdshader.uid",
         "profile_panel.tscn",
         "world_3d.tscn"
       ]
@@ -87,14 +86,6 @@
       "isHidden": false
     },
     "client/Scenes/non_local_player.tscn": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scenes/pixel_art.gdshader": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scenes/pixel_art.gdshader.uid": {
       "isPinned": false,
       "isHidden": false
     },
@@ -336,6 +327,7 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "Resources",
         "Components",
         "Entities",
         "Game",
@@ -2139,8 +2131,6 @@
         "InventorySlotUI.cs",
         "ItemStatsSidebar.cs",
         "ItemStatsSidebar.cs.uid",
-        "LocalPlayerCombat.cs",
-        "LocalPlayerCombat.cs.uid",
         "LocalPlayerInventory.cs",
         "LocalPlayer.cs.uid",
         "LocalPlayerInventory.cs.uid",
@@ -2161,14 +2151,6 @@
       "isHidden": false
     },
     "client/Scripts/Players/Local/ItemStatsSidebar.cs.uid": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/Players/Local/LocalPlayerCombat.cs": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/Players/Local/LocalPlayerCombat.cs.uid": {
       "isPinned": false,
       "isHidden": false
     },
@@ -2214,47 +2196,17 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "CameraController2D.cs",
         "CLAUDE-Clintons-Framework-16.md",
-        "CameraController2D.cs.uid",
-        "CameraRig.cs",
-        "CameraRig.cs.uid",
         "CLAUDE.md",
-        "edge_detection.gdshader.uid",
-        "edge_detection.gdshader",
         "HexGridOverlay2D.cs",
         "HexGridOverlay2D.cs.uid",
         "HexGridOverlay3D.cs",
         "HexGridOverlay3D.cs.uid",
-        "TerrainManager.cs",
-        "TerrainManager.cs.uid",
         "TorusMath.cs",
-        "WorldRenderer3D.cs",
-        "TorusMath.cs.uid",
-        "WorldRenderer3D.cs.uid"
+        "TorusMath.cs.uid"
       ]
     },
-    "client/Scripts/World/CameraController2D.cs.uid": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/World/CameraRig.cs": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/World/CameraRig.cs.uid": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "client/Scripts/World/CLAUDE.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/World/edge_detection.gdshader.uid": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/World/edge_detection.gdshader": {
       "isPinned": false,
       "isHidden": false
     },
@@ -2274,27 +2226,11 @@
       "isPinned": false,
       "isHidden": false
     },
-    "client/Scripts/World/TerrainManager.cs": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/World/TerrainManager.cs.uid": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "client/Scripts/World/TorusMath.cs": {
       "isPinned": false,
       "isHidden": false
     },
-    "client/Scripts/World/WorldRenderer3D.cs": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "client/Scripts/World/TorusMath.cs.uid": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/World/WorldRenderer3D.cs.uid": {
       "isPinned": false,
       "isHidden": false
     },
@@ -20932,6 +20868,7 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "combat",
         "plan.md",
         "CLAUDE.md",
         "enemy",
@@ -21057,9 +20994,14 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "terrain",
+        "aoi.rs",
+        "wrap.rs",
+        "hex.rs",
+        "noise.rs",
+        "prng.rs",
         "def_tables.rs",
         "instance_tables.rs",
-        "methods.rs",
         "mod.rs",
         "reducers.rs",
         "tables.rs",
@@ -21071,10 +21013,6 @@
       "isHidden": false
     },
     "server/spacetimedb/src/world/instance_tables.rs": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "server/spacetimedb/src/world/methods.rs": {
       "isPinned": false,
       "isHidden": false
     },
@@ -22329,6 +22267,8 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "libBulletHell-db3d4ddb7ace0915.rmeta",
+        "BulletHell-db3d4ddb7ace0915.d",
         "enum_as_inner-d7424b2ffd2b60a4.pdb",
         "spacetimedb_bindings_macro-78a58968e8b318c6.pdb",
         "anyhow-db85ef2021a4376f.d",
@@ -23349,6 +23289,7 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "BulletHell-12xane749nvf2",
         "BulletHell-342pnyg1mei05"
       ]
     },
@@ -23357,37 +23298,13 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "s-hkrklhf5yb-1x5iw5w-7yk1gda9ic65g3sapdctlkd8z",
-        "s-hkrklhf5yb-1x5iw5w.lock",
-        "s-hkgrchc6or-0dj93d2-eca9l7hyahny2kzqx1qco5aok",
-        "s-hkgrchc6or-0dj93d2.lock"
+        "s-hksbtiet4t-1tlbdcf-eqmfc793r1v20y00stlkofnfu",
+        "s-hksbtiet4t-1tlbdcf.lock",
+        "s-hksboed9ic-11oyees-2oqx5jacl4nazdurzaqq3y832",
+        "s-hksboed9ic-11oyees.lock",
+        "s-hksbnqeyr5-0s7sgfm-5n8p791m2mfhrec0jc6wvbsti",
+        "s-hksbnqeyr5-0s7sgfm.lock"
       ]
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkgrchc6or-0dj93d2-eca9l7hyahny2kzqx1qco5aok": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "dep-graph.bin",
-        "query-cache.bin",
-        "work-products.bin"
-      ]
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkgrchc6or-0dj93d2-eca9l7hyahny2kzqx1qco5aok/dep-graph.bin": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkgrchc6or-0dj93d2-eca9l7hyahny2kzqx1qco5aok/query-cache.bin": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkgrchc6or-0dj93d2-eca9l7hyahny2kzqx1qco5aok/work-products.bin": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkgrchc6or-0dj93d2.lock": {
-      "isPinned": false,
-      "isHidden": false
     },
     "server/spacetimedb/target/release": {
       "isPinned": false,
@@ -24844,6 +24761,8 @@
       "customOrder": [
         "BulletHell.wasm",
         "BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.13.rcgu.o",
+        "BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.02.rcgu.o",
+        "BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.12.rcgu.o",
         "BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.01.rcgu.o",
         "anyhow-50955bf1314dee83.d",
         "approx-9aa47624b378e901.d",
@@ -50474,10 +50393,6 @@
       "isPinned": false,
       "isHidden": false
     },
-    "client/Scripts/World/CameraController2D.cs": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "client/Scenes/main.tscn": {
       "isPinned": false,
       "isHidden": false
@@ -51010,6 +50925,13 @@
       "isPinned": false,
       "isHidden": false,
       "customOrder": [
+        "ToDo.md",
+        "README.md",
+        "LICENSE.txt",
+        "HowTo.md",
+        "Godot LICENSE.txt",
+        "Conventions.md",
+        "CONTRIBUTING.md",
         "2D Only.gdbuild",
         "Comedot for Godot Asset Store.md",
         "AGENTS.md",
@@ -61321,37 +61243,7 @@
       "isPinned": false,
       "isHidden": false
     },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkrklhf5yb-1x5iw5w.lock": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkrklhf5yb-1x5iw5w-7yk1gda9ic65g3sapdctlkd8z": {
-      "isPinned": false,
-      "isHidden": false,
-      "customOrder": [
-        "work-products.bin",
-        "dep-graph.bin",
-        "query-cache.bin"
-      ],
-      "sortOrder": "custom"
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkrklhf5yb-1x5iw5w-7yk1gda9ic65g3sapdctlkd8z/query-cache.bin": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkrklhf5yb-1x5iw5w-7yk1gda9ic65g3sapdctlkd8z/dep-graph.bin": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hkrklhf5yb-1x5iw5w-7yk1gda9ic65g3sapdctlkd8z/work-products.bin": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.01.rcgu.o": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.13.rcgu.o": {
       "isPinned": false,
       "isHidden": false
     },
@@ -61403,10 +61295,6 @@
       "isPinned": false,
       "isHidden": false
     },
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "client/Scripts/Entities": {
       "isPinned": false,
       "isHidden": false,
@@ -61436,8 +61324,35 @@
       "isPinned": false,
       "isHidden": false,
       "customOrder": [
-        "HitZone.cs.uid",
-        "HitZone.cs",
+        "VisualComponent.cs.uid",
+        "Node3DComponent.cs.uid",
+        "Node2DComponent.cs.uid",
+        "ControlComponent.cs.uid",
+        "Terrain",
+        "Bullets",
+        "Inventory",
+        "Camera",
+        "Lobby",
+        "Spawning",
+        "Catalog",
+        "Subscription",
+        "Connection",
+        "Node3DComponent.cs",
+        "Interaction",
+        "Visual",
+        "Movement",
+        "VisualComponent.cs",
+        "ControlComponent.cs",
+        "Node2DComponent.cs",
+        "Weapon",
+        "AreaComponent.cs.uid",
+        "ComponentRegistration.cs.uid",
+        "IComponent.cs.uid",
+        "Combat",
+        "Data",
+        "AreaComponent.cs",
+        "ComponentRegistration.cs",
+        "IComponent.cs",
         "NodeExtensions.cs.uid",
         "NodeExtensions.cs",
         "Component.cs.uid",
@@ -61461,23 +61376,27 @@
       "isPinned": false,
       "isHidden": false
     },
-    "client/Scripts/Components/HitZone.cs": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "client/Scenes/Components": {
       "isPinned": false,
       "isHidden": false,
       "customOrder": [
+        "Terrain",
+        "Lobby",
+        "Bullets",
+        "Camera",
+        "Spawning",
+        "Catalog",
+        "Subscription",
+        "Connection",
+        "Interaction",
+        "Movement",
+        "Combat",
+        "Data",
         "hit_zone.tscn"
       ],
       "sortOrder": "custom"
     },
     "client/Scenes/Components/hit_zone.tscn": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/Scripts/Components/HitZone.cs.uid": {
       "isPinned": false,
       "isHidden": false
     },
@@ -61497,6 +61416,7 @@
       "isPinned": false,
       "isHidden": false,
       "customOrder": [
+        "enchantment_row.tscn",
         "inventory_panel.tscn",
         "debug_overlay.tscn"
       ],
@@ -61507,10 +61427,6 @@
       "isHidden": false
     },
     "client/Scenes/UI/inventory_panel.tscn": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll": {
       "isPinned": false,
       "isHidden": false
     },
@@ -61531,6 +61447,954 @@
       "isHidden": false
     },
     "code_examples/comedot/2D Only.gdbuild": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/IComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/ComponentRegistration.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/AreaComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Resources": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "Stats"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Resources/Stats": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "StatKind.cs",
+        "StatKind.cs.uid",
+        "Stat.cs.uid",
+        "Stat.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Resources/Stats/Stat.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Resources/Stats/Stat.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Resources/Stats/StatKind.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Resources/Stats/StatKind.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Data": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "StatsComponent.cs.uid",
+        "StatsComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Data/StatsComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Data/StatsComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "DamageComponent.cs.uid",
+        "DamageReceivingComponent.cs.uid",
+        "DamageReceivingComponent.cs",
+        "DamageComponent.cs",
+        "HitZone.cs.uid",
+        "HitZone.cs",
+        "HealthComponent.cs",
+        "FactionComponent.cs.uid",
+        "HealthComponent.cs.uid",
+        "FactionComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Combat/FactionComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat/HealthComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat/FactionComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat/HealthComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Data": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "stats_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Data/stats_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Combat": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "damage_receiving_component.tscn",
+        "damage_component.tscn",
+        "health_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Combat/health_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/IComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/ComponentRegistration.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/AreaComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Weapon": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "CombatComponent.cs.uid",
+        "CombatComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Combat/HitZone.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat/HitZone.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat/DamageComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat/DamageReceivingComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Combat/damage_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Combat/damage_receiving_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat/DamageReceivingComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Combat/DamageComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/combat": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "mod.rs"
+      ],
+      "sortOrder": "custom"
+    },
+    "server/spacetimedb/src/combat/mod.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.12.rcgu.o": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "AGENTS.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "code_examples/comedot/CONTRIBUTING.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "code_examples/comedot/Conventions.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "code_examples/comedot/Godot LICENSE.txt": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "code_examples/comedot/HowTo.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "code_examples/comedot/LICENSE.txt": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "code_examples/comedot/README.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "code_examples/comedot/ToDo.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Node2DComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/ControlComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/VisualComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Weapon/CombatComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Weapon/CombatComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Movement": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "InterpolationComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Movement/InterpolationComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Visual": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "RemoteVisualComponent.cs.uid",
+        "DropVisualComponent.cs.uid",
+        "RemoteVisualComponent.cs",
+        "DropVisualComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Visual/DropVisualComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Visual/RemoteVisualComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Interaction": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "PickupComponent.cs.uid",
+        "PickupComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Interaction/PickupComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Movement": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "interpolation_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Movement/interpolation_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Interaction": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "pickup_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Interaction/pickup_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "s-hksbpshkh9-1b286is-d1xg5ifcp274oxduu2ensy0g0",
+        "s-hksbpshkh9-1b286is.lock",
+        "s-hksbopqtok-0zjkx39-6g5u22kbbhb1chq8ewce0awyk",
+        "s-hksbopqtok-0zjkx39.lock"
+      ],
+      "sortOrder": "custom"
+    },
+    "server/spacetimedb/target/debug/deps/BulletHell-db3d4ddb7ace0915.d": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/deps/libBulletHell-db3d4ddb7ace0915.rmeta": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/prng.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/noise.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/hex.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/wrap.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/aoi.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/terrain": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "mod.rs",
+        "decor.rs",
+        "overlay.rs",
+        "ground.rs",
+        "voronoi.rs",
+        "rules.rs"
+      ],
+      "sortOrder": "custom"
+    },
+    "server/spacetimedb/src/world/terrain/rules.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/terrain/voronoi.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/terrain/ground.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/terrain/overlay.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/terrain/decor.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/src/world/terrain/mod.rs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksbnqeyr5-0s7sgfm.lock": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksbnqeyr5-0s7sgfm-5n8p791m2mfhrec0jc6wvbsti": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Node3DComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Connection": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "ConnectionComponent.cs.uid",
+        "ConnectionComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Connection/ConnectionComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Subscription": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "SubscriptionComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Subscription/SubscriptionComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Catalog": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "CatalogComponent.cs.uid",
+        "CatalogComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Catalog/CatalogComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksboed9ic-11oyees.lock": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksboed9ic-11oyees-2oqx5jacl4nazdurzaqq3y832": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "work-products.bin",
+        "dep-graph.bin",
+        "query-cache.bin"
+      ],
+      "sortOrder": "custom"
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksboed9ic-11oyees-2oqx5jacl4nazdurzaqq3y832/query-cache.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksboed9ic-11oyees-2oqx5jacl4nazdurzaqq3y832/dep-graph.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksboed9ic-11oyees-2oqx5jacl4nazdurzaqq3y832/work-products.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbopqtok-0zjkx39.lock": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbopqtok-0zjkx39-6g5u22kbbhb1chq8ewce0awyk": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "work-products.bin",
+        "query-cache.bin",
+        "dep-graph.bin"
+      ],
+      "sortOrder": "custom"
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbopqtok-0zjkx39-6g5u22kbbhb1chq8ewce0awyk/dep-graph.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbopqtok-0zjkx39-6g5u22kbbhb1chq8ewce0awyk/query-cache.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbopqtok-0zjkx39-6g5u22kbbhb1chq8ewce0awyk/work-products.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Spawning": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "EntitySpawnerComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Spawning/EntitySpawnerComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Lobby": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "LobbyComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Lobby/LobbyComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbpshkh9-1b286is.lock": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbpshkh9-1b286is-d1xg5ifcp274oxduu2ensy0g0": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "work-products.bin",
+        "query-cache.bin",
+        "dep-graph.bin"
+      ],
+      "sortOrder": "custom"
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbpshkh9-1b286is-d1xg5ifcp274oxduu2ensy0g0/dep-graph.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbpshkh9-1b286is-d1xg5ifcp274oxduu2ensy0g0/query-cache.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-12xane749nvf2/s-hksbpshkh9-1b286is-d1xg5ifcp274oxduu2ensy0g0/work-products.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "World3DComponent.cs.uid",
+        "HexGridOverlayComponent.cs.uid",
+        "HexGridOverlay3DComponent.cs.uid",
+        "HexGridOverlay3DComponent.cs",
+        "HexGridOverlayComponent.cs",
+        "World3DComponent.cs",
+        "Camera2DPresenterComponent.cs.uid",
+        "Camera2DPresenterComponent.cs",
+        "CameraRigComponent.cs.uid",
+        "CameraRigComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Camera/CameraRigComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "StatsSidebarComponent.cs.uid",
+        "SlotComponent.cs.uid",
+        "ItemSidebarComponent.cs.uid",
+        "InventoryComponent.cs.uid",
+        "ItemSidebarComponent.cs",
+        "StatsSidebarComponent.cs",
+        "SlotComponent.cs",
+        "InventoryComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Bullets": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "BulletSpawnerComponent.cs.uid",
+        "BulletHitRouterComponent.cs.uid",
+        "BulletHitRouterComponent.cs",
+        "BulletSpawnerComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Camera/CameraRigComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera/Camera2DPresenterComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera/Camera2DPresenterComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera/World3DComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera/HexGridOverlayComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.02.rcgu.o": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.13.rcgu.o": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera/HexGridOverlay3DComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksbtiet4t-1tlbdcf.lock": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksbtiet4t-1tlbdcf-eqmfc793r1v20y00stlkofnfu": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "work-products.bin",
+        "query-cache.bin",
+        "dep-graph.bin"
+      ],
+      "sortOrder": "custom"
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksbtiet4t-1tlbdcf-eqmfc793r1v20y00stlkofnfu/dep-graph.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksbtiet4t-1tlbdcf-eqmfc793r1v20y00stlkofnfu/query-cache.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hksbtiet4t-1tlbdcf-eqmfc793r1v20y00stlkofnfu/work-products.bin": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Bullets/BulletHitRouterComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory/InventoryComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory/SlotComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory/StatsSidebarComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory/ItemSidebarComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Connection": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "connection_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Connection/connection_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Subscription": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "subscription_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Subscription/subscription_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Catalog": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "catalog_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Catalog/catalog_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Spawning": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "entity_spawner_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Spawning/entity_spawner_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Camera": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "camera_2d_presenter_component.tscn",
+        "hex_grid_overlay_component.tscn",
+        "camera_rig_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Camera/camera_rig_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Camera/hex_grid_overlay_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Camera/camera_2d_presenter_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Bullets": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "bullet_hit_router_component.tscn",
+        "bullet_spawner_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Bullets/bullet_spawner_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Bullets/bullet_hit_router_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Lobby": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "lobby_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Lobby/lobby_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/UI/enchantment_row.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "TileComponent.cs.uid",
+        "TerrainLayerComponent.cs.uid",
+        "TerrainComponent.cs.uid",
+        "OverlayComponent.cs.uid",
+        "GroundComponent.cs.uid",
+        "DecorShadowComponent.cs.uid",
+        "TerrainComponent.cs",
+        "TileComponent.cs",
+        "DecorShadowComponent.cs",
+        "OverlayComponent.cs",
+        "TerrainLayerComponent.cs",
+        "DecorLayerComponent.cs",
+        "GroundComponent.cs",
+        "DecorComponent.cs"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scripts/Components/Terrain/DecorComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/GroundComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/DecorLayerComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/TerrainLayerComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/OverlayComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/DecorShadowComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/TileComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/TerrainComponent.cs": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Terrain": {
+      "isPinned": false,
+      "isHidden": false,
+      "customOrder": [
+        "tile_component.tscn",
+        "terrain_component.tscn"
+      ],
+      "sortOrder": "custom"
+    },
+    "client/Scenes/Components/Terrain/terrain_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scenes/Components/Terrain/tile_component.tscn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera/HexGridOverlay3DComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera/HexGridOverlayComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory/InventoryComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Camera/World3DComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory/ItemSidebarComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory/SlotComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Inventory/StatsSidebarComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Bullets/BulletHitRouterComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Catalog/CatalogComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Connection/ConnectionComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Interaction/PickupComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/DecorShadowComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/GroundComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/OverlayComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/TerrainComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/TerrainLayerComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Terrain/TileComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Visual/DropVisualComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Visual/RemoteVisualComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/ControlComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Node2DComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/Node3DComponent.cs.uid": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "client/Scripts/Components/VisualComponent.cs.uid": {
       "isPinned": false,
       "isHidden": false
     }

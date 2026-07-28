@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/Spawning/EntitySpawnerComponent.cs" id="1_spawner"]
+[ext_resource type="PackedScene" path="res://Scenes/local_player.tscn" id="2_local"]
+[ext_resource type="PackedScene" path="res://Scenes/non_local_player.tscn" id="3_remote"]
+[ext_resource type="PackedScene" path="res://Scenes/default_enemy.tscn" id="4_enemy"]
+[ext_resource type="PackedScene" path="res://Scenes/drop.tscn" id="5_drop"]
+[ext_resource type="PackedScene" path="res://Scenes/bullet_manager.tscn" id="6_bullets"]
+
+[node name="EntitySpawnerComponent" type="Node"]
+script = ExtResource("1_spawner")
+LocalPlayerScene = ExtResource("2_local")
+NonLocalPlayerScene = ExtResource("3_remote")
+EnemyScene = ExtResource("4_enemy")
+DropScene = ExtResource("5_drop")
+BulletManagerScene = ExtResource("6_bullets")

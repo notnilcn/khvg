@@ -1,0 +1,6 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Components/Camera/CameraRigComponent.cs" id="1_rig"]
+
+[node name="CameraRigComponent" type="Node"]
+script = ExtResource("1_rig")

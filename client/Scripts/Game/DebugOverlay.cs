@@ -32,7 +32,7 @@ public partial class DebugOverlay : CanvasLayer
 		var objectCount = Performance.GetMonitor(Performance.Monitor.ObjectCount);
 		var nodeCount   = Performance.GetMonitor(Performance.Monitor.ObjectNodeCount);
 		var drawCalls   = Performance.GetMonitor(Performance.Monitor.RenderTotalDrawCallsInFrame);
-		var enemyCount  = GameManager.Instance.EnemyCount;
+		var enemyCount  = GameManager.EnemyCount;
 
 		label.Text =
 			$"FPS: {fps:0} ({frameTimeMs:0.00} ms)\n" +
