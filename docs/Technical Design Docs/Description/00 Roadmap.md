@@ -1,44 +1,61 @@
-# Technical Design Docs — Roadmap
+# 00 Roadmap
 
-This is the index for a set of **technical** design docs describing how the bullet-hell MMO roguelike is actually built — as opposed to the [[01 Executive Summary|Game Design Docs]], which describe what it's *supposed* to become. These are written for someone comfortable with programming concepts (loops, classes, client/server, databases) but brand new to this specific codebase, Godot, and SpacetimeDB.
+## What these docs are
 
-Written over multiple sessions — each numbered doc below is one session's worth of writing, done independently once its prerequisites exist. Status is tracked here so a new session can see what's done at a glance.
+A narrative, learn-from-scratch companion to the terse maintainer references — root `CLAUDE.md`, `client/CLAUDE.md`, `server/CLAUDE.md`. Those files are dense module maps for someone who already knows the codebase; these docs are for someone who doesn't. Where the two disagree, the `CLAUDE.md` files and the code win — these docs link out to them rather than restate them.
 
-## Conventions for these docs
+## Who they're for
 
-- System Documents Structure:
-	- Assumed knowledge (this should include links to other notes)
-	- The 30-second version (summary of the document)
-	- System flowchart (constructed from the numbered prose steps in [[99 End-to-End Timeline Flowchart]] via sync-embed code blocks, scoped to the system being documented)
-	- Main body of the documentation. This section should cover everything that's detailed in the Reading order / sections section in this document. It is expected that this section will duplicate some of the information in the system flowchart (which itself duplicates information from the timeline flowchart), so use the seamless sync-embed blocks that point to the source (the timeline flowchart) wherever possible.
-	- Where to go next (1–3 sentences pointing to the next doc(s) to read)
-- Timeline Document Structure
-	- The scaffold for this document is already laid out via headers.
-	- Each section will have numbered prose bullet point steps starting from 1.
-	- Each section will have a block at the end denoted by `^section-n`.
-- **Wikilinks to code**: use the line-search plugin syntax `[[filename##text on the target line|display text]]` — e.g. `[[admin.rs##pub fn release_admin|release_admin]]`. Use the bare filename (not the full path); the plugin searches the vault. Pick search text that's unique within the file (usually the function/struct signature line) so the link doesn't jump to the wrong match. Every step in the flowchart should link to code whereever possible.
-- **Seamless sync-embed blocks for any duplicated info:** For any duplicated info, use the following syntax:
-```sync
-![[Untitled#^test{seamless:true,title:false,marker:n.}]]
+An intermediate programmer who is brand new to Godot, C#, Rust, and SpacetimeDB, but who already knows general programming concepts (loops, classes, dictionaries, event handlers). Godot- and SpacetimeDB-specific ideas — reducers, subscriptions, node trees, scenes, `.tscn` files — get a brief inline explanation or analogy the first time they matter.
+
+## The code is the source of truth
+
+Every claim in these docs is checked against the current code, not against what a design doc says should exist. Where the code has a TODO, a stub, or a known bug, the doc says so explicitly — in that doc's "Known gaps / stubs" section and inline where it's relevant to the step being described. Aspirational systems described in the Game Design Docs but absent from the code (guild territory PvP, base-building beyond `place_building`/`remove_building`, biomes as gameplay, most of enchantment breadth) are out of scope here; where a doc's subject matter brushes against one of these, it says so rather than describing something that doesn't run.
+
+## Reading order & status
+
+| # | Doc | Status | Covers |
+|---|---|---|---|
+| 00 | Roadmap | done | This doc — what these are, who they're for, conventions, reading order |
+| 01 | [[01 Architecture & Sync Model]] | done | SpacetimeDB primer, server module layout, server bootstrap, a client connecting, subscription waves, session end |
+| 02 | [[02 Entity & Component Framework]] | done | The compositional entity/component pattern shared by client and server; composition map per logical entity |
+| 03 | [[03 World & Hex Grid]] | done | Torus hex grid math, chunking, procedural terrain generation, buildings |
+| 04 | [[04 Player System]] | done | Login/lobby/profile flow, joining the world, movement & AOI, XP/leveling |
+| 05 | [[05 Item, Equipment & Enchantment System]] | done | The unified item catalog, inventory/equip reducers, enchantment socketing |
+| 06 | [[06 Enemy AI & Bullet Patterns]] | done | Enemy templates, phases, attack sequences, bullet pattern events |
+| 07 | [[07 Combat & Damage Math]] | done | The single damage pipeline: outgoing/incoming formulas, death and kill handling |
+| 08 | [[08 Client Rendering & Camera]] | done | Camera rig, 2D presenter, the 3D backdrop viewport |
+| 09 | [[09 Admin, Debug & World Lifecycle]] | done | Admin tools, content seeding, debug overlay, known admin-reducer bugs |
+| 10 | End-to-End Flowchart | done | `99 End-to-End Flowchart.canvas` spatial arrangement + final cross-doc verification pass |
+
+Status values: blank (not yet written) or `done`.
+
+## Conventions used across these docs
+
+**Wikilinks to code** use the `block-link-plus` plugin's line-search syntax:
+
 ```
-	`marker:n.` — replace `n.` with the step's own number from the timeline doc (zero-padded to two digits, e.g. `01.`, `02.`, ... `11.`), so the transcluded line renders with its original step numbering instead of falling back to a bare bullet. The system flowchart numbering should start from `01.` regardless of what step it is linking to in the timeline flowchart.
-- **Audience**: intermediate Python programmer, new to Godot, C#, Rust, and SpacetimeDB. Explain unfamiliar concepts (reducers, WASM modules, node trees, static typing quirks) briefly inline or with an analogy — don't assume prior Godot/Rust/SpacetimeDB knowledge, but don't over-explain general programming ideas (loops, classes, etc).
-- **Scope discipline**: document what the code *does*, not what it's planned to do. Flag TODOs/stubs/aspirational gaps explicitly (e.g. "views.rs is currently an empty placeholder — clients subscribe to tables directly") rather than silently describing the target design.
-- Don't duplicate `server/CLAUDE.md` / `client/CLAUDE.md` / root `CLAUDE.md` — those are terse maintainer references. These docs are the narrative, learn-from-scratch companion; link to the CLAUDE.md files rather than restating them.
+[[filename##text on the target line|display text]]
+```
 
-## Reading order / sections / systems
+Bare filename, no path — the plugin searches the vault (e.g. `[[lifecycle.rs##pub fn init|init]]`, `[[GameManager.cs##public override void _Ready|_Ready]]`). The search text is the function/struct signature line, kept unique within that file. Every step in the timeline and every claim in a doc's main body links to the code that implements it wherever possible — if you follow a link and the text isn't there anymore, the code has moved and the doc is stale.
 
-| #   | Doc                                   | Status | Covers                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| --- | ------------------------------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 00  | This file                             | done   | Index, conventions, how to read these docs                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| 01  | [[01 Architecture & Sync Model]]      | done   | Godot ↔ SpacetimeDB relationship, tables/reducers/subscriptions, bootstrapping a fresh environment (`spacetime start`/`publish`/`generate`, F5), connection lifecycle, project module map                                                                                                                                                                                                                                                                                                                                                                                              |
-| 02  | [[02 World & Hex Grid]]               | done   | Torus-wrapped hex grid math, chunks, terrain/building tables, `world/` module, `HexGridOverlay*`, `TerrainManager`                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| 03  | [[03 Player System]]                  | done   | Login/lobby flow, profiles, `PlayerData`/`PlayerStats`, leveling & XP math, movement sync, `LocalPlayer`/`RemotePlayer`                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| 04  | [[04 Item & Equipment System]]        | done   | Unified `Item` table (slot vs. behavior split), inventory slots, equipping, `LocalPlayerInventory`/`InventorySlotUI`, loot drops                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| 05  | [[05 Enemy AI & Bullet Patterns]]     | done   | `EnemyTemplate` defs, phases/attack sequences, `BulletPatternEvent`, BlastBullets2D bridge (`BulletManager`)                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| 06  | [[06 Combat & Damage Math]]           | done   | Damage/defense formulas, hit reporting flow (client → `report_enemy_hit`/`report_hit` → table update), how this maps to the [[02 Gameplay\|Gameplay Design Doc]]'s combat math                                                                                                                                                                                                                                                                                                                                                                                                          |
-| 07  | [[07 Client Rendering & Camera]]      | done   | 3D/2D presenter split (`WorldRenderer3D` vs `CameraController2D`/`CameraRig`), why they're kept separate, `CharacterModel3D`                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| 08  | [[08 Admin, Debug & World Lifecycle]] | done   | `init`/`client_connected`/`client_disconnected`, admin claim/spawn/chunk reducers, debug overlay                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| 99  | [[99 End-to-End Timeline Flowchart]]  |        | Ordering/causality only — a collation of 01–08 via live `^block` transclusions, not a restatement: standing up the server, connect → lobby → `join_world`, then the parallel in-world loop — movement/AOI, equip/unequip, enemy spawning, both combat directions, and the camera/rendering layer that spectates all of it. Ships with a sibling **canvas** (`99 End-to-End Flowchart.canvas`) built from the same block refs, so the diagram can't drift from the prose. Should only need edits when *interaction between* systems changes, not when a single system's mechanics change |
+**Sync-embedded steps**: the systems all run through one shared, chronologically-ordered narrative — `99 End-to-End Timeline Flowchart.md`. Individual system docs don't retype those steps; they transclude them via the `sync-embeds` plugin:
 
-Aspirational systems described in the Game Design Docs but **not yet in the code** (guild territory PvP, base-building, biomes, most of the item-enchantment system) are intentionally left off this list — they'll get a doc once something exists to document. Where a doc above touches one of these edges, it'll say so explicitly rather than describing code that doesn't exist.
+````
+```sync
+![[99 End-to-End Timeline Flowchart#^move-2{seamless:true,title:false,marker:01.}]]
+```
+````
+
+so a step's prose lives in exactly one place. Each system doc renumbers the steps it embeds starting from `01.` regardless of the step's own number in `99` (`99` numbers within its own named sections, e.g. `move-7` might render as `03.` inside `04 Player System`). Free prose around an embed is for what the timeline doesn't say: why a mechanism works that way, invariants, edge cases, formulas.
+
+**Cross-doc references** use plain Obsidian wikilinks: `[[03 Player System]]`, or with custom display text `[[07 Combat & Damage Math|07]]`.
+
+**Step anchors**: within `99`, every numbered step ends in a block anchor `^prefix-N` (e.g. `^boot-3`, `^move-7`). Each prefix (`boot`, `conn`, `lobby`, `join`, `move`, `equip`, `enemy`, `combat`, `camera`, `end`, `admin`) restarts its own count at 1. Steps refer to each other by anchor name in prose ("the subscription opened in `conn-5`"), never by a bare number, since numbers are only stable within a prefix.
+
+**The canvas** (`99 End-to-End Flowchart.canvas`, doc 10): a spatial arrangement of the same timeline, built last. Its nodes reference `99`'s anchors directly — it adds layout, not new prose.
+
+## Aspirational systems
+
+Anything in the Game Design Docs (`docs/01`–`05`, `99 (outdated)...`) that has no corresponding code — guild territory PvP, base-building beyond placing/removing a single building tile, biomes as a gameplay mechanic rather than a terrain-generation input, most enchantment breadth beyond the current socket/remove pair — is not documented here as if it existed. Docs that touch the edge of one of these say so explicitly rather than filling the gap with design-doc content.

@@ -2,17 +2,13 @@
 
 ## Assumed knowledge
 
-- [[00 Roadmap]] for how these docs are structured and the conventions used below.
-- [[01 Executive Summary|Game Design Docs]] if you want the *what/why* of the game — this doc is only concerned with the *how*.
-- No prior Technical Design Doc — this is the first one. A few concepts get a one-line explanation inline the first time they come up (WASM module, reducer, node tree) since nothing upstream has covered them yet.
+None — this is the entry point. Start here before any other numbered doc; see [[00 Roadmap]] for the reading order and the conventions the rest of this set follows.
 
 ## The 30-second version
 
-The game is two separate programs that never share memory or a process: a **Godot 4.6 mono client** (C#, one instance per player, purely a renderer/input-collector) and a **SpacetimeDB module** (Rust, compiled to WASM, one instance for the whole game world). All game state lives in the module's tables; the client never has authoritative state of its own. The client can't write to a table directly — it calls a **reducer** (a server-side function) and waits for the resulting row change to arrive back over its **subscription**. What a given client's subscription is allowed to see is controlled by **views**, which are per-connection-filtered queries (e.g. "only enemies within this player's AOI chunk radius") rather than raw table dumps. Getting a connection open, subscribed, and torn down cleanly — independent of anything gameplay-specific — is the subject of this doc.
+The server is a **SpacetimeDB module** — Rust code that defines database tables plus **reducers** (server functions a client calls, run as atomic transactions) — published once and then running headless, ticking a handful of scheduled reducers even with nobody connected. The client is a **Godot 4.6 mono** app that opens one `DbConnection` to that module and **subscribes** to specific tables — live queries SpacetimeDB keeps continuously in sync, pushing row inserts/updates/deletes as they happen, instead of the client polling for state. Nothing in this game has a traditional request/response API: the client calls a reducer to *change* something and reads the result back off its subscribed tables, not off a return value (reducers don't return data at all). The rest of this doc covers the server's module layout, the client's top-level connection/subscription machinery, and the bootstrap and connect/disconnect sequences that everything else in this doc set builds on.
 
 ## System flowchart
-
-Ordering below is a scoped excerpt of [[99 End-to-End Timeline Flowchart]] — just the steps this system owns (server bootstrap, connecting, and disconnecting). The parallel in-world loop, lobby/profile mechanics, and joining the world are covered by later docs and intentionally not embedded here.
 
 ```sync
 ![[99 End-to-End Timeline Flowchart#^boot-1{seamless:true,title:false,marker:01.}]]
@@ -27,72 +23,92 @@ Ordering below is a scoped excerpt of [[99 End-to-End Timeline Flowchart]] — j
 ![[99 End-to-End Timeline Flowchart#^boot-4{seamless:true,title:false,marker:04.}]]
 ```
 ```sync
-![[99 End-to-End Timeline Flowchart#^conn-1{seamless:true,title:false,marker:05.}]]
+![[99 End-to-End Timeline Flowchart#^boot-5{seamless:true,title:false,marker:05.}]]
 ```
 ```sync
-![[99 End-to-End Timeline Flowchart#^conn-2{seamless:true,title:false,marker:06.}]]
+![[99 End-to-End Timeline Flowchart#^conn-1{seamless:true,title:false,marker:06.}]]
 ```
 ```sync
-![[99 End-to-End Timeline Flowchart#^conn-3{seamless:true,title:false,marker:07.}]]
+![[99 End-to-End Timeline Flowchart#^conn-2{seamless:true,title:false,marker:07.}]]
 ```
 ```sync
-![[99 End-to-End Timeline Flowchart#^conn-4{seamless:true,title:false,marker:08.}]]
+![[99 End-to-End Timeline Flowchart#^conn-3{seamless:true,title:false,marker:08.}]]
 ```
 ```sync
-![[99 End-to-End Timeline Flowchart#^conn-5{seamless:true,title:false,marker:09.}]]
+![[99 End-to-End Timeline Flowchart#^conn-4{seamless:true,title:false,marker:09.}]]
 ```
 ```sync
-![[99 End-to-End Timeline Flowchart#^end-1{seamless:true,title:false,marker:10.}]]
+![[99 End-to-End Timeline Flowchart#^conn-5{seamless:true,title:false,marker:10.}]]
 ```
 ```sync
-![[99 End-to-End Timeline Flowchart#^end-2{seamless:true,title:false,marker:11.}]]
+![[99 End-to-End Timeline Flowchart#^conn-6{seamless:true,title:false,marker:11.}]]
+```
+```sync
+![[99 End-to-End Timeline Flowchart#^conn-7{seamless:true,title:false,marker:12.}]]
+```
+```sync
+![[99 End-to-End Timeline Flowchart#^end-1{seamless:true,title:false,marker:13.}]]
+```
+```sync
+![[99 End-to-End Timeline Flowchart#^end-2{seamless:true,title:false,marker:14.}]]
+```
+```sync
+![[99 End-to-End Timeline Flowchart#^end-3{seamless:true,title:false,marker:15.}]]
+```
+```sync
+![[99 End-to-End Timeline Flowchart#^end-4{seamless:true,title:false,marker:16.}]]
 ```
 
-## The two runtimes
+## Main body
 
-**SpacetimeDB** is a database and an application server fused together: you write a Rust (or C#) module, it gets compiled to a WASM binary, and the SpacetimeDB host runs that binary *as the database* — your `struct`s are tables, and the only way to mutate a table is to call one of your own `#[reducer]` functions, which runs as an all-or-nothing transaction. Reducers can't touch the filesystem, network, or wall-clock time, and can't return data to whoever called them (see the "Core Concepts" list in `server/CLAUDE.md`) — the only way a client learns a reducer succeeded is by watching for the row change it caused.
+### SpacetimeDB in three ideas
 
-The **Godot client** is a conventional game engine scene tree — nodes, `_Ready`, `_Process` — with a generated C# SDK (`SpacetimeDB.Types`, under `client/Scripts/module_bindings/`, regenerated by `spacetime generate` and never hand-edited) standing in for "the network layer." There is no client-side simulation of anything server-owned: positions, HP, inventory, enemy state are all rows the client is shown, not values it computes. The client's job is to turn player input into reducer calls and turn table rows into rendered nodes — never the reverse.
+If you've never used SpacetimeDB, three ideas cover what you need for this doc set:
 
-`GameManager` (`client/Scripts/Game/GameManager.cs`) is where this boundary lives on the client side: it's the sole owner of the `DbConnection`, instantiated as the root node of `Scenes/main.tscn` rather than an autoload (there are no autoloads in this project — see `client/CLAUDE.md`).
+- **Tables** are ordinary Rust structs annotated `#[table(...)]`. `public` tables are the ones a client can subscribe to; private tables exist only for server-internal bookkeeping.
+- **Reducers** (`#[reducer]` functions) are the *only* way any data changes. They run as atomic transactions against `ctx.db`, take a `&ReducerContext` (never mutable — determinism is enforced by the type system, not convention), and either succeed or return `Err(String)`; there is no other error channel. A few reducers are **lifecycle hooks** SpacetimeDB itself invokes rather than a client: `init` (once, at first publish), `client_connected`/`client_disconnected` (per connection), and scheduled reducers (see below).
+- **Subscriptions** are SQL-like queries (`q.From.SomeTable()`) a connected client registers; SpacetimeDB keeps the client's local mirror of the matched rows continuously in sync and fires `OnInsert`/`OnUpdate`/`OnDelete` callbacks as rows change. Subscribing is not a one-off fetch — the query stays live until explicitly unsubscribed or the connection drops.
 
-## Tables, reducers, and views
+One more mechanism this project leans on heavily: **scheduled tables**. A table declared `scheduled(reducer = X)` holds rows whose `scheduled_at: ScheduleAt` field is a time or a repeating interval; SpacetimeDB invokes `X` automatically when a row comes due, and (for `Interval` rows) reschedules it. This is how enemy behavior/spawn ticks and consumable-effect ticks run continuously without any client driving them — see `^boot-1` above and [[06 Enemy AI & Bullet Patterns|06]] / [[05 Item, Equipment & Enchantment System|05]] for what those specific ticks do.
 
-Three primitives, and the roles don't overlap:
+### Server module layout
 
-- **Tables** (`#[table(accessor = ..., public)]`) hold state. `public` just means "clients may subscribe to this" — it does not mean every client sees every row (that's what views are for).
-- **Reducers** (`#[reducer]`) are the only way to mutate a table. They're synchronous, transactional functions that take a `ReducerContext` (which carries `ctx.sender`, the caller's authenticated `Identity` — never trust an identity passed as an argument instead) and return `Result<(), String>` or nothing.
-- **Views** (`#[spacetimedb::view(accessor = ..., public)]`) are per-connection-filtered read queries clients subscribe to instead of the raw table. A view function gets a `ViewContext` carrying the *subscriber's own* `ctx.sender()`, and returns a `Query<T>` scoped however the code likes.
+`server/spacetimedb/src/lib.rs` is the whole module's table of contents — six `mod` declarations, nothing else:
 
-That third primitive is easy to miss because `server/CLAUDE.md`'s per-module breakdown says most `views.rs` files are still empty placeholders with the exception of `enemy/views.rs` — that was true at some point but isn't the current state: `player/views.rs`, `world/views.rs`, and `item/views.rs` all have real, non-trivial views today. Treat the code as the source of truth over that note. Concretely, the views that matter for this doc's connection flow:
+```
+mod main;    // bootstrap, admin, seeding, debug, global constants
+mod world;   // hex grid, terrain gen, buildings
+mod player;  // identity, profiles, lobby, movement, inventory, XP
+mod enemy;   // templates, phases, attack sequences, bullet events
+mod item;    // unified item/enchantment catalog
+mod combat;  // the one place damage is computed and applied
+```
 
-- `all_textures` / `all_items` (`world/views.rs`, `item/views.rs`) — unfiltered `AnonymousViewContext` views: every connected client sees the same rows, logged in or not. These are the catalog data (texture paths, item definitions) that don't depend on who's asking.
-- `local_player` / `local_player_data` / `local_player_stats` / `local_player_inventory` / `local_player_position` / `local_player_profiles` / `local_player_active_profile` (`player/views.rs`) — each filters its underlying table down to rows matching `ctx.sender()`, so "my data" subscriptions are naturally private without any manual access-control code.
-- `nearby_enemies` / `nearby_remote_players` / `nearby_loot_drops` / `nearby_terrain_tiles` / `nearby_hex_decor` — filtered by [[player/views.rs##pub(crate) fn nearby_indices|nearby_indices]], which resolves the caller's current chunk (via `PlayerChunk`, updated only on chunk crossings so this doesn't recompute on every 10Hz movement report) and returns the surrounding ring of chunk indices. This is the area-of-interest (AOI) mechanism: a client is never sent the whole enemy/player/loot table, only what's near its own player.
+[[lib.rs##mod main;|lib.rs]]
 
-The practical effect: the client's subscription queries (`q.From.LocalPlayerData()`, `q.From.NearbyEnemies()`, etc. — see `SubscribeLobby`/`SubscribeGame` in `GameManager.cs`) are written against *view* accessor names, not the underlying table names, even though from the client's perspective they look and behave like any other subscribable table.
+Each gameplay module (`world`, `player`, `enemy`, `item`) follows the same internal split — `tables.rs`/`def_tables.rs`/`instance_tables.rs` for schema, `methods.rs` for pure helpers and math, `reducers.rs` for the client-callable entry points, `views.rs` for subscription-facing filtered queries — except `world`, whose generation logic is large enough to live in its own `terrain/` sub-pipeline. `combat` is the odd one out structurally: it's a single `mod.rs` because it's deliberately *not* split by table — it's the one shared pipeline every damage-dealing reducer (`report_hit` in `player/`, `report_enemy_hit` in `enemy/`) delegates into, so that damage math has exactly one implementation regardless of which side got hit. Full per-file breakdowns: `server/CLAUDE.md`.
 
-## Bootstrapping a fresh environment
+Every module's tunable constant lives in one place, `main/global.rs` — chunk/hex sizing, AOI subscription radii, player stat baselines, inventory slot layout, the enemy simulation tick rate, world timers. There's no per-module scattering of magic numbers; if you're chasing a "why is this value X" question anywhere in the docs that follow, `global.rs` is the first place to check.
 
-Steps 1–4 of the flowchart above are the mechanical side of this — `spacetime start` / `publish` / `generate`, then F5 in the Godot editor. The commands themselves (and the local dev loop for republishing/regenerating after a schema change) are documented once, in `server/CLAUDE.md`'s "Commands" section — this doc doesn't restate them, only where they sit in the overall boot order. One thing worth calling out here specifically: `init` (step 2) only runs on a fresh publish or `--clear-database`, so re-publishing over an existing database does *not* re-seed or re-run world generation — if you need a clean slate, you need the `--clear-database` flag explicitly.
+### Client top-level structure
 
-## Connection lifecycle
+`client/Scripts/Game/GameManager.cs` is the root node ("Main") of `Scenes/main.tscn` and implements `IEntity` directly (it needs a `Node2D` native base, so it can't derive from the plain-`Node` `Entity` base class — same reason `LocalPlayer`/`Enemy` implement `IEntity` directly rather than inheriting it). It holds essentially no logic of its own. Instead it's a thin **static facade** over sibling components registered under it — `ConnectionComponent`, `SubscriptionComponent`, `CatalogComponent`, `EntitySpawnerComponent`, `LobbyComponent`, plus the camera/overlay components covered in [[08 Client Rendering & Camera|08]]. Static properties like `GameManager.Conn`, `.Username`, `.GetItem(...)` all resolve through `GetComponent<T>()` against the currently-registered `instance`, which is how code with no path back to Main's node tree — spawned entities, UI panels, debug overlays — reaches the connection or the item cache without a node-path walk. [[GameManager.cs##public partial class GameManager|GameManager]]
 
-Steps 5–9 and 90–91 above are the whole lifecycle (the gap is deliberate — see the note at "Session end" in [[99 End-to-End Timeline Flowchart]]): `GameManager.Connect` builds the `DbConnection` (host + database name + `OnConnect`/`OnConnectError`/`OnDisconnect` callbacks), the SDK negotiates an `Identity`, `client_connected` runs server-side, `OnConnected` runs client-side and opens the first (anonymous, global-catalog-only) subscription, and every engine frame `Conn.FrameTick()` is what actually delivers queued row changes and fires the `OnInsert`/`OnUpdate`/`OnDelete` callbacks registered on each table/view proxy. Forgetting to call the frame-tick equivalent is the single most common SpacetimeDB client mistake (see `server/CLAUDE.md`'s SDK rules) — in this codebase it's centralized in one place, `GameManager._Process`, so no other script needs to think about it.
+The full entity/component registration mechanism (how a component finds its owning entity, the `OnRegistered`/`OnEntityReady` lifecycle, sibling lookups) is [[02 Entity & Component Framework|02]]'s subject — this doc only needs the piece that matters for bootstrapping: `ConnectionComponent` reacts the instant it registers (`OnRegistered` immediately opens the connection), and every other component that needs the connection waits for its `Connected` signal instead of assuming a connection order.
 
-One thing worth flagging here that diverges from what you might expect (a second, more serious stub is covered separately in "Known gaps and stubs" below):
+### The three connection-side components
 
-- **Subscriptions are swapped, not merged, across the session.** `GameManager` holds two separate `SubscriptionHandle`s — `lobbySub` (lobby/profile-scoped views) and `gameSub` (the full in-world view set) — and explicitly unsubscribes one before subscribing the other when the player joins or leaves the world. The mechanics of that swap are a connection/sync-model detail and thus this doc's concern; what the lobby and in-world subscriptions actually *contain* (profiles, login/logout, `join_world`) belongs to the player-system doc once it exists.
+- **`ConnectionComponent`** owns the single `DbConnection` for the whole client. It builds the connection on registration, pumps `Conn.FrameTick()` every `_Process` frame (this is what actually delivers queued table updates and fires callbacks — without it, nothing arrives no matter how long the client waits), and disconnects cleanly in `_ExitTree`. It also tracks `LocalIdentity` and `Username`, and exposes `IsLocal(Identity)` — the check every remote-vs-local rendering/logic branch in the client uses.
+- **`SubscriptionComponent`** owns every subscription *wave* — named groups of queries opened/closed together. Today there are three: the always-on **base wave** (`AllTextures`/`AllItems`/`AllEnchantments`, opened once and never torn down), the **lobby wave** (`SubscribeLobby()`/`UnsubscribeLobby()`, active while the player is picking/creating a profile), and the **game wave** (`SubscribeGame()`/`UnsubscribeGame()`, active once in-world — everything AOI-scoped: nearby players/enemies/loot/terrain, plus the local player's own data/stats/inventory/position rows). It also mirrors `MapConfig`'s `LapQ`/`LapR` torus-wrap vectors, exposed for anything doing wrapped-distance math ([[03 World & Hex Grid|03]]). Why waves at all, rather than one subscription for everything: a player sitting in the lobby has no in-world position yet, so AOI-scoped queries have nothing meaningful to filter by — splitting the waves keeps the lobby's subscription footprint to just what the lobby UI needs, and defers every AOI query until `join_world` gives it something to be scoped around ([[04 Player System|04]]).
+- **`CatalogComponent`** turns the base wave's three tables into O(1)-lookup dictionaries (`textureCache`/`itemCache`/`enchantmentCache`) and fires `EnchantmentsChanged` so UI (the enchantment socket/remove panel in [[05 Item, Equipment & Enchantment System|05]]) can refresh reactively instead of re-querying. This is the layer `GameManager`'s `GetItem`/`GetEnchantment(s)`/`GetResPath` static methods actually read from.
 
-## Project module map
+All three follow the identical pattern: `OnRegistered` hooks `ConnectionComponent.Connected`, and the real work happens in an `OnConnected` handler once that signal fires — never in `OnRegistered` itself, since the connection doesn't exist yet at that point (`conn-4` through `conn-7` above). This is the pattern to expect from any future sibling component that needs the connection: hook `Connected`, don't assume registration order.
 
-The server is one Rust crate under `server/spacetimedb/src/`, split into `enemy/`, `player/`, `world/`, `item/`, `main/` — each gameplay module following the same `tables.rs` / `methods.rs` / `reducers.rs` / `views.rs` shape. The client is 100% C# under `client/Scripts/`, with `GameManager.cs` as the connection/subscription owner and everything else (`Players/Local/`, `Players/Remote/`, `Players/Enemies/`, `Items/`, `World/`) reacting to table/view callbacks it forwards. The full per-file breakdown lives in `server/CLAUDE.md` and `client/CLAUDE.md`, and the domain-to-file cross-reference table lives in the root `CLAUDE.md` — this doc doesn't duplicate those, just orients you to the fact that "server module" and "client folder" are two different trees that meet only at the generated bindings and the reducer/view names.
+## Known gaps / stubs
+
+- **No persistent login.** `ConnectionComponent.Connect` always calls `WithToken(null)`; the `AuthToken.Init`/`AuthToken.SaveToken`/`AuthToken.Token` calls that would load/persist a saved identity token are present but commented out (`ConnectionComponent.cs` lines 31, 35, 46). Every connection today is a fresh anonymous identity — closing and reopening the client does not resume the previous identity's session.
+- **Reconnect-while-in-world is a logged bug, not a supported flow.** `client_connected` treats finding an existing `LoggedInPlayer` row for the connecting identity as an error case (`log::error!`) and recovers by force-moving it to `LoggedOutPlayer` rather than resuming the in-world session — see `conn-3`. This can only happen with the (currently unused) persistent-token path above, so it's latent rather than reachable today.
 
 ## Where to go next
 
-The subscription swap mentioned above (lobby → in-world) is the natural next read: [[03 Player System]] once it exists covers profiles, `join_world`, and the login/lobby flow this doc deliberately stopped short of. If you want the world/terrain side of what a freshly-joined client subscribes to instead, [[02 World & Hex Grid]] is the other immediate branch off "joining the world."
-
-## Known gaps and stubs
-
-- **Identity is not currently persisted across launches.** `Connect` calls `.WithToken(null)`, and the `AuthToken.Init`/`AuthToken.SaveToken` calls that would normally save/reuse a token across launches are present in the source but commented out — no `AuthToken` type exists anywhere in the client. Every launch gets a fresh anonymous `Identity`, which means `client_connected` treats every launch as a brand-new player (a new `LoggedOutPlayer` + default "Knight" profile) rather than resuming the identity from your last session. This is a stub, not a design decision to build around.
-- **`LobbyGui.cs` isn't wired to any reducer.** `client/Scripts/Game/LobbyGui.cs` (paired with `Scenes/lobby_gui.tscn`) only does scene navigation and panel show/hide (`CharSlotsPressed`, `ServerListPressed`, `SettingsPressed`, `BackPressed`) — none of its methods call `create_profile`, `join_world`, or any other reducer, matching what `client/CLAUDE.md` already notes about it. The profile-creation/join/delete flow that actually works today lives entirely in `GameManager.cs`, wired directly to the `%CharSlots` UI embedded in `Scenes/main.tscn` (see steps 5–9 above and `OnJoinPressed`/`OnCreatePressed`/`OnDeletePressed` in that file) — a reader tracing the login flow starting from `LobbyGui.cs` will dead-end there rather than find the real implementation.
+Read [[02 Entity & Component Framework]] next — it covers the composition pattern (`IComponent`/`IEntity`/registries on the client, archetype helpers on the server) that every later doc assumes. After that, [[04 Player System]] picks up exactly where `conn-6` leaves off: the lobby wave's data feeding profile creation and `join_world`.
