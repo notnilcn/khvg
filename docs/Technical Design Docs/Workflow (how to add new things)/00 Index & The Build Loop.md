@@ -6,7 +6,6 @@ Workflow guides for adding new content and mechanics to the game. Each guide is 
 
 Almost everything in this game is **data in a table**, not a code branch. The first question is always: does my new thing fit an *existing* enum variant, or does it need a *new* one?
 
-<<<<<<< HEAD
 | I want to add…                                         | Data-only?                         | Guide                                     |
 | ------------------------------------------------------ | ---------------------------------- | ----------------------------------------- |
 | A texture / sprite                                     | yes                                | [[01 Add a Texture or Sprite\|01]] |
@@ -21,22 +20,6 @@ Almost everything in this game is **data in a table**, not a code branch. The fi
 | A new movement behavior (`MovementBehavior` variant)   | no — server enum + match arm       | [[09 Add a Movement Behavior\|09]] |
 | A player stat (`StatKind` variant)                     | no — touches ~8 places, both sides | [[10 Add a Player Stat\|10]] |
 | A biome / region                                       | yes                                | [[11 Add a Biome or Region\|11]] |
-=======
-| I want to add… | Data-only? | Guide |
-|---|---|---|
-| A texture / sprite | yes | [[01 Add a Texture or Sprite|01]] |
-| A weapon using Single/Triple/Cluster | yes | [[02 Add a Weapon (existing shot pattern)|02]] |
-| A new player shot pattern (`WeaponPattern` variant) | no — server enum + client switch | [[03 Add a Player Shot Pattern|03]] |
-| Armor / accessory / artifact / bag | yes | [[04 Add an Item|04]] |
-| An enchantment | yes | [[05 Add an Enchantment|05]] |
-| A consumable (heal / stat buff) | yes | [[06 Add a Consumable or Ability|06]] |
-| A new consumable *effect* (`ConsumableEffect` variant) | no — server enum + match arms | [[06 Add a Consumable or Ability|06]] |
-| An enemy (using existing patterns/movement) | yes | [[07 Add an Enemy|07]] |
-| A new enemy bullet pattern (`PatternType` variant) | no — server enum + client branch | [[08 Add an Enemy Bullet Pattern|08]] |
-| A new movement behavior (`MovementBehavior` variant) | no — server enum + match arm | [[09 Add a Movement Behavior|09]] |
-| A player stat (`StatKind` variant) | no — touches ~8 places, both sides | [[10 Add a Player Stat|10]] |
-| A biome / region | yes | [[11 Add a Biome or Region|11]] |
->>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
 
 "Data-only" means: add a row (via seed code or an admin upsert) — no changes to enums, matches, or client scripts.
 

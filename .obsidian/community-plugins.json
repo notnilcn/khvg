@@ -3,7 +3,7 @@
   "vscode-editor",
   "obsidian-wrap-with-shortcuts",
   "track-changes",
-  "advanced-canvas",
   "sync-embeds",
-  "flexplorer"
+  "flexplorer",
+  "obsidian-git"
 ]

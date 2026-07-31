@@ -13,20 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-<<<<<<< HEAD
                 "file": "docs/README.md",
-=======
-                "file": "docs/Technical Design Docs/Workflow (how to add new things)/00 Index & The Build Loop.md",
->>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-<<<<<<< HEAD
               "title": "README"
-=======
-              "title": "00 Index & The Build Loop"
->>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
             }
           }
         ]
@@ -182,9 +174,19 @@
               "icon": "message-square",
               "title": "CriticMarkup review"
             }
+          },
+          {
+            "id": "03553f6757c0538b",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
           }
         ],
-        "currentTab": 5
+        "currentTab": 6
       }
     ],
     "direction": "horizontal",
@@ -200,16 +202,15 @@
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
       "vscode-editor:Create Code File": false,
-      "track-changes:Open CriticMarkup review panel": false
+      "track-changes:Open CriticMarkup review panel": false,
+      "obsidian-git:Open Git source control": false
     }
   },
-  "active": "ed636a3b616db418",
+  "active": "783cec58f8ac3bd1",
   "lastOpenFiles": [
     "docs/Technical Design Docs/Workflow (how to add new things)/00 Index & The Build Loop.md",
-<<<<<<< HEAD
+    "docs/README.md",
     "docs/Technical Design Docs/Workflow (how to add new things)/03 Add a Player Shot Pattern.md",
-=======
->>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
     "docs/Technical Design Docs/Workflow (how to add new things)/01 Add a Texture or Sprite.md",
     "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs",
     "docs/Game Design Docs/03a Class, Item, and Equipment system (Draft).md",
@@ -230,10 +231,6 @@
     "docs/Technical Design Docs/Workflow (how to add new things)/06 Add a Consumable or Ability.md",
     "docs/Technical Design Docs/Workflow (how to add new things)/05 Add an Enchantment.md",
     "docs/Technical Design Docs/Workflow (how to add new things)/04 Add an Item.md",
-<<<<<<< HEAD
-=======
-    "docs/Technical Design Docs/Workflow (how to add new things)/03 Add a Player Shot Pattern.md",
->>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
     "docs/Technical Design Docs/Workflow (how to add new things)/02 Add a Weapon (existing shot pattern).md",
     "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
     "docs/Technical Design Docs/Description/99 End-to-End Flowchart.canvas",
