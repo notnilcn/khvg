@@ -15,7 +15,7 @@ namespace SpacetimeDB.Types
     {
         public sealed class LootDropHandle : RemoteTableHandle<EventContext, LootDrop>
         {
-            protected override string RemoteTableName => "loot_drop";
+            public override string RemoteTableName => "loot_drop";
 
             public sealed class ChunkIndexIndex : BTreeIndexBase<long>
             {

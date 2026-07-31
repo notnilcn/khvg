@@ -15,7 +15,7 @@ namespace SpacetimeDB.Types
     {
         public sealed class EnemyTemplateHandle : RemoteTableHandle<EventContext, EnemyTemplate>
         {
-            protected override string RemoteTableName => "enemy_template";
+            public override string RemoteTableName => "enemy_template";
 
             public sealed class TemplateIdUniqueIndex : UniqueIndexBase<string>
             {

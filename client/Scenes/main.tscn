@@ -24,6 +24,7 @@ duration = 0.0
 script = ExtResource("1_8gbba")
 
 [node name="ConnectionComponent" parent="." unique_id=1951652395 instance=ExtResource("2_conn")]
+Host = "https://maincloud.spacetimedb.com"
 
 [node name="SubscriptionComponent" parent="." unique_id=2063233651 instance=ExtResource("3_sub")]
 

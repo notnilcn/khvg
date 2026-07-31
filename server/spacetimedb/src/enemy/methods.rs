@@ -76,9 +76,12 @@ pub fn recompute_aggro(ctx: &ReducerContext, x: f32, y: f32, lock_seconds: f32) 
 }
 
 pub fn delete_enemy_behavior(ctx: &ReducerContext, behavior_id: u64) {
-    for phase in ctx.db.enemy_phases().behavior_id().filter(&behavior_id) {
-        for attack in ctx.db.enemy_attack().phase_id().filter(&phase.phase_id) {
-            for step in ctx.db.enemy_sequence_step().attack_id().filter(&attack.attack_id) {
+    // Collect before deleting: removing rows while iterating a btree index filter skips
+    // entries (the same reason teardown_profile collects first).
+    let phases = ctx.db.enemy_phases().behavior_id().filter(&behavior_id).collect::<Vec<_>>();
+    for phase in phases {
+        for attack in ctx.db.enemy_attack().phase_id().filter(&phase.phase_id).collect::<Vec<_>>() {
+            for step in ctx.db.enemy_sequence_step().attack_id().filter(&attack.attack_id).collect::<Vec<_>>() {
                 if let SequenceStepRef::Repeat(repeat_id) = step.step {
                     ctx.db.repeat_step_instance().repeat_id().delete(&repeat_id);
                 }

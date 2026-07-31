@@ -1,10 +1,9 @@
 [
-  "flexplorer",
   "automatic-table-of-contents",
   "vscode-editor",
-  "obsidian42-brat",
   "obsidian-wrap-with-shortcuts",
   "track-changes",
   "advanced-canvas",
-  "sync-embeds"
+  "sync-embeds",
+  "flexplorer"
 ]

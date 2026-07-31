@@ -1,11 +1,10 @@
 [
   "obsidian-wrap-with-shortcuts",
-  "discord-export",
   "obsidian-git",
   "obsidian-custom-file-extensions-plugin",
   "block-link-plus",
   "flexplorer",
   "forwardslash-asterisk-blocks",
-  "html-viewer",
-  "automatic-table-of-contents"
+  "automatic-table-of-contents",
+  "track-changes"
 ]
