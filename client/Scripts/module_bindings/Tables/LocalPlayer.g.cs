@@ -15,10 +15,20 @@ namespace SpacetimeDB.Types
     {
         public sealed class LocalPlayerHandle : RemoteTableHandle<EventContext, LoggedInPlayer>
         {
-            protected override string RemoteTableName => "local_player";
+            public override string RemoteTableName => "local_player";
+
+            public sealed class PlayerIdUniqueIndex : UniqueIndexBase<SpacetimeDB.Identity>
+            {
+                protected override SpacetimeDB.Identity GetKey(LoggedInPlayer row) => row.PlayerId;
+
+                public PlayerIdUniqueIndex(LocalPlayerHandle table) : base(table) { }
+            }
+
+            public readonly PlayerIdUniqueIndex PlayerId;
 
             internal LocalPlayerHandle(DbConnection conn) : base(conn)
             {
+                PlayerId = new(this);
             }
 
             protected override object GetPrimaryKey(LoggedInPlayer row) => row.PlayerId;

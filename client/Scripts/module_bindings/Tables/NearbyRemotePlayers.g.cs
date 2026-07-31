@@ -15,10 +15,20 @@ namespace SpacetimeDB.Types
     {
         public sealed class NearbyRemotePlayersHandle : RemoteTableHandle<EventContext, PlayerPosition>
         {
-            protected override string RemoteTableName => "nearby_remote_players";
+            public override string RemoteTableName => "nearby_remote_players";
+
+            public sealed class ProfileIdUniqueIndex : UniqueIndexBase<ulong>
+            {
+                protected override ulong GetKey(PlayerPosition row) => row.ProfileId;
+
+                public ProfileIdUniqueIndex(NearbyRemotePlayersHandle table) : base(table) { }
+            }
+
+            public readonly ProfileIdUniqueIndex ProfileId;
 
             internal NearbyRemotePlayersHandle(DbConnection conn) : base(conn)
             {
+                ProfileId = new(this);
             }
 
             protected override object GetPrimaryKey(PlayerPosition row) => row.ProfileId;

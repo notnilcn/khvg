@@ -15,7 +15,7 @@ namespace SpacetimeDB.Types
     {
         public sealed class MapConfigHandle : RemoteTableHandle<EventContext, MapConfig>
         {
-            protected override string RemoteTableName => "map_config";
+            public override string RemoteTableName => "map_config";
 
             public sealed class IdUniqueIndex : UniqueIndexBase<uint>
             {

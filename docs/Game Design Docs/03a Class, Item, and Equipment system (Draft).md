@@ -33,6 +33,33 @@ Artisan is useless for combat, but a character fully specced into it should be v
 - Items are designed around RotMG's swap-out meta, but without requiring the player to actually swap out.
 	- Weapons can have toggles that change shot pattern.
 	- Characters have n=6 ability slots and can equip multiple abilities. Abilities are tied to items, and some ability items take up multiple slots (shields take 6, spells take 2, tomes/scriptures take 3).
+		- If order doesn't matter, then the total number of combinations/permutations that fill up n slots can be calculated with the integer partition function.
+			```
+			def partitions(n, max_size=None):
+				"""Yield partitions of n as non-increasing tuples, each part <= max_size."""
+				if max_size is None:
+					max_size = n
+				if n == 0:
+					yield ()
+					return
+				for k in range(min(max_size, n), 0, -1):
+					for rest in partitions(n - k, k):
+						yield (k,) + rest
+usage: len(list(partitions(6)))=11
+			```
+		- If order matters, then the total number of combinations/permutations that fill up n slots can be calculated with the integer composition function
+			```
+			def compositions(n, max_size=None):
+			    """Yield ordered slot arrangements of n."""
+			    if n == 0:
+			        yield ()
+			        return
+			    for k in range(1, min(max_size or n, n) + 1):
+			        for rest in compositions(n - k, max_size):
+			            yield (k,) + rest
+usage: len(list(compositions(6)))=32
+			```
+		- I think I want the order to matter, since the integer composition function grows quickly ($2^{n-1}$). You could make the order matter by making the first ability stronger than the second ability and so on.
 - Items have enchantments and modifiers, similar to the Borderlands item system.
 
 In RotMG, one of the main ways people maximize DPS is swapping gear sets mid-fight — usually because when an enemy is staggered or armor-broken, a set with a higher bullet count suddenly out-DPSes a set with fewer, harder-hitting bullets (higher defense disproportionately punishes low-bullet-count builds). That swap-out meta was clunky, and I don't want it to be as central here.

@@ -28,12 +28,15 @@ public partial class ConnectionComponent : Component
 
     public void Connect(string host, string dbName)
     {
-        // AuthToken.Init(OS.GetUserDataDir() + "/.bullethell_token_");
+        // Scoped per-host: a token minted by one SpacetimeDB instance (e.g. local)
+        // is signed with that instance's key and gets rejected (401) by another
+        // (e.g. maincloud), so local/maincloud tokens can't share one file.
+        var hostTag = host.Replace("://", "_").Replace(":", "_").Replace("/", "_");
+        AuthToken.Init(OS.GetUserDataDir() + $"/.bullethell_token_{hostTag}");
         Conn = DbConnection.Builder()
             .WithUri(host)
             .WithDatabaseName(dbName)
-            // .WithToken(AuthToken.Token)
-            .WithToken(null)
+            .WithToken(AuthToken.Token)
             .OnConnect(OnConnected)
             .OnConnectError(OnConnectError)
             .OnDisconnect(OnDisconnected)
@@ -43,7 +46,7 @@ public partial class ConnectionComponent : Component
     private void OnConnected(DbConnection conn, Identity identity, string token)
     {
         LocalIdentity = identity;
-        // AuthToken.SaveToken(token);
+        AuthToken.SaveToken(token);
 
         conn.Db.LocalLobbyPlayer.OnInsert += (_, p) => Username = p.Username;
         conn.Db.LocalLobbyPlayer.OnUpdate += (_, _, p) => Username = p.Username;

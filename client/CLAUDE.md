@@ -96,5 +96,5 @@ Server-authoritative rule: components never mutate health/stats locally. They *m
 
 ## Setup notes
 - No autoloads — `GameManager` is instantiated as the root node ("Main") of `Scenes/main.tscn`; reach cross-cutting state through its static facade or `GetComponent<T>()` on it.
-- `VampireSurvivorsTemplate.csproj` (project root) has the `SpacetimeDB.ClientSDK` package reference — see the NuGet warning in the root `CLAUDE.md` if it's ever lost.
+- `khvg.csproj` (project root) has the `SpacetimeDB.ClientSDK` package reference — see the NuGet warning in the root `CLAUDE.md` if it's ever lost.
 - **BlastBullets2D** GDExtension plugin (`client/addons/blastbullets2d`) must be present; `BulletManager` dispatches patterns through its `BlastBullets` factory child node.

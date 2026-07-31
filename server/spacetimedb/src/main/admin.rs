@@ -8,7 +8,7 @@ use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
-use crate::enemy::methods::build_enemy_behavior;
+use crate::enemy::methods::{despawn_enemy_archetype, spawn_enemy_archetype};
 
 #[spacetimedb::reducer]
 pub fn claim_admin(ctx: &ReducerContext) -> Result<(), String> {
@@ -87,19 +87,63 @@ pub fn spawn_enemy(ctx: &ReducerContext, template_id: String, x: f32, y: f32, is
     let (x, y) = wrap_world_pos(x, y, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
     let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
     let chunk_index = spiral_chunk_index(cq, cr);
-    let inserted_behavior = ctx.db.enemy_behavior().insert(build_enemy_behavior(ctx, &template));
-    ctx.db.enemy().insert(Enemy {
-        enemy_id: 0, template_id, behavior_id: inserted_behavior.behavior_id,
-        x, y, spawn_time: ctx.timestamp, hp: template.max_hp,
-        phase: 0, is_elite, immortal, chunk_index,
-    });
+    spawn_enemy_archetype(ctx, &template, x, y, is_elite, immortal, chunk_index);
     Ok(())
 }
 
 #[spacetimedb::reducer]
 pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    ctx.db.enemy().enemy_id().delete(&enemy_id);
+    let enemy = ctx.db.enemy().enemy_id().find(&enemy_id)
+        .ok_or_else(|| format!("Enemy {} not found.", enemy_id))?;
+    despawn_enemy_archetype(ctx, &enemy);
+    Ok(())
+}
+
+// Runtime enemy-authoring upserts. `def_id` is auto-increment, so pass 0 to insert a new row
+// (then discover the assigned id via `spacetime sql`), or an existing id to update that row.
+
+#[spacetimedb::reducer]
+pub fn upsert_movement_def(ctx: &ReducerContext, def: MovementDef) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if def.def_id != 0 && ctx.db.movement_def().def_id().find(&def.def_id).is_some() {
+        ctx.db.movement_def().def_id().update(def);
+    } else {
+        ctx.db.movement_def().insert(MovementDef { def_id: 0, ..def });
+    }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn upsert_single_step_def(ctx: &ReducerContext, def: SingleStepDef) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if def.def_id != 0 && ctx.db.single_step_def().def_id().find(&def.def_id).is_some() {
+        ctx.db.single_step_def().def_id().update(def);
+    } else {
+        ctx.db.single_step_def().insert(SingleStepDef { def_id: 0, ..def });
+    }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn upsert_repeat_step_def(ctx: &ReducerContext, def: RepeatStepDef) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if def.def_id != 0 && ctx.db.repeat_step_def().def_id().find(&def.def_id).is_some() {
+        ctx.db.repeat_step_def().def_id().update(def);
+    } else {
+        ctx.db.repeat_step_def().insert(RepeatStepDef { def_id: 0, ..def });
+    }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn upsert_multi_step_def(ctx: &ReducerContext, def: MultiStepDef) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if def.def_id != 0 && ctx.db.multi_step_def().def_id().find(&def.def_id).is_some() {
+        ctx.db.multi_step_def().def_id().update(def);
+    } else {
+        ctx.db.multi_step_def().insert(MultiStepDef { def_id: 0, ..def });
+    }
     Ok(())
 }
 

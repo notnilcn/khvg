@@ -11,7 +11,6 @@ We can figure out the details later
 # Stats
 Right now, the stats are going to be:
 - Dexterity
-- ~~Vitality~~ I think Vitality should be rolled into strength.
 - Strength
 - Wisdom
 I can't think of any other stats to add that would make meaningful sense. I don't like having a luck stat.

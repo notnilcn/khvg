@@ -15,10 +15,20 @@ namespace SpacetimeDB.Types
     {
         public sealed class EnemyTemplatesHandle : RemoteTableHandle<EventContext, EnemyTemplate>
         {
-            protected override string RemoteTableName => "enemy_templates";
+            public override string RemoteTableName => "enemy_templates";
+
+            public sealed class TemplateIdUniqueIndex : UniqueIndexBase<string>
+            {
+                protected override string GetKey(EnemyTemplate row) => row.TemplateId;
+
+                public TemplateIdUniqueIndex(EnemyTemplatesHandle table) : base(table) { }
+            }
+
+            public readonly TemplateIdUniqueIndex TemplateId;
 
             internal EnemyTemplatesHandle(DbConnection conn) : base(conn)
             {
+                TemplateId = new(this);
             }
 
             protected override object GetPrimaryKey(EnemyTemplate row) => row.TemplateId;

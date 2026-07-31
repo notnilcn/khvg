@@ -68,7 +68,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "overviews",
+                "query": "inspirat",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -195,7 +195,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -206,16 +207,31 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
-      "obsidian-git:Open Git source control": false
+      "obsidian-git:Open Git source control": false,
+      "track-changes:Open CriticMarkup review panel": false
     }
   },
   "active": "cc0862031acb2e37",
   "lastOpenFiles": [
     "Game Design Docs/02 Gameplay.md",
     "Game Design Docs/03 Class system, Item system, and Equipment system.md",
+    "Game Design Docs/03a Class, Item, and Equipment system (Draft).md",
+    "Game Design Docs/01 Executive Summary.md",
+    "Game Design Docs/Art/Art style 3D.md",
+    "Game Design Docs/Art/Art style 2D.md",
+    "Game Design Docs/Art/Hollow Knight References.md",
+    "Art/Hollow Knight References.md",
+    "Art/Art style 2D.md",
+    "Art/Art style 3D.md",
+    "README.md",
+    "CLAUDE.md",
     "Game Design Docs/04 Lore.md",
     "Game Design Docs/05 Biomes.md",
-    "Game Design Docs/01 Executive Summary.md",
+    "attachments/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
+    "attachments/Tilings-of-Flat-Tori-by-Congruent-Hexagons.pdf",
+    "attachments/Pasted image 20260530130436.png",
+    "attachments/Pasted image 20260530125651.png",
+    "attachments/Pasted image 20260530125508.png",
     "scripts/discord_sync.py.tmp.70616.fda9d26a137e",
     "scripts/discord_sync.py.tmp.70616.45be1e90cdb6",
     "New folder",
@@ -225,7 +241,6 @@
     "workflows",
     "scripts",
     "discord_sync",
-    "CLAUDE.md",
     "Game Design Docs/CLAUDE.md",
     "Game Design Docs/Classes/ART/gatherer (str) & (art).md",
     "Game Design Docs/Classes/ART/crafter (dex) & (str) & (art).md",
@@ -237,25 +252,12 @@
     "Game Design Docs/Classes/DPS/Wizard (wis) & (dps).md",
     "Game Design Docs/Classes/DPS/Archer (dex) & (dps).md",
     "Game Design Docs/Classes/DPS/Warrior (str) & (dps).md",
-    "Game Design Docs/Classes/Balancing details/Overview.md",
     "Game Design Docs/Classes/Balancing details",
-    "Game Design Docs/Classes/SUP/thief (dex ≳ wis) & (sup ≳ dps).md",
-    "Game Design Docs/Classes/DPS/archer (dex ≳ (str == wis)) & (dps).md",
-    "Game Design Docs/Classes/00 Overview.md",
-    "Game Design Docs/99 (outdated) Game Design Document.md",
-    "Game Design Docs/01 Art.md",
-    "Game Design Docs/Art/Art style 2D.md",
-    "Game Design Docs/Art/Art style 3D.md",
-    "Game Design Docs/Classes/Other or Undeveloped",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/zflpdhs2u7lg1.jpeg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_xwfwyccwkz6a1.jpg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_sdj2v59z2gvf1.jpg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_sd2vb5hgol951.png",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_r444nzn1e0871.png",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_0efnphg5y7fa1.png",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/nhisjil4u7lg1.jpeg",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/itpwblkbu7lg1.jpeg",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/how-to-perma-the-150atk-on-battle-god-seal.png",
-    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/gYNzD9Alfqvo7JifgOpzRNFNOqf2CFzcirlQK_oqmCQ.png"
+    "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_0efnphg5y7fa1.png"
   ]
 }

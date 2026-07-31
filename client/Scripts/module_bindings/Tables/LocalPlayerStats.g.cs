@@ -15,10 +15,20 @@ namespace SpacetimeDB.Types
     {
         public sealed class LocalPlayerStatsHandle : RemoteTableHandle<EventContext, PlayerStats>
         {
-            protected override string RemoteTableName => "local_player_stats";
+            public override string RemoteTableName => "local_player_stats";
+
+            public sealed class ProfileIdUniqueIndex : UniqueIndexBase<ulong>
+            {
+                protected override ulong GetKey(PlayerStats row) => row.ProfileId;
+
+                public ProfileIdUniqueIndex(LocalPlayerStatsHandle table) : base(table) { }
+            }
+
+            public readonly ProfileIdUniqueIndex ProfileId;
 
             internal LocalPlayerStatsHandle(DbConnection conn) : base(conn)
             {
+                ProfileId = new(this);
             }
 
             protected override object GetPrimaryKey(PlayerStats row) => row.ProfileId;

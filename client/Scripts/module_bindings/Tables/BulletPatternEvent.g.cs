@@ -15,7 +15,7 @@ namespace SpacetimeDB.Types
     {
         public sealed class BulletPatternEventHandle : RemoteEventTableHandle<EventContext, BulletPatternEvent>
         {
-            protected override string RemoteTableName => "bullet_pattern_event";
+            public override string RemoteTableName => "bullet_pattern_event";
 
             public sealed class ChunkIndexIndex : BTreeIndexBase<long>
             {

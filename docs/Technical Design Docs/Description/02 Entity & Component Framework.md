@@ -107,7 +107,6 @@ On the client, the equivalent guarantee is simpler because there's no cross-tabl
 
 ## Known gaps / stubs
 
-- **`admin.rs`'s manual enemy spawn/despawn bypass the archetype helpers**, breaking the exact invariant this doc describes: `spawn_enemy` re-inserts `build_enemy_behavior`'s already-inserted result instead of calling `spawn_enemy_archetype`, double-inserting the behavior row; `despawn_enemy` deletes only the `Enemy` row and never calls `despawn_enemy_archetype`, leaking the whole behavior tree. Both are pre-existing, still-present bugs — detail and status in [[09 Admin, Debug & World Lifecycle|09]].
 - **`VisualComponent` (`AnimatedSprite2D` base) has no current instantiation** — the sprite-rooted components that exist today (`RemoteVisualComponent`, on `non_local_player.tscn`'s `AnimatedSprite2D`) attach their script directly to a scene-declared node rather than deriving this base. The base exists for the pattern's completeness, not because something currently uses it.
 
 ## Where to go next

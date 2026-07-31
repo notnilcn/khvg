@@ -15,7 +15,7 @@ namespace SpacetimeDB.Types
     {
         public sealed class EnemyHandle : RemoteTableHandle<EventContext, Enemy>
         {
-            protected override string RemoteTableName => "enemy";
+            public override string RemoteTableName => "enemy";
 
             public sealed class ChunkIndexIndex : BTreeIndexBase<long>
             {

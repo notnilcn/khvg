@@ -14,9 +14,9 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 [application]
 
-config/name="VampireSurvivorsTemplate"
+config/name="khvg"
 run/main_scene="uid://b6lwr7bsg1b0u"
-config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
+config/features=PackedStringArray("4.6", "GL Compatibility")
 
 [autoload]
 
@@ -31,7 +31,7 @@ window/stretch/aspect="expand"
 
 [dotnet]
 
-project/assembly_name="VampireSurvivorsTemplate"
+project/assembly_name="khvg"
 
 [editor_plugins]
 

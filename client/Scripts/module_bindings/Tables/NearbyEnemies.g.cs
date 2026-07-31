@@ -15,10 +15,20 @@ namespace SpacetimeDB.Types
     {
         public sealed class NearbyEnemiesHandle : RemoteTableHandle<EventContext, Enemy>
         {
-            protected override string RemoteTableName => "nearby_enemies";
+            public override string RemoteTableName => "nearby_enemies";
+
+            public sealed class EnemyIdUniqueIndex : UniqueIndexBase<ulong>
+            {
+                protected override ulong GetKey(Enemy row) => row.EnemyId;
+
+                public EnemyIdUniqueIndex(NearbyEnemiesHandle table) : base(table) { }
+            }
+
+            public readonly EnemyIdUniqueIndex EnemyId;
 
             internal NearbyEnemiesHandle(DbConnection conn) : base(conn)
             {
+                EnemyId = new(this);
             }
 
             protected override object GetPrimaryKey(Enemy row) => row.EnemyId;

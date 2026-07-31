@@ -5,637 +5,30 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "scripts",
+        "attachments",
         "CLAUDE.md",
         "Game Design Docs",
         "Old Notes",
-        "attachments",
-        "Resources and dependencies",
+        "scripts",
         "README.md",
-        "todo.md",
-        "Untitled.base"
+        "Resources and dependencies",
+        "Technical Design Docs"
       ]
-    },
-    "Resources and dependencies": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "hex-grid"
-      ]
-    },
-    "Resources and dependencies/hex-grid": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files",
-        "hexagon-tiling-of-an-hexagonal-grid",
-        "Hexagonal Grids_files",
-        "hexmod-representation",
-        "graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange.html",
-        "Hexagonal Grids.md",
-        "Hexagonal Grids.html",
-        "Implementation of Hex Grids_files",
-        "Implementation of Hex Grids.html",
-        "Implementation of Hex Grids.md"
-      ]
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "0Xeu0.gif",
-        "2458.en.js.download",
-        "2Gn1a.png",
-        "3696.en.js.download",
-        "620.en.js.download",
-        "8339.en.js.download",
-        "9366.en.js.download",
-        "7663.en.js.download",
-        "9986.en.js.download",
-        "a4c62c868ace14fce772659f8162dfd2",
-        "a2f11fafc7408dee74dc607e21f3e371.png",
-        "a66d4357f6153585176ed72f21c2c9d2",
-        "a007be5a61f6aa8f3e85ae2fc18dd66e.png",
-        "client",
-        "cookie-consent.en.js.download",
-        "channels.css",
-        "copy.en.js.download",
-        "cD6Fm.png",
-        "follow-ups-flag-modal.en.js.download",
-        "CulEv.png",
-        "fO0O4.png",
-        "follow-ups.en.js.download",
-        "google-analytics.en.js.download",
-        "gYnzn.jpg",
-        "full-anon.en.js.download",
-        "gpp.stub.js.download",
-        "highlightjs-loader.en.js.download",
-        "icon-48.png",
-        "htlbid.js.download",
-        "HZsgW.png",
-        "js",
-        "img-upvote.png",
-        "ivtrS.png",
-        "jquery.min.js.download",
-        "lang-mma.min.js.download",
-        "k8mW7.png",
-        "left-nav-events.en.js.download",
-        "logo.svg",
-        "one-tap.en.js.download",
-        "MathJax.js.download",
-        "otBannerSdk.js.download",
-        "otSDKStub.js.download",
-        "otGPP.js.download",
-        "otTCF.js.download",
-        "post-validation.en.js.download",
-        "primary.css",
-        "powered_by_logo.svg",
-        "pTSRp.png",
-        "px.js.download",
-        "redirect-action-modal.en.js.download",
-        "px(1).js.download",
-        "S1txm.png",
-        "saved_resource(1).html",
-        "saved_resource(2).html",
-        "saved_resource(3).html",
-        "sh1ol.png",
-        "saved_resource.html",
-        "show.en.js.download",
-        "so.png",
-        "stacks-svelte-labs.en.js.download",
-        "signup-modal.en.js.download",
-        "stacks-svelte.en.js.download",
-        "style",
-        "stub.en.js.download",
-        "svelte.en.js.download",
-        "stacks.css",
-        "stacks.min.js.download",
-        "xTHKv.png",
-        "YZus1.gif"
-      ]
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/0Xeu0.gif": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/2458.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/2Gn1a.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/3696.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/620.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/8339.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/9366.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/7663.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/9986.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a4c62c868ace14fce772659f8162dfd2": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a2f11fafc7408dee74dc607e21f3e371.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a66d4357f6153585176ed72f21c2c9d2": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a007be5a61f6aa8f3e85ae2fc18dd66e.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/client": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/cookie-consent.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/channels.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/copy.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/cD6Fm.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/follow-ups-flag-modal.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/CulEv.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/fO0O4.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/follow-ups.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/google-analytics.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/gYnzn.jpg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/full-anon.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/gpp.stub.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/highlightjs-loader.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/icon-48.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/htlbid.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/HZsgW.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/img-upvote.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/ivtrS.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/jquery.min.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/lang-mma.min.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/k8mW7.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/left-nav-events.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/logo.svg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/one-tap.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/MathJax.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otBannerSdk.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otSDKStub.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otGPP.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otTCF.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/post-validation.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/primary.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/powered_by_logo.svg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/pTSRp.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/px.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/redirect-action-modal.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/px(1).js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/S1txm.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(1).html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(2).html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(3).html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/sh1ol.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/show.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/so.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks-svelte-labs.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/signup-modal.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks-svelte.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/style": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stub.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/svelte.en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks.min.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/xTHKv.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/YZus1.gif": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "47e466502e507073@1681.js",
-        "8d271c22db968ab0@160.js",
-        "a46446d8701dfc65@35.js",
-        "index.js",
-        "index.html",
-        "CLAUDE.md",
-        "runtime.js",
-        "package.json",
-        "inspector.css",
-        "README.md"
-      ]
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/47e466502e507073@1681.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/8d271c22db968ab0@160.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/a46446d8701dfc65@35.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/index.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/index.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/runtime.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/package.json": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/inspector.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/README.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids_files": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "code-highlighting.js.download",
-        "diagrams.js.download",
-        "count-data.js.download",
-        "hex-algorithms.js.download",
-        "vue.v2.min.js.download",
-        "index.js.download",
-        "lib.js.download"
-      ]
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids_files/code-highlighting.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids_files/diagrams.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids_files/count-data.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids_files/hex-algorithms.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids_files/vue.v2.min.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids_files/index.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids_files/lib.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "47e466502e507073@1681.js",
-        "4ec02aa4a67ac76d@842.js",
-        "8d271c22db968ab0@160.js",
-        "a46446d8701dfc65@35.js",
-        "index.js",
-        "index.html",
-        "runtime.js",
-        "inspector.css",
-        "package.json",
-        "README.md"
-      ]
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/47e466502e507073@1681.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/4ec02aa4a67ac76d@842.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/8d271c22db968ab0@160.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/a46446d8701dfc65@35.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/index.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/index.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/runtime.js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/inspector.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/package.json": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/hexmod-representation/README.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Hexagonal Grids.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Implementation of Hex Grids_files": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "implementation.js.download",
-        "count-data.js.download",
-        "lib.js.download"
-      ]
-    },
-    "Resources and dependencies/hex-grid/Implementation of Hex Grids_files/implementation.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Implementation of Hex Grids_files/count-data.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Implementation of Hex Grids_files/lib.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Implementation of Hex Grids.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Resources and dependencies/hex-grid/Implementation of Hex Grids.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "todo.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Untitled.base": {
-      "isPinned": false,
-      "isHidden": false
     },
     "attachments": {
       "isPinned": false,
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "Completing My First Marble Colossus Ever! - Rotmg Lost Halls Progression! [audTKsu6qTA].mp4 - Shortcut.lnk",
-        "Full Skip Void Run [axbRt3DQBeM].mp4 - Shortcut.lnk",
-        "Oryx 3 - Beisa mini [RotMG] [eHdOlBJWA8Q].mp4 - Shortcut.lnk",
-        "A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
-        "my best t8 petless solo void run [mJUmuELLeYc].mp4 - Shortcut.lnk",
-        "Oryx 3 - Dammah mini [RotMG] [-mdb-6HktkQ].mp4 - Shortcut.lnk",
-        "game info rotmg",
-        "Oryx 3 - Leucoryx mini (with 3rd counter) [RotMG] [QiUTa-oDBxo].mp4 - Shortcut.lnk",
-        "Oryx 3 - Gemsbok mini [RotMG] [fNIsiBib2jc].mp4 - Shortcut.lnk",
-        "Rotmg - Bad players get world record Oryx 3 (2_29.39) [rgSjmhpQGM8].mp4 - Shortcut.lnk",
         "Pasted image 20260530125508.png",
+        "A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
         "Pasted image 20260530125651.png",
-        "RotMG - Murcian No Hit [-eOg3N7OKLY].mp4 - Shortcut.lnk",
-        "RotMG - lvl 1 Kitsune Umi gearless consumableless solo [IGowzviaTUA].mp4 - Shortcut.lnk",
         "Pasted image 20260530130436.png",
-        "RotMG - Secluded Thicket no-hit Solo [9CWy2cQJn34].mp4 - Shortcut.lnk",
-        "Rotmg - WR Void led by BigDort (5_42) [uvYRJ30DF5c].mp4 - Shortcut.lnk",
-        "RotMG Lost Halls 3 man full skip run [ZRKva2qU9kE].f270.mp4 - Shortcut.lnk",
-        "[RotMG] Solo Plagued Nest WR (3_21) [mau4t3P7Hpw].mp4 - Shortcut.lnk",
-        "Untitled.pdn",
-        "Tilings-of-Flat-Tori-by-Congruent-Hexagons.pdf"
+        "Tilings-of-Flat-Tori-by-Congruent-Hexagons.pdf",
+        "Untitled.pdn"
       ]
     },
-    "attachments/Completing My First Marble Colossus Ever! - Rotmg Lost Halls Progression! [audTKsu6qTA].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/Full Skip Void Run [axbRt3DQBeM].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/Oryx 3 - Beisa mini [RotMG] [eHdOlBJWA8Q].mp4 - Shortcut.lnk": {
+    "attachments/Pasted image 20260530125508.png": {
       "isPinned": false,
       "isHidden": false
     },
@@ -643,655 +36,7 @@
       "isPinned": false,
       "isHidden": false
     },
-    "attachments/my best t8 petless solo void run [mJUmuELLeYc].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/Oryx 3 - Dammah mini [RotMG] [-mdb-6HktkQ].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "build specialisation"
-      ]
-    },
-    "attachments/game info rotmg/build specialisation": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files",
-        "Bloody Monocle - The broken combo nobody asked for _ r_RotMG.html",
-        "How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files",
-        "How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG.html"
-      ]
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "anchor.html",
-        "472486.gif",
-        "avatar_default_2.png",
-        "avatar_default_3.png",
-        "avatar_default_0.png",
-        "avatar_default_6.png",
-        "avatar_default_5.png",
-        "bannerBackgroundImage_ky0811wv1sb61.png",
-        "avatar_default_7.png",
-        "bloody-monocle-the-broken-combo-nobody-asked-for-v0-87clr1n4z7t81.png",
-        "bloody-monocle-the-broken-combo-nobody-asked-for-v0-5vsjzfkcw7t81.png",
-        "bloody-monocle-the-broken-combo-nobody-asked-for-v0-c8hlroleu7t81.png",
-        "bloody-monocle-the-broken-combo-nobody-asked-for-v0-iuum35ean7t81.png",
-        "bloody-monocle-the-broken-combo-nobody-asked-for-v0-dnada8kl48t81.png",
-        "client",
-        "comment-forest-client-css-DHGvxlkb.css",
-        "bloody-monocle-the-broken-combo-nobody-asked-for-v0-vqe24qa6n7t81.png",
-        "concat",
-        "communityIcon_w92bxt4om6ng1.png",
-        "comment-preview-unit-client-css-CES0qfzD.css",
-        "concat(1)",
-        "concat(11)",
-        "concat(10)",
-        "concat(3)",
-        "concat(4)",
-        "concat(5)",
-        "concat(7)",
-        "concat(8)",
-        "concat(6)",
-        "concat(2)",
-        "concat(9)",
-        "D4YoAxddJm.js.download",
-        "DllzEuQPAN.js.download",
-        "enterprise.js.download",
-        "gqbctjodhfog1.png",
-        "header-client-css-BYPk6fcZ.css",
-        "iemdq48nrdof1.png",
-        "hui-grid-client-css-DP-dfyG4.css",
-        "header-large-client-css-Du4QHoPm.css",
-        "js",
-        "notifications-inbox-client-css-DO78Uimv.css",
-        "pdp-client-css-D3XSOpGh.css",
-        "nsfw-bypassable-modal-client-css-Dddft9rf.css",
-        "profileIcon_7otdjdsbv0re1.png",
-        "pdp-post-client-css-Bwd8sRtM.css",
-        "profileIcon_my3ytnchwnfa1.png",
-        "profileIcon_sd2vb5hgol951.png",
-        "qqgb3soh6d3g1.png",
-        "qr-code-persistent-button-upsell-client-css-Bgh5zqyM.css",
-        "recaptcha__en.js.download",
-        "saved_resource(1).html",
-        "saved_resource.html",
-        "search-input-desktop-client-css-tgqsYgQD.css",
-        "styles__ltr.css",
-        "style",
-        "subreddit-right-rail-client-css-5Lh6s9LI.css",
-        "suspense-CgVjpP8x.js.download"
-      ]
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/anchor.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/472486.gif": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/avatar_default_2.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/avatar_default_3.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/avatar_default_0.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/avatar_default_6.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/avatar_default_5.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/bannerBackgroundImage_ky0811wv1sb61.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/avatar_default_7.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/bloody-monocle-the-broken-combo-nobody-asked-for-v0-87clr1n4z7t81.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/bloody-monocle-the-broken-combo-nobody-asked-for-v0-5vsjzfkcw7t81.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/bloody-monocle-the-broken-combo-nobody-asked-for-v0-c8hlroleu7t81.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/bloody-monocle-the-broken-combo-nobody-asked-for-v0-iuum35ean7t81.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/bloody-monocle-the-broken-combo-nobody-asked-for-v0-dnada8kl48t81.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/client": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/comment-forest-client-css-DHGvxlkb.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/bloody-monocle-the-broken-combo-nobody-asked-for-v0-vqe24qa6n7t81.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/communityIcon_w92bxt4om6ng1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/comment-preview-unit-client-css-CES0qfzD.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(1)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(11)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(10)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(3)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(4)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(5)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(7)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(8)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(6)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(2)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/concat(9)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/D4YoAxddJm.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/DllzEuQPAN.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/enterprise.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/gqbctjodhfog1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/header-client-css-BYPk6fcZ.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/iemdq48nrdof1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/hui-grid-client-css-DP-dfyG4.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/header-large-client-css-Du4QHoPm.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/notifications-inbox-client-css-DO78Uimv.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/pdp-client-css-D3XSOpGh.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/nsfw-bypassable-modal-client-css-Dddft9rf.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/profileIcon_7otdjdsbv0re1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/pdp-post-client-css-Bwd8sRtM.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/profileIcon_my3ytnchwnfa1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/profileIcon_sd2vb5hgol951.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/qqgb3soh6d3g1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/qr-code-persistent-button-upsell-client-css-Bgh5zqyM.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/recaptcha__en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/saved_resource(1).html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/saved_resource.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/search-input-desktop-client-css-tgqsYgQD.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/styles__ltr.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/style": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/subreddit-right-rail-client-css-5Lh6s9LI.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG_files/suspense-CgVjpP8x.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/Bloody Monocle - The broken combo nobody asked for _ r_RotMG.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "472486.gif",
-        "anchor.html",
-        "6ag5gyo2u7lg1.jpeg",
-        "avatar_default_0.png",
-        "avatar_default_2.png",
-        "avatar_default_3.png",
-        "avatar_default_4.png",
-        "avatar_default_5.png",
-        "avatar_default_6.png",
-        "avatar_default_7.png",
-        "bannerBackgroundImage_ky0811wv1sb61.png",
-        "client",
-        "comment-forest-client-css-DHGvxlkb.css",
-        "communityIcon_w92bxt4om6ng1.png",
-        "concat",
-        "comment-preview-unit-client-css-CES0qfzD.css",
-        "concat(1)",
-        "concat(3)",
-        "concat(2)",
-        "concat(5)",
-        "concat(6)",
-        "concat(7)",
-        "concat(8)",
-        "concat(4)",
-        "concat(9)",
-        "DllzEuQPAN.js.download",
-        "D4YoAxddJm.js.download",
-        "enterprise.js.download",
-        "e0tlnsm2u7lg1.jpeg",
-        "fi5z80v8u7lg1.jpeg",
-        "gYNzD9Alfqvo7JifgOpzRNFNOqf2CFzcirlQK_oqmCQ.png",
-        "gqbctjodhfog1.png",
-        "header-large-client-css-Du4QHoPm.css",
-        "how-to-perma-the-150atk-on-battle-god-seal.png",
-        "header-client-css-BYPk6fcZ.css",
-        "hui-grid-client-css-DP-dfyG4.css",
-        "itpwblkbu7lg1.jpeg",
-        "js",
-        "nhisjil4u7lg1.jpeg",
-        "notifications-inbox-client-css-DO78Uimv.css",
-        "pdp-client-css-D3XSOpGh.css",
-        "pdp-post-client-css-Bwd8sRtM.css",
-        "nsfw-bypassable-modal-client-css-Dddft9rf.css",
-        "profileIcon_sd2vb5hgol951.png",
-        "profileIcon_r444nzn1e0871.png",
-        "profileIcon_0efnphg5y7fa1.png",
-        "profileIcon_sdj2v59z2gvf1.jpg",
-        "profileIcon_xwfwyccwkz6a1.jpg",
-        "recaptcha__en.js.download",
-        "saved_resource(1).html",
-        "qr-code-persistent-button-upsell-client-css-Bgh5zqyM.css",
-        "saved_resource.html",
-        "style",
-        "styles__ltr.css",
-        "search-input-desktop-client-css-tgqsYgQD.css",
-        "subreddit-right-rail-client-css-5Lh6s9LI.css",
-        "suspense-CgVjpP8x.js.download",
-        "zflpdhs2u7lg1.jpeg"
-      ]
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/472486.gif": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/anchor.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/6ag5gyo2u7lg1.jpeg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/avatar_default_0.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/avatar_default_2.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/avatar_default_3.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/avatar_default_4.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/avatar_default_5.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/avatar_default_6.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/avatar_default_7.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/bannerBackgroundImage_ky0811wv1sb61.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/client": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/comment-forest-client-css-DHGvxlkb.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/communityIcon_w92bxt4om6ng1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/comment-preview-unit-client-css-CES0qfzD.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(1)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(3)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(2)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(5)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(6)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(7)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(8)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(4)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/concat(9)": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/DllzEuQPAN.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/D4YoAxddJm.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/enterprise.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/e0tlnsm2u7lg1.jpeg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/fi5z80v8u7lg1.jpeg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/gYNzD9Alfqvo7JifgOpzRNFNOqf2CFzcirlQK_oqmCQ.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/gqbctjodhfog1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/header-large-client-css-Du4QHoPm.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/how-to-perma-the-150atk-on-battle-god-seal.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/header-client-css-BYPk6fcZ.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/hui-grid-client-css-DP-dfyG4.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/itpwblkbu7lg1.jpeg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/js": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/nhisjil4u7lg1.jpeg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/notifications-inbox-client-css-DO78Uimv.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/pdp-client-css-D3XSOpGh.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/pdp-post-client-css-Bwd8sRtM.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/nsfw-bypassable-modal-client-css-Dddft9rf.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_sd2vb5hgol951.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_r444nzn1e0871.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_0efnphg5y7fa1.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_sdj2v59z2gvf1.jpg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_xwfwyccwkz6a1.jpg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/recaptcha__en.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/saved_resource(1).html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/qr-code-persistent-button-upsell-client-css-Bgh5zqyM.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/saved_resource.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/style": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/styles__ltr.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/search-input-desktop-client-css-tgqsYgQD.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/subreddit-right-rail-client-css-5Lh6s9LI.css": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/suspense-CgVjpP8x.js.download": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/zflpdhs2u7lg1.jpeg": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG.html": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/Oryx 3 - Leucoryx mini (with 3rd counter) [RotMG] [QiUTa-oDBxo].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/Oryx 3 - Gemsbok mini [RotMG] [fNIsiBib2jc].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/Rotmg - Bad players get world record Oryx 3 (2_29.39) [rgSjmhpQGM8].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/Pasted image 20260530125508.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "attachments/Pasted image 20260530125651.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/RotMG - Murcian No Hit [-eOg3N7OKLY].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/RotMG - lvl 1 Kitsune Umi gearless consumableless solo [IGowzviaTUA].mp4 - Shortcut.lnk": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1299,19 +44,7 @@
       "isPinned": false,
       "isHidden": false
     },
-    "attachments/RotMG - Secluded Thicket no-hit Solo [9CWy2cQJn34].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/Rotmg - WR Void led by BigDort (5_42) [uvYRJ30DF5c].mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/RotMG Lost Halls 3 man full skip run [ZRKva2qU9kE].f270.mp4 - Shortcut.lnk": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "attachments/[RotMG] Solo Plagued Nest WR (3_21) [mau4t3P7Hpw].mp4 - Shortcut.lnk": {
+    "attachments/Tilings-of-Flat-Tori-by-Congruent-Hexagons.pdf": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1319,11 +52,144 @@
       "isPinned": false,
       "isHidden": false
     },
-    "attachments/Tilings-of-Flat-Tori-by-Congruent-Hexagons.pdf": {
+    "CLAUDE.md": {
       "isPinned": false,
       "isHidden": false
     },
-    "README.md": {
+    "Game Design Docs": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "01 Executive Summary.md",
+        "02 Gameplay.md",
+        "03 Class system, Item system, and Equipment system.md",
+        "03a Class, Item, and Equipment system (Draft).md",
+        "04 Lore.md",
+        "05 Biomes.md",
+        "99 (outdated) Game Design Document.md",
+        "Art",
+        "CLAUDE.md",
+        "Inspirations, research, and new things to add.md",
+        "Classes"
+      ]
+    },
+    "Game Design Docs/01 Executive Summary.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/02 Gameplay.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/03 Class system, Item system, and Equipment system.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/03a Class, Item, and Equipment system (Draft).md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/04 Lore.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/05 Biomes.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/99 (outdated) Game Design Document.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Art": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "Art style 3D.md",
+        "Hollow Knight References.md",
+        "Art style 2D.md"
+      ]
+    },
+    "Game Design Docs/Art/Art style 3D.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Art/Hollow Knight References.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Art/Art style 2D.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/CLAUDE.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Inspirations, research, and new things to add.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Classes": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "ART",
+        "Balancing details",
+        "Other or Undeveloped"
+      ]
+    },
+    "Game Design Docs/Classes/ART": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "crafter (dex) & (str) & (art).md",
+        "enchanter (wis) & (art).md",
+        "gatherer (str) & (art).md"
+      ]
+    },
+    "Game Design Docs/Classes/ART/crafter (dex) & (str) & (art).md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Classes/ART/enchanter (wis) & (art).md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Classes/ART/gatherer (str) & (art).md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Classes/Balancing details": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "Overview.md"
+      ]
+    },
+    "Game Design Docs/Classes/Balancing details/Overview.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Classes/Other or Undeveloped": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "sorcerer.md",
+        "summoner.md"
+      ]
+    },
+    "Game Design Docs/Classes/Other or Undeveloped/sorcerer.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Classes/Other or Undeveloped/summoner.md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1332,12 +198,12 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "Reasons to play the game",
-        "Monetisation",
+        "001 Explaining Game Code",
+        "002 Game Development",
         "General Gameplay Loop",
         "Dungeons, bosses, & enemies",
-        "002 Game Development",
-        "001 Explaining Game Code"
+        "Monetisation",
+        "Reasons to play the game"
       ]
     },
     "Old Notes/001 Explaining Game Code": {
@@ -1348,14 +214,14 @@
         "000 Autoloads, Spacetimedb.cs, and the elevated client.md",
         "000 Stupid notes for stupid people",
         "000a Player sync.md",
-        "001 (TO BE OVERHAULED) Opening the game.md",
         "000b Enemy sync.md",
         "000c Bullet sync.md",
+        "001 (TO BE OVERHAULED) Opening the game.md",
         "001 Opening the game 1.md",
         "002 After joining the game.md",
-        "999 Hard coded stuff that might be an issue later.md",
         "Important Classes and Node Trees",
         "Old notes",
+        "999 Hard coded stuff that might be an issue later.md",
         "Plugins and addons and whatnot"
       ]
     },
@@ -1373,11 +239,65 @@
         "Stupid notes.md"
       ]
     },
-    "Old Notes/001 Explaining Game Code/000a Player sync.md": {
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Godot": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "000 Godot overview.md"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Godot/000 Godot overview.md": {
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/001 Explaining Game Code/001 (TO BE OVERHAULED) Opening the game.md": {
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "000 Spacetimedb overview.md",
+        "Untitled 2.md",
+        "Untitled 1.md",
+        "Untitled 5.md",
+        "Untitled 3.md",
+        "Untitled 4.md",
+        "Untitled.md"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/000 Spacetimedb overview.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 2.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 1.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 5.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 3.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 4.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Stupid notes.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/000a Player sync.md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1389,15 +309,15 @@
       "isPinned": false,
       "isHidden": false
     },
+    "Old Notes/001 Explaining Game Code/001 (TO BE OVERHAULED) Opening the game.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
     "Old Notes/001 Explaining Game Code/001 Opening the game 1.md": {
       "isPinned": false,
       "isHidden": false
     },
     "Old Notes/001 Explaining Game Code/002 After joining the game.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/999 Hard coded stuff that might be an issue later.md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1410,49 +330,6 @@
         "Game"
       ]
     },
-    "Old Notes/001 Explaining Game Code/Old notes": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "001 Opening the game",
-        "000 Singleton"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "BlastBullets2D"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Godot": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "000 Godot overview.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "000 Spacetimedb overview.md",
-        "Untitled 2.md",
-        "Untitled 3.md",
-        "Untitled 1.md",
-        "Untitled 4.md",
-        "Untitled 5.md",
-        "Untitled.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Stupid notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters": {
       "isPinned": false,
       "isHidden": false,
@@ -1460,45 +337,6 @@
       "customOrder": [
         "Player"
       ]
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "World"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Old and outdated notes",
-        "Untitled.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot/BlastBullets2D": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Stuff that's relevant for the spacetimedb translation.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "000 General Singleton notes.md",
-        "global.gd Notes.md",
-        "network.gd Notes.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Godot/000 Godot overview.md": {
-      "isPinned": false,
-      "isHidden": false
     },
     "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player": {
       "isPinned": false,
@@ -1509,71 +347,6 @@
         "Player.gd.md",
         "res_player.gd.md"
       ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/000 Spacetimedb overview.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game/World": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "spawner.gd and spawner.tscn.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 2.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 3.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 1.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "(old) 000 Opening the game & then clicking Host Game or Join Game.md",
-        "(old) 001 Spawning into a server.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 4.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/000 General Singleton notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Untitled.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/global.gd Notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/network.gd Notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 5.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot/BlastBullets2D/Stuff that's relevant for the spacetimedb translation.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled.md": {
-      "isPinned": false,
-      "isHidden": false
     },
     "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player/atoastwiththoughts": {
       "isPinned": false,
@@ -1587,15 +360,108 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes/(old) 000 Opening the game & then clicking Host Game or Join Game.md": {
+    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "World"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game/World": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "spawner.gd and spawner.tscn.md"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game/World/spawner.gd and spawner.tscn.md": {
       "isPinned": false,
       "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/Old notes": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "000 Singleton",
+        "001 Opening the game"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "global.gd Notes.md",
+        "000 General Singleton notes.md",
+        "network.gd Notes.md"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/global.gd Notes.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/000 General Singleton notes.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/network.gd Notes.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "Old and outdated notes",
+        "Untitled.md"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "(old) 001 Spawning into a server.md",
+        "(old) 000 Opening the game & then clicking Host Game or Join Game.md"
+      ]
     },
     "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes/(old) 001 Spawning into a server.md": {
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game/World/spawner.gd and spawner.tscn.md": {
+    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes/(old) 000 Opening the game & then clicking Host Game or Join Game.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Untitled.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/999 Hard coded stuff that might be an issue later.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "BlastBullets2D"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot/BlastBullets2D": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "Stuff that's relevant for the spacetimedb translation.md"
+      ]
+    },
+    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot/BlastBullets2D/Stuff that's relevant for the spacetimedb translation.md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1604,121 +470,57 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "Small stuff to implement.md",
-        "Notnilc",
-        "Asemif",
-        "Things to fix list.md",
-        "Small stuff.md",
-        "Shelved todo list.md",
-        "Overhaul list.md",
-        "Optimizations.md",
+        "Features to implement list.md",
         "Features to implement",
-        "Features to implement list.md"
-      ]
-    },
-    "Old Notes/002 Game Development/Features to implement": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Player bullets system.md",
-        "Enemy and Player Movement.md",
-        "World grid notes.md",
-        "Enemy bullets system.md",
-        "Attachments"
+        "Asemif",
+        "Optimizations.md",
+        "Notnilc",
+        "Overhaul list.md",
+        "Shelved todo list.md",
+        "Small stuff to implement.md",
+        "Things to fix list.md",
+        "Small stuff.md"
       ]
     },
     "Old Notes/002 Game Development/Features to implement list.md": {
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/002 Game Development/Optimizations.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Shelved todo list.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Overhaul list.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Small stuff.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Things to fix list.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Asemif": {
+    "Old Notes/002 Game Development/Features to implement": {
       "isPinned": false,
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "Untitled.md"
+        "Attachments",
+        "Enemy bullets system.md",
+        "Enemy and Player Movement.md",
+        "Player bullets system.md",
+        "World grid notes.md"
       ]
-    },
-    "Old Notes/002 Game Development/Notnilc": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Untitled.md"
-      ]
-    },
-    "Old Notes/002 Game Development/Small stuff to implement.md": {
-      "isPinned": false,
-      "isHidden": false
     },
     "Old Notes/002 Game Development/Features to implement/Attachments": {
       "isPinned": false,
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "Untitled.png",
-        "Untitled-Clintons-Framework-16.pdn",
-        "Untitled.pdn",
-        "Untitled .pdn",
-        "untitled (7).png",
-        "Pasted image 20260426070151 .png",
-        "untitled (1).pdn",
-        "Pasted image 20260426070151.png",
-        "Pasted image 20260426070151.pdn",
-        "chunkradius8.svg",
-        "Pasted image 20260426070151 .pdn",
-        "Pasted image 20260425115208.png",
-        "chunkradius7.png",
         "chunkradius12.svg",
+        "chunkradius2.svg",
         "chunkradius5.png",
         "chunkradius6.svg",
-        "chunkradius2.svg"
+        "chunkradius7.png",
+        "chunkradius8.svg",
+        "Pasted image 20260425115208.png",
+        "Pasted image 20260426070151 .pdn",
+        "Pasted image 20260426070151 .png",
+        "Pasted image 20260426070151.png",
+        "Pasted image 20260426070151.pdn",
+        "untitled (1).pdn",
+        "untitled (7).png",
+        "Untitled .pdn",
+        "Untitled-Clintons-Framework-16.pdn",
+        "Untitled.pdn",
+        "Untitled.png"
       ]
-    },
-    "Old Notes/002 Game Development/Features to implement/Enemy and Player Movement.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Features to implement/World grid notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Features to implement/Enemy bullets system.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Features to implement/Player bullets system.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Asemif/Untitled.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Notnilc/Untitled.md": {
-      "isPinned": false,
-      "isHidden": false
     },
     "Old Notes/002 Game Development/Features to implement/Attachments/chunkradius12.svg": {
       "isPinned": false,
@@ -1732,11 +534,11 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/002 Game Development/Features to implement/Attachments/chunkradius7.png": {
+    "Old Notes/002 Game Development/Features to implement/Attachments/chunkradius6.svg": {
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/002 Game Development/Features to implement/Attachments/chunkradius6.svg": {
+    "Old Notes/002 Game Development/Features to implement/Attachments/chunkradius7.png": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1748,11 +550,11 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/002 Game Development/Features to implement/Attachments/Pasted image 20260426070151 .png": {
+    "Old Notes/002 Game Development/Features to implement/Attachments/Pasted image 20260426070151 .pdn": {
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/002 Game Development/Features to implement/Attachments/Pasted image 20260426070151 .pdn": {
+    "Old Notes/002 Game Development/Features to implement/Attachments/Pasted image 20260426070151 .png": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1768,19 +570,11 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/002 Game Development/Features to implement/Attachments/Untitled .pdn": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "Old Notes/002 Game Development/Features to implement/Attachments/untitled (7).png": {
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/002 Game Development/Features to implement/Attachments/Untitled.png": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/002 Game Development/Features to implement/Attachments/Untitled.pdn": {
+    "Old Notes/002 Game Development/Features to implement/Attachments/Untitled .pdn": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1788,44 +582,118 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Game Design Docs": {
+    "Old Notes/002 Game Development/Features to implement/Attachments/Untitled.pdn": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Features to implement/Attachments/Untitled.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Features to implement/Enemy bullets system.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Features to implement/Enemy and Player Movement.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Features to implement/Player bullets system.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Features to implement/World grid notes.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Asemif": {
       "isPinned": false,
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "01 Executive Summary.md",
-        "02 Gameplay.md",
-        "03 Class system, Item system, and Equipment system.md",
-        "Classes",
-        "04 Lore.md",
-        "Art",
-        "05 Biomes.md",
-        "99 (outdated) Game Design Document.md"
+        "Untitled.md"
       ]
+    },
+    "Old Notes/002 Game Development/Asemif/Untitled.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Optimizations.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Notnilc": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "Untitled.md"
+      ]
+    },
+    "Old Notes/002 Game Development/Notnilc/Untitled.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Overhaul list.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Shelved todo list.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Small stuff to implement.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Things to fix list.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/002 Game Development/Small stuff.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/General Gameplay Loop": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "000 On account creation.md",
+        "001 On Spawn.md"
+      ]
+    },
+    "Old Notes/General Gameplay Loop/000 On account creation.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/General Gameplay Loop/001 On Spawn.md": {
+      "isPinned": false,
+      "isHidden": false
     },
     "Old Notes/Dungeons, bosses, & enemies": {
       "isPinned": false,
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "Puppet Master's Theatre ripoff.md",
-        "Nest ripoff.md",
-        "Murcian ripoff.md",
-        "Lost Halls ripoff.md",
-        "Fungal Cavern ripoff.md",
         "00 Dungeons & Bosses general notes.md",
-        "01 Enemy AI.md"
+        "Fungal Cavern ripoff.md",
+        "01 Enemy AI.md",
+        "Lost Halls ripoff.md",
+        "Murcian ripoff.md",
+        "Nest ripoff.md",
+        "Puppet Master's Theatre ripoff.md"
       ]
-    },
-    "Old Notes/Dungeons, bosses, & enemies/01 Enemy AI.md": {
-      "isPinned": false,
-      "isHidden": false
     },
     "Old Notes/Dungeons, bosses, & enemies/00 Dungeons & Bosses general notes.md": {
       "isPinned": false,
       "isHidden": false
     },
     "Old Notes/Dungeons, bosses, & enemies/Fungal Cavern ripoff.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Old Notes/Dungeons, bosses, & enemies/01 Enemy AI.md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1845,32 +713,15 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/General Gameplay Loop": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "001 On Spawn.md",
-        "000 On account creation.md"
-      ]
-    },
-    "Old Notes/General Gameplay Loop/000 On account creation.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/General Gameplay Loop/001 On Spawn.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "Old Notes/Monetisation": {
       "isPinned": false,
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "Cosmetic Gacha.md",
-        "Subscription to automatically collect daily login rewards.md",
+        "Across account.md",
         "Consumables.md",
-        "Across account.md"
+        "Subscription to automatically collect daily login rewards.md",
+        "Cosmetic Gacha.md"
       ]
     },
     "Old Notes/Monetisation/Across account.md": {
@@ -1898,136 +749,1272 @@
         "Group Coordination.md"
       ]
     },
-    "Old Notes/Reasons to play the game/Group Coordination.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "Old Notes/Reasons to play the game/Build specialisation.md": {
       "isPinned": false,
       "isHidden": false
     },
-    "Game Design Docs/02 Gameplay.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/04 Lore.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/05 Biomes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/99 (outdated) Game Design Document.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Art": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Art style 2D.md",
-        "Hollow Knight References.md",
-        "Art style 3D.md"
-      ]
-    },
-    "Game Design Docs/Art/Art style 3D.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Art/Hollow Knight References.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Art/Art style 2D.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Balancing details",
-        "Other or Undeveloped",
-        "ART"
-      ]
-    },
-    "Game Design Docs/Classes/ART": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "gatherer (str) & (art).md",
-        "crafter (dex) & (str) & (art).md",
-        "enchanter (wis) & (art).md"
-      ]
-    },
-    "Game Design Docs/Classes/Other or Undeveloped": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "summoner.md",
-        "sorcerer.md"
-      ]
-    },
-    "Game Design Docs/Classes/Other or Undeveloped/sorcerer.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/ART/enchanter (wis) & (art).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/Other or Undeveloped/summoner.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/ART/crafter (dex) & (str) & (art).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/ART/gatherer (str) & (art).md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/01 Executive Summary.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/Classes/Balancing details": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Overview.md"
-      ]
-    },
-    "Game Design Docs/Classes/Balancing details/Overview.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "CLAUDE.md": {
+    "Old Notes/Reasons to play the game/Group Coordination.md": {
       "isPinned": false,
       "isHidden": false
     },
     "scripts": {
       "isPinned": false,
       "isHidden": false,
+      "sortOrder": "custom",
       "customOrder": [
         "discord_sync.py"
-      ],
-      "sortOrder": "custom"
+      ]
     },
     "scripts/discord_sync.py": {
       "isPinned": false,
       "isHidden": false
     },
-    "Game Design Docs/03 Class system, Item system, and Equipment system.md": {
+    "README.md": {
       "isPinned": false,
       "isHidden": false
+    },
+    "Resources and dependencies": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "hex-grid"
+      ]
+    },
+    "Resources and dependencies/hex-grid": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange.html",
+        "graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files",
+        "hexagon-tiling-of-an-hexagonal-grid",
+        "Hexagonal Grids.html",
+        "Hexagonal Grids.md",
+        "Hexagonal Grids_files",
+        "hexmod-representation",
+        "Implementation of Hex Grids.html",
+        "Implementation of Hex Grids.md",
+        "Implementation of Hex Grids_files"
+      ]
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "0Xeu0.gif",
+        "2458.en.js.download",
+        "2Gn1a.png",
+        "3696.en.js.download",
+        "620.en.js.download",
+        "7663.en.js.download",
+        "8339.en.js.download",
+        "9366.en.js.download",
+        "9986.en.js.download",
+        "a007be5a61f6aa8f3e85ae2fc18dd66e.png",
+        "a2f11fafc7408dee74dc607e21f3e371.png",
+        "a4c62c868ace14fce772659f8162dfd2",
+        "a66d4357f6153585176ed72f21c2c9d2",
+        "cD6Fm.png",
+        "channels.css",
+        "client",
+        "cookie-consent.en.js.download",
+        "copy.en.js.download",
+        "CulEv.png",
+        "fO0O4.png",
+        "follow-ups-flag-modal.en.js.download",
+        "follow-ups.en.js.download",
+        "full-anon.en.js.download",
+        "google-analytics.en.js.download",
+        "gpp.stub.js.download",
+        "gYnzn.jpg",
+        "highlightjs-loader.en.js.download",
+        "htlbid.js.download",
+        "HZsgW.png",
+        "icon-48.png",
+        "img-upvote.png",
+        "ivtrS.png",
+        "jquery.min.js.download",
+        "k8mW7.png",
+        "lang-mma.min.js.download",
+        "logo.svg",
+        "left-nav-events.en.js.download",
+        "js",
+        "MathJax.js.download",
+        "one-tap.en.js.download",
+        "otBannerSdk.js.download",
+        "otGPP.js.download",
+        "otSDKStub.js.download",
+        "otTCF.js.download",
+        "post-validation.en.js.download",
+        "powered_by_logo.svg",
+        "primary.css",
+        "pTSRp.png",
+        "px(1).js.download",
+        "px.js.download",
+        "redirect-action-modal.en.js.download",
+        "S1txm.png",
+        "saved_resource(1).html",
+        "saved_resource(2).html",
+        "saved_resource.html",
+        "sh1ol.png",
+        "saved_resource(3).html",
+        "show.en.js.download",
+        "signup-modal.en.js.download",
+        "so.png",
+        "stacks-svelte-labs.en.js.download",
+        "stacks-svelte.en.js.download",
+        "stacks.css",
+        "stacks.min.js.download",
+        "stub.en.js.download",
+        "style",
+        "svelte.en.js.download",
+        "xTHKv.png",
+        "YZus1.gif"
+      ]
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/0Xeu0.gif": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/2458.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/2Gn1a.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/3696.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/620.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/7663.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/8339.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/9366.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/9986.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a007be5a61f6aa8f3e85ae2fc18dd66e.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a2f11fafc7408dee74dc607e21f3e371.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a4c62c868ace14fce772659f8162dfd2": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a66d4357f6153585176ed72f21c2c9d2": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/cD6Fm.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/channels.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/client": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/cookie-consent.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/copy.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/CulEv.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/fO0O4.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/follow-ups-flag-modal.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/follow-ups.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/full-anon.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/google-analytics.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/gpp.stub.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/gYnzn.jpg": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/highlightjs-loader.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/htlbid.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/HZsgW.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/icon-48.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/img-upvote.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/ivtrS.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/jquery.min.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/k8mW7.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/lang-mma.min.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/logo.svg": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/left-nav-events.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/MathJax.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/one-tap.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otBannerSdk.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otGPP.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otSDKStub.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otTCF.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/post-validation.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/powered_by_logo.svg": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/primary.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/pTSRp.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/px(1).js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/px.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/redirect-action-modal.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/S1txm.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(1).html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(2).html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/sh1ol.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(3).html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/show.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/signup-modal.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/so.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks-svelte-labs.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks-svelte.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks.min.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stub.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/style": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/svelte.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/xTHKv.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/YZus1.gif": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "47e466502e507073@1681.js",
+        "8d271c22db968ab0@160.js",
+        "a46446d8701dfc65@35.js",
+        "CLAUDE.md",
+        "index.html",
+        "index.js",
+        "inspector.css",
+        "package.json",
+        "README.md",
+        "runtime.js"
+      ]
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/47e466502e507073@1681.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/8d271c22db968ab0@160.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/a46446d8701dfc65@35.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/index.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/index.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/inspector.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/package.json": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/README.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/runtime.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids_files": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "code-highlighting.js.download",
+        "count-data.js.download",
+        "diagrams.js.download",
+        "hex-algorithms.js.download",
+        "index.js.download",
+        "lib.js.download",
+        "vue.v2.min.js.download"
+      ]
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids_files/code-highlighting.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids_files/count-data.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids_files/diagrams.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids_files/hex-algorithms.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids_files/index.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids_files/lib.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Hexagonal Grids_files/vue.v2.min.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "47e466502e507073@1681.js",
+        "4ec02aa4a67ac76d@842.js",
+        "8d271c22db968ab0@160.js",
+        "a46446d8701dfc65@35.js",
+        "index.html",
+        "index.js",
+        "inspector.css",
+        "README.md",
+        "package.json",
+        "runtime.js"
+      ]
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/47e466502e507073@1681.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/4ec02aa4a67ac76d@842.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/8d271c22db968ab0@160.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/a46446d8701dfc65@35.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/index.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/index.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/inspector.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/README.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/package.json": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/hexmod-representation/runtime.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Implementation of Hex Grids.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Implementation of Hex Grids.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Implementation of Hex Grids_files": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "count-data.js.download",
+        "implementation.js.download",
+        "lib.js.download"
+      ]
+    },
+    "Resources and dependencies/hex-grid/Implementation of Hex Grids_files/count-data.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Implementation of Hex Grids_files/implementation.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Resources and dependencies/hex-grid/Implementation of Hex Grids_files/lib.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "Description",
+        "possible optimisations.md",
+        "REGENERATION PLAN.md",
+        "Resources and dependencies",
+        "Workflow (how to add new things)"
+      ]
+    },
+    "Technical Design Docs/Description": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "00 Roadmap.md",
+        "01 Architecture & Sync Model.md",
+        "02 Entity & Component Framework.md",
+        "03 World & Hex Grid.md",
+        "05 Item, Equipment & Enchantment System.md",
+        "04 Player System.md",
+        "06 Enemy AI & Bullet Patterns.md",
+        "07 Combat & Damage Math.md",
+        "08 Client Rendering & Camera.md",
+        "09 Admin, Debug & World Lifecycle.md",
+        "99 End-to-End Flowchart.canvas",
+        "99 End-to-End Timeline Flowchart.md"
+      ]
+    },
+    "Technical Design Docs/Description/00 Roadmap.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/01 Architecture & Sync Model.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/02 Entity & Component Framework.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/03 World & Hex Grid.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/05 Item, Equipment & Enchantment System.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/04 Player System.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/06 Enemy AI & Bullet Patterns.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/07 Combat & Damage Math.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/08 Client Rendering & Camera.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/09 Admin, Debug & World Lifecycle.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/99 End-to-End Flowchart.canvas": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/99 End-to-End Timeline Flowchart.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/possible optimisations.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/REGENERATION PLAN.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "hex-grid"
+      ]
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange.html",
+        "graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files",
+        "hexagon-tiling-of-an-hexagonal-grid",
+        "Hexagonal Grids.html",
+        "Hexagonal Grids.md",
+        "Hexagonal Grids_files",
+        "hexmod-representation",
+        "Implementation of Hex Grids.html",
+        "Implementation of Hex Grids.md",
+        "Implementation of Hex Grids_files"
+      ]
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "0Xeu0.gif",
+        "2458.en.js.download",
+        "2Gn1a.png",
+        "3696.en.js.download",
+        "620.en.js.download",
+        "7663.en.js.download",
+        "8339.en.js.download",
+        "9366.en.js.download",
+        "9986.en.js.download",
+        "a007be5a61f6aa8f3e85ae2fc18dd66e.png",
+        "a2f11fafc7408dee74dc607e21f3e371.png",
+        "a4c62c868ace14fce772659f8162dfd2",
+        "a66d4357f6153585176ed72f21c2c9d2",
+        "cD6Fm.png",
+        "channels.css",
+        "client",
+        "cookie-consent.en.js.download",
+        "copy.en.js.download",
+        "CulEv.png",
+        "fO0O4.png",
+        "follow-ups-flag-modal.en.js.download",
+        "follow-ups.en.js.download",
+        "full-anon.en.js.download",
+        "google-analytics.en.js.download",
+        "gpp.stub.js.download",
+        "gYnzn.jpg",
+        "highlightjs-loader.en.js.download",
+        "htlbid.js.download",
+        "HZsgW.png",
+        "icon-48.png",
+        "img-upvote.png",
+        "ivtrS.png",
+        "jquery.min.js.download",
+        "k8mW7.png",
+        "js",
+        "lang-mma.min.js.download",
+        "left-nav-events.en.js.download",
+        "logo.svg",
+        "MathJax.js.download",
+        "otBannerSdk.js.download",
+        "one-tap.en.js.download",
+        "otGPP.js.download",
+        "otSDKStub.js.download",
+        "otTCF.js.download",
+        "post-validation.en.js.download",
+        "powered_by_logo.svg",
+        "primary.css",
+        "pTSRp.png",
+        "px(1).js.download",
+        "redirect-action-modal.en.js.download",
+        "px.js.download",
+        "S1txm.png",
+        "saved_resource(1).html",
+        "saved_resource(2).html",
+        "saved_resource(3).html",
+        "saved_resource.html",
+        "sh1ol.png",
+        "show.en.js.download",
+        "signup-modal.en.js.download",
+        "so.png",
+        "stacks-svelte-labs.en.js.download",
+        "stacks-svelte.en.js.download",
+        "stacks.css",
+        "stacks.min.js.download",
+        "stub.en.js.download",
+        "style",
+        "svelte.en.js.download",
+        "xTHKv.png",
+        "YZus1.gif"
+      ]
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/0Xeu0.gif": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/2458.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/2Gn1a.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/3696.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/620.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/7663.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/8339.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/9366.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/9986.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a007be5a61f6aa8f3e85ae2fc18dd66e.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a2f11fafc7408dee74dc607e21f3e371.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a4c62c868ace14fce772659f8162dfd2": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/a66d4357f6153585176ed72f21c2c9d2": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/cD6Fm.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/channels.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/client": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/cookie-consent.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/copy.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/CulEv.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/fO0O4.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/follow-ups-flag-modal.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/follow-ups.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/full-anon.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/google-analytics.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/gpp.stub.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/gYnzn.jpg": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/highlightjs-loader.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/htlbid.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/HZsgW.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/icon-48.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/img-upvote.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/ivtrS.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/jquery.min.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/k8mW7.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/lang-mma.min.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/left-nav-events.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/logo.svg": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/MathJax.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otBannerSdk.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/one-tap.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otGPP.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otSDKStub.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/otTCF.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/post-validation.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/powered_by_logo.svg": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/primary.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/pTSRp.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/px(1).js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/redirect-action-modal.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/px.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/S1txm.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(1).html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(2).html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource(3).html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/saved_resource.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/sh1ol.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/show.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/signup-modal.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/so.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks-svelte-labs.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks-svelte.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stacks.min.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/stub.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/style": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/svelte.en.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/xTHKv.png": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange_files/YZus1.gif": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "47e466502e507073@1681.js",
+        "8d271c22db968ab0@160.js",
+        "a46446d8701dfc65@35.js",
+        "CLAUDE.md",
+        "index.html",
+        "index.js",
+        "inspector.css",
+        "package.json",
+        "README.md",
+        "runtime.js"
+      ]
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/47e466502e507073@1681.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/8d271c22db968ab0@160.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/a46446d8701dfc65@35.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/CLAUDE.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/index.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/index.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/inspector.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/package.json": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/README.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexagon-tiling-of-an-hexagonal-grid/runtime.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "code-highlighting.js.download",
+        "count-data.js.download",
+        "diagrams.js.download",
+        "hex-algorithms.js.download",
+        "index.js.download",
+        "lib.js.download",
+        "vue.v2.min.js.download"
+      ]
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files/code-highlighting.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files/count-data.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files/diagrams.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files/hex-algorithms.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files/index.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files/lib.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Hexagonal Grids_files/vue.v2.min.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "47e466502e507073@1681.js",
+        "4ec02aa4a67ac76d@842.js",
+        "8d271c22db968ab0@160.js",
+        "a46446d8701dfc65@35.js",
+        "index.html",
+        "index.js",
+        "inspector.css",
+        "package.json",
+        "README.md",
+        "runtime.js"
+      ]
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/47e466502e507073@1681.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/4ec02aa4a67ac76d@842.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/8d271c22db968ab0@160.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/a46446d8701dfc65@35.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/index.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/index.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/inspector.css": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/package.json": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/README.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/hexmod-representation/runtime.js": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Implementation of Hex Grids.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Implementation of Hex Grids.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Implementation of Hex Grids_files": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": [
+        "count-data.js.download",
+        "implementation.js.download",
+        "lib.js.download"
+      ]
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Implementation of Hex Grids_files/count-data.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Implementation of Hex Grids_files/implementation.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Resources and dependencies/hex-grid/Implementation of Hex Grids_files/lib.js.download": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Workflow (how to add new things)": {
+      "isPinned": false,
+      "isHidden": false,
+      "sortOrder": "custom",
+      "customOrder": []
     }
   },
   "pinnedFiles": [],

@@ -15,7 +15,7 @@ namespace SpacetimeDB.Types
     {
         public sealed class PlayerPositionHandle : RemoteTableHandle<EventContext, PlayerPosition>
         {
-            protected override string RemoteTableName => "player_position";
+            public override string RemoteTableName => "player_position";
 
             public sealed class ChunkIndexIndex : BTreeIndexBase<long>
             {
