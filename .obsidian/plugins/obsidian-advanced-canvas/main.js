@@ -1763,8 +1763,11 @@ var DEFAULT_SETTINGS_VALUES = {
   disableFontSizeRelativeToZoom: false,
   wrapGroupLabels: true,
   // Added by an LLM agent
+<<<<<<< HEAD
   hideGroupLabels: false,
   // Added by an LLM agent
+=======
+>>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
   canvasMetadataCompatibilityEnabled: true,
   enableSingleNodeLinks: true,
   enableSingleNodePopupReferenceCopy: false,
@@ -1895,12 +1898,15 @@ var SETTINGS = {
         label: "Wrap group labels",
         description: "When enabled, a group label that is too long for the group will wrap onto multiple lines instead of being cut off.",
         type: "boolean"
+<<<<<<< HEAD
       },
       hideGroupLabels: {
         // Added by an LLM agent
         label: "Hide group labels",
         description: 'When enabled, group labels are hidden. Can be toggled with the "Toggle group label visibility" command.',
         type: "boolean"
+=======
+>>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
       }
     }
   },
@@ -4146,7 +4152,11 @@ var GroupLabelWrapCanvasExtension = class extends CanvasExtension {
   }
 };
 
+<<<<<<< HEAD
 // src/canvas-extensions/group-label-visibility-canvas-extension.ts
+=======
+// src/canvas-extensions/node-templates-canvas-extension.ts
+>>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
 var import_obsidian13 = require("obsidian");
 var GroupLabelVisibilityCanvasExtension = class extends CanvasExtension {
   isEnabled() {
@@ -7730,8 +7740,11 @@ var EXPOSED_SETTINGS = [
   "disableFontSizeRelativeToZoom",
   "wrapGroupLabels",
   // Added by an LLM agent
+<<<<<<< HEAD
   "hideGroupLabels",
   // Added by an LLM agent
+=======
+>>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
   "hideBackgroundGridWhenInReadonly",
   "readingModeFixEnabled",
   "collapsibleGroupsFeatureEnabled",
@@ -8000,8 +8013,11 @@ var CANVAS_EXTENSIONS = [
   GroupCanvasExtension,
   GroupLabelWrapCanvasExtension,
   // Added by an LLM agent
+<<<<<<< HEAD
   GroupLabelVisibilityCanvasExtension,
   // Added by an LLM agent
+=======
+>>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
   NodeTemplatesCanvasExtension,
   VariableBreakpointCanvasExtension,
   EdgeHighlightCanvasExtension,

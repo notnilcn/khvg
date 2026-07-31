@@ -347,9 +347,12 @@
   overflow-wrap: anywhere;
   width: var(--wrapped-group-label-width, auto);
 }
+<<<<<<< HEAD
 .canvas-wrapper[data-hide-group-labels=true] .canvas-node .canvas-group-label:not(:focus) {
   display: none;
 }
+=======
+>>>>>>> 40bde6152c25a338ac2ecf7d94553792c8c8dcaf
 .canvas-edges path[data-path=dotted] {
   stroke-dasharray: calc(3px * var(--zoom-multiplier));
 }
