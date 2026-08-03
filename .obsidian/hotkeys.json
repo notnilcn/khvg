@@ -70,5 +70,40 @@
       ],
       "key": "R"
     }
+  ],
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1785493796156": [
+    {
+      "modifiers": [
+        "Alt",
+        "Shift"
+      ],
+      "key": "H"
+    }
+  ],
+  "track-changes:toggle-minimal-markup": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "C"
+    }
+  ],
+  "sync-embeds:toggle-fold-selected-headings": [
+    {
+      "modifiers": [
+        "Alt",
+        "Shift"
+      ],
+      "key": "F"
+    }
+  ],
+  "editor:toggle-fold": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "F"
+    }
   ]
 }

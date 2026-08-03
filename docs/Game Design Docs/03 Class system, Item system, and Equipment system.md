@@ -3,11 +3,8 @@ Classes aren't going to be explicitly defined. They are going to be defined by t
 
 **The reason why it is defined this way is because I want to be able to define new classes simply by adding new gear to the game**. As in, if I want to define a new class (e.g. a monk), then I'll simply just define the exact stat distribution I want for that class (e.g. monk = equal parts wisdom + strength + dexterity) and I add new gear that requires that stat distribution.
 
-~~This means that players will be able to re-spec their characters into different classes by redistributing their stats (we can probably make this extremely impractical though, for example we could make it so that all viable gear absolutely requires you to have a certain distribution of stats - as in, their stat distributions need to meet both a relative threshold and an absolute threshold) which may or may not be a good thing.~~
+The reason for this is that I wouldn't have to update the spacetimedb database schema whenever I wanted to add a class, so players wouldn't have to update their clients whenever an update rolls around.
 
-~~This also means that players who allocate their stats inefficiently will be able to play as narratively conflicting classes (e.g. if a player chooses to distribute their stats evenly, then they will be able to use any gear they'd like). I'm not sure if this should be allowed. The way players will be discouraged from doing this will be by making it so that allocating your stats inefficiently makes it so that you fuck up your progression. Or maybe we can make it so that the more a player uses a certain type of gear, the more "locked in" they become with their stat allocation. As in, if a player allocates their stats evenly but they only ever use healer gear, then the more they use their healer gear, the more their wisdom stat locks in. Stats that aren't locked in can be reallocated however the player wants.~~
-
-We can figure out the details later
 # Stats
 Right now, the stats are going to be:
 - Dexterity
@@ -15,74 +12,98 @@ Right now, the stats are going to be:
 - Wisdom
 I can't think of any other stats to add that would make meaningful sense. I don't like having a luck stat.
 # Temperament
-There are also going to be other stats called Temperament stats. There really isn't much of a difference between Temperament stats and normal stats. They act the same way as normal stats, so any differences would be entirely conceptual. The conceptual difference is that temperament stats flavour what a character does with their normal stats. The temperament stats are:
+There are also going to be other stats called Temperament stats. Temperament stats work exactly like normal stats — the only difference is conceptual, not mechanical. They flavour what a character does with their normal stats:
 - Damage dealer
 - Supporter
 - Artisan
-Different stat distributions make different classes.
-E.g. A tank is a strength supporter. A warrior is a strength damage dealer. A paladin is a strength + wisdom supporter. A healer is a wisdom supporter. A wizard is a wisdom damage dealer.
+Different stat + temperament distributions produce different classes. E.g. a tank is a strength supporter, a warrior is a strength damage dealer, a paladin is a strength+wisdom supporter, a healer is a wisdom supporter, a wizard is a wisdom damage dealer.
 
-The artisan temperament is completely useless for combat but players who have characters that are fully specced into artisan will be valuable in the end game. I kind of want the process for leveling up an artisan character to be intentionally gruelling - I think it'd be cool for players to think "what the fuck?" when they see someone who has fully specced into the artisan temperament.
-# Item and Equipment system overview
-- Items are designed around RotMG's swap-out meta.
+Artisan is useless for combat, but a character fully specced into it should be valuable in the endgame crafting/economy loop. I want leveling an artisan character to be intentionally gruelling — I want other players to go "what the fuck?" when they see someone who actually did it.
+# Item and equipment system overview
+- Items are designed around RotMG's swap-out meta, but without requiring the player to actually swap out.
 	- Weapons can have toggles that change shot pattern.
-	- Characters have n=6 ability slots and can equip multiple abilities. Abilities are tied to items and some ability items take up multiple ability slots.
-- Items will have enchantments and modifiers, similar to the Borderlands item system.
-In RotMG, one thing people do to maximize dps is have item swapouts. I want to design my equipment system around this so that they don't have to, since it was pretty clunky.
-The main reason why people used swapouts is because of the damage calculation nuances. When enemies are staggered or are armor broken, it is often better to swap out to a set that has a large bullet count because higher defence disproportionately effects builds that have a larger bullet count.
+	- Characters have n=6 ability slots and can equip multiple abilities. Abilities are tied to items, and some ability items take up multiple slots (shields take 6, spells take 2, tomes/scriptures take 3).
+		- If order doesn't matter, then the total number of combinations/permutations that fill up n slots can be calculated with the integer partition function.
+			```
+			def partitions(n, max_size=None):
+				"""Yield partitions of n as non-increasing tuples, each part <= max_size."""
+				if max_size is None:
+					max_size = n
+				if n == 0:
+					yield ()
+					return
+				for k in range(min(max_size, n), 0, -1):
+					for rest in partitions(n - k, k):
+						yield (k,) + rest
+usage: len(list(partitions(6)))=11
+			```
+		- If order matters, then the total number of combinations/permutations that fill up n slots can be calculated with the integer composition function
+			```
+			def compositions(n, max_size=None):
+			    """Yield ordered slot arrangements of n."""
+			    if n == 0:
+			        yield ()
+			        return
+			    for k in range(1, min(max_size or n, n) + 1):
+			        for rest in compositions(n - k, max_size):
+			            yield (k,) + rest
+usage: len(list(compositions(6)))=32
+			```
+		- I think I want the order to matter, since the integer composition function grows quickly ($2^{n-1}$). You could make the order matter by making the first ability stronger than the second ability and so on.
+- Items have enchantments. Inspired by the Borderlands item system, though this game won't have any item instancing.
 
-With this in mind, we can simply just allow weapons to have toggles which can change the shot pattern between low-number-of-shots & high raw damage vs large-number-of-shots & low damage. These toggles will be tied to item enchantments.
-- There is a staff in RotMG called the staff of extreme prejudice that shoots out 10 bullets in a circular pattern. It does the highest dps in the game but it requires you to literally stand on the enemy to land all 10 shots, so it's only used when the enemy is staggered. This feature will be added into my game via a item modifiers/enchantments. I kind of want this shot pattern to be one of those "useless in the early game, game breaking in the late game" things because the off meta builds that have huge payoffs thing is a pretty classic rpg fantasy.
-The reason why I want to address it this way rather than integrating swap-out sets is because I kind of don't want item swapping to be as popular in my game as it is in RotMG.
+In RotMG, one of the main ways people maximize DPS is swapping gear sets mid-fight — usually because when an enemy is staggered or armor-broken, a set with a higher bullet count suddenly out-DPSes a set with fewer, harder-hitting bullets (higher defense disproportionately punishes low-bullet-count builds). That swap-out meta was clunky, and I don't want it to be as central here.
 
-This item enchantment modifier thing that changes the shot pattern sounds a lot like the Borderlands item system, and that's because my game's item system will take a lot of inspiration from Borderlands' item system.
-All of the buffs and status conditions in [[02 Gameplay#Buffs, debuffs, and damage calculation nuances]] are able to show up as enchantments and modifiers in my item system. If the enchantments are good, some lower-tier weapons may be better than higher tier weapons.
-- You could probably add enchantment slots that can be modified by the player, as well as innate enchantments that can't be modified by the player but don't take up an enchantment slot. You could probably make weapons that have the staff of extreme prejudice's shot pattern toggle enchantment extremely valuable for minmaxers who want to speed-run things.
+Instead: weapons get toggles, tied to enchantments, that flip the shot pattern between low-count/high-damage and high-count/low-damage. Same tactical decision, no inventory shuffling.
 
-Abilities are tied to equipment. Characters have n=6 ability slots, and some abilities take up multiple slots (e.g. shields take up 6 slots, spells take up 2 slots, and tomes/scriptures take up 3 slots)
-Some ability items modify your main ability if they're in your equipment slot (e.g. paladin buffs), whereas other ability items require you to swap to it to cast it (e.g. wizard spells).
+RotMG's Staff of Extreme Prejudice is the reference case — it fires 10 bullets in a circle and does the highest DPS in the game, but only if you're standing directly on top of the enemy, so it's only good against staggered targets. I want that shot pattern to exist here as a modifier/enchantment: useless early, game-breaking late. Off-meta builds with a huge late-game payoff is a classic RPG fantasy and I want it in this game.
+
+All the buffs and status conditions in [[02 Gameplay#Buffs, debuffs, and damage calculation nuances]] should be able to show up as enchantments/modifiers. If the enchantments are good enough, a lower-tier weapon should sometimes beat a higher-tier one.
+
+Enchantment slots should be player-modifiable, plus some innate enchantments that can't be changed but also don't eat a slot. A weapon born with the Extreme-Prejudice-style toggle as an *innate* enchantment should be extremely valuable to minmaxers.
+
+Abilities are tied to equipment (n=6 ability slots, some abilities eating multiple). Some ability items passively modify your kit just by being equipped (paladin buffs), others require you to actively swap to them to use them (wizard spells).
 # Classes
 The stat distribution syntax is kinda self explanatory. If a stat isn't mentioned, then it can be anything. If a stat is mentioned, then it needs to be greater than 0. i.e. every time you see a ")" replace it with ">0)". I use "≳" instead of ">" is because ">" can't be used in filenames.
 ## Class items
 Class items are going to be locked behind stat thresholds.
 ### DPS
-#### Archer
-Similar to the archer in RotMG? Archer's don't really make sense in a magic world though. Maybe have these people use guns instead.
-##### Weapons
-- Bow
-- Guns?
-##### Abilities
-- idk{++
-- (innate?) can toggle between charge/shotgun/piercing/etc shots
-- big charge shot that self slows and sends a single shot that increases in damage the longer you charge
-- big volley shot that self slows and sends a fuckton of shots that increases in damage the longer you charge (this would be especially good against low defence enemies)
-- spawn a dummy/blackhole thing that allies can shoot at which the gunslinger can absorb and convert into a big charge/volley shot
-- mark enemies to receive more damage
-- quick slash that destroys enemy bullets if the slash is stronger
-- grapple hook towards some point on the ground (can still receive damage during grapple)++}
+#### Gunner (dex) & (dps)
+Maybe make it so that the gunner can store and delay their dps to blast counter phases or wait out invulnerability phases. In the long run, they should do less dps than other classes but when you take into account invulnerability and whatnot then these guys should out-damage other classes because of their ability to store and delay the damage they deal.
+##### Gunner Weapons
+- Guns
+##### Gunner Abilities
+Weapons toggles I guess.
+- (innate?) toggle between charge/shotgun/piercing/etc. shot patterns
+- Big charge shot: self-slows, fires a single shot that gets stronger the longer it's charged
+- Big volley shot: self-slows, fires a large spread that gets stronger the longer it's charged — especially strong against low-defense enemies
+- Spawn a dummy/blackhole that allies can shoot; the archer can absorb the accumulated damage and release it as a big charge/volley shot
+- Mark an enemy to take increased damage
+- Quick slash that destroys enemy bullets, if the slash is stronger than the bullet
+- Grapple hook toward a point on the ground (still takes damage while grappling)
 #### Warrior (str) & (dps)
-##### Weapons: Sword (similar to pixel quest)
-- Play pixel quest on roblox or look up the sword strike animation for it.
-- You could probably look to terraria for different sword ideas.
-	- Swords that send slashes
-	- 
-##### Ability: Magic tattoos
-Similar to Witch Hat Atelier. In RotMG, the warrior's ability item is just a helmet which sucks.
-Higher grade tattoos are made from higher grade inks and whatnot. Monster blood, god ichor, special tree sap, etc.
-The in-game justification for how warriors can swap between abilities is that they have to do some preparation for the tattoo they want to use.
+##### Warrior Weapons:
+- Sword
+	- Play pixel quest on roblox or look up the sword strike animation for it.
+	- You could probably look to terraria for different sword ideas.
+		- Swords that send slashes
+##### Warrior Abilities
+Magic tattoos. Similar to Witch Hat Atelier. In RotMG, the warrior's ability item is just a helmet which sucks.
+Higher grade tattoos are made from higher grade inks: monster blood, god ichor, special tree sap, etc.
 It'd be cool if you could make the tattoos glow when you activate them.
-You should probably make these items like a consumable or something. Like, to equip the ability you use a consumable and it 
-- converts all incoming damage for the next n seconds into bleed damage
+To make warriors special you could probably make these items a consumable or something. Like, to equip the ability you use a consumable and it overwrites one of your existing tattoos.
+- tattoo that converts all incoming damage for the next n seconds into bleed damage
 	- you could probably add some conditions to make it so that they can shed the bleed damage.
 - makes their sword do more damage for the next n seconds
 	- you can be creative with it by making their sword damage burn the enemy or modifies their sword to store all the damage they deal within the next n seconds and doubles it or smth but the general gist is more damage
 	- for the "sword stores all the damage they deal within the next n seconds" thing, you could probably add a fail condition that makes it so they deal 0 damage
-- enter a windup animation to do a short teleport. Similar to the Kensei's ability from RotMG. Intention is for players to be able to dodge upcoming bullets for certain boss phases. Cracked players should be able to solo any boss with this ability.{++
-- (innate?) a tattoo that just always lets them dodge bullets by teleporting short distances, instead of needing a windup - maybe this is the baseline warrior kit and the windup teleport above is a bigger/stronger version of it
+- enter a windup animation to do a short teleport. Similar to the Kensei's ability from RotMG. Intention is for players to be able to dodge upcoming bullets for certain boss phases. Cracked players should be able to solo any boss with this ability.
 - a tattoo that converts all damage dealt *and* received into bleed (as opposed to just incoming damage)
-- a tattoo that stores all damage dealt/received over n seconds and negates/multiplies it if some condition is met - same "high risk high reward" shape as the sword-storing-damage idea above++}
+- a tattoo that stores all damage dealt/received over n seconds and negates/multiplies it if some condition is met - same "high risk high reward" shape as the sword-storing-damage idea above
+	- you could balance this by making bosses aggro when too much damage is dealt.
+		- you could have a boss who's thematically blind and becomes impossible to dodge if you do too much damage.
 #### Wizard (wis) & (dps)
-##### Weapons: Staffs + Wands
+##### Wizard Weapons
 - staffs/staves (similar to RotMG)
 	- S.T.A.F.F. ripoff (don't copy the bullet pattern exactly 1 for 1)
 	- [S.T.A.F.F. Showcase - This Weapon SHREDS Everything | RotMG](<https://youtu.be/m0COVnAtCxA&t=107>)
@@ -91,122 +112,83 @@ You should probably make these items like a consumable or something. Like, to eq
 - Wands (similar to RotMG)
 	- Lumiaire
 	- Tiered wands
-##### Ability: Spell scrolls
+##### Wizard Ability
 - Spell that spawns a delayed beam of light that deals damage
 	- [Chaotic Scripture only Cult (Rotmg)](<https://www.youtube.com/watch?v=dU0andwLZmk>)
 - Spell that summons bullets that converge on or from or around the player's cursor
 	- [Rotmg Penetrating Blast Spell, shot pattern](<https://www.youtube.com/watch?v=-aCETL8lteA>)
 	- [WHY TABLET IS BETTER THEN PARA SPELL ( in o3)](<https://www.youtube.com/watch?v=4W4metbXxsc>)
-- Spell that forces the player to stop shooting to enter a wind up animation that sends a fireball or some shit{++
+- Spell that forces the player to stop shooting to enter a wind up animation that sends a fireball or some shit
 - Spell that summons a spire that damages surrounding enemies (mirror image of the healer's mushroom tome spire idea below, but offensive instead of healing)
 - Spell that calls down a meteor that breaks into shrapnel after it lands
-- Spell that shoots out a laser++}
+- Spell that shoots out a laser
 ### SUP
-#### Healer (wis) & (sup)
-##### Weapons: Wands
-Copy RotMG
-- Luminaire
-- Tiered wands
-##### Ability: Tomes/books/scriptures
+#### Witch Doctor (wis) & (sup)
+##### Witch Doctor Weapons
+- Staves and wands.
+##### Witch Doctor Ability
 - Mushroom tome ripoff
 	- Spawns a spire at a location and heals everyone in a radius around it.
 	- Back when RotMG had more players there used to be some tech around using this for group coordination because healers could direct where the melee players would have to stand, which was useful if they knew all the boss phases and shit. i remember hearing raid leaders saying "guys, push up. stop staying in the back of the group, you're safer if you push up because that's where all the mushroom tomes are. you'll heal more if you push up."
 - AoE heal
 - Targeted heal (heals player closest to cursor or heals the lowest health player that's within a radius of the cursor)
-- Debuff removal{++
-- Witch doctor flavour on the same circle-on-the-ground idea, could all just be more mushroom tome variants:
-	- a circle that players can't die within (soft "can't drop below 1hp" zone)
-	- a circle that heals allies over time
-	- a circle that burst heals allies after n seconds
-	- a circle that makes allies deal more damage
-	- a circle that damages enemies over time
-	- a circle that slows enemies
-	- a circle that makes enemies receive more damage
-	- a circle that distributes all damage received within it evenly across all players standing in it (group-coordination tech, similar to the mushroom-tome-push-up thing above but for damage instead of healing)++}
+- Debuff removal
+- a circle that players can't die within (soft "can't drop below 1hp" zone)
+- a circle that heals allies over time
+- a circle that burst heals allies after n seconds
+- a circle that makes allies deal more damage
+- a circle that damages enemies over time
+- a circle that slows enemies
+- a circle that makes enemies receive more damage
+- a circle that distributes all damage received within it evenly across all players standing in it (group-coordination tech, similar to the mushroom-tome-push-up thing above but for damage instead of healing)
 #### Paladin
 Similar to the paladin in RotMG.
 Paladins will have less defence than tanks but will have a higher health pool. This will make them weak against enemies that fire a large amount of low-damaging bullets, or enemies that spawn in groups or spawn a bunch of mobs.
 I don't really want there to be any religions in the game so maybe don't call them paladins.
-##### Weapons: Sword (similar to pixel quest)
+##### Paladin Weapons
 - Play pixel quest on roblox or look up the sword strike animation for it.
 - You could probably look to terraria for different sword ideas.
-##### Abilities
+##### Paladin Abilities
 The actual item that RotMG uses are seals but that's kinda boring. You could probably reuse the tattoo idea?
-- Temporarily invulnerable to all damage
-	- Self buff
 - Temporarily buff nearby allies to have increased health regen
 - Buff all nearby allies to deal more damage
-- Converts all damage into bleed damage{++
+- Converts all damage into bleed damage
+- Immunity to all damage for the next n seconds
 - Immunity to the next single instance of damage received within n seconds (weaker/cheaper version of the full invuln buff above)
-- Buff all allies to store all damage dealt/received over n seconds and negate/multiply it if a condition is met - same shape as the warrior tattoo idea
-- Redirect all damage that party members receive over the next n seconds to self - tanky "protect the healer" panic button
-- Store all pre-mitigated damage received over the next n seconds and release it as a smite - lets a paladin turn a big incoming hit into burst damage instead of just eating it++}
+- Buff all allies to deal more damage
+	- Buff all allies to store all damage dealt/received over n seconds and negate/multiply it if a condition is met - same shape as the warrior tattoo idea
+- Buff all allies to store all damage dealt/received and negates it if a condition is met
+- Buff all allies to convert damage dealt/received into bleed damage
+- Buff all allies to heal over time
+- Redirect all damage that party members receive over the next n seconds to self
+- Store all pre-mitigated damage received over the next n seconds and release it as a smite
 #### Tank (str) & (sup)
 Similar to the knight in RotMG.
 Knights will have more defence than paladins but will have a lower health pool. The lower health pool effectively shouldn't matter if the healer is good.
 There should be some end game bosses where knights will only be useful for their stagger and armour break debuffs.
-##### Weapons: Sword (similar to pixel quest)
+##### Tank Weapons
 - Play pixel quest on roblox or look up the sword strike animation for it.
 - You could probably look to terraria for different sword ideas.
-##### Ability: shield
+##### Tank Ability
 - Shield bash = stagger bar (similar to how knights can stun in rotmg but less so)
 - Shield bash applies armour break debuff or expose debuff (similar to ogmur/samurai in RotMG. the expose debuff just adds like + 10% damage to all bullets that hit the enemy. I think this +10% damage ignores the enemy's defence, so weapons that shoot a lot of bullets pair well with this debuff. armor break reduces enemy defence to 0)
 - Temporarily invulnerable to all damage
 	- Self buff
-	- {++
-- Immunity to the next single instance of damage received within n seconds (cheaper single-hit version of the full invuln above)
+- Immunity to all damage for the next n seconds
 - Reduce all incoming damage by a percentage for the next n seconds
-- Store pre-mitigated damage received over the next n seconds and release it as a shield bash (same "store then release" shape as the paladin smite idea)
-- Shield wall that absorbs all bullets that hit it++}
+- Store pre-mitigated damage received for the next n seconds and release it as a shield bash
+- Shield bash that debuffs enemies to receive more damage and contributes to a stagger bar
+- Shield wall that absorbs all bullets that hit it
 #### Trickster (wis ≳ dex) & (sup)
 This class combines the assassin, rogue, and trickster from RotMG into one class.
-##### Weapons: idk
+##### Trickster Weapons
+- Guns
 Crossbow probably? Idk. I don't like how daggers are implemented in RotMG and idk how to implement them in this game. Could probably just give them magic throwing knives but i feel like we can come up with something better.
 Terraria has magic throwing knifes but thats kinda weird.
-##### Ability: a whole buncha shit (implement all)
+##### Trickster Ability
 Maybe make this class's magic be tied to physical items rather than magic scrolls like the wizard.
 - Invisibility (cloak)
-- Poisons and debuffs (vials of liquid? i don't like that it comes off as a consumable though)
-- Teleport (magic rocks or orbs?)
-- Decoy (magic rocks or orbs?)
-	- decoys summon a mirror image that can take aggro{++
-	- could probably do "summon decoys that can take aggro" as a separate item from the single-mirror-image teleport-decoy above - one decoy for redirecting aggro during normal fights, a bigger cooldown version for boss mechanics
-- Party-wide panic button: sends all party members to a pocket dimension that makes them briefly invisible + immune to all damage - basically a group-wide oh-shit button, would need to be on a long cooldown or it trivializes mechanics++}
-
-
-
-# Old notes
-Subclasses:
-- periodic invulnerability (str + wis spec)
-- high defence (str + vit spec)
-- high health (vit + str spec)
-My content brain is telling me to do this via gear, but my monetisation brain is telling me to do it via subclasses since you're gonna be monetising character slots.
-
-High defence will be good for lots of bullets (reduces bullet damage by a flat amount, lots of bullets = lots of reduction).
-
-High health will be good for a small amount of high-damaging bullets. Also for armor break situations.
-
-Periodic invulnerability will be skill based and will require party coordination if you want to maximize it. The **only** advantage that this should give over the other tech trees is more damage. A party with 1 dps + 1 defence/health tank + 1 support should roughly deal the same amount of damage as a party with 1 support + 2 periodic invulnerability knights, but only if the periodic invulnerability knights have the right gear. In some dungeons, the 1 support + 2 periodic invulnerability tanks setup should be more optimal. **This 1 support + 2 periodic invulnerability tanks set up should require extreme amounts of danger and extreme amounts of coordination**. If tanks don't tank correctly, the enemy will aggro onto the support who should die instantly due to immobility and low defense.
-
-## Old notes v2
-Should be the classic tank. Since it has high defense, it can tank a lot of weak, low-damage bullets.
-
-High defense tanks are useful for:
-- Boss fights that have a lot of weak, low-damage bullets that target the nearest player.
-- Boss fights that have a lot of minions that fire weak, low-damage bullets
-
-The purpose of the tank in these boss fight is the clear space/bullets for the support/dps who should be behind the tank.
-
-You could probably have end-game boss that requires the 2 main types of tanks by having a boss that shoots a low amount of targeted, high damaging, armor piercing shots (high hp tank would be required here) and also spawns a lot of minions that deal lots of instances of low-damage (high defense tank would be required here).
-
-## Random notes
-There are going to be 2 main types of tanks, high defence tanks and high hp tanks. 
-
-There should be dungeons that require scouts in order to optimize. Similar to how, in rotmg, the shatters requires you to destroy the statues and how the lost halls requires you to find the boss room or destroy the pots.
-
-Scouts should be able to solo certain dungeons, but it should be more optimal to do the dungeons in groups.
-
-There should be end game builds that all thieves can use to put them on par with a dps in terms of damage under certain circumstances (e.g. if the enemy is properly debuffed).
-
-This class might break the balance of the game.
-I like the idea of having a class that can make or break a dungeon run though, similar to how a trickster can fuck up certain boss phases in RotMG. I like how tricksters are required for full-skip void runs in RotMG.
+- Poisons/debuffs
+- Teleport
+- Decoy — summons a mirror image that takes aggro
+- Teleports all party members to a pocket dimension that makes them briefly invisible + immune to all damage

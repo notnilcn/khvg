@@ -1,9 +1,9 @@
 [
-  "automatic-table-of-contents",
   "vscode-editor",
   "obsidian-wrap-with-shortcuts",
   "track-changes",
   "sync-embeds",
+  "obsidian-git",
   "flexplorer",
-  "obsidian-git"
+  "remember-cursor-position"
 ]

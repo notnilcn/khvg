@@ -25,7 +25,7 @@ cd server && bash build.sh
 
 This produces `client/Scripts/module_bindings/Types/WeaponPattern.g.cs` with the new variant as a C# tagged union (`WeaponPattern.Spiral`), alongside reseeding the database.
 
-## 3. Implement the firing behavior (client)
+## 3. Implement the firing behaviour (client)
 
 In `CombatComponent.cs`, add a case to the dispatch switch ([[CombatComponent.cs##private void Fire|Fire]]):
 

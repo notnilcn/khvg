@@ -56,14 +56,14 @@ The actual registration logic — walk `GetParent()` until an `IEntity` is found
 
 A component's scene root is always the *closest matching builtin type* to what it needs (the comedot convention this framework is modeled on) — a hitbox is an `Area2D`, a stat panel is a `Control`, an entity sprite is an `AnimatedSprite2D`. C# only allows one base class, so there can't be one `Component : IComponent` base shared by all of them; instead there are six near-identical bases, one per native root type, each independently implementing the same `_Ready`/`_ExitTree`/`OnRegistered`/`OnEntityReady` cycle by delegating to `ComponentRegistration`:
 
-| Base | Native root | Used for |
-|---|---|---|
-| `Component` | `Node` | Behavior with no visual/physics footprint (`CombatComponent`, `EntitySpawnerComponent`) |
-| `AreaComponent` | `Area2D` | Hitboxes/hurtboxes (`DamageComponent`, `DamageReceivingComponent`, `PickupComponent`) |
-| `Node2DComponent` | `Node2D` | 2D-positioned components (`TerrainComponent`, `Camera2DPresenterComponent`) |
-| `Node3DComponent` | `Node3D` | Components inside the 3D backdrop viewport (`World3DComponent`) |
-| `ControlComponent` | `Control` | UI panels (`InventoryComponent`, `LobbyComponent`) |
-| `VisualComponent` | `AnimatedSprite2D` | (base exists for sprite-rooted components; current sprite components mostly attach the script directly to a scene-declared `AnimatedSprite2D` node instead) |
+| Base               | Native root        | Used for                                                                                                                                                    |
+| ------------------ | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Component`        | `Node`             | Behavior with no visual/physics footprint (`CombatComponent`, `EntitySpawnerComponent`)                                                                     |
+| `AreaComponent`    | `Area2D`           | Hitboxes/hurtboxes (`DamageComponent`, `DamageReceivingComponent`, `PickupComponent`)                                                                       |
+| `Node2DComponent`  | `Node2D`           | 2D-positioned components (`TerrainComponent`, `Camera2DPresenterComponent`)                                                                                 |
+| `Node3DComponent`  | `Node3D`           | Components inside the 3D backdrop viewport (`World3DComponent`)                                                                                             |
+| `ControlComponent` | `Control`          | UI panels (`InventoryComponent`, `LobbyComponent`)                                                                                                          |
+| `VisualComponent`  | `AnimatedSprite2D` | (base exists for sprite-rooted components; current sprite components mostly attach the script directly to a scene-declared `AnimatedSprite2D` node instead) |
 
 [[Component.cs##public abstract partial class Component : Node, IComponent|Component.cs]] · [[AreaComponent.cs##public abstract partial class AreaComponent : Area2D, IComponent|AreaComponent.cs]] · [[Node2DComponent.cs##public abstract partial class Node2DComponent : Node2D, IComponent|Node2DComponent.cs]] · [[Node3DComponent.cs##public abstract partial class Node3DComponent : Node3D, IComponent|Node3DComponent.cs]] · [[ControlComponent.cs##public abstract partial class ControlComponent : Control, IComponent|ControlComponent.cs]] · [[VisualComponent.cs##public abstract partial class VisualComponent : AnimatedSprite2D, IComponent|VisualComponent.cs]]
 

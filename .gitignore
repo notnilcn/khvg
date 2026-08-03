@@ -4,6 +4,9 @@
 .mono/
 android/
 ios/
+Godot/
+code_examples/
+w.ps1
 
 # Rust / SpacetimeDB server
 server/spacetimedb/target/

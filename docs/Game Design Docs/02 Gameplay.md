@@ -52,15 +52,19 @@ These are called status conditions because some of them aren't necessarily bad.
 # End game content
 End game content is not just going to be harder bosses and harder dungeons.
 
-End game content is going to essentially just be building a factory for your guild's territory. Pretty much just Factorio: Space Age + Clash of Clans (and any of the standard RTS games), except you play as the builders and the miners and the individual units and what not.
+End game content is going to essentially just be building a factory for your guild's territory. Pretty much just Factorio: Space Age + Clash of Clans (and any of the standard RTS games), except you play as the individual units (builders, miners, inserters, etc). Like Factorio: Space Age, different biomes will have different resources.
 
 Each biome will have area bosses that can be aggroed and dragged across the world. One tactic for collecting resources from other biomes will be by aggroing and dragging area bosses into your territory.
 
 There will be territory PvP but there won't be direct PvP.
 # Beginner content
 New players are going to follow a story line so they aren't going to be directionless like in Realm of the Mad God.
-# Rotmg videos
-## Group videos
+# Example videos
+# Non-RotMG videos
+[out](<https://youtu.be/Psh3f2np4Ok?si=zOuCcC2gKdqe38fy&t=660>)
+
+## RotMG videos
+### Group videos
 [RotMG: RedMagePOW Clip Compilation 2](<https://youtu.be/-sCk434v3zg&t=41>)
 
 [RotMG: RedMagePOW Clip Complilation](<https://www.youtube.com/watch?v=FqACs109eIE>)
@@ -89,8 +93,7 @@ New players are going to follow a story line so they aren't going to be directio
 
 [Oryx 3 - Dammah mini RotMG](<https://www.youtube.com/watch?v=-mdb-6HktkQ>)
 
-## Solo videos
-[out](<https://youtu.be/Psh3f2np4Ok?si=zOuCcC2gKdqe38fy&t=660>)
+### Solo videos
 
 [RotMG - lvl 1 Kitsune Umi gearless consumableless solo](<https://www.youtube.com/watch?v=IGowzviaTUA>)
 

@@ -1,0 +1,11 @@
+xtends SceneTree
+
+func _initialize() -> void:
+    await current_scene.ready
+    # Wait one frame to ensure rendering is complete
+    await root.process_frame 
+    
+    var img = root.get_texture().get_image()
+    img.save_png("user://cli_screenshot.png")
+    
+    quit()

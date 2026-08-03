@@ -87,4 +87,4 @@ Because `def_id` is auto-increment, pass `0` to insert a new row, then find the 
 
 ## Conventions in these guides
 
-Same as the `Description/` docs ([[00 Roadmap]]): code references use block-link-plus wikilinks (`[[seeds.rs##pub fn seed_world_items|seed_world_items]]`) — if a link stops resolving, the code moved and the guide is stale. Guides describe what the code *actually does today*, including known gaps, which are called out explicitly rather than documented around.
+Same as the `Description/` docs ([[00 High Level Overview and Roadmap]]): code references use block-link-plus wikilinks (`[[seeds.rs##pub fn seed_world_items|seed_world_items]]`) — if a link stops resolving, the code moved and the guide is stale. Guides describe what the code *actually does today*, including known gaps, which are called out explicitly rather than documented around.
