@@ -21,13 +21,13 @@ public partial class CatalogComponent : Component
 
     protected override void OnRegistered()
     {
-        if (GetSibling<ConnectionComponent>() is { } connection)
+        if (GetSibling<DatabaseConnector>() is { } connection)
             connection.Connected += OnConnected;
     }
 
     private void OnConnected()
     {
-        var conn = GetSibling<ConnectionComponent>()?.Conn;
+        var conn = GetSibling<DatabaseConnector>()?.Conn;
         if (conn == null) return;
 
         conn.Db.AllTextures.OnInsert += (_, texture) => textureCache[texture.TextureId] = texture.ResPath;

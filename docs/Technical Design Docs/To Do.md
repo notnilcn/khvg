@@ -3,13 +3,14 @@ Every time a player toggles auto-fire they send their timestamp modulo (modulus 
 
 When players land hits on an enemy, they only send the enemy id.
 
+
 # Claude analysis on what to do:
 I read the design doc, the six server modules, and the client's item/inventory/combat/bullet paths. Here's what I'd change.
 
 The short version
 
-The item schema refactor already in src/CLAUDE.md was the right move — Vec<StatModifier> + Vec<ItemBehavior> on one row is genuinely the shape this doc
-needs, and behaviors being a Vec already makes weapon toggles almost free. But the doc's central claim — "classes are defined by gear + stat requirements"
+The item schema refactor already in src/CLAUDE.md was the right move — `Vec<StatModifier>` + `Vec<ItemBehavior>` on one row is genuinely the shape this doc
+needs, and behaviors being a `Vec already makes weapon toggles almost free. But the doc's central claim — "classes are defined by gear + stat requirements"
 — has zero representation in the schema right now, and three of the ability categories (zones, statuses, cooldowns) have no subsystem at all.
 
 ---
@@ -23,7 +24,7 @@ and formula-driven). Right now they're one flat row (player/tables.rs:52) that t
 Temperament doesn't exist. dps/sup/art aren't in StatKind (item/tables.rs:21) or PlayerStats. Mechanically identical to normal stats, so this is cheap —
 but it has to land before item requirements, since the requirements are what make temperament mean anything.
 
-Items have no stat requirements. This is the entire class-gating mechanism and there's no field for it. Add requirements: Vec<StatRequirement> to Item and
+Items have no stat requirements. This is the entire class-gating mechanism and there's no field for it. Add requirements: `Vec<StatRequirement>` to Item and
 enforce in swap_slots (player/reducers.rs:186-197), which today only checks equip_slot.
 
 ▎ ⚠️ Design trap worth deciding now: gear grants stats, and stats gate gear. If requirements are checked against final stats you get equip-order
@@ -43,7 +44,7 @@ adds another item_id reader.
 ---
 2. Refactors that unblock the ability system
 
-PlayerInventory.slots should stop being one Vec in one row. Six reducers do inv.slots.clone() and rewrite the whole vector. More importantly, ability
+PlayerInventory.slots should stop being one `Vec in one row. Six reducers do inv.slots.clone() and rewrite the whole `Vector. More importantly, ability
 slots need per-slot runtime state — cooldowns, charge, active toggle index, multi-slot occupancy spans — and none of that belongs in a value type
 replicated wholesale on every swap. Promote to PlayerInventorySlot keyed (profile_id, slot_index) with a btree index.
 
@@ -52,7 +53,7 @@ That also kills this:
 // player/methods.rs:112
 if slot.allowed_slots.len() != 1 { continue; }
 
-That's "is this slot equipped?" inferred from vector length. It's already fragile, and it silently breaks the first time a slot accepts two kinds — which
+That's "is this slot equipped?" inferred from `Vector length. It's already fragile, and it silently breaks the first time a slot accepts two kinds — which
 ability slots will. Replace with an explicit role: SlotRole field.
 
 Ability slots don't exist. EquipSlot (item/tables.rs:11) has no Ability variant. Beyond adding one, the multi-slot rule (shield 6, tome 3, spell 2) needs
@@ -65,7 +66,7 @@ No activation path. There's no activate_ability reducer, no cooldown state, no r
 ---
 3. Weapon toggles are nearly free — do this early
 
-Item.behaviors is already Vec<ItemBehavior>, so two Weapon(...) variants on one item is already legal today. What's missing is only:
+Item.behaviors is already `Vec<ItemBehavior>`, so two Weapon(...) variants on one item is already legal today. What's missing is only:
 
 ┌───────────────────────────────────────┬────────────────────────────────────────────────────────────────────────┐
 │                 Where                 │                                 Change                                 │
@@ -103,7 +104,7 @@ Payoff: new weapon patterns become data, addable via upsert_item with no client 
 5. Damage model can't express the doc's core tension
 
 Two of three stats do nothing. compute_player_damage (combat/mod.rs:35-46) is weapon.damage * (1 + strength * 0.002). Wisdom and dexterity are inert — a
-wizard and a warrior with the same staff deal identical damage. Give WeaponBehavior a scaling: Vec<(StatKind, f32)> so staves scale off wis and guns off
+wizard and a warrior with the same staff deal identical damage. Give WeaponBehavior a scaling: `Vec<(StatKind, f32)>` so staves scale off wis and guns off
 dex. Dexterity should also feed fire_rate, which is currently weapon-only and client-side (CombatComponent.cs:141). Also: 0.002 and 0.002 (:43, :51)
 belong in global.rs with every other tunable.
 
@@ -117,7 +118,7 @@ Also worth noting: compute_player_damage hardcodes inv.slots.get(0) as the weapo
 ---
 6. Status effects need to become a pipeline, not a stat bag
 
-ActiveConsumableEffect (player/tables.rs:94) is a StatModifier + a float remaining, decremented at 1 Hz. Now scan the doc's ability list: invulnerability,
+Acti`VeconsumableEffect (player/tables.rs:94) is a StatModifier + a float remaining, decremented at 1 Hz. Now scan the doc's ability list: invulnerability,
 immunity to the next single instance of damage, convert incoming damage to bleed, store pre-mitigated damage and release it as a smite, redirect party
 damage to self, armor break, stagger bar, "can't drop below 1 HP". Almost none of these are stat modifiers.
 
@@ -148,12 +149,12 @@ This is mostly independent of the item refactor and can be built in parallel —
 
 Enchantment (item/tables.rs:71-80) is stat modifiers + allowed_slots. The doc wants enchantments that flip shot patterns and grant status effects.
 
-- Give Enchantment a behaviors: Vec<ItemBehavior> — same field as Item. Behavior resolution then folds both sources, exactly as recompute_stats already
+- Give Enchantment a behaviors: `Vec<ItemBehavior>` — same field as Item. Behavior resolution then folds both sources, exactly as recompute_stats already
 folds both stat sources (methods.rs:115-124).
-- Innate enchantments that don't eat a slot are per-instance, so they land on ItemInstance (§1) as a separate vec not counted against max_enchantments
+- Innate enchantments that don't eat a slot are per-instance, so they land on ItemInstance (§1) as a separate `Vec not counted against max_enchantments
 (reducers.rs:261).
-- allowed_slots: Vec<EquipSlot> is too coarse. A gun-only enchantment is unexpressible because there's no weapon subtype — EquipSlot::Weapon covers
-swords, staves, wands, and guns alike. Add Item.tags: Vec<String> (or an ItemCategory enum) and let enchantments require tags. Tags also give you the
+- allowed_slots: `Vec<EquipSlot>` is too coarse. A gun-only enchantment is unexpressible because there's no weapon subtype — EquipSlot::Weapon covers
+swords, staves, wands, and guns alike. Add Item.tags: `Vec<String>` (or an ItemCategory enum) and let enchantments require tags. Tags also give you the
 per-class weapon taxonomy the doc's class writeups assume — without a schema change per class, which is the doc's stated goal.
 
 ---
@@ -194,3 +195,5 @@ Suggested order
 
 Items 1, 2, and 6 are the ones where doing them later costs materially more than doing them now.
 
+# To confirm: Run Time Authoring.
+Run time authoring is defining enemies after the server has been launched (i.e. outside of seeds).

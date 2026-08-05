@@ -16,11 +16,12 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="khvg"
 run/main_scene="uid://b6lwr7bsg1b0u"
-config/features=PackedStringArray("4.6", "C#", "GL Compatibility")
+config/features=PackedStringArray("4.7", "C#", "GL Compatibility")
 
 [autoload]
 
 PhantomCameraManager="*uid://duq6jhf6unyis"
+McpRuntimeAutoload="*res://addons/open_godot_mcp/runtime/runtime_autoload.gd"
 
 [display]
 
@@ -35,7 +36,7 @@ project/assembly_name="khvg"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/phantom_camera/plugin.cfg")
+enabled=PackedStringArray("res://addons/open_godot_mcp/plugin.cfg", "res://addons/phantom_camera/plugin.cfg")
 
 [input]
 
@@ -157,6 +158,12 @@ Reset_Camera_Pitch={
 2d_physics/layer_2="Player"
 2d_physics/layer_3="Enemy"
 2d_physics/layer_4="Drop"
+
+[open_godot_mcp]
+
+screenshot_max_count=50
+screenshot_max_age_hours=24.0
+_frozen_on_start=false
 
 [rendering]
 

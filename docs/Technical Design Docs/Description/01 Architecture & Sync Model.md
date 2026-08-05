@@ -9,8 +9,6 @@ None — this is the entry point. Start here before any other numbered doc; see 
 The server is a **SpacetimeDB module** — Rust code that defines database tables plus **reducers** (server functions a client calls, run as atomic transactions) — published once and then running headless, ticking a handful of scheduled reducers even with nobody connected. The client is a **Godot 4.6 mono** app that opens one `DbConnection` to that module and **subscribes** to specific tables — live queries SpacetimeDB keeps continuously in sync, pushing row inserts/updates/deletes as they happen, instead of the client polling for state. Nothing in this game has a traditional request/response API: the client calls a reducer to *change* something and reads the result back off its subscribed tables, not off a return value (reducers don't return data at all). The rest of this doc covers the server's module layout, the client's top-level connection/subscription machinery, and the bootstrap and connect/disconnect sequences that everything else in this doc set builds on.
 
 ## System flowchart
-1. w
-	1. w
 ```sync
 ![[99 End-to-End Timeline Flowchart#^boot-1{seamless:true,title:false,marker:01.}]]
 ```

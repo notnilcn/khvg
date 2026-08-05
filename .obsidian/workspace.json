@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Technical Design Docs/To Do.md",
+                "file": "docs/Technical Design Docs/Description/00 High Level Overview and Roadmap.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "To Do"
+              "title": "00 High Level Overview and Roadmap"
             }
           },
           {
@@ -216,8 +216,8 @@
             "state": {
               "type": "tc-review-panel",
               "state": {},
-              "icon": "message-square",
-              "title": "CriticMarkup review"
+              "icon": "lucide-ghost",
+              "title": "tc-review-panel"
             }
           },
           {
@@ -226,8 +226,8 @@
             "state": {
               "type": "git-view",
               "state": {},
-              "icon": "git-pull-request",
-              "title": "Source Control"
+              "icon": "lucide-ghost",
+              "title": "git-view"
             }
           }
         ],
@@ -235,7 +235,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 329.5
+    "width": 329.5,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -251,46 +252,48 @@
       "bases:Create new base": false
     }
   },
-  "active": "643e21c195c18e38",
+  "active": "783cec58f8ac3bd1",
   "lastOpenFiles": [
-    "client/addons/open_godot_mcp/utils/variant_codec.gd.uid",
-    "client/addons/open_godot_mcp/utils/variant_codec.gd",
-    "client/addons/open_godot_mcp/utils/update_reload_runner.gd.uid",
-    "client/addons/open_godot_mcp/utils/update_manager.gd.uid",
-    "client/addons/open_godot_mcp/utils/update_reload_runner.gd",
-    "client/addons/open_godot_mcp/utils/update_manager.gd",
-    "client/addons/open_godot_mcp/utils/screenshot_cleanup.gd.uid",
-    "client/addons/open_godot_mcp/utils/scene_path.gd.uid",
-    "client/addons/open_godot_mcp/utils/screenshot_cleanup.gd",
-    "client/addons/open_godot_mcp/utils/scene_path.gd",
-    "client/addons/open_godot_mcp/utils/port_resolver.gd.uid",
-    "Untitled - Copy.md",
-    "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
-    "docs/Technical Design Docs/Description/00 High Level Overview and Roadmap.md",
-    "docs/Technical Design Docs/Description/02 Entity & Component Framework.md",
-    "docs/Technical Design Docs/Description/03 World & Hex Grid.md",
-    "docs/Game Design Docs/Inspirations, research, and new things to add.md",
-    "docs/Game Design Docs/03a Class, Item, and Equipment system (Draft).md",
-    "docs/Game Design Docs/02 Gameplay.md",
-    "docs/Game Design Docs/Demo.md",
-    "docs/Game Design Docs/01 Executive Summary.md",
+    "client/Scenes/local_player.tscn7565145640.tmp",
+    "client/Scenes/main.tscn4432607910.tmp",
+    "client/Scenes/main.tscn4377963709.tmp",
+    "client/Scenes/main.tscn50673440.tmp",
+    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll",
+    "client/Scenes/main.tscn26262921312.tmp",
+    "code_examples/Open-Godot-MCP/src/open_godot_mcp/utils/__pycache__/__init__.cpython-313.pyc",
+    "code_examples/Open-Godot-MCP/src/open_godot_mcp/utils/__pycache__/error_codes.cpython-313.pyc",
+    "code_examples/Open-Godot-MCP/src/open_godot_mcp/utils/__pycache__/port_resolver.cpython-313.pyc",
+    "code_examples/Open-Godot-MCP/src/open_godot_mcp/utils/__pycache__",
+    "code_examples/Open-Godot-MCP/src/open_godot_mcp/resources/__pycache__/__init__.cpython-313.pyc",
+    "code_examples/Open-Godot-MCP/Docs/assets/icon.png",
+    "code_examples/Open-Godot-MCP/Docs/assets/icon-128.png",
+    "code_examples/Open-Godot-MCP/Docs/08-CSharp-Support/Syntax-Check.md",
+    "code_examples/Open-Godot-MCP/Docs/08-CSharp-Support/Compatibility.md",
+    "code_examples/Open-Godot-MCP/Docs/09-Research/Paid-MCP-Analysis.md",
+    "code_examples/Open-Godot-MCP/Docs/09-Research/CSharp-MCP-Survey.md",
+    "code_examples/Open-Godot-MCP/Docs/09-Research/Existing-MCP-Survey.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.uk.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.zh-CN.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.vi.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.tr.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.th.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.pt-BR.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.ru.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.pl.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.ko.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.nl.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.ja.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.id.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.it.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.hi.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.fr.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.es.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.en.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.de.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.ar.md",
+    "code_examples/Open-Godot-MCP/Docs/05-Network-Testing/Guide.md",
     "docs/Technical Design Docs/Description/99 End-to-End Flowchart.canvas",
-    "client/screenshot.md",
-    "client/CLAUDE - Copy.md",
-    "_debug/test.md",
-    "_debug/test source.md",
-    "_debug/_t2.md",
-    "_se-test.md",
-    "_se-test2.md",
-    "docs/Technical Design Docs/Description/01 Architecture & Sync Model.md",
-    "_se-test-src.md",
     "docs/attachments/Pasted image 20260530125651.png",
-    "docs/Game Design Docs/Art/Hollow Knight References.md",
-    "docs/Game Design Docs/Art/Art style 2D.md",
-    "docs/Game Design Docs/Art/Art style 3D.md",
-    "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
-    "docs/Technical Design Docs/Description/07 Combat & Damage Math.md",
-    "docs/Technical Design Docs/Workflow (how to add new things)/00 Index & The Build Loop.md",
     "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/units/green/banner_green_accent_0.png",
     "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/units/blue/cannon_blue_full_0.png",
     "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/rivers/waterless/hex_river_I_waterless_0.png",
@@ -298,8 +301,6 @@
     "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/roads/hex_road_H_0.png",
     "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/roads/hex_road_M_0.png",
     "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/units/blue/bow_blue_full_0.png",
-    "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/units/blue/cannon_blue_accent_0.png",
-    "client/Assets/3D/accesiories/axe_2handed_0.png",
     "docs old/Technical Design Docs/Description/99 End-to-End Flowchart.canvas",
     "docs/Untitled.canvas",
     "docs/Technical Design Docs/Description oldd/99 End-to-End Flowchart.canvas",

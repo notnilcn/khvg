@@ -4,10 +4,12 @@ using SpacetimeDB.Types;
 using System.Collections.Generic;
 
 /// <summary>
-/// Terrain system, child of Main: subscribes to NearbyTerrainTiles/NearbyHexDecor/MapConfig and
-/// renders them through a pool of TileComponent scenes — one per visible chunk, pre-warmed to
+/// Terrain system, child of Main: renders NearbyTerrainTiles/NearbyHexDecor/MapConfig rows
+/// through a pool of TileComponent scenes — one per visible chunk, pre-warmed to
 /// the AOI ring count (AoiChunkRadius, matching the server's DEFAULT_TERRAIN_AOI_CHUNK_RADIUS).
-/// Row callbacks only set a dirty flag; one rebuild per frame collapses burst chunk crossings.
+/// Table rows arrive via three child TableBinderComponents (declared in terrain_component.tscn,
+/// signals wired in the editor); row callbacks only set a dirty flag, and one rebuild per frame
+/// collapses burst chunk crossings.
 ///
 /// This component owns the shared caches (wedge/decor meshes, textures) and the per-hex
 /// wrap-near-camera + cull math; the TileComponents own the actual MultiMesh batch leaves. Mesh
@@ -34,8 +36,12 @@ public partial class TerrainComponent : Node2DComponent
     /// tile_component.tscn — the per-chunk scaffolding the pool instantiates.
     [Export] public PackedScene TileScene { get; set; } = null!;
 
+    /// Child binders (declared in terrain_component.tscn) feeding MapConfig / tile / decor rows.
+    private TableBinderComponent _mapConfigBinder = null!;
+    private TableBinderComponent _terrainTilesBinder = null!;
+    private TableBinderComponent _hexDecorBinder = null!;
+
     private float _outerRadius = DefaultHexOuterRadius;
-    private bool _subscribed;
 
     private readonly Dictionary<ulong, TriangleTile> _tilesById = new();
     private readonly Dictionary<(int Q, int R), List<TriangleTile>> _tilesByHex = new();
@@ -58,6 +64,15 @@ public partial class TerrainComponent : Node2DComponent
     /// Hex ring count for radius r: 1 + 6·(1 + … + r).
     private static int RingChunkCount(int radius) => 1 + 3 * radius * (radius + 1);
 
+    public override void _Ready()
+    {
+        base._Ready();
+        _mapConfigBinder = GetNode<TableBinderComponent>("MapConfigBinder");
+        _terrainTilesBinder = GetNode<TableBinderComponent>("TerrainTilesBinder");
+        _hexDecorBinder = GetNode<TableBinderComponent>("HexDecorBinder");
+        GD.Print($"[TerrainComponent] DEBUG binders: map={_mapConfigBinder}, tiles={_terrainTilesBinder}, decor={_hexDecorBinder}");
+    }
+
     protected override void OnEntityReady()
     {
         // Pre-warm the pool so the first subscription burst doesn't hitch on instantiation.
@@ -69,9 +84,6 @@ public partial class TerrainComponent : Node2DComponent
 
     public override void _Process(double delta)
     {
-        if (!_subscribed)
-            TrySubscribe();
-
         var cam = GetViewport().GetCamera2D();
         if (cam == null) return;
 
@@ -92,33 +104,14 @@ public partial class TerrainComponent : Node2DComponent
         }
     }
 
-    private void TrySubscribe()
+    // --- TableBinderComponent signal handlers (wired in terrain_component.tscn) ---
+    // Each binder has ReplayExistingRows on, so rows already in the client cache come through
+    // the same insert path — no separate Iter() replay here.
+
+    private void OnMapConfigRow()
     {
-        var conn = GameManager.Conn;
-        if (conn == null) return;
-
-        conn.Db.MapConfig.OnInsert += (_, row) => { _outerRadius = row.HexOuterRadius; InvalidateMeshes(); };
-        conn.Db.MapConfig.OnUpdate += (_, _, row) => { _outerRadius = row.HexOuterRadius; InvalidateMeshes(); };
-        var cfg = conn.Db.MapConfig.Id.Find(0u);
-        if (cfg != null)
-            _outerRadius = cfg.HexOuterRadius;
-
-        conn.Db.NearbyTerrainTiles.OnInsert += OnTileInsert;
-        conn.Db.NearbyTerrainTiles.OnUpdate += OnTileUpdate;
-        conn.Db.NearbyTerrainTiles.OnDelete += OnTileDelete;
-
-        foreach (var tile in conn.Db.NearbyTerrainTiles.Iter())
-            AddTile(tile);
-
-        conn.Db.NearbyHexDecor.OnInsert += OnDecorInsert;
-        conn.Db.NearbyHexDecor.OnUpdate += OnDecorUpdate;
-        conn.Db.NearbyHexDecor.OnDelete += OnDecorDelete;
-
-        foreach (var decor in conn.Db.NearbyHexDecor.Iter())
-            _decorById[decor.DecorId] = decor;
-
-        _subscribed = true;
-        RebuildVisibleInstances();
+        _outerRadius = ((MapConfig)_mapConfigBinder.LastRow!).HexOuterRadius;
+        InvalidateMeshes();
     }
 
     private void AddTile(TriangleTile tile)
@@ -141,40 +134,43 @@ public partial class TerrainComponent : Node2DComponent
             _tilesByHex.Remove(key);
     }
 
-    private void OnTileInsert(EventContext _, TriangleTile tile)
+    private void OnTileRowInserted()
     {
-        AddTile(tile);
+        if (_tilesById.Count == 0) GD.Print("[TerrainComponent] DEBUG first tile row received");
+        AddTile((TriangleTile)_terrainTilesBinder.LastRow!);
         _dirty = true;
     }
 
-    private void OnTileUpdate(EventContext _, TriangleTile old, TriangleTile tile)
+    private void OnTileRowUpdated()
     {
-        RemoveTile(old.TileId);
-        AddTile(tile);
+        RemoveTile(((TriangleTile)_terrainTilesBinder.LastOldRow!).TileId);
+        AddTile((TriangleTile)_terrainTilesBinder.LastRow!);
         _dirty = true;
     }
 
-    private void OnTileDelete(EventContext _, TriangleTile tile)
+    private void OnTileRowDeleted()
     {
-        RemoveTile(tile.TileId);
+        RemoveTile(((TriangleTile)_terrainTilesBinder.LastDeletedRow!).TileId);
         _dirty = true;
     }
 
-    private void OnDecorInsert(EventContext _, HexDecor decor)
+    private void OnDecorRowInserted()
     {
+        var decor = (HexDecor)_hexDecorBinder.LastRow!;
         _decorById[decor.DecorId] = decor;
         _dirty = true;
     }
 
-    private void OnDecorUpdate(EventContext _, HexDecor old, HexDecor decor)
+    private void OnDecorRowUpdated()
     {
+        var decor = (HexDecor)_hexDecorBinder.LastRow!;
         _decorById[decor.DecorId] = decor;
         _dirty = true;
     }
 
-    private void OnDecorDelete(EventContext _, HexDecor decor)
+    private void OnDecorRowDeleted()
     {
-        _decorById.Remove(decor.DecorId);
+        _decorById.Remove(((HexDecor)_hexDecorBinder.LastDeletedRow!).DecorId);
         _dirty = true;
     }
 
@@ -481,20 +477,5 @@ public partial class TerrainComponent : Node2DComponent
     {
         float R = _outerRadius;
         return new Vector2(R * (Sqrt3 * q + Sqrt3 * 0.5f * r), R * 1.5f * r);
-    }
-
-    public override void _ExitTree()
-    {
-        var conn = GameManager.Conn;
-        if (conn != null)
-        {
-            conn.Db.NearbyTerrainTiles.OnInsert -= OnTileInsert;
-            conn.Db.NearbyTerrainTiles.OnUpdate -= OnTileUpdate;
-            conn.Db.NearbyTerrainTiles.OnDelete -= OnTileDelete;
-            conn.Db.NearbyHexDecor.OnInsert -= OnDecorInsert;
-            conn.Db.NearbyHexDecor.OnUpdate -= OnDecorUpdate;
-            conn.Db.NearbyHexDecor.OnDelete -= OnDecorDelete;
-        }
-        base._ExitTree();
     }
 }

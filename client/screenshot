@@ -1,4 +1,4 @@
-xtends SceneTree
+Extends SceneTree
 
 func _initialize() -> void:
     await current_scene.ready

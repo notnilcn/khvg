@@ -8,7 +8,7 @@ using System.Linq;
 
 /// <summary>
 /// Root of main.tscn ("Main") and the IEntity that the scene-level components register
-/// with: ConnectionComponent, SubscriptionComponent, CatalogComponent,
+/// with: DatabaseConnector, TableSubscriber, CatalogComponent,
 /// EntitySpawnerComponent, LobbyComponent, and the camera/overlay components. Holds no
 /// logic of its own — the static facade below delegates to those components so callers
 /// whose own entity registry can't see them (spawned entities, UI, debug overlays) can
@@ -38,13 +38,13 @@ public partial class GameManager : Node2D, IEntity
     private static T? Get<T>() where T : class, IComponent =>
         IsInstanceValid(instance) ? instance!.GetComponent<T>() : null;
 
-    public static DbConnection? Conn => Get<ConnectionComponent>()?.Conn;
-    public static string Username => Get<ConnectionComponent>()?.Username ?? "";
-    public static Vector2 LapQ => Get<SubscriptionComponent>()?.LapQ ?? Vector2.Zero;
-    public static Vector2 LapR => Get<SubscriptionComponent>()?.LapR ?? Vector2.Zero;
+    public static DbConnection? Conn => Get<DatabaseConnector>()?.Conn;
+    public static string Username => Get<DatabaseConnector>()?.Username ?? "";
+    public static Vector2 LapQ => Get<TableSubscriber>()?.LapQ ?? Vector2.Zero;
+    public static Vector2 LapR => Get<TableSubscriber>()?.LapR ?? Vector2.Zero;
     public static int EnemyCount => Get<EntitySpawnerComponent>()?.EnemyCount ?? 0;
 
-    public static bool IsLocal(Identity id) => Get<ConnectionComponent>()?.IsLocal(id) ?? false;
+    public static bool IsLocal(Identity id) => Get<DatabaseConnector>()?.IsLocal(id) ?? false;
     public static Enemy? GetEnemy(ulong enemyId) => Get<EntitySpawnerComponent>()?.GetEnemy(enemyId);
     public static string? GetResPath(string textureId) => Get<CatalogComponent>()?.GetResPath(textureId);
     public static Item? GetItem(string itemId) => Get<CatalogComponent>()?.GetItem(itemId);

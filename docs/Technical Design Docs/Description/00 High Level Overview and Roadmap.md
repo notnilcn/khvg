@@ -1,3 +1,4 @@
+`dotnet add package SpacetimeDB.ClientSDK.Godot`
 # 00 High Level Overview and Roadmap
 ## What these docs are
 

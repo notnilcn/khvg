@@ -13,7 +13,9 @@
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="9_ynf5e"]
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="11_6iyac"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="12_fdnlq"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/Terrain/terrain_component.tscn" id="15_terrain"]
+[ext_resource type="Script" uid="uid://wwivmweabnsm" path="res://Scripts/Components/Terrain/TerrainComponent.cs" id="14_h1bgf"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Terrain/tile_component.tscn" id="15_b3802"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="15_k12tt"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/debug_overlay.tscn" id="16_debug"]
 
 [sub_resource type="Resource" id="Resource_jkdf5"]
@@ -23,9 +25,9 @@ duration = 0.0
 [node name="Main" type="Node2D" unique_id=24548255]
 script = ExtResource("1_8gbba")
 
-[node name="ConnectionComponent" parent="." unique_id=1951652395 instance=ExtResource("2_conn")]
+[node name="DatabaseConnector" parent="." unique_id=1951652395 instance=ExtResource("2_conn")]
 
-[node name="SubscriptionComponent" parent="." unique_id=2063233651 instance=ExtResource("3_sub")]
+[node name="TableSubscriber" parent="." unique_id=2063233651 instance=ExtResource("3_sub")]
 
 [node name="CatalogComponent" parent="." unique_id=1072502500 instance=ExtResource("4_catalog")]
 
@@ -83,6 +85,33 @@ metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 
 [node name="HexGridOverlayComponent" parent="." unique_id=596614871 instance=ExtResource("9_hex2d")]
 
-[node name="TerrainComponent" parent="." unique_id=1575457739 instance=ExtResource("15_terrain")]
+[node name="TerrainComponent" type="Node2D" parent="." unique_id=1575457739]
+z_index = -10
+script = ExtResource("14_h1bgf")
+TileScene = ExtResource("15_b3802")
+
+[node name="MapConfigBinder" type="Node" parent="TerrainComponent" unique_id=1580265458]
+script = ExtResource("15_k12tt")
+ReplayExistingRows = true
+TableName = "MapConfig"
+
+[node name="TerrainTilesBinder" type="Node" parent="TerrainComponent" unique_id=1504131275]
+script = ExtResource("15_k12tt")
+ReplayExistingRows = true
+TableName = "NearbyTerrainTiles"
+
+[node name="HexDecorBinder" type="Node" parent="TerrainComponent" unique_id=259520872]
+script = ExtResource("15_k12tt")
+ReplayExistingRows = true
+TableName = "NearbyHexDecor"
 
 [node name="DebugOverlay" parent="." unique_id=1183131993 instance=ExtResource("16_debug")]
+
+[connection signal="RowInserted" from="TerrainComponent/MapConfigBinder" to="TerrainComponent" method="OnMapConfigRow"]
+[connection signal="RowUpdated" from="TerrainComponent/MapConfigBinder" to="TerrainComponent" method="OnMapConfigRow"]
+[connection signal="RowDeleted" from="TerrainComponent/TerrainTilesBinder" to="TerrainComponent" method="OnTileRowDeleted"]
+[connection signal="RowInserted" from="TerrainComponent/TerrainTilesBinder" to="TerrainComponent" method="OnTileRowInserted"]
+[connection signal="RowUpdated" from="TerrainComponent/TerrainTilesBinder" to="TerrainComponent" method="OnTileRowUpdated"]
+[connection signal="RowDeleted" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowDeleted"]
+[connection signal="RowInserted" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowInserted"]
+[connection signal="RowUpdated" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowUpdated"]

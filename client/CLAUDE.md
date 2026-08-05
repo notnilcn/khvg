@@ -2,7 +2,7 @@
 
 Guidance for Claude Code when working inside the Godot client (`client/`). See the root `CLAUDE.md` for the project-wide domain map and architecture rules.
 
-The client is 100% C# (Godot 4.6 mono) and fully compositional, modeled on `code_examples/comedot`.
+The client is 100% C# (Godot 4.7, .NET) and fully compositional, modeled on `code_examples/comedot`.
 
 ## Do not read
 
@@ -44,9 +44,10 @@ Server-authoritative rule: components never mutate health/stats locally. They *m
 - `CombatComponent.cs` (was `LocalPlayerCombat.cs`) — `Component`; weapon firing from the equipped item's `WeaponBehavior` (fire rate/pattern/range), aim assist/lock-on from `LocalPlayerActiveProfile`, spawns `HitZone`s along bullet paths.
 
 ### `Game/` — GameManager + its decomposition (component scenes in `Scenes/Components/`)
-- `GameManager.cs` — `Node2D, IEntity`, root node ("Main") of `Scenes/main.tscn`. Now thin entity glue plus a **static facade** delegating to its child components: `Conn`, `Username`, `IsLocal` → `ConnectionComponent`; `LapQ`/`LapR` → `SubscriptionComponent`; `GetItem`, `GetEnchantment(s)`, `EnchantmentsChanged`, `GetResPath` → `CatalogComponent`; `GetEnemy`, `EnemyCount` → `EntitySpawnerComponent`.
-- `Components/Connection/ConnectionComponent.cs` (`connection_component.tscn`) — owns the `DbConnection`, pumps `FrameTick()` every frame, `IsLocal` identity check. Connection flow: "Join World" → `Connect()` → `OnConnected()` → subscription builder → `OnSubscriptionApplied()`.
-- `Components/Subscription/SubscriptionComponent.cs` (`subscription_component.tscn`) — subscription waves; `LapQ`/`LapR` torus lap vectors from `MapConfig`.
+- `GameManager.cs` — `Node2D, IEntity`, root node ("Main") of `Scenes/main.tscn`. Now thin entity glue plus a **static facade** delegating to its child components: `Conn`, `Username`, `IsLocal` → `DatabaseConnector`; `LapQ`/`LapR` → `TableSubscriber`; `GetItem`, `GetEnchantment(s)`, `EnchantmentsChanged`, `GetResPath` → `CatalogComponent`; `GetEnemy`, `EnemyCount` → `EntitySpawnerComponent`.
+- `addons/sstdbsdk/DatabaseConnector.cs` — owns the `DbConnection` (`Conn`), pumps `FrameTick()` every frame, `IsLocal` identity check, `Connected` signal siblings hook to wire table callbacks. Exports `Host`/`DbName`.
+- `addons/sstdbsdk/TableSubscriber.cs` — subscription waves (base/lobby/game) as the static `BaseTables`/`LobbyTables`/`GameTables` name lists (the single source of truth for "what is subscribed", built into SQL via the generated `From` API); `LapQ`/`LapR` torus lap vectors from `MapConfig`.
+- `addons/sstdbsdk/TableBinderComponent.cs` — `[Tool]` node binding one subscribed table (`TableName` dropdown from `TableSubscriber.AllSubscribedTables`) and re-exposing its row events as editor-wireable Godot signals (`RowInserted`/`RowUpdated`/`RowDeleted`). Signals carry no args (rows aren't Variant-compatible) — handlers read `LastRow`/`LastOldRow`/`LastDeletedRow` and cast. `ReplayExistingRows` replays the cached rows through `RowInserted` on bind. Place one binder child per table on the consuming component (see `terrain_component.tscn`).
 - `Components/Catalog/CatalogComponent.cs` (`catalog_component.tscn`) — the `AllItems`/`AllEnchantments`/texture subscription views as caches (`GetItem`, `GetEnchantment(s)`, `GetResPath`, `EnchantmentsChanged`).
 - `Components/Spawning/EntitySpawnerComponent.cs` (`entity_spawner_component.tscn`) — table `OnInsert`/`OnDelete` → spawn/despawn of `LocalPlayer`/`RemotePlayer`/`Enemy`/`Drop`/`BulletManager`, plus the tracking dictionaries (`GetEnemy`, `EnemyCount`).
 - `Components/Lobby/LobbyComponent.cs` (`lobby_component.tscn`) — CharSlots UI (moved out of `main.tscn`) and profile panels.
@@ -61,7 +62,7 @@ Server-authoritative rule: components never mutate health/stats locally. They *m
 - The old camera static singletons are gone — reach these via `GameManager.GetComponent<T>()`.
 
 ### `Components/Terrain/` (scenes in `Scenes/Components/Terrain/`) — replaces `World/TerrainManager.cs` (deleted)
-- `TerrainComponent.cs` (`terrain_component.tscn`, `Node2DComponent`, child of Main) — subscribes to `NearbyTerrainTiles`/`NearbyHexDecor`, stores rows, dirty-flag one-rebuild-per-frame, shared wedge/decor mesh + texture caches, per-hex torus wrap + camera cull. Owns a pool of `TileComponent` instances pre-warmed to the AOI ring count (`1+3R(R+1)`; `[Export] AoiChunkRadius = 2` matching the server's `DEFAULT_TERRAIN_AOI_CHUNK_RADIUS`), growing on demand.
+- `TerrainComponent.cs` (`terrain_component.tscn`, `Node2DComponent`, child of Main) — receives `MapConfig`/`NearbyTerrainTiles`/`NearbyHexDecor` rows through three child `TableBinderComponent`s (signals wired in the `.tscn`), stores rows, dirty-flag one-rebuild-per-frame, shared wedge/decor mesh + texture caches, per-hex torus wrap + camera cull. Owns a pool of `TileComponent` instances pre-warmed to the AOI ring count (`1+3R(R+1)`; `[Export] AoiChunkRadius = 2` matching the server's `DEFAULT_TERRAIN_AOI_CHUNK_RADIUS`), growing on demand.
 - `TileComponent.cs` (`tile_component.tscn`, `Node2D, IEntity`) — per-chunk scaffolding with four declared layer children: `GroundComponent` (z=0), `OverlayComponent` (z=1, centroid-scaled), `DecorShadowComponent` (z=2), `DecorComponent` (z=3). `Populate(chunkIndex, rows…)` fills the layers per frame; `Clear()` parks it back in the pool.
 - `TerrainLayerComponent.cs` — base for the four layers; each owns pooled `MultiMeshInstance2D` batch leaves. The leaves stay code-created (data-driven count, deliberate perf design); z-order/scaffolding is declared in the `.tscn`. `DecorLayerComponent.cs` — shared base for the two decor layers (per-texture batches sorted by hex row).
 - Rendering semantics unchanged from the old `TerrainManager` (same meshes, transforms, z-order, fallback modulate, decor HexR sort).
@@ -96,5 +97,5 @@ Server-authoritative rule: components never mutate health/stats locally. They *m
 
 ## Setup notes
 - No autoloads — `GameManager` is instantiated as the root node ("Main") of `Scenes/main.tscn`; reach cross-cutting state through its static facade or `GetComponent<T>()` on it.
-- `khvg.csproj` (project root) has the `SpacetimeDB.ClientSDK` package reference — see the NuGet warning in the root `CLAUDE.md` if it's ever lost.
+- `khvg.csproj` (project root) has the `SpacetimeDB.ClientSDK.Godot` package reference — see the NuGet warning in the root `CLAUDE.md` if it's ever lost.
 - **BlastBullets2D** GDExtension plugin (`client/addons/blastbullets2d`) must be present; `BulletManager` dispatches patterns through its `BlastBullets` factory child node.

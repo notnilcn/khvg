@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://8oytx5u0vik3"]
 
 [ext_resource type="Script" uid="uid://cvwfgrgnsmcte" path="res://Scripts/Players/Remote/RemotePlayer.cs" id="1_v7aue"]
-[ext_resource type="Script" path="res://Scripts/Components/Visual/RemoteVisualComponent.cs" id="2_visual"]
+[ext_resource type="Script" uid="uid://bnc7lfsb82nes" path="res://Scripts/Components/Visual/RemoteVisualComponent.cs" id="2_visual"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="3_interp"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_3srne"]
@@ -14,5 +14,5 @@ position = Vector2(-6, -18)
 sprite_frames = SubResource("SpriteFrames_3srne")
 script = ExtResource("2_visual")
 
-[node name="InterpolationComponent" parent="." instance=ExtResource("3_interp")]
+[node name="InterpolationComponent" parent="." unique_id=1536060247 instance=ExtResource("3_interp")]
 WrapSnapThreshold = 50.0
