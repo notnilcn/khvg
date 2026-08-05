@@ -1,6 +1,0 @@
-[gd_scene format=3]
-
-[ext_resource type="Script" uid="uid://dlttx0smss1ls" path="res://addons/sstdbsdk/DatabaseConnector.cs" id="1_conn"]
-
-[node name="ConnectionComponent" type="Node"]
-script = ExtResource("1_conn")

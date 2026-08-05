@@ -24,7 +24,7 @@ public partial class LobbyComponent : ControlComponent
 
         ShowLobby();
 
-        var conn = GetSibling<DatabaseConnector>()?.Conn;
+        var conn = DatabaseConnector.Instance?.Conn;
         if (conn == null) return;
         conn.Db.LocalPlayerProfiles.OnInsert += OnProfileInsert;
     }
@@ -56,7 +56,7 @@ public partial class LobbyComponent : ControlComponent
 
     private void OnJoinPressed(PlayerProfile profile)
     {
-        var conn = GetSibling<DatabaseConnector>()?.Conn;
+        var conn = DatabaseConnector.Instance?.Conn;
         if (conn == null || GetNode<Control>("CreateProfilePanel").Visible) return;
         HideLobby();
         conn.Reducers.JoinWorld(profile.ProfileId);
@@ -66,7 +66,7 @@ public partial class LobbyComponent : ControlComponent
 
     private void OnDeletePressed(PlayerProfile profile)
     {
-        var conn = GetSibling<DatabaseConnector>()?.Conn;
+        var conn = DatabaseConnector.Instance?.Conn;
         if (conn == null || GetNode<Control>("CreateProfilePanel").Visible) return;
         conn.Reducers.DeleteProfile(profile.ProfileId);
         foreach (Control x in GetNode<Control>("ScrollContainer/VBoxContainer").GetChildren())
@@ -82,7 +82,7 @@ public partial class LobbyComponent : ControlComponent
 
     private void OnCreatePressed()
     {
-        var conn = GetSibling<DatabaseConnector>()?.Conn;
+        var conn = DatabaseConnector.Instance?.Conn;
         if (conn == null || !GetNode<Control>("CreateProfilePanel").Visible) return;
         if (GetNode<LineEdit>("CreateProfilePanel/Panel/LineEdit").Text.Length > 0)
             conn.Reducers.CreateProfile(GetNode<LineEdit>("CreateProfilePanel/Panel/LineEdit").Text, "Knight");

@@ -30,13 +30,16 @@ public partial class EntitySpawnerComponent : Component
 
     protected override void OnRegistered()
     {
-        if (GetSibling<DatabaseConnector>() is { } connection)
-            connection.Connected += OnConnected;
+        var connector = DatabaseConnector.Instance;
+        if (connector == null) return;
+        // The autoload can finish connecting before Main loads — handle both orders.
+        if (connector.Conn?.IsActive == true) OnConnected();
+        else connector.Connected += OnConnected;
     }
 
     private void OnConnected()
     {
-        var conn = GetSibling<DatabaseConnector>()?.Conn;
+        var conn = DatabaseConnector.Instance?.Conn;
         if (conn == null) return;
 
         conn.Db.LocalPlayer.OnInsert += OnLocalPlayerInsert;
@@ -72,7 +75,7 @@ public partial class EntitySpawnerComponent : Component
             bulletManager.QueueFree();
         bulletManager = null;
 
-        if (GetSibling<DatabaseConnector>()?.Conn?.IsActive != true) return;
+        if (DatabaseConnector.Instance?.Conn?.IsActive != true) return;
 
         GetSibling<LobbyComponent>()?.ShowLobby();
         GetSibling<TableSubscriber>()?.SubscribeLobby();
@@ -82,7 +85,7 @@ public partial class EntitySpawnerComponent : Component
     private void OnNearbyRemotePlayerInsert(EventContext _, PlayerPosition position)
     {
         var key = position.PlayerId.ToString();
-        if (GetSibling<DatabaseConnector>()?.IsLocal(position.PlayerId) == true || remotePlayers.ContainsKey(key)) return;
+        if (DatabaseConnector.Instance?.IsLocal(position.PlayerId) == true || remotePlayers.ContainsKey(key)) return;
         var node = NonLocalPlayerScene.Instantiate<RemotePlayer>();
         node.PlayerId = position.PlayerId;
         node.ProfileId = position.ProfileId;

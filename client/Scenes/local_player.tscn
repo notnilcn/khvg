@@ -11,6 +11,11 @@
 [ext_resource type="PackedScene" path="res://Scenes/Components/Combat/health_component.tscn" id="12_health"]
 [ext_resource type="Script" uid="uid://cvf3pb2g8fcrw" path="res://Scripts/Components/Combat/FactionComponent.cs" id="13_faction"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="14_hurtbox"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="15_binder"]
+[ext_resource type="Script" uid="uid://cn6ohebphqkmq" path="res://Scripts/Components/Movement/PositionSyncComponent.cs" id="16_pos"]
+[ext_resource type="Script" uid="uid://b4npu50mqoy3h" path="res://Scripts/Components/Data/LocalPlayerDataComponent.cs" id="17_data"]
+[ext_resource type="Script" uid="uid://dmplf8ey4jjs5" path="res://Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs" id="18_inv"]
+[ext_resource type="Script" uid="uid://dxruader1ioc2" path="res://Scripts/Components/Visual/LocalPlayerProfileComponent.cs" id="19_profile"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_rmvjh"]
 
@@ -68,3 +73,51 @@ follow_target = NodePath("../DamageReceivingComponent")
 tween_resource = SubResource("Resource_0dny4")
 rotate_with_target = true
 metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
+
+[node name="PositionSyncComponent" type="Node" parent="." unique_id=185419315]
+script = ExtResource("16_pos")
+
+[node name="LocalPlayerPositionBinder" type="Node" parent="PositionSyncComponent" unique_id=1246579541]
+script = ExtResource("15_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayerPosition"
+
+[node name="PlayerDataComponent" type="Node" parent="." unique_id=1310598986]
+script = ExtResource("17_data")
+
+[node name="LocalPlayerDataBinder" type="Node" parent="PlayerDataComponent" unique_id=570007707]
+script = ExtResource("15_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayerData"
+
+[node name="LocalPlayerStatsBinder" type="Node" parent="PlayerDataComponent" unique_id=1473012103]
+script = ExtResource("15_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayerStats"
+
+[node name="PlayerInventoryComponent" type="Node" parent="." unique_id=1107901124]
+script = ExtResource("18_inv")
+
+[node name="LocalPlayerInventoryBinder" type="Node" parent="PlayerInventoryComponent" unique_id=607242767]
+script = ExtResource("15_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayerInventory"
+
+[node name="PlayerProfileComponent" type="Node" parent="." unique_id=583780232]
+script = ExtResource("19_profile")
+
+[node name="LocalPlayerActiveProfileBinder" type="Node" parent="PlayerProfileComponent" unique_id=1741728125]
+script = ExtResource("15_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayerActiveProfile"
+
+[connection signal="RowInserted" from="PositionSyncComponent/LocalPlayerPositionBinder" to="PositionSyncComponent" method="OnPositionRowInserted"]
+[connection signal="RowUpdated" from="PositionSyncComponent/LocalPlayerPositionBinder" to="PositionSyncComponent" method="OnPositionRowUpdated"]
+[connection signal="RowInserted" from="PlayerDataComponent/LocalPlayerDataBinder" to="PlayerDataComponent" method="OnDataRow"]
+[connection signal="RowUpdated" from="PlayerDataComponent/LocalPlayerDataBinder" to="PlayerDataComponent" method="OnDataRow"]
+[connection signal="RowInserted" from="PlayerDataComponent/LocalPlayerStatsBinder" to="PlayerDataComponent" method="OnStatsRow"]
+[connection signal="RowUpdated" from="PlayerDataComponent/LocalPlayerStatsBinder" to="PlayerDataComponent" method="OnStatsRow"]
+[connection signal="RowInserted" from="PlayerInventoryComponent/LocalPlayerInventoryBinder" to="PlayerInventoryComponent" method="OnInventoryRow"]
+[connection signal="RowUpdated" from="PlayerInventoryComponent/LocalPlayerInventoryBinder" to="PlayerInventoryComponent" method="OnInventoryRow"]
+[connection signal="RowInserted" from="PlayerProfileComponent/LocalPlayerActiveProfileBinder" to="PlayerProfileComponent" method="OnProfileRowInserted"]
+[connection signal="RowUpdated" from="PlayerProfileComponent/LocalPlayerActiveProfileBinder" to="PlayerProfileComponent" method="OnProfileRowUpdated"]

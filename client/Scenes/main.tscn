@@ -1,8 +1,7 @@
 [gd_scene format=3 uid="uid://bk4d3bkeqrqvu"]
 
 [ext_resource type="Script" uid="uid://cqiavfx25o6be" path="res://Scripts/Game/GameManager.cs" id="1_8gbba"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/Connection/connection_component.tscn" id="2_conn"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/Subscription/subscription_component.tscn" id="3_sub"]
+[ext_resource type="Script" uid="uid://t5dudwr4e8ss" path="res://addons/sstdbsdk/TableSubscriber.cs" id="3_b3802"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Catalog/catalog_component.tscn" id="4_catalog"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Spawning/entity_spawner_component.tscn" id="5_spawner"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Lobby/lobby_component.tscn" id="6_lobby"]
@@ -25,9 +24,8 @@ duration = 0.0
 [node name="Main" type="Node2D" unique_id=24548255]
 script = ExtResource("1_8gbba")
 
-[node name="DatabaseConnector" parent="." unique_id=1951652395 instance=ExtResource("2_conn")]
-
-[node name="TableSubscriber" parent="." unique_id=2063233651 instance=ExtResource("3_sub")]
+[node name="TableSubscriber" type="Node" parent="." unique_id=2063233651]
+script = ExtResource("3_b3802")
 
 [node name="CatalogComponent" parent="." unique_id=1072502500 instance=ExtResource("4_catalog")]
 

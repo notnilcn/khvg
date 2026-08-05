@@ -21,13 +21,16 @@ public partial class CatalogComponent : Component
 
     protected override void OnRegistered()
     {
-        if (GetSibling<DatabaseConnector>() is { } connection)
-            connection.Connected += OnConnected;
+        var connector = DatabaseConnector.Instance;
+        if (connector == null) return;
+        // The autoload can finish connecting before Main loads — handle both orders.
+        if (connector.Conn?.IsActive == true) OnConnected();
+        else connector.Connected += OnConnected;
     }
 
     private void OnConnected()
     {
-        var conn = GetSibling<DatabaseConnector>()?.Conn;
+        var conn = DatabaseConnector.Instance?.Conn;
         if (conn == null) return;
 
         conn.Db.AllTextures.OnInsert += (_, texture) => textureCache[texture.TextureId] = texture.ResPath;
