@@ -17,8 +17,15 @@ public partial class CombatComponent : Component
     private Enemy? _nearestEnemy;
     private float _scanTimer;
     private LocalPlayer player = null!;
+    private TableBinderComponent nearbyEnemiesBinder = null!;
     private const float ScanInterval = 0.5f;
     private const float AimConeHalfAngle = 0.52f;
+
+    public override void _Ready()
+    {
+        base._Ready();
+        nearbyEnemiesBinder = GetNode<TableBinderComponent>("NearbyEnemiesBinder");
+    }
 
     protected override void OnRegistered()
     {
@@ -27,10 +34,6 @@ public partial class CombatComponent : Component
         player.AimSettingsChanged += OnAimSettingsChanged;
         _playerRadius = (player.GetNode<CollisionShape2D>("Collider").Shape as CapsuleShape2D)?.Radius ?? 0f;
         OnAimSettingsChanged();
-
-        var conn = GameManager.Conn;
-        if (conn != null)
-            conn.Db.NearbyEnemies.OnDelete += OnNearbyEnemyDelete;
     }
 
     public override void _Process(double delta)
@@ -107,8 +110,11 @@ public partial class CombatComponent : Component
         _nearestEnemy = best;
     }
 
-    private void OnNearbyEnemyDelete(EventContext _, SpacetimeDB.Types.Enemy enemy)
+    // --- TableBinderComponent signal handlers (wired in local_player.tscn) ---
+
+    private void OnNearbyEnemyDeletedRow()
     {
+        var enemy = (SpacetimeDB.Types.Enemy)nearbyEnemiesBinder.LastDeletedRow!;
         if (_nearestEnemy?.EnemyId == enemy.EnemyId)
         {
             _nearestEnemy = null;
@@ -232,8 +238,5 @@ public partial class CombatComponent : Component
             player.InventoryChanged -= OnInventoryChanged;
             player.AimSettingsChanged -= OnAimSettingsChanged;
         }
-        var conn = GameManager.Conn;
-        if (conn != null)
-            conn.Db.NearbyEnemies.OnDelete -= OnNearbyEnemyDelete;
     }
 }

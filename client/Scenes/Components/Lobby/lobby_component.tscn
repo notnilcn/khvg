@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://Scripts/Components/Lobby/LobbyComponent.cs" id="1_lobby"]
 [ext_resource type="PackedScene" path="res://Scenes/profile_panel.tscn" id="2_profile"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="3_binder"]
 
 [node name="LobbyComponent" type="Control"]
 anchors_preset = 15
@@ -11,6 +12,11 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_lobby")
 PlayerProfileScene = ExtResource("2_profile")
+
+[node name="LocalPlayerProfilesBinder" type="Node" parent="."]
+script = ExtResource("3_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayerProfiles"
 
 [node name="Panel" type="Panel" parent="."]
 custom_minimum_size = Vector2(0, 40)
@@ -97,3 +103,4 @@ text = "CREATE"
 
 [connection signal="pressed" from="Panel/Create" to="." method="OnCreatePanelPressed"]
 [connection signal="pressed" from="CreateProfilePanel/Panel/Create" to="." method="OnCreatePressed"]
+[connection signal="RowInserted" from="LocalPlayerProfilesBinder" to="." method="OnProfileRowInserted"]

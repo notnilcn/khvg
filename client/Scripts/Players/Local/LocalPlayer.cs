@@ -27,6 +27,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
     // (Stats, Health, Faction, Combat…) register themselves here from their _Ready.
     private readonly EntityRegistry componentRegistry = new();
     public void RegisterComponent(IComponent component) => componentRegistry.Register(component);
+    public void RegisterComponent<T>(T component) where T : IComponent => componentRegistry.Register(component);
     public void UnregisterComponent(IComponent component) => componentRegistry.Unregister(component);
     public IComponent? GetComponent(System.Type type) => componentRegistry.Get(type);
     public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
@@ -98,12 +99,12 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 
     public override void _Ready()
     {
-        Local  = this;
+        Local = this;
         sprite = GetNode<AnimatedSprite2D>("Sprite");
 
         var gameManager = this.GetAncestor<GameManager>();
-        world3D   = gameManager?.GetComponent<World3DComponent>();
-        camera2D  = gameManager?.GetComponent<Camera2DPresenterComponent>();
+        world3D = gameManager?.GetComponent<World3DComponent>();
+        camera2D = gameManager?.GetComponent<Camera2DPresenterComponent>();
         cameraRig = gameManager?.GetComponent<CameraRigComponent>();
 
         if (KnightScene != null && world3D != null)
@@ -120,7 +121,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
     public override void _PhysicsProcess(double delta)
     {
         var raw = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
-        float yaw  = cameraRig?.Yaw ?? 0f;
+        float yaw = cameraRig?.Yaw ?? 0f;
         var rot2d = new Vector2(raw.X, raw.Y).Rotated(yaw);
         var input = new Vector2(rot2d.X, rot2d.Y);
 

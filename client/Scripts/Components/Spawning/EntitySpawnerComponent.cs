@@ -1,14 +1,14 @@
 #nullable enable
 using Godot;
-using SpacetimeDB;
 using SpacetimeDB.Types;
 using System.Collections.Generic;
 
 /// <summary>
 /// Spawns and despawns the server-row entities — LocalPlayer (+ the BulletManager),
-/// RemotePlayers, Enemies, Drops — from table OnInsert/OnDelete callbacks, and tracks
-/// them in lookup dictionaries. Instantiation stays in code because the count is
-/// data-driven by server rows (logic moved out of GameManager.cs).
+/// RemotePlayers, Enemies, Drops — from child TableBinderComponent row signals (declared in
+/// entity_spawner_component.tscn, signals wired in the editor; ReplayExistingRows covers rows
+/// already in the client cache), and tracks them in lookup dictionaries. Instantiation stays
+/// in code because the count is data-driven by server rows (logic moved out of GameManager.cs).
 /// </summary>
 public partial class EntitySpawnerComponent : Component
 {
@@ -24,35 +24,28 @@ public partial class EntitySpawnerComponent : Component
     private readonly Dictionary<ulong, Enemy> enemies = new();
     private readonly Dictionary<ulong, Drop> drops = new();
 
+    /// Child binders (declared in entity_spawner_component.tscn) feeding the spawn tables.
+    private TableBinderComponent localPlayerBinder = null!;
+    private TableBinderComponent nearbyRemotePlayersBinder = null!;
+    private TableBinderComponent nearbyEnemiesBinder = null!;
+    private TableBinderComponent nearbyLootDropsBinder = null!;
+
     public int EnemyCount => enemies.Count;
 
     public Enemy? GetEnemy(ulong enemyId) => enemies.TryGetValue(enemyId, out var node) ? node : null;
 
-    protected override void OnRegistered()
+    public override void _Ready()
     {
-        var connector = DatabaseConnector.Instance;
-        if (connector == null) return;
-        // The autoload can finish connecting before Main loads — handle both orders.
-        if (connector.Conn?.IsActive == true) OnConnected();
-        else connector.Connected += OnConnected;
+        base._Ready();
+        localPlayerBinder = GetNode<TableBinderComponent>("LocalPlayerBinder");
+        nearbyRemotePlayersBinder = GetNode<TableBinderComponent>("NearbyRemotePlayersBinder");
+        nearbyEnemiesBinder = GetNode<TableBinderComponent>("NearbyEnemiesBinder");
+        nearbyLootDropsBinder = GetNode<TableBinderComponent>("NearbyLootDropsBinder");
     }
 
-    private void OnConnected()
-    {
-        var conn = DatabaseConnector.Instance?.Conn;
-        if (conn == null) return;
+    // --- TableBinderComponent signal handlers (wired in entity_spawner_component.tscn) ---
 
-        conn.Db.LocalPlayer.OnInsert += OnLocalPlayerInsert;
-        conn.Db.LocalPlayer.OnDelete += OnLocalPlayerDelete;
-        conn.Db.NearbyRemotePlayers.OnInsert += OnNearbyRemotePlayerInsert;
-        conn.Db.NearbyRemotePlayers.OnDelete += OnNearbyRemotePlayerDelete;
-        conn.Db.NearbyEnemies.OnInsert += OnEnemyInsert;
-        conn.Db.NearbyEnemies.OnDelete += OnEnemyDelete;
-        conn.Db.NearbyLootDrops.OnInsert += OnDropInsert;
-        conn.Db.NearbyLootDrops.OnDelete += OnDropDelete;
-    }
-
-    private void OnLocalPlayerInsert(EventContext _, LoggedInPlayer loggedInPlayer)
+    private void OnLocalPlayerInsert()
     {
         if (localPlayer == null)
         {
@@ -66,7 +59,7 @@ public partial class EntitySpawnerComponent : Component
         }
     }
 
-    private void OnLocalPlayerDelete(EventContext _, LoggedInPlayer loggedInPlayer)
+    private void OnLocalPlayerDelete()
     {
         if (localPlayer != null && IsInstanceValid(localPlayer))
             localPlayer.QueueFree();
@@ -82,8 +75,9 @@ public partial class EntitySpawnerComponent : Component
         GetSibling<TableSubscriber>()?.UnsubscribeGame();
     }
 
-    private void OnNearbyRemotePlayerInsert(EventContext _, PlayerPosition position)
+    private void OnNearbyRemotePlayerInsert()
     {
+        var position = (PlayerPosition)nearbyRemotePlayersBinder.LastRow!;
         var key = position.PlayerId.ToString();
         if (DatabaseConnector.Instance?.IsLocal(position.PlayerId) == true || remotePlayers.ContainsKey(key)) return;
         var node = NonLocalPlayerScene.Instantiate<RemotePlayer>();
@@ -94,8 +88,9 @@ public partial class EntitySpawnerComponent : Component
         remotePlayers[key] = node;
     }
 
-    private void OnNearbyRemotePlayerDelete(EventContext _, PlayerPosition position)
+    private void OnNearbyRemotePlayerDelete()
     {
+        var position = (PlayerPosition)nearbyRemotePlayersBinder.LastDeletedRow!;
         var key = position.PlayerId.ToString();
         if (!remotePlayers.TryGetValue(key, out var node)) return;
         remotePlayers.Remove(key);
@@ -103,8 +98,9 @@ public partial class EntitySpawnerComponent : Component
             node.QueueFree();
     }
 
-    private void OnEnemyInsert(EventContext _, SpacetimeDB.Types.Enemy enemy)
+    private void OnEnemyInsert()
     {
+        var enemy = (SpacetimeDB.Types.Enemy)nearbyEnemiesBinder.LastRow!;
         if (enemies.ContainsKey(enemy.EnemyId)) return;
         var node = EnemyScene.Instantiate<Enemy>();
         node.EnemyId = enemy.EnemyId;
@@ -113,16 +109,18 @@ public partial class EntitySpawnerComponent : Component
         enemies[enemy.EnemyId] = node;
     }
 
-    private void OnEnemyDelete(EventContext _, SpacetimeDB.Types.Enemy enemy)
+    private void OnEnemyDelete()
     {
+        var enemy = (SpacetimeDB.Types.Enemy)nearbyEnemiesBinder.LastDeletedRow!;
         if (!enemies.TryGetValue(enemy.EnemyId, out var node)) return;
         enemies.Remove(enemy.EnemyId);
         if (IsInstanceValid(node))
             node.QueueFree();
     }
 
-    private void OnDropInsert(EventContext _, LootDrop lootDrop)
+    private void OnDropInsert()
     {
+        var lootDrop = (LootDrop)nearbyLootDropsBinder.LastRow!;
         GD.Print("Drop Inserted");
         if (drops.ContainsKey(lootDrop.DropId)) return;
         GD.Print("Drop Being Instantiated");
@@ -135,8 +133,9 @@ public partial class EntitySpawnerComponent : Component
         drops[lootDrop.DropId] = node;
     }
 
-    private void OnDropDelete(EventContext _, LootDrop lootDrop)
+    private void OnDropDelete()
     {
+        var lootDrop = (LootDrop)nearbyLootDropsBinder.LastDeletedRow!;
         if (!drops.TryGetValue(lootDrop.DropId, out var node)) return;
         drops.Remove(lootDrop.DropId);
         if (IsInstanceValid(node))

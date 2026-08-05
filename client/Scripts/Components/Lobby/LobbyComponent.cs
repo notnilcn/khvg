@@ -15,6 +15,13 @@ public partial class LobbyComponent : ControlComponent
     [Export] public PackedScene PlayerProfileScene { get; set; } = null!;
 
     private PhantomCamera2D? mainMenuPCam2D;
+    private TableBinderComponent profilesBinder = null!;
+
+    public override void _Ready()
+    {
+        base._Ready();
+        profilesBinder = GetNode<TableBinderComponent>("LocalPlayerProfilesBinder");
+    }
 
     protected override void OnRegistered()
     {
@@ -23,10 +30,6 @@ public partial class LobbyComponent : ControlComponent
             .GetNodeOrNull<Node2D>("MainMenuPhantomCamera2D")?.AsPhantomCamera2D();
 
         ShowLobby();
-
-        var conn = DatabaseConnector.Instance?.Conn;
-        if (conn == null) return;
-        conn.Db.LocalPlayerProfiles.OnInsert += OnProfileInsert;
     }
 
     public void ShowLobby()
@@ -43,8 +46,11 @@ public partial class LobbyComponent : ControlComponent
         mainMenuPCam2D.Priority = 0;
     }
 
-    private void OnProfileInsert(EventContext _, PlayerProfile profile)
+    // --- TableBinderComponent signal handlers (wired in lobby_component.tscn) ---
+
+    private void OnProfileRowInserted()
     {
+        var profile = (PlayerProfile)profilesBinder.LastRow!;
         Control profilePanel = PlayerProfileScene.Instantiate<Control>();
         profilePanel.GetNode<Label>("Name").Text = profile.ProfileName;
         profilePanel.GetNode<Label>("ID").Text = profile.ProfileId.ToString();

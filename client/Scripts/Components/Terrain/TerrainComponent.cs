@@ -362,12 +362,12 @@ public partial class TerrainComponent : Node2DComponent
 
         var halfWidth = size.X / 2f;
         var vertices = new[]
-        {
+    {
             new Vector3(-halfWidth, -size.Y, 0f), new Vector3(halfWidth, -size.Y, 0f),
             new Vector3(halfWidth, 0f, 0f), new Vector3(-halfWidth, 0f, 0f),
         };
         var uvs = new[]
-        {
+    {
             uvRegion.Position, uvRegion.Position + new Vector2(uvRegion.Size.X, 0f),
             uvRegion.Position + uvRegion.Size, uvRegion.Position + new Vector2(0f, uvRegion.Size.Y),
         };

@@ -34,13 +34,15 @@ pub enum EnemyTarget {
 }
 
 #[table(accessor = movement_def, public)]
-pub struct MovementDef {
+pub struct MovementDef 
+{
     #[primary_key] #[auto_inc] pub def_id: u64,
     pub movement: MovementBehavior,
 }
 
 #[table(accessor = single_step_def, public)]
-pub struct SingleStepDef {
+pub struct SingleStepDef 
+{
     #[primary_key] #[auto_inc] pub def_id: u64,
     pub pattern_type: PatternType,
     pub target: EnemyTarget,
@@ -54,7 +56,8 @@ pub struct SingleStepDef {
 }
 
 #[table(accessor = repeat_step_def, public)]
-pub struct RepeatStepDef {
+pub struct RepeatStepDef 
+{
     #[primary_key] #[auto_inc] pub def_id: u64,
     pub pattern_type: PatternType,
     pub target: EnemyTarget,
@@ -70,7 +73,8 @@ pub struct RepeatStepDef {
 }
 
 #[derive(SpacetimeType, Clone)]
-pub struct MultiShot {
+pub struct MultiShot 
+{
     pub pattern_type: PatternType,
     pub target: EnemyTarget,
     pub offset_x: f32,
@@ -82,7 +86,8 @@ pub struct MultiShot {
 }
 
 #[table(accessor = multi_step_def, public)]
-pub struct MultiStepDef {
+pub struct MultiStepDef 
+{
     #[primary_key] #[auto_inc] pub def_id: u64,
     pub shots: Vec<MultiShot>,
     pub next_step_delay: f32,
@@ -96,13 +101,15 @@ pub enum SequenceStepDef {
 }
 
 #[derive(SpacetimeType, Clone)]
-pub struct AttackSequence {
+pub struct AttackSequence 
+{
     pub steps: Vec<SequenceStepDef>,
     pub start_delay: f32,
 }
 
 #[derive(SpacetimeType, Clone)]
-pub struct PhaseDef {
+pub struct PhaseDef 
+{
     pub phase_index: u8,
     pub hp_threshold: f32,
     pub movement_def_id: u64,
@@ -111,7 +118,8 @@ pub struct PhaseDef {
 }
 
 #[table(accessor = enemy_template, public)]
-pub struct EnemyTemplate {
+pub struct EnemyTemplate 
+{
     #[primary_key] pub template_id: String,
     pub texture_id: String,
     pub display_name: String,

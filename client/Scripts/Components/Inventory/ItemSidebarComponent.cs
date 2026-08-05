@@ -164,12 +164,12 @@ public partial class ItemSidebarComponent : ControlComponent
             uint slotIndex = (uint)shownSlot;
             string enchantmentId = enchantment.EnchantmentId;
             button.Pressed += () =>
-            {
-                if (socketed)
-                    GameManager.Conn?.Reducers.RemoveEnchantment(slotIndex, enchantmentId);
-                else
-                    GameManager.Conn?.Reducers.ApplyEnchantment(slotIndex, enchantmentId);
-            };
+    {
+        if (socketed)
+            GameManager.Conn?.Reducers.RemoveEnchantment(slotIndex, enchantmentId);
+        else
+            GameManager.Conn?.Reducers.ApplyEnchantment(slotIndex, enchantmentId);
+    };
         }
         else
         {

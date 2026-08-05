@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/default_enemy.tscn" id="4_enemy"]
 [ext_resource type="PackedScene" path="res://Scenes/drop.tscn" id="5_drop"]
 [ext_resource type="PackedScene" path="res://Scenes/bullet_manager.tscn" id="6_bullets"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="7_binder"]
 
 [node name="EntitySpawnerComponent" type="Node"]
 script = ExtResource("1_spawner")
@@ -14,3 +15,32 @@ NonLocalPlayerScene = ExtResource("3_remote")
 EnemyScene = ExtResource("4_enemy")
 DropScene = ExtResource("5_drop")
 BulletManagerScene = ExtResource("6_bullets")
+
+[node name="LocalPlayerBinder" type="Node" parent="."]
+script = ExtResource("7_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayer"
+
+[node name="NearbyRemotePlayersBinder" type="Node" parent="."]
+script = ExtResource("7_binder")
+ReplayExistingRows = true
+TableName = "NearbyRemotePlayers"
+
+[node name="NearbyEnemiesBinder" type="Node" parent="."]
+script = ExtResource("7_binder")
+ReplayExistingRows = true
+TableName = "NearbyEnemies"
+
+[node name="NearbyLootDropsBinder" type="Node" parent="."]
+script = ExtResource("7_binder")
+ReplayExistingRows = true
+TableName = "NearbyLootDrops"
+
+[connection signal="RowInserted" from="LocalPlayerBinder" to="." method="OnLocalPlayerInsert"]
+[connection signal="RowDeleted" from="LocalPlayerBinder" to="." method="OnLocalPlayerDelete"]
+[connection signal="RowInserted" from="NearbyRemotePlayersBinder" to="." method="OnNearbyRemotePlayerInsert"]
+[connection signal="RowDeleted" from="NearbyRemotePlayersBinder" to="." method="OnNearbyRemotePlayerDelete"]
+[connection signal="RowInserted" from="NearbyEnemiesBinder" to="." method="OnEnemyInsert"]
+[connection signal="RowDeleted" from="NearbyEnemiesBinder" to="." method="OnEnemyDelete"]
+[connection signal="RowInserted" from="NearbyLootDropsBinder" to="." method="OnDropInsert"]
+[connection signal="RowDeleted" from="NearbyLootDropsBinder" to="." method="OnDropDelete"]

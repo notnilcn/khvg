@@ -45,11 +45,11 @@ public abstract partial class TerrainLayerComponent : Node2DComponent
     public void FinishPass(ICollection<string> currentKeys)
     {
         _activeKeys.RemoveWhere(key =>
-        {
-            if (currentKeys.Contains(key)) return false;
-            _leaves[key].Multimesh!.InstanceCount = 0;
-            return true;
-        });
+    {
+        if (currentKeys.Contains(key)) return false;
+        _leaves[key].Multimesh!.InstanceCount = 0;
+        return true;
+    });
     }
 
     /// Frees all leaves — used when the hex outer radius changes and every cached mesh is stale.

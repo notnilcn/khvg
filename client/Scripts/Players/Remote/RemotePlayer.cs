@@ -11,8 +11,8 @@ using System.Linq;
 /// </summary>
 public partial class RemotePlayer : Node2D, IEntity
 {
-	public Identity PlayerId  { get; set; }
-	public ulong    ProfileId { get; set; }
+	public Identity PlayerId { get; set; }
+	public ulong ProfileId { get; set; }
 
 	// IEntity — RemotePlayer needs Node2D, so it implements the interface directly with
 	// its own registry; same pattern as LocalPlayer/Enemy.
@@ -24,11 +24,15 @@ public partial class RemotePlayer : Node2D, IEntity
 
 	private const float SpeedPerStat = 4f;
 
+	/// Child binder (declared in non_local_player.tscn) feeding NearbyRemotePlayers position rows.
+	private TableBinderComponent positionBinder = null!;
+
 	public override void _Ready()
 	{
+		positionBinder = GetNode<TableBinderComponent>("NearbyRemotePlayersBinder");
+
 		var conn = GameManager.Conn;
 		if (conn == null) return;
-		conn.Db.NearbyRemotePlayers.OnUpdate += OnPositionUpdate;
 
 		var profile = conn.Db.NearbyRemotePlayersProfiles.Iter()
 			.FirstOrDefault(p => p.ProfileId == ProfileId);
@@ -36,20 +40,16 @@ public partial class RemotePlayer : Node2D, IEntity
 			GetComponent<RemoteVisualComponent>()?.SetTexture(profile.TextureId);
 	}
 
-	private void OnPositionUpdate(EventContext _, PlayerPosition old, PlayerPosition position)
+	// --- TableBinderComponent signal handlers (wired in non_local_player.tscn) ---
+
+	private void OnPositionRowUpdated()
 	{
+		var position = (PlayerPosition)positionBinder.LastRow!;
 		if (position.PlayerId != PlayerId) return;
 
 		var stats = GameManager.Conn?.Db.PlayerStats.ProfileId.Find(ProfileId);
 		float speed = (stats?.Speed ?? 0) * SpeedPerStat;
 		var velocity = new Vector2(Mathf.Cos(position.Rotation), Mathf.Sin(position.Rotation)) * speed;
 		GetComponent<InterpolationComponent>()?.SetTarget(new Vector2(position.X, position.Y), position.Rotation, velocity);
-	}
-
-	public override void _ExitTree()
-	{
-		var conn = GameManager.Conn;
-		if (conn == null) return;
-		conn.Db.NearbyRemotePlayers.OnUpdate -= OnPositionUpdate;
 	}
 }

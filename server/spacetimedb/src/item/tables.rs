@@ -27,7 +27,8 @@ pub enum StatMode { Flat, Mult }
 pub struct StatModifier { pub stat: StatKind, pub amount: f32, pub mode: StatMode }
 
 #[derive(SpacetimeType, Clone, PartialEq)]
-pub struct WeaponBehavior {
+pub struct WeaponBehavior 
+{
     pub damage: u32, pub range: f32, pub fire_rate: f32, pub projectile_speed: f32,
     pub shot_count: u32, pub zone_count: u32, pub pierce: bool,
     pub projectile_texture_id: String, pub pattern: WeaponPattern, pub spread_angle: f32,
@@ -56,7 +57,8 @@ pub struct ConsumableBehavior { pub effect: ConsumableEffect, pub potency: f32, 
 pub enum ItemBehavior { Weapon(WeaponBehavior), Consumable(ConsumableBehavior) }
 
 #[table(accessor = item, public)]
-pub struct Item {
+pub struct Item 
+{
     #[primary_key]
     pub item_id: String,
     pub display_name: String,
@@ -69,7 +71,8 @@ pub struct Item {
 }
 
 #[table(accessor = enchantment, public)]
-pub struct Enchantment {
+pub struct Enchantment 
+{
     #[primary_key]
     pub enchantment_id: String,
     pub display_name: String,

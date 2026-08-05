@@ -8,7 +8,9 @@ using System.Collections.Generic;
 /// Caches the static catalog subscription views — AllItems, AllEnchantments, AllTextures —
 /// and resolves lookups against them (GetItem/GetEnchantment/GetEnchantments/GetResPath).
 /// Emits <see cref="EnchantmentsChanged"/> whenever the enchantment view changes so UI
-/// observers can refresh (logic moved out of GameManager.cs).
+/// observers can refresh (logic moved out of GameManager.cs). Rows arrive via the child
+/// TableBinderComponents declared in catalog_component.tscn (signals wired in the editor;
+/// ReplayExistingRows replaces the old OnConnected hookup order handling).
 /// </summary>
 public partial class CatalogComponent : Component
 {
@@ -19,31 +21,56 @@ public partial class CatalogComponent : Component
     private readonly Dictionary<string, SpacetimeDB.Types.Item> itemCache = new();
     private readonly Dictionary<string, Enchantment> enchantmentCache = new();
 
-    protected override void OnRegistered()
+    /// Child binders (declared in catalog_component.tscn) feeding the three catalog views.
+    private TableBinderComponent allTexturesBinder = null!;
+    private TableBinderComponent allItemsBinder = null!;
+    private TableBinderComponent allEnchantmentsBinder = null!;
+
+    public override void _Ready()
     {
-        var connector = DatabaseConnector.Instance;
-        if (connector == null) return;
-        // The autoload can finish connecting before Main loads — handle both orders.
-        if (connector.Conn?.IsActive == true) OnConnected();
-        else connector.Connected += OnConnected;
+        base._Ready();
+        allTexturesBinder = GetNode<TableBinderComponent>("AllTexturesBinder");
+        allItemsBinder = GetNode<TableBinderComponent>("AllItemsBinder");
+        allEnchantmentsBinder = GetNode<TableBinderComponent>("AllEnchantmentsBinder");
     }
 
-    private void OnConnected()
+    // --- TableBinderComponent signal handlers (wired in catalog_component.tscn) ---
+    // Each binder has ReplayExistingRows on, so rows already in the client cache come through
+    // the same insert path — no separate connection-order handling here.
+
+    private void OnTextureRow()
     {
-        var conn = DatabaseConnector.Instance?.Conn;
-        if (conn == null) return;
+        var texture = (TextureEntry)allTexturesBinder.LastRow!;
+        textureCache[texture.TextureId] = texture.ResPath;
+    }
 
-        conn.Db.AllTextures.OnInsert += (_, texture) => textureCache[texture.TextureId] = texture.ResPath;
-        conn.Db.AllTextures.OnUpdate += (_, _, texture) => textureCache[texture.TextureId] = texture.ResPath;
-        conn.Db.AllTextures.OnDelete += (_, texture) => textureCache.Remove(texture.TextureId);
+    private void OnTextureRowDeleted()
+    {
+        textureCache.Remove(((TextureEntry)allTexturesBinder.LastDeletedRow!).TextureId);
+    }
 
-        conn.Db.AllItems.OnInsert += (_, item) => itemCache[item.ItemId] = item;
-        conn.Db.AllItems.OnUpdate += (_, _, item) => itemCache[item.ItemId] = item;
-        conn.Db.AllItems.OnDelete += (_, item) => itemCache.Remove(item.ItemId);
+    private void OnItemRow()
+    {
+        var item = (Item)allItemsBinder.LastRow!;
+        itemCache[item.ItemId] = item;
+    }
 
-        conn.Db.AllEnchantments.OnInsert += (_, enchantment) => { enchantmentCache[enchantment.EnchantmentId] = enchantment; EnchantmentsChanged?.Invoke(); };
-        conn.Db.AllEnchantments.OnUpdate += (_, _, enchantment) => { enchantmentCache[enchantment.EnchantmentId] = enchantment; EnchantmentsChanged?.Invoke(); };
-        conn.Db.AllEnchantments.OnDelete += (_, enchantment) => { enchantmentCache.Remove(enchantment.EnchantmentId); EnchantmentsChanged?.Invoke(); };
+    private void OnItemRowDeleted()
+    {
+        itemCache.Remove(((Item)allItemsBinder.LastDeletedRow!).ItemId);
+    }
+
+    private void OnEnchantmentRow()
+    {
+        var enchantment = (Enchantment)allEnchantmentsBinder.LastRow!;
+        enchantmentCache[enchantment.EnchantmentId] = enchantment;
+        EnchantmentsChanged?.Invoke();
+    }
+
+    private void OnEnchantmentRowDeleted()
+    {
+        enchantmentCache.Remove(((Enchantment)allEnchantmentsBinder.LastDeletedRow!).EnchantmentId);
+        EnchantmentsChanged?.Invoke();
     }
 
     public string? GetResPath(string textureId) =>

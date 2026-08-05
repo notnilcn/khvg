@@ -24,8 +24,8 @@ public partial class InterpolationComponent : Component
 
     private Vector2 canonicalPosition;
     private Vector2 snapVelocity;
-    private float   timeSinceSnap;
-    private float   targetRotation;
+    private float timeSinceSnap;
+    private float targetRotation;
 
     /// The entity root this component moves (the IEntity ancestor cast to Node2D).
     private Node2D? EntityNode => Entity as Node2D;
@@ -34,7 +34,7 @@ public partial class InterpolationComponent : Component
     {
         if (EntityNode is not { } node) return;
         canonicalPosition = node.GlobalPosition;
-        targetRotation    = node.Rotation;
+        targetRotation = node.Rotation;
     }
 
     /// Sets a new position target; rotation target and extrapolation velocity are unchanged.
@@ -45,9 +45,9 @@ public partial class InterpolationComponent : Component
     public void SetTarget(Vector2 position, float rotation, Vector2 velocity = default)
     {
         canonicalPosition = position;
-        targetRotation    = rotation;
-        snapVelocity      = velocity;
-        timeSinceSnap     = 0f;
+        targetRotation = rotation;
+        snapVelocity = velocity;
+        timeSinceSnap = 0f;
 
         if (WrapSnapThreshold <= 0f || EntityNode is not { } node) return;
         var nearest = TorusMath.NearestCandidate(canonicalPosition, node.GlobalPosition, GameManager.LapQ, GameManager.LapR);
@@ -59,8 +59,8 @@ public partial class InterpolationComponent : Component
     public void SnapTo(Vector2 position)
     {
         canonicalPosition = position;
-        snapVelocity      = Vector2.Zero;
-        timeSinceSnap     = 0f;
+        snapVelocity = Vector2.Zero;
+        timeSinceSnap = 0f;
         if (EntityNode is { } node)
             node.GlobalPosition = TorusMath.NearestCandidate(position, node.GlobalPosition, GameManager.LapQ, GameManager.LapR);
     }
@@ -71,8 +71,8 @@ public partial class InterpolationComponent : Component
         timeSinceSnap += (float)delta;
         var canonicalExtrapolated = canonicalPosition + snapVelocity * timeSinceSnap;
         var nearest = TorusMath.NearestCandidate(canonicalExtrapolated, node.GlobalPosition, GameManager.LapQ, GameManager.LapR);
-        Moving             = node.GlobalPosition.DistanceSquaredTo(nearest) > 1f;
+        Moving = node.GlobalPosition.DistanceSquaredTo(nearest) > 1f;
         node.GlobalPosition = node.GlobalPosition.Lerp(nearest, LerpSpeed * (float)delta);
-        node.Rotation       = Mathf.LerpAngle(node.Rotation, targetRotation, LerpSpeed * (float)delta);
+        node.Rotation = Mathf.LerpAngle(node.Rotation, targetRotation, LerpSpeed * (float)delta);
     }
 }

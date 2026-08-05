@@ -75,7 +75,7 @@ public partial class BulletSpawnerComponent : Component
 
     public void SpawnEnemyBullet(BulletPatternEvent bulletPattern)
     {
-        var origin    = new Vector2(bulletPattern.OriginX, bulletPattern.OriginY) + new Vector2(bulletPattern.OriginOffsetX, bulletPattern.OriginOffsetY);
+        var origin = new Vector2(bulletPattern.OriginX, bulletPattern.OriginY) + new Vector2(bulletPattern.OriginOffsetX, bulletPattern.OriginOffsetY);
         var baseAngle = ResolveTargetAngle(origin, bulletPattern.Target) + Mathf.DegToRad(bulletPattern.BaseAngleOffset);
 
         EnemyBulletSpawner.Set("bullets_custom_data", new BulletData { SourceStep = bulletPattern.SourceStep });
@@ -181,7 +181,7 @@ public partial class BulletSpawnerComponent : Component
         if (p.Count == 0) return;
         SetSpeed(p.Speed);
         var transforms = new Godot.Collections.Array<Transform2D>();
-        float angleStep  = p.Count > 1 ? p.AngleSpan / (p.Count - 1) : 0f;
+        float angleStep = p.Count > 1 ? p.AngleSpan / (p.Count - 1) : 0f;
         float startAngle = baseAngle - p.AngleSpan * 0.5f;
         for (uint i = 0; i < p.Count; i++)
         {
@@ -196,11 +196,11 @@ public partial class BulletSpawnerComponent : Component
     {
         if (p.Count == 0) return;
         float halfSpread = p.Spread * 0.5f;
-        float angleStep  = p.Count > 1 ? p.Spread / (p.Count - 1) : 0f;
+        float angleStep = p.Count > 1 ? p.Spread / (p.Count - 1) : 0f;
         for (uint i = 0; i < p.Count; i++)
         {
-            float angle          = baseAngle - halfSpread + angleStep * i;
-            float speed          = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
+            float angle = baseAngle - halfSpread + angleStep * i;
+            float speed = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
             float pelletLifetime = lifetime + Jitter(eventId, i, 1, p.LifetimeVariance);
             SpawnSingle(origin, angle, speed, pelletLifetime);
         }
@@ -212,8 +212,8 @@ public partial class BulletSpawnerComponent : Component
         float angleStep = Mathf.Tau / p.Count;
         for (uint i = 0; i < p.Count; i++)
         {
-            float angle          = baseAngle + angleStep * i;
-            float speed          = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
+            float angle = baseAngle + angleStep * i;
+            float speed = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
             float pelletLifetime = lifetime + Jitter(eventId, i, 1, p.LifetimeVariance);
             SpawnSingle(origin, angle, speed, pelletLifetime);
         }

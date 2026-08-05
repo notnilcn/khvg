@@ -11,6 +11,7 @@ public partial class LobbyGui : Control
 	{
 		GetTree().ChangeSceneToFile("res://Scenes/main.tscn");
 	}
+
 	public void ServerListPressed()
 	{
 		GetNode<CenterContainer>("MainMenu").Hide();

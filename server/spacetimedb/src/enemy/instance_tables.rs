@@ -10,13 +10,15 @@ pub enum SequenceStepRef {
 }
 
 #[derive(SpacetimeType, Clone)]
-pub struct MultiStepRef {
+pub struct MultiStepRef 
+{
     pub def_id: u64,
     pub shot_index: u32
 }
 
 #[table(accessor = repeat_step_instance, public)]
-pub struct RepeatStepInstance {
+pub struct RepeatStepInstance 
+{
     #[primary_key] #[auto_inc] pub repeat_id: u64,
     pub pattern_type: PatternType,
     pub target: EnemyTarget,
@@ -33,7 +35,8 @@ pub struct RepeatStepInstance {
 }
 
 #[table(accessor = enemy_sequence_step, public)]
-pub struct EnemySequenceStep {
+pub struct EnemySequenceStep 
+{
     #[primary_key] #[auto_inc] pub step_id: u64,
     #[index(btree)] pub attack_id: u64,
     pub step_index: u32,
@@ -41,7 +44,8 @@ pub struct EnemySequenceStep {
 }
 
 #[table(accessor = enemy_attack, public)]
-pub struct EnemyAttack {
+pub struct EnemyAttack 
+{
     #[primary_key] #[auto_inc] pub attack_id: u64,
     #[index(btree)] pub phase_id: u64,
     pub attack_index: u32,
@@ -52,7 +56,8 @@ pub struct EnemyAttack {
 }
 
 #[table(accessor = enemy_phases, public)]
-pub struct EnemyPhase {
+pub struct EnemyPhase 
+{
     #[primary_key] #[auto_inc] pub phase_id: u64,
     #[index(btree)] pub behavior_id: u64,
     pub phase_index: u8,
@@ -65,7 +70,8 @@ pub struct EnemyPhase {
 }
 
 #[table(accessor = enemy_behavior, public)]
-pub struct EnemyBehavior {
+pub struct EnemyBehavior 
+{
     #[primary_key] #[auto_inc]
     pub behavior_id: u64,
     pub aggro_target: Option<Identity>,
@@ -77,7 +83,8 @@ pub struct EnemyBehavior {
 }
 
 #[table(accessor = enemy, public)]
-pub struct Enemy {
+pub struct Enemy 
+{
     #[primary_key] #[auto_inc]
     pub enemy_id: u64,
     pub template_id: String,
@@ -94,21 +101,24 @@ pub struct Enemy {
 }
 
 #[spacetimedb::table(accessor = enemy_spawn_schedule, scheduled(tick_enemy_spawn))]
-pub struct EnemySpawnSchedule {
+pub struct EnemySpawnSchedule 
+{
     #[primary_key] #[auto_inc]
     pub scheduled_id: u64,
     pub scheduled_at: ScheduleAt,
 }
 
 #[spacetimedb::table(accessor = enemy_behavior_schedule, scheduled(tick_enemy_behavior))]
-pub struct EnemyBehaviorSchedule {
+pub struct EnemyBehaviorSchedule 
+{
     #[primary_key] #[auto_inc]
     pub scheduled_id: u64,
     pub scheduled_at: ScheduleAt,
 }
 
 #[table(accessor = bullet_pattern_event, public, event)]
-pub struct BulletPatternEvent {
+pub struct BulletPatternEvent 
+{
     #[primary_key] #[auto_inc]
     pub event_id: u64,
     pub enemy_id: u64,

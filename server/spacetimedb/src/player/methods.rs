@@ -5,23 +5,27 @@ use crate::world::tables::MapConfig;
 use crate::player::tables::*;
 use crate::item::tables::*;
 
-pub fn require_logged_in(ctx: &ReducerContext) -> Result<(), String> {
+pub fn require_logged_in(ctx: &ReducerContext) -> Result<(), String> 
+{
     if ctx.db.logged_in_player().player_id().find(ctx.sender()).is_none() {
         return Err("Not in world.".to_string());
     }
     Ok(())
 }
 
-pub fn require_in_world(ctx: &ReducerContext) -> Result<LoggedInPlayer, String> {
+pub fn require_in_world(ctx: &ReducerContext) -> Result<LoggedInPlayer, String> 
+{
     ctx.db.logged_in_player().player_id().find(ctx.sender()).ok_or_else(|| "Not in world.".to_string())
 }
 
-pub fn require_in_lobby(ctx: &ReducerContext) -> Result<LoggedOutPlayer, String> {
+pub fn require_in_lobby(ctx: &ReducerContext) -> Result<LoggedOutPlayer, String> 
+{
     ctx.db.logged_out_player().player_id().find(ctx.sender())
         .ok_or_else(|| "Not in lobby.".to_string())
 }
 
-pub fn is_admin(ctx: &ReducerContext) -> bool {
+pub fn is_admin(ctx: &ReducerContext) -> bool 
+{
     if let Some(p) = ctx.db.logged_in_player().player_id().find(ctx.sender()) {
         return p.is_admin;
     }
@@ -30,26 +34,31 @@ pub fn is_admin(ctx: &ReducerContext) -> bool {
         .unwrap_or(false)
 }
 
-pub fn xp_for_level(level: u32) -> u32 {
+pub fn xp_for_level(level: u32) -> u32 
+{
     if level <= 1 { 0 } else { 100 * (level - 1) * level / 2 }
 }
 
-pub fn compute_level(total_xp: u32) -> u32 {
+pub fn compute_level(total_xp: u32) -> u32 
+{
     let mut level = 1u32;
     while xp_for_level(level + 1) <= total_xp { level += 1; }
     level
 }
 
-pub fn compute_base_stats(level: u32) -> (i32, i32, i32, i32, i32, i32) {
+pub fn compute_base_stats(level: u32) -> (i32, i32, i32, i32, i32, i32) 
+{
     let bonus = (level as i32) - 1;
     (10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus, 10 + bonus)
 }
 
-pub fn compute_base_max_hp(level: u32) -> i32 {
+pub fn compute_base_max_hp(level: u32) -> i32 
+{
     BASE_MAX_HP + (level as i32 - 1) * HP_PER_LEVEL
 }
 
-fn stat_index(stat: StatKind) -> usize {
+fn stat_index(stat: StatKind) -> usize 
+{
     match stat {
         StatKind::Strength => 0,
         StatKind::Wisdom => 1,
@@ -61,7 +70,8 @@ fn stat_index(stat: StatKind) -> usize {
     }
 }
 
-fn buff_to_modifier(effect: &ConsumableBuffEffect) -> StatModifier {
+fn buff_to_modifier(effect: &ConsumableBuffEffect) -> StatModifier 
+{
     let (stat, amount) = match effect {
         ConsumableBuffEffect::Strength(v) => (StatKind::Strength, *v),
         ConsumableBuffEffect::Wisdom(v) => (StatKind::Wisdom, *v),
@@ -73,21 +83,24 @@ fn buff_to_modifier(effect: &ConsumableBuffEffect) -> StatModifier {
     StatModifier { stat, amount, mode: StatMode::Flat }
 }
 
-pub fn weapon_behavior(item: &Item) -> Option<&WeaponBehavior> {
+pub fn weapon_behavior(item: &Item) -> Option<&WeaponBehavior> 
+{
     item.behaviors.iter().find_map(|b| match b {
         ItemBehavior::Weapon(w) => Some(w),
         _ => None,
     })
 }
 
-pub fn consumable_behavior(item: &Item) -> Option<&ConsumableBehavior> {
+pub fn consumable_behavior(item: &Item) -> Option<&ConsumableBehavior> 
+{
     item.behaviors.iter().find_map(|b| match b {
         ItemBehavior::Consumable(c) => Some(c),
         _ => None,
     })
 }
 
-pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
+pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) 
+{
     let data = match ctx.db.player_data().profile_id().find(&profile_id) {
         Some(d) => d,
         None => return,
@@ -163,7 +176,8 @@ fn artifact_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipS
 fn general_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Weapon, EquipSlot::Artifact, EquipSlot::Armor, EquipSlot::Accessory, EquipSlot::Consumable], item_id: None, enchantment_ids: vec![] } }
 fn bag_slot() -> InventorySlot { InventorySlot { allowed_slots: vec![EquipSlot::Bag], item_id: None, enchantment_ids: vec![] } }
 
-pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
+pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) 
+{
     if ctx.db.player_data().profile_id().find(&profile_id).is_none() {
         ctx.db.player_data().insert(PlayerData {
             profile_id, level: 1, xp: 0, hp: BASE_MAX_HP as u32, max_hp: BASE_MAX_HP as u32,
@@ -211,7 +225,8 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
 /// shared table list for profile cleanup; callers handle the identity-level rows themselves
 /// (combat death keeps PlayerProfile and moves the player to LoggedOutPlayer; delete_profile
 /// removes PlayerProfile while the player sits in the lobby).
-pub fn teardown_profile(ctx: &ReducerContext, profile_id: u64) {
+pub fn teardown_profile(ctx: &ReducerContext, profile_id: u64) 
+{
     ctx.db.player_data().profile_id().delete(profile_id);
     ctx.db.player_stats().profile_id().delete(profile_id);
     ctx.db.player_inventory().profile_id().delete(profile_id);
@@ -224,7 +239,8 @@ pub fn teardown_profile(ctx: &ReducerContext, profile_id: u64) {
 
 use crate::combat::heal_player;
 
-pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable: &ConsumableBehavior) {
+pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable: &ConsumableBehavior) 
+{
     match &consumable.effect {
         ConsumableEffect::Heal => {
             heal_player(ctx, profile_id, consumable.potency as u32);
@@ -238,7 +254,8 @@ pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable
     }
 }
 
-pub fn internal_gain_xp(ctx: &ReducerContext, profile_id: u64, amount: u32) {
+pub fn internal_gain_xp(ctx: &ReducerContext, profile_id: u64, amount: u32) 
+{
     let data = match ctx.db.player_data().profile_id().find(&profile_id) { Some(d) => d, None => return };
     let old_level = data.level;
     let new_xp = data.xp + amount;
@@ -252,7 +269,8 @@ pub fn internal_gain_xp(ctx: &ReducerContext, profile_id: u64, amount: u32) {
     if new_level != old_level { recompute_stats(ctx, profile_id); }
 }
 
-pub fn find_profile_by_name(ctx: &ReducerContext, player_id: spacetimedb::Identity, profile_name: &str) -> Option<PlayerProfile> {
+pub fn find_profile_by_name(ctx: &ReducerContext, player_id: spacetimedb::Identity, profile_name: &str) -> Option<PlayerProfile> 
+{
     let lower = profile_name.to_lowercase();
     ctx.db.player_profile().player_id().filter(&player_id).find(|p| p.profile_name.to_lowercase() == lower)
 }

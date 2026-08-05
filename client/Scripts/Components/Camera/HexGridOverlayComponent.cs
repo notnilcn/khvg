@@ -4,8 +4,9 @@ using SpacetimeDB.Types;
 using System;
 
 /// <summary>
-/// Hex grid debug overlay (2D), child of Main. Hidden by default. Reads MapConfig
-/// through the GameManager facade and draws chunk/hex lines around the camera.
+/// Hex grid debug overlay (2D), child of Main. Hidden by default. MapConfig rows
+/// arrive via a child TableBinderComponent (declared in hex_grid_overlay_component.tscn,
+/// signals wired in the editor); draws chunk/hex lines around the camera.
 /// </summary>
 public partial class HexGridOverlayComponent : Node2DComponent
 {
@@ -13,7 +14,7 @@ public partial class HexGridOverlayComponent : Node2DComponent
 	private const int DefaultChunkHexRadius = 5;
 	private const float DefaultHexOuterRadius = 32.0f;
 
-	private static readonly Color LineColor  = new(0f, 0f, 0f, 0.3f);
+	private static readonly Color LineColor = new(0f, 0f, 0f, 0.3f);
 	private const float LineWidth = 1f;
 	private static readonly Color LabelColor = new(0f, 0f, 0f, 0.75f);
 	private const int FontSize = 8;
@@ -26,18 +27,25 @@ public partial class HexGridOverlayComponent : Node2DComponent
 	};
 
 	private float _outerRadius = DefaultHexOuterRadius;
-	private int   _chunkRadius = DefaultChunkHexRadius;
-	private int   _chunkCols   = 0;   // 0 = unknown (no MapConfig yet)
-	private int   _chunkRows   = 0;
+	private int _chunkRadius = DefaultChunkHexRadius;
+	private int _chunkCols = 0;   // 0 = unknown (no MapConfig yet)
+	private int _chunkRows = 0;
 
 	private static readonly Color OutOfBoundsColor = new(0.15f, 0.15f, 0.15f, 0.45f);
-	private static readonly Color SeamLineColor    = new(1f, 0.2f, 0.2f, 0.85f);
+	private static readonly Color SeamLineColor = new(1f, 0.2f, 0.2f, 0.85f);
 	private const float SeamLineWidth = 2f;
 
-	private Vector2 _camPos  = Vector2.Zero;
+	private Vector2 _camPos = Vector2.Zero;
 	private Vector2 _camZoom = Vector2.One;
-	private Font?   _font;
-	private bool    _subscribed;
+	private Font? _font;
+
+	private TableBinderComponent _mapConfigBinder = null!;
+
+	public override void _Ready()
+	{
+		base._Ready();
+		_mapConfigBinder = GetNode<TableBinderComponent>("MapConfigBinder");
+	}
 
 	protected override void OnRegistered()
 	{
@@ -47,40 +55,29 @@ public partial class HexGridOverlayComponent : Node2DComponent
 
 	public override void _Process(double delta)
 	{
-		if (!_subscribed)
-			TrySubscribe();
-
 		var cam = GetViewport().GetCamera2D();
 		if (cam == null) return;
 		if (cam.GlobalPosition != _camPos || cam.Zoom != _camZoom)
 		{
-			_camPos  = cam.GlobalPosition;
+			_camPos = cam.GlobalPosition;
 			_camZoom = cam.Zoom;
 			QueueRedraw();
 		}
 	}
 
-	// Deferred subscription: conn may not exist yet when _Ready fires (lobby is shown first).
-	private void TrySubscribe()
+	// --- TableBinderComponent signal handlers (wired in hex_grid_overlay_component.tscn) ---
+
+	private void OnMapConfigRow()
 	{
-		var conn = GameManager.Conn;
-		if (conn == null) return;
-
-		conn.Db.MapConfig.OnInsert += (_, row) => ApplyMapConfig(row);
-		conn.Db.MapConfig.OnUpdate += (_, _, row) => ApplyMapConfig(row);
-		var cfg = conn.Db.MapConfig.Id.Find(0u);
-		if (cfg != null)
-			ApplyMapConfig(cfg);
-
-		_subscribed = true;
+		ApplyMapConfig((MapConfig)_mapConfigBinder.LastRow!);
 	}
 
 	private void ApplyMapConfig(MapConfig cfg)
 	{
 		_chunkRadius = cfg.ChunkHexRadius;
 		_outerRadius = cfg.HexOuterRadius;
-		_chunkCols   = (int)cfg.ChunkCols;
-		_chunkRows   = (int)cfg.ChunkRows;
+		_chunkCols = (int)cfg.ChunkCols;
+		_chunkRows = (int)cfg.ChunkRows;
 		QueueRedraw();
 	}
 
@@ -89,7 +86,7 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		var cam = GetViewport().GetCamera2D();
 		if (cam == null) return;
 
-		var half     = GetViewportRect().Size / cam.Zoom;// * 0.5f;
+		var half = GetViewportRect().Size / cam.Zoom;// * 0.5f;
 		var worldMin = _camPos - half;
 		var worldMax = _camPos + half;
 
@@ -117,10 +114,10 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		var player = LocalPlayer.Local;
 		if (player == null) return;
 
-		var pos      = player.GlobalPosition;
-		var fineHex  = WorldToHex(pos.X, pos.Y);
-		var chunk    = ToLowerRes(fineHex.X, fineHex.Y, _chunkRadius);
-		long cidx    = HexSpiralIndex(chunk.X, chunk.Y);
+		var pos = player.GlobalPosition;
+		var fineHex = WorldToHex(pos.X, pos.Y);
+		var chunk = ToLowerRes(fineHex.X, fineHex.Y, _chunkRadius);
+		long cidx = HexSpiralIndex(chunk.X, chunk.Y);
 
 		var center = HexToWorld(fineHex.X, fineHex.Y);
 
@@ -147,11 +144,11 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		};
 
 		float invZoom = 1f / cam.Zoom.X;
-		float lineH   = (HudFontSize + 3f) * invZoom;
-		float margin  = 8f * invZoom;
-		float px      = invZoom;
+		float lineH = (HudFontSize + 3f) * invZoom;
+		float margin = 8f * invZoom;
+		float px = invZoom;
 
-		var half     = GetViewportRect().Size / cam.Zoom * 0.5f;
+		var half = GetViewportRect().Size / cam.Zoom * 0.5f;
 		var topRight = _camPos + new Vector2(half.X, -half.Y);
 
 		for (int i = 0; i < lines.Length; i++)
@@ -162,12 +159,12 @@ public partial class HexGridOverlayComponent : Node2DComponent
 				topRight.Y + margin + HudFontSize * invZoom + lineH * i);
 
 			for (int dy = -1; dy <= 1; dy++)
-			for (int dx = -1; dx <= 1; dx++)
-			{
-				if (dx == 0 && dy == 0) continue;
-				DrawString(_font, origin + new Vector2(dx * px, dy * px), lines[i],
-					HorizontalAlignment.Left, -1, HudFontSize, HudBlack);
-			}
+				for (int dx = -1; dx <= 1; dx++)
+				{
+					if (dx == 0 && dy == 0) continue;
+					DrawString(_font, origin + new Vector2(dx * px, dy * px), lines[i],
+						HorizontalAlignment.Left, -1, HudFontSize, HudBlack);
+				}
 			DrawString(_font, origin, lines[i], HorizontalAlignment.Left, -1, HudFontSize, HudWhite);
 		}
 	}
@@ -175,7 +172,7 @@ public partial class HexGridOverlayComponent : Node2DComponent
 	private void DrawHex(int q, int r)
 	{
 		var center = HexToWorld(q, r);
-		var chunk  = ToLowerRes(q, r, _chunkRadius);
+		var chunk = ToLowerRes(q, r, _chunkRadius);
 
 		var verts = new Vector2[6];
 		for (int i = 0; i < 6; i++)
@@ -205,19 +202,19 @@ public partial class HexGridOverlayComponent : Node2DComponent
 
 		if (_font == null) return;
 
-		long   cidx     = HexSpiralIndex(chunk.X, chunk.Y);
-		string hexStr   = $"{q},{r}";
+		long cidx = HexSpiralIndex(chunk.X, chunk.Y);
+		string hexStr = $"{q},{r}";
 		string chunkStr = $"{chunk.X},{chunk.Y}";
-		string cidxStr  = cidx.ToString();
+		string cidxStr = cidx.ToString();
 
 		float line = FontSize + 1f;
-		float hw = _font.GetStringSize(hexStr,   HorizontalAlignment.Left, -1, FontSize).X;
+		float hw = _font.GetStringSize(hexStr, HorizontalAlignment.Left, -1, FontSize).X;
 		float cw = _font.GetStringSize(chunkStr, HorizontalAlignment.Left, -1, FontSize).X;
-		float iw = _font.GetStringSize(cidxStr,  HorizontalAlignment.Left, -1, FontSize).X;
+		float iw = _font.GetStringSize(cidxStr, HorizontalAlignment.Left, -1, FontSize).X;
 
-		DrawString(_font, new Vector2(center.X - hw * 0.5f, center.Y - line),     hexStr,   HorizontalAlignment.Left, -1, FontSize, LabelColor);
-		DrawString(_font, new Vector2(center.X - cw * 0.5f, center.Y + 2f),       chunkStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
-		DrawString(_font, new Vector2(center.X - iw * 0.5f, center.Y + line + 3f), cidxStr,  HorizontalAlignment.Left, -1, FontSize, LabelColor);
+		DrawString(_font, new Vector2(center.X - hw * 0.5f, center.Y - line), hexStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
+		DrawString(_font, new Vector2(center.X - cw * 0.5f, center.Y + 2f), chunkStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
+		DrawString(_font, new Vector2(center.X - iw * 0.5f, center.Y + line + 3f), cidxStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
 	}
 
 	// ── Hex math (mirrors server methods.rs / hex_grid_overlay.gd) ──────────────
@@ -230,10 +227,10 @@ public partial class HexGridOverlayComponent : Node2DComponent
 
 	private Vector2I WorldToHex(float wx, float wy)
 	{
-		float R  = _outerRadius;
-		float q  = (wx * Sqrt3 / 3f - wy / 3f) / R;
-		float r  = wy * 2f / 3f / R;
-		float s  = -q - r;
+		float R = _outerRadius;
+		float q = (wx * Sqrt3 / 3f - wy / 3f) / R;
+		float r = wy * 2f / 3f / R;
+		float s = -q - r;
 		float rq = MathF.Round(q);
 		float rr = MathF.Round(r);
 		float rs = MathF.Round(s);
@@ -252,24 +249,24 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		if (rho == 0) return 0;
 		long b = 3L * rho * (rho - 1) + 1;
 		long arm, step;
-		if      (z == -rho && x > 0)                  { arm = 0; step = y; }
-		else if (y ==  rho && x > -rho)               { arm = 1; step = -x; }
-		else if (x == -rho && z < rho)                { arm = 2; step = z; }
-		else if (z ==  rho && x < 0)                  { arm = 3; step = x + rho; }
-		else if (y == -rho && x >= 0 && x < rho)      { arm = 4; step = x; }
-		else                                           { arm = 5; step = y + rho; }
+		if (z == -rho && x > 0) { arm = 0; step = y; }
+		else if (y == rho && x > -rho) { arm = 1; step = -x; }
+		else if (x == -rho && z < rho) { arm = 2; step = z; }
+		else if (z == rho && x < 0) { arm = 3; step = x + rho; }
+		else if (y == -rho && x >= 0 && x < rho) { arm = 4; step = x; }
+		else { arm = 5; step = y + rho; }
 		return b + arm * rho + step;
 	}
 
 	// Port of hexx Hex::to_lower_res. Mirrors _to_lower_res in hex_grid_overlay.gd.
 	private static Vector2I ToLowerRes(int q, int r, int radius)
 	{
-		int   s     = -q - r;
-		float area  = 3f * radius * (radius + 1) + 1f;
-		int   shift = 3 * radius + 2;
-		int   a     = Mathf.FloorToInt((r + shift * q) / area);
-		int   b     = Mathf.FloorToInt((s + shift * r) / area);
-		int   c     = Mathf.FloorToInt((q + shift * s) / area);
+		int s = -q - r;
+		float area = 3f * radius * (radius + 1) + 1f;
+		int shift = 3 * radius + 2;
+		int a = Mathf.FloorToInt((r + shift * q) / area);
+		int b = Mathf.FloorToInt((s + shift * r) / area);
+		int c = Mathf.FloorToInt((q + shift * s) / area);
 		return new Vector2I(
 			Mathf.FloorToInt((1f + a - b) / 3f),
 			Mathf.FloorToInt((1f + b - c) / 3f));

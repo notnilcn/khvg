@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://cvf3pb2g8fcrw" path="res://Scripts/Components/Combat/FactionComponent.cs" id="4_faction"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="5_hurtbox"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="6_interp"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="7_binder"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kjvdn"]
 
@@ -39,3 +40,16 @@ collision_mask = 0
 shape = SubResource("CapsuleShape2D_hkglx")
 
 [node name="InterpolationComponent" parent="." unique_id=1348353208 instance=ExtResource("6_interp")]
+
+[node name="NearbyEnemiesBinder" type="Node" parent="." unique_id=1847562930]
+script = ExtResource("7_binder")
+ReplayExistingRows = true
+TableName = "NearbyEnemies"
+
+[node name="BulletPatternEventBinder" type="Node" parent="." unique_id=673820194]
+script = ExtResource("7_binder")
+TableName = "BulletPatternEvent"
+
+[connection signal="RowInserted" from="NearbyEnemiesBinder" to="." method="OnEnemyRowInserted"]
+[connection signal="RowUpdated" from="NearbyEnemiesBinder" to="." method="OnEnemyRowUpdated"]
+[connection signal="RowInserted" from="BulletPatternEventBinder" to="." method="OnBulletPatternRowInserted"]

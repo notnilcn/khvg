@@ -51,3 +51,7 @@
 	- teleport
 	- summon decoys that can take aggro
 	- sends all party members to a pocket dimension that makes them briefly invisible + immune to all damage
+
+
+
+Near miss detection

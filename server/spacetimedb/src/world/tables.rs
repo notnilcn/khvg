@@ -11,7 +11,8 @@ pub enum TextureKind {
 }
 
 #[table(accessor = map_config, public)]
-pub struct MapConfig {
+pub struct MapConfig 
+{
     #[primary_key]
     pub id: u32,
     pub chunk_hex_radius: i32,
@@ -34,7 +35,8 @@ impl MapConfig {
     /// caller-chosen because call sites deliberately disagree on the degenerate grid:
     /// 0/0 trips wrap_world_pos's `<= 0` guard (disables torus wrapping entirely), while 1/1
     /// collapses the grid to a single chunk so wrap/AOI math still runs, degenerately.
-    pub fn load(ctx: &ReducerContext, fallback_chunk_cols: i32, fallback_chunk_rows: i32) -> MapConfig {
+    pub fn load(ctx: &ReducerContext, fallback_chunk_cols: i32, fallback_chunk_rows: i32) -> MapConfig 
+{
         ctx.db.map_config().id().find(0u32).unwrap_or(MapConfig {
             id: 0,
             chunk_hex_radius: DEFAULT_CHUNK_HEX_RADIUS,
@@ -50,7 +52,8 @@ impl MapConfig {
 }
 
 #[table(accessor = building_tile, public)]
-pub struct BuildingTile {
+pub struct BuildingTile 
+{
     #[primary_key] #[auto_inc]
     pub tile_id: u64,
     #[index(btree)]
@@ -66,7 +69,8 @@ pub struct BuildingTile {
 }
 
 #[table(accessor = texture_entry, public)]
-pub struct TextureEntry {
+pub struct TextureEntry 
+{
     #[primary_key]
     pub texture_id: String,
     pub res_path: String,
@@ -76,7 +80,8 @@ pub struct TextureEntry {
 // Allow-list: an overlay tagged `overlay_tag` may be layered on a base tagged `allowed_base_tag`.
 // Default is deny — most overlay/base pairs don't make sense, so compatibility is opt-in.
 #[table(accessor = layering_rule, public)]
-pub struct LayeringRule {
+pub struct LayeringRule 
+{
     #[primary_key] #[auto_inc]
     pub rule_id: u64,
     pub overlay_tag: String,
@@ -88,7 +93,8 @@ pub struct LayeringRule {
 // clashing pairs (e.g. swamp next to sand) get blocked. Symmetric: a row blocks tag_a next to
 // tag_b in either direction, so only one row is needed per clashing pair.
 #[table(accessor = base_adjacency_rule, public)]
-pub struct BaseAdjacencyRule {
+pub struct BaseAdjacencyRule 
+{
     #[primary_key] #[auto_inc]
     pub rule_id: u64,
     pub tag_a: String,
@@ -99,7 +105,8 @@ pub struct BaseAdjacencyRule {
 // type for both layers) so the same tag string can never cross-apply between a base-to-base rule
 // and an overlay-to-overlay rule just because they share a tag name.
 #[table(accessor = overlay_adjacency_rule, public)]
-pub struct OverlayAdjacencyRule {
+pub struct OverlayAdjacencyRule 
+{
     #[primary_key] #[auto_inc]
     pub rule_id: u64,
     pub tag_a: String,
@@ -111,7 +118,8 @@ pub struct OverlayAdjacencyRule {
 // above, since this relates two different kinds of tag (decor vs. ground/overlay), not two
 // occurrences of the same kind.
 #[table(accessor = decor_ground_rule, public)]
-pub struct DecorGroundRule {
+pub struct DecorGroundRule 
+{
     #[primary_key] #[auto_inc]
     pub rule_id: u64,
     pub decor_tag: String,

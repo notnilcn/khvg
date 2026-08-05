@@ -14,7 +14,7 @@
     "cs"
   ],
   "folding": true,
-  "lineNumbers": true,
+  "lineNumbers": false,
   "wordWrap": true,
   "minimap": true,
   "semanticValidation": true,
@@ -22,5 +22,8 @@
   "themeColor": "AUTO",
   "fontSize": 14,
   "fontFamily": "'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace",
-  "fontLigatures": true
+  "fontLigatures": true,
+  "showEmbedHeader": false,
+  "embedMaxHeight": 1500,
+  "embedMinHeight": 0
 }

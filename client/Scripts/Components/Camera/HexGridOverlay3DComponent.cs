@@ -12,14 +12,14 @@ using System.Collections.Generic;
 public partial class HexGridOverlay3DComponent : Node3DComponent
 {
 	private const float Sqrt3 = 1.7320508075688772f;
-	private const int   DefaultChunkHexRadius = 5;
+	private const int DefaultChunkHexRadius = 5;
 	private const float DefaultHexOuterRadius = 32.0f;
 
 	// Chunk coloring: (cq*2 + cr) % 3  →  0=purple, 1=pink, 2=grey
 	// Verifies: (0,0)→0 purple, (0,1)→1 pink, (1,0)→2 grey, adjacent chunks always differ.
 	[Export] public PackedScene? PurpleTileScene { get; set; }
-	[Export] public PackedScene? PinkTileScene   { get; set; }
-	[Export] public PackedScene? GreyTileScene   { get; set; }
+	[Export] public PackedScene? PinkTileScene { get; set; }
+	[Export] public PackedScene? GreyTileScene { get; set; }
 
 	// Multiply by _outerRadius to get the tile's world-space footprint.
 	// Set to 1.0 if the tile's native outer radius == 1 Godot unit; adjust otherwise.
@@ -32,12 +32,14 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 	[Export] public bool ShowTileLabels { get; set; } = true;
 
 	private float _outerRadius = DefaultHexOuterRadius;
-	private int   _chunkRadius = DefaultChunkHexRadius;
+	private int _chunkRadius = DefaultChunkHexRadius;
 
-	private readonly Dictionary<Vector2I, Node3D>   _tiles  = new();
-	private readonly Dictionary<Vector2I, Label3D>  _labels = new();
+	private readonly Dictionary<Vector2I, Node3D> _tiles = new();
+	private readonly Dictionary<Vector2I, Label3D> _labels = new();
 	private Vector3 _lastRefreshPos = new(float.MaxValue, 0f, float.MaxValue);
-	private bool    _subscribed;
+
+	// Child binder (declared in world_3d.tscn) feeding MapConfig rows.
+	private TableBinderComponent _mapConfigBinder = null!;
 
 	// Indexed by coloring formula result (0,1,2).
 	private PackedScene?[] _scenes = Array.Empty<PackedScene?>();
@@ -47,14 +49,18 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 		_scenes = new PackedScene?[] { PurpleTileScene, PinkTileScene, GreyTileScene };
 	}
 
+	public override void _Ready()
+	{
+		base._Ready();
+		_mapConfigBinder = GetNode<TableBinderComponent>("MapConfigBinder");
+	}
+
 	public override void _Process(double _delta)
 	{
-		if (!_subscribed) TrySubscribe();
-
 		var player = LocalPlayer.Local;
 		if (player == null) return;
 
-		var p2  = player.GlobalPosition;    // Vector2 from CharacterBody2D
+		var p2 = player.GlobalPosition;    // Vector2 from CharacterBody2D
 		var pos = new Vector3(p2.X, 0f, p2.Y);
 		if (pos.DistanceSquaredTo(_lastRefreshPos) > _outerRadius * _outerRadius)
 		{
@@ -69,23 +75,13 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 		base._ExitTree();
 	}
 
-	// ── Subscription ─────────────────────────────────────────────────────────
+	// --- TableBinderComponent signal handlers (wired in world_3d.tscn) ---
+	// The binder has ReplayExistingRows on, so a row already in the client cache comes
+	// through the same insert path — no separate Id.Find() replay here.
 
-	private void TrySubscribe()
+	private void OnMapConfigRow()
 	{
-		var conn = GameManager.Conn;
-		if (conn == null) return;
-
-		conn.Db.MapConfig.OnInsert += (_, row)    => OnMapConfig(row);
-		conn.Db.MapConfig.OnUpdate += (_, _, row) => OnMapConfig(row);
-		var cfg = conn.Db.MapConfig.Id.Find(0u);
-		if (cfg != null) OnMapConfig(cfg);
-
-		_subscribed = true;
-	}
-
-	private void OnMapConfig(MapConfig cfg)
-	{
+		var cfg = (MapConfig)_mapConfigBinder.LastRow!;
 		_chunkRadius = cfg.ChunkHexRadius;
 		_outerRadius = cfg.HexOuterRadius;
 		ClearAll();
@@ -96,13 +92,13 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 	private void RefreshTiles(Vector3 center)
 	{
 		var ch = WorldToHex(center.X, center.Z);
-		int R  = ViewRadiusHexes;
+		int R = ViewRadiusHexes;
 
 		// Build the set of hexes that should be visible (hex ring of radius R).
 		var needed = new HashSet<Vector2I>();
 		for (int dq = -R; dq <= R; dq++)
-		for (int dr = Mathf.Max(-R, -dq - R); dr <= Mathf.Min(R, -dq + R); dr++)
-			needed.Add(new Vector2I(ch.X + dq, ch.Y + dr));
+			for (int dr = Mathf.Max(-R, -dq - R); dr <= Mathf.Min(R, -dq + R); dr++)
+				needed.Add(new Vector2I(ch.X + dq, ch.Y + dr));
 
 		// Remove tiles no longer in range.
 		var toRemove = new List<Vector2I>();
@@ -123,15 +119,15 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 
 	private void SpawnTile(int q, int r)
 	{
-		var chunk    = ToLowerRes(q, r, _chunkRadius);
+		var chunk = ToLowerRes(q, r, _chunkRadius);
 		int colorIdx = ((chunk.X * 2 + chunk.Y) % 3 + 3) % 3;
-		var scene    = _scenes.Length > colorIdx ? _scenes[colorIdx] : null;
+		var scene = _scenes.Length > colorIdx ? _scenes[colorIdx] : null;
 		if (scene == null) return;
 
-		var tile  = scene.Instantiate<Node3D>();
-		float s   = _outerRadius * TileScaleMultiplier;
+		var tile = scene.Instantiate<Node3D>();
+		float s = _outerRadius * TileScaleMultiplier;
 		tile.Position = HexToWorld3D(q, r);
-		tile.Scale    = new Vector3(s, 1f, s);
+		tile.Scale = new Vector3(s, 1f, s);
 		AddChild(tile);
 		_tiles[new Vector2I(q, r)] = tile;
 
@@ -139,22 +135,22 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 
 		long spiralIdx = HexSpiralIndex(chunk.X, chunk.Y);
 		var label = new Label3D();
-		label.Text                = $"({q},{r})\nc({chunk.X},{chunk.Y}) i={spiralIdx}";
+		label.Text = $"({q},{r})\nc({chunk.X},{chunk.Y}) i={spiralIdx}";
 		label.HorizontalAlignment = HorizontalAlignment.Center;
-		label.PixelSize           = 0.3f;
-		label.FontSize            = 14;
-		label.Modulate            = Colors.White;
-		label.OutlineSize         = 2;
-		label.OutlineModulate     = Colors.Black;
-		label.Position            = HexToWorld3D(q, r) + new Vector3(0f, 0.15f, 0f);
-		label.RotationDegrees     = new Vector3(-90f, 0f, 0f);
+		label.PixelSize = 0.3f;
+		label.FontSize = 14;
+		label.Modulate = Colors.White;
+		label.OutlineSize = 2;
+		label.OutlineModulate = Colors.Black;
+		label.Position = HexToWorld3D(q, r) + new Vector3(0f, 0.15f, 0f);
+		label.RotationDegrees = new Vector3(-90f, 0f, 0f);
 		AddChild(label);
 		_labels[new Vector2I(q, r)] = label;
 	}
 
 	private void ClearAll()
 	{
-		foreach (var t in _tiles.Values)  t.QueueFree();
+		foreach (var t in _tiles.Values) t.QueueFree();
 		foreach (var l in _labels.Values) l.QueueFree();
 		_tiles.Clear();
 		_labels.Clear();
@@ -175,10 +171,10 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 
 	private Vector2I WorldToHex(float wx, float wz)
 	{
-		float R  = _outerRadius;
-		float q  = (wx * Sqrt3 / 3f - wz / 3f) / R;
-		float r  = wz * 2f / 3f / R;
-		float s  = -q - r;
+		float R = _outerRadius;
+		float q = (wx * Sqrt3 / 3f - wz / 3f) / R;
+		float r = wz * 2f / 3f / R;
+		float s = -q - r;
 		float rq = MathF.Round(q);
 		float rr = MathF.Round(r);
 		float rs = MathF.Round(s);
@@ -192,12 +188,12 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 	// Port of hexx Hex::to_lower_res. Maps fine hex (q,r) → chunk (cq,cr).
 	private static Vector2I ToLowerRes(int q, int r, int radius)
 	{
-		int   s     = -q - r;
-		float area  = 3f * radius * (radius + 1) + 1f;
-		int   shift = 3 * radius + 2;
-		int   a     = Mathf.FloorToInt((r + shift * q) / area);
-		int   b     = Mathf.FloorToInt((s + shift * r) / area);
-		int   c     = Mathf.FloorToInt((q + shift * s) / area);
+		int s = -q - r;
+		float area = 3f * radius * (radius + 1) + 1f;
+		int shift = 3 * radius + 2;
+		int a = Mathf.FloorToInt((r + shift * q) / area);
+		int b = Mathf.FloorToInt((s + shift * r) / area);
+		int c = Mathf.FloorToInt((q + shift * s) / area);
 		return new Vector2I(
 			Mathf.FloorToInt((1f + a - b) / 3f),
 			Mathf.FloorToInt((1f + b - c) / 3f));
@@ -207,19 +203,19 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 	// Analytical arm detection — no ring walk, exact match guaranteed.
 	private static long HexSpiralIndex(int cq, int cr)
 	{
-		int x   = cq;
-		int z   = cr;
-		int y   = -cq - cr;
+		int x = cq;
+		int z = cr;
+		int y = -cq - cr;
 		int rho = Math.Max(Math.Max(Math.Abs(x), Math.Abs(y)), Math.Abs(z));
 		if (rho == 0) return 0L;
 		long b = 3L * rho * (rho - 1) + 1;
 		long arm, step;
-		if      (z == -rho && x > 0)              { arm = 0; step = y; }
-		else if (y ==  rho && x > -rho)           { arm = 1; step = -x; }
-		else if (x == -rho && z < rho)            { arm = 2; step = z; }
-		else if (z ==  rho && x < 0)              { arm = 3; step = x + rho; }
+		if (z == -rho && x > 0) { arm = 0; step = y; }
+		else if (y == rho && x > -rho) { arm = 1; step = -x; }
+		else if (x == -rho && z < rho) { arm = 2; step = z; }
+		else if (z == rho && x < 0) { arm = 3; step = x + rho; }
 		else if (y == -rho && x >= 0 && x < rho) { arm = 4; step = x; }
-		else                                       { arm = 5; step = y + rho; }
+		else { arm = 5; step = y + rho; }
 		return b + arm * rho + step;
 	}
 }

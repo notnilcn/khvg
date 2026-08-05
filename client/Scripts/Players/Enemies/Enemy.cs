@@ -24,38 +24,16 @@ public partial class Enemy : CharacterBody2D, IEntity
     private AnimatedSprite2D? sprite;
     private uint maxHp;
 
+    private TableBinderComponent nearbyEnemiesBinder = null!;
+    private TableBinderComponent bulletPatternEventBinder = null!;
+
     public override void _Ready()
     {
         // Component children register themselves in their own _Ready, before this one runs.
         interpolation = GetComponent<InterpolationComponent>();
 
-        var conn = GameManager.Conn;
-        if (conn == null) return;
-
-        conn.Db.NearbyEnemies.OnUpdate += OnEnemyUpdate;
-        conn.Db.BulletPatternEvent.OnInsert += OnBulletPatternInsert;
-
-        foreach (var row in conn.Db.NearbyEnemies.Iter())
-        {
-            if (row.EnemyId != EnemyId) continue;
-            interpolation?.SnapTo(new Vector2(row.X, row.Y));
-            Phase = row.Phase;
-            IsElite = row.IsElite;
-            sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
-            var template = conn.Db.EnemyTemplates.Iter().FirstOrDefault(t => t.TemplateId == row.TemplateId);
-            if (template != null && sprite != null)
-            {
-                var resPath = GameManager.GetResPath(template.TextureId);
-                if (resPath != null)
-                    sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
-            }
-            // The server defines the component values: max_hp from the template, hp from the live row.
-            maxHp = template?.MaxHp ?? row.Hp;
-            HealthComponent?.SetFromServer(row.Hp, maxHp);
-            if (HealthComponent != null && StatsComponent != null)
-                StatsComponent.RegisterStat(StatKind.Hp, HealthComponent.Health);
-            break;
-        }
+        nearbyEnemiesBinder = GetNode<TableBinderComponent>("NearbyEnemiesBinder");
+        bulletPatternEventBinder = GetNode<TableBinderComponent>("BulletPatternEventBinder");
     }
 
     public override void _Process(double delta)
@@ -65,25 +43,45 @@ public partial class Enemy : CharacterBody2D, IEntity
             sprite.Play(moving ? "Walk" : "Idle");
     }
 
-    private void OnEnemyUpdate(EventContext _, SpacetimeDB.Types.Enemy old, SpacetimeDB.Types.Enemy enemy)
+    // --- TableBinderComponent signal handlers (wired in default_enemy.tscn) ---
+    // The NearbyEnemies binder has ReplayExistingRows on, so a row already in the client
+    // cache comes through the same insert path — no separate Iter() replay here.
+
+    private void OnEnemyRowInserted()
     {
+        var row = (SpacetimeDB.Types.Enemy)nearbyEnemiesBinder.LastRow!;
+        if (row.EnemyId != EnemyId) return;
+        interpolation?.SnapTo(new Vector2(row.X, row.Y));
+        Phase = row.Phase;
+        IsElite = row.IsElite;
+        sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
+        var template = GameManager.Conn?.Db.EnemyTemplates.Iter().FirstOrDefault(t => t.TemplateId == row.TemplateId);
+        if (template != null && sprite != null)
+        {
+            var resPath = GameManager.GetResPath(template.TextureId);
+            if (resPath != null)
+                sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
+        }
+        // The server defines the component values: max_hp from the template, hp from the live row.
+        maxHp = template?.MaxHp ?? row.Hp;
+        HealthComponent?.SetFromServer(row.Hp, maxHp);
+        if (HealthComponent != null && StatsComponent != null)
+            StatsComponent.RegisterStat(StatKind.Hp, HealthComponent.Health);
+    }
+
+    private void OnEnemyRowUpdated()
+    {
+        var enemy = (SpacetimeDB.Types.Enemy)nearbyEnemiesBinder.LastRow!;
         if (enemy.EnemyId != EnemyId) return;
         interpolation?.SetTarget(new Vector2(enemy.X, enemy.Y));
         HealthComponent?.SetFromServer(enemy.Hp, maxHp);
         Phase = enemy.Phase;
     }
 
-    private void OnBulletPatternInsert(EventContext _, BulletPatternEvent bulletPattern)
+    private void OnBulletPatternRowInserted()
     {
+        var bulletPattern = (BulletPatternEvent)bulletPatternEventBinder.LastRow!;
         if (bulletPattern.EnemyId != EnemyId) return;
         BulletManager.Instance.SpawnEnemyBullet(bulletPattern);
-    }
-
-    public override void _ExitTree()
-    {
-        var conn = GameManager.Conn;
-        if (conn == null) return;
-        conn.Db.NearbyEnemies.OnUpdate -= OnEnemyUpdate;
-        conn.Db.BulletPatternEvent.OnInsert -= OnBulletPatternInsert;
     }
 }

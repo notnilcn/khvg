@@ -3,7 +3,8 @@ use crate::world::tables::*;
 use crate::player::methods::*;
 
 #[spacetimedb::reducer]
-pub fn place_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32, building_type: String) -> Result<(), String> {
+pub fn place_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32, building_type: String) -> Result<(), String> 
+{
     require_logged_in(ctx)?;
     if building_type.is_empty() { return Err("building_type cannot be empty.".to_string()); }
 
@@ -18,7 +19,8 @@ pub fn place_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32, building_typ
 }
 
 #[spacetimedb::reducer]
-pub fn remove_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32) -> Result<(), String> {
+pub fn remove_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32) -> Result<(), String> 
+{
     require_logged_in(ctx)?;
     let tile = ctx.db.building_tile().hex_q().filter(&hex_q)
         .find(|t| t.hex_r == hex_r)

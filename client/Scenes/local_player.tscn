@@ -47,6 +47,10 @@ zoom = Vector2(0.75, 0.75)
 script = ExtResource("2_h1vum")
 HitZoneScene = ExtResource("10_hit")
 
+[node name="NearbyEnemiesBinder" type="Node" parent="CombatComponent" unique_id=384726190]
+script = ExtResource("15_binder")
+TableName = "NearbyEnemies"
+
 [node name="StatsComponent" parent="." unique_id=754370146 instance=ExtResource("11_stats")]
 
 [node name="HealthComponent" parent="." unique_id=911255234 instance=ExtResource("12_health")]
@@ -111,6 +115,7 @@ script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerActiveProfile"
 
+[connection signal="RowDeleted" from="CombatComponent/NearbyEnemiesBinder" to="CombatComponent" method="OnNearbyEnemyDeletedRow"]
 [connection signal="RowInserted" from="PositionSyncComponent/LocalPlayerPositionBinder" to="PositionSyncComponent" method="OnPositionRowInserted"]
 [connection signal="RowUpdated" from="PositionSyncComponent/LocalPlayerPositionBinder" to="PositionSyncComponent" method="OnPositionRowUpdated"]
 [connection signal="RowInserted" from="PlayerDataComponent/LocalPlayerDataBinder" to="PlayerDataComponent" method="OnDataRow"]

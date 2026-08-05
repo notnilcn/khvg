@@ -13,23 +13,23 @@ using Godot;
 public partial class CameraRigComponent : Component
 {
     // ── Tuning ──────────────────────────────────────────────────────────────
-    [Export] public float YawSpeed              = 90f;    // deg/s for Camera_Left/Right
-    [Export] public float MouseSens             = 0.3f;   // deg per pixel, arcball drag
+    [Export] public float YawSpeed = 90f;    // deg/s for Camera_Left/Right
+    [Export] public float MouseSens = 0.3f;   // deg per pixel, arcball drag
     [Export] public float MouseRotateSensitivity = 0.005f;// rad per pixel, snap drag
-    [Export] public float PitchMin              = -90f;
-    [Export] public float PitchMax              = -10f;
-    [Export] public float DefaultPitch          = -90f;   // straight-down top-down view
-    [Export] public float DistanceMin           = 50f;
-    [Export] public float DistanceMax           = 1200f;
-    [Export] public float ZoomStep              = 1.1f;   // multiplicative per scroll tick
+    [Export] public float PitchMin = -90f;
+    [Export] public float PitchMax = -10f;
+    [Export] public float DefaultPitch = -90f;   // straight-down top-down view
+    [Export] public float DistanceMin = 50f;
+    [Export] public float DistanceMax = 1200f;
+    [Export] public float ZoomStep = 1.1f;   // multiplicative per scroll tick
     [Export] public float ZoomReferenceDistance = 300f;   // Distance that maps to 2D zoom 1.0
 
     // ── Canonical state ─────────────────────────────────────────────────────
     // Yaw is the one true heading. It IS the 2D PhantomCamera2D.RotationOffset (radians,
     // clockwise in Godot's y-down 2D space). The 3D presenter negates it for +Y rotation.
-    public float Yaw          { get; private set; }
+    public float Yaw { get; private set; }
     public float PitchDegrees { get; private set; }  // 3D spring-arm pitch; unused by 2D
-    public float Distance     { get; private set; }  // 3D spring_length; drives 2D zoom
+    public float Distance { get; private set; }  // 3D spring_length; drives 2D zoom
 
     // 2D zoom factor derived from Distance (larger zoom = closer in Godot 2D, so it's inverse).
     public float Zoom2D => ZoomReferenceDistance / Distance;
@@ -92,7 +92,6 @@ public partial class CameraRigComponent : Component
         var mousePosition = GetViewport().GetMousePosition();
         var angle = (playerCanvasPosition.AngleToPoint(mousePosition) + Mathf.Pi * 5 / 2) % (Mathf.Pi * 2);
         var center = GetViewport().GetVisibleRect().Size / 2f;
-
         { // Snap so that cursor is north
             if (Input.IsActionJustPressed("Camera_Snap_So_That_Cursor_Is_North"))
             {

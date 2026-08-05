@@ -3,6 +3,8 @@ Every time a player toggles auto-fire they send their timestamp modulo (modulus 
 
 When players land hits on an enemy, they only send the enemy id.
 
+# i$\omega$aginary numbers for the hex chunks
+![](https://www.youtube.com/watch?v=d6agN416onM&t=492s)
 
 # Claude analysis on what to do:
 I read the design doc, the six server modules, and the client's item/inventory/combat/bullet paths. Here's what I'd change.
@@ -197,3 +199,6 @@ Items 1, 2, and 6 are the ones where doing them later costs materially more than
 
 # To confirm: Run Time Authoring.
 Run time authoring is defining enemies after the server has been launched (i.e. outside of seeds).
+
+
+# Near miss detection

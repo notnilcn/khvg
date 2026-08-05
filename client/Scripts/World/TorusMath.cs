@@ -14,7 +14,7 @@ public static class TorusMath
 		var bestDist = canonical.DistanceSquaredTo(reference);
 
 		Vector2[] shifts =
-		{
+	{
 			lapQ, -lapQ, lapR, -lapR,
 			lapQ + lapR, lapQ - lapR, -lapQ + lapR, -lapQ - lapR,
 		};

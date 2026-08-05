@@ -6,7 +6,8 @@ use crate::player::tables::*;
 use crate::player::methods::*;
 
 #[spacetimedb::reducer]
-pub fn tick_player_position_debug(ctx: &ReducerContext, _job: PlayerPositionDebugSchedule) {
+pub fn tick_player_position_debug(ctx: &ReducerContext, _job: PlayerPositionDebugSchedule) 
+{
     let hex_outer_radius = MapConfig::load(ctx, 0, 0).hex_outer_radius;
     let mut active_ids = std::collections::HashSet::new();
     for pos in ctx.db.player_position().iter() {
@@ -28,7 +29,8 @@ pub fn tick_player_position_debug(ctx: &ReducerContext, _job: PlayerPositionDebu
 }
 
 #[spacetimedb::reducer]
-pub fn toggle_debug(ctx: &ReducerContext) -> Result<(), String> {
+pub fn toggle_debug(ctx: &ReducerContext) -> Result<(), String> 
+{
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     let is_active = ctx.db.player_position_debug_schedule().iter().next().is_some();
     if is_active {
@@ -50,7 +52,8 @@ pub fn toggle_debug(ctx: &ReducerContext) -> Result<(), String> {
 }
 
 #[table(accessor = player_position_debug)]
-pub struct PlayerPositionDebug {
+pub struct PlayerPositionDebug 
+{
     #[primary_key]
     pub player_id: Identity,
     pub x: f32,
@@ -62,7 +65,8 @@ pub struct PlayerPositionDebug {
 }
 
 #[spacetimedb::table(accessor = player_position_debug_schedule, scheduled(tick_player_position_debug))]
-pub struct PlayerPositionDebugSchedule {
+pub struct PlayerPositionDebugSchedule 
+{
     #[primary_key] #[auto_inc]
     pub scheduled_id: u64,
     pub scheduled_at: ScheduleAt,
