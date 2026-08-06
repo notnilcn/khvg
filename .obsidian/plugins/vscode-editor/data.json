@@ -1,16 +1,6 @@
 {
   "extensions": [
-    "ts",
-    "js",
-    "py",
-    "css",
-    "c",
-    "cpp",
-    "go",
     "rs",
-    "java",
-    "lua",
-    "php",
     "cs"
   ],
   "folding": true,
@@ -24,6 +14,8 @@
   "fontFamily": "'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace",
   "fontLigatures": true,
   "showEmbedHeader": false,
+  "canvasNodeWidth": 400,
+  "canvasNodeHeight": 400,
   "embedMaxHeight": 1500,
   "embedMinHeight": 0
 }

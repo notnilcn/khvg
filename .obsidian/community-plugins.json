@@ -1,10 +1,10 @@
 [
-  "obsidian-wrap-with-shortcuts",
-  "track-changes",
-  "sync-embeds",
-  "obsidian-git",
-  "flexplorer",
-  "remember-cursor-position",
   "advanced-canvas",
-  "better-embedded-canvas"
+  "obsidian-git",
+  "remember-cursor-position",
+  "sync-embeds",
+  "track-changes",
+  "obsidian-wrap-with-shortcuts",
+  "vscode-editor",
+  "flexplorer"
 ]

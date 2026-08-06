@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code when working with code in this repository.
+This file provides guidance to Claude Code when working with code in this repository. ^e7e4af
 ## Project Overview
 
 This is a **bullet-hell MMO roguelike** built in **Godot 4.6.1 mono**. Combat is dodge-focused: enemies fire telegraphed parametric bullet patterns, players evade.

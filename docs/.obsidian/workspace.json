@@ -41,7 +41,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -198,6 +200,8 @@
   },
   "active": "918b12cfbf1973ca",
   "lastOpenFiles": [
+    "Technical Design Docs/To Do.md",
+    "README.md",
     "Old Notes/001 Explaining Game Code/001 (TO BE OVERHAULED) Opening the game.md",
     "Game Design Docs/01 Executive Summary.md",
     "Technical Design Docs/Workflow (how to add new things)/00 Index & The Build Loop.md",
@@ -211,7 +215,6 @@
     "Art/Hollow Knight References.md",
     "Art/Art style 2D.md",
     "Art/Art style 3D.md",
-    "README.md",
     "CLAUDE.md",
     "Game Design Docs/04 Lore.md",
     "Game Design Docs/05 Biomes.md",
@@ -236,7 +239,6 @@
     "Game Design Docs/Classes/SUP/Trickster (wis ≳ dex) & (sup).md",
     "Game Design Docs/Classes/SUP/Tank (str) & (sup).md",
     "Game Design Docs/Classes/SUP/Paladin (wis == str) & (sup ≳ dps).md",
-    "Game Design Docs/Classes/SUP/Healer (wis) & (sup).md",
     "Game Design Docs/Classes/Balancing details",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/zflpdhs2u7lg1.jpeg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_xwfwyccwkz6a1.jpg",

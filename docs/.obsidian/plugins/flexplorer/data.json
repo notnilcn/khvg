@@ -57,8 +57,8 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "Demo.md",
         "01 Executive Summary.md",
-        "03a Class, Item, and Equipment system (Draft).md",
         "02 Gameplay.md",
         "04 Lore.md",
         "03 Class system, Item system, and Equipment system.md",
@@ -71,10 +71,6 @@
       ]
     },
     "Game Design Docs/01 Executive Summary.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Game Design Docs/03a Class, Item, and Equipment system (Draft).md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -199,7 +195,6 @@
       "sortOrder": "custom",
       "customOrder": [
         "002 Game Development",
-        "001 Explaining Game Code",
         "Dungeons, bosses, & enemies",
         "General Gameplay Loop",
         "Monetisation",
@@ -395,265 +390,6 @@
       "isPinned": false,
       "isHidden": false
     },
-    "Old Notes/001 Explaining Game Code": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "000 Autoloads, Spacetimedb.cs, and the elevated client.md",
-        "000a Player sync.md",
-        "000 Stupid notes for stupid people",
-        "000b Enemy sync.md",
-        "000c Bullet sync.md",
-        "001 (TO BE OVERHAULED) Opening the game.md",
-        "001 Opening the game 1.md",
-        "Important Classes and Node Trees",
-        "002 After joining the game.md",
-        "Old notes",
-        "Plugins and addons and whatnot",
-        "999 Hard coded stuff that might be an issue later.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Autoloads, Spacetimedb.cs, and the elevated client.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000a Player sync.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Godot",
-        "Spacetimedb",
-        "Stupid notes.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Godot": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "000 Godot overview.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Godot/000 Godot overview.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Untitled 3.md",
-        "Untitled 1.md",
-        "Untitled 2.md",
-        "Untitled 4.md",
-        "Untitled.md",
-        "Untitled 5.md",
-        "000 Spacetimedb overview.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 3.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 1.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 2.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 4.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/Untitled 5.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Spacetimedb/000 Spacetimedb overview.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000 Stupid notes for stupid people/Stupid notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000b Enemy sync.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/000c Bullet sync.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/001 (TO BE OVERHAULED) Opening the game.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/001 Opening the game 1.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Characters",
-        "Game"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Player"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "atoastwiththoughts",
-        "res_player.gd.md",
-        "Player.gd.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player/atoastwiththoughts": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player/res_player.gd.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Characters/Player/Player.gd.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "World"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game/World": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "spawner.gd and spawner.tscn.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Important Classes and Node Trees/Game/World/spawner.gd and spawner.tscn.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/002 After joining the game.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "000 Singleton",
-        "001 Opening the game"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "000 General Singleton notes.md",
-        "network.gd Notes.md",
-        "global.gd Notes.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/000 General Singleton notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/network.gd Notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/000 Singleton/global.gd Notes.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Old and outdated notes",
-        "Untitled.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "(old) 000 Opening the game & then clicking Host Game or Join Game.md",
-        "(old) 001 Spawning into a server.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes/(old) 000 Opening the game & then clicking Host Game or Join Game.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Old and outdated notes/(old) 001 Spawning into a server.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Old notes/001 Opening the game/Untitled.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "BlastBullets2D"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot/BlastBullets2D": {
-      "isPinned": false,
-      "isHidden": false,
-      "sortOrder": "custom",
-      "customOrder": [
-        "Stuff that's relevant for the spacetimedb translation.md"
-      ]
-    },
-    "Old Notes/001 Explaining Game Code/Plugins and addons and whatnot/BlastBullets2D/Stuff that's relevant for the spacetimedb translation.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Old Notes/001 Explaining Game Code/999 Hard coded stuff that might be an issue later.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
     "Old Notes/Dungeons, bosses, & enemies": {
       "isPinned": false,
       "isHidden": false,
@@ -778,10 +514,10 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
+        "To Do.md",
         "Resources and dependencies",
         "Description",
-        "Workflow (how to add new things)",
-        "possible optimisations.md"
+        "Workflow (how to add new things)"
       ]
     },
     "Technical Design Docs/Resources and dependencies": {
@@ -1364,7 +1100,7 @@
       "isHidden": false,
       "sortOrder": "custom",
       "customOrder": [
-        "00 Roadmap.md",
+        "00 High Level Overview and Roadmap.md",
         "01 Architecture & Sync Model.md",
         "02 Entity & Component Framework.md",
         "03 World & Hex Grid.md",
@@ -1380,10 +1116,6 @@
       ]
     },
     "Technical Design Docs/Description/01 Architecture & Sync Model.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Technical Design Docs/Description/00 Roadmap.md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -1495,10 +1227,6 @@
       "isHidden": false
     },
     "Technical Design Docs/Workflow (how to add new things)/11 Add a Biome or Region.md": {
-      "isPinned": false,
-      "isHidden": false
-    },
-    "Technical Design Docs/possible optimisations.md": {
       "isPinned": false,
       "isHidden": false
     },
@@ -2074,6 +1802,18 @@
       "isHidden": false
     },
     "Resources and dependencies/hex-grid/graphics3d - Create a torus with a hexagonal mesh for 3D-printing - Mathematica Stack Exchange.html": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Game Design Docs/Demo.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/To Do.md": {
+      "isPinned": false,
+      "isHidden": false
+    },
+    "Technical Design Docs/Description/00 High Level Overview and Roadmap.md": {
       "isPinned": false,
       "isHidden": false
     }

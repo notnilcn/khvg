@@ -2,14 +2,14 @@
 	"nodes":[
 		{"id":"91ecb887259a5b0a","type":"group","x":800,"y":-640,"width":1560,"height":2080,"color":"1","label":"red group"},
 		{"id":"a5122a8bf1446e42","type":"group","x":-680,"y":-640,"width":1360,"height":2080,"color":"5","label":"blue group"},
+		{"id":"24a3b9a3b2384f8e","type":"file","file":"client/addons/phantom_camera/scripts/managers/PhantomCameraManager.cs","x":140,"y":820,"width":400,"height":400},
 		{"id":"d779da69640942c1","type":"file","file":"client/Scripts/Players/Local/LocalPlayer.cs","x":-360,"y":-260,"width":800,"height":660,"color":"5"},
 		{"id":"0b3f599625bfda33","type":"file","file":"client/Scripts/Players/Local/LocalPlayer.cs","subpath":"#_Ready","x":-62,"y":590,"width":560,"height":400,"color":"5"},
 		{"id":"820bb6772e48e67b","type":"file","file":"client/Scripts/Players/Local/LocalPlayer.cs","x":1120,"y":-220,"width":800,"height":660,"color":"1"},
-		{"id":"6fa2a5e9860296c0","type":"file","file":"client/Scripts/Players/Local/LocalPlayer.cs","subpath":"#_Ready","x":1360,"y":660,"width":560,"height":400,"color":"1"}
+		{"id":"281565474111eea3","type":"file","file":"Untitled 1.canvas","x":-1360,"y":0,"width":400,"height":400}
 	],
 	"edges":[
-		{"id":"1c9717310a198f2a","fromNode":"d779da69640942c1","fromSide":"bottom","toNode":"0b3f599625bfda33","toSide":"top"},
-		{"id":"0936dc85eb57f663","fromNode":"820bb6772e48e67b","fromSide":"bottom","toNode":"6fa2a5e9860296c0","toSide":"top"}
+		{"id":"1c9717310a198f2a","fromNode":"d779da69640942c1","fromSide":"bottom","toNode":"0b3f599625bfda33","toSide":"top"}
 	],
 	"metadata":{
 		"version":"1.0-1.0",
