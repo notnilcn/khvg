@@ -1821,6 +1821,8 @@ var DEFAULT_SETTINGS_VALUES = {
   // Added by an LLM agent
   defaultArrowSize: "1",
   // Added by an LLM agent
+  cardNodePadding: [16, 0],
+  // Added by an LLM agent - matches Obsidian's own default padding
   connectEdgesToArrowBase: false,
   // Added by an LLM agent
   canvasMetadataCompatibilityEnabled: true,
@@ -2018,6 +2020,17 @@ var SETTINGS = {
           "1": "Default (1x)",
           "1.5": "Large (1.5x)",
           "2": "Extra Large (2x)"
+        }
+      },
+      cardNodePadding: {
+        // Added by an LLM agent
+        label: "Card node padding (horizontal, vertical)",
+        description: "The inner padding of a card's (text/file node) content, in pixels. Obsidian's own default is 16 horizontal, 0 vertical. Set either to 0 to let the content reach all the way to that edge.",
+        type: "dimension",
+        parse: (value) => {
+          const horizontal = Math.max(0, parseInt(value[0]) || 0);
+          const vertical = Math.max(0, parseInt(value[1]) || 0);
+          return [horizontal, vertical];
         }
       },
       connectEdgesToArrowBase: {
@@ -3941,8 +3954,10 @@ var MetadataCanvasExtension = class extends CanvasExtension {
     ));
   }
   onCanvasChanged(canvas) {
-    var _a;
-    const metadata = (_a = canvas.data) == null ? void 0 : _a.metadata;
+    if (!canvas.data) return;
+    if (MigrationHelper.needsMigration(canvas.data))
+      canvas.data = MigrationHelper.migrate(canvas.data);
+    const metadata = canvas.data.metadata;
     if (!metadata || metadata.version !== CURRENT_SPEC_VERSION)
       return void new import_obsidian11.Notice("Metadata node not found or version mismatch. Should have been migrated (but wasn't).");
     const that = this;
@@ -4392,6 +4407,8 @@ var DEFAULT_SIZE_SETTINGS = [
   { setting: "defaultArrowSize", datasetKey: "defaultArrowSize" }
 ];
 var UNCHANGED_SIZE = "1";
+var CARD_PADDING_H_PROPERTY = "--ac-card-padding-h";
+var CARD_PADDING_V_PROPERTY = "--ac-card-padding-v";
 var DefaultStyleSizesCanvasExtension = class extends CanvasExtension {
   isEnabled() {
     return true;
@@ -4417,6 +4434,9 @@ var DefaultStyleSizesCanvasExtension = class extends CanvasExtension {
       if (value === (unchangedValue != null ? unchangedValue : UNCHANGED_SIZE)) delete wrapperEl.dataset[datasetKey];
       else wrapperEl.dataset[datasetKey] = value;
     }
+    const [paddingHorizontal, paddingVertical] = this.plugin.settings.getSetting("cardNodePadding");
+    wrapperEl.style.setProperty(CARD_PADDING_H_PROPERTY, `${paddingHorizontal}px`);
+    wrapperEl.style.setProperty(CARD_PADDING_V_PROPERTY, `${paddingVertical}px`);
   }
 };
 
@@ -5235,6 +5255,11 @@ var CopyNodeReferenceCanvasExtension = class _CopyNodeReferenceCanvasExtension e
 
 // src/canvas-extensions/commands-canvas-extension.ts
 var DIRECTIONS = ["up", "down", "left", "right"];
+var INVISIBLE_STYLE_VALUE = "invisible";
+var INVISIBLE_STYLE_KEYS = {
+  node: { style: "border", restore: "borderBeforeInvisible" },
+  edge: { style: "path", restore: "pathBeforeInvisible" }
+};
 var CommandsCanvasExtension = class extends CanvasExtension {
   isEnabled() {
     return "commandsFeatureEnabled";
@@ -5247,6 +5272,15 @@ var CommandsCanvasExtension = class extends CanvasExtension {
         this.plugin,
         (_canvas) => true,
         (canvas) => canvas.setReadonly(!canvas.readonly)
+      )
+    });
+    this.plugin.addCommand({
+      id: "toggle-invisible-style",
+      name: "Toggle invisible style",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (canvas) => !canvas.readonly && this.getInvisibleStyleTargets(canvas).length > 0,
+        (canvas) => this.toggleInvisibleStyle(canvas)
       )
     });
     this.plugin.addCommand({
@@ -5498,6 +5532,50 @@ var CommandsCanvasExtension = class extends CanvasExtension {
         }
       )
     });
+  }
+  /**
+   * Added by an LLM agent.
+   * The selected elements the "Invisible" style option can be applied to, paired with the style
+   * attribute that carries it. Nodes/edges are skipped while their styling feature is disabled - the
+   * style attribute never reaches the DOM then, so toggling it would silently do nothing.
+   */
+  getInvisibleStyleTargets(canvas) {
+    const targets = [];
+    for (const element of canvas.selection) {
+      const kind = element.path !== void 0 ? "edge" : "node";
+      const featureSetting = kind === "edge" ? "edgesStylingFeatureEnabled" : "nodeStylingFeatureEnabled";
+      if (!this.plugin.settings.getSetting(featureSetting)) continue;
+      targets.push({ element, keys: INVISIBLE_STYLE_KEYS[kind] });
+    }
+    return targets;
+  }
+  /**
+   * Added by an LLM agent.
+   * Hides the whole selection, unless it is already fully hidden - then it gets restored to whatever
+   * style it had before being hidden.
+   */
+  toggleInvisibleStyle(canvas) {
+    var _a, _b, _c;
+    const targets = this.getInvisibleStyleTargets(canvas);
+    if (targets.length === 0) return;
+    const hide = !targets.every(({ element, keys }) => {
+      var _a2;
+      return ((_a2 = element.getData().styleAttributes) == null ? void 0 : _a2[keys.style]) === INVISIBLE_STYLE_VALUE;
+    });
+    for (const { element, keys } of targets) {
+      const elementData = element.getData();
+      const styleAttributes = (_a = elementData.styleAttributes) != null ? _a : {};
+      if (styleAttributes[keys.style] === INVISIBLE_STYLE_VALUE === hide) continue;
+      element.setData({
+        ...elementData,
+        styleAttributes: {
+          ...styleAttributes,
+          [keys.style]: hide ? INVISIBLE_STYLE_VALUE : (_b = styleAttributes[keys.restore]) != null ? _b : null,
+          [keys.restore]: hide ? (_c = styleAttributes[keys.style]) != null ? _c : null : null
+        }
+      });
+    }
+    canvas.pushHistory(canvas.getData());
   }
   createTextNode(canvas) {
     const size = canvas.config.defaultTextNodeDimensions;
@@ -8534,7 +8612,8 @@ var CanvasMetadataExposerExtension = class extends CanvasExtension {
     ));
   }
   updateExposedSettings(canvas) {
-    const startNodeId = canvas.metadata["startNode"];
+    var _a;
+    const startNodeId = (_a = canvas.metadata) == null ? void 0 : _a["startNode"];
     for (const [nodeId, node] of canvas.nodes) {
       if (nodeId === startNodeId) node.nodeEl.dataset.isStartNode = "true";
       else delete node.nodeEl.dataset.isStartNode;

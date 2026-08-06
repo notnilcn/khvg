@@ -1,0 +1,11 @@
+{
+	"nodes":[
+		{"id":"42e082c0174c455c","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/combat/mod.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
+		{"id":"5f8e4743cf1c90dc","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/combat/combatFile.canvas","color":"5","x":460,"y":0,"width":400,"height":400}
+	],
+	"edges":[],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
+}

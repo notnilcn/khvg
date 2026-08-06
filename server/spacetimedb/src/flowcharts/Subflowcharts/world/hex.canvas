@@ -1,0 +1,199 @@
+{
+	"nodes": [
+		{
+			"id": "3721aa22180ea18e",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#hex_area",
+			"x": 3220,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8d35f677efb38e3c",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#hex_shift",
+			"x": 2760,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "71018be8e00bdee7",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#world_to_hex",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "da8f32c3fc5139ef",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#hex_to_world",
+			"x": 2300,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "30e602e989f0168f",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#chunk_center_hex",
+			"x": 1840,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "77f40d7f572172f4",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#inv_hexmod",
+			"x": 1380,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "963ebf084fe3206c",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#spiral_chunk_index",
+			"x": 920,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "02190a6f17f70699",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#world_to_chunk",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0c352c6484728656",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#HEX_NEIGHBOR_DELTAS",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4f44da0cb21341e4",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#same_hex_neighbor_indices",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7eb4fd75adb07d51",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#cross_hex_neighbor",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "26352ce6229017aa",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#HexCell",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f43e079a0bc4f256",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#enumerate_world_hexes",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "104deccb11fad310",
+			"fromNode": "f43e079a0bc4f256",
+			"fromSide": "bottom",
+			"toNode": "3721aa22180ea18e",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5c3f1f04c14786c3",
+			"fromNode": "f43e079a0bc4f256",
+			"fromSide": "bottom",
+			"toNode": "8d35f677efb38e3c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "efd29aff07d4d1ef",
+			"fromNode": "02190a6f17f70699",
+			"fromSide": "bottom",
+			"toNode": "71018be8e00bdee7",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "4928f23addff3f18",
+			"fromNode": "f43e079a0bc4f256",
+			"fromSide": "bottom",
+			"toNode": "da8f32c3fc5139ef",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "eaf7ddc94e1cc32e",
+			"fromNode": "f43e079a0bc4f256",
+			"fromSide": "bottom",
+			"toNode": "30e602e989f0168f",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "69e1745cbc52d750",
+			"fromNode": "f43e079a0bc4f256",
+			"fromSide": "bottom",
+			"toNode": "77f40d7f572172f4",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d7cf9b4c624ef3c8",
+			"fromNode": "f43e079a0bc4f256",
+			"fromSide": "bottom",
+			"toNode": "963ebf084fe3206c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInMainFlowchart"
+			]
+		}
+	}
+}

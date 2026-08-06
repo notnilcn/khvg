@@ -1,10 +1,12 @@
 [
-  "advanced-canvas",
   "obsidian-git",
   "remember-cursor-position",
   "sync-embeds",
   "track-changes",
   "obsidian-wrap-with-shortcuts",
+  "flexplorer",
+  "folder-notes",
+  "advanced-canvas",
   "vscode-editor",
-  "flexplorer"
+  "better-embedded-canvas"
 ]

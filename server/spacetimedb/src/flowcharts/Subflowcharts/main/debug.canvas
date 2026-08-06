@@ -1,0 +1,13 @@
+{
+	"nodes":[
+		{"id":"2a80e3b634f2d500","type":"file","file":"server/spacetimedb/src/main/debug.rs","subpath":"#tick_player_position_debug","x":0,"y":0,"width":400,"height":400,"color":"1"},
+		{"id":"fa5c9e112f19495f","type":"file","file":"server/spacetimedb/src/main/debug.rs","subpath":"#toggle_debug","x":460,"y":0,"width":400,"height":400,"color":"1"},
+		{"id":"53244642c05b9b86","type":"file","file":"server/spacetimedb/src/main/debug.rs","subpath":"#PlayerPositionDebug","x":920,"y":0,"width":400,"height":400},
+		{"id":"04310d9fbabd8472","type":"file","file":"server/spacetimedb/src/main/debug.rs","subpath":"#PlayerPositionDebugSchedule","x":1380,"y":0,"width":400,"height":400}
+	],
+	"edges":[],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
+}

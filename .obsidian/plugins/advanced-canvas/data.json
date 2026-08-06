@@ -18,6 +18,10 @@
   "defaultGroupOpacity": "default",
   "defaultEdgeWidth": "3",
   "defaultArrowSize": "2",
+  "cardNodePadding": [
+    0,
+    0
+  ],
   "connectEdgesToArrowBase": true,
   "canvasMetadataCompatibilityEnabled": true,
   "enableSingleNodeLinks": true,
@@ -65,6 +69,7 @@
   "collapsibleGroupsFeatureEnabled": false,
   "collapsedGroupPreviewOnDrag": true,
   "focusModeFeatureEnabled": false,
+  "canvasFilterFeatureEnabled": true,
   "presentationFeatureEnabled": true,
   "showSetStartNodeInPopup": true,
   "defaultSlideDimensions": [

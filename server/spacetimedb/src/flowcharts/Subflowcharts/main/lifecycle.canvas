@@ -1,0 +1,12 @@
+{
+	"nodes":[
+		{"id":"fd0e81e25c963620","type":"file","file":"server/spacetimedb/src/main/lifecycle.rs","subpath":"#init","x":0,"y":0,"width":400,"height":400,"color":"1"},
+		{"id":"a9eb8e4b06b18b98","type":"file","file":"server/spacetimedb/src/main/lifecycle.rs","subpath":"#client_connected","x":460,"y":0,"width":400,"height":400,"color":"1"},
+		{"id":"e5031da1a6c48174","type":"file","file":"server/spacetimedb/src/main/lifecycle.rs","subpath":"#client_disconnected","x":920,"y":0,"width":400,"height":400,"color":"1"}
+	],
+	"edges":[],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
+}

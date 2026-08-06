@@ -1,0 +1,51 @@
+{
+	"nodes": [
+		{
+			"id": "bd01d9bcf4326933",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/wrap.rs",
+			"subpath": "#wrap_chunk_coords",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e63c93699d7230d5",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/wrap.rs",
+			"subpath": "#wrap_world_pos",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "68f329f48d8f838e",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/wrap.rs",
+			"subpath": "#wrapped_distance_sq",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "2f972055815f9234",
+			"fromNode": "e63c93699d7230d5",
+			"fromSide": "bottom",
+			"toNode": "bd01d9bcf4326933",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInMainFlowchart"
+			]
+		}
+	}
+}

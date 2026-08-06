@@ -16,6 +16,17 @@
   "showEmbedHeader": false,
   "canvasNodeWidth": 400,
   "canvasNodeHeight": 400,
+  "flowchartNodeSpacingX": 60,
+  "flowchartNodeSpacingY": 100,
+  "flowchartDefaultGranularity": "file",
+  "linkableSymbolKinds": [
+    "function",
+    "variable",
+    "enum",
+    "struct",
+    "class",
+    "interface"
+  ],
   "embedMaxHeight": 1500,
   "embedMinHeight": 0
 }

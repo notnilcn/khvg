@@ -4,24 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "27c1a5ef92121d00",
+        "id": "1d7ca559ffeb8391",
         "type": "tabs",
         "children": [
           {
-            "id": "4ac034c6e2cc57f8",
+            "id": "72a28ae30cf40c16",
             "type": "leaf",
             "state": {
               "type": "canvas",
               "state": {
-                "file": "Untitled.canvas",
+                "file": "server/spacetimedb/src/flowcharts/Subflowcharts/main/seeds.canvas",
                 "viewState": {
-                  "x": -869.3800577573625,
-                  "y": 145.68026063968313,
-                  "zoom": -0.9288071614079275
+                  "x": 2664.9841084469817,
+                  "y": 553.5445208036592,
+                  "zoom": -2.646212106165934
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "Untitled"
+              "title": "seeds"
             }
           }
         ]
@@ -58,7 +58,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "agents",
+                "query": "",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -83,7 +83,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 352.70001220703125
+    "width": 309.5
   },
   "right": {
     "id": "42a05c4edfa51420",
@@ -189,13 +189,25 @@
               "icon": "git-pull-request",
               "title": "Source Control"
             }
+          },
+          {
+            "id": "f9b4591b8af90174",
+            "type": "leaf",
+            "state": {
+              "type": "file-properties",
+              "state": {
+                "file": "server/spacetimedb/src/flowcharts/Subflowcharts/main/main.canvas"
+              },
+              "icon": "lucide-info",
+              "title": "File properties"
+            }
           }
         ],
         "currentTab": 6
       }
     ],
     "direction": "horizontal",
-    "width": 329.5
+    "width": 366.2999267578125
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -211,15 +223,42 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "4ac034c6e2cc57f8",
+  "active": "72a28ae30cf40c16",
   "lastOpenFiles": [
-    "Untitled.canvas",
-    "Untitled.md",
-    "Untitled 1.canvas",
-    "docs/Technical Design Docs/Description/99 End-to-End Flowchart.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/main/main.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/player/player.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/world/world.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/main/seeds.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/main/mod.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/main/lifecycle.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/main/debug.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/main/global.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/main/admin.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/lib.canvas",
+    "server/spacetimedb/src/flowcharts/Subflowcharts/src.canvas",
+    "server/spacetimedb/src/world#/terrain/voronoi.rs",
+    "server/spacetimedb/src/world#/terrain/overlay.rs",
+    "server/spacetimedb/src/world#/terrain/rules.rs",
+    "server/spacetimedb/src/world#/terrain/ground.rs",
+    "server/spacetimedb/src/world#/terrain/mod.rs",
+    "server/spacetimedb/src/world#/terrain/decor.rs",
+    "server/spacetimedb/src/world#/wrap.rs",
+    "server/spacetimedb/src/world#/views.rs",
+    "server/spacetimedb/src/world#/terrain",
+    "server/spacetimedb/src/world#/tables.rs",
+    "server/spacetimedb/src/CLAUDE.md",
+    "server/CLAUDE.md",
+    "canvas3.png",
+    "canvas2.png",
     "_code-embed-test/demo.md",
     "_code-embed-test/test.md",
-    "client/Scenes/main.tscn42711080209.tmp",
+    "_debug/suggest-test.md",
+    "_debug/symbol-embed-test.md",
+    "Untitled.md",
+    "_scratch/Untitled.md",
+    "server/spacetimedb/src/plan.md",
+    "code_examples/Open-Godot-MCP/Docs/i18n/README.it.md",
+    "code_examples/Open-Godot-MCP/Docs/02-Tools/Network.md",
     "docs/Game Design Docs/01 Executive Summary.md",
     "docs/Game Design Docs/Inspirations, research, and new things to add.md",
     "CLAUDE.md",
@@ -229,23 +268,11 @@
     "docs/Game Design Docs/Art/Hollow Knight References.md",
     "docs/Game Design Docs/Art/Art style 3D.md",
     "docs/Game Design Docs/05 Biomes.md",
-    "client/Scenes/main.tscn33734226211.tmp",
     "docs/Game Design Docs/Art/Art style 2D.md",
-    "client/Scripts/Players/Local/LocalPlayer.cs",
-    "client/Scenes/main.tscn33443062201.tmp",
-    "_scratch/Untitled.md",
-    "LocalPlayer.cs",
     "_debug/vscode-editor-suggest-test.md",
-    "_debug",
-    "client/Scenes/main.tscn5626726849.tmp",
-    "client/Scenes/local_player.tscn5454740273.tmp",
     "docs/CLAUDE.md",
     "_code-embed-test/demo3.md",
     "_code-embed-test/demo2.md",
-    "_code-embed-test",
-    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll",
-    "client/Scripts/module_bindings/CLAUDE.md",
-    "client/addons/sstdbsdk/README.md",
     "client/addons/phantom_camera/examples/textures/3D/target.png",
     "client/addons/phantom_camera/examples/textures/3D/checker_pattern_dark.png",
     "client/addons/phantom_camera/examples/textures/2D/sign_prompt.png",
@@ -253,17 +280,6 @@
     "client/addons/phantom_camera/examples/textures/2D/phantom_camera_2d_sprite.png",
     "client/addons/phantom_camera/examples/textures/2D/level_spritesheet.png",
     "client/addons/phantom_camera/examples/textures/2D/inventory_container.png",
-    "client/addons/phantom_camera/icons/viewfinder/Select.svg",
-    "client/addons/phantom_camera/icons/viewfinder/Camera3DIcon.svg",
-    "client/addons/phantom_camera/icons/viewfinder/SceneTypesIcon.svg",
-    "client/addons/blastbullets2d/README.md",
-    "client/addons/blastbullets2d/LICENSE.md",
-    "module_bindings/CLAUDE.md",
-    "_code-embed-test/Code Embed Test.md",
-    "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
-    "docs old/Technical Design Docs/Description/99 End-to-End Flowchart.canvas",
-    "docs/Untitled.canvas",
-    "docs/Technical Design Docs/Description oldd/99 End-to-End Flowchart.canvas",
-    "docs/Technical Design Docs/Description old/99 End-to-End Flowchart.canvas"
+    "client/addons/phantom_camera/icons/viewfinder/Select.svg"
   ]
 }

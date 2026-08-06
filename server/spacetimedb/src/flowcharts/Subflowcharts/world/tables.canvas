@@ -1,0 +1,20 @@
+{
+	"nodes":[
+		{"id":"120ca728f2ebddae","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#TextureKind","x":0,"y":0,"width":400,"height":400},
+		{"id":"0026118df6375706","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#MapConfig","x":460,"y":0,"width":400,"height":400},
+		{"id":"43f300fe517ccd86","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#load","x":920,"y":0,"width":400,"height":400},
+		{"id":"21d47369801c39d5","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#BuildingTile","x":1380,"y":0,"width":400,"height":400},
+		{"id":"bc790d5bc44c4f26","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#TextureEntry","x":1840,"y":0,"width":400,"height":400},
+		{"id":"5c2195da0817c91b","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#LayeringRule","x":2300,"y":0,"width":400,"height":400},
+		{"id":"fbd9838c4e588344","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#BaseAdjacencyRule","x":2760,"y":0,"width":400,"height":400},
+		{"id":"c487d6b78ad44394","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#OverlayAdjacencyRule","x":3220,"y":0,"width":400,"height":400},
+		{"id":"7dd2c04186ae6f19","type":"file","file":"server/spacetimedb/src/world/tables.rs","subpath":"#DecorGroundRule","x":3680,"y":0,"width":400,"height":400}
+	],
+	"edges":[],
+	"metadata":{
+		"frontmatter":{
+			"tags":["includeInMainFlowchart"]
+		},
+		"version":"1.0-1.0"
+	}
+}

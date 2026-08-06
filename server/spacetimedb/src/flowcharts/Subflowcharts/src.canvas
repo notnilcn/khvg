@@ -1,0 +1,16 @@
+{
+	"nodes":[
+		{"id":"29f34aceed67e29b","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/lib.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
+		{"id":"bd9d977a971eaffc","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/enemy/enemy.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
+		{"id":"0123c3368b1b2c4a","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/combat/combat.canvas","color":"5","x":920,"y":0,"width":400,"height":400},
+		{"id":"ad7a003a06ef66b1","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/item/item.canvas","color":"5","x":1380,"y":0,"width":400,"height":400},
+		{"id":"07d08de0415d3a8d","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/main/main.canvas","color":"5","x":1840,"y":0,"width":400,"height":400},
+		{"id":"d03ab49289503580","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/player/player.canvas","color":"5","x":2300,"y":0,"width":400,"height":400},
+		{"id":"895dc3828d744d4a","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/world.canvas","color":"5","x":2760,"y":0,"width":400,"height":400}
+	],
+	"edges":[],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
+}

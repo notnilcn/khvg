@@ -1,0 +1,141 @@
+{
+	"nodes": [
+		{
+			"id": "5b43ae65b2b02f54",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#splitmix64",
+			"x": 690,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "344010b372e1a715",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#hash_to_unit",
+			"x": 1150,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d448fd9b67f49b7b",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#next_unit",
+			"x": 690,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4403b59ffe835c42",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#pick_index",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2d0ea76e3a5a9912",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#weighted_pick_index",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "904a34649acfb8e8",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#weighted_pick_index_from_unit",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3d1c7c274690db75",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#weighted_pick_with_remainder",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e7ffe3aad88ff941",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#weighted_pick_with_remainder_from_unit",
+			"x": 10,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "0b1d0e6b2b87ba41",
+			"fromNode": "d448fd9b67f49b7b",
+			"fromSide": "bottom",
+			"toNode": "5b43ae65b2b02f54",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "fcc84ec503d9c93e",
+			"fromNode": "d448fd9b67f49b7b",
+			"fromSide": "bottom",
+			"toNode": "344010b372e1a715",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "fa9a4250e6410dae",
+			"fromNode": "4403b59ffe835c42",
+			"fromSide": "bottom",
+			"toNode": "d448fd9b67f49b7b",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "c9e710001796301d",
+			"fromNode": "2d0ea76e3a5a9912",
+			"fromSide": "bottom",
+			"toNode": "d448fd9b67f49b7b",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "6e6797f9ba9f8d30",
+			"fromNode": "3d1c7c274690db75",
+			"fromSide": "bottom",
+			"toNode": "d448fd9b67f49b7b",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "3a6f13647f11511b",
+			"fromNode": "3d1c7c274690db75",
+			"fromSide": "bottom",
+			"toNode": "e7ffe3aad88ff941",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInMainFlowchart"
+			]
+		}
+	}
+}

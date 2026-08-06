@@ -1,0 +1,72 @@
+{
+	"nodes": [
+		{
+			"id": "1e1fc419167af338",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/rules.rs",
+			"subpath": "#overlay_compatible_with_base",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d4fab70625017c6f",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/rules.rs",
+			"subpath": "#base_tags_conflict",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c3fcf77d05fea0be",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/rules.rs",
+			"subpath": "#overlay_tags_conflict",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "50c89bec8bffe0e4",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/rules.rs",
+			"subpath": "#decor_ground_conflict",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "47697338d7e6f668",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/rules.rs",
+			"subpath": "#DecidedWedgeTags",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2b8b485f4d6f7868",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/rules.rs",
+			"subpath": "#decided_neighbor_tags",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInMainFlowchart"
+			]
+		}
+	}
+}

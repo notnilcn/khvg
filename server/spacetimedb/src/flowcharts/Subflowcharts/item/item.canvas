@@ -1,0 +1,55 @@
+{
+	"nodes": [
+		{
+			"id": "952073adfd6ddd21",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/item/mod.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9903c16e9705c7f5",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/item/reducers.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fb2d2de127c5b323",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/item/seeds.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "09472d69a73e7672",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/item/tables.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1e405d65a181d977",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/item/views.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": []
+}

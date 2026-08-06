@@ -1,0 +1,23 @@
+{
+	"nodes":[
+		{"id":"580ae99fc18cf4ec","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/aoi.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
+		{"id":"b633ee68d345a4fd","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/def_tables.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
+		{"id":"e5ecab3d2be480ff","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/hex.canvas","color":"5","x":920,"y":0,"width":400,"height":400},
+		{"id":"9acd9089f1d95c4e","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/instance_tables.canvas","color":"5","x":1380,"y":0,"width":400,"height":400},
+		{"id":"c9157eb8259fa547","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/mod.canvas","color":"5","x":1840,"y":0,"width":400,"height":400},
+		{"id":"c01b57897f910e60","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/prng.canvas","color":"5","x":2300,"y":0,"width":400,"height":400},
+		{"id":"6913b25053c8037c","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/reducers.canvas","color":"5","x":2760,"y":0,"width":400,"height":400},
+		{"id":"06f5626c2554bd4c","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/tables.canvas","color":"5","x":3220,"y":0,"width":400,"height":400},
+		{"id":"354940efc5ea1b4e","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/noise.canvas","color":"5","x":3680,"y":0,"width":400,"height":400},
+		{"id":"b86da72b20e1c7f2","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/views.canvas","color":"5","x":4140,"y":0,"width":400,"height":400},
+		{"id":"72eed2e697bf2378","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/wrap.canvas","color":"5","x":4600,"y":0,"width":400,"height":400},
+		{"id":"a93cc292a8aedbc1","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/world/terrain/terrain.canvas","color":"5","x":5060,"y":0,"width":400,"height":400}
+	],
+	"edges":[],
+	"metadata":{
+		"frontmatter":{
+			"aliases":null
+		},
+		"version":"1.0-1.0"
+	}
+}

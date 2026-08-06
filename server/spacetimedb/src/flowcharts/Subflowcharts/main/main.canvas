@@ -1,0 +1,15 @@
+{
+	"nodes":[
+		{"id":"2c4c5f3f4ec8ecd6","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/main/admin.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
+		{"id":"afad9bab2d40122e","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/main/global.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
+		{"id":"1fca2443017acf95","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/main/debug.canvas","color":"5","x":920,"y":0,"width":400,"height":400},
+		{"id":"11e08afdb8354502","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/main/lifecycle.canvas","color":"5","x":1380,"y":0,"width":400,"height":400},
+		{"id":"58879fae5cbd4b56","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/main/mod.canvas","color":"5","x":1840,"y":0,"width":400,"height":400},
+		{"id":"39bc5c68707ae2b9","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/main/seeds.canvas","color":"5","x":2300,"y":0,"width":400,"height":400}
+	],
+	"edges":[],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
+}

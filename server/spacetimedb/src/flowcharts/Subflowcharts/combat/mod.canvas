@@ -1,0 +1,92 @@
+{
+	"nodes": [
+		{
+			"id": "9898364227f966c5",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#PlayerDamageOutcome",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "59cba1f1f7bbafb7",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#EnemyDamageOutcome",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ed78d9ee9fcfd35c",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#compute_player_damage",
+			"x": 1380,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8cb9e00c78913d68",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#compute_incoming_damage",
+			"x": 920,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4e60a1400b5b7a0f",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#deal_damage_to_player",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f0b8f4e0388da41f",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#deal_damage_to_enemy",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e382e688557cc776",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#heal_player",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "f97648a33e418c83",
+			"fromNode": "f0b8f4e0388da41f",
+			"fromSide": "bottom",
+			"toNode": "ed78d9ee9fcfd35c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d63e3fd8021780f5",
+			"fromNode": "4e60a1400b5b7a0f",
+			"fromSide": "bottom",
+			"toNode": "8cb9e00c78913d68",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	]
+}

@@ -1,4 +1,4 @@
-[[admin.rs##pub fn release_admin|release_admin]]
+
 
 
 1. test ^test
@@ -9,3 +9,4 @@ Khvor' Gates
 Khvor' means illness/disease/ailment. It usually refers to a state of being unwell.
 
 
+![[server/spacetimedb/src/world/tables.rs#MapConfig]]

@@ -1,0 +1,159 @@
+{
+	"nodes": [
+		{
+			"id": "58a25c9faa1da5c8",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#set_username",
+			"color": "1",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "75ce4a9f6d5679a0",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#create_profile",
+			"color": "1",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "dd804213b4feb989",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#delete_profile",
+			"color": "1",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "83d966dfbb3a99fd",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#join_world",
+			"color": "1",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0a664a150a294e84",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#leave_world",
+			"color": "1",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7bd7b2a0a0d947c2",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#report_movement",
+			"color": "1",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "231865bf62e26c66",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#report_hit",
+			"color": "1",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bfd40a0a18130e95",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#pickup_drop",
+			"color": "1",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2ca8fa4b7132ca9e",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#drop_item",
+			"color": "1",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fc0853cc6c593284",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#swap_slots",
+			"color": "1",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "51edb8bbae66d105",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#tick_active_consumable_effects",
+			"color": "1",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0538d04a2c0429d4",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#use_item",
+			"color": "1",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "34ead17597a34726",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#apply_enchantment",
+			"color": "1",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bf6123733c906eb8",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#remove_enchantment",
+			"color": "1",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": []
+}

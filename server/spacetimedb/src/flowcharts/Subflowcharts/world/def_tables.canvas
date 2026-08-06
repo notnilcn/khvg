@@ -1,0 +1,112 @@
+{
+	"nodes": [
+		{
+			"id": "3b3feeb92cacf2d6",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#BiomeWeight",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3dfcb79bb2998e7f",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#WorldDef",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f6b0ded114c85cc0",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#RegionWeight",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4e75176a14e8f75c",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#GroundTextureConfig",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9bf83632be7c2a16",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#OverlayTextureConfig",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5a5be4e6c3f6052e",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#DecorConfig",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a9b5c94d142d76bb",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#BiomeDef",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0f2ebdb42c0d26e8",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#BiomeRegionDef",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f61c2ef14a112022",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#ManualRegionInput",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "54a19ed6a25bc8cb",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#ManualBiomeInput",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInMainFlowchart"
+			]
+		}
+	}
+}

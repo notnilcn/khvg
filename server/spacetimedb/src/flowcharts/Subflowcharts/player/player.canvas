@@ -1,0 +1,14 @@
+{
+	"nodes":[
+		{"id":"e31c65c2fb3023cf","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/player/methods.canvas","x":0,"y":0,"width":400,"height":400,"color":"5"},
+		{"id":"3ea3e348cdda4d34","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/player/mod.canvas","x":460,"y":0,"width":400,"height":400,"color":"5"},
+		{"id":"08cee8015a5e68c0","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/player/tables.canvas","x":920,"y":0,"width":400,"height":400,"color":"5"},
+		{"id":"83ebbaf08cf80656","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/player/views.canvas","x":1380,"y":0,"width":400,"height":400,"color":"5"},
+		{"id":"de5e7834792cae16","type":"file","file":"server/spacetimedb/src/flowcharts/Subflowcharts/player/reducers.canvas","x":1840,"y":0,"width":400,"height":400,"color":"5"}
+	],
+	"edges":[],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
+}

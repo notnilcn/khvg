@@ -541,6 +541,23 @@
 .canvas-wrapper[data-default-arrow-size] .canvas-edges polygon.canvas-path-end {
   transform: scale(calc(var(--zoom-multiplier) * var(--arrow-size-multiplier, var(--default-arrow-size-multiplier, 1))));
 }
+.canvas-wrapper .canvas-node:not(.canvas-node-group) .canvas-node-content .markdown-preview-view {
+  padding-left: var(--ac-card-padding-h, var(--size-4-4));
+  padding-right: var(--ac-card-padding-h, var(--size-4-4));
+  padding-top: var(--ac-card-padding-v, 0px);
+  padding-bottom: var(--ac-card-padding-v, 0px);
+}
+.canvas-wrapper .canvas-node:not(.canvas-node-group) .canvas-node-content .markdown-source-view .cm-content {
+  padding-left: var(--ac-card-padding-h, var(--size-4-4));
+  padding-right: var(--ac-card-padding-h, var(--size-4-4));
+  padding-top: var(--ac-card-padding-v, 0px);
+  padding-bottom: var(--ac-card-padding-v, 0px);
+}
+.canvas-wrapper .canvas-node:not(.canvas-node-group) .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view::before,
+.canvas-wrapper .canvas-node:not(.canvas-node-group) .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view::after {
+  min-height: var(--ac-card-padding-v, min(var(--canvas-node-height) * 0.1 - 3px, var(--size-4-4)));
+  max-height: var(--ac-card-padding-v, var(--size-4-4));
+}
 .icon-modal-suggestion {
   display: flex;
   align-items: center;

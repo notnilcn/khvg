@@ -1,0 +1,65 @@
+{
+	"nodes": [
+		{
+			"id": "84c13b4fd7aa9c27",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/enemy/def_tables.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3964c5de9d4071a5",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/enemy/reducers.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "47783c1fe2c1ec1d",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/enemy/instance_tables.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "425547a35e2bebf4",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/enemy/methods.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "87bf6aa5e33c8b50",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/enemy/views.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3d64a060097573ed",
+			"type": "file",
+			"file": "server/spacetimedb/src/flowcharts/Subflowcharts/enemy/mod.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": []
+}

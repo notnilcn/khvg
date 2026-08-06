@@ -27,7 +27,6 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
     // (Stats, Health, Faction, Combat…) register themselves here from their _Ready.
     private readonly EntityRegistry componentRegistry = new();
     public void RegisterComponent(IComponent component) => componentRegistry.Register(component);
-    public void RegisterComponent<T>(T component) where T : IComponent => componentRegistry.Register(component);
     public void UnregisterComponent(IComponent component) => componentRegistry.Unregister(component);
     public IComponent? GetComponent(System.Type type) => componentRegistry.Get(type);
     public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;

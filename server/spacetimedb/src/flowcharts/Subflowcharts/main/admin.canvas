@@ -1,0 +1,242 @@
+{
+	"nodes": [
+		{
+			"id": "6f34c1461df5c2ef",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#claim_admin",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "d9c6361d63b1fe5a",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#release_admin",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "50d307b56a8203b2",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#change_stats",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "12abb606d92fc2f8",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_texture_entry",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "9a6e5f2354857f18",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_enemy_template",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "c447f6b7d436ecf1",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#spawn_enemy",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "b594d0d4fbe1b704",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#despawn_enemy",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "3bf9abdd71057915",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_movement_def",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "3c65a6953841712c",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_single_step_def",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "802f518d3aef06f1",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_repeat_step_def",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "c60556a58d022e67",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_multi_step_def",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "23833139efdadef9",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#internal_add_chunks",
+			"x": 5060,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0248f733f7459067",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#add_chunks",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "022a1615888526fd",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#clear_chunks",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "d0c84827d44de960",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_world_def",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "f48065616eac94eb",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_biome_def",
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "32a1f52bcb3e822a",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#upsert_biome_region_def",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "ccce62d500001dc7",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#generate_world_proc",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "791ae3606cb2e2c6",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#generate_world_manual",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400,
+			"color": "1"
+		},
+		{
+			"id": "54fab917a7041eb8",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/admin.rs",
+			"subpath": "#find_player_by_username",
+			"x": 920,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "345a6a02674bab9c",
+			"fromNode": "0248f733f7459067",
+			"fromSide": "bottom",
+			"toNode": "23833139efdadef9",
+			"toSide": "top"
+		},
+		{
+			"id": "a1c32b7a2a568cfe",
+			"fromNode": "50d307b56a8203b2",
+			"fromSide": "bottom",
+			"toNode": "54fab917a7041eb8",
+			"toSide": "top"
+		}
+	],
+	"metadata": {
+		"version": "1.0-1.0",
+		"frontmatter": {}
+	}
+}
