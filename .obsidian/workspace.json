@@ -1,44 +1,79 @@
 {
   "main": {
-    "id": "d6f9c7b8a968fedf",
+    "id": "e49bc2f68f335dc2",
     "type": "split",
     "children": [
       {
-        "id": "1d7ca559ffeb8391",
+        "id": "05f0db297af225c8",
         "type": "tabs",
         "children": [
           {
-            "id": "72a28ae30cf40c16",
+            "id": "3673ee8f8880e917",
             "type": "leaf",
             "state": {
               "type": "canvas",
               "state": {
-                "file": "server/spacetimedb/src/flowcharts/Subflowcharts/main/seeds.canvas",
+                "file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
                 "viewState": {
-                  "x": 2664.9841084469817,
-                  "y": 553.5445208036592,
-                  "zoom": -2.646212106165934
+                  "x": 1631.6296728876732,
+                  "y": 26.65090671921692,
+                  "zoom": -0.3057389343543207
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "seeds"
+              "title": "player_subfolder"
+            }
+          },
+          {
+            "id": "1a07a4282418068c",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
+                "viewState": {
+                  "x": 545,
+                  "y": 450,
+                  "zoom": -0.9765683370736423
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "client_subfolder"
+            }
+          },
+          {
+            "id": "d6e69f98a99a0b9f",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "flowcharts/main.canvas",
+                "viewState": {
+                  "x": 2200,
+                  "y": -700,
+                  "zoom": -3.1832071339317904
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "main"
             }
           }
-        ]
+        ],
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "4b1b3908a50868d3",
+    "id": "cd3e4e7fac0cce24",
     "type": "split",
     "children": [
       {
-        "id": "b8c9cc70d8490922",
+        "id": "4d9598145bc8a441",
         "type": "tabs",
         "children": [
           {
-            "id": "783cec58f8ac3bd1",
+            "id": "7f36269607e47ab2",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -53,7 +88,7 @@
             }
           },
           {
-            "id": "fdebd5a62f3a457d",
+            "id": "7ce3ab2fd1459342",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -70,11 +105,14 @@
             }
           },
           {
-            "id": "bfeb57ed541a4e68",
+            "id": "a67e52779e8d553a",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {},
+              "state": {
+                "showSearch": false,
+                "searchQuery": ""
+              },
               "icon": "lucide-bookmark",
               "title": "Bookmarks"
             }
@@ -83,23 +121,22 @@
       }
     ],
     "direction": "horizontal",
-    "width": 309.5
+    "width": 300
   },
   "right": {
-    "id": "42a05c4edfa51420",
+    "id": "a81713b2b8e823c1",
     "type": "split",
     "children": [
       {
-        "id": "0fb0bf4d5bbf82db",
+        "id": "895fdbb51c40895c",
         "type": "tabs",
         "children": [
           {
-            "id": "5b92619b66fd9f02",
+            "id": "f8382ca74dae8e74",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/Game Design Docs/02 Gameplay.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -109,25 +146,24 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for 02 Gameplay"
+              "title": "Backlinks"
             }
           },
           {
-            "id": "6d93b41b84d29fd5",
+            "id": "5ca8d114889a31ab",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/Game Design Docs/02 Gameplay.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from 02 Gameplay"
+              "title": "Outgoing links"
             }
           },
           {
-            "id": "ab7a1a6cab44c81d",
+            "id": "25ff524a9baaee42",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -142,7 +178,7 @@
             }
           },
           {
-            "id": "0539160d877c77db",
+            "id": "55ac4e5abcb2053d",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -156,32 +192,33 @@
             }
           },
           {
-            "id": "318d248634b2136a",
+            "id": "7ec7c2d895d833de",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/Game Design Docs/02 Gameplay.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of 02 Gameplay"
+              "title": "Outline"
             }
           },
           {
-            "id": "f9c636c93125cc23",
+            "id": "df3d3c293a077a73",
             "type": "leaf",
             "state": {
-              "type": "tc-review-panel",
-              "state": {},
-              "icon": "lucide-ghost",
-              "title": "tc-review-panel"
+              "type": "file-properties",
+              "state": {
+                "file": "flowcharts/main.canvas"
+              },
+              "icon": "lucide-info",
+              "title": "File properties"
             }
           },
           {
-            "id": "03553f6757c0538b",
+            "id": "06e9c65429d203fe",
             "type": "leaf",
             "state": {
               "type": "git-view",
@@ -189,25 +226,13 @@
               "icon": "git-pull-request",
               "title": "Source Control"
             }
-          },
-          {
-            "id": "f9b4591b8af90174",
-            "type": "leaf",
-            "state": {
-              "type": "file-properties",
-              "state": {
-                "file": "server/spacetimedb/src/flowcharts/Subflowcharts/main/main.canvas"
-              },
-              "icon": "lucide-info",
-              "title": "File properties"
-            }
           }
         ],
-        "currentTab": 6
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
-    "width": 366.2999267578125
+    "width": 291.0999755859375
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -223,63 +248,41 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "72a28ae30cf40c16",
+  "active": "d6e69f98a99a0b9f",
   "lastOpenFiles": [
-    "server/spacetimedb/src/flowcharts/Subflowcharts/main/main.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/player/player.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/world/world.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/main/seeds.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/main/mod.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/main/lifecycle.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/main/debug.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/main/global.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/main/admin.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/lib.canvas",
-    "server/spacetimedb/src/flowcharts/Subflowcharts/src.canvas",
-    "server/spacetimedb/src/world#/terrain/voronoi.rs",
-    "server/spacetimedb/src/world#/terrain/overlay.rs",
-    "server/spacetimedb/src/world#/terrain/rules.rs",
-    "server/spacetimedb/src/world#/terrain/ground.rs",
-    "server/spacetimedb/src/world#/terrain/mod.rs",
-    "server/spacetimedb/src/world#/terrain/decor.rs",
-    "server/spacetimedb/src/world#/wrap.rs",
-    "server/spacetimedb/src/world#/views.rs",
-    "server/spacetimedb/src/world#/terrain",
-    "server/spacetimedb/src/world#/tables.rs",
-    "server/spacetimedb/src/CLAUDE.md",
-    "server/CLAUDE.md",
-    "canvas3.png",
-    "canvas2.png",
-    "_code-embed-test/demo.md",
-    "_code-embed-test/test.md",
-    "_debug/suggest-test.md",
-    "_debug/symbol-embed-test.md",
-    "Untitled.md",
-    "_scratch/Untitled.md",
-    "server/spacetimedb/src/plan.md",
-    "code_examples/Open-Godot-MCP/Docs/i18n/README.it.md",
-    "code_examples/Open-Godot-MCP/Docs/02-Tools/Network.md",
-    "docs/Game Design Docs/01 Executive Summary.md",
-    "docs/Game Design Docs/Inspirations, research, and new things to add.md",
-    "CLAUDE.md",
-    "docs/Game Design Docs/02 Gameplay.md",
-    "docs/Technical Design Docs/To Do.md",
-    "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
-    "docs/Game Design Docs/Art/Hollow Knight References.md",
-    "docs/Game Design Docs/Art/Art style 3D.md",
-    "docs/Game Design Docs/05 Biomes.md",
-    "docs/Game Design Docs/Art/Art style 2D.md",
-    "_debug/vscode-editor-suggest-test.md",
-    "docs/CLAUDE.md",
-    "_code-embed-test/demo3.md",
-    "_code-embed-test/demo2.md",
-    "client/addons/phantom_camera/examples/textures/3D/target.png",
-    "client/addons/phantom_camera/examples/textures/3D/checker_pattern_dark.png",
-    "client/addons/phantom_camera/examples/textures/2D/sign_prompt.png",
-    "client/addons/phantom_camera/examples/textures/2D/player_sprite.svg",
-    "client/addons/phantom_camera/examples/textures/2D/phantom_camera_2d_sprite.png",
-    "client/addons/phantom_camera/examples/textures/2D/level_spritesheet.png",
-    "client/addons/phantom_camera/examples/textures/2D/inventory_container.png",
-    "client/addons/phantom_camera/icons/viewfinder/Select.svg"
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/addons_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/phantom_camera_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/World_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder.canvas",
+    "flowcharts/main.canvas",
+    "flowcharts/Subflowcharts/server_subfolder/server_subfolder.canvas",
+    "zzz-test-single-node.canvas",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/lib_codefile/lib_codefile.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/Assets_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/views_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/voronoi_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/rules_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/overlay_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/mod_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/ground_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/decor_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile",
+    "client/addons/phantom_camera/icons/viewfinder/Camera3DIcon.svg",
+    "client/addons/phantom_camera/icons/viewfinder/Select.svg",
+    "client/addons/phantom_camera/icons/viewfinder/SceneTypesIcon.svg",
+    "client/addons/phantom_camera/icons/viewfinder/Camera2DIcon.svg",
+    "client/addons/phantom_camera/icons/misc/PriorityOverride.svg",
+    "client/addons/phantom_camera/icons/warning.svg",
+    "client/addons/phantom_camera/icons/phantom_camera_updater_panel_icon.svg",
+    "client/addons/phantom_camera/icons/phantom_camera_tween_director_resource.svg",
+    "client/addons/phantom_camera/icons/phantom_camera_tween_director.svg",
+    "client/addons/phantom_camera/icons/phantom_camera_tween.svg",
+    "client/addons/sstdbsdk/README.md",
+    "client/addons/blastbullets2d/README.md",
+    "client/addons/blastbullets2d/LICENSE.md"
   ]
 }

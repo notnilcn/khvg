@@ -11,15 +11,13 @@ use crate::player::tables::*;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 
-fn nearby_player_position_chunks(ctx: &ReducerContext, x: f32, y: f32, rings: i32) -> Vec<i64> 
-{
+fn nearby_player_position_chunks(ctx: &ReducerContext, x: f32, y: f32, rings: i32) -> Vec<i64> {
     let cfg = MapConfig::load(ctx, 0, 0);
     let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
     surrounding_chunk_indices(cq, cr, cfg.chunk_cols, cfg.chunk_rows, Some(rings))
 }
 
-pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool 
-{
+pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
     let range_sq = range * range;
     nearby_player_position_chunks(ctx, x, y, SIMULATION_CHUNK_RINGS).iter().any(|idx| {
         ctx.db.player_position().chunk_index().filter(idx)
@@ -35,21 +33,18 @@ pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, rang
     })
 }
 
-pub fn has_player_near_spawn_point(ctx: &ReducerContext, x: f32, y: f32) -> bool 
-{
+pub fn has_player_near_spawn_point(ctx: &ReducerContext, x: f32, y: f32) -> bool {
     nearby_player_position_chunks(ctx, x, y, SPAWN_LOOKAHEAD_CHUNK_RINGS).iter()
         .any(|idx| ctx.db.player_position().chunk_index().filter(idx)
             .any(|pos| ctx.db.logged_in_player().profile_id().find(&pos.profile_id).is_some()))
 }
 
-pub fn find_player_pos_by_id(ctx: &ReducerContext, id: Identity) -> Option<(f32, f32)> 
-{
+pub fn find_player_pos_by_id(ctx: &ReducerContext, id: Identity) -> Option<(f32, f32)> {
     ctx.db.logged_in_player().player_id().find(id)?;
     ctx.db.player_position().iter().find(|p| p.player_id == id).map(|p| (p.x, p.y))
 }
 
-pub fn find_nearest_player_id(ctx: &ReducerContext, x: f32, y: f32) -> Option<Identity> 
-{
+pub fn find_nearest_player_id(ctx: &ReducerContext, x: f32, y: f32) -> Option<Identity> {
     ctx.db.player_position().iter()
         .filter(|p| ctx.db.logged_in_player().profile_id().find(&p.profile_id).is_some())
         .min_by(|a, b| {
@@ -60,31 +55,27 @@ pub fn find_nearest_player_id(ctx: &ReducerContext, x: f32, y: f32) -> Option<Id
         .map(|p| p.player_id)
 }
 
-pub fn seconds_since(ctx: &ReducerContext, since: Timestamp) -> f32 
-{
+pub fn seconds_since(ctx: &ReducerContext, since: Timestamp) -> f32 {
     let now = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros();
     let then = since.to_duration_since_unix_epoch().unwrap_or_default().as_micros();
     now.saturating_sub(then) as f32 / 1_000_000.0
 }
 
 // Returns (is_in_active_phase, cycle_index) for a move/pause cycle measured from `since`.
-pub fn cycle_phase(ctx: &ReducerContext, since: Timestamp, active_duration: f32, pause_duration: f32) -> (bool, u64) 
-{
+pub fn cycle_phase(ctx: &ReducerContext, since: Timestamp, active_duration: f32, pause_duration: f32) -> (bool, u64) {
     let cycle = (active_duration + pause_duration).max(f32::EPSILON);
     let elapsed = seconds_since(ctx, since);
     let cycle_index = (elapsed / cycle).floor() as u64;
     (elapsed % cycle < active_duration, cycle_index)
 }
 
-pub fn recompute_aggro(ctx: &ReducerContext, x: f32, y: f32, lock_seconds: f32) -> (Option<Identity>, Timestamp) 
-{
+pub fn recompute_aggro(ctx: &ReducerContext, x: f32, y: f32, lock_seconds: f32) -> (Option<Identity>, Timestamp) {
     let target = find_nearest_player_id(ctx, x, y);
     let locked_until = ctx.timestamp + Duration::from_secs_f32(lock_seconds.max(0.0));
     (target, locked_until)
 }
 
-pub fn delete_enemy_behavior(ctx: &ReducerContext, behavior_id: u64) 
-{
+pub fn delete_enemy_behavior(ctx: &ReducerContext, behavior_id: u64) {
     // Collect before deleting: removing rows while iterating a btree index filter skips
     // entries (the same reason teardown_profile collects first).
     let phases = ctx.db.enemy_phases().behavior_id().filter(&behavior_id).collect::<Vec<_>>();
@@ -103,8 +94,7 @@ pub fn delete_enemy_behavior(ctx: &ReducerContext, behavior_id: u64)
     ctx.db.enemy_behavior().behavior_id().delete(&behavior_id);
 }
 
-pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> EnemyBehavior 
-{
+pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> EnemyBehavior {
     let behavior = ctx.db.enemy_behavior().insert(EnemyBehavior {
         behavior_id: 0,
         aggro_target: None,
@@ -191,8 +181,7 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
 /// EnemyAttack/EnemySequenceStep/RepeatStepInstance rows) is the enemy's component tree, with
 /// behavior_id/enemy_id as the entity id joining it — the Enemy row stays flat by design
 /// (structure-only refactor: no schema changes).
-pub fn spawn_enemy_archetype(ctx: &ReducerContext, template: &EnemyTemplate, x: f32, y: f32, is_elite: bool, immortal: bool, chunk_index: i64) -> Enemy 
-{
+pub fn spawn_enemy_archetype(ctx: &ReducerContext, template: &EnemyTemplate, x: f32, y: f32, is_elite: bool, immortal: bool, chunk_index: i64) -> Enemy {
     let behavior = build_enemy_behavior(ctx, template);
     ctx.db.enemy().insert(Enemy {
         enemy_id: 0, template_id: template.template_id.clone(), behavior_id: behavior.behavior_id,
@@ -203,27 +192,23 @@ pub fn spawn_enemy_archetype(ctx: &ReducerContext, template: &EnemyTemplate, x: 
 
 /// Despawn one enemy: delete the flat Enemy row together with its whole behavior tree
 /// (delete_enemy_behavior), so no orphan component rows outlive the entity.
-pub fn despawn_enemy_archetype(ctx: &ReducerContext, enemy: &Enemy) 
-{
+pub fn despawn_enemy_archetype(ctx: &ReducerContext, enemy: &Enemy) {
     delete_enemy_behavior(ctx, enemy.behavior_id);
     ctx.db.enemy().enemy_id().delete(enemy.enemy_id);
 }
 
-pub fn resolve_step_target(target: EnemyTarget, aggro_target: Option<Identity>) -> Option<Identity> 
-{
+pub fn resolve_step_target(target: EnemyTarget, aggro_target: Option<Identity>) -> Option<Identity> {
     match target {
         EnemyTarget::Idle => None,
         EnemyTarget::AggroTarget => aggro_target,
     }
 }
 
-pub fn is_attack_finished(attack: &EnemyAttack, attack_def: &AttackSequence) -> bool 
-{
+pub fn is_attack_finished(attack: &EnemyAttack, attack_def: &AttackSequence) -> bool {
     attack.step_index as usize >= attack_def.steps.len()
 }
 
-fn reset_repeat_counts(ctx: &ReducerContext, attack_id: u64) 
-{
+fn reset_repeat_counts(ctx: &ReducerContext, attack_id: u64) {
     for step in ctx.db.enemy_sequence_step().attack_id().filter(&attack_id) {
         if let SequenceStepRef::Repeat(repeat_id) = step.step {
             if let Some(mut r) = ctx.db.repeat_step_instance().repeat_id().find(&repeat_id) {
@@ -234,8 +219,7 @@ fn reset_repeat_counts(ctx: &ReducerContext, attack_id: u64)
     }
 }
 
-pub fn activate_all_attacks(ctx: &ReducerContext, phase_id: u64, phase_def: &PhaseDef) 
-{
+pub fn activate_all_attacks(ctx: &ReducerContext, phase_id: u64, phase_def: &PhaseDef) {
     for mut attack in ctx.db.enemy_attack().phase_id().filter(&phase_id) {
         let attack_def = &phase_def.attacks[attack.attack_index as usize];
         attack.step_index = 0;
@@ -247,8 +231,7 @@ pub fn activate_all_attacks(ctx: &ReducerContext, phase_id: u64, phase_def: &Pha
     }
 }
 
-pub fn begin_phase_cycle(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &PhaseDef) 
-{
+pub fn begin_phase_cycle(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &PhaseDef) {
     phase.move_cycle_started_at = ctx.timestamp;
     if phase.phase_loop_delay > 0.0 {
         phase.phase_waiting = true;
@@ -271,8 +254,7 @@ pub type BulletStepEvent = (PatternType, EnemyTarget, f32, f32, f32, String, f32
 // Per-tick entry point for one phase. Advances every attack sequence in the phase by at
 // most one step each, collecting any bullet events fired this tick. Once all attacks have
 // exhausted their steps, the phase loop restarts via begin_phase_cycle.
-pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &PhaseDef) -> Vec<BulletStepEvent> 
-{
+pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &PhaseDef) -> Vec<BulletStepEvent> {
     if phase.phase_waiting {
         if ctx.timestamp < phase.phase_loop_timer + Duration::from_secs_f32(phase.phase_loop_delay) {
             return vec![];
@@ -303,8 +285,7 @@ pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &Phas
 // Single/Multi: fire once, then optionally wait `next_step_delay` before moving to the next
 // step. Repeat: re-fire on `repeat_interval` until `repeat_count` reaches `repeat_target`,
 // then behaves like the others.
-pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def: &AttackSequence) -> Vec<BulletStepEvent> 
-{
+pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def: &AttackSequence) -> Vec<BulletStepEvent> {
     if attack_def.steps.is_empty() {
         return vec![];
     }
@@ -416,8 +397,7 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
 // Picks the highest phase_index whose hp_threshold has been crossed (hp_pct <= threshold).
 // Phases are authored in descending-threshold order, but we take the max defensively in
 // case that ordering assumption is ever violated.
-pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 
-{
+pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 {
     let hp_pct = hp as f32 / max_hp as f32;
     let mut phase = 0u8;
     for def in phases {
@@ -428,8 +408,7 @@ pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8
     phase
 }
 
-pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, phase: &EnemyPhase) -> (f32, f32, f32, f32) 
-{
+pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, phase: &EnemyPhase) -> (f32, f32, f32, f32) {
     let dt = BEHAVIOR_TICK_DT;
     let idle = (enemy.x, enemy.y, behavior.velocity_x, behavior.velocity_y);
     let movement = match ctx.db.movement_def().def_id().find(&phase.movement_def_id) {
@@ -482,8 +461,7 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
     }
 }
 
-pub fn spawn_from_biome_regions(ctx: &ReducerContext) 
-{
+pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
     let cfg = MapConfig::load(ctx, 0, 0);
     let (chunk_hex_radius, hex_outer_radius, chunk_cols, chunk_rows) =
         (cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows);

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "0c66c6728396b352",
+			"type": "file",
+			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
+			"subpath": "#OnEnchantmentRow",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

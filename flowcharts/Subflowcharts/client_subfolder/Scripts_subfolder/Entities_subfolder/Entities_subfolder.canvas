@@ -1,0 +1,43 @@
+{
+	"nodes": [
+		{
+			"id": "c00e445798116e1b",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/Entity_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "21e11dcc9b7637db",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/EntityRegistry_codefile/EntityRegistry_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7d7e689176eb1b19",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/IEntity_codefile/IEntity_codefile.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"subfolder",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

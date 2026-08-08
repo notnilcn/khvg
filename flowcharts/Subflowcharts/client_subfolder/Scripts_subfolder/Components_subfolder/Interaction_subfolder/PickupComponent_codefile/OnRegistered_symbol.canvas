@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "443366425835acf8",
+			"type": "file",
+			"file": "client/Scripts/Components/Interaction/PickupComponent.cs",
+			"subpath": "#OnRegistered",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

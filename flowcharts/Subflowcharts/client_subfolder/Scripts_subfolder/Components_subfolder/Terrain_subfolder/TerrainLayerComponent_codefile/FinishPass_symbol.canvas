@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e84cb1891fa8e3e3",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/TerrainLayerComponent.cs",
+			"subpath": "#FinishPass",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

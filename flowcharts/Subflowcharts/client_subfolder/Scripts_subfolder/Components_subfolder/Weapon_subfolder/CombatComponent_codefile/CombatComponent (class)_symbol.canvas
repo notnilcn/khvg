@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "99b093fa4b2e5d06",
+			"type": "file",
+			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
+			"subpath": "#CombatComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

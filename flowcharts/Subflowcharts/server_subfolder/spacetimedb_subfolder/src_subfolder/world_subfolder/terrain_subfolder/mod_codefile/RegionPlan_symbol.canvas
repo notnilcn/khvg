@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4701f6428e8249cc",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/mod.rs",
+			"subpath": "#RegionPlan",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

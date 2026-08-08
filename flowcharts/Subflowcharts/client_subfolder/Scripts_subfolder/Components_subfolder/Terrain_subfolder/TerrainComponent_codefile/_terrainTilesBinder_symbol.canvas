@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "eb45fcf7c318c80a",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/TerrainComponent.cs",
+			"subpath": "#_terrainTilesBinder",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

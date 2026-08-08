@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "601060f696855610",
+			"type": "file",
+			"file": "client/Scripts/Components/Movement/InterpolationComponent.cs",
+			"subpath": "#InterpolationComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

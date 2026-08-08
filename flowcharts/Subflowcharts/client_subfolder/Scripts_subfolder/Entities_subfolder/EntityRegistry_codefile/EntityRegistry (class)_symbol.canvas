@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "54f6c15c7c21a333",
+			"type": "file",
+			"file": "client/Scripts/Entities/EntityRegistry.cs",
+			"subpath": "#EntityRegistry",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -6,8 +6,7 @@ use crate::main::admin::find_player_by_username;
 use crate::main::global::{GENERAL_SLOT_START, GENERAL_SLOT_COUNT};
 
 #[spacetimedb::reducer]
-pub fn give_item(ctx: &ReducerContext, target_username: String, profile_name: String, item_id: String) -> Result<(), String> 
-{
+pub fn give_item(ctx: &ReducerContext, target_username: String, profile_name: String, item_id: String) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     let target_id = find_player_by_username(ctx, &target_username)
         .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
@@ -26,8 +25,7 @@ pub fn give_item(ctx: &ReducerContext, target_username: String, profile_name: St
 }
 
 #[spacetimedb::reducer]
-pub fn remove_item(ctx: &ReducerContext, target_username: String, profile_name: String, item_id: String) -> Result<(), String> 
-{
+pub fn remove_item(ctx: &ReducerContext, target_username: String, profile_name: String, item_id: String) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     let target_id = find_player_by_username(ctx, &target_username)
         .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
@@ -44,8 +42,7 @@ pub fn remove_item(ctx: &ReducerContext, target_username: String, profile_name: 
 }
 
 #[spacetimedb::reducer]
-pub fn upsert_item(ctx: &ReducerContext, item: Item) -> Result<(), String> 
-{
+pub fn upsert_item(ctx: &ReducerContext, item: Item) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     if ctx.db.item().item_id().find(&item.item_id).is_some() {
         ctx.db.item().item_id().update(item);
@@ -56,8 +53,7 @@ pub fn upsert_item(ctx: &ReducerContext, item: Item) -> Result<(), String>
 }
 
 #[spacetimedb::reducer]
-pub fn upsert_enchantment(ctx: &ReducerContext, enchantment: Enchantment) -> Result<(), String> 
-{
+pub fn upsert_enchantment(ctx: &ReducerContext, enchantment: Enchantment) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     if ctx.db.enchantment().enchantment_id().find(&enchantment.enchantment_id).is_some() {
         ctx.db.enchantment().enchantment_id().update(enchantment);

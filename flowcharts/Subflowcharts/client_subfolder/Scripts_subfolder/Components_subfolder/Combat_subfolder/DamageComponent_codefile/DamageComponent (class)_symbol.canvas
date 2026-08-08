@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "3307240874d5e85a",
+			"type": "file",
+			"file": "client/Scripts/Components/Combat/DamageComponent.cs",
+			"subpath": "#DamageComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

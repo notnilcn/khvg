@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c12c10fc562a256d",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/wrap.rs",
+			"subpath": "#wrapped_distance_sq",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

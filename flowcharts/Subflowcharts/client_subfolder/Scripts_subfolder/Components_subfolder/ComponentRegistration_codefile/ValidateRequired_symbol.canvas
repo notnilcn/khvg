@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "02a45a35c2c3d160",
+			"type": "file",
+			"file": "client/Scripts/Components/ComponentRegistration.cs",
+			"subpath": "#ValidateRequired",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

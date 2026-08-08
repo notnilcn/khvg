@@ -1,7 +1,8 @@
 {
   "extensions": [
     "rs",
-    "cs"
+    "cs",
+    "tscn"
   ],
   "folding": true,
   "lineNumbers": false,
@@ -18,7 +19,6 @@
   "canvasNodeHeight": 400,
   "flowchartNodeSpacingX": 60,
   "flowchartNodeSpacingY": 100,
-  "flowchartDefaultGranularity": "file",
   "linkableSymbolKinds": [
     "function",
     "variable",
@@ -27,6 +27,8 @@
     "class",
     "interface"
   ],
+  "includeGeneratedCodeFiles": false,
+  "flowchartDefaultGranularity": "file",
   "embedMaxHeight": 1500,
   "embedMinHeight": 0
 }

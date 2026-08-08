@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "98f701641e2cde6c",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/methods.rs",
+			"subpath": "#compute_base_stats",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "75a917a319b5127f",
+			"type": "file",
+			"file": "client/Scripts/Components/NodeExtensions.cs",
+			"subpath": "#GetAncestor",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

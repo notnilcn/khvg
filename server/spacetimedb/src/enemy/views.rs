@@ -4,8 +4,7 @@ use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 
 #[spacetimedb::view(accessor = nearby_enemies, public)]
-fn nearby_enemies(ctx: &ViewContext) -> impl Query<Enemy> 
-{
+fn nearby_enemies(ctx: &ViewContext) -> impl Query<Enemy> {
     let empty = ctx.from.enemy().r#where(|e| e.enemy_id.eq(u64::MAX)).build();
     let indices = match nearby_indices(ctx) {
         Some(i) if !i.is_empty() => i,
@@ -19,7 +18,6 @@ fn nearby_enemies(ctx: &ViewContext) -> impl Query<Enemy>
 }
 
 #[spacetimedb::view(accessor = enemy_templates, public)]
-fn enemy_templates(ctx: &AnonymousViewContext) -> impl Query<EnemyTemplate> 
-{
+fn enemy_templates(ctx: &AnonymousViewContext) -> impl Query<EnemyTemplate> {
     ctx.from.enemy_template().build()
 }

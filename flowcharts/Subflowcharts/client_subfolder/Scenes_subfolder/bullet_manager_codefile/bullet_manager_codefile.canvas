@@ -1,0 +1,37 @@
+{
+	"nodes": [
+		{
+			"id": "fd00ebcb3be55363",
+			"type": "file",
+			"file": "client/Scenes/bullet_manager.tscn",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"edge-_colon_-client/Scripts/Game/BulletManager-_dot_-cs-_hashtag_-BulletManager-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletManager_codefile/BulletManager_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scenes/Components/Bullets/bullet_spawner_component-_dot_-tscn-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/bullet_spawner_component_codefile/bullet_spawner_component_codefile-_dot_-canvas-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder-_dot_-canvas-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Scenes_subfolder-_dot_-canvas-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-scene",
+				"edge-_colon_-client/Scenes/Components/Bullets/bullet_hit_router_component-_dot_-tscn-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/bullet_hit_router_component_codefile/bullet_hit_router_component_codefile-_dot_-canvas-_colon_-scene",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

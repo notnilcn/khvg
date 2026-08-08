@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "522951e108ef3f07",
+			"type": "file",
+			"file": "client/Scripts/Components/ControlComponent.cs",
+			"subpath": "#OnEntityReady",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

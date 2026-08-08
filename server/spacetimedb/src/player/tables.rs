@@ -3,16 +3,14 @@ use crate::item::tables::{EquipSlot, StatModifier};
 use super::reducers::tick_active_consumable_effects;
 
 #[derive(SpacetimeType, Clone)]
-pub struct InventorySlot 
-{
+pub struct InventorySlot {
     pub allowed_slots: Vec<EquipSlot>,
     pub item_id: Option<String>,
     pub enchantment_ids: Vec<String>,
 }
 
 #[table(accessor = logged_in_player, public)]
-pub struct LoggedInPlayer 
-{
+pub struct LoggedInPlayer {
     #[primary_key]
     pub player_id: Identity,
     pub username: String,
@@ -22,8 +20,7 @@ pub struct LoggedInPlayer
 }
 
 #[table(accessor = logged_out_player)]
-pub struct LoggedOutPlayer 
-{
+pub struct LoggedOutPlayer {
     #[primary_key]
     pub player_id: Identity,
     pub username: String,
@@ -31,8 +28,7 @@ pub struct LoggedOutPlayer
 }
 
 #[table(accessor = player_profile, public, index(accessor = by_player_profile_name, btree(columns = [player_id, profile_name])))]
-pub struct PlayerProfile 
-{
+pub struct PlayerProfile {
     #[primary_key] #[auto_inc]
     pub profile_id: u64,
     #[index(btree)]
@@ -44,8 +40,7 @@ pub struct PlayerProfile
 }
 
 #[table(accessor = player_data, public)]
-pub struct PlayerData 
-{
+pub struct PlayerData {
     #[primary_key]
     pub profile_id: u64,
     pub level: u32,
@@ -55,8 +50,7 @@ pub struct PlayerData
 }
 
 #[table(accessor = player_stats, public)]
-pub struct PlayerStats 
-{
+pub struct PlayerStats {
     #[primary_key]
     pub profile_id: u64,
     pub strength: i32,
@@ -68,16 +62,14 @@ pub struct PlayerStats
 }
 
 #[table(accessor = player_inventory, public)]
-pub struct PlayerInventory 
-{
+pub struct PlayerInventory {
     #[primary_key]
     pub profile_id: u64,
     pub slots: Vec<InventorySlot>,
 }
 
 #[table(accessor = player_position, public)]
-pub struct PlayerPosition 
-{
+pub struct PlayerPosition {
     #[primary_key]
     pub profile_id: u64,
     pub player_id: Identity,
@@ -92,8 +84,7 @@ pub struct PlayerPosition
 // every report_movement call at 10Hz) — views that key off this instead of PlayerPosition only
 // recompute on real chunk crossings, not on every movement tick.
 #[table(accessor = player_chunk, public)]
-pub struct PlayerChunk 
-{
+pub struct PlayerChunk {
     #[primary_key]
     pub profile_id: u64,
     pub chunk_q: i32,
@@ -101,8 +92,7 @@ pub struct PlayerChunk
 }
 
 #[table(accessor = active_consumable_effect, public)]
-pub struct ActiveConsumableEffect 
-{
+pub struct ActiveConsumableEffect {
     #[primary_key] #[auto_inc]
     pub effect_id: u64,
     #[index(btree)]
@@ -112,16 +102,14 @@ pub struct ActiveConsumableEffect
 }
 
 #[table(accessor = consumable_effect_schedule, scheduled(tick_active_consumable_effects))]
-pub struct ConsumableEffectSchedule 
-{
+pub struct ConsumableEffectSchedule {
     #[primary_key] #[auto_inc]
     pub scheduled_id: u64,
     pub scheduled_at: ScheduleAt,
 }
 
 #[table(accessor = loot_drop, public)]
-pub struct LootDrop 
-{
+pub struct LootDrop {
     #[primary_key] #[auto_inc]
     pub drop_id: u64,
     pub item_id: String,

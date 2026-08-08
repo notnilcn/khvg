@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "09f2c20bca0bf95f",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
+			"subpath": "#YawSpeed",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

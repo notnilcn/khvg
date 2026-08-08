@@ -1,0 +1,29 @@
+{
+	"nodes": [
+		{
+			"id": "d610a322c422525b",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Subscription_subfolder/subscription_component_codefile/subscription_component_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"subfolder",
+				"edge-_colon_-client/addons/sstdbsdk/TableSubscriber-_dot_-cs-_hashtag_-TableSubscriber-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/TableSubscriber_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/addons_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

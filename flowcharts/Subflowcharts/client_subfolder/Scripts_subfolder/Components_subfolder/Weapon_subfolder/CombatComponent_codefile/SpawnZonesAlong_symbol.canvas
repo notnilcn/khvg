@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "8e639cbb0413edb8",
+			"type": "file",
+			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
+			"subpath": "#SpawnZonesAlong",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

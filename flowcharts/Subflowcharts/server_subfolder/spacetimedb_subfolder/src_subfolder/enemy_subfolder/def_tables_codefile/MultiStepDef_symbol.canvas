@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a5af0c650f73d40d",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/def_tables.rs",
+			"subpath": "#MultiStepDef",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

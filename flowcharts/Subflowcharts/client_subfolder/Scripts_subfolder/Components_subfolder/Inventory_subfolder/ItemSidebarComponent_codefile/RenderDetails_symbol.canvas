@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "f0b1770056e2093a",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
+			"subpath": "#RenderDetails",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

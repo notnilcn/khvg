@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "6a2ae31a5db6ee95",
+			"type": "file",
+			"file": "client/Scripts/Components/AreaComponent.cs",
+			"subpath": "#AreaComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a097692fe4bf9ac7",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/voronoi.rs",
+			"subpath": "#validate_weights_sum_100",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

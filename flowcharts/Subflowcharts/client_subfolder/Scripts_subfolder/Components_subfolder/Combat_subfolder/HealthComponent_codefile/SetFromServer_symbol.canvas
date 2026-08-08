@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "0bcf2f72a714ae72",
+			"type": "file",
+			"file": "client/Scripts/Components/Combat/HealthComponent.cs",
+			"subpath": "#SetFromServer",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

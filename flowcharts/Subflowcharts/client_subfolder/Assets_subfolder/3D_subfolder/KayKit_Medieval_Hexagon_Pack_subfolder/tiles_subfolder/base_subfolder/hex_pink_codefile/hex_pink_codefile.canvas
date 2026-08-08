@@ -1,0 +1,22 @@
+{
+	"nodes": [
+		{
+			"id": "6768605f6051233f",
+			"type": "file",
+			"file": "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_pink.tscn",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

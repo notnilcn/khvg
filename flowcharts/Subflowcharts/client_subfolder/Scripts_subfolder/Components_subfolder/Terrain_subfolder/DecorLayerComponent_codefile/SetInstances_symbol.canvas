@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "471d7aede1fb7475",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/DecorLayerComponent.cs",
+			"subpath": "#SetInstances",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

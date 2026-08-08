@@ -1,0 +1,151 @@
+{
+	"nodes": [
+		{
+			"id": "477bd14211f4893f",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/splitmix64_symbol.canvas",
+			"color": "5",
+			"x": 690,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c5cbb2d81f6e5048",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/hash_to_unit_symbol.canvas",
+			"color": "5",
+			"x": 1150,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "21b88b38115c6213",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/next_unit_symbol.canvas",
+			"color": "5",
+			"x": 690,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "89e3e01beb4f6504",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/pick_index_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e77317390c023792",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/weighted_pick_index_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bd3bcd7658157779",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/weighted_pick_index_from_unit_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8b3a5644f443eb79",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/weighted_pick_with_remainder_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "25d0d92271626baf",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/weighted_pick_with_remainder_from_unit_symbol.canvas",
+			"color": "5",
+			"x": 10,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "3771d6ca9e5dd919",
+			"fromNode": "21b88b38115c6213",
+			"fromSide": "bottom",
+			"toNode": "477bd14211f4893f",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "78b2215135e74769",
+			"fromNode": "21b88b38115c6213",
+			"fromSide": "bottom",
+			"toNode": "c5cbb2d81f6e5048",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "967b9d2b7659def5",
+			"fromNode": "89e3e01beb4f6504",
+			"fromSide": "bottom",
+			"toNode": "21b88b38115c6213",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "250e661e9f60e2b0",
+			"fromNode": "e77317390c023792",
+			"fromSide": "bottom",
+			"toNode": "21b88b38115c6213",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "f9847fc39ef1d64a",
+			"fromNode": "8b3a5644f443eb79",
+			"fromSide": "bottom",
+			"toNode": "21b88b38115c6213",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "b101f5736f4d6a4f",
+			"fromNode": "8b3a5644f443eb79",
+			"fromSide": "bottom",
+			"toNode": "25d0d92271626baf",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-splitmix64",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-hash_to_unit",
+				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-next_unit",
+				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-weighted_pick_with_remainder_from_unit",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

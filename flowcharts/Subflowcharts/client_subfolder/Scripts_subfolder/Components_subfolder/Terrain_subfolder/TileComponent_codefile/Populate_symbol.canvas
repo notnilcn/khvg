@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "dc4c7a34589824b8",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/TileComponent.cs",
+			"subpath": "#Populate",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

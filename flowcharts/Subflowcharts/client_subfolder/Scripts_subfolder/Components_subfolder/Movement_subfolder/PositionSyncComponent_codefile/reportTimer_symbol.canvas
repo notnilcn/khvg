@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "89f5cb66d68a16b5",
+			"type": "file",
+			"file": "client/Scripts/Components/Movement/PositionSyncComponent.cs",
+			"subpath": "#reportTimer",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

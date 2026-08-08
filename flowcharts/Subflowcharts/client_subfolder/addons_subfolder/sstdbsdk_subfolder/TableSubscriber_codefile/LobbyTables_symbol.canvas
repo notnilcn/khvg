@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "428872ff6d774b02",
+			"type": "file",
+			"file": "client/addons/sstdbsdk/TableSubscriber.cs",
+			"subpath": "#LobbyTables",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

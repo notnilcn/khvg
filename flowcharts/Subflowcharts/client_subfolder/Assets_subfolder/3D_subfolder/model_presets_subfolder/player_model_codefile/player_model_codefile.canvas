@@ -1,0 +1,22 @@
+{
+	"nodes": [
+		{
+			"id": "de2c7f8a9c7bbb51",
+			"type": "file",
+			"file": "client/Assets/3D/model_presets/player_model.tscn",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

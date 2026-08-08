@@ -1,0 +1,193 @@
+{
+	"nodes": [
+		{
+			"id": "a8f92f7523ece002",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent (class)_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cf491cbc621872d7",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableNameProperty_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0900b0f71bbb58b3",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_handle_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e1b530726cdc9947",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_bindings_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "61581a55ab0b9588",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4c623b0c12e4cfe2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/OnEntityReady_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "54625d9cdb2d3066",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/OnConnected_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6c3028c1d91cd032",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/Bind_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f120541db17819d2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/Hook_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "87c40b7655eed7de",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/HandleInsert_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "edfafc0eec5bccbc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_firstInsertLogged_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8491cb7935809652",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/HandleUpdate_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9b6a0364e26bda9c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/HandleDelete_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6cd9bd73f1dc2519",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_ExitTree_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "89b71c31823a3551",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_GetPropertyList_symbol.canvas",
+			"color": "5",
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5559415a9ab829e4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_Get_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "faac83aec692110f",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_Set_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "12277dc4f9c8dc40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/_GetConfigurationWarnings_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

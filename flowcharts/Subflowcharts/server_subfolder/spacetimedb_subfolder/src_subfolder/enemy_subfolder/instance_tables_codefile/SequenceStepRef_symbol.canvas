@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "ba59a21377ea7ac6",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/instance_tables.rs",
+			"subpath": "#SequenceStepRef",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

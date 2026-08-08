@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "683eb442eecdf3aa",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/World3DComponent.cs",
+			"subpath": "#ClearCameraFollowTarget",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

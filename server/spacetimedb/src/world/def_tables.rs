@@ -1,15 +1,13 @@
 use spacetimedb::{table, SpacetimeType};
 
 #[derive(SpacetimeType, Clone)]
-pub struct BiomeWeight 
-{
+pub struct BiomeWeight {
     pub biome_id: String,
     pub weight: f32,
 }
 
 #[table(accessor = world_def, public)]
-pub struct WorldDef 
-{
+pub struct WorldDef {
     #[primary_key]
     pub world_id: String,
     pub display_name: String,
@@ -17,8 +15,7 @@ pub struct WorldDef
 }
 
 #[derive(SpacetimeType, Clone)]
-pub struct RegionWeight 
-{
+pub struct RegionWeight {
     pub region_def_id: String,
     pub weight: f32,
 }
@@ -30,8 +27,7 @@ pub struct RegionWeight
 // `chance` is relative frequency among the other ground entries in this biome — not required to
 // sum to 100, just weighted-random.
 #[derive(SpacetimeType, Clone)]
-pub struct GroundTextureConfig 
-{
+pub struct GroundTextureConfig {
     pub texture_id: String,
     pub chance: f32,
     // Compatibility tags (e.g. "soft", "delicate"). Consumed by LayeringRule to decide which
@@ -50,8 +46,7 @@ pub struct GroundTextureConfig
 // summing is "no overlay", and if they sum past 100 they're scaled down proportionally rather
 // than overflowing (see weighted_pick_with_remainder in world::prng).
 #[derive(SpacetimeType, Clone)]
-pub struct OverlayTextureConfig 
-{
+pub struct OverlayTextureConfig {
     pub texture_id: String,
     pub chance: f32,
     pub scale: f32,
@@ -64,8 +59,7 @@ pub struct OverlayTextureConfig
 // (rotates together with texture_id as one unit) rather than derived by naming convention, since
 // it's data-driven like everything else here.
 #[derive(SpacetimeType, Clone)]
-pub struct DecorConfig 
-{
+pub struct DecorConfig {
     pub texture_id: String,
     pub shadow_texture_id: String,
     pub chance: f32,
@@ -73,8 +67,7 @@ pub struct DecorConfig
 }
 
 #[table(accessor = biome_def, public)]
-pub struct BiomeDef 
-{
+pub struct BiomeDef {
     #[primary_key]
     pub biome_id: String,
     pub display_name: String,
@@ -100,8 +93,7 @@ pub struct BiomeDef
 }
 
 #[table(accessor = biome_region_def, public)]
-pub struct BiomeRegionDef 
-{
+pub struct BiomeRegionDef {
     #[primary_key]
     pub region_def_id: String,
     pub display_name: String,
@@ -111,8 +103,7 @@ pub struct BiomeRegionDef
 }
 
 #[derive(SpacetimeType, Clone)]
-pub struct ManualRegionInput 
-{
+pub struct ManualRegionInput {
     pub region_id: String,
     pub center_hex_q: i32,
     pub center_hex_r: i32,
@@ -122,8 +113,7 @@ pub struct ManualRegionInput
 }
 
 #[derive(SpacetimeType, Clone)]
-pub struct ManualBiomeInput 
-{
+pub struct ManualBiomeInput {
     pub biome_id: String,
     pub center_hex_q: i32,
     pub center_hex_r: i32,

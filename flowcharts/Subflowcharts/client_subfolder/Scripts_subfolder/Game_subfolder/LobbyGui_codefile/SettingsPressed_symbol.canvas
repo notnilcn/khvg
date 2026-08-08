@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e179422ba472da35",
+			"type": "file",
+			"file": "client/Scripts/Game/LobbyGui.cs",
+			"subpath": "#SettingsPressed",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

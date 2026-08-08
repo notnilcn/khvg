@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "392a5a6da58c2654",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/LocalPlayer_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"subfolder",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

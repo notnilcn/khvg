@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a5bacbfc32b334f1",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/prng.rs",
+			"subpath": "#weighted_pick_with_remainder_from_unit",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

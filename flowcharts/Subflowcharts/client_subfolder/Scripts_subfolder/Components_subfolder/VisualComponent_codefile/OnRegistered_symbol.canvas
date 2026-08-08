@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a9704231f1312cc1",
+			"type": "file",
+			"file": "client/Scripts/Components/VisualComponent.cs",
+			"subpath": "#OnRegistered",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

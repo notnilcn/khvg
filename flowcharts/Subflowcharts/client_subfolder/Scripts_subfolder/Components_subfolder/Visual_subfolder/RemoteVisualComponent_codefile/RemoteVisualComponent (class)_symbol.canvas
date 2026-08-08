@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "02fb7ead0610bf82",
+			"type": "file",
+			"file": "client/Scripts/Components/Visual/RemoteVisualComponent.cs",
+			"subpath": "#RemoteVisualComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

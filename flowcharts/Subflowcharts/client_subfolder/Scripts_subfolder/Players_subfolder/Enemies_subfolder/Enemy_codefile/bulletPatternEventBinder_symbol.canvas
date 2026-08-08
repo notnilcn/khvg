@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a3fa60ab57d585d2",
+			"type": "file",
+			"file": "client/Scripts/Players/Enemies/Enemy.cs",
+			"subpath": "#bulletPatternEventBinder",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

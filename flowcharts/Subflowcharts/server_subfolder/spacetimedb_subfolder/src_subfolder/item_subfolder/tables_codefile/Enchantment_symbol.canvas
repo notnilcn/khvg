@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "8a37a1216a2a3c4e",
+			"type": "file",
+			"file": "server/spacetimedb/src/item/tables.rs",
+			"subpath": "#Enchantment",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

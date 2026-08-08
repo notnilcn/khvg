@@ -1,0 +1,110 @@
+{
+	"nodes": [
+		{
+			"id": "38dd4b3b99ec97af",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/DatabaseConnector (class)_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fa4e0482adf3de56",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "21444c83714f15d1",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/_Process_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3923dcbee6352304",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/Connect_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6555519a72f382fa",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/OnConnected_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "eb037256eaf16558",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/OnConnectError_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "28978bc4caebfde1",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/OnDisconnected_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e45d7fd120725e04",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/IsLocal_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "be27f086c80ff28b",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/_ExitTree_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_lobby_player-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

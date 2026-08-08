@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c2d05a8507824bf5",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/instance_tables.rs",
+			"subpath": "#EnemyAttack",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e2f3229bbe5d2540",
+			"type": "file",
+			"file": "client/Scripts/Components/Node2DComponent.cs",
+			"subpath": "#_ExitTree",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

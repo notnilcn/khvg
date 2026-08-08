@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "6ace12651ce3bd37",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
+			"subpath": "#DistanceMax",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

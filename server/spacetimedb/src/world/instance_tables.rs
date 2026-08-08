@@ -1,8 +1,7 @@
 use spacetimedb::table;
 
 #[table(accessor = biome_region, public)]
-pub struct BiomeRegion 
-{
+pub struct BiomeRegion {
     #[primary_key] #[auto_inc]
     pub region_id: u64,
     pub biome_id: String,
@@ -14,8 +13,7 @@ pub struct BiomeRegion
 }
 
 #[table(accessor = triangle_tile, public)]
-pub struct TriangleTile 
-{
+pub struct TriangleTile {
     #[primary_key] #[auto_inc]
     pub tile_id: u64,
     pub hex_q: i32,
@@ -39,8 +37,7 @@ pub struct TriangleTile
 // for multiple-per-hex to come up. Unlike TriangleTile, a hex with no decor simply has no row
 // here rather than a blank placeholder, since decor is optional content, not a required fill.
 #[table(accessor = hex_decor, public)]
-pub struct HexDecor 
-{
+pub struct HexDecor {
     #[primary_key] #[auto_inc]
     pub decor_id: u64,
     pub hex_q: i32,

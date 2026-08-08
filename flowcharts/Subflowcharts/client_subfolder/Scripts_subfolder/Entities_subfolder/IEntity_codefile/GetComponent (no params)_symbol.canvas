@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "89a64b387f65aa28",
+			"type": "file",
+			"file": "client/Scripts/Entities/IEntity.cs",
+			"subpath": "#GetComponent#2",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

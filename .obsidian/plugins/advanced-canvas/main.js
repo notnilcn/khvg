@@ -1813,6 +1813,8 @@ var DEFAULT_SETTINGS_VALUES = {
   // Added by an LLM agent
   hideGroupLabels: false,
   // Added by an LLM agent
+  boxedNodeLabels: true,
+  // Added by an LLM agent
   defaultGroupLabelSize: "1",
   // Added by an LLM agent
   defaultGroupOpacity: "default",
@@ -1888,6 +1890,8 @@ var DEFAULT_SETTINGS_VALUES = {
   canvasEncapsulationEnabled: false,
   portalsFeatureEnabled: true,
   showEdgesIntoDisabledPortals: true,
+  autoOpenSingleNodePortals: true,
+  // Added by an LLM agent
   autoFileNodeEdgesFeatureEnabled: false,
   autoFileNodeEdgesFrontmatterKey: "canvas-edges",
   edgeHighlightEnabled: false,
@@ -1970,6 +1974,12 @@ var SETTINGS = {
         // Added by an LLM agent
         label: "Hide group labels",
         description: 'When enabled, group labels are hidden. Can be toggled with the "Toggle group label visibility" command.',
+        type: "boolean"
+      },
+      boxedNodeLabels: {
+        // Added by an LLM agent
+        label: "Boxed node labels",
+        description: "When enabled, file/text/link node labels get the same coloured box styling as group labels, instead of plain text.",
         type: "boolean"
       },
       defaultGroupLabelSize: {
@@ -2109,6 +2119,12 @@ var SETTINGS = {
       showEdgesIntoDisabledPortals: {
         label: "Show edges into disabled portals",
         description: "When enabled, edges into disabled portals will be shown.",
+        type: "boolean"
+      },
+      autoOpenSingleNodePortals: {
+        // Added by an LLM agent
+        label: "Auto-open single-node portals",
+        description: "When enabled, a new file node linking to a canvas that contains only one node automatically opens as a portal.",
         type: "boolean"
       }
     }
@@ -5855,6 +5871,10 @@ var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtensi
       (canvas) => this.onPopupMenu(canvas)
     ));
     this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-created",
+      (canvas, node) => void this.tryAutoOpenSingleNodePortal(canvas, node)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
       "advanced-canvas:node-removed",
       (canvas, node) => this.onNodeRemoved(canvas, node)
     ));
@@ -6014,6 +6034,38 @@ var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtensi
         }
       })
     );
+  }
+  // Added by an LLM agent
+  // Automatically opens a newly created file node as a portal if it links to a canvas
+  // file that only contains a single node - saves a manual "Open portal" click for
+  // canvases that are trivial enough to just inline.
+  async tryAutoOpenSingleNodePortal(canvas, node) {
+    var _a, _b;
+    if (!this.plugin.settings.getSetting("autoOpenSingleNodePortals")) return;
+    const nodeData = node.getData();
+    if (nodeData.type !== "file" || nodeData.portal) return;
+    const portalFilePath = typeof node.file === "string" ? node.file : (_a = node.file) == null ? void 0 : _a.path;
+    if (!portalFilePath) return;
+    const portalFile = this.plugin.app.vault.getAbstractFileByPath(portalFilePath);
+    if (!(portalFile instanceof import_obsidian18.TFile) || portalFile.extension !== "canvas") return;
+    if (portalFile.path === ((_b = canvas.view.file) == null ? void 0 : _b.path)) return;
+    const portalFileDataString = await this.plugin.app.vault.cachedRead(portalFile);
+    if (portalFileDataString === "") return;
+    let portalFileData;
+    try {
+      portalFileData = JSON.parse(portalFileDataString);
+    } catch (error) {
+      return;
+    }
+    if (!(portalFileData == null ? void 0 : portalFileData.nodes) || portalFileData.nodes.length !== 1) return;
+    const currentNode = canvas.nodes.get(node.id);
+    if (!currentNode) return;
+    const currentNodeData = currentNode.getData();
+    if (currentNodeData.portal) return;
+    if (currentNodeData.file !== portalFile.path) {
+      currentNode.setData({ ...currentNodeData, file: portalFile.path });
+    }
+    this.setPortalOpen(canvas, currentNode, true);
   }
   setPortalOpen(canvas, portalNode, open) {
     const portalNodeData = portalNode.getData();
@@ -8627,6 +8679,8 @@ var EXPOSED_SETTINGS = [
   "wrapGroupLabels",
   // Added by an LLM agent
   "hideGroupLabels",
+  // Added by an LLM agent
+  "boxedNodeLabels",
   // Added by an LLM agent
   "hideBackgroundGridWhenInReadonly",
   "readingModeFixEnabled",

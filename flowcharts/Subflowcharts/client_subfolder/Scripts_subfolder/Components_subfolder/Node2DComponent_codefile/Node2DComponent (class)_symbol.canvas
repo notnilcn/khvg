@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "dbb67668fcaa9ce6",
+			"type": "file",
+			"file": "client/Scripts/Components/Node2DComponent.cs",
+			"subpath": "#Node2DComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "429171079cc3a33d",
+			"type": "file",
+			"file": "client/Scripts/Components/Spawning/EntitySpawnerComponent.cs",
+			"subpath": "#OnNearbyRemotePlayerDelete",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

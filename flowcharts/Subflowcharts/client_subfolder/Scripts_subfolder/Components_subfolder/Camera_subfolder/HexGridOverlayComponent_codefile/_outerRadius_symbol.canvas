@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "ffbb46b9c59afc70",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
+			"subpath": "#_outerRadius",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

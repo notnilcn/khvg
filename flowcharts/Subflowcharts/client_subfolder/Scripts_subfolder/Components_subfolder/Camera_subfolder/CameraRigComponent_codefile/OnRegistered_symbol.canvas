@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c4078c3993a99b79",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
+			"subpath": "#OnRegistered",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

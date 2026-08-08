@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "ab0666c4a61aea5f",
+			"type": "file",
+			"file": "client/Scripts/Game/BulletData.cs",
+			"subpath": "#SourceStep",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d02319551d21b508",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/tables.rs",
+			"subpath": "#LoggedOutPlayer",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

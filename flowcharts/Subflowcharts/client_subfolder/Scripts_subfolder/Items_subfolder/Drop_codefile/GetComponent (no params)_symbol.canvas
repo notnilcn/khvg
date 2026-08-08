@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d0621310eedf0b4a",
+			"type": "file",
+			"file": "client/Scripts/Items/Drop.cs",
+			"subpath": "#GetComponent#2",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

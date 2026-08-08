@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "0b8770c9c44ba110",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/terrain/mod.rs",
+			"subpath": "#skipped",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

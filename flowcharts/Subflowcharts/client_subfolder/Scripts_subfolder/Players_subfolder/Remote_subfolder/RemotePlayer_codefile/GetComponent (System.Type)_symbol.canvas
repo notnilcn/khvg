@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c45b52e54174044b",
+			"type": "file",
+			"file": "client/Scripts/Players/Remote/RemotePlayer.cs",
+			"subpath": "#GetComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

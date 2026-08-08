@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "1cc50d91d446e1b5",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#DecorConfig",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -9,8 +9,7 @@ use super::admin::internal_add_chunks;
 use crate::item::seeds::{seed_world_items, seed_world_enchantments};
 
 #[spacetimedb::reducer(init)]
-pub fn init(ctx: &ReducerContext) 
-{
+pub fn init(ctx: &ReducerContext) {
     ctx.db.enemy_behavior_schedule().insert(EnemyBehaviorSchedule {
         scheduled_id: 0,
         scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_millis(100))),
@@ -41,8 +40,7 @@ pub fn init(ctx: &ReducerContext)
 }
 
 #[spacetimedb::reducer(client_connected)]
-pub fn client_connected(ctx: &ReducerContext) 
-{
+pub fn client_connected(ctx: &ReducerContext) {
     let in_world = ctx.db.logged_in_player().player_id().find(ctx.sender()).is_some();
     let in_lobby = ctx.db.logged_out_player().player_id().find(ctx.sender()).is_some();
     if in_world {
@@ -66,8 +64,7 @@ pub fn client_connected(ctx: &ReducerContext)
 }
 
 #[spacetimedb::reducer(client_disconnected)]
-pub fn client_disconnected(ctx: &ReducerContext) 
-{
+pub fn client_disconnected(ctx: &ReducerContext) {
     if let Some(p) = ctx.db.logged_in_player().player_id().find(ctx.sender()) {
         ctx.db.logged_in_player().player_id().delete(ctx.sender());
         ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: p.player_id, username: p.username, is_admin: p.is_admin });

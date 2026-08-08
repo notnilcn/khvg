@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a669d906197f3d16",
+			"type": "file",
+			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
+			"subpath": "#_zoneStep",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

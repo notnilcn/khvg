@@ -12,8 +12,7 @@ use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 
 #[spacetimedb::reducer]
-pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String> 
-{
+pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String> {
     if username.trim().is_empty() || username.len() > 20 {
         return Err("Username must be 1-20 non-whitespace characters.".to_string());
     }
@@ -28,8 +27,7 @@ pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String
 }
 
 #[spacetimedb::reducer]
-pub fn create_profile(ctx: &ReducerContext, profile_name: String, texture_id: String) -> Result<(), String> 
-{
+pub fn create_profile(ctx: &ReducerContext, profile_name: String, texture_id: String) -> Result<(), String> {
     let _ = require_in_lobby(ctx)?;
     if profile_name.trim().is_empty() || profile_name.len() > 20 {
         return Err("Profile name must be 1-20 non-whitespace characters.".to_string());
@@ -49,8 +47,7 @@ pub fn create_profile(ctx: &ReducerContext, profile_name: String, texture_id: St
 }
 
 #[spacetimedb::reducer]
-pub fn delete_profile(ctx: &ReducerContext, profile_id: u64) -> Result<(), String> 
-{
+pub fn delete_profile(ctx: &ReducerContext, profile_id: u64) -> Result<(), String> {
     let _ = require_in_lobby(ctx)?;
     let profile = ctx.db.player_profile().profile_id().find(&profile_id)
         .ok_or("Profile not found.")?;
@@ -63,8 +60,7 @@ pub fn delete_profile(ctx: &ReducerContext, profile_id: u64) -> Result<(), Strin
 }
 
 #[spacetimedb::reducer]
-pub fn join_world(ctx: &ReducerContext, profile_id: u64) -> Result<(), String> 
-{
+pub fn join_world(ctx: &ReducerContext, profile_id: u64) -> Result<(), String> {
     let lobby = require_in_lobby(ctx)?;
     let profile = ctx.db.player_profile().profile_id().find(&profile_id).ok_or("Profile not found.")?;
     if profile.player_id != ctx.sender() { return Err("Not your profile.".to_string()); }
@@ -78,8 +74,7 @@ pub fn join_world(ctx: &ReducerContext, profile_id: u64) -> Result<(), String>
 }
 
 #[spacetimedb::reducer]
-pub fn leave_world(ctx: &ReducerContext) -> Result<(), String> 
-{
+pub fn leave_world(ctx: &ReducerContext) -> Result<(), String> {
     let player = ctx.db.logged_in_player().player_id().find(ctx.sender()).ok_or("Not in world.")?;
     ctx.db.logged_in_player().player_id().delete(ctx.sender());
     ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: player.player_id, username: player.username, is_admin: player.is_admin});
@@ -87,8 +82,7 @@ pub fn leave_world(ctx: &ReducerContext) -> Result<(), String>
 }
 
 #[spacetimedb::reducer]
-pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> Result<(), String> 
-{
+pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
 
@@ -109,8 +103,7 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
 }
 
 #[spacetimedb::reducer]
-pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), String> 
-{
+pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), String> {
     let player = require_in_world(ctx)?;
 
     let base_damage = match attack {
@@ -124,8 +117,7 @@ pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), S
 }
 
 #[spacetimedb::reducer]
-pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> 
-{
+pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
 
@@ -154,8 +146,7 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String>
 }
 
 #[spacetimedb::reducer]
-pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> 
-{
+pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
     let slot_index = slot_index as usize;
@@ -182,8 +173,7 @@ pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String>
 }
 
 #[spacetimedb::reducer]
-pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Result<(), String> 
-{
+pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
     let (from_index, to_index) = (from_index as usize, to_index as usize);
@@ -215,8 +205,7 @@ pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Resul
 }
 
 #[spacetimedb::reducer]
-pub fn tick_active_consumable_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule) 
-{
+pub fn tick_active_consumable_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule) {
     let mut affected_profiles = Vec::new();
     for active in ctx.db.active_consumable_effect().iter() {
         let remaining = active.remaining - CONSUMABLE_EFFECT_TICK_SECONDS;
@@ -233,8 +222,7 @@ pub fn tick_active_consumable_effects(ctx: &ReducerContext, _job: ConsumableEffe
 }
 
 #[spacetimedb::reducer]
-pub fn use_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> 
-{
+pub fn use_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
     let slot_index = slot_index as usize;
@@ -256,8 +244,7 @@ pub fn use_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String>
 }
 
 #[spacetimedb::reducer]
-pub fn apply_enchantment(ctx: &ReducerContext, slot_index: u32, enchantment_id: String) -> Result<(), String> 
-{
+pub fn apply_enchantment(ctx: &ReducerContext, slot_index: u32, enchantment_id: String) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
     let slot_index = slot_index as usize;
@@ -286,8 +273,7 @@ pub fn apply_enchantment(ctx: &ReducerContext, slot_index: u32, enchantment_id: 
 }
 
 #[spacetimedb::reducer]
-pub fn remove_enchantment(ctx: &ReducerContext, slot_index: u32, enchantment_id: String) -> Result<(), String> 
-{
+pub fn remove_enchantment(ctx: &ReducerContext, slot_index: u32, enchantment_id: String) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
     let slot_index = slot_index as usize;

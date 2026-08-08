@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "0b21d56560a48051",
+			"type": "file",
+			"file": "client/Scripts/Players/Enemies/Enemy.cs",
+			"subpath": "#Enemy",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "99371db8305449ea",
+			"type": "file",
+			"file": "client/Scripts/Components/Combat/HitZone.cs",
+			"subpath": "#Launch",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

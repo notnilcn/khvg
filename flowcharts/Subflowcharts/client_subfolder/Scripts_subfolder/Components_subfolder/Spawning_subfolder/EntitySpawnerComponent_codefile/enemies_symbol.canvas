@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e97440cd6f1a6f52",
+			"type": "file",
+			"file": "client/Scripts/Components/Spawning/EntitySpawnerComponent.cs",
+			"subpath": "#enemies",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

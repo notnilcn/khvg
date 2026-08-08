@@ -9,14 +9,12 @@ use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
 use crate::enemy::methods::*;
 #[spacetimedb::reducer]
-pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) 
-{
+pub fn tick_enemy_spawn(ctx: &ReducerContext, _job: EnemySpawnSchedule) {
     spawn_from_biome_regions(ctx);
 }
 
 #[spacetimedb::reducer]
-pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) 
-{
+pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
     let cfg = MapConfig::load(ctx, 0, 0);
     let (chunk_hex_radius, hex_outer_radius, chunk_cols, chunk_rows) =
         (cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows);
@@ -98,8 +96,7 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule)
 }
 
 #[spacetimedb::reducer]
-pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> 
-{
+pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
     let player = require_in_world(ctx)?;
 
     let enemy = match ctx.db.enemy().enemy_id().find(&enemy_id) {

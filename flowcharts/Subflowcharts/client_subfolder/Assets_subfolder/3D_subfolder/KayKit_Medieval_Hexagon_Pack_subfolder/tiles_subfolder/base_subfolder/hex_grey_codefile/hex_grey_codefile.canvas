@@ -1,0 +1,22 @@
+{
+	"nodes": [
+		{
+			"id": "a5eb2611b655416c",
+			"type": "file",
+			"file": "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grey.tscn",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

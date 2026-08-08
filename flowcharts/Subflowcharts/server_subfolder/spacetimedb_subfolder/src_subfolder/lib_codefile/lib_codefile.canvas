@@ -1,0 +1,12 @@
+{
+	"nodes":[
+		{"id":"91fe2af41b99a17c","type":"file","file":"server/spacetimedb/src/lib.rs","x":0,"y":0,"width":400,"height":400}
+	],
+	"edges":[],
+	"metadata":{
+		"frontmatter":{
+			"tags":["codefile","includeInAggregateFlowchart"]
+		},
+		"version":"1.0-1.0"
+	}
+}

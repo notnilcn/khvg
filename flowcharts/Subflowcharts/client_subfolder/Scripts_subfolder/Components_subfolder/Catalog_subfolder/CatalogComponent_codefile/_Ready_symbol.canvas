@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "fc01fd376b297cb3",
+			"type": "file",
+			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
+			"subpath": "#_Ready",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

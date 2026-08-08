@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4bb7bc3b334f6101",
+			"type": "file",
+			"file": "client/Scripts/Components/Combat/DamageReceivingComponent.cs",
+			"subpath": "#GetRequiredComponents",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

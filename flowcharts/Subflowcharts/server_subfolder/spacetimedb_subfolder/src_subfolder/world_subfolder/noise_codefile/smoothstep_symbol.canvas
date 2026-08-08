@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "0674ba4445bc887e",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/noise.rs",
+			"subpath": "#smoothstep",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "1e51d8588ccf29a5",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/noise.rs",
+			"subpath": "#OVERLAY_NOISE_SEED_OFFSET",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

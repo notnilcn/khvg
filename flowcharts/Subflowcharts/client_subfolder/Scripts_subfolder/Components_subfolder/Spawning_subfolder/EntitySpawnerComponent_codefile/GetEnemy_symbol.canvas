@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "f2ddc3254f009913",
+			"type": "file",
+			"file": "client/Scripts/Components/Spawning/EntitySpawnerComponent.cs",
+			"subpath": "#GetEnemy",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

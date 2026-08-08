@@ -1,0 +1,22 @@
+{
+	"nodes": [
+		{
+			"id": "fa99ae97f61cf83f",
+			"type": "file",
+			"file": "server/spacetimedb/src/item/mod.rs",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

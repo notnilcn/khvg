@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "16723025cc2b3ac9",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/hex.rs",
+			"subpath": "#hex_to_world",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

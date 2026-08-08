@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "fce24070420c534b",
+			"type": "file",
+			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
+			"subpath": "#OnCreatePanelPressed",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

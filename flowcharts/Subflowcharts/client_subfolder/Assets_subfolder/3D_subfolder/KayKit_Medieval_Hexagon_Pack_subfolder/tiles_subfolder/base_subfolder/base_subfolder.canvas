@@ -1,0 +1,43 @@
+{
+	"nodes": [
+		{
+			"id": "f93338732ec8f733",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_grey_codefile/hex_grey_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f3fc84beb6daf4f5",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_pink_codefile/hex_pink_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0a8773b5262652a4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_purple_codefile/hex_purple_codefile.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"subfolder",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

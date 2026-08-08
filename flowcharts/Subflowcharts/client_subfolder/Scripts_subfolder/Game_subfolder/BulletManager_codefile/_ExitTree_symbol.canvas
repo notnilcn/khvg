@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "bd00d58c4b8dfab8",
+			"type": "file",
+			"file": "client/Scripts/Game/BulletManager.cs",
+			"subpath": "#_ExitTree",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

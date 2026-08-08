@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4245be272acf284a",
+			"type": "file",
+			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
+			"subpath": "#GetEnchantment",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

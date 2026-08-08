@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4bd8f710dc90b7cf",
+			"type": "file",
+			"file": "client/Scripts/Game/GameManager.cs",
+			"subpath": "#GetEnemy",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

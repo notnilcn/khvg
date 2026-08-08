@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "23bb391a562cb1ea",
+			"type": "file",
+			"file": "client/Scripts/Components/Node2DComponent.cs",
+			"subpath": "#AfterSiblingsReady",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

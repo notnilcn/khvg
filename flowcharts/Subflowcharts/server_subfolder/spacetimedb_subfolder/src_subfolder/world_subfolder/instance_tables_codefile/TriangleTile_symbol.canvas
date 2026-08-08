@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "74c154b4c45f3684",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/instance_tables.rs",
+			"subpath": "#TriangleTile",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

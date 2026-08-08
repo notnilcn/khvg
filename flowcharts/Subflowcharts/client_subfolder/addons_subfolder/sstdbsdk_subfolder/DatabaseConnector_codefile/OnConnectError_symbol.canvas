@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "b8b5399c27822d3f",
+			"type": "file",
+			"file": "client/addons/sstdbsdk/DatabaseConnector.cs",
+			"subpath": "#OnConnectError",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

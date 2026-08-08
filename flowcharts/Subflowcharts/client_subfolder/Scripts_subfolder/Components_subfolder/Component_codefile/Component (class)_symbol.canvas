@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4955f8ef2458d484",
+			"type": "file",
+			"file": "client/Scripts/Components/Component.cs",
+			"subpath": "#Component",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

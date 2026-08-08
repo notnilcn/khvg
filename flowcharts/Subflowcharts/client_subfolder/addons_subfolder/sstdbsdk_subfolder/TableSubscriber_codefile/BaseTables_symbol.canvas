@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "f611d53bc4504dc6",
+			"type": "file",
+			"file": "client/addons/sstdbsdk/TableSubscriber.cs",
+			"subpath": "#BaseTables",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

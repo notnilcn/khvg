@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "f46d9919b71093e5",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/World3DComponent.cs",
+			"subpath": "#OnRegistered",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

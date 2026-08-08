@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "bb8e5dea498eecb3",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/HexGridOverlay3DComponent.cs",
+			"subpath": "#SpawnTile",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

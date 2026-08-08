@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "ef4f4dab13225883",
+			"type": "file",
+			"file": "client/Scripts/Players/Enemies/Enemy.cs",
+			"subpath": "#OnBulletPatternRowInserted",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

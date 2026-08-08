@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "493c6d2177d9ab36",
+			"type": "file",
+			"file": "client/Scripts/Game/BulletManager.cs",
+			"subpath": "#GetComponent#2",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,212 @@
+{
+	"nodes": [
+		{
+			"id": "f4209c0879903012",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_area_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5de8207f89395d5b",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_shift_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3782dd0fc464c962",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/world_to_hex_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "73faa7252b6d7712",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_to_world_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9b934ad394cd64fa",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/chunk_center_hex_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0b491e0956b0d327",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/inv_hexmod_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d3533328309ca48c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/spiral_chunk_index_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "90940c895c0242fe",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/world_to_chunk_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "529e68dcdb75ce04",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/HEX_NEIGHBOR_DELTAS_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "21f11bb43ed70885",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/same_hex_neighbor_indices_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c244d345dbef47d9",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/cross_hex_neighbor_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c6f7ae2c185169a8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/HexCell_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0c7d6be62cf39ab8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/enumerate_world_hexes_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "940612ed0dbcb7bf",
+			"fromNode": "90940c895c0242fe",
+			"fromSide": "bottom",
+			"toNode": "3782dd0fc464c962",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "6e3377baab08f1bf",
+			"fromNode": "0c7d6be62cf39ab8",
+			"fromSide": "bottom",
+			"toNode": "f4209c0879903012",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "98c2413c46ab76f0",
+			"fromNode": "0c7d6be62cf39ab8",
+			"fromSide": "bottom",
+			"toNode": "5de8207f89395d5b",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "753d774d01294c90",
+			"fromNode": "0c7d6be62cf39ab8",
+			"fromSide": "bottom",
+			"toNode": "73faa7252b6d7712",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "35cade756e3c90ff",
+			"fromNode": "0c7d6be62cf39ab8",
+			"fromSide": "bottom",
+			"toNode": "9b934ad394cd64fa",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "06c57b6c1de38f7f",
+			"fromNode": "0c7d6be62cf39ab8",
+			"fromSide": "bottom",
+			"toNode": "0b491e0956b0d327",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "b18ec8ad7f3bf382",
+			"fromNode": "0c7d6be62cf39ab8",
+			"fromSide": "bottom",
+			"toNode": "d3533328309ca48c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_hex",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-hex_area",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-hex_shift",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-hex_to_world",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-chunk_center_hex",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-inv_hexmod",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-spiral_chunk_index",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

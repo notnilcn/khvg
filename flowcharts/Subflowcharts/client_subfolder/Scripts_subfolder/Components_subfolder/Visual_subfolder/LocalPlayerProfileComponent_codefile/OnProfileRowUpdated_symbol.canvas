@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a7e3701e0811d036",
+			"type": "file",
+			"file": "client/Scripts/Components/Visual/LocalPlayerProfileComponent.cs",
+			"subpath": "#OnProfileRowUpdated",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

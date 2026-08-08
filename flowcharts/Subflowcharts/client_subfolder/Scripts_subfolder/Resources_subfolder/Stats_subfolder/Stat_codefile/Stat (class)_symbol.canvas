@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "b5652d11b4cd5bbe",
+			"type": "file",
+			"file": "client/Scripts/Resources/Stats/Stat.cs",
+			"subpath": "#Stat",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

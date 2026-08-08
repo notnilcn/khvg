@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "9a5841c3a35b1687",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/SlotComponent.cs",
+			"subpath": "#_CanDropData",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

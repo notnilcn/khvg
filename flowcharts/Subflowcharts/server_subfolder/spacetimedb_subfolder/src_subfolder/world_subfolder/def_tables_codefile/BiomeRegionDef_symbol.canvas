@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "40dc3d6031d76b9f",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/def_tables.rs",
+			"subpath": "#BiomeRegionDef",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a22f3156b73da8aa",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/Camera2DPresenterComponent.cs",
+			"subpath": "#OnEntityReady",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

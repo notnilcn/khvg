@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "9598d615a2c77a47",
+			"type": "file",
+			"file": "client/Scripts/Components/Visual/DropVisualComponent.cs",
+			"subpath": "#DropVisualComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "84377d03ff2877db",
+			"type": "file",
+			"file": "client/Scripts/Components/Combat/FactionComponent.cs",
+			"subpath": "#Factions",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

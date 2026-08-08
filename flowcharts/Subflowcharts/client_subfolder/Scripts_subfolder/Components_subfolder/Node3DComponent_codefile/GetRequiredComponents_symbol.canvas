@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e1a336634b9a64d0",
+			"type": "file",
+			"file": "client/Scripts/Components/Node3DComponent.cs",
+			"subpath": "#GetRequiredComponents",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "02bee5a901f9c7e0",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/debug.rs",
+			"subpath": "#PlayerPositionDebug",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

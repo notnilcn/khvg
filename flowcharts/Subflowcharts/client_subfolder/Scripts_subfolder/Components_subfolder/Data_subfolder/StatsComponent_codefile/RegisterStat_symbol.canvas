@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "2a80f7319a0b7c21",
+			"type": "file",
+			"file": "client/Scripts/Components/Data/StatsComponent.cs",
+			"subpath": "#RegisterStat",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

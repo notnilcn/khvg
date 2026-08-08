@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "209588fbc8507e0e",
+			"type": "file",
+			"file": "client/Scripts/Components/AreaComponent.cs",
+			"subpath": "#GetSibling",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

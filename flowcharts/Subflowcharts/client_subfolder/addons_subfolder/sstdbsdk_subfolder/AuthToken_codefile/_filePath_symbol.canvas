@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "758896399b65f0ef",
+			"type": "file",
+			"file": "client/addons/sstdbsdk/AuthToken.cs",
+			"subpath": "#_filePath",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

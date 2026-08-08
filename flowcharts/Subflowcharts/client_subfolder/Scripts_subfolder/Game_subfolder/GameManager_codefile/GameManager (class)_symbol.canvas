@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "2e56bb6aa5e689bc",
+			"type": "file",
+			"file": "client/Scripts/Game/GameManager.cs",
+			"subpath": "#GameManager",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

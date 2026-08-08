@@ -2,8 +2,7 @@ use spacetimedb::{ReducerContext, Table};
 use crate::item::tables::*;
 use crate::main::seeds::Seed;
 
-pub fn seed_world_items(ctx: &ReducerContext) 
-{
+pub fn seed_world_items(ctx: &ReducerContext) {
     Item::seed(ctx, Item {
         item_id: "Helmet".to_string(),
         display_name: "Helmet".to_string(),
@@ -96,8 +95,7 @@ pub fn seed_world_items(ctx: &ReducerContext)
     });
 }
 
-pub fn seed_world_enchantments(ctx: &ReducerContext) 
-{
+pub fn seed_world_enchantments(ctx: &ReducerContext) {
     Enchantment::seed(ctx, Enchantment {
         enchantment_id: "bear".to_string(),
         display_name: "Bear".to_string(),
@@ -155,8 +153,7 @@ pub fn seed_world_enchantments(ctx: &ReducerContext)
 }
 
 impl Seed for Item {
-    fn seed(ctx: &ReducerContext, data: Item) 
-{
+    fn seed(ctx: &ReducerContext, data: Item) {
         if ctx.db.item().item_id().find(&data.item_id).is_some() {
             ctx.db.item().item_id().update(data);
         } else {

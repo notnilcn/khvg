@@ -1,0 +1,43 @@
+{
+	"nodes": [
+		{
+			"id": "66dedb4e15fd1728",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/model_presets_subfolder/base_preset_codefile/base_preset_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0a7412351863a902",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/model_presets_subfolder/enemy_model_codefile/enemy_model_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c8b1c253e1d91ec0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/model_presets_subfolder/player_model_codefile/player_model_codefile.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"subfolder",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

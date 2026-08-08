@@ -1,0 +1,22 @@
+{
+	"nodes": [
+		{
+			"id": "738af2ef7c1c0f2d",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/mod.rs",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

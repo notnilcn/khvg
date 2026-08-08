@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "f0e312bd03c20c1c",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/tables.rs",
+			"subpath": "#PlayerInventory",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}
