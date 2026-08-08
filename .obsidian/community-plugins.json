@@ -1,5 +1,4 @@
 [
-  "obsidian-git",
   "remember-cursor-position",
   "sync-embeds",
   "track-changes",
@@ -8,5 +7,6 @@
   "folder-notes",
   "vscode-editor",
   "optimize-canvas-connections",
-  "advanced-canvas"
+  "advanced-canvas",
+  "better-embedded-canvas"
 ]

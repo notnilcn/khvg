@@ -1,63 +1,16 @@
 {
-	"nodes": [
-		{
-			"id": "0243dc06df263e2f",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletData_codefile/BulletData_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "94213cb02c2bcda0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletManager_codefile/BulletManager_codefile.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "d197e513695750de",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay_codefile.canvas",
-			"color": "5",
-			"x": 920,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "bd5bec703cb1de26",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GameManager_codefile.canvas",
-			"color": "5",
-			"x": 1380,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "fb4ec4b6fe9eef3b",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui_codefile.canvas",
-			"color": "5",
-			"x": 1840,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		}
+	"nodes":[
+		{"id":"0243dc06df263e2f","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletData_codefile/BulletData_codefile.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
+		{"id":"94213cb02c2bcda0","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletManager_codefile/BulletManager_codefile.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
+		{"id":"d197e513695750de","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay_codefile.canvas","color":"5","x":920,"y":0,"width":400,"height":400},
+		{"id":"bd5bec703cb1de26","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GameManager_codefile.canvas","color":"5","x":1380,"y":0,"width":400,"height":400},
+		{"id":"fb4ec4b6fe9eef3b","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui_codefile.canvas","color":"5","x":1840,"y":0,"width":400,"height":400}
 	],
-	"edges": [],
-	"metadata": {
-		"frontmatter": {
-			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
-			]
-		}
+	"edges":[],
+	"metadata":{
+		"frontmatter":{
+			"tags":["subfolder","includeInAggregateFlowchart"]
+		},
+		"version":"1.0-1.0"
 	}
 }

@@ -1,40 +1,45 @@
 # CLAUDE.md
 
 This file provides guidance to Claude Code when working with code in this repository. ^e7e4af
+
 ## Project Overview
 
-This is a **bullet-hell MMO roguelike** built in **Godot 4.6.1 mono**. Combat is dodge-focused: enemies fire telegraphed parametric bullet patterns, players evade.
+A **bullet-hell MMO roguelike**: **Godot 4.7 mono** C# client (`client/`) over a **SpacetimeDB 2.2** Rust module (`server/spacetimedb/`). Combat is dodge-focused — enemies fire telegraphed parametric bullet patterns, players evade.
+
+**The server is authoritative.** The client mirrors subscribed rows and reports intent through reducers; it never computes damage or mutates stats locally. Any feature spanning both sides needs all five steps: table → reducer → client subscription → **client calls the reducer** → client renders. Forgetting step 4 is the recurring mistake.
+
 ## Where to find things
 
-Most tasks span a server module and one or more client scripts. Use this map to jump straight to the relevant files instead of exploring the tree.
+Most tasks span a server module and one or more client scripts. Use this map to jump straight to the relevant files instead of exploring the tree; the two child files below have the per-file detail.
 
 | Domain | Server — `server/spacetimedb/src/` | Client — `client/Scripts/` |
 |---|---|---|
-| Player identity, profiles, lobby, login/logout, inventory, XP/leveling | `player/` | `Game/LobbyGui.cs`, `Game/GameManager.cs`, `Players/Local/*`, `Players/Remote/RemotePlayer.cs` |
+| Player identity, profiles, lobby, login/logout, XP/leveling | `player/` | `Game/LobbyGui.cs`, `Game/GameManager.cs`, `Players/Local/`, `Players/Remote/` |
 | Enemy AI, phases, attack sequences, bullet patterns | `enemy/` | `Players/Enemies/Enemy.cs`, `Game/BulletManager.cs` |
-| World/hex grid, buildings, terrain | `world/` | `Components/Camera/HexGridOverlayComponent.cs` (+ `HexGridOverlay3DComponent.cs`), `Components/Terrain/` |
-| Admin tools, content seeding, debug overlay, connect/disconnect lifecycle | `main/admin.rs`, `main/seeds.rs`, `main/debug.rs`, `main/lifecycle.rs` | `Game/DebugOverlay.cs` |
-| Item/weapon/armor catalog, equipping, inventory UI | `item/` | `Components/Catalog/CatalogComponent.cs` (item cache/lookup, behind the `GameManager` facade), `Players/Local/LocalPlayer.cs` (slot resolution), `Components/Inventory/InventoryComponent.cs`, `Components/Inventory/SlotComponent.cs`, `Components/Inventory/ItemSidebarComponent.cs` |
-| Loot pickups | `player/` (`LootDrop`, `pickup_drop`) | `Items/Drop.cs`, `Components/Interaction/PickupComponent.cs` |
-| Generated bindings — **do not read** | — | `Scripts/module_bindings/` |
+| Damage & healing math (the only place damage is computed) | `combat/mod.rs` | `Components/Combat/`, `Components/Weapon/` |
+| World/hex grid, terrain generation, buildings | `world/` | `Components/Terrain/`, `Components/Camera/HexGridOverlay*Component.cs` |
+| Item/enchantment catalog, equipping, inventory UI | `item/` | `Components/Catalog/`, `Components/Inventory/` |
+| Loot drops and pickups | `player/` (`LootDrop`, `pickup_drop`) | `Items/Drop.cs`, `Components/Interaction/PickupComponent.cs` |
+| Admin tools, seeding, debug overlay, connect/disconnect | `main/` | `Game/DebugOverlay.cs` |
+| Connection, subscriptions, table→signal binding | — | `client/sstdbsdk/` |
 
-For a per-file breakdown of each server module, see `server/CLAUDE.md`. For a per-file breakdown of the client folders above, see `client/CLAUDE.md`.
+- `server/CLAUDE.md` — per-module server breakdown **plus the SpacetimeDB Rust rules**. Read it before writing any Rust here.
+- `client/CLAUDE.md` — per-file client breakdown plus the component naming convention.
 
 ## Folders to skip
 
-These don't need exploration for gameplay/feature work:
-
-- `client/Scripts/module_bindings/` — generated, regenerate via `spacetime generate` (see `server/CLAUDE.md`)
-- `client/.godot/`, `client/.vscode/` — editor cache/config
-- `client/addons/` — third-party plugins (BlastBullets2D, phantom_camera, godot_dotnet_mcp); only relevant when debugging plugin internals
-- `client/Assets/`, `client/Textures/` — art assets
-- `docs/Technical Design Docs` — technical documentation; only relevant when technical design decisions have been finalized
-- `server/spacetimedb/target/` — Rust build output
+- `client/Scripts/module_bindings/` — generated bindings. **Never read or hand-edit**; regenerate with `server/build.sh`.
+- `client/addons/` — third-party plugins (`blastbullets2d`, `phantom_camera`, `open_godot_mcp`), gitignored; only relevant when debugging plugin internals. **`client/sstdbsdk/` is not in here** — it is first-party code every component depends on, and reads like any other client script.
+- `client/.godot/`, `client/.vscode/` — editor cache/config. `client/Assets/`, `client/Textures/` — art.
+- `server/spacetimedb/target/` — Rust build output.
+- `docs/` — an Obsidian vault of design and ideation notes, **not a spec**; nothing in it is guaranteed to be implemented (see `docs/edualc.md`). Consult `docs/Technical Design Docs/` only once a design decision has been finalized.
+- `flowcharts/` — Obsidian canvas diagrams of the tree.
 
 ## Running and Developing
 
-- **Engine:** Godot 4.6.1 mono (`Godot_v4.6.1-stable_mono_win64.exe`) — the mono build is required for C# and SpacetimeDB
-- **Run game:** Press F5 in Godot editor (main scene: `Scenes/main.tscn`)
-- **Export:** Web/HTML5 preset configured in `export_presets.cfg`
-- **No build system** — Godot handles compilation internally
-- **⚠️ NuGet warning:** Never use **Project → Tools → C# → Create C# solution** — it regenerates the `.csproj` from scratch and wipes the `SpacetimeDB.ClientSDK` package reference. The solution already exists. If the package reference is ever lost, run `dotnet add package SpacetimeDB.ClientSDK --version 2.1.0` while Godot is closed.
+- **Engine:** `Godot/Godot-stable_mono_win64.exe` — the mono build is required for C# and SpacetimeDB.
+- **Run:** F5 in the editor. The project's main scene is `client/Scenes/lobby_gui.tscn`; gameplay lives in `Scenes/main.tscn`, entered from the lobby. Same entry point when launching via open-godot-mcp.
+- **Client build:** no build system — Godot compiles `client/khvg.csproj` internally.
+- **Server publish:** `server/build.sh` regenerates the C# bindings into `client/Scripts/module_bindings/` and publishes the `bullethell` module to the `local` server with `--delete-data`. **Every publish wipes the database**, so schema changes are hard cuts — no migrations, no dual-write; seeds re-run from `main/seeds.rs`. Logs: `spacetime logs bullethell`.
+- **Export:** Web/HTML5 preset in `client/export_presets.cfg`.
+- **⚠️ Never use Project → Tools → C# → Create C# solution** — it regenerates `khvg.csproj` from scratch and wipes the `SpacetimeDB.ClientSDK.Godot` package reference. The solution already exists. If the reference is ever lost, restore it with Godot closed: `dotnet add package SpacetimeDB.ClientSDK.Godot --version 2.7.1`.

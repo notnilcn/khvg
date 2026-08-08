@@ -1,79 +1,132 @@
 {
   "main": {
-    "id": "e49bc2f68f335dc2",
+    "id": "1db0b00510e15499",
     "type": "split",
     "children": [
       {
-        "id": "05f0db297af225c8",
+        "id": "1cbe77328d9e2bba",
         "type": "tabs",
         "children": [
           {
-            "id": "3673ee8f8880e917",
+            "id": "9d11c4d935614f74",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
-                "viewState": {
-                  "x": 1631.6296728876732,
-                  "y": 26.65090671921692,
-                  "zoom": -0.3057389343543207
-                }
+                "file": "_debug/embed-test.md",
+                "mode": "preview",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "player_subfolder"
+              "icon": "lucide-file",
+              "title": "embed-test"
             }
           },
           {
-            "id": "1a07a4282418068c",
+            "id": "08e0f09381879131",
             "type": "leaf",
             "state": {
               "type": "canvas",
               "state": {
-                "file": "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
-                "viewState": {
-                  "x": 545,
-                  "y": 450,
-                  "zoom": -0.9765683370736423
-                }
-              },
-              "icon": "lucide-layout-dashboard",
-              "title": "client_subfolder"
-            }
-          },
-          {
-            "id": "d6e69f98a99a0b9f",
-            "type": "leaf",
-            "state": {
-              "type": "canvas",
-              "state": {
-                "file": "flowcharts/main.canvas",
+                "file": "flowcharts/main_subfolders.canvas",
                 "viewState": {
                   "x": 2200,
                   "y": -700,
-                  "zoom": -3.1832071339317904
+                  "zoom": -2.779421909283167
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "main"
+              "title": "main_subfolders"
+            }
+          },
+          {
+            "id": "a0d67e53adc77080",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_debug/embed-test.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "embed-test"
+            }
+          },
+          {
+            "id": "62e8685498fc0828",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_debug/embed-test.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "embed-test"
+            }
+          },
+          {
+            "id": "fed3c37d5fd8a387",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "_debug/embed-test.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "embed-test"
+            }
+          },
+          {
+            "id": "bfd512e44f4a5ac7",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "flowcharts/main_subfolders.canvas",
+                "viewState": {
+                  "x": 2200,
+                  "y": -700,
+                  "zoom": -2.779421909283167
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "main_subfolders"
+            }
+          },
+          {
+            "id": "8e6c9a09168da535",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Game Design Docs/Art/Art style 3D.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Art style 3D"
             }
           }
         ],
-        "currentTab": 2
+        "currentTab": 6
       }
     ],
     "direction": "vertical"
   },
   "left": {
-    "id": "cd3e4e7fac0cce24",
+    "id": "db5501c631466da6",
     "type": "split",
     "children": [
       {
-        "id": "4d9598145bc8a441",
+        "id": "70714bc44fa486d2",
         "type": "tabs",
         "children": [
           {
-            "id": "7f36269607e47ab2",
+            "id": "12a00caef91e69d4",
             "type": "leaf",
             "state": {
               "type": "file-explorer",
@@ -88,7 +141,7 @@
             }
           },
           {
-            "id": "7ce3ab2fd1459342",
+            "id": "1792cc6c70ec005d",
             "type": "leaf",
             "state": {
               "type": "search",
@@ -105,7 +158,7 @@
             }
           },
           {
-            "id": "a67e52779e8d553a",
+            "id": "cf5c1a1bc1d9cc27",
             "type": "leaf",
             "state": {
               "type": "bookmarks",
@@ -124,19 +177,20 @@
     "width": 300
   },
   "right": {
-    "id": "a81713b2b8e823c1",
+    "id": "af61fe3fbe59f298",
     "type": "split",
     "children": [
       {
-        "id": "895fdbb51c40895c",
+        "id": "1fcd4b0cca68effa",
         "type": "tabs",
         "children": [
           {
-            "id": "f8382ca74dae8e74",
+            "id": "251336a2bdc882de",
             "type": "leaf",
             "state": {
               "type": "backlink",
               "state": {
+                "file": "flowcharts/main_subfolders.canvas",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -150,11 +204,12 @@
             }
           },
           {
-            "id": "5ca8d114889a31ab",
+            "id": "675a16c28f4692f1",
             "type": "leaf",
             "state": {
               "type": "outgoing-link",
               "state": {
+                "file": "flowcharts/main_subfolders.canvas",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -163,7 +218,7 @@
             }
           },
           {
-            "id": "25ff524a9baaee42",
+            "id": "2256a652373bd1e1",
             "type": "leaf",
             "state": {
               "type": "tag",
@@ -178,7 +233,7 @@
             }
           },
           {
-            "id": "55ac4e5abcb2053d",
+            "id": "89b96d960f2babb6",
             "type": "leaf",
             "state": {
               "type": "all-properties",
@@ -192,11 +247,12 @@
             }
           },
           {
-            "id": "7ec7c2d895d833de",
+            "id": "1c76e356e50275c1",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
+                "file": "flowcharts/main_subfolders.canvas",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
@@ -204,35 +260,13 @@
               "icon": "lucide-list",
               "title": "Outline"
             }
-          },
-          {
-            "id": "df3d3c293a077a73",
-            "type": "leaf",
-            "state": {
-              "type": "file-properties",
-              "state": {
-                "file": "flowcharts/main.canvas"
-              },
-              "icon": "lucide-info",
-              "title": "File properties"
-            }
-          },
-          {
-            "id": "06e9c65429d203fe",
-            "type": "leaf",
-            "state": {
-              "type": "git-view",
-              "state": {},
-              "icon": "git-pull-request",
-              "title": "Source Control"
-            }
           }
-        ],
-        "currentTab": 5
+        ]
       }
     ],
     "direction": "horizontal",
-    "width": 291.0999755859375
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -243,46 +277,41 @@
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
-      "obsidian-git:Open Git source control": false,
       "track-changes:Open CriticMarkup review panel": false,
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "d6e69f98a99a0b9f",
+  "active": "8e6c9a09168da535",
   "lastOpenFiles": [
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/addons_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/phantom_camera_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/World_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder.canvas",
-    "flowcharts/main.canvas",
-    "flowcharts/Subflowcharts/server_subfolder/server_subfolder.canvas",
-    "zzz-test-single-node.canvas",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/lib_codefile/lib_codefile.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/Assets_subfolder.canvas",
+    "client/Scenes/main.tscn27972013896.tmp",
+    "client/Scenes/main.tscn27966461655.tmp",
+    "client/Scenes/main.tscn27964109095.tmp",
+    "client/Scenes/main.tscn5809110904.tmp",
+    "client/Scenes/main.tscn5447350013.tmp",
+    "client/Scenes/main.tscn4516661628.tmp",
+    "client/Scenes/main.tscn4472094420.tmp",
+    "client/Scenes/main.tscn4469641776.tmp",
+    "client/Scenes/main.tscn4368742422.tmp",
+    "client/Scenes/main.tscn4333592329.tmp",
+    "client/Scenes/main.tscn4323604710.tmp",
+    "docs/Game Design Docs/Art/Art style 2D.md",
+    "docs/README.md",
+    "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Scenes_subfolder.canvas",
     "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/views_codefile",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/voronoi_codefile",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/rules_codefile",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/overlay_codefile",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/mod_codefile",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/ground_codefile",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/decor_codefile",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder",
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile",
-    "client/addons/phantom_camera/icons/viewfinder/Camera3DIcon.svg",
-    "client/addons/phantom_camera/icons/viewfinder/Select.svg",
-    "client/addons/phantom_camera/icons/viewfinder/SceneTypesIcon.svg",
-    "client/addons/phantom_camera/icons/viewfinder/Camera2DIcon.svg",
-    "client/addons/phantom_camera/icons/misc/PriorityOverride.svg",
-    "client/addons/phantom_camera/icons/warning.svg",
-    "client/addons/phantom_camera/icons/phantom_camera_updater_panel_icon.svg",
-    "client/addons/phantom_camera/icons/phantom_camera_tween_director_resource.svg",
-    "client/addons/phantom_camera/icons/phantom_camera_tween_director.svg",
-    "client/addons/phantom_camera/icons/phantom_camera_tween.svg",
-    "client/addons/sstdbsdk/README.md",
-    "client/addons/blastbullets2d/README.md",
-    "client/addons/blastbullets2d/LICENSE.md"
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entities_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/TorusMath_codefile/TorusMath_codefile.canvas",
+    "_debug/embed-test.md",
+    "flowcharts/main_subfolders.canvas",
+    "_debug/embed-test-fresh.md",
+    "docs/Technical Design Docs/To Do.md",
+    "docs/CLAUDE.md",
+    "docs/Technical Design Docs/Resources and dependencies/hex-grid/(superseded) Hex grid + chunking math notes.md",
+    "docs/Game Design Docs/(shelved) Bullet-affecting player abilities.md",
+    "docs/Technical Design Docs/(implemented) Item system - split stats from behavior.md",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/Get_symbol.canvas"
   ]
 }

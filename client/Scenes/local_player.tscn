@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Components/Combat/health_component.tscn" id="12_health"]
 [ext_resource type="Script" uid="uid://cvf3pb2g8fcrw" path="res://Scripts/Components/Combat/FactionComponent.cs" id="13_faction"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="14_hurtbox"]
-[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="15_binder"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="15_binder"]
 [ext_resource type="Script" uid="uid://cn6ohebphqkmq" path="res://Scripts/Components/Movement/PositionSyncComponent.cs" id="16_pos"]
 [ext_resource type="Script" uid="uid://b4npu50mqoy3h" path="res://Scripts/Components/Data/LocalPlayerDataComponent.cs" id="17_data"]
 [ext_resource type="Script" uid="uid://dmplf8ey4jjs5" path="res://Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs" id="18_inv"]
@@ -86,31 +86,31 @@ script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerPosition"
 
-[node name="PlayerDataComponent" type="Node" parent="." unique_id=1310598986]
+[node name="LocalPlayerDataComponent" type="Node" parent="." unique_id=1310598986]
 script = ExtResource("17_data")
 
-[node name="LocalPlayerDataBinder" type="Node" parent="PlayerDataComponent" unique_id=570007707]
+[node name="LocalPlayerDataBinder" type="Node" parent="LocalPlayerDataComponent" unique_id=570007707]
 script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerData"
 
-[node name="LocalPlayerStatsBinder" type="Node" parent="PlayerDataComponent" unique_id=1473012103]
+[node name="LocalPlayerStatsBinder" type="Node" parent="LocalPlayerDataComponent" unique_id=1473012103]
 script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerStats"
 
-[node name="PlayerInventoryComponent" type="Node" parent="." unique_id=1107901124]
+[node name="LocalPlayerInventoryComponent" type="Node" parent="." unique_id=1107901124]
 script = ExtResource("18_inv")
 
-[node name="LocalPlayerInventoryBinder" type="Node" parent="PlayerInventoryComponent" unique_id=607242767]
+[node name="LocalPlayerInventoryBinder" type="Node" parent="LocalPlayerInventoryComponent" unique_id=607242767]
 script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerInventory"
 
-[node name="PlayerProfileComponent" type="Node" parent="." unique_id=583780232]
+[node name="LocalPlayerProfileComponent" type="Node" parent="." unique_id=583780232]
 script = ExtResource("19_profile")
 
-[node name="LocalPlayerActiveProfileBinder" type="Node" parent="PlayerProfileComponent" unique_id=1741728125]
+[node name="LocalPlayerActiveProfileBinder" type="Node" parent="LocalPlayerProfileComponent" unique_id=1741728125]
 script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerActiveProfile"
@@ -118,11 +118,11 @@ TableName = "LocalPlayerActiveProfile"
 [connection signal="RowDeleted" from="CombatComponent/NearbyEnemiesBinder" to="CombatComponent" method="OnNearbyEnemyDeletedRow"]
 [connection signal="RowInserted" from="PositionSyncComponent/LocalPlayerPositionBinder" to="PositionSyncComponent" method="OnPositionRowInserted"]
 [connection signal="RowUpdated" from="PositionSyncComponent/LocalPlayerPositionBinder" to="PositionSyncComponent" method="OnPositionRowUpdated"]
-[connection signal="RowInserted" from="PlayerDataComponent/LocalPlayerDataBinder" to="PlayerDataComponent" method="OnDataRow"]
-[connection signal="RowUpdated" from="PlayerDataComponent/LocalPlayerDataBinder" to="PlayerDataComponent" method="OnDataRow"]
-[connection signal="RowInserted" from="PlayerDataComponent/LocalPlayerStatsBinder" to="PlayerDataComponent" method="OnStatsRow"]
-[connection signal="RowUpdated" from="PlayerDataComponent/LocalPlayerStatsBinder" to="PlayerDataComponent" method="OnStatsRow"]
-[connection signal="RowInserted" from="PlayerInventoryComponent/LocalPlayerInventoryBinder" to="PlayerInventoryComponent" method="OnInventoryRow"]
-[connection signal="RowUpdated" from="PlayerInventoryComponent/LocalPlayerInventoryBinder" to="PlayerInventoryComponent" method="OnInventoryRow"]
-[connection signal="RowInserted" from="PlayerProfileComponent/LocalPlayerActiveProfileBinder" to="PlayerProfileComponent" method="OnProfileRowInserted"]
-[connection signal="RowUpdated" from="PlayerProfileComponent/LocalPlayerActiveProfileBinder" to="PlayerProfileComponent" method="OnProfileRowUpdated"]
+[connection signal="RowInserted" from="LocalPlayerDataComponent/LocalPlayerDataBinder" to="LocalPlayerDataComponent" method="OnDataRow"]
+[connection signal="RowUpdated" from="LocalPlayerDataComponent/LocalPlayerDataBinder" to="LocalPlayerDataComponent" method="OnDataRow"]
+[connection signal="RowInserted" from="LocalPlayerDataComponent/LocalPlayerStatsBinder" to="LocalPlayerDataComponent" method="OnStatsRow"]
+[connection signal="RowUpdated" from="LocalPlayerDataComponent/LocalPlayerStatsBinder" to="LocalPlayerDataComponent" method="OnStatsRow"]
+[connection signal="RowInserted" from="LocalPlayerInventoryComponent/LocalPlayerInventoryBinder" to="LocalPlayerInventoryComponent" method="OnInventoryRow"]
+[connection signal="RowUpdated" from="LocalPlayerInventoryComponent/LocalPlayerInventoryBinder" to="LocalPlayerInventoryComponent" method="OnInventoryRow"]
+[connection signal="RowInserted" from="LocalPlayerProfileComponent/LocalPlayerActiveProfileBinder" to="LocalPlayerProfileComponent" method="OnProfileRowInserted"]
+[connection signal="RowUpdated" from="LocalPlayerProfileComponent/LocalPlayerActiveProfileBinder" to="LocalPlayerProfileComponent" method="OnProfileRowUpdated"]

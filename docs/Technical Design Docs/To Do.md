@@ -11,7 +11,7 @@ I read the design doc, the six server modules, and the client's item/inventory/c
 
 The short version
 
-The item schema refactor already in src/CLAUDE.md was the right move — `Vec<StatModifier>` + `Vec<ItemBehavior>` on one row is genuinely the shape this doc
+The item schema refactor (see `(implemented) Item system - split stats from behavior.md`) was the right move — `Vec<StatModifier>` + `Vec<ItemBehavior>` on one row is genuinely the shape this doc
 needs, and behaviors being a `Vec already makes weapon toggles almost free. But the doc's central claim — "classes are defined by gear + stat requirements"
 — has zero representation in the schema right now, and three of the ability categories (zones, statuses, cooldowns) have no subsystem at all.
 

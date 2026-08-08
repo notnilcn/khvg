@@ -1,7 +1,7 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://Scripts/Components/Catalog/CatalogComponent.cs" id="1_catalog"]
-[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="2_binder"]
+[ext_resource type="Script" uid="uid://kprjwmx8qekg" path="res://Scripts/Components/Catalog/CatalogComponent.cs" id="1_catalog"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="2_binder"]
 
 [node name="CatalogComponent" type="Node"]
 script = ExtResource("1_catalog")

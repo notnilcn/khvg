@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://cvwfgrgnsmcte" path="res://Scripts/Players/Remote/RemotePlayer.cs" id="1_v7aue"]
 [ext_resource type="Script" uid="uid://bnc7lfsb82nes" path="res://Scripts/Components/Visual/RemoteVisualComponent.cs" id="2_visual"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="3_interp"]
-[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="4_binder"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="4_binder"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_3srne"]
 

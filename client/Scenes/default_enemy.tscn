@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://cvf3pb2g8fcrw" path="res://Scripts/Components/Combat/FactionComponent.cs" id="4_faction"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="5_hurtbox"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="6_interp"]
-[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="7_binder"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="7_binder"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kjvdn"]
 

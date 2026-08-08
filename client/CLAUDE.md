@@ -1,12 +1,8 @@
 # client/CLAUDE.md
 
-Guidance for Claude Code when working inside the Godot client (`client/`). See the root `CLAUDE.md` for the project-wide domain map and architecture rules.
+Per-file map of the Godot client. See the root `CLAUDE.md` for the project-wide domain map, folders to skip, and run/publish commands.
 
-The client is 100% C# (Godot 4.7, .NET) and fully compositional, modeled on `code_examples/comedot`.
-
-## Do not read
-
-`Scripts/module_bindings/` — generated SpacetimeDB bindings.
+100% C# (Godot 4.7, .NET 8) and fully compositional, modeled on the **Comedot** component framework.
 
 ## Naming convention
 
@@ -18,15 +14,26 @@ Every high-level parent node's children are **components named `<Role>Component`
 
 Nodes are declared in the `.tscn`, not built in code, wherever feasible.
 
+## `client/sstdbsdk/` — connection + subscription layer (first-party)
+
+Everything else here depends on these three. Not under `addons/`, despite the name.
+
+- `DatabaseConnector.cs` — **autoload singleton** (`DatabaseConnector.Instance`, declared in `project.godot` as `res://sstdbsdk/DatabaseConnector.cs`, *not* a child of Main). Owns the `DbConnection` (`Conn`), pumps `FrameTick()` every frame, does the `IsLocal` identity check, exports `Host`/`DbName`. Consumers wire table callbacks from its `Connected` signal — guard with `Conn?.IsActive` first, since the autoload can finish connecting before Main loads. `AuthToken.cs` handles token persistence.
+- `TableSubscriber.cs` — subscription waves (base/lobby/game) as the static `BaseTables`/`LobbyTables`/`GameTables` name lists — the single source of truth for "what is subscribed", built into SQL via the generated `From` API. Also exposes `LapQ`/`LapR` torus lap vectors from `MapConfig`.
+- `TableBinderComponent.cs` — `[Tool]` node binding one subscribed table (`TableName` dropdown from `TableSubscriber.AllSubscribedTables`) and re-exposing its row events as editor-wireable Godot signals (`RowInserted`/`RowUpdated`/`RowDeleted`). Signals carry no args (rows aren't Variant-compatible) — handlers read `LastRow`/`LastOldRow`/`LastDeletedRow` and cast. `ReplayExistingRows` replays cached rows through `RowInserted` on bind.
+
+**This is the standard way every component consumes table row events** — place one binder child per table on the consuming component and wire its signals in the `.tscn`; no direct `conn.Db.*.OnInsert/OnUpdate/OnDelete` hooks outside this folder. See `terrain_component.tscn`, `local_player.tscn`, `entity_spawner_component.tscn`, `catalog_component.tscn`. Only infrastructure keeps internal hooks: `TableSubscriber` (`MapConfig` lap vectors) and `DatabaseConnector` (`LocalLobbyPlayer`).
+
 ## Module Map (`Scripts/`)
 
-### `Components/` + `Entities/` (entity/component framework, modeled on comedot)
+### `Components/` + `Entities/` (entity/component framework)
 
 Server-authoritative rule: components never mutate health/stats locally. They *mirror* server rows (`SetFromServer(...)`) and emit signals for observers, and they *report* hits via reducers — the server computes damage and the updated row flows back into the mirror.
 
-- `IComponent.cs` / `ComponentRegistration.cs` — the component contract (`Entity` back-reference to the owning `IEntity`) plus the static self-registration logic: `_Ready` registers with the nearest `IEntity` ancestor, calls `OnRegistered()`, then (deferred) `OnEntityReady()` + required-sibling validation. `_ExitTree` unregisters, so dynamically spawned components (e.g. `HitZone`) don't leak in the registry. Sibling access via `GetSibling<T>()` / `Entity.GetComponent<T>()`.
-- One base per native root type (C# has single inheritance): `Component.cs` (`Node`), `AreaComponent.cs` (`Area2D` — hitboxes/hurtboxes), `Node2DComponent.cs` (`Node2D`), `Node3DComponent.cs` (`Node3D`), `ControlComponent.cs` (`Control`), `VisualComponent.cs` (`AnimatedSprite2D`). All delegate to `ComponentRegistration`.
-- `Entities/IEntity.cs` / `Entity.cs` / `EntityRegistry.cs` — the entity side. Roots needing a native base (`LocalPlayer`/`Enemy : CharacterBody2D`) implement `IEntity` directly with an `EntityRegistry` field; plain-`Node` roots can derive from `Entity`. Registry lookups return the first component assignable to the requested type (subclass-friendly).
+- `IComponent.cs` — the whole contract is one member: an `Entity` back-reference to the owning `IEntity` (null before `_Ready`, null again after `_ExitTree`).
+- **The lifecycle lives in the base classes, not in `ComponentRegistration`.** One base per native root type, because C# has single inheritance: `Component.cs` (`Node`), `AreaComponent.cs` (`Area2D` — hitboxes/hurtboxes), `Node2DComponent.cs` (`Node2D`), `Node3DComponent.cs` (`Node3D`), `ControlComponent.cs` (`Control`), `VisualComponent.cs` (`AnimatedSprite2D`). Each one's `_Ready` registers with the nearest `IEntity` ancestor, runs `OnRegistered()`, then `CallDeferred`s a pass that validates `GetRequiredComponents()` and runs `OnEntityReady()` — deferred so every sibling has finished its own `_Ready`. `_ExitTree` unregisters, so dynamically spawned components (e.g. `HitZone`) don't leak in the registry. Override points: `OnRegistered`, `OnEntityReady`, `GetRequiredComponents`; sibling access via `GetSibling<T>()`.
+- `ComponentRegistration.cs` — only two static helpers those bases share: `Register(node, component)` (walks ancestors for the nearest `IEntity`, `PushError` if there is none) and `ValidateRequired(node, entity, types)` (`PushWarning` per missing sibling).
+- `Entities/IEntity.cs` / `Entity.cs` / `EntityRegistry.cs` — the entity side. `IEntity` declares `RegisterComponent`/`UnregisterComponent`/`GetComponent(Type)` plus a default-implemented generic `GetComponent<T>()`. Roots needing a native base (`LocalPlayer`/`Enemy : CharacterBody2D`) implement `IEntity` directly with an `EntityRegistry` field; plain-`Node` roots can derive from `Entity`. `EntityRegistry` itself is a flat `List<IComponent>` with `Register`/`Unregister`/`Get(Type)`, and `Get` returns the first component the type `IsInstanceOfType` — i.e. lookups are subclass-friendly and **order-dependent** when two components share a base.
 - `NodeExtensions.cs` — `GetAncestor<T>()` (works across instanced sub-scene boundaries, unlike `Node.Owner`).
 
 ### `Components/Combat/` (scenes in `Scenes/Components/Combat/`)
@@ -38,68 +45,55 @@ Server-authoritative rule: components never mutate health/stats locally. They *m
 
 ### `Components/Data/` + `Resources/Stats/`
 - `StatsComponent.cs` (`Scenes/Components/Data/stats_component.tscn`) — `Stat` set keyed by `StatKind`; `SetFromServer(kind, value)`, `StatChanged` signal. Shared-Stat pattern: the entity registers `HealthComponent.Health` under `StatKind.Hp` so all observers see one instance.
-- `Resources/Stats/Stat.cs` — `[GlobalClass] Resource`: clamped `MinValue`/`MaxValue`/`Value`, `ValueChanged` signal. Data only (comedot's resource rule).
+- `LocalPlayerDataComponent.cs` — `LocalPlayerData`/`LocalPlayerStats` rows → the `HealthComponent`/`StatsComponent` mirrors.
+- `Resources/Stats/Stat.cs` — `[GlobalClass] Resource`: clamped `MinValue`/`MaxValue`/`Value`, `ValueChanged` signal. Data only.
 - `Resources/Stats/StatKind.cs` — mirrors the server's `StatKind`. Note the generated bindings also define `SpacetimeDB.Types.StatKind` — qualify when you need that one.
 
 ### `Components/Weapon/`
-- `CombatComponent.cs` (was `LocalPlayerCombat.cs`) — `Component`; weapon firing from the equipped item's `WeaponBehavior` (fire rate/pattern/range), aim assist/lock-on from `LocalPlayerActiveProfile`, spawns `HitZone`s along bullet paths. Nearest-enemy invalidation comes from a child `NearbyEnemies` binder (`RowDeleted` wired in `local_player.tscn`).
+- `CombatComponent.cs` — `Component`; weapon firing from the equipped item's `WeaponBehavior` (fire rate/pattern/range), aim assist/lock-on from `LocalPlayerActiveProfile`, spawns `HitZone`s along bullet paths. Nearest-enemy invalidation comes from a child `NearbyEnemies` binder (`RowDeleted` wired in `local_player.tscn`).
 
 ### `Game/` — GameManager + its decomposition (component scenes in `Scenes/Components/`)
-- `GameManager.cs` — `Node2D, IEntity`, root node ("Main") of `Scenes/main.tscn`. Now thin entity glue plus a **static facade** delegating to its child components: `Conn`, `Username`, `IsLocal` → the `DatabaseConnector` autoload; `LapQ`/`LapR` → `TableSubscriber`; `GetItem`, `GetEnchantment(s)`, `EnchantmentsChanged`, `GetResPath` → `CatalogComponent`; `GetEnemy`, `EnemyCount` → `EntitySpawnerComponent`.
-- `addons/sstdbsdk/DatabaseConnector.cs` — **autoload singleton** (`DatabaseConnector.Instance`; declared in `project.godot`, not a child of Main). Owns the `DbConnection` (`Conn`), pumps `FrameTick()` every frame, `IsLocal` identity check, `Connected` signal consumers hook to wire table callbacks — guard with `Conn?.IsActive` first, since the autoload can finish connecting before Main loads. Exports `Host`/`DbName`.
-- `addons/sstdbsdk/TableSubscriber.cs` — subscription waves (base/lobby/game) as the static `BaseTables`/`LobbyTables`/`GameTables` name lists (the single source of truth for "what is subscribed", built into SQL via the generated `From` API); `LapQ`/`LapR` torus lap vectors from `MapConfig`.
-- `addons/sstdbsdk/TableBinderComponent.cs` — `[Tool]` node binding one subscribed table (`TableName` dropdown from `TableSubscriber.AllSubscribedTables`) and re-exposing its row events as editor-wireable Godot signals (`RowInserted`/`RowUpdated`/`RowDeleted`). Signals carry no args (rows aren't Variant-compatible) — handlers read `LastRow`/`LastOldRow`/`LastDeletedRow` and cast. `ReplayExistingRows` replays the cached rows through `RowInserted` on bind. Place one binder child per table on the consuming component — this is **the standard way every component consumes table row events** (no direct `conn.Db.*.OnInsert/OnUpdate/OnDelete` hooks outside this addon); see `terrain_component.tscn`, `local_player.tscn`, `entity_spawner_component.tscn`, `catalog_component.tscn`. Infrastructure keeps its own internal hooks: `TableSubscriber` (`MapConfig` lap vectors) and `DatabaseConnector` (`LocalLobbyPlayer`).
-- `Components/Catalog/CatalogComponent.cs` (`catalog_component.tscn`) — the `AllItems`/`AllEnchantments`/`AllTextures` views as caches (`GetItem`, `GetEnchantment(s)`, `GetResPath`, `EnchantmentsChanged`), fed by three child `TableBinderComponent`s with `ReplayExistingRows` (one per table, signals wired in the `.tscn`).
-- `Components/Spawning/EntitySpawnerComponent.cs` (`entity_spawner_component.tscn`) — row insert/delete signals from four child `TableBinderComponent`s (`LocalPlayer`/`NearbyRemotePlayers`/`NearbyEnemies`/`NearbyLootDrops`, all replaying) → spawn/despawn of `LocalPlayer`/`RemotePlayer`/`Enemy`/`Drop`/`BulletManager`, plus the tracking dictionaries (`GetEnemy`, `EnemyCount`).
-- `Components/Lobby/LobbyComponent.cs` (`lobby_component.tscn`) — CharSlots UI (moved out of `main.tscn`) and profile panels, fed by a child `LocalPlayerProfiles` binder (inserts only; panel removal stays local via the Delete button).
-- `BulletManager.cs` — `Node2D, IEntity`, root of `Scenes/bullet_manager.tscn`. Children: `BlastBullets` (plain GDExtension child reached via `[Export]` NodePath, replacing `GetChild(0)`), `Components/Bullets/BulletSpawnerComponent.cs` (`BulletPatternEvent` → per-`PatternType` dispatch to the BlastBullets2D `BulletFactory2D`), `Components/Bullets/BulletHitRouterComponent.cs` (overlap → `ReportHit` routing through the victim's `DamageReceivingComponent`). Keeps a static `Instance` + spawn pass-throughs (`CombatComponent`/`Enemy` have no registry path to it). `BulletData.cs` — small `Resource` carried through the bullet pipeline.
-- `LobbyGui.cs` — lobby/menu UI (`Scenes/lobby_gui.tscn`). Currently scene navigation only — not yet wired to `create_profile`/`join_world` reducers.
+- `GameManager.cs` — `Node2D, IEntity`, root node ("Main") of `Scenes/main.tscn`; **not an autoload**. Thin entity glue plus a **static facade** delegating to its child components: `Conn`, `Username`, `IsLocal` → the `DatabaseConnector` autoload; `LapQ`/`LapR` → `TableSubscriber`; `GetItem`, `GetEnchantment(s)`, `EnchantmentsChanged`, `GetResPath` → `CatalogComponent`; `GetEnemy`, `EnemyCount` → `EntitySpawnerComponent`. Reach anything else on it via `GameManager.GetComponent<T>()` — the old camera/sidebar static singletons are gone.
+- `Components/Catalog/CatalogComponent.cs` (`catalog_component.tscn`) — the `AllItems`/`AllEnchantments`/`AllTextures` views as caches (`GetItem`, `GetEnchantment(s)`, `GetResPath`, `EnchantmentsChanged`), fed by three child `TableBinderComponent`s with `ReplayExistingRows`.
+- `Components/Spawning/EntitySpawnerComponent.cs` (`entity_spawner_component.tscn`) — row insert/delete signals from four child binders (`LocalPlayer`/`NearbyRemotePlayers`/`NearbyEnemies`/`NearbyLootDrops`, all replaying) → spawn/despawn of `LocalPlayer`/`RemotePlayer`/`Enemy`/`Drop`/`BulletManager`, plus the tracking dictionaries (`GetEnemy`, `EnemyCount`).
+- `Components/Lobby/LobbyComponent.cs` (`lobby_component.tscn`) — CharSlots UI and profile panels, fed by a child `LocalPlayerProfiles` binder (inserts only; panel removal stays local via the Delete button).
+- `BulletManager.cs` — `Node2D, IEntity`, root of `Scenes/bullet_manager.tscn`. Children: `BlastBullets`, the BlastBullets2D `BulletFactory2D` GDExtension node, typed only as `[Export] public Node` (reached via NodePath, not `GetChild(0)`); `Components/Bullets/BulletSpawnerComponent.cs` (`BulletPatternEvent` → per-`PatternType` dispatch, reaching the factory through **untyped `BlastBullets.Call("spawn_directional_bullets", …)`** — no compile-time checking on that call or its `.tres` spawn-data resources, so typos surface only at runtime); `Components/Bullets/BulletHitRouterComponent.cs` (overlap → `ReportHit` routing through the victim's `DamageReceivingComponent`). Keeps a static `Instance` + spawn pass-throughs (`CombatComponent`/`Enemy` have no registry path to it). `BulletData.cs` — small `Resource` carried through the bullet pipeline.
+- `LobbyGui.cs` — lobby/menu UI (`Scenes/lobby_gui.tscn`, the project's main scene). Currently scene navigation only — not yet wired to the `create_profile`/`join_world` reducers.
 - `DebugOverlay.cs` — debug HUD (`Scenes/UI/debug_overlay.tscn`, instanced in `main.tscn`); paired with server `main/debug.rs`.
 
 ### `Components/Camera/` (scenes in `Scenes/Components/Camera/` + `Scenes/world_3d.tscn`)
-- `CameraRigComponent.cs` (was `World/CameraRig.cs`) and `Camera2DPresenterComponent.cs` (was `CameraController2D.cs`) — 2D camera rig/presenter, children of `main.tscn`.
-- `World3DComponent.cs` (was `WorldRenderer3D.cs`) — root of `world_3d.tscn` (the 3D backdrop viewport).
-- `HexGridOverlayComponent.cs` (was `HexGridOverlay2D.cs`) — hex grid debug overlay, `MapConfig` rows via a child binder (signals wired in its `.tscn`); `HexGridOverlay3DComponent.cs` (was `HexGridOverlay3D.cs`) — its 3D sibling, declared with its own binder in `world_3d.tscn`.
-- The old camera static singletons are gone — reach these via `GameManager.GetComponent<T>()`.
+- `CameraRigComponent.cs` and `Camera2DPresenterComponent.cs` — 2D camera rig/presenter, children of `main.tscn`.
+- `World3DComponent.cs` — root of `world_3d.tscn` (the 3D backdrop viewport).
+- `HexGridOverlayComponent.cs` — hex grid debug overlay, `MapConfig` rows via a child binder; `HexGridOverlay3DComponent.cs` — its 3D sibling, declared with its own binder in `world_3d.tscn`.
 
-### `Components/Terrain/` (scenes in `Scenes/Components/Terrain/`) — replaces `World/TerrainManager.cs` (deleted)
-- `TerrainComponent.cs` (`terrain_component.tscn`, `Node2DComponent`, child of Main) — receives `MapConfig`/`NearbyTerrainTiles`/`NearbyHexDecor` rows through three child `TableBinderComponent`s (signals wired in the `.tscn`), stores rows, dirty-flag one-rebuild-per-frame, shared wedge/decor mesh + texture caches, per-hex torus wrap + camera cull. Owns a pool of `TileComponent` instances pre-warmed to the AOI ring count (`1+3R(R+1)`; `[Export] AoiChunkRadius = 2` matching the server's `DEFAULT_TERRAIN_AOI_CHUNK_RADIUS`), growing on demand.
+### `Components/Terrain/` (scenes in `Scenes/Components/Terrain/`)
+- `TerrainComponent.cs` (`terrain_component.tscn`, `Node2DComponent`, child of Main) — receives `MapConfig`/`NearbyTerrainTiles`/`NearbyHexDecor` rows through three child binders, stores rows, dirty-flag one-rebuild-per-frame, shared wedge/decor mesh + texture caches, per-hex torus wrap + camera cull. Owns a pool of `TileComponent` instances pre-warmed to the AOI ring count (`1+3R(R+1)`; `[Export] AoiChunkRadius = 2` matching the server's `DEFAULT_TERRAIN_AOI_CHUNK_RADIUS`), growing on demand.
 - `TileComponent.cs` (`tile_component.tscn`, `Node2D, IEntity`) — per-chunk scaffolding with four declared layer children: `GroundComponent` (z=0), `OverlayComponent` (z=1, centroid-scaled), `DecorShadowComponent` (z=2), `DecorComponent` (z=3). `Populate(chunkIndex, rows…)` fills the layers per frame; `Clear()` parks it back in the pool.
 - `TerrainLayerComponent.cs` — base for the four layers; each owns pooled `MultiMeshInstance2D` batch leaves. The leaves stay code-created (data-driven count, deliberate perf design); z-order/scaffolding is declared in the `.tscn`. `DecorLayerComponent.cs` — shared base for the two decor layers (per-texture batches sorted by hex row).
-- Rendering semantics unchanged from the old `TerrainManager` (same meshes, transforms, z-order, fallback modulate, decor HexR sort).
 
 ### `Components/Movement/` + `Components/Visual/` + `Components/Interaction/`
 - `Movement/InterpolationComponent.cs` (`interpolation_component.tscn`) — shared position/rotation lerp toward server targets, torus-aware via `TorusMath.NearestCandidate`; exposes `Moving`. Used by `RemotePlayer` + `Enemy`.
-- `Visual/RemoteVisualComponent.cs` — remote player sprite/texture; Walk/Idle driven by `InterpolationComponent.Moving`.
-- `Visual/DropVisualComponent.cs` — drop item texture.
+- `Movement/LocalPositionSyncComponent.cs` — local player's `LocalPlayerPosition` rows + the `ReportMovement` timer.
+- `Visual/RemoteVisualComponent.cs` — remote player sprite/texture; Walk/Idle driven by `InterpolationComponent.Moving`. `Visual/DropVisualComponent.cs` — drop item texture. `Visual/LocalPlayerProfileComponent.cs` — `LocalPlayerActiveProfile` rows → SpriteFrames.
 - `Interaction/PickupComponent.cs` (`pickup_component.tscn`) — `AreaComponent` with declared `CollisionShape2D` + `PickupLockTimer` children; body-entered → `PickupDrop` reducer.
 
 ### `Components/Inventory/` (UI scene: `Scenes/UI/inventory_panel.tscn`)
-- `InventoryComponent.cs` (was `Players/Local/LocalPlayerInventory.cs`) — `ControlComponent`; hotbar/backpack/equipment slot UI, listens for `LocalPlayer.InventoryChanged`, calls `UseItem` reducer on hotbar key press. Hotbar/Backpack stay plain containers (zero behavior) inside `inventory_panel.tscn`.
-- `SlotComponent.cs` (was `InventorySlotUI.cs`) — single inventory slot — drag/drop (`SwapSlots` reducer), right-click drop (`DropItem` reducer), hover shows `ItemSidebarComponent`.
-- `StatsSidebarComponent.cs` (was `PlayerStatsSidebar.cs`) — player stat panel.
-- `ItemSidebarComponent.cs` (was `ItemStatsSidebar.cs`; singleton removed) — hovered slot's item name/icon/description plus full composition: base stat modifiers, behavior summary, socketed enchantments (`N / MaxEnchantments`), and — for enchantable items in equipment slots — applicable enchantments with Socket/Remove buttons calling the `ApplyEnchantment`/`RemoveEnchantment` reducers. Enchantment rows are instantiated from `Scenes/UI/enchantment_row.tscn` instead of code-built. Refreshes on `InventoryChanged` and `EnchantmentsChanged`; stays open while the mouse is over it.
-- The whole inventory UI (hotbar, 24 slot panels, both sidebars) lives in `Scenes/UI/inventory_panel.tscn`, instanced into `local_player.tscn`. Scripts inside it reach the player via `GetAncestor<LocalPlayer>()`, not `Owner`.
+- `InventoryComponent.cs` — `ControlComponent`; hotbar/backpack/equipment slot UI, listens for `LocalPlayer.InventoryChanged`, calls `UseItem` reducer on hotbar key press. Hotbar/Backpack stay plain containers (zero behavior) inside `inventory_panel.tscn`.
+- `LocalPlayerInventoryComponent.cs` — `LocalPlayerInventory` rows → slot state; owns slot resolution (`ResolveSlotAt`/`GetSlotItemId`).
+- `SlotComponent.cs` — single inventory slot: drag/drop (`SwapSlots` reducer), right-click drop (`DropItem` reducer), hover shows `ItemSidebarComponent`.
+- `StatsSidebarComponent.cs` — player stat panel.
+- `ItemSidebarComponent.cs` — hovered slot's item name/icon/description plus full composition: base stat modifiers, behavior summary, socketed enchantments (`N / MaxEnchantments`), and — for enchantable items in equipment slots — applicable enchantments with Socket/Remove buttons calling the `ApplyEnchantment`/`RemoveEnchantment` reducers. Enchantment rows are instantiated from `Scenes/UI/enchantment_row.tscn`. Refreshes on `InventoryChanged` and `EnchantmentsChanged`; stays open while the mouse is over it.
+- The whole inventory UI lives in `Scenes/UI/inventory_panel.tscn`, instanced into `local_player.tscn`. Scripts inside it reach the player via `GetAncestor<LocalPlayer>()`, not `Owner`. It holds **29 `SlotComponent` nodes**: a 5-slot `Hotbar` (indices 0–4, the weapon + four consumables) plus a `Backpack` of six 4-slot rows covering all 24 server slots — so indices 0–4 are shown twice. Every slot's `[Export] SlotIndex` is authored in the scene, and **row order is not index order** (Row 1 is armor 9–12, Row 2 accessories 5–8, Row 5 the hotbar 1–4); check the export before assuming a layout.
 
-### `Players/Local/`
-- `LocalPlayer.cs` — `CharacterBody2D, IEntity`; WASD movement, sprite Walk/Idle, 3D-model sync, camera registration. Server-table concerns live in child components, each fed by its own `TableBinderComponent` with signals wired in `local_player.tscn` (the TerrainComponent pattern): `PositionSyncComponent` (`LocalPlayerPosition` rows + the `ReportMovement` timer), `LocalPlayerDataComponent` (`LocalPlayerData`/`LocalPlayerStats` rows → the `HealthComponent`/`StatsComponent` mirrors), `LocalPlayerInventoryComponent` (`LocalPlayerInventory` rows → slot state, `ResolveSlotAt`/`GetSlotItemId`), `LocalPlayerProfileComponent` (`LocalPlayerActiveProfile` rows → SpriteFrames). Other children: `StatsComponent`, `HealthComponent`, `FactionComponent`, `DamageReceivingComponent` (was "Hurtbox"), `CombatComponent` (was "Combat"). `LocalPlayer` keeps the `InventoryChanged`/`AimSettingsChanged`/`StatsChanged` signals (components raise them via `Raise*Changed()`) and pass-through properties (`Hp`, `MaxHp`, `Strength`…) so UI readers (e.g. `StatsSidebarComponent`) stay stable. Combat logic lives in `Components/Weapon/CombatComponent.cs`.
+### `Players/`
+- `Local/LocalPlayer.cs` — `CharacterBody2D, IEntity`; WASD movement, sprite Walk/Idle, 3D-model sync, camera registration. Server-table concerns live in child components, each fed by its own binder with signals wired in `local_player.tscn`: `LocalPositionSyncComponent`, `LocalPlayerDataComponent`, `LocalPlayerInventoryComponent`, `LocalPlayerProfileComponent`. Other children: `StatsComponent`, `HealthComponent`, `FactionComponent`, `DamageReceivingComponent`, `CombatComponent`. `LocalPlayer` keeps the `InventoryChanged`/`AimSettingsChanged`/`StatsChanged` signals (components raise them via `Raise*Changed()`) and pass-through properties (`Hp`, `MaxHp`, `Strength`…) so UI readers stay stable.
+- `Remote/RemotePlayer.cs` — `Node2D, IEntity` root of `non_local_player.tscn` (EntityRegistry boilerplate + thin glue). `NearbyRemotePlayers` position updates arrive via a child binder (`RowUpdated` wired in the `.tscn`); the one-shot profile lookup stays a direct `Iter()` read. The work lives in `InterpolationComponent` + `RemoteVisualComponent`.
+- `Enemies/Enemy.cs` — `CharacterBody2D, IEntity`; server-driven puppet. `NearbyEnemies` and `BulletPatternEvent` rows arrive via two child binders (signals wired in `default_enemy.tscn`; the `NearbyEnemies` binder replays so late-spawned instances still initialize). Feeds row hp + `EnemyTemplate` max_hp into its `HealthComponent`/`StatsComponent` and forwards matching `BulletPatternEvent` rows to `BulletManager`. `default_enemy.tscn` children: `StatsComponent`, `HealthComponent`, `FactionComponent` (Enemies), `DamageReceivingComponent` (Enemy collision layer — what `HitZone`s detect instead of the physics body), `InterpolationComponent`.
+- `CharacterModel3D.cs` — the 3D character model mirroring 2D player state. Not present in any `.tscn`; `LocalPlayer.cs` is its only consumer.
 
-### `Players/Remote/`
-- `RemotePlayer.cs` — `Node2D, IEntity` root of `non_local_player.tscn` (EntityRegistry boilerplate + thin glue). `NearbyRemotePlayers` position updates arrive via a child `TableBinderComponent` (`RowUpdated` wired in the `.tscn`); the one-shot profile lookup stays a direct `Iter()` read. The work lives in its children: `InterpolationComponent` (lerp toward subscribed positions) and `RemoteVisualComponent` (texture + Walk/Idle).
-
-### `Players/Enemies/`
-- `Enemy.cs` — `CharacterBody2D, IEntity`; server-driven puppet. `NearbyEnemies` and `BulletPatternEvent` rows arrive via two child `TableBinderComponent`s (signals wired in `default_enemy.tscn`; the `NearbyEnemies` binder replays so late-spawned instances still initialize). Feeds row hp + `EnemyTemplate` max_hp into its `HealthComponent`/`StatsComponent` and forwards matching `BulletPatternEvent` rows to `BulletManager`. `default_enemy.tscn` children: `StatsComponent`, `HealthComponent`, `FactionComponent` (Enemies), `DamageReceivingComponent` (Enemy collision layer — what `HitZone`s detect instead of the physics body), `InterpolationComponent` (drives the lerp toward `NearbyEnemies` positions).
-
-### `Items/`
-- `Drop.cs` — `Node2D, IEntity` root of `drop.tscn` (EntityRegistry boilerplate only). Children: `DropVisualComponent` (item texture) + `PickupComponent` (the `Area2D` that calls the `PickupDrop(drop_id)` reducer when the local player enters).
-
-### `World/`
-- `TorusMath.cs` — torus wrap / nearest-candidate math (`NearestCandidate`). The only file left here — everything else moved to `Components/`.
+### `Items/` + `World/`
+- `Items/Drop.cs` — `Node2D, IEntity` root of `drop.tscn` (EntityRegistry boilerplate only). Children: `DropVisualComponent` + `PickupComponent`.
+- `World/TorusMath.cs` — torus wrap / nearest-candidate math (`NearestCandidate`). The only file left in `World/`.
 
 ## Setup notes
-- No autoloads — `GameManager` is instantiated as the root node ("Main") of `Scenes/main.tscn`; reach cross-cutting state through its static facade or `GetComponent<T>()` on it.
-- `khvg.csproj` (project root) has the `SpacetimeDB.ClientSDK.Godot` package reference — see the NuGet warning in the root `CLAUDE.md` if it's ever lost.
 - **BlastBullets2D** GDExtension plugin (`client/addons/blastbullets2d`) must be present; `BulletManager` dispatches patterns through its `BlastBullets` factory child node.
-
-## Workflow rules
-When running the game using open-godot-mcp, open it from the lobby_gui.tscn scene.

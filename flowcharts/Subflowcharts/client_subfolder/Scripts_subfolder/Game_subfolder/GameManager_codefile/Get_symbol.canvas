@@ -1,23 +1,12 @@
 {
-	"nodes": [
-		{
-			"id": "889a7db64333a683",
-			"type": "file",
-			"file": "client/Scripts/Game/GameManager.cs",
-			"subpath": "#Get",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		}
+	"nodes":[
+		{"id":"889a7db64333a683","type":"file","file":"client/Scripts/Game/GameManager.cs","subpath":"#Get","x":0,"y":0,"width":400,"height":400}
 	],
-	"edges": [],
-	"metadata": {
-		"frontmatter": {
-			"tags": [
-				"symbol",
-				"includeInAggregateFlowchart"
-			]
-		}
+	"edges":[],
+	"metadata":{
+		"frontmatter":{
+			"tags":["symbol","includeInAggregateFlowchart"]
+		},
+		"version":"1.0-1.0"
 	}
 }

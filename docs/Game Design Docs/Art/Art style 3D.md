@@ -14,7 +14,7 @@ My game is definitely going to look like the above
 ![Creating a Scene for my 3D Pixel Art Game](<https://www.youtube.com/watch?v=ERA7-I5nPAU>)
 My game is definitely going to look like the above
 
-![Giving Personality to Procedural Animations using Math](<https://youtu.be/KPoeNZZ6H4s?si=fzqXrk3z6RS4MM0u&t=70>)
+![Giving Personality to Procedural Animations using Math](<https://youtu.be/KPoeNZZ6H4s&t=70>)
 My game is definitely going to look like the above
 #### Size and proportions examples
 ![bitcraft character editor showcase](<https://youtu.be/qVT8_b1h-kQ>)

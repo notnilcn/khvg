@@ -333,8 +333,7 @@
 				"edge-_colon_-server/spacetimedb/src/world/terrain/rules-_dot_-rs-_hashtag_-overlay_compatible_with_base",
 				"edge-_colon_-server/spacetimedb/src/world/terrain/rules-_dot_-rs-_hashtag_-overlay_tags_conflict",
 				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-weighted_pick_with_remainder",
-				"includeInAggregateFlowchart",
-				"includeInMainFlowchart"
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

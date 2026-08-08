@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bk4d3bkeqrqvu"]
 
 [ext_resource type="Script" uid="uid://cqiavfx25o6be" path="res://Scripts/Game/GameManager.cs" id="1_8gbba"]
-[ext_resource type="Script" uid="uid://t5dudwr4e8ss" path="res://addons/sstdbsdk/TableSubscriber.cs" id="3_b3802"]
+[ext_resource type="Script" uid="uid://t5dudwr4e8ss" path="res://sstdbsdk/TableSubscriber.cs" id="3_b3802"]
 [ext_resource type="Script" uid="uid://kprjwmx8qekg" path="res://Scripts/Components/Catalog/CatalogComponent.cs" id="3_pdsj5"]
 [ext_resource type="Script" uid="uid://enddugsgfdov" path="res://Scripts/Components/Spawning/EntitySpawnerComponent.cs" id="5_ee4r6"]
 [ext_resource type="PackedScene" uid="uid://bbjjh55yrwyfn" path="res://Scenes/local_player.tscn" id="6_gt3je"]
@@ -18,7 +18,7 @@
 [ext_resource type="Script" uid="uid://wwivmweabnsm" path="res://Scripts/Components/Terrain/TerrainComponent.cs" id="14_h1bgf"]
 [ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/Components/Camera/Camera2DPresenterComponent.cs" id="15_6vcvc"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Terrain/tile_component.tscn" id="15_b3802"]
-[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="15_k12tt"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="15_k12tt"]
 [ext_resource type="Script" uid="uid://c3l165fibt4wq" path="res://Scripts/Components/Camera/HexGridOverlayComponent.cs" id="18_7k868"]
 [ext_resource type="Script" uid="uid://bdh2fwurk1uh7" path="res://Scripts/Game/DebugOverlay.cs" id="21_hpc6h"]
 
@@ -83,7 +83,6 @@ script = ExtResource("11_ueoa1")
 PitchMax = 0.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
-visible = false
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="3D" unique_id=1047841400]
 texture_filter = 1
@@ -99,7 +98,7 @@ stretch_shrink = 3
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(384, 216)
-render_target_update_mode = 0
+render_target_update_mode = 4
 
 [node name="World3DComponent" parent="3D/SubViewportContainer/SubViewport" unique_id=1360330812 instance=ExtResource("8_fdnlq")]
 

@@ -1,23 +1,12 @@
 {
-	"nodes": [
-		{
-			"id": "d06c0dd266cc04d4",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/Drop_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		}
+	"nodes":[
+		{"id":"d06c0dd266cc04d4","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/Drop_codefile.canvas","color":"5","x":0,"y":0,"width":400,"height":400}
 	],
-	"edges": [],
-	"metadata": {
-		"frontmatter": {
-			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
-			]
-		}
+	"edges":[],
+	"metadata":{
+		"frontmatter":{
+			"tags":["subfolder","includeInAggregateFlowchart"]
+		},
+		"version":"1.0-1.0"
 	}
 }

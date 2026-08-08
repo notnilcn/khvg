@@ -1,8 +1,8 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://Scripts/Components/Lobby/LobbyComponent.cs" id="1_lobby"]
-[ext_resource type="PackedScene" path="res://Scenes/profile_panel.tscn" id="2_profile"]
-[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="3_binder"]
+[ext_resource type="Script" uid="uid://drmk14tu2scnl" path="res://Scripts/Components/Lobby/LobbyComponent.cs" id="1_lobby"]
+[ext_resource type="PackedScene" uid="uid://dcn402bshd83k" path="res://Scenes/profile_panel.tscn" id="2_profile"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="3_binder"]
 
 [node name="LobbyComponent" type="Control"]
 anchors_preset = 15

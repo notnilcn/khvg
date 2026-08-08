@@ -1,12 +1,12 @@
 [gd_scene format=3]
 
-[ext_resource type="Script" path="res://Scripts/Components/Spawning/EntitySpawnerComponent.cs" id="1_spawner"]
-[ext_resource type="PackedScene" path="res://Scenes/local_player.tscn" id="2_local"]
-[ext_resource type="PackedScene" path="res://Scenes/non_local_player.tscn" id="3_remote"]
-[ext_resource type="PackedScene" path="res://Scenes/default_enemy.tscn" id="4_enemy"]
-[ext_resource type="PackedScene" path="res://Scenes/drop.tscn" id="5_drop"]
-[ext_resource type="PackedScene" path="res://Scenes/bullet_manager.tscn" id="6_bullets"]
-[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://addons/sstdbsdk/TableBinderComponent.cs" id="7_binder"]
+[ext_resource type="Script" uid="uid://enddugsgfdov" path="res://Scripts/Components/Spawning/EntitySpawnerComponent.cs" id="1_spawner"]
+[ext_resource type="PackedScene" uid="uid://bbjjh55yrwyfn" path="res://Scenes/local_player.tscn" id="2_local"]
+[ext_resource type="PackedScene" uid="uid://8oytx5u0vik3" path="res://Scenes/non_local_player.tscn" id="3_remote"]
+[ext_resource type="PackedScene" uid="uid://djjulhvulxtyc" path="res://Scenes/default_enemy.tscn" id="4_enemy"]
+[ext_resource type="PackedScene" uid="uid://i7v5ssc1g45q" path="res://Scenes/drop.tscn" id="5_drop"]
+[ext_resource type="PackedScene" uid="uid://simxqrad34gm" path="res://Scenes/bullet_manager.tscn" id="6_bullets"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="7_binder"]
 
 [node name="EntitySpawnerComponent" type="Node"]
 script = ExtResource("1_spawner")

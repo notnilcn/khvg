@@ -1,0 +1,12 @@
+{
+	"nodes":[
+		{"id":"e65dbbed7e6bb8a1","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/scripts_subfolder.canvas","color":"5","x":0,"y":0,"width":400,"height":400}
+	],
+	"edges":[],
+	"metadata":{
+		"frontmatter":{
+			"tags":["subfolder","includeInAggregateFlowchart"]
+		},
+		"version":"1.0-1.0"
+	}
+}
