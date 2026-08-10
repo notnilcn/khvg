@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e9e6bb247fb82001",
+			"id": "cd790421593ef29e",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/SlotComponent.cs",
 			"subpath": "#inBackpack",

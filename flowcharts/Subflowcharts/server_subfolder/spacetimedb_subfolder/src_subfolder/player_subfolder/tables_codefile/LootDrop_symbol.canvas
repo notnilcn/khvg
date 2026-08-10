@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "312b9f2eb50bae10",
+			"id": "eed5cb2ce2919900",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/tables.rs",
 			"subpath": "#LootDrop",

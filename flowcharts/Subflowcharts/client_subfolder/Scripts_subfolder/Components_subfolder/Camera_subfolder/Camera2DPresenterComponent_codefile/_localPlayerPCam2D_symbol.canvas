@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3276ee7ca36a067e",
+			"id": "39ec14e285e323bc",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/Camera2DPresenterComponent.cs",
 			"subpath": "#_localPlayerPCam2D",

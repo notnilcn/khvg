@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9b66409c0a0cecfc",
+			"id": "7b65c01956878178",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/reducers.rs",
 			"subpath": "#remove_building",

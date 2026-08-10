@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bd51d10a73003d32",
+			"id": "2713bea1247e428e",
 			"type": "file",
 			"file": "client/Scenes/UI/debug_overlay.tscn",
 			"x": 0,

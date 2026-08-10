@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "2fd3f4e531d4e7c1",
+			"id": "f11bf37db8eeadfc",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/InventorySlot_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/ActiveConsumableEffect_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "356f6e04a077d96e",
+			"id": "b2c5f67acff78f4c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/LoggedInPlayer_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/ConsumableEffectSchedule_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "97cea8c90aeb6046",
+			"id": "504b4b5592de0952",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/LoggedOutPlayer_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/InventorySlot_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "468d225fd062848b",
+			"id": "20be8839bc2efc3c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerProfile_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/LoggedInPlayer_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "d09e0bf0d487ef32",
+			"id": "ab732f328e63691c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerData_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/LoggedOutPlayer_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "f0ce85cca50db340",
+			"id": "11a6a8ae144755bc",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerStats_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/LootDrop_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -61,9 +61,9 @@
 			"height": 400
 		},
 		{
-			"id": "9a3653fc3b9fc245",
+			"id": "b8ba9f6322989d22",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerInventory_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerChunk_symbol.canvas",
 			"color": "5",
 			"x": 2760,
 			"y": 0,
@@ -71,9 +71,9 @@
 			"height": 400
 		},
 		{
-			"id": "0f0ce41d2c512f6b",
+			"id": "0e9a1fa05ff64600",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerPosition_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerData_symbol.canvas",
 			"color": "5",
 			"x": 3220,
 			"y": 0,
@@ -81,9 +81,9 @@
 			"height": 400
 		},
 		{
-			"id": "cfda8bec9897e4dd",
+			"id": "8e2fd38675673b40",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerChunk_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerInventory_symbol.canvas",
 			"color": "5",
 			"x": 3680,
 			"y": 0,
@@ -91,9 +91,9 @@
 			"height": 400
 		},
 		{
-			"id": "bc7bafb0ea67a453",
+			"id": "da65d2e35c67bc04",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/ActiveConsumableEffect_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerPosition_symbol.canvas",
 			"color": "5",
 			"x": 4140,
 			"y": 0,
@@ -101,9 +101,9 @@
 			"height": 400
 		},
 		{
-			"id": "13fc72f6f46ae861",
+			"id": "62f465e73cf78446",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/ConsumableEffectSchedule_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerProfile_symbol.canvas",
 			"color": "5",
 			"x": 4600,
 			"y": 0,
@@ -111,9 +111,9 @@
 			"height": 400
 		},
 		{
-			"id": "7399129ac5959d3c",
+			"id": "a7077be98cc1c6e6",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/LootDrop_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerStats_symbol.canvas",
 			"color": "5",
 			"x": 5060,
 			"y": 0,
@@ -125,19 +125,19 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
-				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EquipSlot",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-StatModifier",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-StatModifier",
 				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-tick_active_consumable_effects",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EquipSlot"
 			]
 		}
 	}

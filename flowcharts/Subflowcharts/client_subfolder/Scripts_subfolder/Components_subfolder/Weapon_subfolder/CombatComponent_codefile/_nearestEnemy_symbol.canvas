@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6044c5a4064e601e",
+			"id": "0ee49439828eaaca",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#_nearestEnemy",

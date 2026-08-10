@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "73cafdc85117a2d6",
+			"id": "8e20a4ff86906654",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/overlay.rs",
 			"subpath": "#choose_overlay",

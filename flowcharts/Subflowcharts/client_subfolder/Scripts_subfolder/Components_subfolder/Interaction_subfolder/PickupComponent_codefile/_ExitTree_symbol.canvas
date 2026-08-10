@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bbc517f60f79b109",
+			"id": "f26316493bd26718",
 			"type": "file",
 			"file": "client/Scripts/Components/Interaction/PickupComponent.cs",
 			"subpath": "#_ExitTree",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "cefa74de24116cca",
+			"id": "3545175cc5027300",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/def_tables.rs",
 			"subpath": "#CurtainParams",

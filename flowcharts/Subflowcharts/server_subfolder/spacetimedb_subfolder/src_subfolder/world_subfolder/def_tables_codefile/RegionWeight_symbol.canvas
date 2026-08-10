@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e411870f954316eb",
+			"id": "c18899c05af42600",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/def_tables.rs",
 			"subpath": "#RegionWeight",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2789dd9ced4eb2d7",
+			"id": "e72bda73484fe7d8",
 			"type": "file",
 			"file": "client/Scripts/Components/Interaction/PickupComponent.cs",
 			"subpath": "#PickupComponent",

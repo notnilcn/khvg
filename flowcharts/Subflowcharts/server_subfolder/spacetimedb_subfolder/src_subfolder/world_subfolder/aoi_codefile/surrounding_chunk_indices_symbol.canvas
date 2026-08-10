@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0759730509202930",
+			"id": "4c8e42026e591ce8",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/aoi.rs",
 			"subpath": "#surrounding_chunk_indices",

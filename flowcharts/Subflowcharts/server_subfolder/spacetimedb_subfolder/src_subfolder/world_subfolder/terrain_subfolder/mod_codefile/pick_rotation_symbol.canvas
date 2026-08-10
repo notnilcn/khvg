@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d10241c64b464650",
+			"id": "937484e32f21dac6",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/mod.rs",
 			"subpath": "#pick_rotation",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4034b3227e02114b",
+			"id": "a39d955f9c7f802a",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#ZoomStep",

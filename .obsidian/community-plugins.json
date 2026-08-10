@@ -5,8 +5,9 @@
   "obsidian-wrap-with-shortcuts",
   "flexplorer",
   "folder-notes",
-  "vscode-editor",
   "optimize-canvas-connections",
   "advanced-canvas",
-  "better-embedded-canvas"
+  "better-embedded-canvas",
+  "obsidian-git",
+  "vscode-editor"
 ]

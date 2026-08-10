@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "462aae1c4122315f",
+			"id": "9c3be6ee04df443c",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/def_tables.rs",
 			"subpath": "#FleeParams",

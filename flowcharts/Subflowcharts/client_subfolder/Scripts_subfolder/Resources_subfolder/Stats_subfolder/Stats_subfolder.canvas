@@ -1,21 +1,21 @@
 {
 	"nodes": [
 		{
-			"id": "eddf5ceb7e7ebe0e",
+			"id": "15cccba3bad78b5a",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/Stat_codefile/Stat_codefile.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/StatKind_codefile/StatKind_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
 		},
 		{
-			"id": "8e01a484cd720ea1",
+			"id": "8bbcfd3b584369ca",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/StatKind_codefile/StatKind_codefile.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/Stat_codefile/Stat_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,8 +25,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
 		}
 	}

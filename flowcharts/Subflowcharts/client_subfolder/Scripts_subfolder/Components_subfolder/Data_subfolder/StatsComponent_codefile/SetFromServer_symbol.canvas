@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "00e06aa357bb4fe9",
+			"id": "5d8f5726dad45d8c",
 			"type": "file",
 			"file": "client/Scripts/Components/Data/StatsComponent.cs",
 			"subpath": "#SetFromServer",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "fbe24dec8cd37822",
+			"id": "ef81864835451350",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/SlotComponent.cs",
 			"subpath": "#_GuiInput",

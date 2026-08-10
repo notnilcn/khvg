@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c4d89c869b0d202f",
+			"id": "11541cfde2a05b30",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#enchantmentCache",

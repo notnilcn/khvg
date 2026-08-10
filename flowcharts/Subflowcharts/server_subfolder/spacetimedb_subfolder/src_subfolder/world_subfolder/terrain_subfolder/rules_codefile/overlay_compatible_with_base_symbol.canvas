@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "249a609f4f1cdf77",
+			"id": "edbf19a201d8b294",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/rules.rs",
 			"subpath": "#overlay_compatible_with_base",

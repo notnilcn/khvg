@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3307240874d5e85a",
+			"id": "968b8ad70a4fb842",
 			"type": "file",
 			"file": "client/Scripts/Components/Combat/DamageComponent.cs",
 			"subpath": "#DamageComponent",

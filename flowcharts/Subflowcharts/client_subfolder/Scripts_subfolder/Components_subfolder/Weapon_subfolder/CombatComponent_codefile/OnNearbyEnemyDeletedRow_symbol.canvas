@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "79b4d3d5202fe6d1",
+			"id": "e1f55c0f457f8092",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#OnNearbyEnemyDeletedRow",

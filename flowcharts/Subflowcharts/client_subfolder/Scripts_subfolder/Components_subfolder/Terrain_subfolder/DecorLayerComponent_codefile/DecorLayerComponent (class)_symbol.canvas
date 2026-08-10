@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ab6cbd70b0079cb6",
+			"id": "8aa866a0632f8d00",
 			"type": "file",
 			"file": "client/Scripts/Components/Terrain/DecorLayerComponent.cs",
 			"subpath": "#DecorLayerComponent",

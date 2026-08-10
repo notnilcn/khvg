@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "25a818fb7c0469e4",
+			"id": "c31b8944093ec780",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/instance_tables.rs",
 			"subpath": "#RepeatStepInstance",

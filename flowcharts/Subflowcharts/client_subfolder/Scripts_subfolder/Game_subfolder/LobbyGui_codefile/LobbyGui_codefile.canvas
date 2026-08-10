@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "18abd2b0aa8ab16c",
+			"id": "6a9b54df2b51c554",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/_Ready_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "b3ae01e321424f79",
+			"id": "f0fbaf9496fcab80",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/_Ready_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/BackPressed_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "8437136d5fce226c",
+			"id": "f7bbb452acbecda8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/CharSlotsPressed_symbol.canvas",
 			"color": "5",
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "b7d3b7cb2d046749",
+			"id": "ad5ba2c354b207b0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/ServerListPressed_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui (class)_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "9d5e595b162c05e0",
+			"id": "7a5fcdec6009b4d8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/SettingsPressed_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/ServerListPressed_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "ebd00f05bed4efe3",
+			"id": "b88d48562a46b9f8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/BackPressed_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/SettingsPressed_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -65,8 +65,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

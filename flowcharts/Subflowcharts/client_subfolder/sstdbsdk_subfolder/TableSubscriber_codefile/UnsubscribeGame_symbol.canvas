@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "7b2433cab9205654",
+			"type": "file",
+			"file": "client/sstdbsdk/TableSubscriber.cs",
+			"subpath": "#UnsubscribeGame",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

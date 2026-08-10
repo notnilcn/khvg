@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a745bddbad4af5d0",
+			"id": "f70479e2ecb129d8",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#MouseSens",

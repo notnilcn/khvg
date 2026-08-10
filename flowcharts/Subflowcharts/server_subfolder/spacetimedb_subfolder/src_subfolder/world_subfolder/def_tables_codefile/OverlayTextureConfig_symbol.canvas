@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "8c35d2ffd0408df6",
+			"id": "9f9b867915788d7a",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/def_tables.rs",
 			"subpath": "#OverlayTextureConfig",

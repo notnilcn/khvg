@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d7d1217d59208223",
+			"id": "b41437e32135c336",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
 			"subpath": "#SeamLineColor",

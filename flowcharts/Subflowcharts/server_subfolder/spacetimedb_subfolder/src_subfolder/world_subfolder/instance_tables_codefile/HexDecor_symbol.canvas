@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9bfe9454969138fd",
+			"id": "a25052883bacc940",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/instance_tables.rs",
 			"subpath": "#HexDecor",

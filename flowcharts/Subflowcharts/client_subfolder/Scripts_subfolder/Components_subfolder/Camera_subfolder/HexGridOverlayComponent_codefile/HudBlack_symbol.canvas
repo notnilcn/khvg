@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "62f2afd65c4a8fe3",
+			"id": "40206510b81f28e0",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
 			"subpath": "#HudBlack",

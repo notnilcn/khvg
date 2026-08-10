@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "69cbb059003bfce9",
+			"id": "3ee2ac3c9d2c01d8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/Stats_subfolder.canvas",
 			"color": "5",
@@ -15,8 +15,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
 		}
 	}

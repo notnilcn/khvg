@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "766d0b840741d3e8",
+			"id": "72244c895d8bee20",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/methods.rs",
 			"subpath": "#weapon_slot",

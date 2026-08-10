@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "5960902a1fb91d4a",
+			"id": "a52b3a0bc46f7414",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/mod.rs",
 			"subpath": "#write_triangle_tiles",

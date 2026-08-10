@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "5ffbcef1d251dcbd",
+			"id": "32c29faa8e26b7c4",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#BIOME_VORONOI_SEED_BUDGET",

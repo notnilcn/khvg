@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e677eee5d90078e2",
+			"id": "9b5b8127f18a3564",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#claim_admin",

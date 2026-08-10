@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9a5841c3a35b1687",
+			"id": "55a34900cdce6600",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/SlotComponent.cs",
 			"subpath": "#_CanDropData",

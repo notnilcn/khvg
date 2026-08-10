@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0e8f12c2eae36ce2",
+			"id": "3699645c8fcbdc70",
 			"type": "file",
 			"file": "client/Scripts/Components/Visual/LocalPlayerProfileComponent.cs",
 			"subpath": "#profileBinder",

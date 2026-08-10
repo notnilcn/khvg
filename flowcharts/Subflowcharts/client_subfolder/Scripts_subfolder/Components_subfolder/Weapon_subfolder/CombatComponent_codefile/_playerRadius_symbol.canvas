@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f26df628e59df0e5",
+			"id": "8f1dc058044ee9d0",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#_playerRadius",

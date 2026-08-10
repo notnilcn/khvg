@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0048dc14e666ac1d",
+			"id": "d955d071c62f5212",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/instance_tables.rs",
 			"subpath": "#EnemyBehaviorSchedule",

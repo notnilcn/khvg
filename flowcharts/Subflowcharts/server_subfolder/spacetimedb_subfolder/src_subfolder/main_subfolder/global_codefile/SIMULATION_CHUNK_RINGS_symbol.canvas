@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "65dc3f43bf90a6b9",
+			"id": "c00a5bf0892c0b20",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#SIMULATION_CHUNK_RINGS",

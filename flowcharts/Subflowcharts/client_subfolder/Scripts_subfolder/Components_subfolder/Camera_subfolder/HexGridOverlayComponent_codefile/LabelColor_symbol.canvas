@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c4bf03e7e5564614",
+			"id": "aa687695de275124",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
 			"subpath": "#LabelColor",

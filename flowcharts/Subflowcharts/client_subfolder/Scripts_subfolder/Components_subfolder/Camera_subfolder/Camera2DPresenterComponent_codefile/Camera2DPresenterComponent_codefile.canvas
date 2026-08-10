@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "5316fab7fa74552d",
+			"id": "0fa3f6bf4e3cdaee",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/Camera2DPresenterComponent (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/_localPlayerPCam2D_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "40f886970e95e69c",
+			"id": "778cfb6dbfc015b2",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/_localPlayerPCam2D_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/_Process_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "fcb9a91d083d191b",
+			"id": "bc7679124543ac88",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/_rig_symbol.canvas",
 			"color": "5",
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "976d40ce7864ee20",
+			"id": "0f164eea568e3fe0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/OnEntityReady_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/Camera2DPresenterComponent (class)_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "46782ba027af06d5",
+			"id": "e71f087ecff5ccf8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/RegisterCamera_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/OnEntityReady_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "dda4814e955162cc",
+			"id": "df534c55cd7c1cb6",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/UnregisterCamera_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/RegisterCamera_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -61,9 +61,9 @@
 			"height": 400
 		},
 		{
-			"id": "9c4e8eee35286061",
+			"id": "a0bafa160a440770",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/_Process_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/UnregisterCamera_symbol.canvas",
 			"color": "5",
 			"x": 2760,
 			"y": 0,
@@ -75,8 +75,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

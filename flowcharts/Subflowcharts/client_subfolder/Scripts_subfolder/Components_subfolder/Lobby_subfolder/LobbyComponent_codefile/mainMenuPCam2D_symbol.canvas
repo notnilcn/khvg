@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e25058ebf7d20df8",
+			"id": "06b7e3aff0b476dc",
 			"type": "file",
 			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
 			"subpath": "#mainMenuPCam2D",

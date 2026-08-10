@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "94a76434282247c1",
+			"id": "2334617e064cba64",
 			"type": "file",
 			"file": "client/Scripts/Components/ControlComponent.cs",
 			"subpath": "#_Ready",

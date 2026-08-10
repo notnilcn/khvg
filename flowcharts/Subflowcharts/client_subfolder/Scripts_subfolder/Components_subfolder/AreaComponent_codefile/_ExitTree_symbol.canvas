@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ce2f7f99c9f15ce7",
+			"id": "62730919d0f81e00",
 			"type": "file",
 			"file": "client/Scripts/Components/AreaComponent.cs",
 			"subpath": "#_ExitTree",

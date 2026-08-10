@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0335284a03a54ee3",
+			"id": "3ccff7268cc54e5c",
 			"type": "file",
 			"file": "client/Scenes/UI/inventory_panel.tscn",
 			"x": 0,

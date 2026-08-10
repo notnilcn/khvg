@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "f1c6f1b43387a1d0",
+			"type": "file",
+			"file": "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder/sub_subfolder/util_codefile/util_fn_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
+	}
+}

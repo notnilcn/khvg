@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ae6507ced8866421",
+			"id": "f737947dcc64121c",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/reducers.rs",
 			"subpath": "#tick_enemy_behavior",

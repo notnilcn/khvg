@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "980416ad0cead486",
+			"id": "e52031e48d8d87c8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/Enemy (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/_Process_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "1c7330a0ad00fc30",
+			"id": "1479182223fd28bc",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/componentRegistry_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/_Ready_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "374528b915ec7c78",
+			"id": "71b305e8b8cc3cd0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/RegisterComponent_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/bulletPatternEventBinder_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "87a50d51dfcf4ebf",
+			"id": "b7cda9e0a1221fc0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/UnregisterComponent_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/componentRegistry_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "fd52af0cf6887011",
+			"id": "136b5e6f73599a32",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/GetComponent (System.Type)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/Enemy (class)_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,7 +51,7 @@
 			"height": 400
 		},
 		{
-			"id": "6458874e1ada3e72",
+			"id": "3678653f67c1352c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/GetComponent (no params)_symbol.canvas",
 			"color": "5",
@@ -61,9 +61,9 @@
 			"height": 400
 		},
 		{
-			"id": "0499b4e8f26c3c81",
+			"id": "c4c074d90a080a38",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/interpolation_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/GetComponent (System.Type)_symbol.canvas",
 			"color": "5",
 			"x": 2760,
 			"y": 0,
@@ -71,9 +71,9 @@
 			"height": 400
 		},
 		{
-			"id": "905908bd6e32d158",
+			"id": "652601c23066546c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/sprite_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/interpolation_symbol.canvas",
 			"color": "5",
 			"x": 3220,
 			"y": 0,
@@ -81,7 +81,7 @@
 			"height": 400
 		},
 		{
-			"id": "5b8ef51a5399adf9",
+			"id": "8b94a572bef09540",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/maxHp_symbol.canvas",
 			"color": "5",
@@ -91,7 +91,7 @@
 			"height": 400
 		},
 		{
-			"id": "f4189a1f2f7a880c",
+			"id": "69ca39a54400fcfa",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/nearbyEnemiesBinder_symbol.canvas",
 			"color": "5",
@@ -101,9 +101,9 @@
 			"height": 400
 		},
 		{
-			"id": "8cc2f5a0e985d7ba",
+			"id": "19d43f0db1bc6f64",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/bulletPatternEventBinder_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnBulletPatternRowInserted_symbol.canvas",
 			"color": "5",
 			"x": 4600,
 			"y": 0,
@@ -111,9 +111,9 @@
 			"height": 400
 		},
 		{
-			"id": "2514efe40f85cd39",
+			"id": "8f0b73c7aefd6598",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/_Ready_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnEnemyRowInserted_symbol.canvas",
 			"color": "5",
 			"x": 5060,
 			"y": 0,
@@ -121,9 +121,9 @@
 			"height": 400
 		},
 		{
-			"id": "c1b260923c9eacc0",
+			"id": "372a2ffc648ea290",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/_Process_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnEnemyRowUpdated_symbol.canvas",
 			"color": "5",
 			"x": 5520,
 			"y": 0,
@@ -131,9 +131,9 @@
 			"height": 400
 		},
 		{
-			"id": "35020613feb55054",
+			"id": "93c4ad90172f8b60",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnEnemyRowInserted_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/RegisterComponent_symbol.canvas",
 			"color": "5",
 			"x": 5980,
 			"y": 0,
@@ -141,9 +141,9 @@
 			"height": 400
 		},
 		{
-			"id": "cc14b24851fe29f1",
+			"id": "04d88d53400f23ec",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnEnemyRowUpdated_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/sprite_symbol.canvas",
 			"color": "5",
 			"x": 6440,
 			"y": 0,
@@ -151,9 +151,9 @@
 			"height": 400
 		},
 		{
-			"id": "32f056d22dbbadd0",
+			"id": "37bf62e599ef1cae",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnBulletPatternRowInserted_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/UnregisterComponent_symbol.canvas",
 			"color": "5",
 			"x": 6900,
 			"y": 0,
@@ -165,6 +165,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-server/spacetimedb/src/enemy/views-_dot_-rs-_hashtag_-enemy_templates-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-read",
@@ -172,8 +173,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
-				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read"
 			]
 		}
 	}

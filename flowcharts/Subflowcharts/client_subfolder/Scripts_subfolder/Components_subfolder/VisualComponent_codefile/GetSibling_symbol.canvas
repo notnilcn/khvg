@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "aaad556b818d9e99",
+			"id": "ffbd8889a101359a",
 			"type": "file",
 			"file": "client/Scripts/Components/VisualComponent.cs",
 			"subpath": "#GetSibling",

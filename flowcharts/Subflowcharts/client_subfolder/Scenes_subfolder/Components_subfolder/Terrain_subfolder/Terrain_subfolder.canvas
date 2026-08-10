@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "80d49c33513021a6",
+			"id": "74f0e94b1eb9e1ce",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Terrain_subfolder/terrain_component_codefile/terrain_component_codefile.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "5334d2ecae70c605",
+			"id": "9841c0af090272d6",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Terrain_subfolder/tile_component_codefile/tile_component_codefile.canvas",
 			"color": "5",
@@ -25,6 +25,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"subfolder",
 				"edge-_colon_-client/Scripts/Components/Terrain/TerrainComponent-_dot_-cs-_hashtag_-TerrainComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/TerrainComponent_codefile-_dot_-canvas-_colon_-script",
@@ -33,10 +34,9 @@
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/addons/sstdbsdk/TableBinderComponent-_dot_-cs-_hashtag_-TableBinderComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/addons_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/sstdbsdk/TableBinderComponent-_dot_-cs-_hashtag_-TableBinderComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-bind",
@@ -56,8 +56,7 @@
 				"edge-_colon_-client/Scripts/Components/Terrain/DecorShadowComponent-_dot_-cs-_hashtag_-DecorShadowComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorShadowComponent_codefile/DecorShadowComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Terrain/DecorComponent-_dot_-cs-_hashtag_-DecorComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent_codefile-_dot_-canvas-_colon_-script",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent_codefile-_dot_-canvas-_colon_-script"
 			]
 		}
 	}

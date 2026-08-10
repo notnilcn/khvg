@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "4a8c645b9d549e7c",
+			"id": "71eb6e323eb468b4",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/CombatComponent (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_aimAssist_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "b9be4322fbc32128",
+			"id": "efae3f7afa401a30",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_weapon_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_ExitTree_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "78fefd90da992557",
+			"id": "ae24be1baaa07682",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_weaponItemId_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_firePeriod_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,7 +31,7 @@
 			"height": 400
 		},
 		{
-			"id": "7442c845b15c6f8b",
+			"id": "1ea9a90502f1e92c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_fireTimer_symbol.canvas",
 			"color": "5",
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "894a0e617810c93e",
+			"id": "60c4ae2c0badc550",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_firePeriod_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_lockOn_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "21313d188b91e66e",
+			"id": "ec05e24c54adcf20",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_zoneStep_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_nearestEnemy_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -61,7 +61,7 @@
 			"height": 400
 		},
 		{
-			"id": "456bfa15e7a58084",
+			"id": "dc3a3629acfeb132",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_playerRadius_symbol.canvas",
 			"color": "5",
@@ -71,9 +71,9 @@
 			"height": 400
 		},
 		{
-			"id": "52a6ece6d8069523",
+			"id": "1726f0a169c47ca0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_aimAssist_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_Process_symbol.canvas",
 			"color": "5",
 			"x": 3220,
 			"y": 0,
@@ -81,9 +81,9 @@
 			"height": 400
 		},
 		{
-			"id": "7c331549477d4e5f",
+			"id": "2ac035bfc305e434",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_lockOn_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_Ready_symbol.canvas",
 			"color": "5",
 			"x": 3680,
 			"y": 0,
@@ -91,9 +91,9 @@
 			"height": 400
 		},
 		{
-			"id": "d9c21950620d99ca",
+			"id": "3727367643b9d588",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_nearestEnemy_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_scanTimer_symbol.canvas",
 			"color": "5",
 			"x": 4140,
 			"y": 0,
@@ -101,9 +101,9 @@
 			"height": 400
 		},
 		{
-			"id": "d448017376ef513a",
+			"id": "df43ec66431f94a0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_scanTimer_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_weapon_symbol.canvas",
 			"color": "5",
 			"x": 4600,
 			"y": 0,
@@ -111,9 +111,9 @@
 			"height": 400
 		},
 		{
-			"id": "1739f9529e82e6e1",
+			"id": "99c695b8afe88900",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/player_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_weaponItemId_symbol.canvas",
 			"color": "5",
 			"x": 5060,
 			"y": 0,
@@ -121,9 +121,9 @@
 			"height": 400
 		},
 		{
-			"id": "0ca10f185ea42fbc",
+			"id": "10cb89d60fbfe79c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/nearbyEnemiesBinder_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_zoneStep_symbol.canvas",
 			"color": "5",
 			"x": 5520,
 			"y": 0,
@@ -131,9 +131,9 @@
 			"height": 400
 		},
 		{
-			"id": "f8f8434501c841b4",
+			"id": "006aae99cd585264",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/ScanInterval_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/AimConeHalfAngle_symbol.canvas",
 			"color": "5",
 			"x": 5980,
 			"y": 0,
@@ -141,9 +141,9 @@
 			"height": 400
 		},
 		{
-			"id": "a8ea926448afa38b",
+			"id": "a009d4c328490196",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/AimConeHalfAngle_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/CombatComponent (class)_symbol.canvas",
 			"color": "5",
 			"x": 6440,
 			"y": 0,
@@ -151,9 +151,9 @@
 			"height": 400
 		},
 		{
-			"id": "d557c158a6d46bcc",
+			"id": "01ecec2747cdf960",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_Ready_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/Fire_symbol.canvas",
 			"color": "5",
 			"x": 6900,
 			"y": 0,
@@ -161,9 +161,9 @@
 			"height": 400
 		},
 		{
-			"id": "f1a573f57376bb95",
+			"id": "ade5446512ad1796",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/OnRegistered_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/FireCluster_symbol.canvas",
 			"color": "5",
 			"x": 7360,
 			"y": 0,
@@ -171,9 +171,9 @@
 			"height": 400
 		},
 		{
-			"id": "83ec76b99a16f244",
+			"id": "132dd27fe52dbb74",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_Process_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/FireSingle_symbol.canvas",
 			"color": "5",
 			"x": 7820,
 			"y": 0,
@@ -181,9 +181,9 @@
 			"height": 400
 		},
 		{
-			"id": "d56c6443a5002385",
+			"id": "85b9c90306a85aa4",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/OnAimSettingsChanged_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/FireTriple_symbol.canvas",
 			"color": "5",
 			"x": 8280,
 			"y": 0,
@@ -191,9 +191,9 @@
 			"height": 400
 		},
 		{
-			"id": "4554e0deba2e4531",
+			"id": "6e29a9fb47eb8132",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/ScanNearestEnemy_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/GetAimDir_symbol.canvas",
 			"color": "5",
 			"x": 8740,
 			"y": 0,
@@ -201,9 +201,9 @@
 			"height": 400
 		},
 		{
-			"id": "55b78aada4443b94",
+			"id": "4779c74640b88168",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/OnNearbyEnemyDeletedRow_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/nearbyEnemiesBinder_symbol.canvas",
 			"color": "5",
 			"x": 9200,
 			"y": 0,
@@ -211,9 +211,9 @@
 			"height": 400
 		},
 		{
-			"id": "761a0acc4478c12d",
+			"id": "c037a45223869d20",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/GetAimDir_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/OnAimSettingsChanged_symbol.canvas",
 			"color": "5",
 			"x": 9660,
 			"y": 0,
@@ -221,7 +221,7 @@
 			"height": 400
 		},
 		{
-			"id": "3c4d7eeac439113d",
+			"id": "f841ae82f050a8ac",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/OnInventoryChanged_symbol.canvas",
 			"color": "5",
@@ -231,9 +231,9 @@
 			"height": 400
 		},
 		{
-			"id": "c91b17515197462a",
+			"id": "53773d1af4cdb774",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/Fire_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/OnNearbyEnemyDeletedRow_symbol.canvas",
 			"color": "5",
 			"x": 10580,
 			"y": 0,
@@ -241,9 +241,9 @@
 			"height": 400
 		},
 		{
-			"id": "6620977b30b12403",
+			"id": "4905c12e1e678a3c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/FireSingle_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
 			"x": 11040,
 			"y": 0,
@@ -251,9 +251,9 @@
 			"height": 400
 		},
 		{
-			"id": "a08cba1d2867fb3a",
+			"id": "9855cc92dfda61c8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/FireTriple_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/player_symbol.canvas",
 			"color": "5",
 			"x": 11500,
 			"y": 0,
@@ -261,9 +261,9 @@
 			"height": 400
 		},
 		{
-			"id": "3a495100a5801712",
+			"id": "f09fe17764c4eaf8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/FireCluster_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/ScanInterval_symbol.canvas",
 			"color": "5",
 			"x": 11960,
 			"y": 0,
@@ -271,9 +271,9 @@
 			"height": 400
 		},
 		{
-			"id": "ea1214cde3adbd57",
+			"id": "fb48714451cbf908",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/SpawnBulletWithZones_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/ScanNearestEnemy_symbol.canvas",
 			"color": "5",
 			"x": 12420,
 			"y": 0,
@@ -281,9 +281,9 @@
 			"height": 400
 		},
 		{
-			"id": "df9e6f3cb15135c5",
+			"id": "6d93255ddc7b14ec",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/SpawnZonesAlong_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/SpawnBulletWithZones_symbol.canvas",
 			"color": "5",
 			"x": 12880,
 			"y": 0,
@@ -291,7 +291,7 @@
 			"height": 400
 		},
 		{
-			"id": "eb975f6b3fd2fd66",
+			"id": "2cde107a6191a3d8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/SpawnZone_symbol.canvas",
 			"color": "5",
@@ -301,9 +301,9 @@
 			"height": 400
 		},
 		{
-			"id": "57a39d3a1dd578f4",
+			"id": "ee9ee798343a47d0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/_ExitTree_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/CombatComponent_codefile/SpawnZonesAlong_symbol.canvas",
 			"color": "5",
 			"x": 13800,
 			"y": 0,
@@ -315,6 +315,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_active_profile-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-read",
@@ -325,8 +326,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/views-_dot_-rs-_hashtag_-nearby_enemies-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-read",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-read",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-read"
 			]
 		}
 	}

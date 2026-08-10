@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e72fcc9b69320a3c",
+			"id": "d3cef78164734ad0",
 			"type": "file",
 			"file": "client/Scripts/Game/GameManager.cs",
 			"subpath": "#RegisterComponent",

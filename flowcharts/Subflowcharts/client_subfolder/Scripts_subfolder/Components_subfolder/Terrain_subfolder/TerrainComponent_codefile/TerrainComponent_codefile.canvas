@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "c28b8ead5e7d9119",
+			"id": "01c52d4f9cd66ea4",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/TerrainComponent (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_activeTiles_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "a0531dc7f288b015",
+			"id": "379ae49d58ea90ea",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/Sqrt3_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_camPos_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "5f3c306b05148ab0",
+			"id": "22bc798c28816c70",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/DefaultHexOuterRadius_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_camZoom_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "506d0d18e653edc4",
+			"id": "c6a3aefdd978fc48",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/FallbackColor_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_decorById_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "5ffa19b06baa47da",
+			"id": "a3bd8fa01a914a80",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_mapConfigBinder_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_decorMeshCache_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "d32dd42ed69fdba2",
+			"id": "4ccf599c753e4290",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_terrainTilesBinder_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_dirty_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -61,7 +61,7 @@
 			"height": 400
 		},
 		{
-			"id": "0ec419796811d749",
+			"id": "6bec6e2037df6080",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_hexDecorBinder_symbol.canvas",
 			"color": "5",
@@ -71,9 +71,9 @@
 			"height": 400
 		},
 		{
-			"id": "058cbb1ae509f38e",
+			"id": "1a669c705d144f00",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_outerRadius_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_mapConfigBinder_symbol.canvas",
 			"color": "5",
 			"x": 3220,
 			"y": 0,
@@ -81,9 +81,9 @@
 			"height": 400
 		},
 		{
-			"id": "653a2441f30a4cce",
+			"id": "83253f2934243dc8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_tilesById_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_meshCache_symbol.canvas",
 			"color": "5",
 			"x": 3680,
 			"y": 0,
@@ -91,9 +91,9 @@
 			"height": 400
 		},
 		{
-			"id": "eab1b2e52e9e017f",
+			"id": "b79826c13bb8d8ec",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_tilesByHex_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_outerRadius_symbol.canvas",
 			"color": "5",
 			"x": 4140,
 			"y": 0,
@@ -101,9 +101,9 @@
 			"height": 400
 		},
 		{
-			"id": "af65ea9f3b8400ad",
+			"id": "acc84d5d3acf96f4",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_textureCache_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_Process_symbol.canvas",
 			"color": "5",
 			"x": 4600,
 			"y": 0,
@@ -111,9 +111,9 @@
 			"height": 400
 		},
 		{
-			"id": "dfac7a7e6d3bfec1",
+			"id": "8247b6fbec391c78",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_meshCache_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_Ready_symbol.canvas",
 			"color": "5",
 			"x": 5060,
 			"y": 0,
@@ -121,9 +121,9 @@
 			"height": 400
 		},
 		{
-			"id": "a535bb22d159aa24",
+			"id": "cbf8e87b09972d68",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_decorById_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_releaseBuffer_symbol.canvas",
 			"color": "5",
 			"x": 5520,
 			"y": 0,
@@ -131,9 +131,9 @@
 			"height": 400
 		},
 		{
-			"id": "dbf89768d369125a",
+			"id": "07c9c5e02cccd580",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_decorMeshCache_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_terrainTilesBinder_symbol.canvas",
 			"color": "5",
 			"x": 5980,
 			"y": 0,
@@ -141,9 +141,9 @@
 			"height": 400
 		},
 		{
-			"id": "4e3498cdfb68a529",
+			"id": "f251066d7bc63e4a",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_tilePool_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_textureCache_symbol.canvas",
 			"color": "5",
 			"x": 6440,
 			"y": 0,
@@ -151,9 +151,9 @@
 			"height": 400
 		},
 		{
-			"id": "71d994a14042d815",
+			"id": "65dc05c86e1c1800",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_activeTiles_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_tilePool_symbol.canvas",
 			"color": "5",
 			"x": 6900,
 			"y": 0,
@@ -161,9 +161,9 @@
 			"height": 400
 		},
 		{
-			"id": "577cf2d7e555380c",
+			"id": "beb21b6ffc86ec2a",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_camPos_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_tilesByHex_symbol.canvas",
 			"color": "5",
 			"x": 7360,
 			"y": 0,
@@ -171,9 +171,9 @@
 			"height": 400
 		},
 		{
-			"id": "788ff637f5fc5a4c",
+			"id": "62392b29ad95b7cc",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_camZoom_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_tilesById_symbol.canvas",
 			"color": "5",
 			"x": 7820,
 			"y": 0,
@@ -181,9 +181,9 @@
 			"height": 400
 		},
 		{
-			"id": "f04126c8ae5611dc",
+			"id": "081c834b4691136e",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_dirty_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/AcquireTile_symbol.canvas",
 			"color": "5",
 			"x": 8280,
 			"y": 0,
@@ -191,9 +191,9 @@
 			"height": 400
 		},
 		{
-			"id": "0ff124b8d988946c",
+			"id": "9335ecc865224810",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/RingChunkCount_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/AddDecorInstance_symbol.canvas",
 			"color": "5",
 			"x": 8740,
 			"y": 0,
@@ -201,9 +201,9 @@
 			"height": 400
 		},
 		{
-			"id": "b31de53aac1f7525",
+			"id": "932acbf4ba3e40c8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_Ready_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/AddTile_symbol.canvas",
 			"color": "5",
 			"x": 9200,
 			"y": 0,
@@ -211,9 +211,9 @@
 			"height": 400
 		},
 		{
-			"id": "4f519a8be592e453",
+			"id": "bb3093cfbd3ebdf4",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnEntityReady_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/AllPresentChunks_symbol.canvas",
 			"color": "5",
 			"x": 9660,
 			"y": 0,
@@ -221,9 +221,9 @@
 			"height": 400
 		},
 		{
-			"id": "ce90b0169502de01",
+			"id": "4721a73f99c3dbc0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_Process_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/CreateTile_symbol.canvas",
 			"color": "5",
 			"x": 10120,
 			"y": 0,
@@ -231,9 +231,9 @@
 			"height": 400
 		},
 		{
-			"id": "de2d8c6245f9058f",
+			"id": "ddeeb350571f9560",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnMapConfigRow_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/DefaultHexOuterRadius_symbol.canvas",
 			"color": "5",
 			"x": 10580,
 			"y": 0,
@@ -241,9 +241,9 @@
 			"height": 400
 		},
 		{
-			"id": "9b0d3d98a7e1ee17",
+			"id": "bf87175d5a51f070",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/AddTile_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/EmptyDecor_symbol.canvas",
 			"color": "5",
 			"x": 11040,
 			"y": 0,
@@ -251,9 +251,9 @@
 			"height": 400
 		},
 		{
-			"id": "5c151f6afd1ec34a",
+			"id": "a3710ae956675dce",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/RemoveTile_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/EmptyGround_symbol.canvas",
 			"color": "5",
 			"x": 11500,
 			"y": 0,
@@ -261,9 +261,9 @@
 			"height": 400
 		},
 		{
-			"id": "bdbc68269b1eeff9",
+			"id": "e8a56feca006cbc0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnTileRowInserted_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/EmptyOverlay_symbol.canvas",
 			"color": "5",
 			"x": 11960,
 			"y": 0,
@@ -271,9 +271,9 @@
 			"height": 400
 		},
 		{
-			"id": "a28edba0638e8653",
+			"id": "cf86ea1aa88c6768",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnTileRowUpdated_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/FallbackColor_symbol.canvas",
 			"color": "5",
 			"x": 12420,
 			"y": 0,
@@ -281,9 +281,9 @@
 			"height": 400
 		},
 		{
-			"id": "5f48062d0024a748",
+			"id": "e927d13f4ce95f4a",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnTileRowDeleted_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetChunkGroup_symbol.canvas",
 			"color": "5",
 			"x": 12880,
 			"y": 0,
@@ -291,9 +291,9 @@
 			"height": 400
 		},
 		{
-			"id": "b721f254241b53d8",
+			"id": "a052404b8b127330",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnDecorRowInserted_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetDecorMeshAndTexture_symbol.canvas",
 			"color": "5",
 			"x": 13340,
 			"y": 0,
@@ -301,9 +301,9 @@
 			"height": 400
 		},
 		{
-			"id": "b096b69c6cc9b433",
+			"id": "718da242eb49dc38",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnDecorRowUpdated_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetOrBuildDecorMesh_symbol.canvas",
 			"color": "5",
 			"x": 13800,
 			"y": 0,
@@ -311,9 +311,9 @@
 			"height": 400
 		},
 		{
-			"id": "91d7cac244298535",
+			"id": "39cd17719318a2d8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnDecorRowDeleted_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetOrBuildMesh_symbol.canvas",
 			"color": "5",
 			"x": 14260,
 			"y": 0,
@@ -321,9 +321,9 @@
 			"height": 400
 		},
 		{
-			"id": "547ceda08b3d4c5c",
+			"id": "a41d02788a177b20",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/InvalidateMeshes_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetTexture_symbol.canvas",
 			"color": "5",
 			"x": 14720,
 			"y": 0,
@@ -331,9 +331,9 @@
 			"height": 400
 		},
 		{
-			"id": "10f1732dbee617e5",
+			"id": "5b2cc9ff2ead2a0c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/CreateTile_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetWedgeCentroid_symbol.canvas",
 			"color": "5",
 			"x": 15180,
 			"y": 0,
@@ -341,9 +341,9 @@
 			"height": 400
 		},
 		{
-			"id": "89fb8f87c8bd6372",
+			"id": "1ee7b3eea4b8480c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/AcquireTile_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetWedgeMeshAndTexture_symbol.canvas",
 			"color": "5",
 			"x": 15640,
 			"y": 0,
@@ -351,9 +351,9 @@
 			"height": 400
 		},
 		{
-			"id": "7dbc8e268f9596e3",
+			"id": "26c675f485729da8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/RebuildVisibleInstances_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetWedgeVertices_symbol.canvas",
 			"color": "5",
 			"x": 16100,
 			"y": 0,
@@ -361,9 +361,9 @@
 			"height": 400
 		},
 		{
-			"id": "5941e8deda2cd245",
+			"id": "3ea02c173e62241c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/_releaseBuffer_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/HexToWorld_symbol.canvas",
 			"color": "5",
 			"x": 16560,
 			"y": 0,
@@ -371,9 +371,9 @@
 			"height": 400
 		},
 		{
-			"id": "f7e4b001d6747cc1",
+			"id": "ec49a4639a140f64",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/EmptyGround_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/InvalidateMeshes_symbol.canvas",
 			"color": "5",
 			"x": 17020,
 			"y": 0,
@@ -381,9 +381,9 @@
 			"height": 400
 		},
 		{
-			"id": "8ed51013ab3263bd",
+			"id": "3734d8f04b908d40",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/EmptyOverlay_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnDecorRowDeleted_symbol.canvas",
 			"color": "5",
 			"x": 17480,
 			"y": 0,
@@ -391,9 +391,9 @@
 			"height": 400
 		},
 		{
-			"id": "ec7e7825b5963cad",
+			"id": "f79f9a2194a4817c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/EmptyDecor_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnDecorRowInserted_symbol.canvas",
 			"color": "5",
 			"x": 17940,
 			"y": 0,
@@ -401,9 +401,9 @@
 			"height": 400
 		},
 		{
-			"id": "3ba4c22108457d3b",
+			"id": "5fd94196cd9bc0b0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetChunkGroup_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnDecorRowUpdated_symbol.canvas",
 			"color": "5",
 			"x": 18400,
 			"y": 0,
@@ -411,9 +411,9 @@
 			"height": 400
 		},
 		{
-			"id": "d48662a029b8d075",
+			"id": "33bdfa4e1b11ac30",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/AllPresentChunks_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnEntityReady_symbol.canvas",
 			"color": "5",
 			"x": 18860,
 			"y": 0,
@@ -421,9 +421,9 @@
 			"height": 400
 		},
 		{
-			"id": "f7e4d87dbde9e853",
+			"id": "2fa5dadaafa98d6c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/AddDecorInstance_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnMapConfigRow_symbol.canvas",
 			"color": "5",
 			"x": 19320,
 			"y": 0,
@@ -431,9 +431,9 @@
 			"height": 400
 		},
 		{
-			"id": "5778966bcad4e155",
+			"id": "aa9b2c6f00edd194",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetWedgeMeshAndTexture_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnTileRowDeleted_symbol.canvas",
 			"color": "5",
 			"x": 19780,
 			"y": 0,
@@ -441,9 +441,9 @@
 			"height": 400
 		},
 		{
-			"id": "5ad7970ca65f7eb9",
+			"id": "d13f75c80f427b90",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetDecorMeshAndTexture_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnTileRowInserted_symbol.canvas",
 			"color": "5",
 			"x": 20240,
 			"y": 0,
@@ -451,9 +451,9 @@
 			"height": 400
 		},
 		{
-			"id": "9573c1c6402a2b28",
+			"id": "d6589a89697097d0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetOrBuildDecorMesh_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/OnTileRowUpdated_symbol.canvas",
 			"color": "5",
 			"x": 20700,
 			"y": 0,
@@ -461,9 +461,9 @@
 			"height": 400
 		},
 		{
-			"id": "9ca0d7232000b4f4",
+			"id": "4bffaa3a4db34090",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetWedgeVertices_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/RebuildVisibleInstances_symbol.canvas",
 			"color": "5",
 			"x": 21160,
 			"y": 0,
@@ -471,9 +471,9 @@
 			"height": 400
 		},
 		{
-			"id": "cfa038db03e6ed0d",
+			"id": "c54ed1d9ad67b1a2",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetWedgeCentroid_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/RemapUv_symbol.canvas",
 			"color": "5",
 			"x": 21620,
 			"y": 0,
@@ -481,9 +481,9 @@
 			"height": 400
 		},
 		{
-			"id": "e9358c6435697e6f",
+			"id": "33c901ef2eef4310",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetOrBuildMesh_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/RemoveTile_symbol.canvas",
 			"color": "5",
 			"x": 22080,
 			"y": 0,
@@ -491,9 +491,9 @@
 			"height": 400
 		},
 		{
-			"id": "f5b1c2228a02b4e8",
+			"id": "c18bea04642e0cf8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/UvFor_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/ResolveTexture_symbol.canvas",
 			"color": "5",
 			"x": 22540,
 			"y": 0,
@@ -501,9 +501,9 @@
 			"height": 400
 		},
 		{
-			"id": "74b7cdb016e058f1",
+			"id": "e21d800da0e7106c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/RemapUv_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/RingChunkCount_symbol.canvas",
 			"color": "5",
 			"x": 23000,
 			"y": 0,
@@ -511,9 +511,9 @@
 			"height": 400
 		},
 		{
-			"id": "b77f02690a0602e9",
+			"id": "65561368cfda0760",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/GetTexture_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/Sqrt3_symbol.canvas",
 			"color": "5",
 			"x": 23460,
 			"y": 0,
@@ -521,9 +521,9 @@
 			"height": 400
 		},
 		{
-			"id": "1f307149e07c3b91",
+			"id": "8659b1ec98caf9d0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/ResolveTexture_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/TerrainComponent (class)_symbol.canvas",
 			"color": "5",
 			"x": 23920,
 			"y": 0,
@@ -531,9 +531,9 @@
 			"height": 400
 		},
 		{
-			"id": "fee774dfc7370bd9",
+			"id": "8c39d6d57d80feba",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/HexToWorld_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/UvFor_symbol.canvas",
 			"color": "5",
 			"x": 24380,
 			"y": 0,
@@ -545,8 +545,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

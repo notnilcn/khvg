@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "13f06c0af1217a01",
+			"id": "d5b9d16a0cd9a0fc",
 			"type": "file",
 			"file": "client/Scenes/profile_panel.tscn",
 			"x": 0,

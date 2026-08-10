@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6e7d26b39f5c6f07",
+			"id": "093b7a96681b064c",
 			"type": "file",
 			"file": "client/Scripts/Players/Remote/RemotePlayer.cs",
 			"subpath": "#RegisterComponent",

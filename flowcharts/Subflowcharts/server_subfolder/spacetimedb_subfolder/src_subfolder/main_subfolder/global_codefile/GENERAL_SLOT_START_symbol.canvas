@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d2b56ef084ae5675",
+			"id": "efeb6217d1532668",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#GENERAL_SLOT_START",

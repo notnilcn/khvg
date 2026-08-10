@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9f4f48261b647ee8",
+			"id": "5abec83808237430",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#DEFAULT_CHUNK_ROWS",

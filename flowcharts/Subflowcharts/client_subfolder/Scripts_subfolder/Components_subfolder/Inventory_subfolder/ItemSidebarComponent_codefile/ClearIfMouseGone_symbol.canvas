@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "18762806a62d31d8",
+			"id": "dd7cb221d53b6788",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#ClearIfMouseGone",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "618a8ee24ed8798c",
+			"id": "5d791255e08249b0",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/def_tables.rs",
 			"subpath": "#MultiShot",

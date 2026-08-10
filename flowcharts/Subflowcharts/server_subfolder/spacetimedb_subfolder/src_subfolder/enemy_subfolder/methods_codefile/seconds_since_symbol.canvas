@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0d04a238d2ffe1fb",
+			"id": "69298157a4b37ee6",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#seconds_since",

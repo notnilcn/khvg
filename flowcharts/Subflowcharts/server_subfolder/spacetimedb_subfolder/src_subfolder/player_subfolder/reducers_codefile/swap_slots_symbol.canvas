@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1356cfae274640a6",
+			"id": "f5065b9eaf96f304",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/reducers.rs",
 			"subpath": "#swap_slots",

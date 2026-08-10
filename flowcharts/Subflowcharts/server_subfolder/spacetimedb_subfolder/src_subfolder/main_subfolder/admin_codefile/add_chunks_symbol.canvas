@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "235ece45b8d33180",
+			"id": "2f59dbdf24c045ce",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#add_chunks",

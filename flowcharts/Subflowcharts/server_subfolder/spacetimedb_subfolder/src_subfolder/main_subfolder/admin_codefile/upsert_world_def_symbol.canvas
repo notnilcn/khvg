@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f471f150c3c7bfb0",
+			"id": "b562f31976a5a622",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#upsert_world_def",

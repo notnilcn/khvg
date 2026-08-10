@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "98b1eaba1e92a59a",
+			"id": "a935705bb957ec7c",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#_snapDist",

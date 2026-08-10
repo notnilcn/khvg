@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6bc9ba82ba83eeac",
+			"id": "586d96647092e878",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/instance_tables.rs",
 			"subpath": "#BulletPatternEvent",

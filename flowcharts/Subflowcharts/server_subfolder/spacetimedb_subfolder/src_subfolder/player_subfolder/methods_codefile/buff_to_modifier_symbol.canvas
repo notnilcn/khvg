@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "839b2633883f68f7",
+			"id": "d2721d5d9dce8b8a",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/methods.rs",
 			"subpath": "#buff_to_modifier",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "cf87e9a1b5e607c6",
+			"id": "b5cc27f7f23d4540",
 			"type": "file",
 			"file": "server/spacetimedb/src/item/tables.rs",
 			"subpath": "#WeaponBehavior",

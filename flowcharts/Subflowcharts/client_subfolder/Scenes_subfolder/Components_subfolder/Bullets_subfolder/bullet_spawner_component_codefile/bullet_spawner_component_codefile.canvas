@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "b4972023afedf8e6",
+			"id": "afe05fda58b9d1f0",
 			"type": "file",
 			"file": "client/Scenes/Components/Bullets/bullet_spawner_component.tscn",
 			"x": 0,

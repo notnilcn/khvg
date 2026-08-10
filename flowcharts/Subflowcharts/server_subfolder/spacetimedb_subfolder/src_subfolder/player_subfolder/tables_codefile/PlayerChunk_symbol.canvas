@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "7e015a9fdd64d3d9",
+			"id": "cd14f1571192ac22",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/tables.rs",
 			"subpath": "#PlayerChunk",

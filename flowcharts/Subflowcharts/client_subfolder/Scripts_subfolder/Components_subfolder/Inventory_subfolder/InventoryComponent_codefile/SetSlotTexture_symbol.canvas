@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "dc58bbeba42e97ec",
+			"id": "134a4553a7bc5c54",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/InventoryComponent.cs",
 			"subpath": "#SetSlotTexture",

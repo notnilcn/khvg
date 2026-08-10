@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1c60c09288c19fdb",
+			"id": "cc0c6c1fa42a7268",
 			"type": "file",
 			"file": "client/Scripts/Components/Data/LocalPlayerDataComponent.cs",
 			"subpath": "#OnDataRow",

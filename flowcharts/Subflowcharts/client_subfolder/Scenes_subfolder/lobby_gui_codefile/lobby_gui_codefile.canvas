@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "5e25ef4fce0bc5fb",
+			"id": "f71cb656305aaa0c",
 			"type": "file",
 			"file": "client/Scenes/lobby_gui.tscn",
 			"x": 0,

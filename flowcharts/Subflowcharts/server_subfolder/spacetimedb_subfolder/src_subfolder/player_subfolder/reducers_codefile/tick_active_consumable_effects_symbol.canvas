@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "7b4b7e92527023e7",
+			"id": "6089a5b4b1817408",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/reducers.rs",
 			"subpath": "#tick_active_consumable_effects",

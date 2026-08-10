@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6cda161cdd35f8a8",
+			"id": "4742162036473780",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#spawn_from_biome_regions",

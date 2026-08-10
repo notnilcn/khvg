@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "eab52e5f9d37bb6e",
+			"id": "bc4343cd5fcb69b2",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#OnTextureRowDeleted",

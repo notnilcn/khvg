@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9b797b0f9734a22c",
+			"id": "4df23e8e9a929bd8",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/def_tables.rs",
 			"subpath": "#PhaseDef",

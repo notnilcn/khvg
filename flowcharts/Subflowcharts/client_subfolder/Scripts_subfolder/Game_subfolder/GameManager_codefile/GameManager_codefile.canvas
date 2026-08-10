@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "b3e452276215c11f",
+			"id": "f4a39b806e81b000",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GameManager (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/_ExitTree_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "da948d77cdd72b02",
+			"id": "85b8d6694fc72136",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/instance_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/_Ready_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "e40a120a9ef46147",
+			"id": "a9fee13da7981618",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/componentRegistry_symbol.canvas",
 			"color": "5",
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "85a6db35bd2cf268",
+			"id": "e023d48739156f54",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/RegisterComponent_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GameManager (class)_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "2d014ff750b8a8e2",
+			"id": "93a8def1b2a1139c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/UnregisterComponent_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/Get_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "9ed31535ded3abf4",
+			"id": "adb0bce0cc12d340",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetComponent (Type)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetComponent (no params)_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -61,9 +61,9 @@
 			"height": 400
 		},
 		{
-			"id": "8a7de5695089fc7b",
+			"id": "69d3314788fd6bd8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetComponent (no params)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetComponent (Type)_symbol.canvas",
 			"color": "5",
 			"x": 2760,
 			"y": 0,
@@ -71,9 +71,9 @@
 			"height": 400
 		},
 		{
-			"id": "bc6d11295a987d28",
+			"id": "b021a8f09160a3e0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/_Ready_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnchantment_symbol.canvas",
 			"color": "5",
 			"x": 3220,
 			"y": 0,
@@ -81,9 +81,9 @@
 			"height": 400
 		},
 		{
-			"id": "a54c5b7ae04ff499",
+			"id": "44b688b37bef8a8c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/_ExitTree_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnchantments_symbol.canvas",
 			"color": "5",
 			"x": 3680,
 			"y": 0,
@@ -91,9 +91,9 @@
 			"height": 400
 		},
 		{
-			"id": "b2f51e0a48caa7e7",
+			"id": "44fac7451feb7542",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/Get_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnemy_symbol.canvas",
 			"color": "5",
 			"x": 4140,
 			"y": 0,
@@ -101,9 +101,9 @@
 			"height": 400
 		},
 		{
-			"id": "fcc435784b4875d1",
+			"id": "3d8692b2ec3cf644",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/IsLocal_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetItem_symbol.canvas",
 			"color": "5",
 			"x": 4600,
 			"y": 0,
@@ -111,9 +111,9 @@
 			"height": 400
 		},
 		{
-			"id": "4a6924233fc69592",
+			"id": "c08dab041d896fa8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnemy_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetResPath_symbol.canvas",
 			"color": "5",
 			"x": 5060,
 			"y": 0,
@@ -121,9 +121,9 @@
 			"height": 400
 		},
 		{
-			"id": "8f884c353d21f97a",
+			"id": "1c0e8b629feacf04",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetResPath_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/instance_symbol.canvas",
 			"color": "5",
 			"x": 5520,
 			"y": 0,
@@ -131,9 +131,9 @@
 			"height": 400
 		},
 		{
-			"id": "e09e6567645e74ff",
+			"id": "5f112baa4b8d9b3c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetItem_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/IsLocal_symbol.canvas",
 			"color": "5",
 			"x": 5980,
 			"y": 0,
@@ -141,9 +141,9 @@
 			"height": 400
 		},
 		{
-			"id": "32dd33a321ec39e3",
+			"id": "4113018923771bfc",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnchantment_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/RegisterComponent_symbol.canvas",
 			"color": "5",
 			"x": 6440,
 			"y": 0,
@@ -151,9 +151,9 @@
 			"height": 400
 		},
 		{
-			"id": "dd2de4c066df3239",
+			"id": "9f751560fe9984c0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnchantments_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/UnregisterComponent_symbol.canvas",
 			"color": "5",
 			"x": 6900,
 			"y": 0,
@@ -165,8 +165,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

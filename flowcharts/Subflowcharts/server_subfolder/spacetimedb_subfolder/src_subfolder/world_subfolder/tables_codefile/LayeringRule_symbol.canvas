@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d28946f2354b6e63",
+			"id": "73e7a4095e42d376",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/tables.rs",
 			"subpath": "#LayeringRule",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bdd140645797f7f1",
+			"id": "6b15eabd96d154b0",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#CAMERA_VIEW_RADIUS",

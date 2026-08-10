@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "dc0c6464acce1c53",
+			"id": "e5732aa53ef3c640",
 			"type": "file",
 			"file": "client/Scripts/Items/Drop.cs",
 			"subpath": "#RegisterComponent",

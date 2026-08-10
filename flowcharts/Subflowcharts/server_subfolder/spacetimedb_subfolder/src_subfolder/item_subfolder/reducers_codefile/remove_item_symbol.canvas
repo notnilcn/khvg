@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6024d8c9f2d0605c",
+			"id": "3c3f6ec5c43cc48e",
 			"type": "file",
 			"file": "server/spacetimedb/src/item/reducers.rs",
 			"subpath": "#remove_item",

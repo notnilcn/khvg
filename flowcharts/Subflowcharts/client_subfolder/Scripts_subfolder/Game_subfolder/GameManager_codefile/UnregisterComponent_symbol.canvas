@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "5466c752bd6ad300",
+			"id": "91ada658f82c79c0",
 			"type": "file",
 			"file": "client/Scripts/Game/GameManager.cs",
 			"subpath": "#UnregisterComponent",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "96f3bb222f361db3",
+			"id": "c9ae7e4c10c85188",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/IComponent_codefile/IComponent (interface)_symbol.canvas",
 			"color": "5",
@@ -15,8 +15,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

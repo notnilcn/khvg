@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "53d1090d10c3a8bc",
+			"id": "8528c300ce01fe00",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#_ExitTree",

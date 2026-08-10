@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "43a77036541ba0ae",
+			"id": "6c53306775f8aaa6",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/Drop (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/_Ready_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "9f24c5caa24181da",
+			"id": "c415244bdc94c320",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/componentRegistry_symbol.canvas",
 			"color": "5",
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "5b29a13d20f00d15",
+			"id": "2d27874d3eb97f92",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/RegisterComponent_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/Drop (class)_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "12486e37f85e66b4",
+			"id": "7f01762e25617904",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/UnregisterComponent_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/GetComponent (no params)_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,7 +41,7 @@
 			"height": 400
 		},
 		{
-			"id": "c4083069d21e8c5d",
+			"id": "d1200dd807c3eb80",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/GetComponent (System.Type)_symbol.canvas",
 			"color": "5",
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "3f5b911d14a97465",
+			"id": "b785428f5ea06644",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/GetComponent (no params)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/RegisterComponent_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -61,9 +61,9 @@
 			"height": 400
 		},
 		{
-			"id": "ba6d079cf41c940e",
+			"id": "7207dddaed619b08",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/_Ready_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/UnregisterComponent_symbol.canvas",
 			"color": "5",
 			"x": 2760,
 			"y": 0,
@@ -75,8 +75,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

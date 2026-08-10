@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4b38af00efba52ee",
+			"id": "2e42fa7ed0a424f0",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#upsert_biome_region_def",

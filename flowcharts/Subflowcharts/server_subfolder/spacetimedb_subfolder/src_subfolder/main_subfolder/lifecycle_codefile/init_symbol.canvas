@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "b9e8b0e04d02db47",
+			"id": "b72278dc8ea14c28",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/lifecycle.rs",
 			"subpath": "#init",

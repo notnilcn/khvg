@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c7e7550220c314b7",
+			"id": "2130dfdcbd728320",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/reducers.rs",
 			"subpath": "#place_building",

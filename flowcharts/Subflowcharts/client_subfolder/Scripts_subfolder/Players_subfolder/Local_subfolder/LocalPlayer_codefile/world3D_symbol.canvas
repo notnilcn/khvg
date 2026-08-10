@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a26b350a9f7c751d",
+			"id": "a7820fcbdc831fee",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#world3D",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "fa99ae97f61cf83f",
+			"id": "478bf76813abeac0",
 			"type": "file",
 			"file": "server/spacetimedb/src/item/mod.rs",
 			"x": 0,

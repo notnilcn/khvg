@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e353e2ae94c30878",
+			"id": "392980e4986b57e0",
 			"type": "file",
 			"file": "client/Scripts/Game/BulletData.cs",
 			"subpath": "#BulletData",

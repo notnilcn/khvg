@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6f5634deb8590a89",
+			"id": "8c828552874c27d4",
 			"type": "file",
 			"file": "client/Scripts/Components/Visual/LocalPlayerProfileComponent.cs",
 			"subpath": "#sprite",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "5b2148481998a1a7",
+			"id": "c0180769d12b4c6c",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/StatsSidebarComponent.cs",
 			"subpath": "#StatsSidebarComponent",

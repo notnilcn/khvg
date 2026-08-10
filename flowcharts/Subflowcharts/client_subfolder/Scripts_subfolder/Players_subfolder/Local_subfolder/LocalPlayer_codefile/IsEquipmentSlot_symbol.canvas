@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a7abbe63880fc51e",
+			"id": "8e60076c418f7c70",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#IsEquipmentSlot",

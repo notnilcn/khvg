@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9a20dac6a0293e4c",
+			"id": "89266f2ab7f1efcc",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#MakeEnchantmentRow",

@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "Game Design Docs/04 Lore.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "04 Lore"
             }
           }
         ]
@@ -182,8 +182,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -195,15 +194,17 @@
       "command-palette:Open command palette": false,
       "bases:Create new base": false,
       "obsidian-git:Open Git source control": false,
-      "track-changes:Open CriticMarkup review panel": false
+      "track-changes:Open CriticMarkup review panel": false,
+      "vscode-editor:Create Code File": false
     }
   },
   "active": "918b12cfbf1973ca",
   "lastOpenFiles": [
-    "Technical Design Docs/To Do.md",
-    "README.md",
-    "Old Notes/001 Explaining Game Code/001 (TO BE OVERHAULED) Opening the game.md",
     "Game Design Docs/01 Executive Summary.md",
+    "Game Design Docs/04 Lore.md",
+    "README.md",
+    "Technical Design Docs/To Do.md",
+    "Old Notes/001 Explaining Game Code/001 (TO BE OVERHAULED) Opening the game.md",
     "Technical Design Docs/Workflow (how to add new things)/00 Index & The Build Loop.md",
     "Technical Design Docs/possible optimisations.md",
     "Game Design Docs/02 Gameplay.md",
@@ -216,7 +217,6 @@
     "Art/Art style 2D.md",
     "Art/Art style 3D.md",
     "CLAUDE.md",
-    "Game Design Docs/04 Lore.md",
     "Game Design Docs/05 Biomes.md",
     "attachments/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
     "attachments/Tilings-of-Flat-Tori-by-Congruent-Hexagons.pdf",

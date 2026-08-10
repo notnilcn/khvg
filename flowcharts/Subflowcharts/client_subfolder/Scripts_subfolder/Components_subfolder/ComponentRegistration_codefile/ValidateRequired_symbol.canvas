@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "02a45a35c2c3d160",
+			"id": "82fd9351949e4b56",
 			"type": "file",
 			"file": "client/Scripts/Components/ComponentRegistration.cs",
 			"subpath": "#ValidateRequired",

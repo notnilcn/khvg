@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "848ff07406fee5fa",
+			"id": "743179cbc23ea3d8",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/tables.rs",
 			"subpath": "#BaseAdjacencyRule",

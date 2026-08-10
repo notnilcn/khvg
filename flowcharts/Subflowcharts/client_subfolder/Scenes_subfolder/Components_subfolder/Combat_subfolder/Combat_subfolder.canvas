@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "5577f21442efe50f",
+			"id": "763f5a3ebde1ae24",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/damage_component_codefile/damage_component_codefile.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "b4ca4bb28e78f03d",
+			"id": "d3879fb21e0df7b4",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/damage_receiving_component_codefile/damage_receiving_component_codefile.canvas",
 			"color": "5",
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "2e84f95910a8e30f",
+			"id": "e21cf77a78e4762c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/health_component_codefile/health_component_codefile.canvas",
 			"color": "5",
@@ -35,6 +35,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"subfolder",
 				"edge-_colon_-client/Scripts/Components/Combat/DamageComponent-_dot_-cs-_hashtag_-DamageComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageComponent_codefile/DamageComponent_codefile-_dot_-canvas-_colon_-script",
@@ -46,8 +47,7 @@
 				"edge-_colon_-client/Scripts/Components/Combat/DamageReceivingComponent-_dot_-cs-_hashtag_-DamageReceivingComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageReceivingComponent_codefile/DamageReceivingComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Combat/HealthComponent-_dot_-cs-_hashtag_-HealthComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/HealthComponent_codefile-_dot_-canvas-_colon_-script",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/HealthComponent_codefile-_dot_-canvas-_colon_-script"
 			]
 		}
 	}

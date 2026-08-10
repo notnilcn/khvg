@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "33b3016c4b2e1bac",
+			"id": "a4062901eaf5bc52",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#has_player_near_spawn_point",

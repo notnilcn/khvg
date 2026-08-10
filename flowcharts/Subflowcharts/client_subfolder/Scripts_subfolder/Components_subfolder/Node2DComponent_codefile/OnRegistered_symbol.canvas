@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "496787e5d48c1557",
+			"id": "7d5178007d669000",
 			"type": "file",
 			"file": "client/Scripts/Components/Node2DComponent.cs",
 			"subpath": "#OnRegistered",

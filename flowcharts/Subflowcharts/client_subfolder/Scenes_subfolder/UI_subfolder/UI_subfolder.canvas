@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3722fbfd8218cb81",
+			"id": "28bbde92aa3a30d8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/debug_overlay_codefile/debug_overlay_codefile.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "adee88ce23f086c3",
+			"id": "de9cfb1a5e3f05c8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/enchantment_row_codefile/enchantment_row_codefile.canvas",
 			"color": "5",
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "67746bb67a25885d",
+			"id": "2122d47813fa5b20",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/inventory_panel_codefile/inventory_panel_codefile.canvas",
 			"color": "5",
@@ -35,6 +35,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"subfolder",
 				"edge-_colon_-client/Scripts/Game/DebugOverlay-_dot_-cs-_hashtag_-DebugOverlay-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay_codefile-_dot_-canvas-_colon_-script",
@@ -51,8 +52,7 @@
 				"edge-_colon_-client/Scripts/Components/Inventory/StatsSidebarComponent-_dot_-cs-_hashtag_-StatsSidebarComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebarComponent_codefile/StatsSidebarComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Inventory/ItemSidebarComponent-_dot_-cs-_hashtag_-ItemSidebarComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/ItemSidebarComponent_codefile-_dot_-canvas-_colon_-script",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/ItemSidebarComponent_codefile-_dot_-canvas-_colon_-script"
 			]
 		}
 	}

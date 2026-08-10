@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "fea85573e736116f",
+			"id": "cc346a5ab8e63678",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#FireTriple",

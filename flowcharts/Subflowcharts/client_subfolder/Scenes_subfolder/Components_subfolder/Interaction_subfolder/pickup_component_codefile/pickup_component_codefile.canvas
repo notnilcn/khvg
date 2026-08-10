@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a4bb14b787cb069e",
+			"id": "a3e4dc52856b5964",
 			"type": "file",
 			"file": "client/Scenes/Components/Interaction/pickup_component.tscn",
 			"x": 0,

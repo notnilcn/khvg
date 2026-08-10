@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d52bf8949329bde3",
+			"id": "055e4e90eea40980",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/SlotComponent.cs",
 			"subpath": "#_DropData",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bb5ee6fd8a96d9ce",
+			"id": "4aa4bae04c406800",
 			"type": "file",
 			"file": "client/Scripts/Components/Movement/PositionSyncComponent.cs",
 			"subpath": "#positionBinder",

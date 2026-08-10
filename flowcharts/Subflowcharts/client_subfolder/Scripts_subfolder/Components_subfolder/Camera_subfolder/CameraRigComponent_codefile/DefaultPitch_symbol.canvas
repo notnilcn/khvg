@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f4a429ce1c3f654b",
+			"id": "3f5a2f8799b008be",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#DefaultPitch",

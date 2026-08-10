@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6f79ae373240d0ed",
+			"id": "3eb1aa3f6e4cdb4e",
 			"type": "file",
 			"file": "client/Scripts/Players/Enemies/Enemy.cs",
 			"subpath": "#RegisterComponent",

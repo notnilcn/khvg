@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "3ad4a917e7d55444",
+			"type": "file",
+			"file": "client/sstdbsdk/TableSubscriber.cs",
+			"subpath": "#SubscribeGame",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

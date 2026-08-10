@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bfadf6f7fbede8bc",
+			"id": "52825a6973d0678e",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#upsert_texture_entry",

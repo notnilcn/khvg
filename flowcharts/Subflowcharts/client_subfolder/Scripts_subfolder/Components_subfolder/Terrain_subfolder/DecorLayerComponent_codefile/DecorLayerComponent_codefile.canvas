@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d143e14aaa253e36",
+			"id": "e7e37e4ceb3c7b40",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorLayerComponent_codefile/DecorLayerComponent (class)_symbol.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "9d38cceafd71e54a",
+			"id": "c0060fb44fb6e8f0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorLayerComponent_codefile/SetInstances_symbol.canvas",
 			"color": "5",
@@ -25,8 +25,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

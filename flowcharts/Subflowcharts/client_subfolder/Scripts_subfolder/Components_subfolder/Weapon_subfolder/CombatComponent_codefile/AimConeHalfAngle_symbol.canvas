@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ff687ca250a51421",
+			"id": "cd87e438b38b9020",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#AimConeHalfAngle",

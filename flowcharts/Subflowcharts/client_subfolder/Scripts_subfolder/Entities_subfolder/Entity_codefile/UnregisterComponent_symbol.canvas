@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "af660c38d7c2c9e6",
+			"id": "3bba578926944daa",
 			"type": "file",
 			"file": "client/Scripts/Entities/Entity.cs",
 			"subpath": "#UnregisterComponent",

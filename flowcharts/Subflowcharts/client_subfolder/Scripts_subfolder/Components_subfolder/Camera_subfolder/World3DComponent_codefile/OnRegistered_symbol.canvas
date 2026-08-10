@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f46d9919b71093e5",
+			"id": "b19fad67645dfa8e",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/World3DComponent.cs",
 			"subpath": "#OnRegistered",

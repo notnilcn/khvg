@@ -1,17 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6f3fdb71c8768cd7",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/hit_zone_codefile/hit_zone_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "b51b00a9f0898b8a",
+			"id": "e4ae64660d11b020",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
 			"color": "5",
@@ -21,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "ef11af550f1ef319",
+			"id": "771bdf0c0e7a81c0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas",
 			"color": "5",
@@ -31,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "92ef60727dbc440e",
+			"id": "7eea45368a0315f8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "b133e0da2ccdc742",
+			"id": "0c79cef6e3c5a5b8",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "8baa670023508ced",
+			"id": "3dafdbce8383b4e0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -61,9 +51,19 @@
 			"height": 400
 		},
 		{
-			"id": "ae3b1bdb03ac6192",
+			"id": "dda9a63a0665be50",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/hit_zone_codefile/hit_zone_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "14ad81da70556260",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
 			"color": "5",
 			"x": 2760,
 			"y": 0,
@@ -71,9 +71,9 @@
 			"height": 400
 		},
 		{
-			"id": "a28811c13be717f8",
+			"id": "7a615a526756e130",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
 			"color": "5",
 			"x": 3220,
 			"y": 0,
@@ -81,7 +81,7 @@
 			"height": 400
 		},
 		{
-			"id": "4a568f9dfb90c285",
+			"id": "773ad628851456c0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
 			"color": "5",
@@ -91,7 +91,7 @@
 			"height": 400
 		},
 		{
-			"id": "e3d0ddbbfe1099b8",
+			"id": "45b98b4ca2b3edd0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
 			"color": "5",
@@ -101,7 +101,7 @@
 			"height": 400
 		},
 		{
-			"id": "39d169d18341e3f8",
+			"id": "629715202c23bac0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Subscription_subfolder/Subscription_subfolder.canvas",
 			"color": "5",
@@ -111,7 +111,7 @@
 			"height": 400
 		},
 		{
-			"id": "ecd92dfebe8a1244",
+			"id": "b34b5fce92a466d8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Terrain_subfolder/Terrain_subfolder.canvas",
 			"color": "5",
@@ -125,26 +125,27 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"subfolder",
-				"edge-_colon_-client/Scripts/Components/Combat/HitZone-_dot_-cs-_hashtag_-HitZone-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HitZone_codefile/HitZone_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Bullets/BulletHitRouterComponent-_dot_-cs-_hashtag_-BulletHitRouterComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletHitRouterComponent_codefile/BulletHitRouterComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Bullets/BulletHitRouterComponent-_dot_-cs-_hashtag_-BulletHitRouterComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletHitRouterComponent_codefile/BulletHitRouterComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Bullets/BulletSpawnerComponent-_dot_-cs-_hashtag_-BulletSpawnerComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/BulletSpawnerComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Camera/Camera2DPresenterComponent-_dot_-cs-_hashtag_-Camera2DPresenterComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/Camera2DPresenterComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Camera/CameraRigComponent-_dot_-cs-_hashtag_-CameraRigComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/CameraRigComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Camera/HexGridOverlayComponent-_dot_-cs-_hashtag_-HexGridOverlayComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HexGridOverlayComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/addons/sstdbsdk/TableBinderComponent-_dot_-cs-_hashtag_-TableBinderComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/addons_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/sstdbsdk/TableBinderComponent-_dot_-cs-_hashtag_-TableBinderComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-bind",
@@ -152,25 +153,6 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-bind",
-				"edge-_colon_-client/Scripts/Components/Camera/CameraRigComponent-_dot_-cs-_hashtag_-CameraRigComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/CameraRigComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Camera/Camera2DPresenterComponent-_dot_-cs-_hashtag_-Camera2DPresenterComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/Camera2DPresenterComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Combat/DamageComponent-_dot_-cs-_hashtag_-DamageComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageComponent_codefile/DamageComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Combat/DamageReceivingComponent-_dot_-cs-_hashtag_-DamageReceivingComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageReceivingComponent_codefile/DamageReceivingComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Combat/HealthComponent-_dot_-cs-_hashtag_-HealthComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/HealthComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Interaction/PickupComponent-_dot_-cs-_hashtag_-PickupComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/PickupComponent_codefile/PickupComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Lobby/LobbyComponent-_dot_-cs-_hashtag_-LobbyComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/LobbyComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_profiles-_colon_-bind",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-client/Scripts/Components/Catalog/CatalogComponent-_dot_-cs-_hashtag_-CatalogComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/CatalogComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder-_dot_-canvas-_colon_-script",
@@ -180,9 +162,27 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/item/views-_dot_-rs-_hashtag_-all_enchantments-_colon_-bind",
+				"edge-_colon_-client/Scripts/Components/Combat/DamageComponent-_dot_-cs-_hashtag_-DamageComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageComponent_codefile/DamageComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Combat/DamageReceivingComponent-_dot_-cs-_hashtag_-DamageReceivingComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageReceivingComponent_codefile/DamageReceivingComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Combat/HealthComponent-_dot_-cs-_hashtag_-HealthComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/HealthComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Data/StatsComponent-_dot_-cs-_hashtag_-StatsComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/StatsComponent_codefile/StatsComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/Data_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Combat/HitZone-_dot_-cs-_hashtag_-HitZone-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HitZone_codefile/HitZone_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Interaction/PickupComponent-_dot_-cs-_hashtag_-PickupComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/PickupComponent_codefile/PickupComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Lobby/LobbyComponent-_dot_-cs-_hashtag_-LobbyComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/LobbyComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_profiles-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-client/Scripts/Components/Movement/InterpolationComponent-_dot_-cs-_hashtag_-InterpolationComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/InterpolationComponent_codefile/InterpolationComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder-_dot_-canvas-_colon_-script",
@@ -195,8 +195,8 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_loot_drops-_colon_-bind",
-				"edge-_colon_-client/addons/sstdbsdk/TableSubscriber-_dot_-cs-_hashtag_-TableSubscriber-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/addons_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/TableSubscriber_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/sstdbsdk/TableSubscriber-_dot_-cs-_hashtag_-TableSubscriber-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/TableSubscriber_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Terrain/TerrainComponent-_dot_-cs-_hashtag_-TerrainComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/TerrainComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/Terrain_subfolder-_dot_-canvas-_colon_-script",
@@ -211,8 +211,7 @@
 				"edge-_colon_-client/Scripts/Components/Terrain/DecorShadowComponent-_dot_-cs-_hashtag_-DecorShadowComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorShadowComponent_codefile/DecorShadowComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Terrain/DecorComponent-_dot_-cs-_hashtag_-DecorComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent_codefile-_dot_-canvas-_colon_-script",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent_codefile-_dot_-canvas-_colon_-script"
 			]
 		}
 	}

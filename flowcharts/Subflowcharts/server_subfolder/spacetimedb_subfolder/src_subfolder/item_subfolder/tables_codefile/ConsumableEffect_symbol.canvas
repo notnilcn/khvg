@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e1dfd290a6a6361e",
+			"id": "c3ee3edb2bf92b00",
 			"type": "file",
 			"file": "server/spacetimedb/src/item/tables.rs",
 			"subpath": "#ConsumableEffect",

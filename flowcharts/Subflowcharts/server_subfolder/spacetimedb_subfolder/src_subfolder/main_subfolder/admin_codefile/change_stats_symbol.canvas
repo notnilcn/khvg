@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "fe5821c2baf24f06",
+			"id": "69e19561079fda0a",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#change_stats",

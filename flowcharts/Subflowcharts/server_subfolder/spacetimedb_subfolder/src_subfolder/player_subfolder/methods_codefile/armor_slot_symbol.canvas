@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "69ae60862340ce2e",
+			"id": "d819328c95ccc4b8",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/methods.rs",
 			"subpath": "#armor_slot",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "23bb391a562cb1ea",
+			"id": "2dec34cd4138b6c2",
 			"type": "file",
 			"file": "client/Scripts/Components/Node2DComponent.cs",
 			"subpath": "#AfterSiblingsReady",

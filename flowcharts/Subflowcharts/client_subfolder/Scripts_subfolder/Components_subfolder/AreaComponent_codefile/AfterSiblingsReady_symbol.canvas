@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "facab17e6e482c25",
+			"id": "831613d8ce283450",
 			"type": "file",
 			"file": "client/Scripts/Components/AreaComponent.cs",
 			"subpath": "#AfterSiblingsReady",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a4937ba9f1fc1fb0",
+			"id": "036732d31bc9f052",
 			"type": "file",
 			"file": "server/spacetimedb/src/item/tables.rs",
 			"subpath": "#EquipSlot",

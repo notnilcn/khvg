@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "64617c35274976cf",
+			"id": "ad0aa1505a5ca020",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
 			"subpath": "#DrawHudText",

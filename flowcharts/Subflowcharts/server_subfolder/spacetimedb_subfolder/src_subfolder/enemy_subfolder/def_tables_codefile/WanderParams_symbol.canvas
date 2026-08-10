@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ccc5438aef20fce8",
+			"id": "b09a8b83f4875746",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/def_tables.rs",
 			"subpath": "#WanderParams",

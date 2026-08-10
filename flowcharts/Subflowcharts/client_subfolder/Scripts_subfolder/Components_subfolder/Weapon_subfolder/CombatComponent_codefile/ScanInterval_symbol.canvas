@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c9d3ecdf9be57636",
+			"id": "56b6c21617c21894",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#ScanInterval",

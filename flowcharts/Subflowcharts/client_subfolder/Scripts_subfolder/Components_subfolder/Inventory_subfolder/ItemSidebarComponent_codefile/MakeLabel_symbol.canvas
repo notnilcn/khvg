@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ad341cc437a04bef",
+			"id": "747897793a75e29a",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#MakeLabel",

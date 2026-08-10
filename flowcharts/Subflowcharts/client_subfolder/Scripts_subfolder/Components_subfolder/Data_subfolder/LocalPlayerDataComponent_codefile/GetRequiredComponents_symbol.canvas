@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "60268652471afbf4",
+			"id": "5ef8fcc569f03a3c",
 			"type": "file",
 			"file": "client/Scripts/Components/Data/LocalPlayerDataComponent.cs",
 			"subpath": "#GetRequiredComponents",

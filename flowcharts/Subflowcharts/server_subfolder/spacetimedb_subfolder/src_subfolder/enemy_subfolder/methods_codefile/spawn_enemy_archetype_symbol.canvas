@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "5c80a380032e6930",
+			"id": "c22409db9fe830be",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#spawn_enemy_archetype",

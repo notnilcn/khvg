@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ba7689f9b0c7b650",
+			"id": "725e7edfa41b3c98",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#has_player_in_simulation_range",

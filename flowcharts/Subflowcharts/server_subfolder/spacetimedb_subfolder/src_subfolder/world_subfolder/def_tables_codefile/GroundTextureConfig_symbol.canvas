@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c236108a849eaba4",
+			"id": "c1584008d26a7f20",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/def_tables.rs",
 			"subpath": "#GroundTextureConfig",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1ea83ace56732cbb",
+			"id": "9023fa44c8e0b768",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#OnTextureRow",

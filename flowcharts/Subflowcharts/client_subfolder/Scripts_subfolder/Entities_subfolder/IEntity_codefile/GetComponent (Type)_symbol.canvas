@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4b7ab091c2eb947d",
+			"id": "4a7586044cf74688",
 			"type": "file",
 			"file": "client/Scripts/Entities/IEntity.cs",
 			"subpath": "#GetComponent",

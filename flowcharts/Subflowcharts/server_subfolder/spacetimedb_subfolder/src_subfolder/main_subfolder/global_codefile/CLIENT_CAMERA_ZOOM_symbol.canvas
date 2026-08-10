@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f1a90967e53f2c87",
+			"id": "1f62771a53522f2c",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#CLIENT_CAMERA_ZOOM",

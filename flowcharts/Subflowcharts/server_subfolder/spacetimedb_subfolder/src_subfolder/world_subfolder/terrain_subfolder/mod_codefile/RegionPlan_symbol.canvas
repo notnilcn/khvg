@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4701f6428e8249cc",
+			"id": "8b3fc80ab4b4db14",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/mod.rs",
 			"subpath": "#RegionPlan",

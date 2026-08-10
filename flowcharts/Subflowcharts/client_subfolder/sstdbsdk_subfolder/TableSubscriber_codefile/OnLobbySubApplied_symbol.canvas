@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "2965a5255f6a4f64",
+			"type": "file",
+			"file": "client/sstdbsdk/TableSubscriber.cs",
+			"subpath": "#OnLobbySubApplied",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

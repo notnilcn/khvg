@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "788b39c1faf397d8",
+			"id": "3ef2fb3036ac65e0",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/seeds.rs",
 			"subpath": "#seed#6",

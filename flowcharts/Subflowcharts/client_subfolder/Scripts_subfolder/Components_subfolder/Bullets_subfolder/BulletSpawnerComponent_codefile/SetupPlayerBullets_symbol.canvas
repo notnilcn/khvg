@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "deb0942ef864d480",
+			"id": "29e0c3aec5e9c660",
 			"type": "file",
 			"file": "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs",
 			"subpath": "#SetupPlayerBullets",

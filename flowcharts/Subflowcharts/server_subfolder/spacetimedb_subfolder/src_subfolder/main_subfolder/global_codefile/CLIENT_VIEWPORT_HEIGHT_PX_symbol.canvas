@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bde31cffc61e64cf",
+			"id": "5dd84feee2d5b184",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#CLIENT_VIEWPORT_HEIGHT_PX",

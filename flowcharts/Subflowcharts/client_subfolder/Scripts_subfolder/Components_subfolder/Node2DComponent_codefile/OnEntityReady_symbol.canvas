@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f33a463e6482c063",
+			"id": "0d56390e77cbfd5c",
 			"type": "file",
 			"file": "client/Scripts/Components/Node2DComponent.cs",
 			"subpath": "#OnEntityReady",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e1d81b0251f44d75",
+			"id": "a521f0a82f6469b0",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/seeds.rs",
 			"subpath": "#seed_test_boss_p3_clone",

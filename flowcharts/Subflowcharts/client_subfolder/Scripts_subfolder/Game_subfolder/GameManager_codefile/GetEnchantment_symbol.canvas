@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "df471c0b5f3050fe",
+			"id": "4595b256140cb9f8",
 			"type": "file",
 			"file": "client/Scripts/Game/GameManager.cs",
 			"subpath": "#GetEnchantment",

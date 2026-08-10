@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "eaa05355dc330a67",
+			"id": "778c1fdde5fa0290",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#GetResPath",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0875225c4b65c521",
+			"id": "58b8dfcd75923f16",
 			"type": "file",
 			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
 			"subpath": "#OnJoinPressed",

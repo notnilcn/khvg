@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "b5ee106381a1c7ec",
+			"id": "53df49333368871e",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "4a9a3ea702d37d74",
+			"id": "7f9684836e4b2876",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/model_presets_subfolder/model_presets_subfolder.canvas",
 			"color": "5",
@@ -25,8 +25,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
 		}
 	}

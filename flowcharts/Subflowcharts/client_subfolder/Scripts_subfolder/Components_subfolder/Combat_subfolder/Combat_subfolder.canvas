@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3c6e86d9815e0df3",
+			"id": "45daf2afd3e02e0a",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageComponent_codefile/DamageComponent_codefile.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "8707e59dc0ecf563",
+			"id": "ed9a8de99c4b506a",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageReceivingComponent_codefile/DamageReceivingComponent_codefile.canvas",
 			"color": "5",
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "fd7aaad91e1a5fa2",
+			"id": "5f54e0cd46eb4b02",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/FactionComponent_codefile/FactionComponent_codefile.canvas",
 			"color": "5",
@@ -31,7 +31,7 @@
 			"height": 400
 		},
 		{
-			"id": "4c3ee7c84eff07dc",
+			"id": "cedeae95b6a3f46a",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/HealthComponent_codefile.canvas",
 			"color": "5",
@@ -41,7 +41,7 @@
 			"height": 400
 		},
 		{
-			"id": "4b4bee30c2deb2e1",
+			"id": "8ec9d58d305609ca",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HitZone_codefile/HitZone_codefile.canvas",
 			"color": "5",
@@ -55,6 +55,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"subfolder",
 				"edge-_colon_-server/spacetimedb/src/enemy/reducers-_dot_-rs-_hashtag_-report_enemy_hit-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
@@ -65,8 +66,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-report_hit-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc"
 			]
 		}
 	}

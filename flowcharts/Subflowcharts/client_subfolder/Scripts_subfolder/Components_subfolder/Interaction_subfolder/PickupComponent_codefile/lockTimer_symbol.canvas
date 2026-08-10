@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "7e126025e81845c8",
+			"id": "e0866b1c2b4d8580",
 			"type": "file",
 			"file": "client/Scripts/Components/Interaction/PickupComponent.cs",
 			"subpath": "#lockTimer",

@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "4af8f1c1ab0a7f8e",
+			"id": "c6bfabed8770d36c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/AreaComponent (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/_ExitTree_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "7c427116aa55b3d4",
+			"id": "bf16280e4c550f40",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/_Ready_symbol.canvas",
 			"color": "5",
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "75a5d8885783b1f3",
+			"id": "50bc373aac3fd710",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/_ExitTree_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/AfterSiblingsReady_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "4638c9b8c2bc2f39",
+			"id": "d1d4f547b3b64948",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/OnRegistered_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/AreaComponent (class)_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "413cb3a4d05339ab",
+			"id": "f17aca25f419de98",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/OnEntityReady_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/GetRequiredComponents_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "02c9e3b34919e232",
+			"id": "1a20a0c878fcfbc0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/GetRequiredComponents_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/GetSibling_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -61,9 +61,9 @@
 			"height": 400
 		},
 		{
-			"id": "3fcd94bedad033f2",
+			"id": "c85f11d51f3884f4",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/GetSibling_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/OnEntityReady_symbol.canvas",
 			"color": "5",
 			"x": 2760,
 			"y": 0,
@@ -71,9 +71,9 @@
 			"height": 400
 		},
 		{
-			"id": "d897d6d55a29e2ef",
+			"id": "794519ebdbd2d93e",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/AfterSiblingsReady_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/AreaComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
 			"x": 3220,
 			"y": 0,
@@ -85,8 +85,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

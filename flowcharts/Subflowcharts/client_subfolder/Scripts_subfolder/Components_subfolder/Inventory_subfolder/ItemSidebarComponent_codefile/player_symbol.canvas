@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9e12ccf9b294a64f",
+			"id": "f7d806d2be4231e8",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#player",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9d7dc59e16a09d2a",
+			"id": "c97000c8d772c1d0",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#upsert_enemy_template",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "dbb67668fcaa9ce6",
+			"id": "67130432c124706c",
 			"type": "file",
 			"file": "client/Scripts/Components/Node2DComponent.cs",
 			"subpath": "#Node2DComponent",

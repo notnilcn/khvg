@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "924a7c1cb29909c7",
+			"id": "640b864dca261aac",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/def_tables.rs",
 			"subpath": "#SingleStepDef",

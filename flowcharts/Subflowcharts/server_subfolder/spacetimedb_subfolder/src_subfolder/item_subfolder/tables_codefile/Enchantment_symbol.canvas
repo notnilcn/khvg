@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "8a37a1216a2a3c4e",
+			"id": "8c22bd6261fc1f7c",
 			"type": "file",
 			"file": "server/spacetimedb/src/item/tables.rs",
 			"subpath": "#Enchantment",

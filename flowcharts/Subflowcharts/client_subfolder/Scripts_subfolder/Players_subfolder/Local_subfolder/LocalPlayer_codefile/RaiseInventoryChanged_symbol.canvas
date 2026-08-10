@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e3c8cc2402c5e418",
+			"id": "4c735ff0d029cc20",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#RaiseInventoryChanged",

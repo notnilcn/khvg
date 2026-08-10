@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "74c154b4c45f3684",
+			"id": "548627fa69beb99c",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/instance_tables.rs",
 			"subpath": "#TriangleTile",

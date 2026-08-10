@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4f3d71951a2d85cf",
+			"id": "6b5a70dba5108170",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/mod.rs",
 			"subpath": "#BiomeGen",

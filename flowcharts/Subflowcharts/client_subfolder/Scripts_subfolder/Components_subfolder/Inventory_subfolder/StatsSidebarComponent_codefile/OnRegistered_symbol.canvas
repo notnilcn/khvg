@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "03e193f0fb2e1854",
+			"id": "3e4aa27e40c84fe8",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/StatsSidebarComponent.cs",
 			"subpath": "#OnRegistered",

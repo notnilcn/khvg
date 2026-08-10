@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9598d615a2c77a47",
+			"id": "a679e77bd140a81e",
 			"type": "file",
 			"file": "client/Scripts/Components/Visual/DropVisualComponent.cs",
 			"subpath": "#DropVisualComponent",

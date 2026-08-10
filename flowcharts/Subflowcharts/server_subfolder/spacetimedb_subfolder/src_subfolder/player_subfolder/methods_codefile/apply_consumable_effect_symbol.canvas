@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "dd52f697fb1ad862",
+			"id": "4c0152faa74d8b64",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/methods.rs",
 			"subpath": "#apply_consumable_effect",

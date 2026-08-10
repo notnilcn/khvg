@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "55a489e0ecd75d25",
+			"id": "3ea5ad3c652dffb0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent (class)_symbol.canvas",
 			"color": "5",
@@ -15,8 +15,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

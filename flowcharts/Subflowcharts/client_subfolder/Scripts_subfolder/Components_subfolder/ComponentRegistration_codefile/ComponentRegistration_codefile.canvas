@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "868fb45728a7528a",
+			"id": "feaebbcbde33d9ec",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/ComponentRegistration_codefile/ComponentRegistration (class)_symbol.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "ed55fdf051b102fd",
+			"id": "bc8a3f51c1f01e1a",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/ComponentRegistration_codefile/Register_symbol.canvas",
 			"color": "5",
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "0787b8feef2ed6b2",
+			"id": "9c0bf3eb7c799fc6",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/ComponentRegistration_codefile/ValidateRequired_symbol.canvas",
 			"color": "5",
@@ -35,8 +35,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

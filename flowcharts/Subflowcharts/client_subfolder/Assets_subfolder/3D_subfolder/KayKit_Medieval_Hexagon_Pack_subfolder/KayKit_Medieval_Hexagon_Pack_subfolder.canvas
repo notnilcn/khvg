@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2ad5a5e0724e2a80",
+			"id": "7a843ca3b1fbbde4",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/tiles_subfolder.canvas",
 			"color": "5",
@@ -15,8 +15,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
 		}
 	}

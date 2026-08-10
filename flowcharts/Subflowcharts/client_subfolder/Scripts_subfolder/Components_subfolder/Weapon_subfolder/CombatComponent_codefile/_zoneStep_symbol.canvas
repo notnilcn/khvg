@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a669d906197f3d16",
+			"id": "7c3088b3a93d12ae",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#_zoneStep",

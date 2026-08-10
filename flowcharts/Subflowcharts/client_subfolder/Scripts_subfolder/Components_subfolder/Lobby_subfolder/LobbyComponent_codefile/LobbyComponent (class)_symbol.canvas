@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "dda45279e8201996",
+			"id": "f71cb9cbc665904c",
 			"type": "file",
 			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
 			"subpath": "#LobbyComponent",

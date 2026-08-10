@@ -3,7 +3,7 @@ Every time a player toggles auto-fire they send their timestamp modulo (modulus 
 
 When players land hits on an enemy, they only send the enemy id.
 
-# i$\omega$aginary numbers for the hex chunks
+# (stupid) i$\omega$aginary numbers for the hex chunks
 ![](https://www.youtube.com/watch?v=d6agN416onM&t=492s)
 
 # Claude analysis on what to do:

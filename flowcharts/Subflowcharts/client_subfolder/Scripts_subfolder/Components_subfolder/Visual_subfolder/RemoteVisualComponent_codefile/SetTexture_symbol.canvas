@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3ac205e0cdd1cabf",
+			"id": "5cb1d9efbae7525c",
 			"type": "file",
 			"file": "client/Scripts/Components/Visual/RemoteVisualComponent.cs",
 			"subpath": "#SetTexture",

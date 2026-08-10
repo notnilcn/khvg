@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "cc303bfd6aecb04a",
+			"id": "e37c96c9052018c4",
 			"type": "file",
 			"file": "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs",
 			"subpath": "#ProjectileTextureAngleOffset",

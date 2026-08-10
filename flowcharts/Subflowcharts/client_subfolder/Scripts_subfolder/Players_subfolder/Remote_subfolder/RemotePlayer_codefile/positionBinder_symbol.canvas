@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "88f71ad59ded7be0",
+			"id": "f30487391c809140",
 			"type": "file",
 			"file": "client/Scripts/Players/Remote/RemotePlayer.cs",
 			"subpath": "#positionBinder",

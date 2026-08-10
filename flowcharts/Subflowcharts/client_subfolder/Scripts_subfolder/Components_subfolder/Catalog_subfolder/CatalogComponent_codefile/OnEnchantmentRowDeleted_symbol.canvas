@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4c40650bf8fd3b85",
+			"id": "6e42d34bf6ba9ce6",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#OnEnchantmentRowDeleted",

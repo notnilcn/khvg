@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "faf6dd1fccc568a0",
+			"id": "df57a7afd9fa4348",
 			"type": "file",
 			"file": "client/Scripts/Components/Spawning/EntitySpawnerComponent.cs",
 			"subpath": "#nearbyLootDropsBinder",

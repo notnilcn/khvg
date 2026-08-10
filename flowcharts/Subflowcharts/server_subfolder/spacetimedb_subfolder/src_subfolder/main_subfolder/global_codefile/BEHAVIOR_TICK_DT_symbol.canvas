@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6cfa934ac07633e5",
+			"id": "0f143832503c3bb0",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#BEHAVIOR_TICK_DT",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9c82fa7cdf072977",
+			"id": "b67f5397b8e2e42e",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/DropVisualComponent_codefile/DropVisualComponent_codefile.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "d5ad9e6032291bf8",
+			"id": "e04e321f5be0922e",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/LocalPlayerProfileComponent_codefile.canvas",
 			"color": "5",
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "e2dfe0c9317a29e4",
+			"id": "19795f21389253be",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/RemoteVisualComponent_codefile.canvas",
 			"color": "5",
@@ -35,8 +35,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
 		}
 	}

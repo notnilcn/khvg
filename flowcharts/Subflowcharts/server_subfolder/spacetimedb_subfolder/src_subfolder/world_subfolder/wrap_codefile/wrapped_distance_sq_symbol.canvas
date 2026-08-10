@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c12c10fc562a256d",
+			"id": "5b6df3918ea107f4",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/wrap.rs",
 			"subpath": "#wrapped_distance_sq",

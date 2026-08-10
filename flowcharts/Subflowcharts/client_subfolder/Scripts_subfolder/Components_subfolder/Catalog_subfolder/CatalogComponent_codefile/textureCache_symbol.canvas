@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ef390b2931b508ca",
+			"id": "e9f1a5ff3bca6138",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#textureCache",

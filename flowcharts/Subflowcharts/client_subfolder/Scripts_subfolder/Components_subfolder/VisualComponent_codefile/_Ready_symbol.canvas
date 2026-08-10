@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "cfcf96049a959379",
+			"id": "b47e534f7b42b2b2",
 			"type": "file",
 			"file": "client/Scripts/Components/VisualComponent.cs",
 			"subpath": "#_Ready",

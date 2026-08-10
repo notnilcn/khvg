@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3e63d467dcffd1e8",
+			"id": "8c1cbaef8541e32a",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#_ExitTree",

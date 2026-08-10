@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "6daf97b2da9baabd",
+			"id": "771713d60f434d24",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/LocalPlayerProfileComponent (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/_Ready_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "91e031383ecbcf6f",
+			"id": "ec9618d5fd105dca",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/profileBinder_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/LocalPlayerProfileComponent (class)_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "cfa21e488cf0ff14",
+			"id": "ff18149caeb834b0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/sprite_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/OnProfileRowInserted_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "7483d390bc38c3b1",
+			"id": "4fc2fdf512f1a2ea",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/_Ready_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/OnProfileRowUpdated_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "67b045799fe3738d",
+			"id": "f5fd3a190933214e",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/OnProfileRowInserted_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/profileBinder_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,9 +51,9 @@
 			"height": 400
 		},
 		{
-			"id": "65ae9e9b419f0fae",
+			"id": "189ef79f2d021fc0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/OnProfileRowUpdated_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/sprite_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -65,8 +65,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

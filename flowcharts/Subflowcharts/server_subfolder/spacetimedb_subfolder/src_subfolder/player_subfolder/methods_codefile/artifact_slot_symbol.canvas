@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "509fd4ea31710704",
+			"id": "628ca14b85a1fd40",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/methods.rs",
 			"subpath": "#artifact_slot",

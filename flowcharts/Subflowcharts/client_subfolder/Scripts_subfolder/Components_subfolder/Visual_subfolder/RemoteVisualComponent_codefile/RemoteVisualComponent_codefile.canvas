@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "95f16388576c7f23",
+			"id": "1df70617be9dd40c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/RemoteVisualComponent (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/_Process_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "dc81619aba6f14af",
+			"id": "0f98e96345ac3e76",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/interpolation_symbol.canvas",
 			"color": "5",
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "6ce2ddbe031307fc",
+			"id": "e166393457417ba8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/OnEntityReady_symbol.canvas",
 			"color": "5",
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "909cd421902cb19b",
+			"id": "0c211d3bde7590c6",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/SetTexture_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/RemoteVisualComponent (class)_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "62bff1e18874079f",
+			"id": "56f96dee1ffc1ac4",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/_Process_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/SetTexture_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -55,8 +55,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

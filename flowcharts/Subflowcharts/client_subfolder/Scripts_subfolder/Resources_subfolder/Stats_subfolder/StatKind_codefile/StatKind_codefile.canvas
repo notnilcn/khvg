@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ddf07b65848c48c1",
+			"id": "4f4925dcd2006108",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/StatKind_codefile/StatKind (enum)_symbol.canvas",
 			"color": "5",
@@ -15,8 +15,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

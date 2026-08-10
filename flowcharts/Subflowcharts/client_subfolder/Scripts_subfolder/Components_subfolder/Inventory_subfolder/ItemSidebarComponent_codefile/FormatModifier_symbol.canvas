@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3ca636dcf4212e29",
+			"id": "f5ad4b95c49ebe80",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#FormatModifier",

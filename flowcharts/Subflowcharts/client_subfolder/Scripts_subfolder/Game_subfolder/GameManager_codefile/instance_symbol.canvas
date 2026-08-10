@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f6c3b9f4096894d8",
+			"id": "a976b1407d736780",
 			"type": "file",
 			"file": "client/Scripts/Game/GameManager.cs",
 			"subpath": "#instance",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ae07cb4633f8feb4",
+			"id": "beba49ab0d66fce8",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#DEFAULT_HEX_OUTER_RADIUS",

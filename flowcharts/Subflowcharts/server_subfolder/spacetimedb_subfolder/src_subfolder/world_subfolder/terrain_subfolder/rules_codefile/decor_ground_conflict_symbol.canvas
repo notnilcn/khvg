@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "32864532f9640eda",
+			"id": "89787c6a179b1ed8",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/rules.rs",
 			"subpath": "#decor_ground_conflict",

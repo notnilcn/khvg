@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "8be3486a7169968d",
+			"id": "bd09af57669e5404",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/FactionComponent_codefile/Factions_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/FactionComponent_codefile/CheckOpposition_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "53c7286fcff9508d",
+			"id": "44a00557336313c6",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/FactionComponent_codefile/FactionComponent (class)_symbol.canvas",
 			"color": "5",
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "3d371f3a2e0f79a5",
+			"id": "cf89be8a517a80a0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/FactionComponent_codefile/CheckOpposition_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/FactionComponent_codefile/Factions_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -35,8 +35,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

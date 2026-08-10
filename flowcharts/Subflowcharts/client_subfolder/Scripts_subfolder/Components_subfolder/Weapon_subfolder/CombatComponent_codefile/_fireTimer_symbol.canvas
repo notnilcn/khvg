@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6718aa8756ecb23c",
+			"id": "3ead8c5cbfb97608",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#_fireTimer",

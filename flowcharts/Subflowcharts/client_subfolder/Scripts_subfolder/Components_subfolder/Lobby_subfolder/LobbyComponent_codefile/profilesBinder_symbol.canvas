@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0880d2e3442a293b",
+			"id": "ed0fbdd240c04c48",
 			"type": "file",
 			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
 			"subpath": "#profilesBinder",

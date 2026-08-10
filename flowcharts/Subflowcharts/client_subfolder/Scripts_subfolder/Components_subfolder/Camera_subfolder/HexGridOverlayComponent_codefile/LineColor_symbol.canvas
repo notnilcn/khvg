@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "27590ba96a4d0ff6",
+			"id": "35b08c21b1a8ade2",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
 			"subpath": "#LineColor",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "b07c1c3e886b0f5d",
+			"id": "7dcb68c96692ea60",
 			"type": "file",
 			"file": "client/Scripts/Components/Data/LocalPlayerDataComponent.cs",
 			"subpath": "#OnEntityReady",

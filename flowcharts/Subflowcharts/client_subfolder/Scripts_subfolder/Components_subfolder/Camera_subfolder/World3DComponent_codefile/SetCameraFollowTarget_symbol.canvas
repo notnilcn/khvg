@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bc7aa0b2240489cb",
+			"id": "65a3fd712c1385e0",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/World3DComponent.cs",
 			"subpath": "#SetCameraFollowTarget",

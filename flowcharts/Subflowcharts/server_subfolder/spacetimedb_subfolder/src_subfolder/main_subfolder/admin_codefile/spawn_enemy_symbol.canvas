@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "7f35c36f31699494",
+			"id": "237b539b6f581fa4",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#spawn_enemy",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "131117e3053e27a2",
+			"id": "44bd888552ac07f4",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#sprite",

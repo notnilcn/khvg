@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "deaf3c7f9ea182e2",
+			"id": "93d94625c982e5e4",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#ZoomReferenceDistance",

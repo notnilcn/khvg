@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2bf63751849d8dc8",
+			"id": "67caf657c1348b98",
 			"type": "file",
 			"file": "server/spacetimedb/src/combat/mod.rs",
 			"subpath": "#deal_damage_to_player",

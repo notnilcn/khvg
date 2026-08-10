@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "523f60cf0d7c35fb",
+			"id": "68f7a6a8af482950",
 			"type": "file",
 			"file": "client/Scripts/Game/GameManager.cs",
 			"subpath": "#GetComponent",

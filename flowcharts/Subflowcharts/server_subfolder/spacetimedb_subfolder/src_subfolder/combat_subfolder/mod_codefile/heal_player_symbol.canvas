@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "615753702dea785c",
+			"id": "fbaaf02bd092e26c",
 			"type": "file",
 			"file": "server/spacetimedb/src/combat/mod.rs",
 			"subpath": "#heal_player",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "8b7196684ea925e0",
+			"id": "ec2fcd88cb4e7cd0",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/tables.rs",
 			"subpath": "#OverlayAdjacencyRule",

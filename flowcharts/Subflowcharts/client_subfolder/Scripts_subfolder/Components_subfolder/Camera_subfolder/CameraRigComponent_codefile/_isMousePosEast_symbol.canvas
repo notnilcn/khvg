@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a23aa510a64d6e39",
+			"id": "76522f41fa6d3054",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#_isMousePosEast",

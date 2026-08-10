@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a96c60c4e66d7045",
+			"id": "a9ebdecb7d6e04f0",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/seeds.rs",
 			"subpath": "#seed_decor_ground_rules",

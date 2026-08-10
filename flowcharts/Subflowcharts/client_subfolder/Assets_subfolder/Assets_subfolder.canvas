@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "93da30aa3247259f",
+			"id": "a4b959d4032792c8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/3D_subfolder.canvas",
 			"color": "5",
@@ -15,10 +15,9 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
-		},
-		"version": "1.0-1.0"
+		}
 	}
 }

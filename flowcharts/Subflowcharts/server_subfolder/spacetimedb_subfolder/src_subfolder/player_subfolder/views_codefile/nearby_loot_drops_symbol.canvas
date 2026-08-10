@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9a2e6ab8409dd02b",
+			"id": "9824502306857cc8",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/views.rs",
 			"subpath": "#nearby_loot_drops",

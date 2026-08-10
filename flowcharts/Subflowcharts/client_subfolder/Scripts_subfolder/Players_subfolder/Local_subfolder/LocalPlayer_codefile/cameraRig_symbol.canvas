@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "736401c2ab2b02bf",
+			"id": "41e6dcbf3174c5fe",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#cameraRig",

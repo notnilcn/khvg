@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4804b1f892c12608",
+			"id": "d2bf73e3d701655c",
 			"type": "file",
 			"file": "client/Scripts/Game/LobbyGui.cs",
 			"subpath": "#_Ready",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "02bee5a901f9c7e0",
+			"id": "ba4000c6e6e710f0",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/debug.rs",
 			"subpath": "#PlayerPositionDebug",

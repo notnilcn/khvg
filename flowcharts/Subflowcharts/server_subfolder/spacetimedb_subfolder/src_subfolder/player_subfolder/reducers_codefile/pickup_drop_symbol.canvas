@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3a102b86d8dd2981",
+			"id": "e2166af585829b0a",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/reducers.rs",
 			"subpath": "#pickup_drop",

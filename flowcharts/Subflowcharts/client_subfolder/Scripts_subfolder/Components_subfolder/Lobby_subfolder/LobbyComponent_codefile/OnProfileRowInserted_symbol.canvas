@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "78166add914c781e",
+			"id": "8f4ac8ce51c8af98",
 			"type": "file",
 			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
 			"subpath": "#OnProfileRowInserted",

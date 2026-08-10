@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "68fed49e6ccf9626",
+			"id": "df91cf7c865ba718",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#_lastMousePos",

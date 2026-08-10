@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bb03c0be79d5a052",
+			"id": "3d02735c11792368",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#tick_phase",

@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "c16ade063129465f",
+			"id": "f16ff3537eb6beee",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/DropVisualComponent_codefile/DropVisualComponent (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/DropVisualComponent_codefile/_ExitTree_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "57e877c504b3ff53",
+			"id": "ef604f1881e604c0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/DropVisualComponent_codefile/_Ready_symbol.canvas",
 			"color": "5",
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "0508bb43f4a9ff3a",
+			"id": "81c255ad38497a32",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/DropVisualComponent_codefile/_ExitTree_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/DropVisualComponent_codefile/DropVisualComponent (class)_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,7 +31,7 @@
 			"height": 400
 		},
 		{
-			"id": "6841aac4e394225a",
+			"id": "781a2671e7067746",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/DropVisualComponent_codefile/SetItem_symbol.canvas",
 			"color": "5",
@@ -45,8 +45,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

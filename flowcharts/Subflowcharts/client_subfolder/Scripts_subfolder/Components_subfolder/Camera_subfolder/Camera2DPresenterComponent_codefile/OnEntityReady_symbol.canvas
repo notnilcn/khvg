@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a22f3156b73da8aa",
+			"id": "c6ef87a79af05e8c",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/Camera2DPresenterComponent.cs",
 			"subpath": "#OnEntityReady",

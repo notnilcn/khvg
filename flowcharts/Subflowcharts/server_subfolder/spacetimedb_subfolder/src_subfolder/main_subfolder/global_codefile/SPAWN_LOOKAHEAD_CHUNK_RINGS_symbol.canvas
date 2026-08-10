@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "749ab89ccd491ff5",
+			"id": "10a76055318ed642",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#SPAWN_LOOKAHEAD_CHUNK_RINGS",

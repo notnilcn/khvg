@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d2af7a4645283c12",
+			"id": "6ad87d781ad282d0",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/def_tables.rs",
 			"subpath": "#BiomeWeight",

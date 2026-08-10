@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "b730e1221db9291e",
+			"id": "75d354ffcfe59386",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#SpawnZone",

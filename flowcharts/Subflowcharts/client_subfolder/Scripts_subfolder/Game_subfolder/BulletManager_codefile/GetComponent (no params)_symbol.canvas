@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "493c6d2177d9ab36",
+			"id": "a16f3b9b18fe6ba6",
 			"type": "file",
 			"file": "client/Scripts/Game/BulletManager.cs",
 			"subpath": "#GetComponent#2",

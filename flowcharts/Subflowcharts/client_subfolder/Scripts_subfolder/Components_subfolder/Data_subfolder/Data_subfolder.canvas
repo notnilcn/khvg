@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9846c957c8e6f624",
+			"id": "8c7252edb3414756",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/LocalPlayerDataComponent_codefile.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "290a19c117257670",
+			"id": "2bb90039b8b18a86",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/StatsComponent_codefile/StatsComponent_codefile.canvas",
 			"color": "5",
@@ -25,8 +25,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
 		}
 	}

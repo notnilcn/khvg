@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "48632bc7315561af",
+			"id": "6bccc0a546626de4",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/def_tables.rs",
 			"subpath": "#ExplosionParams",

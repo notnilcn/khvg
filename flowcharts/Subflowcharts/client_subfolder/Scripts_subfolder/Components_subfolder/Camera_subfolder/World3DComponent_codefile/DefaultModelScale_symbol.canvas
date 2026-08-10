@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "8d511070267ba583",
+			"id": "56c0d2e257dd7ecc",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/World3DComponent.cs",
 			"subpath": "#DefaultModelScale",

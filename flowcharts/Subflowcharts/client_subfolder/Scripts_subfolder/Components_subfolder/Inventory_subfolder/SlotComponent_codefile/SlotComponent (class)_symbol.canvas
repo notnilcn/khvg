@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "95201b85437e11f9",
+			"id": "2746331fa66dd6e0",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/SlotComponent.cs",
 			"subpath": "#SlotComponent",

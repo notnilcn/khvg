@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f93338732ec8f733",
+			"id": "6834c87160d5d6ae",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_grey_codefile/hex_grey_codefile.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "f3fc84beb6daf4f5",
+			"id": "99bd0c8135ed69b6",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_pink_codefile/hex_pink_codefile.canvas",
 			"color": "5",
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "0a8773b5262652a4",
+			"id": "4c2f2705cd06e17e",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_purple_codefile/hex_purple_codefile.canvas",
 			"color": "5",
@@ -35,8 +35,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
 		}
 	}

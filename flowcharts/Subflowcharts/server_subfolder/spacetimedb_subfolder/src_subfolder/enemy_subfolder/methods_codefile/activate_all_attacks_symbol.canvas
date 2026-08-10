@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "8ce34de5714eddcb",
+			"id": "0926255a3fbf0a50",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#activate_all_attacks",

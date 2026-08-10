@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3ed5fa225cb3235e",
+			"id": "be76b9d5f403b4c2",
 			"type": "file",
 			"file": "client/Scripts/Components/Visual/RemoteVisualComponent.cs",
 			"subpath": "#OnEntityReady",

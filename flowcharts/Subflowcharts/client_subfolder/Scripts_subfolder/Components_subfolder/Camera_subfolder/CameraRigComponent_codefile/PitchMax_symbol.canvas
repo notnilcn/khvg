@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "42ccbcbbde02f54c",
+			"id": "19853796973cdd14",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#PitchMax",

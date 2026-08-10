@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "31ef0f3e59a57b05",
+			"id": "9f0384cc483f3dc8",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/hex.rs",
 			"subpath": "#world_to_hex",

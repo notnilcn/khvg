@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "734627d8e3ba08bb",
+			"id": "e936adb54a8282ba",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/debug.rs",
 			"subpath": "#toggle_debug",

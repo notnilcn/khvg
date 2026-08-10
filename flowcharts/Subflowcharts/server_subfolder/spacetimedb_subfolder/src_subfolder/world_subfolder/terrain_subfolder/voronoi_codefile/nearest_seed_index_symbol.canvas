@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9e8235150ca8aef8",
+			"id": "7e2c0422aa983c98",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/voronoi.rs",
 			"subpath": "#nearest_seed_index",

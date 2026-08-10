@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0c8b9b21b008504a",
+			"id": "3d097898c69372c0",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/hex.rs",
 			"subpath": "#HEX_NEIGHBOR_DELTAS",

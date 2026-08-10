@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2d5ef44434d8f825",
+			"id": "6d9f72edfb078eaa",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
 			"subpath": "#ChunkColors",

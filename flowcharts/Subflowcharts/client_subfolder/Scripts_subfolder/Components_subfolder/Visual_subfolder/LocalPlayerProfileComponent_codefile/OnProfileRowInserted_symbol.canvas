@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "5a09f7347a4561dc",
+			"id": "2a5ba3a582964f94",
 			"type": "file",
 			"file": "client/Scripts/Components/Visual/LocalPlayerProfileComponent.cs",
 			"subpath": "#OnProfileRowInserted",

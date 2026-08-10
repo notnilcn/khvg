@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "fc87253d2fc75e81",
+			"id": "d7e6fb44a78a9608",
 			"type": "file",
 			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
 			"subpath": "#HideLobby",

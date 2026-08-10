@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "044e103b3ff3fa9b",
+			"id": "3ad1840417c21db8",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#SpawnBulletWithZones",

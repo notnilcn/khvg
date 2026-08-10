@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "bdc36bbc445b02e7",
+			"id": "7de21f4a6ec31004",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorLayerComponent_codefile/DecorLayerComponent_codefile.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent_codefile.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "74e901f902bbcfa7",
+			"id": "1d71f31a7c983d64",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent_codefile.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorLayerComponent_codefile/DecorLayerComponent_codefile.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "6ebad14795b060f2",
+			"id": "abc2461ac0487da4",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/GroundComponent_codefile/GroundComponent_codefile.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorShadowComponent_codefile/DecorShadowComponent_codefile.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "81c27ddc2c7bc306",
+			"id": "ae6bf568c1a4f9d0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorShadowComponent_codefile/DecorShadowComponent_codefile.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/GroundComponent_codefile/GroundComponent_codefile.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,7 +41,7 @@
 			"height": 400
 		},
 		{
-			"id": "c5843941787705a4",
+			"id": "a122ffda4ff52524",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/OverlayComponent_codefile/OverlayComponent_codefile.canvas",
 			"color": "5",
@@ -51,7 +51,7 @@
 			"height": 400
 		},
 		{
-			"id": "cea5e3bc6a866f18",
+			"id": "a27889ba731b4d9c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/TerrainComponent_codefile.canvas",
 			"color": "5",
@@ -61,7 +61,7 @@
 			"height": 400
 		},
 		{
-			"id": "298a94d230373717",
+			"id": "2ea4c2fa59359864",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainLayerComponent_codefile/TerrainLayerComponent_codefile.canvas",
 			"color": "5",
@@ -71,7 +71,7 @@
 			"height": 400
 		},
 		{
-			"id": "1a3cdaf3327f1641",
+			"id": "f9db5d8239269d34",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TileComponent_codefile/TileComponent_codefile.canvas",
 			"color": "5",
@@ -85,8 +85,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"subfolder",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"subfolder"
 			]
 		}
 	}

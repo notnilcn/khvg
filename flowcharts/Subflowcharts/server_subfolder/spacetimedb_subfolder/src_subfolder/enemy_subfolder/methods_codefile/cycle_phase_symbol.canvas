@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6200268a6c313c83",
+			"id": "295c2b95aa2f70a6",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#cycle_phase",

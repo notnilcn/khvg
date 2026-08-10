@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c4078c3993a99b79",
+			"id": "785362d384624cde",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#OnRegistered",

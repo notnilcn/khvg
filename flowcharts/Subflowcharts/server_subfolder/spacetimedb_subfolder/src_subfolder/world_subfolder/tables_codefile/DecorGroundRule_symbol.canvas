@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "25240da376171324",
+			"id": "70cc46f0246663c0",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/tables.rs",
 			"subpath": "#DecorGroundRule",

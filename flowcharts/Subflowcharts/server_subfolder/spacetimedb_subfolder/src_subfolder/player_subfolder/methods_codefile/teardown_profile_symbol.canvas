@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ffb275daee8f5fe4",
+			"id": "3081355a76bc45c8",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/methods.rs",
 			"subpath": "#teardown_profile",

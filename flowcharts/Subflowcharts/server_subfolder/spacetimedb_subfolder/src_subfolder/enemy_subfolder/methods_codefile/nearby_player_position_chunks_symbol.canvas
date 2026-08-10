@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9af43a1aff751678",
+			"id": "5b18467b4e628d2a",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#nearby_player_position_chunks",

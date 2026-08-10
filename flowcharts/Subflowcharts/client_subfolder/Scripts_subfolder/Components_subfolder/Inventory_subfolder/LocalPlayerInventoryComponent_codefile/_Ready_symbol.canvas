@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bebd44e23625dabf",
+			"id": "bed39d36dafd649c",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs",
 			"subpath": "#_Ready",

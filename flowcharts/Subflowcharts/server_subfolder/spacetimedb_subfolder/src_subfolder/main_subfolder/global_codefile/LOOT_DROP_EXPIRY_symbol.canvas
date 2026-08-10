@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "edbb5aa1789f8dcc",
+			"id": "1105459976ef619c",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#LOOT_DROP_EXPIRY",

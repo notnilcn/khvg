@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "41ac24437a40a354",
+			"id": "167cdb6cd4e58178",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/InventoryComponent.cs",
 			"subpath": "#UpdateSection",

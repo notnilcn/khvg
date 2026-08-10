@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "79bc0a6a3beb9bfc",
+			"id": "b9e97b6116a43706",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#UnregisterComponent",

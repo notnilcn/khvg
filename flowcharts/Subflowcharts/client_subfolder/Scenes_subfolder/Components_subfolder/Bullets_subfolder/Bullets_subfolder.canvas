@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "79a1a0f78d1df7ec",
+			"id": "e2128df5a9c4a8b2",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/bullet_hit_router_component_codefile/bullet_hit_router_component_codefile.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "8abcc4cc6c1d3412",
+			"id": "c2ccba4bea128dce",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/bullet_spawner_component_codefile/bullet_spawner_component_codefile.canvas",
 			"color": "5",
@@ -25,6 +25,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"subfolder",
 				"edge-_colon_-client/Scripts/Components/Bullets/BulletHitRouterComponent-_dot_-cs-_hashtag_-BulletHitRouterComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletHitRouterComponent_codefile/BulletHitRouterComponent_codefile-_dot_-canvas-_colon_-script",
@@ -34,8 +35,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Bullets/BulletSpawnerComponent-_dot_-cs-_hashtag_-BulletSpawnerComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/BulletSpawnerComponent_codefile-_dot_-canvas-_colon_-script",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/BulletSpawnerComponent_codefile-_dot_-canvas-_colon_-script"
 			]
 		}
 	}

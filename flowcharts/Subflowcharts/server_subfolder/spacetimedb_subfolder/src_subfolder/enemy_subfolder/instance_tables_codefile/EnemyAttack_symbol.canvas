@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c2d05a8507824bf5",
+			"id": "3f5f0a06d7593208",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/instance_tables.rs",
 			"subpath": "#EnemyAttack",

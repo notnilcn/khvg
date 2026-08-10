@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ce999887accf6c32",
+			"id": "985a4d1acbb03088",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/views.rs",
 			"subpath": "#nearby_hex_decor",

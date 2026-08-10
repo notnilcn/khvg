@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "30d76999882aac95",
+			"id": "46733adfa655f10e",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/mod.rs",
 			"x": 0,

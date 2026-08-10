@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "9cd86b13453be931",
+			"id": "cbe6e639943ba46e",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/LocalPlayerDataComponent (class)_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/_Ready_symbol.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "71026942d8ca474e",
+			"id": "520fdcc1e53a4cd6",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/dataBinder_symbol.canvas",
 			"color": "5",
@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "443fefb1f07ece4e",
+			"id": "01d86404e08a7290",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/statsBinder_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/GetRequiredComponents_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "ec9357652eb04a58",
+			"id": "0bf24877484c23be",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/_Ready_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/LocalPlayerDataComponent (class)_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "75fe34cd2e63d817",
+			"id": "7da9d03e9e717054",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/GetRequiredComponents_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/OnDataRow_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -51,7 +51,7 @@
 			"height": 400
 		},
 		{
-			"id": "a8d64c8bdf7cb58c",
+			"id": "3865e8b049a1cee0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/OnEntityReady_symbol.canvas",
 			"color": "5",
@@ -61,9 +61,9 @@
 			"height": 400
 		},
 		{
-			"id": "fc056bad3cd595db",
+			"id": "8aa5b621c04534ce",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/OnDataRow_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/OnStatsRow_symbol.canvas",
 			"color": "5",
 			"x": 2760,
 			"y": 0,
@@ -71,9 +71,9 @@
 			"height": 400
 		},
 		{
-			"id": "13685d458b7aa90a",
+			"id": "6e91f6d2044c8a9c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/OnStatsRow_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/LocalPlayerDataComponent_codefile/statsBinder_symbol.canvas",
 			"color": "5",
 			"x": 3220,
 			"y": 0,
@@ -85,8 +85,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d8a926228ee08bdc",
+			"id": "bb449c271bb9d39a",
 			"type": "file",
 			"file": "client/Scenes/UI/enchantment_row.tscn",
 			"x": 0,

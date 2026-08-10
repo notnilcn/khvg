@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c5bca806c2038c9d",
+			"id": "31873d208c207140",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/hex.rs",
 			"subpath": "#world_to_chunk",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1d10880f40be51c6",
+			"id": "2b76c42ccc454ca0",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#FireCluster",

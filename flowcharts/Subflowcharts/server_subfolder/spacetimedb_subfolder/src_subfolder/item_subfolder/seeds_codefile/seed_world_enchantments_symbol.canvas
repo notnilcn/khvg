@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "8c8b4e0ee76b740a",
+			"id": "8b5fac8f43b841e4",
 			"type": "file",
 			"file": "server/spacetimedb/src/item/seeds.rs",
 			"subpath": "#seed_world_enchantments",

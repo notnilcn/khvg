@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "373c934734e37d42",
+			"id": "c4cd35e74c42a948",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#build_enemy_behavior",

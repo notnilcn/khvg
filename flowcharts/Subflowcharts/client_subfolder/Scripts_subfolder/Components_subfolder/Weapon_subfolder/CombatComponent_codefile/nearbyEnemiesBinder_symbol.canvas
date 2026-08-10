@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e77f7577d7cee48e",
+			"id": "58b98813b665000a",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#nearbyEnemiesBinder",

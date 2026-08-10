@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "40cf41e43f509e7e",
+			"id": "63f9ff572c5734a4",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#OnInventoryChanged",

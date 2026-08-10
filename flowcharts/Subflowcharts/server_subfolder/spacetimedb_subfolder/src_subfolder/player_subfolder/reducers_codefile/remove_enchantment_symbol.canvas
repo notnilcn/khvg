@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1c7f2340aa72f84f",
+			"id": "a95f5d655df66740",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/reducers.rs",
 			"subpath": "#remove_enchantment",

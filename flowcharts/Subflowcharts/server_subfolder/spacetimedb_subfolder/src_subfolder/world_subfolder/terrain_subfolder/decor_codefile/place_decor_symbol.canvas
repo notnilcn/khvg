@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "367d546cc3837c1d",
+			"id": "82c55461d3e78982",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/decor.rs",
 			"subpath": "#place_decor",

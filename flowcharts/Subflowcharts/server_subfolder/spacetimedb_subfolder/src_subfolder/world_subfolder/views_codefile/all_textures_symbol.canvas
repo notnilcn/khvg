@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d64d2908718b4d9c",
+			"id": "6770c92133d19bc4",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/views.rs",
 			"subpath": "#all_textures",

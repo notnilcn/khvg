@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1147efa83cb6dbc3",
+			"id": "7c7144d677e7e5fc",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/views.rs",
 			"subpath": "#nearby_terrain_tiles",

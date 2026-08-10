@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "fad1c88b0619d407",
+			"id": "4616760bdad14fee",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#allTexturesBinder",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e642731db6b2452c",
+			"id": "dd15d2a2821a7aac",
 			"type": "file",
 			"file": "client/Scripts/Components/IComponent.cs",
 			"subpath": "#IComponent",

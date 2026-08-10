@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2d9e8357a5424a20",
+			"id": "9c77a257820f700c",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#OnItemRowDeleted",

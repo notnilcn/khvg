@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ae7dd98b919a039d",
+			"id": "92bd3cd7a25dac44",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#OnAimSettingsChanged",

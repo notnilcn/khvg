@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4e8d22826b5ac7bf",
+			"id": "7c8c96c23777c0b8",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#despawn_enemy_archetype",

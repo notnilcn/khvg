@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4850ed0862d46ab6",
+			"id": "bcb0e1b16fac94a8",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#_model3D",

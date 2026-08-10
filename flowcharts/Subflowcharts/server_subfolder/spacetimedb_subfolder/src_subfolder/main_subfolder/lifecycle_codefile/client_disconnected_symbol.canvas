@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "56d1e4213ed0d61b",
+			"id": "fce037bda91e2c48",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/lifecycle.rs",
 			"subpath": "#client_disconnected",

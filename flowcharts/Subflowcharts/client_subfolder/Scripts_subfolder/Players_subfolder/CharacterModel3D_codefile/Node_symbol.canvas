@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "73d2e6fd91dfc745",
+			"id": "83cbe507d3bb30c6",
 			"type": "file",
 			"file": "client/Scripts/Players/CharacterModel3D.cs",
 			"subpath": "#Node",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "7ac939ae0b81a7ad",
+			"id": "0d98f2a02699c7c0",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
 			"subpath": "#SeamLineWidth",

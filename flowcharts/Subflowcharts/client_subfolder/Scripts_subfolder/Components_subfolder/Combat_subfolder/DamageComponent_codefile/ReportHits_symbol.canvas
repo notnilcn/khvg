@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c43485717d3850b8",
+			"id": "e4aba6498f1581f4",
 			"type": "file",
 			"file": "client/Scripts/Components/Combat/DamageComponent.cs",
 			"subpath": "#ReportHits",

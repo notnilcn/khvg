@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9c243867a8b69efe",
+			"id": "dc4a971656a21924",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#generate_world_proc",

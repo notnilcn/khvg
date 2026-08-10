@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3a79f3610575eb3a",
+			"id": "bb86c7cb65a11e92",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/Camera2DPresenterComponent.cs",
 			"subpath": "#_rig",

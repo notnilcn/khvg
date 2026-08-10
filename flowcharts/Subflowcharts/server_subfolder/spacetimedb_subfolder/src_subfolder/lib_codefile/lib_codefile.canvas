@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "91fe2af41b99a17c",
+			"id": "a5e7e653a6e26802",
 			"type": "file",
 			"file": "server/spacetimedb/src/lib.rs",
 			"x": 0,
@@ -17,7 +17,6 @@
 				"codefile",
 				"includeInAggregateFlowchart"
 			]
-		},
-		"version": "1.0-1.0"
+		}
 	}
 }

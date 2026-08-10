@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "75c2cd0289f16734",
+			"id": "bfb563adb7e24266",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#allEnchantmentsBinder",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "ce7223246893c685",
+			"id": "4f31bf85cbb067bc",
 			"type": "file",
 			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
 			"subpath": "#OnRegistered",

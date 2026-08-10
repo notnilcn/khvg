@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "197f6c54e15c3844",
+			"id": "36ae67a2e41ba064",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#OnItemRow",

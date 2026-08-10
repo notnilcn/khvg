@@ -1,0 +1,81 @@
+{
+	"nodes": [
+		{
+			"id": "1ea852a0c4712480",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
+			"color": "5",
+			"x": 110,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a9724b02f55e547c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/root_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "af32b8e8f2977040",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/server_subfolder.canvas",
+			"color": "5",
+			"x": 110,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "2cb5b5b2aabdbff4",
+			"fromNode": "1ea852a0c4712480",
+			"fromSide": "bottom",
+			"toNode": "a9724b02f55e547c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "scene"
+		},
+		{
+			"id": "bce0ac7effa5ea08",
+			"fromNode": "1ea852a0c4712480",
+			"fromSide": "bottom",
+			"toNode": "af32b8e8f2977040",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "ab5c7d7e536ad354",
+			"fromNode": "a9724b02f55e547c",
+			"fromSide": "bottom",
+			"toNode": "1ea852a0c4712480",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "scene"
+		},
+		{
+			"id": "5ca93e4bc40584fa",
+			"fromNode": "a9724b02f55e547c",
+			"fromSide": "bottom",
+			"toNode": "af32b8e8f2977040",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "a335a02cab9e82f0",
+			"fromNode": "af32b8e8f2977040",
+			"fromSide": "bottom",
+			"toNode": "a9724b02f55e547c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		}
+	]
+}

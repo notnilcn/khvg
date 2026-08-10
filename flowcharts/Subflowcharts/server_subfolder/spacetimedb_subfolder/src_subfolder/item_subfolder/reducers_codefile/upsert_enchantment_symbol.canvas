@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "b3bac018f9a90fd1",
+			"id": "98f03644f28bc950",
 			"type": "file",
 			"file": "server/spacetimedb/src/item/reducers.rs",
 			"subpath": "#upsert_enchantment",

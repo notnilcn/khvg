@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "13914cc4c35f28c2",
+			"id": "16c51ec27ddf68fc",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#_firePeriod",

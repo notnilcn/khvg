@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "fc01fd376b297cb3",
+			"id": "205c65843930d698",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#_Ready",

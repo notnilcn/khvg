@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "b543b794e6638d85",
+			"id": "01d61ffd307e6984",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/methods.rs",
 			"subpath": "#is_attack_finished",

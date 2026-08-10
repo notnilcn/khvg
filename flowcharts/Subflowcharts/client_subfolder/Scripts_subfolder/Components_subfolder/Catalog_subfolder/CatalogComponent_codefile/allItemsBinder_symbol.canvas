@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "17adeec6a36c266a",
+			"id": "1d4bb97d79b44874",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#allItemsBinder",

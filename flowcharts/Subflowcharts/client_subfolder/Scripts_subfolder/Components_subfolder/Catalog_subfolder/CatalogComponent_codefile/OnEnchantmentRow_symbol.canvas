@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0c66c6728396b352",
+			"id": "ef81ab36e0db1470",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#OnEnchantmentRow",

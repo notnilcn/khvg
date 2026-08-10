@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c5d0b6cc815c653e",
+			"id": "4b9dd21fd895993c",
 			"type": "file",
 			"file": "client/Scripts/Components/Terrain/TileComponent.cs",
 			"subpath": "#componentRegistry",

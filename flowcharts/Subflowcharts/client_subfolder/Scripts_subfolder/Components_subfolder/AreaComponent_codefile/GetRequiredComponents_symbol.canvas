@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "13a991a6bcd54a1d",
+			"id": "b222516526a2004c",
 			"type": "file",
 			"file": "client/Scripts/Components/AreaComponent.cs",
 			"subpath": "#GetRequiredComponents",

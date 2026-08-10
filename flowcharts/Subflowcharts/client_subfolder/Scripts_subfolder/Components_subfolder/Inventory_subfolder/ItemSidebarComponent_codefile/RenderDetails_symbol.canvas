@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f0b1770056e2093a",
+			"id": "1aa7a39333aed6ea",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#RenderDetails",

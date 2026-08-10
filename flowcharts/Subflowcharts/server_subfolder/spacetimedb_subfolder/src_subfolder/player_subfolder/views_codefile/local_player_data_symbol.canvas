@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "4b55330b3db53023",
+			"id": "86d272fee2709d14",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/views.rs",
 			"subpath": "#local_player_data",

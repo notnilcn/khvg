@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "38742c97951ef985",
+			"id": "df1296305e8ceb60",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/reducers.rs",
 			"subpath": "#join_world",

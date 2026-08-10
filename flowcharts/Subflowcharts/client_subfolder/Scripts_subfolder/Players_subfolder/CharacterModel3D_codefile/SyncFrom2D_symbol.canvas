@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2bbbd42fcd4ac472",
+			"id": "a855528acbf6e76c",
 			"type": "file",
 			"file": "client/Scripts/Players/CharacterModel3D.cs",
 			"subpath": "#SyncFrom2D",

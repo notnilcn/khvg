@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "09f2c20bca0bf95f",
+			"id": "d801a51cd1412360",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#YawSpeed",

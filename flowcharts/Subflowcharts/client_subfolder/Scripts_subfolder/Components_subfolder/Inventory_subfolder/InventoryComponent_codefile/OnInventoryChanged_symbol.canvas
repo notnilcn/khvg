@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c93590caed10df52",
+			"id": "2fb30ab110a5ddd0",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/InventoryComponent.cs",
 			"subpath": "#OnInventoryChanged",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a03dae197f7d16b5",
+			"id": "962754018d9c8818",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/tables.rs",
 			"subpath": "#PlayerPosition",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e8f53d4c08c3b7d8",
+			"id": "f6f49aab7a1bafe0",
 			"type": "file",
 			"file": "client/Scripts/Components/ControlComponent.cs",
 			"subpath": "#OnRegistered",

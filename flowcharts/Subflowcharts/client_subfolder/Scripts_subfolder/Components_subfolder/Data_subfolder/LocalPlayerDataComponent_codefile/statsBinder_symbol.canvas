@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "970ec9bda2a1bb5f",
+			"id": "6bde1563123d24e0",
 			"type": "file",
 			"file": "client/Scripts/Components/Data/LocalPlayerDataComponent.cs",
 			"subpath": "#statsBinder",

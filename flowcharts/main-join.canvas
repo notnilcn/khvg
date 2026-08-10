@@ -1,0 +1,129 @@
+{
+	"nodes": [
+		{
+			"id": "45b98b4ca2b3edd0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
+			"color": "5",
+			"x": 940,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "629715202c23bac0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Subscription_subfolder/Subscription_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b715f8cabe07b138",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/local_player_codefile/local_player_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69206441fa058f50",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
+			"color": "5",
+			"x": 1060,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "194079a7791dc546",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
+			"color": "5",
+			"x": 580,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "23ad101c7f63b520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
+			"color": "5",
+			"x": 580,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "2308430d4bb4cfaa",
+			"fromNode": "45b98b4ca2b3edd0",
+			"fromSide": "bottom",
+			"toNode": "69206441fa058f50",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "35bf415bca79e0c2",
+			"fromNode": "45b98b4ca2b3edd0",
+			"fromSide": "bottom",
+			"toNode": "194079a7791dc546",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "a22729962960d64c",
+			"fromNode": "45b98b4ca2b3edd0",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "feca295da02125ee",
+			"fromNode": "629715202c23bac0",
+			"fromSide": "bottom",
+			"toNode": "194079a7791dc546",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "b09a2c60818c4640",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "194079a7791dc546",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "577b24018954304a",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "efc2f30642c9adb4",
+			"fromNode": "194079a7791dc546",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		}
+	]
+}

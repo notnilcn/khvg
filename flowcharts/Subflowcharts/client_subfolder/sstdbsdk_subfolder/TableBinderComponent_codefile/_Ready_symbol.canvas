@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "f0703b2e77caa7e8",
+			"type": "file",
+			"file": "client/sstdbsdk/TableBinderComponent.cs",
+			"subpath": "#_Ready",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

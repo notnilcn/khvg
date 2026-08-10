@@ -4,115 +4,42 @@
     "type": "split",
     "children": [
       {
-        "id": "1cbe77328d9e2bba",
+        "id": "0532b93fb8fd01be",
         "type": "tabs",
         "children": [
           {
-            "id": "9d11c4d935614f74",
+            "id": "144999bccf4e9e5d",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "_debug/embed-test.md",
-                "mode": "preview",
+                "file": "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "embed-test"
+              "title": "00 End-to-End Timeline Flowchart"
             }
           },
           {
-            "id": "08e0f09381879131",
+            "id": "c8bf5293bcaebfde",
             "type": "leaf",
             "state": {
               "type": "canvas",
               "state": {
-                "file": "flowcharts/main_subfolders.canvas",
+                "file": "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
                 "viewState": {
-                  "x": 2200,
-                  "y": -700,
-                  "zoom": -2.779421909283167
+                  "x": 775,
+                  "y": 450,
+                  "zoom": -0.9346561239912303
                 }
               },
               "icon": "lucide-layout-dashboard",
-              "title": "main_subfolders"
-            }
-          },
-          {
-            "id": "a0d67e53adc77080",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_debug/embed-test.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "embed-test"
-            }
-          },
-          {
-            "id": "62e8685498fc0828",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_debug/embed-test.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "embed-test"
-            }
-          },
-          {
-            "id": "fed3c37d5fd8a387",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "_debug/embed-test.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "embed-test"
-            }
-          },
-          {
-            "id": "bfd512e44f4a5ac7",
-            "type": "leaf",
-            "state": {
-              "type": "canvas",
-              "state": {
-                "file": "flowcharts/main_subfolders.canvas",
-                "viewState": {
-                  "x": 2200,
-                  "y": -700,
-                  "zoom": -2.779421909283167
-                }
-              },
-              "icon": "lucide-layout-dashboard",
-              "title": "main_subfolders"
-            }
-          },
-          {
-            "id": "8e6c9a09168da535",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Game Design Docs/Art/Art style 3D.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "Art style 3D"
+              "title": "client_subfolder"
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -260,16 +187,39 @@
               "icon": "lucide-list",
               "title": "Outline"
             }
+          },
+          {
+            "id": "e0f0465a22004c8b",
+            "type": "leaf",
+            "state": {
+              "type": "git-view",
+              "state": {},
+              "icon": "git-pull-request",
+              "title": "Source Control"
+            }
+          },
+          {
+            "id": "f0a75dc89e409a00",
+            "type": "leaf",
+            "state": {
+              "type": "file-properties",
+              "state": {
+                "file": "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas"
+              },
+              "icon": "lucide-info",
+              "title": "File properties"
+            }
           }
-        ]
+        ],
+        "currentTab": 6
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
+      "obsidian-git:Open Git source control": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
@@ -281,37 +231,53 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "8e6c9a09168da535",
+  "active": "12a00caef91e69d4",
   "lastOpenFiles": [
-    "client/Scenes/main.tscn27972013896.tmp",
-    "client/Scenes/main.tscn27966461655.tmp",
-    "client/Scenes/main.tscn27964109095.tmp",
-    "client/Scenes/main.tscn5809110904.tmp",
-    "client/Scenes/main.tscn5447350013.tmp",
-    "client/Scenes/main.tscn4516661628.tmp",
-    "client/Scenes/main.tscn4472094420.tmp",
-    "client/Scenes/main.tscn4469641776.tmp",
-    "client/Scenes/main.tscn4368742422.tmp",
-    "client/Scenes/main.tscn4333592329.tmp",
-    "client/Scenes/main.tscn4323604710.tmp",
-    "docs/Game Design Docs/Art/Art style 2D.md",
-    "docs/README.md",
-    "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Scenes_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entities_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/TorusMath_codefile/TorusMath_codefile.canvas",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/addons_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/open_godot_mcp_subfolder/open_godot_mcp_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/open_godot_mcp_subfolder/dock_subfolder/dock_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/phantom_camera_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/panel_subfolder/panel_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/scripts_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/examples_subfolder/examples_subfolder.canvas",
+    "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
+    "docs/Technical Design Docs/Description/01 Roadmap.md",
+    "docs/Technical Design Docs/Description/02 The Component Framework.md",
+    "docs/Technical Design Docs/Description/04 Lobby & Profiles.md",
+    "docs/Technical Design Docs/Description/03 Boot & Connection.md",
+    "docs/Technical Design Docs/Description/05 Joining the World.md",
+    "docs/Technical Design Docs/Description/06 Movement & Position Sync.md",
+    "docs/Technical Design Docs/Description/07 Terrain & World Streaming.md",
+    "docs/Technical Design Docs/Description/08 Enemies & AI.md",
+    "docs/Technical Design Docs/Description/09 Combat & Damage.md",
+    "docs/Technical Design Docs/Description/10 Inventory, Items & Enchantments.md",
+    "docs/Technical Design Docs/Description/11 Camera & Presentation.md",
+    "docs/Technical Design Docs/Description/12 Admin & Debug.md",
+    "docs/Technical Design Docs/Description/13 Disconnect & Teardown.md",
+    "flowcharts/main-framework.canvas",
+    "flowcharts/main-terrain.canvas",
+    "flowcharts/main-teardown.canvas",
+    "server/spacetimedb/src/main/seeds.rs",
+    "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
+    "flowcharts/flows.json",
+    "client/Scenes/main.tscn1187700049.tmp",
+    "_code-embed-test/flowchart-scratch/flowcharts/flows.json",
+    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder/sub_subfolder/util_codefile",
+    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder/sub_subfolder",
+    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder/seeds_codefile",
+    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder",
+    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/readme_codefile",
+    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts",
     "_debug/embed-test.md",
-    "flowcharts/main_subfolders.canvas",
-    "_debug/embed-test-fresh.md",
-    "docs/Technical Design Docs/To Do.md",
-    "docs/CLAUDE.md",
-    "docs/Technical Design Docs/Resources and dependencies/hex-grid/(superseded) Hex grid + chunking math notes.md",
     "docs/Game Design Docs/(shelved) Bullet-affecting player abilities.md",
+    "docs/Technical Design Docs/To Do.md",
+    "docs/Game Design Docs/Demo.md",
+    "docs/Game Design Docs/04 Lore.md",
+    "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
+    "docs/Game Design Docs/02 Gameplay.md",
+    "docs/Game Design Docs/01 Executive Summary.md",
     "docs/Technical Design Docs/(implemented) Item system - split stats from behavior.md",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/Get_symbol.canvas"
+    "docs/Game Design Docs/Art/Art style 3D.md"
   ]
 }

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1a862e40bcbb2460",
+			"id": "31e22ddd733c0a0e",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#MouseRotateSensitivity",

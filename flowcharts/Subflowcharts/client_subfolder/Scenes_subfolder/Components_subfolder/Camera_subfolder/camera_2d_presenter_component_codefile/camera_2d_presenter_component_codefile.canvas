@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a8b583ca51eee2df",
+			"id": "d6dc2f42ef16ac0c",
 			"type": "file",
 			"file": "client/Scenes/Components/Camera/camera_2d_presenter_component.tscn",
 			"x": 0,

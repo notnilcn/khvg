@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f4b3f7aa209e0b8e",
+			"id": "ff18a1244cb283c8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/Entity (class)_symbol.canvas",
 			"color": "5",
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "71367a3d2b6b126c",
+			"id": "11190f138e939f3c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/registry_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/GetComponent_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,
@@ -21,7 +21,7 @@
 			"height": 400
 		},
 		{
-			"id": "b66ff136618a6ef1",
+			"id": "98257406815098d8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/RegisterComponent_symbol.canvas",
 			"color": "5",
@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "48bc78c699488cb1",
+			"id": "0b1b2d0ff2f7bc4c",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/UnregisterComponent_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/registry_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -41,9 +41,9 @@
 			"height": 400
 		},
 		{
-			"id": "d2cf7668f318a5a4",
+			"id": "8e0a34678a1b9cd2",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/GetComponent_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/UnregisterComponent_symbol.canvas",
 			"color": "5",
 			"x": 1840,
 			"y": 0,
@@ -55,8 +55,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

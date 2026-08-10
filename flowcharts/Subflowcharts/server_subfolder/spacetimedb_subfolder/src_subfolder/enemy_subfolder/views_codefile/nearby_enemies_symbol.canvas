@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "d410fcad7efeb719",
+			"id": "001a4649fbaef7a4",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/views.rs",
 			"subpath": "#nearby_enemies",

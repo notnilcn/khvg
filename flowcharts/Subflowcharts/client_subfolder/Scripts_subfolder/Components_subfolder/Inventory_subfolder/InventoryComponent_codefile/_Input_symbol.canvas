@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "58df9e1ab54373cb",
+			"id": "bb4a0a6f0e6dbfbc",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/InventoryComponent.cs",
 			"subpath": "#_Input",

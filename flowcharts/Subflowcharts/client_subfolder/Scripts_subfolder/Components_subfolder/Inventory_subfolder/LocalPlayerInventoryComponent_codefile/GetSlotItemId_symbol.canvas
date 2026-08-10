@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "96ec98a8ef368cb3",
+			"id": "da7dbec878e36ee0",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs",
 			"subpath": "#GetSlotItemId",

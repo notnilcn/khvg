@@ -1,13 +1,33 @@
 {
-	"nodes":[
-		{"id":"24df4fc3499ba62e","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/TorusMath_codefile/TorusMath (class)_symbol.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
-		{"id":"7225eb760e5f3acb","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/TorusMath_codefile/NearestCandidate_symbol.canvas","color":"5","x":460,"y":0,"width":400,"height":400}
-	],
-	"edges":[],
-	"metadata":{
-		"frontmatter":{
-			"tags":["codefile","includeInAggregateFlowchart"]
+	"nodes": [
+		{
+			"id": "ad71c7b2d2121438",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/TorusMath_codefile/NearestCandidate_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
 		},
-		"version":"1.0-1.0"
+		{
+			"id": "9c893675ad69b0de",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/TorusMath_codefile/TorusMath (class)_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
 	}
 }

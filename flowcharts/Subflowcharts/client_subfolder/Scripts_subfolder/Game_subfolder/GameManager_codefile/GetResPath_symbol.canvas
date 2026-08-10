@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2518c4a038470a11",
+			"id": "45f9579665aad508",
 			"type": "file",
 			"file": "client/Scripts/Game/GameManager.cs",
 			"subpath": "#GetResPath",

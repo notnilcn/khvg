@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1cc50d91d446e1b5",
+			"id": "df61d67bdddaa71c",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/def_tables.rs",
 			"subpath": "#DecorConfig",

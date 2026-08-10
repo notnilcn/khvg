@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "34bc9a15c72e8edf",
+			"id": "82c3ed245de85110",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#RegisterComponent",

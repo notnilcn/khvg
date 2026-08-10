@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "06c37763f92cefeb",
+			"id": "a469bd2c8888b1b0",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/def_tables.rs",
 			"subpath": "#RingParams",

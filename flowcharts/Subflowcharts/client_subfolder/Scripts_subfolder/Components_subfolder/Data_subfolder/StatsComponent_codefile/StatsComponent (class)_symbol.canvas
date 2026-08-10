@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "dd1d5fb73edb6b86",
+			"id": "f505be05d73b69fa",
 			"type": "file",
 			"file": "client/Scripts/Components/Data/StatsComponent.cs",
 			"subpath": "#StatsComponent",

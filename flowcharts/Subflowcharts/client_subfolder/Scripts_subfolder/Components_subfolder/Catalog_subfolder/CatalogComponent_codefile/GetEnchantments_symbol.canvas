@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "033c6d427ea6ca9f",
+			"id": "6b81049e8343d5f0",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#GetEnchantments",

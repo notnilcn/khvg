@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "80e6675ca99b2f4b",
+			"id": "710710694b92e316",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/methods.rs",
 			"subpath": "#xp_for_level",

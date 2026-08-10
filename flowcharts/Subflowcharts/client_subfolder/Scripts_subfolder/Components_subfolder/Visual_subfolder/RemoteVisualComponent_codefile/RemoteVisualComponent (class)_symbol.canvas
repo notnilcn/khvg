@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "02fb7ead0610bf82",
+			"id": "1948efe9e5e497c6",
 			"type": "file",
 			"file": "client/Scripts/Components/Visual/RemoteVisualComponent.cs",
 			"subpath": "#RemoteVisualComponent",

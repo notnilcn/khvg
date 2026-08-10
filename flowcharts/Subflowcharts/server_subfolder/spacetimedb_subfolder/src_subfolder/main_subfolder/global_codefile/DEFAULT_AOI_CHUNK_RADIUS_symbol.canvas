@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "0c4eff58074ef148",
+			"id": "f981d82370fb08e8",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#DEFAULT_AOI_CHUNK_RADIUS",

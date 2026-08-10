@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "60f11f93df2ce3eb",
+			"id": "24c7e8cfbfd7f540",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#DistanceMin",

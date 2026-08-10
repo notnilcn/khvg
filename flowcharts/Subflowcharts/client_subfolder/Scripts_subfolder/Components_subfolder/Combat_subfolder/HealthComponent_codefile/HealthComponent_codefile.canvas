@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "8cff22ceaeead9db",
+			"id": "30422c7f0d943bae",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/HealthComponent (class)_symbol.canvas",
 			"color": "5",
@@ -11,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "bf9ec1d51097bba1",
+			"id": "d3ce67e65893929c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/SetFromServer_symbol.canvas",
 			"color": "5",
@@ -25,8 +25,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

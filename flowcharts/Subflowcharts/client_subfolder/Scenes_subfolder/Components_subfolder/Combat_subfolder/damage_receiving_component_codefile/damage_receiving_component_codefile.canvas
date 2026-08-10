@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f2468412e85cf9c0",
+			"id": "f02c5f64f2dc0ea8",
 			"type": "file",
 			"file": "client/Scenes/Components/Combat/damage_receiving_component.tscn",
 			"x": 0,

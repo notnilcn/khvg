@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "bebb30a549a025ca",
+			"id": "52fd28d0729f8f80",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/CameraRigComponent.cs",
 			"subpath": "#PitchMin",

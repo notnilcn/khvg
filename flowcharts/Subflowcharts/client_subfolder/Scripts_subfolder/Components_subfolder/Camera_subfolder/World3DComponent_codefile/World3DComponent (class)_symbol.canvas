@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2bcb9a37b79d57ad",
+			"id": "44459e04661366f0",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/World3DComponent.cs",
 			"subpath": "#World3DComponent",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "b3d762deae83b558",
+			"id": "2c789047bb854dc2",
 			"type": "file",
 			"file": "server/spacetimedb/src/enemy/reducers.rs",
 			"subpath": "#report_enemy_hit",

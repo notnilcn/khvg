@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "84377d03ff2877db",
+			"id": "d997595b752889a6",
 			"type": "file",
 			"file": "client/Scripts/Components/Combat/FactionComponent.cs",
 			"subpath": "#Factions",

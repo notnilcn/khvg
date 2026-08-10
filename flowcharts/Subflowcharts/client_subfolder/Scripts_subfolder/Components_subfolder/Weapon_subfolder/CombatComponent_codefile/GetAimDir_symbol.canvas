@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2b7c9da886ca1560",
+			"id": "cd9b8452ce062510",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#GetAimDir",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e1bf64568eba4dcf",
+			"id": "ef6066bef2715ec4",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/methods.rs",
 			"subpath": "#try_scaffold_profile",

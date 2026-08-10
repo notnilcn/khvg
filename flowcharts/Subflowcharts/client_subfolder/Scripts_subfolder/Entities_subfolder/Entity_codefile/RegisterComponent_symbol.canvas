@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "60da0b9a317fa672",
+			"id": "99eaa6bc81cf2a00",
 			"type": "file",
 			"file": "client/Scripts/Entities/Entity.cs",
 			"subpath": "#RegisterComponent",

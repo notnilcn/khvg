@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "34c8575876597e09",
+			"id": "7e1a79f7e8499e80",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#RefreshShownSlot",

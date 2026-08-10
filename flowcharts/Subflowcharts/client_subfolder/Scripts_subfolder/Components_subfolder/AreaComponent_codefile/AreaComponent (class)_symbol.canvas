@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6a2ae31a5db6ee95",
+			"id": "56238c548ede03c0",
 			"type": "file",
 			"file": "client/Scripts/Components/AreaComponent.cs",
 			"subpath": "#AreaComponent",

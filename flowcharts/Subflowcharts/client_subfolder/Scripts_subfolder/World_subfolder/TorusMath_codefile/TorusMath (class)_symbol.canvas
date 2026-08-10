@@ -1,12 +1,23 @@
 {
-	"nodes":[
-		{"id":"ca6685802a21ca05","type":"file","file":"client/Scripts/World/TorusMath.cs","subpath":"#TorusMath","x":0,"y":0,"width":400,"height":400}
+	"nodes": [
+		{
+			"id": "436ed9b2a2317b54",
+			"type": "file",
+			"file": "client/Scripts/World/TorusMath.cs",
+			"subpath": "#TorusMath",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
 	],
-	"edges":[],
-	"metadata":{
-		"frontmatter":{
-			"tags":["symbol","includeInAggregateFlowchart"]
-		},
-		"version":"1.0-1.0"
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
 	}
 }

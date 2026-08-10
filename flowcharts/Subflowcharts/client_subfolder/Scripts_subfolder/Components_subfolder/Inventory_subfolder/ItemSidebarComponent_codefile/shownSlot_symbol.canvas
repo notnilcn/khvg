@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "75829a5226b38aef",
+			"id": "312f6d5066cab3c0",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/ItemSidebarComponent.cs",
 			"subpath": "#shownSlot",

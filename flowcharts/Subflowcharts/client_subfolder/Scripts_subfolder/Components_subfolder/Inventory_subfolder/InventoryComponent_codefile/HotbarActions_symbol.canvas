@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "50b21b0d285eaf2c",
+			"id": "ff7a45d3d7f7ad6a",
 			"type": "file",
 			"file": "client/Scripts/Components/Inventory/InventoryComponent.cs",
 			"subpath": "#HotbarActions",

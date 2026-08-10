@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "70d7c7fdf7278f4d",
+			"id": "6be3a295e2032e3e",
 			"type": "file",
 			"file": "client/Scripts/Resources/Stats/StatKind.cs",
 			"subpath": "#StatKind",

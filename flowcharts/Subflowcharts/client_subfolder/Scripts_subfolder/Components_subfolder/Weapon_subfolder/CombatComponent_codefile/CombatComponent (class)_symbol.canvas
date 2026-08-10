@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "99b093fa4b2e5d06",
+			"id": "910349253ac0af42",
 			"type": "file",
 			"file": "client/Scripts/Components/Weapon/CombatComponent.cs",
 			"subpath": "#CombatComponent",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "e62184cbdb2b5104",
+			"id": "7863e7efbf047316",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/rules.rs",
 			"subpath": "#decided_neighbor_tags",

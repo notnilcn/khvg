@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "1df6fc3a611c1dc4",
+			"id": "067e110233f01958",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/terrain/mod.rs",
 			"subpath": "#clear_world_geometry",

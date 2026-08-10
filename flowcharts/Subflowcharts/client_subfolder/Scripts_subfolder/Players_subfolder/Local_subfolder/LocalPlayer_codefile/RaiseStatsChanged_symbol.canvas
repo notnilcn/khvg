@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "6bb956caf5d9ef44",
+			"id": "d4907cb5cafe843e",
 			"type": "file",
 			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
 			"subpath": "#RaiseStatsChanged",

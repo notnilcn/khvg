@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "3c78dc8b08313cbe",
+			"id": "e37a28161daeae20",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/admin.rs",
 			"subpath": "#release_admin",

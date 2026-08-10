@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2b500c87ca689765",
+			"id": "21892606c6a23e44",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/def_tables.rs",
 			"subpath": "#ManualRegionInput",

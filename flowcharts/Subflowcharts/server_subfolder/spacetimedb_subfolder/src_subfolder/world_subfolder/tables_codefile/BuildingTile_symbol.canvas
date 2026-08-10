@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "97dcd4374f6ee317",
+			"id": "9d1ab68417723578",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/tables.rs",
 			"subpath": "#BuildingTile",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "216caeb7938b7ceb",
+			"id": "2526dccea02c833c",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/global.rs",
 			"subpath": "#BASE_MAX_HP",

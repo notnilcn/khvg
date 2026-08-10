@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "40dc3d6031d76b9f",
+			"id": "51cd771b13ac4fa6",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/def_tables.rs",
 			"subpath": "#BiomeRegionDef",

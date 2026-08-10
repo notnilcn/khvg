@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "a4e71732d1fafbfa",
+			"id": "8838b73ca1639880",
 			"type": "file",
 			"file": "client/Scripts/Components/Camera/HexGridOverlayComponent.cs",
 			"subpath": "#FontSize",

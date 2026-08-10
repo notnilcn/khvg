@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "536a42e591861f80",
+			"id": "0efec44dfe5b9d36",
 			"type": "file",
 			"file": "server/spacetimedb/src/player/reducers.rs",
 			"subpath": "#leave_world",

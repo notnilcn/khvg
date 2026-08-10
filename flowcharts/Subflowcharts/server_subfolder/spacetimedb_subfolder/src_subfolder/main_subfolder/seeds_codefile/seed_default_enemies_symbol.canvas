@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "c9c5bd083d323eb1",
+			"id": "0109d1e8671d8d80",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/seeds.rs",
 			"subpath": "#seed_default_enemies",

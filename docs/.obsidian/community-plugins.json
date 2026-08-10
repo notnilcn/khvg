@@ -6,5 +6,12 @@
   "forwardslash-asterisk-blocks",
   "automatic-table-of-contents",
   "track-changes",
-  "flexplorer"
+  "flexplorer",
+  "advanced-canvas",
+  "better-embedded-canvas",
+  "folder-notes",
+  "optimize-canvas-connections",
+  "remember-cursor-position",
+  "sync-embeds",
+  "vscode-editor"
 ]

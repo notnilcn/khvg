@@ -1,27 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "2b25a7a260bab433",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/debug_codefile/tick_player_position_debug_symbol.canvas",
-			"color": "5",
-			"x": 480,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "46fe33d4a724f6d4",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/debug_codefile/toggle_debug_symbol.canvas",
-			"color": "5",
-			"x": 10,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "1ecd8058696ad266",
+			"id": "e586a3aebdd89e38",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/debug_codefile/PlayerPositionDebug_symbol.canvas",
 			"color": "5",
@@ -31,7 +11,7 @@
 			"height": 400
 		},
 		{
-			"id": "3c3a73e2c0e859a5",
+			"id": "c0615fd700b8c37c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/debug_codefile/PlayerPositionDebugSchedule_symbol.canvas",
 			"color": "5",
@@ -39,32 +19,52 @@
 			"y": 500,
 			"width": 400,
 			"height": 400
+		},
+		{
+			"id": "e143a400a53ad800",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/debug_codefile/tick_player_position_debug_symbol.canvas",
+			"color": "5",
+			"x": 480,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b6b24b9f60994f0a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/debug_codefile/toggle_debug_symbol.canvas",
+			"color": "5",
+			"x": 10,
+			"y": 0,
+			"width": 400,
+			"height": 400
 		}
 	],
 	"edges": [
 		{
-			"id": "3024ef4271e9cd88",
-			"fromNode": "2b25a7a260bab433",
+			"id": "a21d68937d75c3a4",
+			"fromNode": "e143a400a53ad800",
 			"fromSide": "bottom",
-			"toNode": "1ecd8058696ad266",
+			"toNode": "e586a3aebdd89e38",
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "write"
 		},
 		{
-			"id": "bc70d16cbc2f3828",
-			"fromNode": "46fe33d4a724f6d4",
+			"id": "b4fc39dda8f6958e",
+			"fromNode": "b6b24b9f60994f0a",
 			"fromSide": "bottom",
-			"toNode": "3c3a73e2c0e859a5",
+			"toNode": "c0615fd700b8c37c",
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "read"
 		},
 		{
-			"id": "e614fb0468d4d09a",
-			"fromNode": "46fe33d4a724f6d4",
+			"id": "737ee3d70da22564",
+			"fromNode": "b6b24b9f60994f0a",
 			"fromSide": "bottom",
-			"toNode": "1ecd8058696ad266",
+			"toNode": "e586a3aebdd89e38",
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "write"
@@ -73,37 +73,37 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_hex",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebug-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebug-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_hex",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebug-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebug-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-is_admin",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebugSchedule-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebugSchedule-_colon_-write",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas"
 			]
 		}
 	}

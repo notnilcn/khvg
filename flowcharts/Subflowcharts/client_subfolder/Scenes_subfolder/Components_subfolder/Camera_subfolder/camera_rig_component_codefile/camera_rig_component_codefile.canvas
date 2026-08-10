@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "27c46d2f71086d67",
+			"id": "4edbec01261541f6",
 			"type": "file",
 			"file": "client/Scenes/Components/Camera/camera_rig_component.tscn",
 			"x": 0,

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "046cdcc2b4f82eea",
+			"id": "1573c455c39a1068",
 			"type": "file",
 			"file": "server/spacetimedb/src/world/tables.rs",
 			"subpath": "#TextureKind",

@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "9d8d34650f26a815",
+			"id": "feab1c82ba62a900",
 			"type": "file",
 			"file": "client/Scripts/Players/Enemies/Enemy.cs",
 			"subpath": "#nearbyEnemiesBinder",

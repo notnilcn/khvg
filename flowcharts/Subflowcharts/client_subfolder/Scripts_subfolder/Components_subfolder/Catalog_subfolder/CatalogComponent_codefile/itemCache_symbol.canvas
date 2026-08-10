@@ -1,7 +1,7 @@
 {
 	"nodes": [
 		{
-			"id": "f53f74dc06209e1a",
+			"id": "7b884773c1d7a256",
 			"type": "file",
 			"file": "client/Scripts/Components/Catalog/CatalogComponent.cs",
 			"subpath": "#itemCache",
