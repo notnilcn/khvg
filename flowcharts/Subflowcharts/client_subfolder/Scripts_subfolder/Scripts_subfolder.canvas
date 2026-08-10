@@ -1,21 +1,21 @@
 {
 	"nodes": [
 		{
-			"id": "fbc749a97e8bd786",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "83dfef8316be863e",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entities_subfolder.canvas",
 			"color": "5",
 			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fbc749a97e8bd786",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder.canvas",
+			"color": "5",
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -31,21 +31,21 @@
 			"height": 400
 		},
 		{
-			"id": "51fdfc79fa8f5462",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas",
-			"color": "5",
-			"x": 1380,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "0bfa04cd733308ca",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
 			"color": "5",
 			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "51fdfc79fa8f5462",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas",
+			"color": "5",
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400

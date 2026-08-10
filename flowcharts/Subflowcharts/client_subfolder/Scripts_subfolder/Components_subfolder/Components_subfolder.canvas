@@ -21,21 +21,21 @@
 			"height": 400
 		},
 		{
-			"id": "9c40649d704c108c",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas",
-			"color": "5",
-			"x": 4600,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "3e75a59f8a2cb088",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder.canvas",
 			"color": "5",
 			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9c40649d704c108c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas",
+			"color": "5",
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -131,21 +131,21 @@
 			"height": 400
 		},
 		{
-			"id": "f97564cb0fced794",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Node2DComponent_codefile/Node2DComponent_codefile.canvas",
-			"color": "5",
-			"x": 2300,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "1d60b7451412fc10",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
 			"color": "5",
 			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f97564cb0fced794",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Node2DComponent_codefile/Node2DComponent_codefile.canvas",
+			"color": "5",
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400

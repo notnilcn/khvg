@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://i7v5ssc1g45q"]
 
 [ext_resource type="Script" uid="uid://bnc70m8tlxmif" path="res://Scripts/Items/Drop.cs" id="1_lbfjw"]
-[ext_resource type="Script" path="res://Scripts/Components/Visual/DropVisualComponent.cs" id="2_visual"]
+[ext_resource type="Script" uid="uid://dyy36qgfhs6k2" path="res://Scripts/Components/Visual/DropVisualComponent.cs" id="2_visual"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Interaction/pickup_component.tscn" id="3_pickup"]
 
 [node name="Drop" type="Node2D" unique_id=1237467754]

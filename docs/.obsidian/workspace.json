@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Game Design Docs/04 Lore.md",
+                "file": "Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "04 Lore"
+              "title": "00 End-to-End Timeline Flowchart"
             }
           }
         ]

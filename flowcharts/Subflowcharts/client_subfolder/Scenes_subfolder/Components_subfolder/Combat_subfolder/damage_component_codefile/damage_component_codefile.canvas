@@ -14,6 +14,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Components/Combat/DamageComponent-_dot_-cs-_hashtag_-DamageComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageComponent_codefile/DamageComponent_codefile-_dot_-canvas-_colon_-script",
@@ -21,8 +22,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script"
 			]
 		}
 	}

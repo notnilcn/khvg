@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dw7m1ev54lshc"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Bullets/BulletHitRouterComponent.cs" id="1_router"]
+[ext_resource type="Script" uid="uid://dq1l6lcwan7h4" path="res://Scripts/Components/Bullets/BulletHitRouterComponent.cs" id="1_router"]
 
-[node name="BulletHitRouterComponent" type="Node"]
+[node name="BulletHitRouterComponent" type="Node" unique_id=1707507483]
 script = ExtResource("1_router")

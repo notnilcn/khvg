@@ -4,11 +4,12 @@ using SpacetimeDB.Types;
 using System.Collections.Generic;
 
 /// <summary>
-/// Spawns and despawns the server-row entities — LocalPlayer (+ the BulletManager),
-/// RemotePlayers, Enemies, Drops — from child TableBinderComponent row signals (declared in
+/// Spawns and despawns the server-row entities — LocalPlayer, RemotePlayers, Enemies,
+/// Drops — from child TableBinderComponent row signals (declared in
 /// entity_spawner_component.tscn, signals wired in the editor; ReplayExistingRows covers rows
 /// already in the client cache), and tracks them in lookup dictionaries. Instantiation stays
 /// in code because the count is data-driven by server rows (logic moved out of GameManager.cs).
+/// The BulletManager is not row-driven, so it lives directly in main.tscn instead.
 /// </summary>
 public partial class EntitySpawnerComponent : Component
 {
@@ -16,10 +17,8 @@ public partial class EntitySpawnerComponent : Component
     [Export] public PackedScene NonLocalPlayerScene { get; set; } = null!;
     [Export] public PackedScene EnemyScene { get; set; } = null!;
     [Export] public PackedScene DropScene { get; set; } = null!;
-    [Export] public PackedScene BulletManagerScene { get; set; } = null!;
 
     private LocalPlayer? localPlayer;
-    private BulletManager? bulletManager;
     private readonly Dictionary<string, RemotePlayer> remotePlayers = new();
     private readonly Dictionary<ulong, Enemy> enemies = new();
     private readonly Dictionary<ulong, Drop> drops = new();
@@ -52,11 +51,6 @@ public partial class EntitySpawnerComponent : Component
             localPlayer = LocalPlayerScene.Instantiate<LocalPlayer>();
             GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, localPlayer);
         }
-        if (bulletManager == null)
-        {
-            bulletManager = BulletManagerScene.Instantiate<BulletManager>();
-            GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, bulletManager);
-        }
     }
 
     private void OnLocalPlayerDelete()
@@ -64,9 +58,6 @@ public partial class EntitySpawnerComponent : Component
         if (localPlayer != null && IsInstanceValid(localPlayer))
             localPlayer.QueueFree();
         localPlayer = null;
-        if (bulletManager != null && IsInstanceValid(bulletManager))
-            bulletManager.QueueFree();
-        bulletManager = null;
 
         if (DatabaseConnector.Instance?.Conn?.IsActive != true) return;
 

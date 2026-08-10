@@ -1,10 +1,11 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dxx5w0ohddwun"]
 
 [ext_resource type="Script" uid="uid://drmk14tu2scnl" path="res://Scripts/Components/Lobby/LobbyComponent.cs" id="1_lobby"]
 [ext_resource type="PackedScene" uid="uid://dcn402bshd83k" path="res://Scenes/profile_panel.tscn" id="2_profile"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="3_binder"]
 
-[node name="LobbyComponent" type="Control"]
+[node name="LobbyComponent" type="Control" unique_id=1898970437]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -13,12 +14,12 @@ grow_vertical = 2
 script = ExtResource("1_lobby")
 PlayerProfileScene = ExtResource("2_profile")
 
-[node name="LocalPlayerProfilesBinder" type="Node" parent="."]
+[node name="LocalPlayerProfilesBinder" type="Node" parent="." unique_id=833288132]
 script = ExtResource("3_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerProfiles"
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="Panel" parent="." unique_id=1137648779]
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 1
 anchors_preset = 10
@@ -26,7 +27,7 @@ anchor_right = 1.0
 offset_bottom = 40.0
 grow_horizontal = 2
 
-[node name="CenterContainer" type="CenterContainer" parent="Panel"]
+[node name="CenterContainer" type="CenterContainer" parent="Panel" unique_id=1981648497]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -34,11 +35,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Button" type="Button" parent="Panel/CenterContainer"]
+[node name="Button" type="Button" parent="Panel/CenterContainer" unique_id=1525011945]
 layout_mode = 2
 text = "BACK"
 
-[node name="Create" type="Button" parent="Panel"]
+[node name="Create" type="Button" parent="Panel" unique_id=230472962]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 1.0
@@ -50,7 +51,7 @@ offset_bottom = 35.0
 grow_horizontal = 0
 text = "CREATE"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=468767839]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -60,10 +61,10 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer" unique_id=975960307]
 layout_mode = 2
 
-[node name="CreateProfilePanel" type="CenterContainer" parent="."]
+[node name="CreateProfilePanel" type="CenterContainer" parent="." unique_id=2142697048]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -72,11 +73,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Panel" type="Panel" parent="CreateProfilePanel"]
+[node name="Panel" type="Panel" parent="CreateProfilePanel" unique_id=141105439]
 custom_minimum_size = Vector2(250, 120)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="CreateProfilePanel/Panel"]
+[node name="Label" type="Label" parent="CreateProfilePanel/Panel" unique_id=1324746523]
 layout_mode = 0
 offset_top = 2.0
 offset_right = 250.0
@@ -85,7 +86,7 @@ text = "Create Profile"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="LineEdit" type="LineEdit" parent="CreateProfilePanel/Panel"]
+[node name="LineEdit" type="LineEdit" parent="CreateProfilePanel/Panel" unique_id=2046495742]
 layout_mode = 0
 offset_left = 25.0
 offset_top = 38.0
@@ -93,7 +94,7 @@ offset_right = 225.0
 offset_bottom = 69.0
 placeholder_text = "Profile Name =^.^="
 
-[node name="Create" type="Button" parent="CreateProfilePanel/Panel"]
+[node name="Create" type="Button" parent="CreateProfilePanel/Panel" unique_id=1178916767]
 layout_mode = 0
 offset_left = 92.0
 offset_top = 80.0
@@ -101,6 +102,6 @@ offset_right = 158.0
 offset_bottom = 111.0
 text = "CREATE"
 
+[connection signal="RowInserted" from="LocalPlayerProfilesBinder" to="." method="OnProfileRowInserted"]
 [connection signal="pressed" from="Panel/Create" to="." method="OnCreatePanelPressed"]
 [connection signal="pressed" from="CreateProfilePanel/Panel/Create" to="." method="OnCreatePressed"]
-[connection signal="RowInserted" from="LocalPlayerProfilesBinder" to="." method="OnProfileRowInserted"]

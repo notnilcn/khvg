@@ -2,7 +2,7 @@
   "nodeTypeOnDoubleClick": "text",
   "alignNewNodesToGrid": true,
   "defaultTextNodeDimensions": [
-    260,
+    60,
     60
   ],
   "defaultFileNodeDimensions": [
@@ -14,6 +14,7 @@
   "disableFontSizeRelativeToZoom": false,
   "wrapGroupLabels": true,
   "hideGroupLabels": false,
+  "boxedNodeLabels": true,
   "defaultGroupLabelSize": "1",
   "defaultGroupOpacity": "default",
   "defaultEdgeWidth": "3",
@@ -88,6 +89,7 @@
   "canvasEncapsulationEnabled": false,
   "portalsFeatureEnabled": true,
   "showEdgesIntoDisabledPortals": true,
+  "autoOpenSingleNodePortals": true,
   "autoFileNodeEdgesFeatureEnabled": false,
   "autoFileNodeEdgesFrontmatterKey": "canvas-edges",
   "edgeHighlightEnabled": false,

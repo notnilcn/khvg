@@ -1,21 +1,21 @@
 {
 	"nodes": [
 		{
-			"id": "56939f7d6d7221e4",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/AuthToken_codefile/AuthToken_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "af25fe5b348d1e04",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/DatabaseConnector_codefile.canvas",
 			"color": "5",
 			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "56939f7d6d7221e4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/AuthToken_codefile/AuthToken_codefile.canvas",
+			"color": "5",
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400

@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dly5ocjb0vcx4"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Bullets/BulletSpawnerComponent.cs" id="1_spawner"]
+[ext_resource type="Script" uid="uid://k5um1vjuigjd" path="res://Scripts/Components/Bullets/BulletSpawnerComponent.cs" id="1_spawner"]
 
-[node name="BulletSpawnerComponent" type="Node"]
+[node name="BulletSpawnerComponent" type="Node" unique_id=1188786107]
 script = ExtResource("1_spawner")

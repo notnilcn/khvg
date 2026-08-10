@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://cm1irf8f36aog"]
+
+[ext_resource type="Script" uid="uid://dlttx0smss1ls" path="res://sstdbsdk/DatabaseConnector.cs" id="1_awvhk"]
+
+[node name="DatabaseConnector" type="Node" unique_id=1645465411]
+script = ExtResource("1_awvhk")
+Host = "http://khvgames.com/server"

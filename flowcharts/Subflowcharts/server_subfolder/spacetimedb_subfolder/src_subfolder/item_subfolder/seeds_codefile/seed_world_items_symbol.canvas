@@ -15,6 +15,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/item/seeds-_dot_-rs-_hashtag_-seed",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/seeds_codefile/seeds_codefile-_dot_-canvas",
@@ -33,8 +34,7 @@
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConsumableBehavior",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConsumableEffect",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WeaponBehavior",
-				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WeaponPattern",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WeaponPattern"
 			]
 		}
 	}

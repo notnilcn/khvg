@@ -11,21 +11,21 @@
 			"height": 400
 		},
 		{
-			"id": "ed9a8de99c4b506a",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageReceivingComponent_codefile/DamageReceivingComponent_codefile.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "5f54e0cd46eb4b02",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/FactionComponent_codefile/FactionComponent_codefile.canvas",
 			"color": "5",
 			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ed9a8de99c4b506a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageReceivingComponent_codefile/DamageReceivingComponent_codefile.canvas",
+			"color": "5",
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400

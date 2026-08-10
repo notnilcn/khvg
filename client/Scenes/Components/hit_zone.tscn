@@ -1,19 +1,19 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://d1kw27sttw8j1"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Combat/HitZone.cs" id="1_hit"]
+[ext_resource type="Script" uid="uid://ce3hljawg8hu4" path="res://Scripts/Components/Combat/HitZone.cs" id="1_hit"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_hit"]
 resource_local_to_scene = true
 
-[node name="HitZone" type="Area2D"]
+[node name="HitZone" type="Area2D" unique_id=1632218274]
+top_level = true
 collision_layer = 0
 collision_mask = 4
 monitorable = false
-top_level = true
 script = ExtResource("1_hit")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1468591573]
 shape = SubResource("CircleShape2D_hit")
 
-[node name="LifetimeTimer" type="Timer" parent="."]
+[node name="LifetimeTimer" type="Timer" parent="." unique_id=511436248]
 one_shot = true

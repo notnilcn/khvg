@@ -1,25 +1,25 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://b1nvedybn2tn5"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Terrain/TileComponent.cs" id="1_tile"]
-[ext_resource type="Script" path="res://Scripts/Components/Terrain/GroundComponent.cs" id="2_ground"]
-[ext_resource type="Script" path="res://Scripts/Components/Terrain/OverlayComponent.cs" id="3_overlay"]
-[ext_resource type="Script" path="res://Scripts/Components/Terrain/DecorShadowComponent.cs" id="4_shadow"]
-[ext_resource type="Script" path="res://Scripts/Components/Terrain/DecorComponent.cs" id="5_decor"]
+[ext_resource type="Script" uid="uid://i8r3le3mnaj4" path="res://Scripts/Components/Terrain/TileComponent.cs" id="1_tile"]
+[ext_resource type="Script" uid="uid://byr47174j65d2" path="res://Scripts/Components/Terrain/GroundComponent.cs" id="2_ground"]
+[ext_resource type="Script" uid="uid://namoo5ma7m78" path="res://Scripts/Components/Terrain/OverlayComponent.cs" id="3_overlay"]
+[ext_resource type="Script" uid="uid://bmfpjjcu2igva" path="res://Scripts/Components/Terrain/DecorShadowComponent.cs" id="4_shadow"]
+[ext_resource type="Script" uid="uid://dntqw24igqfk" path="res://Scripts/Components/Terrain/DecorComponent.cs" id="5_decor"]
 
-[node name="TileComponent" type="Node2D"]
+[node name="TileComponent" type="Node2D" unique_id=1786891103]
 script = ExtResource("1_tile")
 
-[node name="GroundComponent" type="Node2D" parent="."]
+[node name="GroundComponent" type="Node2D" parent="." unique_id=2036775815]
 script = ExtResource("2_ground")
 
-[node name="OverlayComponent" type="Node2D" parent="."]
+[node name="OverlayComponent" type="Node2D" parent="." unique_id=1086284410]
 z_index = 1
 script = ExtResource("3_overlay")
 
-[node name="DecorShadowComponent" type="Node2D" parent="."]
+[node name="DecorShadowComponent" type="Node2D" parent="." unique_id=565722720]
 z_index = 2
 script = ExtResource("4_shadow")
 
-[node name="DecorComponent" type="Node2D" parent="."]
+[node name="DecorComponent" type="Node2D" parent="." unique_id=1178175127]
 z_index = 3
 script = ExtResource("5_decor")

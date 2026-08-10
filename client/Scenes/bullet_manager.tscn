@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://cl7qy3eeo4jep" path="res://Scripts/Game/BulletManager.cs" id="1_hr8h3"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Bullets/bullet_spawner_component.tscn" id="2_spawner"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Bullets/bullet_hit_router_component.tscn" id="3_router"]
+[ext_resource type="PackedScene" path="res://Scenes/Components/Bullets/bullet_ability_component.tscn" id="4_ability"]
 
 [node name="BulletManager" type="Node2D" unique_id=469550103 node_paths=PackedStringArray("BlastBullets")]
 script = ExtResource("1_hr8h3")
@@ -10,6 +11,8 @@ BlastBullets = NodePath("BlastBullets")
 
 [node name="BlastBullets" type="BulletFactory2D" parent="." unique_id=1590443171]
 
-[node name="BulletSpawnerComponent" parent="." instance=ExtResource("2_spawner")]
+[node name="BulletSpawnerComponent" parent="." unique_id=1703170528 instance=ExtResource("2_spawner")]
 
-[node name="BulletHitRouterComponent" parent="." instance=ExtResource("3_router")]
+[node name="BulletHitRouterComponent" parent="." unique_id=72256238 instance=ExtResource("3_router")]
+
+[node name="BulletAbilityComponent" parent="." unique_id=91347526 instance=ExtResource("4_ability")]

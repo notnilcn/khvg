@@ -117,10 +117,10 @@ The plugin's flowchart feature (right-click a folder in Obsidian's file explorer
 
 ## Mechanical conventions (exact syntax — follow precisely)
 
-**Wikilinks to code** (block-link-plus line-search syntax):
-
+**Wikilinks to code**:
+[[server/spacetimedb/src/main/seeds.rs#seed#2|seeds]]
 ```
-[[filename##text on the target line|display text]]
+[[filename#function name#function index|display text]]
 ```
 
 - Bare filename, no path — the plugin searches the vault (e.g. `[[lifecycle.rs##pub fn init|init]]`, `[[GameManager.cs##public override void _Ready|_Ready]]`).

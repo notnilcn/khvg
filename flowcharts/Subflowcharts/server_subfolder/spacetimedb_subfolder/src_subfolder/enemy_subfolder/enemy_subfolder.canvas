@@ -11,22 +11,22 @@
 			"height": 400
 		},
 		{
-			"id": "8385aa86a81a3048",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/methods_codefile.canvas",
-			"color": "5",
-			"x": 730,
-			"y": 1500,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "420d865877a22360",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile.canvas",
 			"color": "5",
 			"x": 600,
 			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8385aa86a81a3048",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/methods_codefile.canvas",
+			"color": "5",
+			"x": 730,
+			"y": 1500,
 			"width": 400,
 			"height": 400
 		},
@@ -63,6 +63,22 @@
 	],
 	"edges": [
 		{
+			"id": "6dc76420a362d840",
+			"fromNode": "420d865877a22360",
+			"fromSide": "bottom",
+			"toNode": "14c5c4e036769600",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d29f3cca6b888870",
+			"fromNode": "420d865877a22360",
+			"fromSide": "bottom",
+			"toNode": "8c5d43003f225e00",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
 			"id": "b0f27f5dffd77e1a",
 			"fromNode": "8385aa86a81a3048",
 			"fromSide": "bottom",
@@ -78,22 +94,6 @@
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "read"
-		},
-		{
-			"id": "6dc76420a362d840",
-			"fromNode": "420d865877a22360",
-			"fromSide": "bottom",
-			"toNode": "14c5c4e036769600",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "d29f3cca6b888870",
-			"fromNode": "420d865877a22360",
-			"fromSide": "bottom",
-			"toNode": "8c5d43003f225e00",
-			"toSide": "top",
-			"toEnd": "arrow"
 		},
 		{
 			"id": "d7d8510e7ae5a61c",
@@ -143,15 +143,20 @@
 			"tags": [
 				"includeInAggregateFlowchart",
 				"subfolder",
-				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-reset_repeat_counts",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PhaseDef",
-				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyAttack-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyAttack-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/reducers-_dot_-rs-_hashtag_-tick_enemy_behavior",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/reducers-_dot_-rs-_hashtag_-tick_enemy_spawn",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-reset_repeat_counts",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PhaseDef",
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyAttack-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyAttack-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
@@ -212,7 +217,6 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-find_nearest_player_id",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemySequenceStep-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-RepeatStepInstance-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-build_enemy_behavior",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-has_player_near_spawn_point",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-spawn_enemy_archetype",
@@ -231,10 +235,6 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-tick_sequence",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
-				"edge-_colon_-server/spacetimedb/src/enemy/reducers-_dot_-rs-_hashtag_-tick_enemy_behavior",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/enemy/reducers-_dot_-rs-_hashtag_-tick_enemy_spawn",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
 				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-deal_damage_to_enemy",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",

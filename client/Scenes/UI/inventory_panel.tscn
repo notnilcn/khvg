@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://701vhi4srkpg" path="res://Scripts/Components/Inventory/SlotComponent.cs" id="4_7ophi"]
 [ext_resource type="Script" uid="uid://blemhphivh11e" path="res://Scripts/Components/Inventory/StatsSidebarComponent.cs" id="5_rmvjh"]
 [ext_resource type="Script" uid="uid://fs5pxnesqgbg" path="res://Scripts/Components/Inventory/ItemSidebarComponent.cs" id="6_rmvjh"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/enchantment_row.tscn" id="7_row"]
+[ext_resource type="PackedScene" uid="uid://dcq2iaph4ucdh" path="res://Scenes/UI/enchantment_row.tscn" id="7_row"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1vum"]
 bg_color = Color(0.4115005, 0.4115005, 0.4115005, 1)
@@ -857,7 +857,6 @@ pivot_offset = Vector2(8, 8)
 
 [node name="StatsSidebarComponent" type="Control" parent="InventoryComponent/Menu" unique_id=1162261805 node_paths=PackedStringArray("LevelLabel", "HpLabel", "StrengthLabel", "WisdomLabel", "DexterityLabel", "DefenseLabel", "VitalityLabel", "SpeedLabel")]
 layout_mode = 1
-anchors_preset = -1
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -300.0
@@ -972,7 +971,6 @@ uppercase = true
 
 [node name="ItemSidebarComponent" type="Control" parent="InventoryComponent/Menu" unique_id=984716298 node_paths=PackedStringArray("ItemNameLabel", "ItemIcon", "DescriptionLabel", "EmptyLabel", "DetailsScroll", "DetailsList")]
 layout_mode = 1
-anchors_preset = -1
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = 100.0

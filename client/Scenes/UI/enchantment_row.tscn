@@ -1,31 +1,31 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dcq2iaph4ucdh"]
 
-[node name="EnchantmentRow" type="HBoxContainer"]
+[node name="EnchantmentRow" type="HBoxContainer" unique_id=900208609]
 theme_override_constants/separation = 4
 
-[node name="Icon" type="TextureRect" parent="."]
+[node name="Icon" type="TextureRect" parent="." unique_id=824499432]
 custom_minimum_size = Vector2(24, 24)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Text" type="VBoxContainer" parent="."]
+[node name="Text" type="VBoxContainer" parent="." unique_id=2114345233]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="Name" type="Label" parent="Text"]
+[node name="Name" type="Label" parent="Text" unique_id=470990281]
 layout_mode = 2
 theme_override_font_sizes/font_size = 13
 autowrap_mode = 3
 uppercase = true
 
-[node name="Stats" type="Label" parent="Text"]
+[node name="Stats" type="Label" parent="Text" unique_id=1549396903]
 layout_mode = 2
 theme_override_font_sizes/font_size = 11
 autowrap_mode = 3
 uppercase = true
 
-[node name="ActionButton" type="Button" parent="."]
+[node name="ActionButton" type="Button" parent="." unique_id=2075285485]
 layout_mode = 2
 theme_override_font_sizes/font_size = 12

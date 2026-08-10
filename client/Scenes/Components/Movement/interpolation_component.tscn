@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bylri1y7swjqa"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Movement/InterpolationComponent.cs" id="1_interp"]
+[ext_resource type="Script" uid="uid://wbwiuqmv770v" path="res://Scripts/Components/Movement/InterpolationComponent.cs" id="1_interp"]
 
-[node name="InterpolationComponent" type="Node"]
+[node name="InterpolationComponent" type="Node" unique_id=2130595165]
 script = ExtResource("1_interp")

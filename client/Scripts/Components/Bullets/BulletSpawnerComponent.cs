@@ -6,15 +6,28 @@ using SpacetimeDB.Types;
 /// Bullet spawning for the BulletManager entity: owns the enemy/player spawner configs
 /// (ClassDB.Instantiate of BlastBullets2D *resources* — not nodes), dispatches
 /// BulletPatternEvent rows to the per-pattern spawn methods, and fires player bullets
-/// for CombatComponent. The deterministic SplitMix64 jitter mirrors the server's hash
-/// technique in enemy/methods.rs, seeded by event_id so every client (and the future
-/// audit script) derives identical pellet trajectories (logic moved out of BulletManager.cs).
+/// for CombatComponent. Enemy bullets spawn via spawn_controllable_directional_bullets and
+/// the returned DirectionalBullets2D instances are tracked in LiveEnemyBullets so
+/// BulletAbilityComponent can find and manipulate live bullets (the factory cannot enumerate
+/// them). The deterministic SplitMix64 jitter mirrors the server's hash technique in
+/// enemy/methods.rs, seeded by event_id so every client (and the future audit script)
+/// derives identical pellet trajectories (logic moved out of BulletManager.cs).
 /// </summary>
 public partial class BulletSpawnerComponent : Component
 {
     private GodotObject EnemyBulletSpawner = null!;
     private GodotObject PlayerBulletSpawner = null!;
     private readonly System.Collections.Generic.Dictionary<string, Texture2D?> bulletTextureCache = [];
+
+    // Live DirectionalBullets2D instances returned by spawn_controllable_directional_bullets.
+    // The factory offers no way to enumerate active instances, so they are captured here for
+    // BulletAbilityComponent. A HashSet dedups instances that auto-pooling hands back out for
+    // a later spawn; dead entries are pruned periodically and before each enemy spawn.
+    private readonly System.Collections.Generic.HashSet<GodotObject> liveEnemyBullets = [];
+    private float pruneTimer;
+    private const float PruneInterval = 1f;
+
+    public System.Collections.Generic.IReadOnlyCollection<GodotObject> LiveEnemyBullets => liveEnemyBullets;
 
     // Arrow.tres art faces up-right (-45 degrees) instead of Vector2.Right, so compensate before BlastBullets2D applies its own trajectory rotation.
     private const float ProjectileTextureAngleOffset = Mathf.Pi / 4f;
@@ -26,6 +39,34 @@ public partial class BulletSpawnerComponent : Component
     {
         SetupEnemyBullets();
         SetupPlayerBullets();
+    }
+
+    public override void _Process(double delta)
+    {
+        pruneTimer += (float)delta;
+        if (pruneTimer >= PruneInterval)
+        {
+            pruneTimer = 0f;
+            PruneLiveEnemyBullets();
+        }
+    }
+
+    // No per-bullet despawn signal exists, so liveness is checked defensively: an instance is
+    // dropped once it is freed or has no enabled bullets left.
+    private void PruneLiveEnemyBullets() =>
+        liveEnemyBullets.RemoveWhere(inst =>
+        {
+            if (!GodotObject.IsInstanceValid(inst)) return true;
+            var statuses = inst.Call("get_all_bullets_status").AsGodotArray<bool>();
+            foreach (var enabled in statuses)
+                if (enabled) return false;
+            return true;
+        });
+
+    private void SpawnControllable()
+    {
+        var instance = BlastBullets.Call("spawn_controllable_directional_bullets", EnemyBulletSpawner).AsGodotObject();
+        if (instance != null) liveEnemyBullets.Add(instance);
     }
 
     private void SetupEnemyBullets()
@@ -75,6 +116,7 @@ public partial class BulletSpawnerComponent : Component
 
     public void SpawnEnemyBullet(BulletPatternEvent bulletPattern)
     {
+        PruneLiveEnemyBullets();
         var origin = new Vector2(bulletPattern.OriginX, bulletPattern.OriginY) + new Vector2(bulletPattern.OriginOffsetX, bulletPattern.OriginOffsetY);
         var baseAngle = ResolveTargetAngle(origin, bulletPattern.Target) + Mathf.DegToRad(bulletPattern.BaseAngleOffset);
 
@@ -152,7 +194,7 @@ public partial class BulletSpawnerComponent : Component
         EnemyBulletSpawner.Set("max_life_time", lifetime);
         SetSpeed(speed);
         EnemyBulletSpawner.Set("transforms", new Godot.Collections.Array<Transform2D> { BulletTransform(angle, origin) });
-        BlastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
+        SpawnControllable();
     }
 
     private void SpawnRing(Vector2 origin, RingParams p, float baseAngle)
@@ -163,7 +205,7 @@ public partial class BulletSpawnerComponent : Component
         for (int i = 0; i < p.Count; i++)
             transforms.Add(BulletTransform(baseAngle + angleStep * i, origin));
         EnemyBulletSpawner.Set("transforms", transforms);
-        BlastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
+        SpawnControllable();
     }
 
     private void SpawnVolley(Vector2 origin, VolleyParams p, float baseAngle, ulong eventId, float lifetime)
@@ -189,7 +231,7 @@ public partial class BulletSpawnerComponent : Component
             transforms.Add(BulletTransform(startAngle + angleStep * i, origin));
         }
         EnemyBulletSpawner.Set("transforms", transforms);
-        BlastBullets.Call("spawn_directional_bullets", EnemyBulletSpawner);
+        SpawnControllable();
     }
 
     private void SpawnShotgun(Vector2 origin, ShotgunParams p, float baseAngle, ulong eventId, float lifetime)
@@ -217,5 +259,24 @@ public partial class BulletSpawnerComponent : Component
             float pelletLifetime = lifetime + Jitter(eventId, i, 1, p.LifetimeVariance);
             SpawnSingle(origin, angle, speed, pelletLifetime);
         }
+    }
+
+    /// Fan of enemy bullets for BulletAbilityComponent's split effect. Keeps the source
+    /// bullet's BulletData so split pellets still report the original SourceStep on hit, and
+    /// whatever texture was last applied to the shared enemy spawner.
+    public void SpawnEnemyBulletFan(Vector2 origin, float baseAngle, int count, float spread, float speed, float lifetime, BulletData? customData)
+    {
+        if (count == 0) return;
+        if (customData != null)
+            EnemyBulletSpawner.Set("bullets_custom_data", customData);
+        EnemyBulletSpawner.Set("max_life_time", lifetime);
+        SetSpeed(speed);
+        var transforms = new Godot.Collections.Array<Transform2D>();
+        float halfSpread = spread * 0.5f;
+        float angleStep = count > 1 ? spread / (count - 1) : 0f;
+        for (int i = 0; i < count; i++)
+            transforms.Add(BulletTransform(baseAngle - halfSpread + angleStep * i, origin));
+        EnemyBulletSpawner.Set("transforms", transforms);
+        SpawnControllable();
     }
 }

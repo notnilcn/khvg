@@ -1,7 +1,7 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bjwx238ylaevn"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Combat/DamageComponent.cs" id="1_damage"]
+[ext_resource type="Script" uid="uid://3ycld58kuxni" path="res://Scripts/Components/Combat/DamageComponent.cs" id="1_damage"]
 
-[node name="DamageComponent" type="Area2D"]
+[node name="DamageComponent" type="Area2D" unique_id=947646973]
 collision_layer = 0
 script = ExtResource("1_damage")

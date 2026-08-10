@@ -1,15 +1,15 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cfcenqmp3bur4"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Interaction/PickupComponent.cs" id="1_pickup"]
+[ext_resource type="Script" uid="uid://ce7pfij67lftd" path="res://Scripts/Components/Interaction/PickupComponent.cs" id="1_pickup"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_pickup"]
 
-[node name="PickupComponent" type="Area2D"]
+[node name="PickupComponent" type="Area2D" unique_id=1819579072]
 script = ExtResource("1_pickup")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=118382465]
 shape = SubResource("CircleShape2D_pickup")
 
-[node name="PickupLockTimer" type="Timer" parent="."]
+[node name="PickupLockTimer" type="Timer" parent="." unique_id=150623070]
 wait_time = 5.0
 one_shot = true

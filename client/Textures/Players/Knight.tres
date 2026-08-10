@@ -1,7 +1,7 @@
 [gd_resource type="SpriteFrames" format=3 uid="uid://b53v3eyd2thnc"]
 
-[ext_resource type="Texture2D" uid="uid://ddell0nm3yshp" path="res://Assets/2D/Tiny Swords (Free Pack)/Units/Yellow Units/Warrior/Warrior_Idle.png" id="1_btye7"]
-[ext_resource type="Texture2D" uid="uid://dno04pr6k3xde" path="res://Assets/2D/Tiny Swords (Free Pack)/Units/Yellow Units/Warrior/Warrior_Run.png" id="2_e0j06"]
+[ext_resource type="Texture2D" uid="uid://ws8muichc5u8" path="res://Assets/2D/Tiny Swords (Free Pack)/Units/Yellow Units/Warrior/Warrior_Idle.png" id="1_btye7"]
+[ext_resource type="Texture2D" uid="uid://d2swfy06uw0r8" path="res://Assets/2D/Tiny Swords (Free Pack)/Units/Yellow Units/Warrior/Warrior_Run.png" id="2_e0j06"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tincf"]
 atlas = ExtResource("1_btye7")
@@ -86,7 +86,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_kpx6f")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Idle",
 "speed": 12.0
 }, {
@@ -109,7 +109,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_v8irs")
 }],
-"loop": true,
+"loop": 1,
 "name": &"Walk",
 "speed": 12.0
 }]

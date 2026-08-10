@@ -15,6 +15,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-HexCell",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
@@ -36,8 +37,7 @@
 				"edge-_colon_-server/spacetimedb/src/world/terrain/rules-_dot_-rs-_hashtag_-base_tags_conflict",
 				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-weighted_pick_index",
 				"edge-_colon_-server/spacetimedb/src/world/terrain/mod-_dot_-rs-_hashtag_-pick_rotation",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/mod_codefile/mod_codefile-_dot_-canvas",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/mod_codefile/mod_codefile-_dot_-canvas"
 			]
 		}
 	}

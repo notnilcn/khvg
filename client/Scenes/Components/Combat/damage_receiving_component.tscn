@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://bf6l41xsuwqcr"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Combat/DamageReceivingComponent.cs" id="1_receiver"]
+[ext_resource type="Script" uid="uid://bsb30nq0p32wm" path="res://Scripts/Components/Combat/DamageReceivingComponent.cs" id="1_receiver"]
 
-[node name="DamageReceivingComponent" type="Area2D"]
+[node name="DamageReceivingComponent" type="Area2D" unique_id=2117995]
 script = ExtResource("1_receiver")

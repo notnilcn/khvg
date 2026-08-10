@@ -5,8 +5,8 @@
 [ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="2_rwaib"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_1j568"]
 [ext_resource type="PackedScene" uid="uid://bh20s8vjtrd21" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grass.fbx" id="3_374ew"]
-[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="5_30yqp"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="4_binder"]
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="5_30yqp"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kqqpj"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -114,7 +114,7 @@ spring_length = 200.0
 metadata/_custom_type_script = "uid://csjccrhj5wnx7"
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1778573569]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 200, 0)
 top_level = true
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D" unique_id=390949796]

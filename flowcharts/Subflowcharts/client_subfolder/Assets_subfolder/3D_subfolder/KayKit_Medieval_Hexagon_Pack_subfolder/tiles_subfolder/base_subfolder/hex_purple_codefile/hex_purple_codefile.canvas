@@ -14,8 +14,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"codefile",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"codefile"
 			]
 		}
 	}

@@ -11,16 +11,6 @@
 			"height": 400
 		},
 		{
-			"id": "2522e9392c9e4064",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletManager_codefile/BulletManager_codefile.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "673d50952c45fcf8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay_codefile.canvas",
@@ -36,6 +26,16 @@
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GameManager_codefile.canvas",
 			"color": "5",
 			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2522e9392c9e4064",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletManager_codefile/BulletManager_codefile.canvas",
+			"color": "5",
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400

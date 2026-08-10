@@ -1,21 +1,21 @@
 {
 	"nodes": [
 		{
-			"id": "28bbde92aa3a30d8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/debug_overlay_codefile/debug_overlay_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "de9cfb1a5e3f05c8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/enchantment_row_codefile/enchantment_row_codefile.canvas",
 			"color": "5",
 			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "28bbde92aa3a30d8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/debug_overlay_codefile/debug_overlay_codefile.canvas",
+			"color": "5",
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400

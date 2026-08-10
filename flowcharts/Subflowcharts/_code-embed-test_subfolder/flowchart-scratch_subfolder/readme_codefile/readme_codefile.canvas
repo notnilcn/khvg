@@ -1,0 +1,22 @@
+{
+	"nodes": [
+		{
+			"id": "5d0dc778e1fd6230",
+			"type": "file",
+			"file": "_code-embed-test/flowchart-scratch/readme.cs",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"codefile",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

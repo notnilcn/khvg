@@ -14,6 +14,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Components/Inventory/InventoryComponent-_dot_-cs-_hashtag_-InventoryComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/InventoryComponent_codefile/InventoryComponent_codefile-_dot_-canvas-_colon_-script",
@@ -27,8 +28,7 @@
 				"edge-_colon_-client/Scripts/Components/Inventory/StatsSidebarComponent-_dot_-cs-_hashtag_-StatsSidebarComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebarComponent_codefile/StatsSidebarComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Inventory/ItemSidebarComponent-_dot_-cs-_hashtag_-ItemSidebarComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/ItemSidebarComponent_codefile-_dot_-canvas-_colon_-script",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/ItemSidebarComponent_codefile-_dot_-canvas-_colon_-script"
 			]
 		}
 	}

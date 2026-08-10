@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://vpqptkx8t25c"]
 
-[ext_resource type="Script" path="res://Scripts/Components/Camera/CameraRigComponent.cs" id="1_rig"]
+[ext_resource type="Script" uid="uid://4vtm5wwxgp2d" path="res://Scripts/Components/Camera/CameraRigComponent.cs" id="1_rig"]
 
-[node name="CameraRigComponent" type="Node"]
+[node name="CameraRigComponent" type="Node" unique_id=1298956042]
 script = ExtResource("1_rig")

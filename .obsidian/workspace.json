@@ -13,6 +13,34 @@
             "state": {
               "type": "markdown",
               "state": {
+                "file": "Untitled.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Untitled"
+            }
+          },
+          {
+            "id": "8234102911d161b8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "REGENERATION PLAN"
+            }
+          },
+          {
+            "id": "ce98ae86abb7854b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
                 "file": "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
                 "mode": "source",
                 "source": false
@@ -22,24 +50,18 @@
             }
           },
           {
-            "id": "c8bf5293bcaebfde",
+            "id": "266b038d46b252d3",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "vscode-editor",
               "state": {
-                "file": "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
-                "viewState": {
-                  "x": 775,
-                  "y": 450,
-                  "zoom": -0.9346561239912303
-                }
+                "file": "client/Scripts/Components/Spawning/EntitySpawnerComponent.cs"
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "client_subfolder"
+              "icon": "lucide-file",
+              "title": "EntitySpawnerComponent"
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -204,14 +226,14 @@
             "state": {
               "type": "file-properties",
               "state": {
-                "file": "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas"
+                "file": "Untitled.md"
               },
               "icon": "lucide-info",
               "title": "File properties"
             }
           }
         ],
-        "currentTab": 6
+        "currentTab": 5
       }
     ],
     "direction": "horizontal",
@@ -233,42 +255,43 @@
   },
   "active": "12a00caef91e69d4",
   "lastOpenFiles": [
-    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/addons_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/open_godot_mcp_subfolder/open_godot_mcp_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/open_godot_mcp_subfolder/dock_subfolder/dock_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/phantom_camera_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/panel_subfolder/panel_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/scripts_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/examples_subfolder/examples_subfolder.canvas",
+    "client/sstdbsdk/DatabaseConnector.tscn38751551707.tmp",
+    "client/Scenes/main.tscn38717957016.tmp",
+    "client/Scenes/main.tscn38675180286.tmp",
+    "client/Scenes/main.tscn38673715360.tmp",
+    "client/project.godot38664449334.tmp",
+    "client/sstdbsdk/DatabaseConnector.tscn",
+    "client/Scenes/main.tscn38567023534.tmp",
+    "client/Scenes/main.tscn38511655536.tmp",
+    "client/Scenes/main.tscn38492835024.tmp",
     "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
+    "client/Scenes/main.tscn38139473611.tmp",
+    "client/Scenes/main.tscn38084589691.tmp",
+    "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
+    "flowcharts/main.canvas",
+    "docs/Technical Design Docs/Description/08 Enemies & AI.md",
+    "flowcharts/Subflowcharts/_code-embed-test_subfolder/_code-embed-test_subfolder.canvas",
+    "flowcharts/Subflowcharts/_code-embed-test_subfolder/flowchart-scratch_subfolder/flowchart-scratch_subfolder.canvas",
+    "flowcharts/Subflowcharts/_code-embed-test_subfolder/flowchart-scratch_subfolder/src_subfolder/src_subfolder.canvas",
+    "flowcharts/Subflowcharts/_code-embed-test_subfolder/flowchart-scratch_subfolder/src_subfolder/sub_subfolder/sub_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/open_godot_mcp_subfolder/dock_subfolder/dock_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/scripts_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/resources_subfolder/resources_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/phantom_camera_host_subfolder/phantom_camera_host_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/managers_subfolder/managers_subfolder.canvas",
     "docs/Technical Design Docs/Description/01 Roadmap.md",
+    "docs/Technical Design Docs/(implemented) Item system - split stats from behavior.md",
     "docs/Technical Design Docs/Description/02 The Component Framework.md",
     "docs/Technical Design Docs/Description/04 Lobby & Profiles.md",
     "docs/Technical Design Docs/Description/03 Boot & Connection.md",
     "docs/Technical Design Docs/Description/05 Joining the World.md",
     "docs/Technical Design Docs/Description/06 Movement & Position Sync.md",
     "docs/Technical Design Docs/Description/07 Terrain & World Streaming.md",
-    "docs/Technical Design Docs/Description/08 Enemies & AI.md",
     "docs/Technical Design Docs/Description/09 Combat & Damage.md",
     "docs/Technical Design Docs/Description/10 Inventory, Items & Enchantments.md",
     "docs/Technical Design Docs/Description/11 Camera & Presentation.md",
     "docs/Technical Design Docs/Description/12 Admin & Debug.md",
     "docs/Technical Design Docs/Description/13 Disconnect & Teardown.md",
-    "flowcharts/main-framework.canvas",
-    "flowcharts/main-terrain.canvas",
-    "flowcharts/main-teardown.canvas",
-    "server/spacetimedb/src/main/seeds.rs",
-    "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
-    "flowcharts/flows.json",
-    "client/Scenes/main.tscn1187700049.tmp",
-    "_code-embed-test/flowchart-scratch/flowcharts/flows.json",
-    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder/sub_subfolder/util_codefile",
-    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder/sub_subfolder",
-    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder/seeds_codefile",
-    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/src_subfolder",
-    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts/readme_codefile",
-    "_code-embed-test/flowchart-scratch/flowcharts/Subflowcharts",
     "_debug/embed-test.md",
     "docs/Game Design Docs/(shelved) Bullet-affecting player abilities.md",
     "docs/Technical Design Docs/To Do.md",
@@ -277,7 +300,6 @@
     "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
     "docs/Game Design Docs/02 Gameplay.md",
     "docs/Game Design Docs/01 Executive Summary.md",
-    "docs/Technical Design Docs/(implemented) Item system - split stats from behavior.md",
     "docs/Game Design Docs/Art/Art style 3D.md"
   ]
 }

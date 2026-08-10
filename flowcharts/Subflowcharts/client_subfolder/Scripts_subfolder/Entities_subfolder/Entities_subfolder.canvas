@@ -11,21 +11,21 @@
 			"height": 400
 		},
 		{
-			"id": "841cb692144e20fc",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/Entity_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "5c464414db9d5c78",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/IEntity_codefile/IEntity_codefile.canvas",
 			"color": "5",
 			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "841cb692144e20fc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entity_codefile/Entity_codefile.canvas",
+			"color": "5",
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400

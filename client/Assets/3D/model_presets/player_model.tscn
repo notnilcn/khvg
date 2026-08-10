@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://bno30x37r4bnm"]
 
-[ext_resource type="PackedScene" uid="uid://dud7eg6a4d3k1" path="res://VS-Like/Assets/characters/Knight.fbx" id="1_6ay00"]
-[ext_resource type="World3D" uid="uid://ctphkhx1sl0vy" path="res://VS-Like/Assets/world_3d.tres" id="1_rpums"]
-[ext_resource type="PackedScene" uid="uid://cw8y35bqkygin" path="res://VS-Like/Assets/characters/Ranger.fbx" id="2_rpums"]
+[ext_resource type="World3D" uid="uid://ctphkhx1sl0vy" path="res://Assets/3D/world_3d.tres" id="1_rpums"]
+[ext_resource type="PackedScene" uid="uid://c3lln0nygubmm" path="res://Assets/3D/characters/Knight.fbx" id="2_ohx32"]
+[ext_resource type="PackedScene" uid="uid://bxa4h7suv2cqh" path="res://Assets/3D/characters/Ranger.fbx" id="3_a0yjr"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_6ay00"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -35,14 +35,9 @@ render_target_update_mode = 4
 [node name="WorldEnvironment" type="WorldEnvironment" parent="SubViewportContainer/SubViewport" unique_id=872917498]
 environment = SubResource("Environment_1lbao")
 
-[node name="Knight" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1221006572 instance=ExtResource("1_6ay00")]
-transform = Transform3D(0.779808, 0, 0.62601876, 0, 1, 0, -0.62601876, 0, 0.779808, 0, 0, 0)
-top_level = true
-visible = false
+[node name="Knight" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1133483222 instance=ExtResource("2_ohx32")]
 
-[node name="Archer" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1263903499 instance=ExtResource("2_rpums")]
-transform = Transform3D(0.779808, 0, 0.62601876, 0, 1, 0, -0.62601876, 0, 0.779808, 0, 0, 0)
-visible = false
+[node name="Ranger" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1779277376 instance=ExtResource("3_a0yjr")]
 
 [node name="Camera3D" type="Camera3D" parent="SubViewportContainer/SubViewport/WorldEnvironment" unique_id=1887527152]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 3)

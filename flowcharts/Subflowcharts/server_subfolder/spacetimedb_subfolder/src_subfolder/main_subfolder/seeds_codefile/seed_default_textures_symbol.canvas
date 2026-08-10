@@ -15,6 +15,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-2",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seeds_codefile-_dot_-canvas",
@@ -30,8 +31,7 @@
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-TextureKind",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Item",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas"
 			]
 		}
 	}

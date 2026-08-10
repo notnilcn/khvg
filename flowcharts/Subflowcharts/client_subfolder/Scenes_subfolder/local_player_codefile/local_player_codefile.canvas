@@ -14,6 +14,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Players/Local/LocalPlayer-_dot_-cs-_hashtag_-LocalPlayer-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/LocalPlayer_codefile-_dot_-canvas-_colon_-script",
@@ -72,8 +73,7 @@
 				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_data-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_stats-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_inventory-_colon_-bind",
-				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_active_profile-_colon_-bind",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_active_profile-_colon_-bind"
 			]
 		}
 	}

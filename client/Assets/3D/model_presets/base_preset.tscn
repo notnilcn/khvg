@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://chohqhcs8kwb4"]
 
-[ext_resource type="World3D" uid="uid://ctphkhx1sl0vy" path="res://VS-Like/Assets/world_3d.tres" id="1_su8hj"]
-[ext_resource type="Environment" uid="uid://bby4vk1tvjgu7" path="res://VS-Like/Assets/enviroment.tres" id="2_02fpp"]
+[ext_resource type="World3D" uid="uid://ctphkhx1sl0vy" path="res://Assets/3D/world_3d.tres" id="1_su8hj"]
+[ext_resource type="Environment" uid="uid://bby4vk1tvjgu7" path="res://Assets/3D/enviroment.tres" id="2_02fpp"]
 
 [node name="base_preset" type="Node2D" unique_id=2043616491]
 

@@ -1,6 +1,6 @@
 [gd_resource type="World3D" format=3 uid="uid://ctphkhx1sl0vy"]
 
-[ext_resource type="Environment" uid="uid://bby4vk1tvjgu7" path="res://VS-Like/Assets/enviroment.tres" id="1_y75bh"]
+[ext_resource type="Environment" uid="uid://bby4vk1tvjgu7" path="res://Assets/3D/enviroment.tres" id="1_y75bh"]
 
 [resource]
 environment = ExtResource("1_y75bh")
