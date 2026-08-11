@@ -52,14 +52,16 @@ public partial class BulletSpawnerComponent : Component
     }
 
     // No per-bullet despawn signal exists, so liveness is checked defensively: an instance is
-    // dropped once it is freed or has no enabled bullets left.
+    // dropped once it is freed or has no enabled bullets left. The bulk get_all_bullets_status
+    // array is unreliable for multi-bullet instances (only index 0 reports true), so liveness
+    // goes through the per-index is_bullet_status_enabled.
     private void PruneLiveEnemyBullets() =>
         liveEnemyBullets.RemoveWhere(inst =>
         {
             if (!GodotObject.IsInstanceValid(inst)) return true;
-            var statuses = inst.Call("get_all_bullets_status").AsGodotArray<bool>();
-            foreach (var enabled in statuses)
-                if (enabled) return false;
+            int count = inst.Call("get_amount_bullets").AsInt32();
+            for (int i = 0; i < count; i++)
+                if (inst.Call("is_bullet_status_enabled", i).AsBool()) return false;
             return true;
         });
 

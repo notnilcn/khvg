@@ -43,11 +43,13 @@ public partial class EnemyBullets3DComponent : Node3DComponent
         if (!GodotObject.IsInstanceValid(inst)) return;
         int count = inst.Call("get_amount_bullets").AsInt32();
         if (count == 0) return;
-        var statuses = inst.Call("get_all_bullets_status").AsGodotArray<bool>();
+        // NOTE: the bulk get_all_bullets_status array is unreliable for multi-bullet
+        // instances (only index 0 reports true) — liveness must go through the per-index
+        // is_bullet_status_enabled, same as BulletAbilityComponent.
         var transforms = inst.Call("all_bullets_get_transforms").AsGodotArray<Transform2D>();
-        for (int i = 0; i < count && i < transforms.Count && i < statuses.Count; i++)
+        for (int i = 0; i < count && i < transforms.Count; i++)
         {
-            if (!statuses[i]) continue;
+            if (!inst.Call("is_bullet_status_enabled", i).AsBool()) continue;
             var node = NextNode();
             var t = transforms[i];
             node.GlobalPosition = new Vector3(t.Origin.X, BulletHeight, t.Origin.Y);

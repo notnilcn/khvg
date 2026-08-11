@@ -550,6 +550,27 @@
 .canvas-wrapper[data-default-arrow-size] .canvas-edges polygon.canvas-path-end {
   transform: scale(calc(var(--zoom-multiplier) * var(--arrow-size-multiplier, var(--default-arrow-size-multiplier, 1))));
 }
+.canvas-wrapper[data-default-node-border][data-default-node-border=dashed] .canvas-node:not([data-border]) .canvas-node-container {
+  box-shadow: none;
+  border-style: dashed;
+}
+.canvas-wrapper[data-default-node-border][data-default-node-border=dotted] .canvas-node:not([data-border]) .canvas-node-container {
+  box-shadow: none;
+  border-style: dotted;
+}
+.canvas-wrapper[data-default-node-border][data-default-node-border=invisible] .canvas-node:not([data-border]) {
+  box-shadow: none;
+}
+.canvas-wrapper[data-default-node-border][data-default-node-border=invisible] .canvas-node:not([data-border]):not(.is-focused):not(.is-selected) .canvas-node-container {
+  border-color: transparent !important;
+}
+.canvas-wrapper[data-default-node-border][data-default-node-border=invisible] .canvas-node:not([data-border]) .canvas-node-label {
+  display: none;
+}
+.canvas-wrapper[data-default-node-border][data-default-node-border=invisible] .canvas-node:not([data-border]) .canvas-node-container {
+  background-color: transparent;
+  box-shadow: none;
+}
 .canvas-wrapper .canvas-node:not(.canvas-node-group) .canvas-node-content .markdown-preview-view {
   padding-left: var(--ac-card-padding-h, var(--size-4-4));
   padding-right: var(--ac-card-padding-h, var(--size-4-4));

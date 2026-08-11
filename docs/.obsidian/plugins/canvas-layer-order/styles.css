@@ -1,0 +1,6 @@
+.canvas-layer-order-status {
+	color: var(--text-muted);
+	font-size: var(--font-ui-smaller);
+	line-height: 1.4;
+	margin-top: 8px;
+}

@@ -99,7 +99,6 @@ script = ExtResource("11_ueoa1")
 PitchMax = 0.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
-visible = false
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="3D" unique_id=1047841400]
 texture_filter = 1
@@ -115,7 +114,7 @@ stretch_shrink = 3
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(384, 216)
-render_target_update_mode = 0
+render_target_update_mode = 4
 
 [node name="World3DComponent" parent="3D/SubViewportContainer/SubViewport" unique_id=1360330812 instance=ExtResource("8_fdnlq")]
 

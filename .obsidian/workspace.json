@@ -25,28 +25,34 @@
             "id": "8234102911d161b8",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
-                "mode": "source",
-                "source": false
+                "file": "docs/Game Design Docs/Art/Untitled.canvas",
+                "viewState": {
+                  "x": 0,
+                  "y": -93,
+                  "zoom": 0
+                }
               },
-              "icon": "lucide-file",
-              "title": "REGENERATION PLAN"
+              "icon": "lucide-layout-dashboard",
+              "title": "Untitled"
             }
           },
           {
             "id": "ce98ae86abb7854b",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
-                "mode": "source",
-                "source": false
+                "file": "docs/Game Design Docs/Art/Untitled.canvas",
+                "viewState": {
+                  "x": -236.67026684597346,
+                  "y": 255.06924311064836,
+                  "zoom": 0.6666666666666665
+                }
               },
-              "icon": "lucide-file",
-              "title": "00 End-to-End Timeline Flowchart"
+              "icon": "lucide-layout-dashboard",
+              "title": "Untitled"
             }
           },
           {
@@ -62,7 +68,7 @@
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 2
       }
     ],
     "direction": "vertical"
@@ -238,7 +244,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 300,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -254,21 +261,36 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "8234102911d161b8",
+  "active": "ce98ae86abb7854b",
   "lastOpenFiles": [
+    "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
+    "client/Scenes/main.tscn29147457695.tmp",
+    "_debug/border-test.canvas",
+    "docs/Game Design Docs/Art/Untitled.canvas",
+    "docs/Game Design Docs/Art/Mood board task.md",
+    "Untitled.png",
+    "Untitled.png.0.pdnSave",
+    "docs/Game Design Docs/01 Executive Summary.md",
+    "docs/Game Design Docs/Art/Untitled.md",
+    "docs/Game Design Docs/99 (outdated) Game Design Document.md",
+    "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
+    "docs/attachments/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
+    "docs/attachments/Tilings-of-Flat-Tori-by-Congruent-Hexagons.pdf",
+    "docs/attachments/Pasted image 20260530125508.png",
+    "docs/attachments/Pasted image 20260530130436.png",
+    "docs/attachments/Pasted image 20260530125651.png",
+    "docs/Game Design Docs/Art/Art style 3D.md",
+    "flowcharts/main.canvas",
+    "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
+    "client/Scenes/main.tscn22653590576.tmp",
+    "client/Scenes/main.tscn22538092876.tmp",
     "client/Scenes/main.tscn19586262134.tmp",
     "client/Scenes/main.tscn19584579960.tmp",
     "client/Scenes/main.tscn19549317817.tmp",
     "client/_scene_check.gd.uid",
     "client/_scene_check.gd",
-    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll~RF14512f2c.TMP",
-    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll3690551.tmp",
-    "client/Scripts/Components/Bullets/EnemyBullets3DComponent.cs.uid",
-    "client/Scripts/Components/Bullets/EnemyBullets3DComponent.cs",
-    "client/Scenes/main.tscn18781400880.tmp",
     "_debug/grid-size-test.canvas",
     "Untitled.md",
-    "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_bullet.tscn",
     "client/README.md",
     "client/CLAUDE - Copy.md",
     "docs/Game Design Docs/Inspirations, research, and new things to add.md",
@@ -276,9 +298,6 @@
     "docs/Game Design Docs/05 Biomes.md",
     "docs/Technical Design Docs/To Do.md",
     "docs/Technical Design Docs/(implemented) Item system - split stats from behavior.md",
-    "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
-    "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
-    "flowcharts/main.canvas",
     "docs/Technical Design Docs/Description/08 Enemies & AI.md",
     "flowcharts/Subflowcharts/_code-embed-test_subfolder/_code-embed-test_subfolder.canvas",
     "flowcharts/Subflowcharts/_code-embed-test_subfolder/flowchart-scratch_subfolder/flowchart-scratch_subfolder.canvas",
@@ -286,8 +305,6 @@
     "flowcharts/Subflowcharts/_code-embed-test_subfolder/flowchart-scratch_subfolder/src_subfolder/sub_subfolder/sub_subfolder.canvas",
     "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/open_godot_mcp_subfolder/dock_subfolder/dock_subfolder.canvas",
     "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/scripts_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/resources_subfolder/resources_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/phantom_camera_host_subfolder/phantom_camera_host_subfolder.canvas",
     "docs/Technical Design Docs/Description/01 Roadmap.md",
     "docs/Technical Design Docs/Description/02 The Component Framework.md",
     "docs/Technical Design Docs/Description/04 Lobby & Profiles.md",
@@ -295,12 +312,6 @@
     "docs/Technical Design Docs/Description/05 Joining the World.md",
     "docs/Technical Design Docs/Description/06 Movement & Position Sync.md",
     "docs/Technical Design Docs/Description/07 Terrain & World Streaming.md",
-    "docs/Technical Design Docs/Description/09 Combat & Damage.md",
-    "docs/Technical Design Docs/Description/10 Inventory, Items & Enchantments.md",
-    "docs/Technical Design Docs/Description/11 Camera & Presentation.md",
-    "docs/Technical Design Docs/Description/12 Admin & Debug.md",
-    "docs/Technical Design Docs/Description/13 Disconnect & Teardown.md",
-    "_debug/embed-test.md",
-    "docs/Game Design Docs/(shelved) Bullet-affecting player abilities.md"
+    "docs/Technical Design Docs/Description/09 Combat & Damage.md"
   ]
 }

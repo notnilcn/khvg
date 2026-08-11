@@ -6,8 +6,8 @@
   "flexplorer",
   "folder-notes",
   "optimize-canvas-connections",
-  "advanced-canvas",
-  "better-embedded-canvas",
   "obsidian-git",
-  "vscode-editor"
+  "vscode-editor",
+  "canvas-layer-order",
+  "advanced-canvas"
 ]

@@ -42,3 +42,18 @@ The story will follow 3 characters who played a large role in the lead up to the
   Similar to most MMORPGs, there is going to be skills for logging, fishing, mining, and crafting.
 - **Group coordination:**
   Beyond the player territories and resource management, the actual bosses and bullet patterns and phases are going to force players to coordinate. The intention is that the game is going to be both easier and harder than Realm of the Mad God.
+
+
+
+Avatar (irl movie)
+Spirit (horse movie)
+Monster hunter (movie)
+Clash of titans (movie long one)
+
+Minecraft (game)
+Raymond legends (game)
+Expedition 33 (game)
+
+
+Splaty
+Outer wilds (game)

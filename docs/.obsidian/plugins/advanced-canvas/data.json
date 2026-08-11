@@ -25,6 +25,7 @@
     0
   ],
   "connectEdgesToArrowBase": true,
+  "defaultNodeBorder": "invisible",
   "canvasMetadataCompatibilityEnabled": true,
   "enableSingleNodeLinks": true,
   "enableSingleNodePopupReferenceCopy": false,

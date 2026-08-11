@@ -1,13 +1,13 @@
 [gd_scene format=3 uid="uid://djjulhvulxtyc"]
 
 [ext_resource type="Script" uid="uid://d05mpx8xh66pk" path="res://Scripts/Players/Enemies/Enemy.cs" id="1_tincf"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/Data/stats_component.tscn" id="2_stats"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/Combat/health_component.tscn" id="3_health"]
+[ext_resource type="PackedScene" uid="uid://d38b31qyrgif1" path="res://Scenes/Components/Data/stats_component.tscn" id="2_stats"]
+[ext_resource type="PackedScene" uid="uid://crw7iwu08algx" path="res://Scenes/Components/Combat/health_component.tscn" id="3_health"]
 [ext_resource type="Script" uid="uid://cvf3pb2g8fcrw" path="res://Scripts/Components/Combat/FactionComponent.cs" id="4_faction"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="5_hurtbox"]
-[ext_resource type="PackedScene" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="6_interp"]
+[ext_resource type="PackedScene" uid="uid://bf6l41xsuwqcr" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="5_hurtbox"]
+[ext_resource type="PackedScene" uid="uid://bylri1y7swjqa" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="6_interp"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="7_binder"]
-[ext_resource type="PackedScene" path="res://Assets/3D/skeletons/Skeleton_Warrior.fbx" id="8_skeleton"]
+[ext_resource type="PackedScene" uid="uid://coj1g8ajq2fnh" path="res://Assets/3D/skeletons/Skeleton_Warrior.fbx" id="8_skeleton"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kjvdn"]
 

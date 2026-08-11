@@ -1829,6 +1829,8 @@ var DEFAULT_SETTINGS_VALUES = {
   // Added by an LLM agent - matches Obsidian's own default padding
   connectEdgesToArrowBase: false,
   // Added by an LLM agent
+  defaultNodeBorder: "default",
+  // Added by an LLM agent
   canvasMetadataCompatibilityEnabled: true,
   enableSingleNodeLinks: true,
   enableSingleNodePopupReferenceCopy: false,
@@ -2057,6 +2059,18 @@ var SETTINGS = {
         label: "Connect edges to the arrow base",
         description: "When enabled, an edge's line stops at the back of its arrow head instead of continuing on towards the node. Without this, a line that reaches a node at an angle runs through the arrow and attaches off-centre. Only affects triangle arrow heads.",
         type: "boolean"
+      },
+      defaultNodeBorder: {
+        // Added by an LLM agent
+        label: "Default node border",
+        description: "The border used by nodes that don't have a border style of their own set in the node popup.",
+        type: "dropdown",
+        options: {
+          "default": "Default (solid)",
+          "dashed": "Dashed",
+          "dotted": "Dotted",
+          "invisible": "Invisible"
+        }
       }
     }
   },
@@ -4452,7 +4466,9 @@ var DEFAULT_SIZE_SETTINGS = [
   // 1 means a solid fill for the opacity, so it needs its own "leave it alone" value
   { setting: "defaultGroupOpacity", datasetKey: "defaultGroupOpacity", unchangedValue: "default" },
   { setting: "defaultEdgeWidth", datasetKey: "defaultEdgeWidth" },
-  { setting: "defaultArrowSize", datasetKey: "defaultArrowSize" }
+  { setting: "defaultArrowSize", datasetKey: "defaultArrowSize" },
+  // Solid is Obsidian's own border, so it needs its own "leave it alone" value
+  { setting: "defaultNodeBorder", datasetKey: "defaultNodeBorder", unchangedValue: "default" }
 ];
 var UNCHANGED_SIZE = "1";
 var CARD_PADDING_H_PROPERTY = "--ac-card-padding-h";

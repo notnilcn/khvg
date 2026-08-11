@@ -1,0 +1,10 @@
+{
+	"id": "canvas-layer-order",
+	"name": "Canvas Layer Order",
+	"version": "0.1.3",
+	"minAppVersion": "1.5.0",
+	"description": "Reorder overlapping Canvas cards with bring forward, send backward, bring to front, and send to back commands.",
+	"author": "fengzhe",
+	"authorUrl": "https://github.com/Laplacede",
+	"isDesktopOnly": false
+}
