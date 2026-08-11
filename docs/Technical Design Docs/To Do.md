@@ -200,5 +200,4 @@ Items 1, 2, and 6 are the ones where doing them later costs materially more than
 # To confirm: Run Time Authoring.
 Run time authoring is defining enemies after the server has been launched (i.e. outside of seeds).
 
-
 # Near miss detection

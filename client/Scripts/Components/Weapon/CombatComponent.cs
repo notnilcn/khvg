@@ -57,7 +57,7 @@ public partial class CombatComponent : Component
             _scanTimer = 0f;
         }
 
-        if (!Input.IsMouseButtonPressed(MouseButton.Left)) return;
+        if (!Input.IsActionPressed("fire")) return;
         if (_fireTimer < _firePeriod) return;
 
         _fireTimer = 0f;

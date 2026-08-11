@@ -22,30 +22,52 @@ public partial class DatabaseConnector : Node
 
     [Export] public string Host { get; set; } = "http://127.0.0.1:3000"; // "https://maincloud.spacetimedb.com"
     [Export] public string DbName { get; set; } = "bullethell";
+    [Export] public string TokenAppend { get; set; } = "";
 
     public DbConnection? Conn { get; private set; }
     public Identity? LocalIdentity { get; private set; }
     public string Username { get; private set; } = "";
+    private string _authTokenKey = "";
 
     public override void _Ready()
-{
+    {
         Instance = this;
-        Connect(Host, DbName);
+
+        // "--p1", "--p2", ... in the launch args appends "_p1", "_p2", ... to the
+        // auth token so parallel run instances get distinct identities.
+        foreach (var arg in OS.GetCmdlineArgs())
+        {
+            if (IsPlayerArg(arg)) { TokenAppend = "_" + arg.TrimStart('-'); break; }
+        }
+        if (TokenAppend == "")
+        {
+            foreach (var arg in OS.GetCmdlineUserArgs())
+            {
+                if (IsPlayerArg(arg)) { TokenAppend = "_" + arg.TrimStart('-'); break; }
+            }
+        }
+
+        Connect();
     }
+
+    private static bool IsPlayerArg(string arg) => arg.StartsWith("--p") && arg.Length > 3;
 
     public override void _Process(double delta) => Conn?.FrameTick();
 
-    public void Connect(string host, string dbName)
-{
-        // Scoped per-host: a token minted by one SpacetimeDB instance (e.g. local)
-        // is signed with that instance's key and gets rejected (401) by another
-        // (e.g. maincloud), so local/maincloud tokens can't share one file.
-        var hostTag = host.Replace("://", "_").Replace(":", "_").Replace("/", "_");
-        AuthToken.Init(OS.GetUserDataDir() + $"/.bullethell_token_{hostTag}");
+    public void Connect()
+    {
+        // Each SpacetimeDB host gets its own token because tokens are signed
+        // by the individual instance.
+        _authTokenKey = Host.Replace("://", "_")
+                        .Replace(":", "_")
+                        .Replace("/", "_");
+
+        AuthToken.TryGetToken(_authTokenKey+TokenAppend, out var token);
+
         Conn = DbConnection.Builder()
-            .WithUri(host)
-            .WithDatabaseName(dbName)
-            .WithToken(AuthToken.Token)
+            .WithUri(Host)
+            .WithDatabaseName(DbName)
+            .WithToken(token)
             .OnConnect(OnConnected)
             .OnConnectError(OnConnectError)
             .OnDisconnect(OnDisconnected)
@@ -55,7 +77,7 @@ public partial class DatabaseConnector : Node
     private void OnConnected(DbConnection conn, Identity identity, string token)
     {
         LocalIdentity = identity;
-        AuthToken.SaveToken(token);
+        AuthToken.SaveToken(token, _authTokenKey+TokenAppend);
 
         conn.Db.LocalLobbyPlayer.OnInsert += (_, p) => Username = p.Username;
         conn.Db.LocalLobbyPlayer.OnUpdate += (_, _, p) => Username = p.Username;
@@ -77,7 +99,7 @@ public partial class DatabaseConnector : Node
     public bool IsLocal(Identity id) => LocalIdentity.HasValue && id == LocalIdentity.Value;
 
     public override void _ExitTree()
-{
+    {
         if (Conn?.IsActive == true)
             Conn.Disconnect();
         if (Instance == this) Instance = null;
