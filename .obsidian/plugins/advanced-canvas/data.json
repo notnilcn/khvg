@@ -1,6 +1,7 @@
 {
   "nodeTypeOnDoubleClick": "text",
   "alignNewNodesToGrid": true,
+  "gridSize": 10,
   "defaultTextNodeDimensions": [
     60,
     60

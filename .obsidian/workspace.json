@@ -61,7 +61,8 @@
               "title": "EntitySpawnerComponent"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -253,27 +254,28 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "144999bccf4e9e5d",
+  "active": "8234102911d161b8",
   "lastOpenFiles": [
-    "client/Scenes/main.tscn12017930786.tmp",
-    "client/Scenes/main.tscn12009108879.tmp",
-    "client/Scenes/main.tscn11961653410.tmp",
-    "client/Scenes/main.tscn11095156815.tmp",
+    "client/Scenes/main.tscn19586262134.tmp",
+    "client/Scenes/main.tscn19584579960.tmp",
+    "client/Scenes/main.tscn19549317817.tmp",
+    "client/_scene_check.gd.uid",
+    "client/_scene_check.gd",
+    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll~RF14512f2c.TMP",
+    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll3690551.tmp",
+    "client/Scripts/Components/Bullets/EnemyBullets3DComponent.cs.uid",
+    "client/Scripts/Components/Bullets/EnemyBullets3DComponent.cs",
+    "client/Scenes/main.tscn18781400880.tmp",
+    "_debug/grid-size-test.canvas",
+    "Untitled.md",
+    "client/Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_bullet.tscn",
     "client/README.md",
     "client/CLAUDE - Copy.md",
-    "client/sstdbsdk/AuthToken.cs",
-    "client/sstdbsdk/AuthToken.cs.uid",
     "docs/Game Design Docs/Inspirations, research, and new things to add.md",
-    "client/Scenes/local_player.tscn31958148.tmp",
-    "client/Scenes/local_player.tscn28983554.tmp",
-    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll",
-    "client/Scenes/local_player.tscn53845477799.tmp",
     "docs/Game Design Docs/Demo.md",
     "docs/Game Design Docs/05 Biomes.md",
     "docs/Technical Design Docs/To Do.md",
     "docs/Technical Design Docs/(implemented) Item system - split stats from behavior.md",
-    "Untitled.md",
-    "client/sstdbsdk/DatabaseConnector.tscn38751551707.tmp",
     "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
     "docs/Technical Design Docs/Description/REGENERATION PLAN.md",
     "flowcharts/main.canvas",
@@ -286,7 +288,6 @@
     "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/scripts_subfolder.canvas",
     "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/resources_subfolder/resources_subfolder.canvas",
     "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/phantom_camera_host_subfolder/phantom_camera_host_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/scripts_subfolder/managers_subfolder/managers_subfolder.canvas",
     "docs/Technical Design Docs/Description/01 Roadmap.md",
     "docs/Technical Design Docs/Description/02 The Component Framework.md",
     "docs/Technical Design Docs/Description/04 Lobby & Profiles.md",

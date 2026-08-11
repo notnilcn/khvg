@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="5_hurtbox"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="6_interp"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="7_binder"]
+[ext_resource type="PackedScene" path="res://Assets/3D/skeletons/Skeleton_Warrior.fbx" id="8_skeleton"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kjvdn"]
 
@@ -17,6 +18,7 @@ height = 60.0
 [node name="DefaultEnemy" type="CharacterBody2D" unique_id=1112231485]
 scale = Vector2(0.5, 0.5)
 script = ExtResource("1_tincf")
+SkeletonScene = ExtResource("8_skeleton")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=637474852]
 sprite_frames = SubResource("SpriteFrames_kjvdn")

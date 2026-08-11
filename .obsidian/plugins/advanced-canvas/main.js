@@ -1804,6 +1804,8 @@ var KOFI_BADGE_URI = "data:image/webp;base64,UklGRrosAABXRUJQVlA4TK4sAAAv1wNDEL/
 var DEFAULT_SETTINGS_VALUES = {
   nodeTypeOnDoubleClick: "text",
   alignNewNodesToGrid: true,
+  gridSize: 20,
+  // Added by an LLM agent
   defaultTextNodeDimensions: [260, 60],
   defaultFileNodeDimensions: [400, 400],
   minNodeSize: 60,
@@ -1926,6 +1928,13 @@ var SETTINGS = {
         label: "Always align new nodes to grid",
         description: "When enabled, new nodes will be aligned to the grid.",
         type: "boolean"
+      },
+      gridSize: {
+        // Added by an LLM agent
+        label: "Grid size",
+        description: `The size of the grid that nodes snap to when "Snap to grid" is enabled. Also affects the background grid, arrow-key nudging and grid-aligned features. Obsidian's default is 20.`,
+        type: "number",
+        parse: (value) => Math.max(1, parseInt(value) || 20)
       },
       defaultTextNodeDimensions: {
         label: "Default text node dimensions",
@@ -3137,6 +3146,7 @@ var CanvasPatcher = class extends Patcher {
         return result;
       })
     });
+    this.patchGridSpacing(view);
     Patcher.patchPrototype(this.plugin, view.canvas.menu, {
       render: Patcher.OverrideExisting((next) => function(...args) {
         const result = next.call(this, ...args);
@@ -3159,6 +3169,28 @@ var CanvasPatcher = class extends Patcher {
       if (!node) return;
       that.plugin.app.workspace.trigger("advanced-canvas:node-text-content-changed", node.canvas, node, update);
     })]);
+  }
+  // Added by an LLM agent: Override the native `gridSpacing` getter so the snap-to-grid size
+  // (drag snapping, resize snapping, arrow-key nudging and the background grid) follows the `gridSize` setting.
+  // Obsidian defines it as a zoom-dependent accessor on the Canvas prototype (tiers of 20/40/80/160).
+  patchGridSpacing(view) {
+    const canvasPrototype = view.canvas.constructor.prototype;
+    const originalDescriptor = Object.getOwnPropertyDescriptor(canvasPrototype, "gridSpacing");
+    if (!(originalDescriptor == null ? void 0 : originalDescriptor.get)) {
+      console.warn("Advanced Canvas: Failed to patch gridSpacing - native getter not found");
+      return;
+    }
+    const that = this;
+    Object.defineProperty(canvasPrototype, "gridSpacing", {
+      get: function() {
+        const gridSize = that.plugin.settings.getSetting("gridSize");
+        const zoom = this.zoom;
+        return zoom < -3.3 ? 8 * gridSize : zoom < -2.16 ? 4 * gridSize : zoom < -0.91 ? 2 * gridSize : gridSize;
+      },
+      enumerable: false,
+      configurable: true
+    });
+    this.plugin.register(() => Object.defineProperty(canvasPrototype, "gridSpacing", originalDescriptor));
   }
   patchNode(node) {
     const that = this;
@@ -5842,8 +5874,10 @@ var AutoResizeNodeCanvasExtension = class extends CanvasExtension {
     if (maxHeight != -1 && height > maxHeight) height = maxHeight;
     const nodeData = node.getData();
     height = Math.max(height, node.canvas.config.minContainerDimension);
-    if (this.plugin.settings.getSetting("autoResizeNodeSnapToGrid"))
-      height = Math.ceil(height / CanvasHelper.GRID_SIZE) * CanvasHelper.GRID_SIZE;
+    if (this.plugin.settings.getSetting("autoResizeNodeSnapToGrid")) {
+      const gridSize = this.plugin.settings.getSetting("gridSize");
+      height = Math.ceil(height / gridSize) * gridSize;
+    }
     node.setData({
       ...nodeData,
       height
@@ -6328,11 +6362,12 @@ var BetterDefaultSettingsCanvasExtension = class extends CanvasExtension {
   }
   enforceNodeGridAlignment(_canvas, node) {
     if (!this.plugin.settings.getSetting("alignNewNodesToGrid")) return;
+    const gridSize = this.plugin.settings.getSetting("gridSize");
     const nodeData = node.getData();
     node.setData({
       ...nodeData,
-      x: CanvasHelper.alignToGrid(nodeData.x),
-      y: CanvasHelper.alignToGrid(nodeData.y)
+      x: CanvasHelper.alignToGrid(nodeData.x, gridSize),
+      y: CanvasHelper.alignToGrid(nodeData.y, gridSize)
     });
   }
   applyDefaultNodeStyles(_canvas, node) {

@@ -5,6 +5,9 @@ using System.Linq;
 
 public partial class Enemy : CharacterBody2D, IEntity
 {
+    /// 3D model mirrored into the World3DComponent viewport (same pattern as LocalPlayer's KnightScene).
+    [Export] public PackedScene? SkeletonScene { get; set; }
+
     public ulong EnemyId { get; set; }
     public byte Phase { get; private set; }
     public bool IsElite { get; private set; }
@@ -24,6 +27,8 @@ public partial class Enemy : CharacterBody2D, IEntity
     private AnimatedSprite2D? sprite;
     private uint maxHp;
 
+    private CharacterModel3D? _model3D;
+
     private TableBinderComponent nearbyEnemiesBinder = null!;
     private TableBinderComponent bulletPatternEventBinder = null!;
 
@@ -34,6 +39,10 @@ public partial class Enemy : CharacterBody2D, IEntity
 
         nearbyEnemiesBinder = GetNode<TableBinderComponent>("NearbyEnemiesBinder");
         bulletPatternEventBinder = GetNode<TableBinderComponent>("BulletPatternEventBinder");
+
+        var world3D = this.GetAncestor<GameManager>()?.GetComponent<World3DComponent>();
+        if (SkeletonScene != null && world3D != null)
+            _model3D = new CharacterModel3D(SkeletonScene, GlobalPosition, world3D);
     }
 
     public override void _Process(double delta)
@@ -41,7 +50,10 @@ public partial class Enemy : CharacterBody2D, IEntity
         var moving = interpolation?.Moving ?? false;
         if (sprite?.SpriteFrames != null)
             sprite.Play(moving ? "Walk" : "Idle");
+        _model3D?.SyncFrom2D(GlobalPosition, Rotation);
     }
+
+    public override void _ExitTree() => _model3D?.Dispose();
 
     // --- TableBinderComponent signal handlers (wired in default_enemy.tscn) ---
     // The NearbyEnemies binder has ReplayExistingRows on, so a row already in the client

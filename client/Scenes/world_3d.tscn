@@ -4,9 +4,11 @@
 [ext_resource type="Script" uid="uid://dkpcix6ryvuwm" path="res://Scripts/Components/Camera/HexGridOverlay3DComponent.cs" id="1_5pobv"]
 [ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="2_rwaib"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_1j568"]
-[ext_resource type="PackedScene" uid="uid://bh20s8vjtrd21" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grass.fbx" id="3_374ew"]
+[ext_resource type="PackedScene" uid="uid://c772bc4131jcx" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grass.fbx" id="3_374ew"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="4_binder"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="5_30yqp"]
+[ext_resource type="PackedScene" uid="uid://bvgcsih5ik5ny" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_bullet.tscn" id="6_bullet"]
+[ext_resource type="Script" uid="uid://cn5lkrknhfvqp" path="res://Scripts/Components/Bullets/EnemyBullets3DComponent.cs" id="7_bullets3d"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kqqpj"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -101,6 +103,10 @@ TileScaleMultiplier = 0.8
 script = ExtResource("4_binder")
 ReplayExistingRows = true
 TableName = "MapConfig"
+
+[node name="EnemyBullets3DComponent" type="Node3D" parent="." unique_id=1581820701]
+script = ExtResource("7_bullets3d")
+BulletScene = ExtResource("6_bullet")
 
 [node name="PhantomCamera3D" type="Node3D" parent="." unique_id=526330480]
 unique_name_in_owner = true

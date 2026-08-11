@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bvgcsih5ik5ny"]
+
+[ext_resource type="PackedScene" uid="uid://c772bc4131jcx" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grass.fbx" id="1_mntho"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j8el2"]
+albedo_color = Color(1, 1, 0, 1)
+
+[node name="hex_grass" unique_id=1828934469 instance=ExtResource("1_mntho")]
+
+[node name="hex_grass" parent="." index="0" unique_id=457988557]
+surface_material_override/0 = SubResource("StandardMaterial3D_j8el2")
