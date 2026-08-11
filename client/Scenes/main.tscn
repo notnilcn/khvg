@@ -17,6 +17,7 @@
 [ext_resource type="Script" uid="uid://4vtm5wwxgp2d" path="res://Scripts/Components/Camera/CameraRigComponent.cs" id="11_ueoa1"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="12_fdnlq"]
 [ext_resource type="PackedScene" uid="uid://dw7m1ev54lshc" path="res://Scenes/Components/Bullets/bullet_hit_router_component.tscn" id="12_u50mg"]
+[ext_resource type="Script" uid="uid://dyg400ij28uph" path="res://Scripts/Components/Bullets/BulletAbilityComponent.cs" id="13_3pmx8"]
 [ext_resource type="Script" uid="uid://wwivmweabnsm" path="res://Scripts/Components/Terrain/TerrainComponent.cs" id="14_h1bgf"]
 [ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/Components/Camera/Camera2DPresenterComponent.cs" id="15_6vcvc"]
 [ext_resource type="PackedScene" uid="uid://b1nvedybn2tn5" path="res://Scenes/Components/Terrain/tile_component.tscn" id="15_b3802"]
@@ -89,6 +90,9 @@ BlastBullets = NodePath("BlastBullets")
 [node name="BulletSpawnerComponent" parent="BulletManager" unique_id=1703170528 instance=ExtResource("11_3pmx8")]
 
 [node name="BulletHitRouterComponent" parent="BulletManager" unique_id=72256238 instance=ExtResource("12_u50mg")]
+
+[node name="BulletAbilityComponent" type="Node" parent="BulletManager" unique_id=77774317]
+script = ExtResource("13_3pmx8")
 
 [node name="CameraRigComponent" type="Node" parent="." unique_id=429369880]
 script = ExtResource("11_ueoa1")

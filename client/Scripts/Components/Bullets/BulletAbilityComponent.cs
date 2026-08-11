@@ -14,14 +14,14 @@ using Godot;
 /// </summary>
 public partial class BulletAbilityComponent : Component
 {
-    private const float Radius = 120f;
-    private const float SlowFactor = 0.35f;
-    private const float DefaultSlowSpeed = 100f;
-    private const int SplitCount = 4;
-    private const float SplitSpread = Mathf.Pi / 3f;
-    private const float SplitLifetime = 3f;
-    private const float SplitDefaultSpeed = 150f;
-    private const float HomingSmoothing = 5f;
+    [Export] public float Radius = 120f;
+    [Export] public float SlowFactor = 0.35f;
+    [Export] public float DefaultSlowSpeed = 100f;
+    [Export] public int SplitCount = 4;
+    [Export] public float SplitSpread = Mathf.Pi / 3f;
+    [Export] public float SplitLifetime = 3f;
+    [Export] public float SplitDefaultSpeed = 150f;
+    [Export] public float HomingSmoothing = 5f;
 
     private BulletSpawnerComponent spawner = null!;
 
