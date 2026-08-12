@@ -31,7 +31,7 @@ public partial class TableSubscriber : Component
         "LocalPlayerPosition", "LocalPlayerActiveProfile", "LocalPlayerProfiles",
         "NearbyRemotePlayers", "NearbyRemotePlayersProfiles", "NearbyEnemies",
         "NearbyLootDrops", "NearbyTerrainTiles", "NearbyHexDecor", "EnemyTemplates",
-        "BulletPatternEvent", "MapConfig",
+        "BulletPatternEvent", "BulletControlEvent", "MapConfig",
     };
 
     /// Every table name across all waves — TableBinderComponent's dropdown source.

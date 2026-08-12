@@ -10,7 +10,7 @@ using System.Collections.Generic;
 /// instances over their positions — the BlastBullets2D factory renders only into the 2D
 /// world, so without this the 3D viewport shows no enemy fire. Bullet transforms are read
 /// through untyped Call(…) (the factory is a GDExtension node — no compile-time checking,
-/// same as BulletSpawnerComponent/BulletAbilityComponent).
+/// same as BulletSpawnerComponent/BulletControllerComponent).
 /// </summary>
 public partial class EnemyBullets3DComponent : Node3DComponent
 {
@@ -45,7 +45,7 @@ public partial class EnemyBullets3DComponent : Node3DComponent
         if (count == 0) return;
         // NOTE: the bulk get_all_bullets_status array is unreliable for multi-bullet
         // instances (only index 0 reports true) — liveness must go through the per-index
-        // is_bullet_status_enabled, same as BulletAbilityComponent.
+        // is_bullet_status_enabled, same as BulletControllerComponent.
         var transforms = inst.Call("all_bullets_get_transforms").AsGodotArray<Transform2D>();
         for (int i = 0; i < count && i < transforms.Count; i++)
         {

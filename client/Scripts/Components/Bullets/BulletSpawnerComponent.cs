@@ -8,7 +8,7 @@ using SpacetimeDB.Types;
 /// BulletPatternEvent rows to the per-pattern spawn methods, and fires player bullets
 /// for CombatComponent. Enemy bullets spawn via spawn_controllable_directional_bullets and
 /// the returned DirectionalBullets2D instances are tracked in LiveEnemyBullets so
-/// BulletAbilityComponent can find and manipulate live bullets (the factory cannot enumerate
+/// BulletControllerComponent can find and manipulate live bullets (the factory cannot enumerate
 /// them). The deterministic SplitMix64 jitter mirrors the server's hash technique in
 /// enemy/methods.rs, seeded by event_id so every client (and the future audit script)
 /// derives identical pellet trajectories (logic moved out of BulletManager.cs).
@@ -21,7 +21,7 @@ public partial class BulletSpawnerComponent : Component
 
     // Live DirectionalBullets2D instances returned by spawn_controllable_directional_bullets.
     // The factory offers no way to enumerate active instances, so they are captured here for
-    // BulletAbilityComponent. A HashSet dedups instances that auto-pooling hands back out for
+    // BulletControllerComponent. A HashSet dedups instances that auto-pooling hands back out for
     // a later spawn; dead entries are pruned periodically and before each enemy spawn.
     private readonly System.Collections.Generic.HashSet<GodotObject> liveEnemyBullets = [];
     private float pruneTimer;
@@ -263,7 +263,7 @@ public partial class BulletSpawnerComponent : Component
         }
     }
 
-    /// Fan of enemy bullets for BulletAbilityComponent's split effect. Keeps the source
+    /// Fan of enemy bullets for BulletControllerComponent's split effect. Keeps the source
     /// bullet's BulletData so split pellets still report the original SourceStep on hit, and
     /// whatever texture was last applied to the shared enemy spawner.
     public void SpawnEnemyBulletFan(Vector2 origin, float baseAngle, int count, float spread, float speed, float lifetime, BulletData? customData)

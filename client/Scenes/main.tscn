@@ -17,7 +17,7 @@
 [ext_resource type="Script" uid="uid://4vtm5wwxgp2d" path="res://Scripts/Components/Camera/CameraRigComponent.cs" id="11_ueoa1"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="12_fdnlq"]
 [ext_resource type="PackedScene" uid="uid://dw7m1ev54lshc" path="res://Scenes/Components/Bullets/bullet_hit_router_component.tscn" id="12_u50mg"]
-[ext_resource type="Script" uid="uid://dyg400ij28uph" path="res://Scripts/Components/Bullets/BulletAbilityComponent.cs" id="13_3pmx8"]
+[ext_resource type="Script" uid="uid://dyg400ij28uph" path="res://Scripts/Components/Bullets/BulletControllerComponent.cs" id="13_3pmx8"]
 [ext_resource type="Script" uid="uid://wwivmweabnsm" path="res://Scripts/Components/Terrain/TerrainComponent.cs" id="14_h1bgf"]
 [ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/Components/Camera/Camera2DPresenterComponent.cs" id="15_6vcvc"]
 [ext_resource type="PackedScene" uid="uid://b1nvedybn2tn5" path="res://Scenes/Components/Terrain/tile_component.tscn" id="15_b3802"]
@@ -91,14 +91,19 @@ BlastBullets = NodePath("BlastBullets")
 
 [node name="BulletHitRouterComponent" parent="BulletManager" unique_id=72256238 instance=ExtResource("12_u50mg")]
 
-[node name="BulletAbilityComponent" type="Node" parent="BulletManager" unique_id=77774317]
+[node name="BulletControllerComponent" type="Node" parent="BulletManager" unique_id=77774317]
 script = ExtResource("13_3pmx8")
+
+[node name="BulletControlEventBinder" type="Node" parent="BulletManager/BulletControllerComponent" unique_id=1670808940]
+script = ExtResource("15_k12tt")
+TableName = "BulletControlEvent"
 
 [node name="CameraRigComponent" type="Node" parent="." unique_id=429369880]
 script = ExtResource("11_ueoa1")
 PitchMax = 0.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
+visible = false
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="3D" unique_id=1047841400]
 texture_filter = 1
@@ -114,7 +119,7 @@ stretch_shrink = 3
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(384, 216)
-render_target_update_mode = 4
+render_target_update_mode = 0
 
 [node name="World3DComponent" parent="3D/SubViewportContainer/SubViewport" unique_id=1360330812 instance=ExtResource("8_fdnlq")]
 
@@ -203,6 +208,7 @@ theme_override_constants/outline_size = 4
 [connection signal="RowInserted" from="EntitySpawnerComponent/NearbyEnemiesBinder" to="EntitySpawnerComponent" method="OnEnemyInsert"]
 [connection signal="RowDeleted" from="EntitySpawnerComponent/NearbyLootDropsBinder" to="EntitySpawnerComponent" method="OnDropDelete"]
 [connection signal="RowInserted" from="EntitySpawnerComponent/NearbyLootDropsBinder" to="EntitySpawnerComponent" method="OnDropInsert"]
+[connection signal="RowInserted" from="BulletManager/BulletControllerComponent/BulletControlEventBinder" to="BulletManager/BulletControllerComponent" method="OnBulletControlEventRow"]
 [connection signal="RowInserted" from="HexGridOverlayComponent/MapConfigBinder" to="HexGridOverlayComponent" method="OnMapConfigRow"]
 [connection signal="RowUpdated" from="HexGridOverlayComponent/MapConfigBinder" to="HexGridOverlayComponent" method="OnMapConfigRow"]
 [connection signal="RowInserted" from="TerrainComponent/MapConfigBinder" to="TerrainComponent" method="OnMapConfigRow"]

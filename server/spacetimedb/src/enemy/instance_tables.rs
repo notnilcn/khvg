@@ -107,6 +107,30 @@ pub struct EnemyBehaviorSchedule {
     pub scheduled_at: ScheduleAt,
 }
 
+#[derive(SpacetimeType, Clone)]
+pub enum BulletControlKind {
+    Delete,
+    Split,
+    Attract,
+}
+
+/// Relay of a player's bullet-controller ability cast (delete/split/blackhole). The server
+/// tracks no live bullets — it validates the caller and rebroadcasts the cast; every client
+/// resolves the proximity query against its own local bullets. Ephemeral event table, same
+/// shape as BulletPatternEvent.
+#[table(accessor = bullet_control_event, public, event)]
+pub struct BulletControlEvent {
+    #[primary_key] #[auto_inc]
+    pub event_id: u64,
+    pub kind: BulletControlKind,
+    pub x: f32,
+    pub y: f32,
+    pub radius: f32,
+    pub target_x: f32,
+    pub target_y: f32,
+    pub cast_by: Identity,
+}
+
 #[table(accessor = bullet_pattern_event, public, event)]
 pub struct BulletPatternEvent {
     #[primary_key] #[auto_inc]

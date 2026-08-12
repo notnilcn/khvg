@@ -15,4 +15,4 @@ BlastBullets = NodePath("BlastBullets")
 
 [node name="BulletHitRouterComponent" parent="." unique_id=72256238 instance=ExtResource("3_router")]
 
-[node name="BulletAbilityComponent" parent="." unique_id=91347526 instance=ExtResource("4_ability")]
+[node name="BulletControllerComponent" parent="." unique_id=91347526 instance=ExtResource("4_ability")]

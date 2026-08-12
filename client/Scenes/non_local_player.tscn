@@ -4,8 +4,11 @@
 [ext_resource type="Script" uid="uid://bnc7lfsb82nes" path="res://Scripts/Components/Visual/RemoteVisualComponent.cs" id="2_visual"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="3_interp"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="4_binder"]
+[ext_resource type="Script" path="res://Scripts/Components/Combat/RemoteHitWitnessComponent.cs" id="5_witness"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_3srne"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_witness"]
 
 [node name="NonLocalPlayer" type="Node2D" unique_id=538548655]
 script = ExtResource("1_v7aue")
@@ -21,5 +24,13 @@ WrapSnapThreshold = 50.0
 [node name="NearbyRemotePlayersBinder" type="Node" parent="." unique_id=742918305]
 script = ExtResource("4_binder")
 TableName = "NearbyRemotePlayers"
+
+[node name="RemoteHitWitnessComponent" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 0
+script = ExtResource("5_witness")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RemoteHitWitnessComponent"]
+shape = SubResource("CapsuleShape2D_witness")
 
 [connection signal="RowUpdated" from="NearbyRemotePlayersBinder" to="." method="OnPositionRowUpdated"]

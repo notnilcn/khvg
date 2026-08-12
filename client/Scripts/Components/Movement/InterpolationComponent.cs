@@ -6,8 +6,10 @@ using Godot;
 /// the shared home of the lerp logic RemotePlayer and Enemy used to carry inline.
 /// The torus wrap is handled by picking the nearest wrapped candidate of the target
 /// each frame, so routine wraps lerp smoothly without ever snapping. RemotePlayer
-/// additionally passes the server's velocity (extrapolation between updates) and sets
-/// WrapSnapThreshold (hard correction on real desync); Enemy uses position targets only.
+/// additionally passes the server's velocity, and each frame the target is advanced by
+/// velocity * time-since-last-update — dead reckoning (velocity extrapolation between
+/// snapshots) blended with the lerp. RemotePlayer also sets WrapSnapThreshold (hard
+/// correction on real desync); Enemy uses position targets only.
 /// </summary>
 public partial class InterpolationComponent : Component
 {

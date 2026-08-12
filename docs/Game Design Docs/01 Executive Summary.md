@@ -1,12 +1,27 @@
 # High Concept
-The world is in turmoil because of a bunch of wizards naively tried to implement world-wide long range teleportation gates but they messed it up and caused 75% of the planet to be patchwork-merged with other worlds which have monsters and stuff.
-
+Wizards tried to implement world-wide long range teleportation gates but they fucked it up and caused 75% of the planet to be patchwork-merged with other worlds which have monsters and stuff. Kinda post apocalyptic.
 # Demographic
-**Target Audience:** MMORPG players who enjoy difficult skill based games.
-**Game Style:** Bullet-hell rogue-like perma-death base-building mmo.
+## Difficulty enjoyers
+Perma-death bullet hell rogue like mmo. Main sources of difficulty are:
+- Dodging bullets
+- Group Coordination
+- Perma-death
+## Stylized visual enjoyers
+Low poly 3d passed through a pixel art shader.
+## Realistic story enjoyers
+I'm not a huge fan of stories that are coded. I don't like fantasy-coded stories, science-coded stories, human-condition-coded stories, or politically-coded stories.
+##### Premise
+Humans discovered magic early. No scarcity > no conflict > no bureaucracy. This causes the patchwork-merge catastrophe.
+##### Story Inspirations
+###### Vibe
+- Project Hail Mary (movie)
+- The Martian (movie)
+###### Plot
+
+
 **Game Inspirations:** Realm of the Mad God (core gameplay), Alabaster Dawn (core gameplay), Runeward Online (core gameplay), Pixel Quest (core gameplay), BitCraft Online (non-core gameplay), Clash of Clans (non-core gameplay), Factorio: Space Age (non-core gameplay), Hollow Knight (art style), Hollow Knight: Silksong (art style), t3ssel8r videos (art style), Borderlands (item system), and Terraria (idk I just think it's cool).
-**Platform:** PC, Steam Deck (?)
-# Overview
+**Platform:** PC
+# Game Overview
 ## World building vibes
 Players spawn into a post-catastrophe world that has recently been patch-work merged with out worlds because a bunch of wizards naively tried to implement world-wide long range teleportation bates and messed it up. The game is similar to post-apocalypse except less depressing/bleak - the survivors aren't being threatened by anything but they still have to figure out how to survive, so at a societal/narrative level it'll have survival game vibes (different colonies have to establish contact, trade, etc) but at an individual level it'll just be a standard mmorpg.
 ## Look

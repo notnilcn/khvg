@@ -96,6 +96,30 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
 }
 
 #[spacetimedb::reducer]
+pub fn control_bullets(
+    ctx: &ReducerContext,
+    kind: BulletControlKind,
+    x: f32,
+    y: f32,
+    radius: f32,
+    target_x: f32,
+    target_y: f32,
+) -> Result<(), String> {
+    require_in_world(ctx)?;
+    ctx.db.bullet_control_event().insert(BulletControlEvent {
+        event_id: 0,
+        kind,
+        x,
+        y,
+        radius,
+        target_x,
+        target_y,
+        cast_by: ctx.sender(),
+    });
+    Ok(())
+}
+
+#[spacetimedb::reducer]
 pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
     let player = require_in_world(ctx)?;
 

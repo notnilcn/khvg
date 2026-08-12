@@ -43,3 +43,7 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 - **Server publish:** `server/build.sh` regenerates the C# bindings into `client/Scripts/module_bindings/` and publishes the `bullethell` module to the `local` server with `--delete-data`. **Every publish wipes the database**, so schema changes are hard cuts — no migrations, no dual-write; seeds re-run from `main/seeds.rs`. Logs: `spacetime logs bullethell`.
 - **Export:** Web/HTML5 preset in `client/export_presets.cfg`.
 - **⚠️ Never use Project → Tools → C# → Create C# solution** — it regenerates `khvg.csproj` from scratch and wipes the `SpacetimeDB.ClientSDK.Godot` package reference. The solution already exists. If the reference is ever lost, restore it with Godot closed: `dotnet add package SpacetimeDB.ClientSDK.Godot --version 2.7.1`.
+
+## Verification
+
+Automated checks stop at compilation: `cargo check` for the server, `dotnet build client/khvg.csproj` for the client. Anything beyond that — running the game, multiplayer behavior, visuals — is done **by the user**. When a change needs runtime verification, describe the manual test steps and ask the user to run them; do not launch the editor or game yourself.

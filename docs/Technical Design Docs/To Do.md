@@ -2,10 +2,6 @@
 Every time a player toggles auto-fire they send their timestamp modulo (modulus is equal to server tick rate).
 
 When players land hits on an enemy, they only send the enemy id.
-
-# (stupid) i$\omega$aginary numbers for the hex chunks
-![](https://www.youtube.com/watch?v=d6agN416onM&t=492s)
-
 # Claude analysis on what to do:
 I read the design doc, the six server modules, and the client's item/inventory/combat/bullet paths. Here's what I'd change.
 
