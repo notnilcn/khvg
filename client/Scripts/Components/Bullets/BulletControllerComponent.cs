@@ -6,16 +6,18 @@ using SpacetimeDB.Types;
 
 /// <summary>
 /// Player abilities that manipulate live enemy bullets near a point: DeleteNear, SplitNear
-/// and AttractNear (blackhole-style homing). All four share the FindBulletsNear proximity
+/// and AttractNear (blackhole-style homing). All three share the FindBulletsNear proximity
 /// query over the live DirectionalBullets2D instances tracked by BulletSpawnerComponent,
 /// which is why they live in one component.
 /// Casts are networked by relaying the cast itself: the caster applies the effect locally
-/// (optimistic) and calls the control_bullets reducer, which appends a BulletControlEvent
-/// row; every other client applies the same effect on row insert via the child
-/// BulletControlEventBinder (own echoes are skipped via cast_by). Each client resolves the
-/// proximity query against its own bullets, so edge-of-radius results can differ slightly.
-/// Triggered for now by debug hotkeys (ability_delete/split/attract, keys 6-9) polled
-/// in _Process; the public methods are the real API for a future ability system.
+/// (optimistic) and the server appends a BulletControlEvent row; every other client applies
+/// the same effect on row insert via the child BulletControlEventBinder (own echoes are
+/// skipped via cast_by). Each client resolves the proximity query against its own bullets,
+/// so edge-of-radius results can differ slightly.
+/// Driven by the real ability system: ability items with a DeleteBullets/SplitBullets/
+/// AttractBullets AbilityEffect call the public methods below from
+/// LocalPlayerInventoryComponent.TryActivateAbility, and activate_ability appends the
+/// event server-side (radius from the item, cursor target clamped to cast range).
 /// </summary>
 public partial class BulletControllerComponent : Component
 {
@@ -39,31 +41,7 @@ public partial class BulletControllerComponent : Component
 
     protected override void OnEntityReady() => spawner = GetSibling<BulletSpawnerComponent>()!;
 
-    public override void _Process(double delta)
-    {
-        bool delete = Input.IsActionJustPressed("ability_delete");
-        bool split = Input.IsActionJustPressed("ability_split");
-        bool attract = Input.IsActionJustPressed("ability_attract");
-        if (!delete && !split && !attract) return;
-
-        var playerPos = GetLocalPlayerPosition();
-        if (playerPos == null) return;
-        var point = playerPos.Value;
-        var target = ((BulletManager)Entity!).GetGlobalMousePosition();
-
-        // Optimistic local apply; remote clients apply on the BulletControlEvent echo.
-        if (delete) DeleteNear(point, Radius);
-        if (split) SplitNear(point, Radius);
-        if (attract) AttractNear(point, Radius, target);
-
-        var conn = GameManager.Conn;
-        if (conn == null) return; // offline debug use stays local-only
-        if (delete) conn.Reducers.ControlBullets(BulletControlKind.Delete, point.X, point.Y, Radius, 0f, 0f);
-        if (split) conn.Reducers.ControlBullets(BulletControlKind.Split, point.X, point.Y, Radius, 0f, 0f);
-        if (attract) conn.Reducers.ControlBullets(BulletControlKind.Attract, point.X, point.Y, Radius, target.X, target.Y);
-    }
-
-    /// BulletControlEventBinder RowInserted handler (wired in main.tscn). Replays another
+    /// BulletControlEventBinder RowInserted handler (wired in characters.tscn). Replays another
     /// player's cast locally; the caster's own echo is skipped (already applied optimistically).
     private void OnBulletControlEventRow()
     {
@@ -74,15 +52,6 @@ public partial class BulletControllerComponent : Component
         else if (row.Kind is BulletControlKind.Split) SplitNear(point, row.Radius);
         else if (row.Kind is BulletControlKind.Attract)
             AttractNear(point, row.Radius, new Vector2(row.TargetX, row.TargetY));
-    }
-
-    private static Vector2? GetLocalPlayerPosition()
-    {
-        var conn = GameManager.Conn;
-        if (conn == null) return null;
-        foreach (var row in conn.Db.LocalPlayerPosition.Iter())
-            return new Vector2(row.X, row.Y);
-        return null;
     }
 
     /// Every enabled live enemy bullet (instance, index) whose position is within radius of point.

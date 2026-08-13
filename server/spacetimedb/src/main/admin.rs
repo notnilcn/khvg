@@ -45,14 +45,14 @@ pub fn release_admin(ctx: &ReducerContext) -> Result<(), String> {
 }
 
 #[spacetimedb::reducer]
-pub fn change_stats(ctx: &ReducerContext, target_username: String, profile_name: String, strength: i32, wisdom: i32, dexterity: i32, defense: i32, vitality: i32, speed: i32) -> Result<(), String> {
+pub fn change_stats(ctx: &ReducerContext, target_username: String, profile_name: String, strength: i32, wisdom: i32, dexterity: i32, damage_dealer: i32, supporter: i32, artisan: i32) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
     let target_id = find_player_by_username(ctx, &target_username)
         .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
     let profile = find_profile_by_name(ctx, target_id, &profile_name)
         .ok_or_else(|| format!("Profile '{}' not found.", profile_name))?;
     let stats = ctx.db.player_stats().profile_id().find(&profile.profile_id).ok_or("Stats not found.")?;
-    ctx.db.player_stats().profile_id().update(PlayerStats { strength, wisdom, dexterity, defense, vitality, speed, ..stats });
+    ctx.db.player_stats().profile_id().update(PlayerStats { strength, wisdom, dexterity, damage_dealer, supporter, artisan, ..stats });
     Ok(())
 }
 

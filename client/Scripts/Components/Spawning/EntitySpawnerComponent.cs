@@ -9,7 +9,7 @@ using System.Collections.Generic;
 /// entity_spawner_component.tscn, signals wired in the editor; ReplayExistingRows covers rows
 /// already in the client cache), and tracks them in lookup dictionaries. Instantiation stays
 /// in code because the count is data-driven by server rows (logic moved out of GameManager.cs).
-/// The BulletManager is not row-driven, so it lives directly in main.tscn instead.
+/// The BulletManager is not row-driven, so it lives directly in characters.tscn instead.
 /// </summary>
 public partial class EntitySpawnerComponent : Component
 {

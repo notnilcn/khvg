@@ -4,18 +4,23 @@ using SpacetimeDB.Types;
 using System;
 
 /// <summary>
-/// Feeds the local player's LocalPlayerData/LocalPlayerStats rows into the sibling
-/// HealthComponent/StatsComponent mirrors, which own the actual values (LocalPlayer's
-/// Hp/MaxHp/Strength… pass-throughs read from them, keeping UI readers stable). Rows
-/// arrive via the child binders declared in local_player.tscn (signals wired in the
-/// editor; ReplayExistingRows replaces the old Iter() loops in LocalPlayer._Ready).
+/// Feeds the local player's LocalPlayerData/LocalPlayerStats/LocalPlayerStatAllocation
+/// rows into the sibling HealthComponent/StatsComponent mirrors, which own the actual
+/// values (LocalPlayer's Hp/MaxHp/Strength… pass-throughs read from them, keeping UI
+/// readers stable). Rows arrive via the child binders declared in local_player.tscn
+/// (signals wired in the editor; ReplayExistingRows replaces the old Iter() loops in
+/// LocalPlayer._Ready). Defense is modifier-only (gear/buffs) and lives on the data row,
+/// same as max_hp.
 /// </summary>
 public partial class LocalPlayerDataComponent : Component
 {
     public uint Level { get; private set; }
+    public int Defense { get; private set; }
+    public uint UnspentPoints { get; private set; }
 
     private TableBinderComponent dataBinder = null!;
     private TableBinderComponent statsBinder = null!;
+    private TableBinderComponent allocationBinder = null!;
 
     private HealthComponent? HealthComponent => GetSibling<HealthComponent>();
     private StatsComponent? StatsComponent => GetSibling<StatsComponent>();
@@ -25,6 +30,7 @@ public partial class LocalPlayerDataComponent : Component
         base._Ready();
         dataBinder = GetNode<TableBinderComponent>("LocalPlayerDataBinder");
         statsBinder = GetNode<TableBinderComponent>("LocalPlayerStatsBinder");
+        allocationBinder = GetNode<TableBinderComponent>("LocalPlayerStatAllocationBinder");
     }
 
     protected override Type[] GetRequiredComponents() => [typeof(HealthComponent), typeof(StatsComponent)];
@@ -43,6 +49,7 @@ public partial class LocalPlayerDataComponent : Component
     {
         var data = (PlayerData)dataBinder.LastRow!;
         Level = data.Level;
+        Defense = data.Defense;
         HealthComponent?.SetFromServer(data.Hp, data.MaxHp);
         (Entity as LocalPlayer)?.RaiseStatsChanged();
     }
@@ -53,9 +60,16 @@ public partial class LocalPlayerDataComponent : Component
         StatsComponent?.SetFromServer(StatKind.Strength, stats.Strength);
         StatsComponent?.SetFromServer(StatKind.Wisdom, stats.Wisdom);
         StatsComponent?.SetFromServer(StatKind.Dexterity, stats.Dexterity);
-        StatsComponent?.SetFromServer(StatKind.Defense, stats.Defense);
-        StatsComponent?.SetFromServer(StatKind.Vitality, stats.Vitality);
-        StatsComponent?.SetFromServer(StatKind.Speed, stats.Speed);
+        StatsComponent?.SetFromServer(StatKind.DamageDealer, stats.DamageDealer);
+        StatsComponent?.SetFromServer(StatKind.Supporter, stats.Supporter);
+        StatsComponent?.SetFromServer(StatKind.Artisan, stats.Artisan);
+        (Entity as LocalPlayer)?.RaiseStatsChanged();
+    }
+
+    private void OnAllocationRow()
+    {
+        var allocation = (PlayerStatAllocation)allocationBinder.LastRow!;
+        UnspentPoints = allocation.UnspentPoints;
         (Entity as LocalPlayer)?.RaiseStatsChanged();
     }
 }

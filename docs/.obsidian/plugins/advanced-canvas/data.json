@@ -49,6 +49,7 @@
   "zOrderingControlFeatureEnabled": false,
   "zOrderingControlShowOneLayerShiftOptions": false,
   "aspectRatioControlFeatureEnabled": true,
+  "nodeRotationFeatureEnabled": true,
   "commandsFeatureEnabled": true,
   "zoomToClonedNode": true,
   "cloneNodeMargin": 20,

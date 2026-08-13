@@ -12,7 +12,7 @@
 - [[02 The Component Framework]] — the nine unreferenced duplicate component scenes (one of them is this doc's drift hazard).
 - [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
 - [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `admin` section.
-- Maintainer references for orientation (not restated here): [[CLAUDE.md]] at the repo root, plus the `CLAUDE.md` files in `client/` and `server/`.
+- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
 
 ## The 30-second version
 

@@ -100,6 +100,11 @@ script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerStats"
 
+[node name="LocalPlayerStatAllocationBinder" type="Node" parent="LocalPlayerDataComponent"]
+script = ExtResource("15_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayerStatAllocation"
+
 [node name="LocalPlayerInventoryComponent" type="Node" parent="." unique_id=1107901124]
 script = ExtResource("18_inv")
 
@@ -123,6 +128,9 @@ TableName = "LocalPlayerActiveProfile"
 [connection signal="RowUpdated" from="LocalPlayerDataComponent/LocalPlayerDataBinder" to="LocalPlayerDataComponent" method="OnDataRow"]
 [connection signal="RowInserted" from="LocalPlayerDataComponent/LocalPlayerStatsBinder" to="LocalPlayerDataComponent" method="OnStatsRow"]
 [connection signal="RowUpdated" from="LocalPlayerDataComponent/LocalPlayerStatsBinder" to="LocalPlayerDataComponent" method="OnStatsRow"]
+[connection signal="RowInserted" from="LocalPlayerDataComponent/LocalPlayerStatAllocationBinder" to="LocalPlayerDataComponent" method="OnAllocationRow"]
+[connection signal="RowUpdated" from="LocalPlayerDataComponent/LocalPlayerStatAllocationBinder" to="LocalPlayerDataComponent" method="OnAllocationRow"]
+[connection signal="RowDeleted" from="LocalPlayerInventoryComponent/LocalPlayerInventoryBinder" to="LocalPlayerInventoryComponent" method="OnInventoryRowDeleted"]
 [connection signal="RowInserted" from="LocalPlayerInventoryComponent/LocalPlayerInventoryBinder" to="LocalPlayerInventoryComponent" method="OnInventoryRow"]
 [connection signal="RowUpdated" from="LocalPlayerInventoryComponent/LocalPlayerInventoryBinder" to="LocalPlayerInventoryComponent" method="OnInventoryRow"]
 [connection signal="RowInserted" from="LocalPlayerProfileComponent/LocalPlayerActiveProfileBinder" to="LocalPlayerProfileComponent" method="OnProfileRowInserted"]

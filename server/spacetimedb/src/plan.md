@@ -274,8 +274,8 @@ becomes needed).
 
 ## Docs to update after implementation
 
-- `server/CLAUDE.md` module map: `BulletDespawnEvent` under `enemy/instance_tables.rs`,
+- `server/AGENTS.md` module map: `BulletDespawnEvent` under `enemy/instance_tables.rs`,
   `slash_bullet` under `enemy/reducers.rs`, new `report_hit` signature under `player/reducers.rs`,
   `resolve_step_damage` under `enemy/methods.rs`.
-- `client/CLAUDE.md`: `BulletManager.cs` entry (controllable spawns + despawn relay), new
+- `client/AGENTS.md`: `BulletManager.cs` entry (controllable spawns + despawn relay), new
   `LocalPlayerSlash.cs` entry.

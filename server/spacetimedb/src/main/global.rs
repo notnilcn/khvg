@@ -43,13 +43,27 @@ pub const SPAWN_LOOKAHEAD_CHUNK_RINGS: i32 = 2;
 pub const BASE_MAX_HP: i32 = 100;
 // HP gained (and healed) per level up.
 pub const HP_PER_LEVEL: i32 = 5;
+// Flat base value of each of the six allocatable stats — level-ups don't raise stats
+// directly, they grant skill points (see PlayerStatAllocation).
+pub const BASE_STAT: i32 = 10;
+// Skill points granted per level, allocatable into the six stats via allocate_stat.
+pub const SKILL_POINTS_PER_LEVEL: u32 = 2;
+// Max distance from the player an ability target point may be; activate_ability clamps
+// the client-supplied cursor position to this range.
+pub const MAX_ABILITY_TARGET_RANGE: f32 = 600.0;
 
 // ===== Player Inventory =====
 
-// First general-purpose inventory slot index.
-pub const GENERAL_SLOT_START: usize = 15;
-// Number of general inventory slots.
-pub const GENERAL_SLOT_COUNT: usize = 8;
+// Slot layout (index ranges per SlotRole) is constructed in try_scaffold_profile; the client
+// mirrors those ranges in LocalPlayerInventoryComponent: 0 weapon, 1-4 hotbar, 5 accessory,
+// 6 armor, 7-30 general, 31 bag, 32-37 ability. First ability slot index:
+pub const ABILITY_SLOT_START: u32 = 32;
+// Number of ability slots (design doc: n=6; shields cost 6, tomes 3, spells 2).
+pub const ABILITY_SLOT_COUNT: u32 = 6;
+// Potency multiplier for an ability by the position of its span's head within the ability
+// region — "order matters, first ability stronger" (design doc 03). Applied to passive stat
+// modifiers in recompute_stats and to effect potency in activate_ability.
+pub const ABILITY_POSITION_MULTIPLIERS: [f32; ABILITY_SLOT_COUNT as usize] = [1.5, 1.25, 1.1, 1.0, 0.9, 0.8];
 
 // ===== Enemy Simulation =====
 

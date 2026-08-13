@@ -10,7 +10,7 @@
 - [[02 The Component Framework]] — entities/components, the ancestor-walk registration that lets the instanced inventory panel belong to the `LocalPlayer` entity, and the `TableBinderComponent` mechanism.
 - [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
 - [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `equip` and `loot` sections.
-- Maintainer references for orientation (not restated here): [[CLAUDE.md]] at the repo root, plus the `CLAUDE.md` files in `client/` and `server/`.
+- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
 
 ## The 30-second version
 

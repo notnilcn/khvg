@@ -12,7 +12,7 @@
 - [[12 Admin & Debug]] — admin-8's `PlayerPositionDebug` mirror, which makes ghost rows visible.
 - [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
 - [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `end` section.
-- Maintainer references for orientation (not restated here): [[CLAUDE.md]] at the repo root, plus the `CLAUDE.md` files in `client/` and `server/`.
+- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
 
 ## The 30-second version
 
@@ -119,4 +119,4 @@ Reconnection works because identity is pinned to the saved token (boot-2/conn-1)
 
 ## Where to go next
 
-This is the last doc in the series — the timeline that started at boot-1 now closes at end-6. To re-read the whole arc as one narrative, go back to [[00 End-to-End Timeline Flowchart]]; for the map of what each doc covers, see [[01 Roadmap]]. For day-to-day maintenance rather than learning, the terse references are [[CLAUDE.md]] at the repo root and the `CLAUDE.md` files in `client/` and `server/`.
+This is the last doc in the series — the timeline that started at boot-1 now closes at end-6. To re-read the whole arc as one narrative, go back to [[00 End-to-End Timeline Flowchart]]; for the map of what each doc covers, see [[01 Roadmap]]. For day-to-day maintenance rather than learning, the terse references are [[AGENTS.md]] at the repo root and the `AGENTS.md` files in `client/` and `server/`.

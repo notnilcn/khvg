@@ -4,7 +4,7 @@
 
 This folder is the narrative, learn-from-scratch companion to the codebase: a bullet-hell MMO roguelike built from a Godot 4.7 mono C# client (`client/`) and a SpacetimeDB Rust server module (`server/spacetimedb/src/`). The client is fully compositional — every entity is assembled from components — and the server mirrors that compositionally: one table per concern acts like a component, ids like `profile_id`/`enemy_id` join a logical entity's rows across tables, and "archetype helpers" bundle the rows of one entity.
 
-These docs are the prose complement to the terse maintainer references ([[CLAUDE.md]] at the repo root, plus the `CLAUDE.md` files in `client/` and `server/`). Those tell a maintainer where things are; these explain how and why the pieces fit together, one system at a time, in reading order.
+These docs are the prose complement to the terse maintainer references ([[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`). Those tell a maintainer where things are; these explain how and why the pieces fit together, one system at a time, in reading order.
 
 **Audience:** an intermediate programmer who is brand new to Godot, C#, Rust, and SpacetimeDB. Unfamiliar concepts — reducers, views, subscriptions, node trees, scenes, `.tscn` files — are explained briefly inline as they come up. General programming ideas (loops, classes, dictionaries) are not.
 

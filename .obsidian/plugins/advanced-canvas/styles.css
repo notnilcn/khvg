@@ -774,6 +774,42 @@
 .canvas-wrapper .advanced-canvas-filtered-out {
   display: none;
 }
+.canvas-node[data-content-rotation="180"] .canvas-node-container > .canvas-node-content {
+  transform: rotate(180deg);
+}
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content,
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--canvas-node-height);
+  height: var(--canvas-node-width);
+}
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content img,
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content video,
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content iframe,
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content .markdown-embed,
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content .canvas-node-content-blocker,
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content img,
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content video,
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content iframe,
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content .markdown-embed,
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content .canvas-node-content-blocker {
+  width: 100%;
+  height: 100%;
+}
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content img,
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content video,
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content img,
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content video {
+  object-fit: contain;
+}
+.canvas-node[data-content-rotation="90"] .canvas-node-container > .canvas-node-content {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+.canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content {
+  transform: translate(-50%, -50%) rotate(270deg);
+}
 .canvas-wrapper.presentation-mode .canvas-controls {
   visibility: hidden;
 }

@@ -4,7 +4,7 @@
 
 - [[01 Roadmap]] — what these docs are, who they're for, and the linking conventions used throughout.
 - [[00 End-to-End Timeline Flowchart]] — the runtime spine this doc hangs off of. The framework itself is not a runtime beat, so this doc has no timeline steps of its own.
-- The maintainer references for orientation (not restated here): [[CLAUDE.md]] at the repo root, plus the `CLAUDE.md` files in `client/` and `server/`.
+- The maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
 
 ## The 30-second version
 

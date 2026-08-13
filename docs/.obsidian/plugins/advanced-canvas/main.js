@@ -27,7 +27,7 @@ __export(main_exports, {
   default: () => AdvancedCanvasPlugin
 });
 module.exports = __toCommonJS(main_exports);
-var import_obsidian24 = require("obsidian");
+var import_obsidian25 = require("obsidian");
 
 // src/utils/icons-helper.ts
 var import_obsidian = require("obsidian");
@@ -1854,6 +1854,8 @@ var DEFAULT_SETTINGS_VALUES = {
   zOrderingControlFeatureEnabled: false,
   zOrderingControlShowOneLayerShiftOptions: false,
   aspectRatioControlFeatureEnabled: false,
+  nodeRotationFeatureEnabled: false,
+  // Added by an LLM agent
   commandsFeatureEnabled: true,
   zoomToClonedNode: true,
   cloneNodeMargin: 20,
@@ -2390,6 +2392,12 @@ var SETTINGS = {
   aspectRatioControlFeatureEnabled: {
     label: "Aspect ratio control",
     description: "Change the aspect ratio of nodes using the node popup menu or the context menu.",
+    children: {}
+  },
+  // Added by an LLM agent
+  nodeRotationFeatureEnabled: {
+    label: "Node rotation",
+    description: "Rotate nodes around their own center using the context menu (90\xB0 steps or a custom angle) or commands. Rotating a group rigidly rotates all fully contained nodes with it. Also allows rotating just the content of a node in 90\xB0 steps (cardinal content rotation).",
     children: {}
   },
   variableBreakpointFeatureEnabled: {
@@ -8699,6 +8707,271 @@ var ReadingModeFixCanvasExtension = class extends CanvasExtension {
   }
 };
 
+// src/canvas-extensions/rotate-node-canvas-extension.ts
+var import_obsidian24 = require("obsidian");
+var CONTENT_ROTATION_OPTIONS = [
+  { label: "None", value: 0 },
+  { label: "90\xB0 clockwise", value: 90 },
+  { label: "180\xB0", value: 180 },
+  { label: "90\xB0 counter-clockwise", value: 270 }
+];
+function normalizeAngle(angle) {
+  const normalized = angle % 360;
+  return normalized < 0 ? normalized + 360 : normalized;
+}
+function rotatePointAround(point, center, angleDeg) {
+  const rad = angleDeg * Math.PI / 180;
+  const cos = Math.cos(rad);
+  const sin = Math.sin(rad);
+  const dx = point.x - center.x;
+  const dy = point.y - center.y;
+  return {
+    x: center.x + dx * cos - dy * sin,
+    y: center.y + dx * sin + dy * cos
+  };
+}
+var RotateNodeCanvasExtension = class extends CanvasExtension {
+  constructor() {
+    super(...arguments);
+    /** Per-canvas cache: does any node/group have a rotation? Invalidated on data changes. */
+    this.rotationPresenceCache = /* @__PURE__ */ new WeakMap();
+  }
+  isEnabled() {
+    return "nodeRotationFeatureEnabled";
+  }
+  init() {
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-rendered",
+      (canvas, node) => {
+        if (!this.getRotationPresence(canvas)) return;
+        this.updateNodeTransform(canvas, node);
+      }
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-changed",
+      (canvas, node) => {
+        this.rotationPresenceCache.delete(canvas);
+        if (this.getRotationPresence(canvas)) this.updateAllNodeTransforms(canvas);
+        else this.updateNodeTransform(canvas, node);
+      }
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-removed",
+      (canvas) => this.rotationPresenceCache.delete(canvas)
+    ));
+    for (const event of ["advanced-canvas:data-loaded:after", "advanced-canvas:canvas-changed", "advanced-canvas:undo", "advanced-canvas:redo"]) {
+      this.plugin.registerEvent(this.plugin.app.workspace.on(
+        event,
+        (canvas) => {
+          this.rotationPresenceCache.delete(canvas);
+          if (this.getRotationPresence(canvas)) this.updateAllNodeTransforms(canvas);
+        }
+      ));
+    }
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "canvas:node-menu",
+      (menu, node) => this.addRotationMenuItems(node.canvas, [node], menu)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "canvas:selection-menu",
+      (menu, canvas) => this.addRotationMenuItems(canvas, this.getSelectedNodes(canvas), menu)
+    ));
+    this.plugin.addCommand({
+      id: "rotate-selection-90-clockwise",
+      name: "Rotate selection 90\xB0 clockwise",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (canvas) => !canvas.readonly && canvas.getSelectionData().nodes.length > 0,
+        (canvas) => this.rotateNodesBy(canvas, this.getSelectedNodes(canvas), 90)
+      )
+    });
+    this.plugin.addCommand({
+      id: "rotate-selection-90-counterclockwise",
+      name: "Rotate selection 90\xB0 counterclockwise",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (canvas) => !canvas.readonly && canvas.getSelectionData().nodes.length > 0,
+        (canvas) => this.rotateNodesBy(canvas, this.getSelectedNodes(canvas), -90)
+      )
+    });
+    this.plugin.addCommand({
+      id: "rotate-selection-180",
+      name: "Rotate selection 180\xB0",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (canvas) => !canvas.readonly && canvas.getSelectionData().nodes.length > 0,
+        (canvas) => this.rotateNodesBy(canvas, this.getSelectedNodes(canvas), 180)
+      )
+    });
+    this.plugin.addCommand({
+      id: "reset-selection-rotation",
+      name: "Reset selection rotation",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (canvas) => !canvas.readonly && canvas.getSelectionData().nodes.length > 0,
+        (canvas) => this.setNodesRotation(canvas, this.getSelectedNodes(canvas), 0)
+      )
+    });
+  }
+  getSelectedNodes(canvas) {
+    return canvas.getSelectionData().nodes.map((nodeData) => canvas.nodes.get(nodeData.id)).filter((node) => node !== void 0);
+  }
+  addRotationMenuItems(canvas, nodes, menu) {
+    if (canvas.readonly || nodes.length === 0) return;
+    menu.addSeparator();
+    menu.addItem((item) => {
+      item.setTitle("Rotate 90\xB0 clockwise");
+      item.setIcon("rotate-cw");
+      item.onClick(() => this.rotateNodesBy(canvas, nodes, 90));
+    });
+    menu.addItem((item) => {
+      item.setTitle("Rotate 90\xB0 counterclockwise");
+      item.setIcon("rotate-ccw");
+      item.onClick(() => this.rotateNodesBy(canvas, nodes, -90));
+    });
+    menu.addItem((item) => {
+      item.setTitle("Rotate 180\xB0");
+      item.setIcon("refresh-cw");
+      item.onClick(() => this.rotateNodesBy(canvas, nodes, 180));
+    });
+    menu.addItem((item) => {
+      item.setTitle("Set rotation angle\u2026");
+      item.setIcon("compass");
+      item.onClick(async () => {
+        const input = await new AbstractSelectionModal(
+          this.plugin.app,
+          "Enter a rotation angle in degrees (clockwise)",
+          ["0", "45", "90", "135", "180", "225", "270", "315"],
+          true
+          // Allow arbitrary angles
+        ).awaitInput();
+        const angle = Number(input);
+        if (isNaN(angle)) {
+          new import_obsidian24.Notice("Invalid rotation angle");
+          return;
+        }
+        this.setNodesRotation(canvas, nodes, angle);
+      });
+    });
+    if (nodes.some((node) => {
+      var _a;
+      return normalizeAngle((_a = node.getData().rotation) != null ? _a : 0) !== 0;
+    })) {
+      menu.addItem((item) => {
+        item.setTitle("Reset rotation");
+        item.setIcon("undo-2");
+        item.onClick(() => this.setNodesRotation(canvas, nodes, 0));
+      });
+    }
+    menu.addSeparator();
+    for (const option of CONTENT_ROTATION_OPTIONS) {
+      menu.addItem((item) => {
+        item.setTitle(`Content rotation: ${option.label}`);
+        item.setIcon(option.value === 0 ? "ban" : "rotate-cw");
+        item.onClick(() => this.setNodesContentRotation(canvas, nodes, option.value));
+      });
+    }
+    menu.addSeparator();
+  }
+  rotateNodesBy(canvas, nodes, deltaDeg) {
+    var _a;
+    for (const node of nodes) {
+      const newRotation = normalizeAngle(((_a = node.getData().rotation) != null ? _a : 0) + deltaDeg);
+      node.setData({
+        ...node.getData(),
+        rotation: newRotation === 0 ? void 0 : newRotation
+        // Keep the canvas JSON clean
+      });
+    }
+    canvas.pushHistory(canvas.getData());
+  }
+  setNodesRotation(canvas, nodes, angleDeg) {
+    const rotation = normalizeAngle(angleDeg);
+    for (const node of nodes) {
+      node.setData({
+        ...node.getData(),
+        rotation: rotation === 0 ? void 0 : rotation
+        // Keep the canvas JSON clean
+      });
+    }
+    canvas.pushHistory(canvas.getData());
+  }
+  setNodesContentRotation(canvas, nodes, contentRotation) {
+    for (const node of nodes) {
+      node.setData({
+        ...node.getData(),
+        contentRotation: contentRotation === 0 ? void 0 : contentRotation
+        // Keep the canvas JSON clean
+      });
+    }
+    canvas.pushHistory(canvas.getData());
+  }
+  getRotationPresence(canvas) {
+    const cached = this.rotationPresenceCache.get(canvas);
+    if (cached !== void 0) return cached;
+    const hasRotation = [...canvas.nodes.values()].some((node) => {
+      var _a;
+      return normalizeAngle((_a = node.getData().rotation) != null ? _a : 0) !== 0;
+    });
+    this.rotationPresenceCache.set(canvas, hasRotation);
+    return hasRotation;
+  }
+  updateAllNodeTransforms(canvas) {
+    for (const node of canvas.nodes.values()) this.updateNodeTransform(canvas, node);
+  }
+  updateNodeTransform(canvas, node) {
+    var _a;
+    const ownRotation = normalizeAngle((_a = node.getData().rotation) != null ? _a : 0);
+    const containingGroups = this.getContainingRotatedGroups(canvas, node);
+    if (ownRotation === 0 && containingGroups.length === 0) {
+      if (node.nodeEl.style.transform.includes("rotate("))
+        node.nodeEl.style.transform = `translate(${node.x}px, ${node.y}px)`;
+      return;
+    }
+    let center = { x: node.x + node.width / 2, y: node.y + node.height / 2 };
+    let totalAngle = ownRotation;
+    const appliedSteps = [];
+    for (const group of containingGroups) {
+      let groupCenter = group.center;
+      for (const step of appliedSteps) groupCenter = rotatePointAround(groupCenter, step.center, step.angle);
+      appliedSteps.push({ center: groupCenter, angle: group.rotation });
+      center = rotatePointAround(center, groupCenter, group.rotation);
+      totalAngle += group.rotation;
+    }
+    totalAngle = normalizeAngle(totalAngle);
+    const tx = center.x - node.width / 2;
+    const ty = center.y - node.height / 2;
+    const transform = totalAngle === 0 ? `translate(${tx}px, ${ty}px)` : `translate(${tx}px, ${ty}px) rotate(${totalAngle}deg)`;
+    if (node.nodeEl.style.transform !== transform) node.nodeEl.style.transform = transform;
+  }
+  /** All rotated groups whose data-bbox fully contains the node's data-bbox, outermost first */
+  getContainingRotatedGroups(canvas, node) {
+    const nodeBBox = {
+      minX: node.x,
+      minY: node.y,
+      maxX: node.x + node.width,
+      maxY: node.y + node.height
+    };
+    return [...canvas.nodes.values()].filter((other) => other !== node && other.getData().type === "group").map((group) => {
+      var _a;
+      return { group, rotation: normalizeAngle((_a = group.getData().rotation) != null ? _a : 0) };
+    }).filter(({ rotation }) => rotation !== 0).map(({ group, rotation }) => {
+      const groupBBox = {
+        minX: group.x,
+        minY: group.y,
+        maxX: group.x + group.width,
+        maxY: group.y + group.height
+      };
+      return {
+        center: { x: group.x + group.width / 2, y: group.y + group.height / 2 },
+        rotation,
+        area: (groupBBox.maxX - groupBBox.minX) * (groupBBox.maxY - groupBBox.minY),
+        contains: BBoxHelper.insideBBox(nodeBBox, groupBBox, true)
+      };
+    }).filter(({ contains }) => contains).sort((a, b) => b.area - a.area).map(({ center, rotation }) => ({ center, rotation }));
+  }
+};
+
 // src/canvas-extensions/dataset-exposers/canvas-metadata-exposer.ts
 var CanvasMetadataExposerExtension = class extends CanvasExtension {
   isEnabled() {
@@ -8785,6 +9058,7 @@ function getExposedNodeData(settings) {
   if (settings.getSetting("nodeStylingFeatureEnabled")) exposedData.push("styleAttributes");
   if (settings.getSetting("collapsibleGroupsFeatureEnabled")) exposedData.push("collapsed");
   if (settings.getSetting("portalsFeatureEnabled")) exposedData.push("isPortalLoaded");
+  if (settings.getSetting("nodeRotationFeatureEnabled")) exposedData.push("rotation", "contentRotation");
   return exposedData;
 }
 var NodeExposerExtension = class extends CanvasExtension {
@@ -8967,10 +9241,10 @@ var PATCHERS = [
   FileManagerPatcher,
   // Direct metadata dependant patchers
   PropertiesPatcher,
-  !(0, import_obsidian24.requireApiVersion)("1.12.0") && BacklinksPatcher,
+  !(0, import_obsidian25.requireApiVersion)("1.12.0") && BacklinksPatcher,
   OutgoingLinksPatcher,
   // Metadata dependant patchers
-  (0, import_obsidian24.requireApiVersion)("1.9.0") && BasesTableViewPatcher,
+  (0, import_obsidian25.requireApiVersion)("1.9.0") && BasesTableViewPatcher,
   LinkSuggestionsPatcher,
   EmbedPatcher,
   SearchPatcher
@@ -9022,9 +9296,11 @@ var CANVAS_EXTENSIONS = [
   // Added by an LLM agent
   EncapsulateCanvasExtension,
   EdgeSelectionCanvasExtension,
-  CopyNodeReferenceCanvasExtension
+  CopyNodeReferenceCanvasExtension,
+  RotateNodeCanvasExtension
+  // Added by an LLM agent
 ];
-var AdvancedCanvasPlugin = class extends import_obsidian24.Plugin {
+var AdvancedCanvasPlugin = class extends import_obsidian25.Plugin {
   async onload() {
     IconsHelper.addIcons();
     this.settings = new SettingsManager(this);
@@ -9056,7 +9332,7 @@ var AdvancedCanvasPlugin = class extends import_obsidian24.Plugin {
     }).filter((canvas) => canvas);
   }
   getCurrentCanvasView() {
-    const canvasView = this.app.workspace.getActiveViewOfType(import_obsidian24.ItemView);
+    const canvasView = this.app.workspace.getActiveViewOfType(import_obsidian25.ItemView);
     if ((canvasView == null ? void 0 : canvasView.getViewType()) !== "canvas") return null;
     return canvasView;
   }

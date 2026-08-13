@@ -1,15 +1,15 @@
 # Item system: split stats from behavior
 
-> **Status: implemented.** This was `server/spacetimedb/src/CLAUDE.md` — a plan doc that lived where it
+> **Status: implemented.** This was `server/spacetimedb/src/AGENTS.md` — a plan doc that lived where it
 > auto-loaded on every server edit long after it shipped. The schema it describes is live
-> (`item/tables.rs`, `player/methods.rs::recompute_stats`); `server/CLAUDE.md` carries the durable
+> (`item/tables.rs`, `player/methods.rs::recompute_stats`); `server/AGENTS.md` carries the durable
 > design rules. Kept here for the *why* behind the shape, and for the follow-ups at the bottom that
 > are still open. Details drifted since: `recompute_stats` now also folds socketed enchantment
 > modifiers, and `ConsumableBuffEffect` survived as a seed-time input converted by `buff_to_modifier`.
 
 ## Context
 
-`server/spacetimedb/src/CLAUDE.md` documents a target design for the item system that has never been
+`server/spacetimedb/src/AGENTS.md` documents a target design for the item system that has never been
 implemented. Today an item is a row in `Item` plus a row in one of five parallel side tables
 (`Weapon`, `Armor`, `Artifact`, `Accessory`, `Consumable`), joined by a shared string id and
 dispatched on `Item.item_type`. That structure is closed: what an item *does* is welded to which

@@ -7,15 +7,19 @@
 //! `profile_id`/`enemy_id` is the entity id joining its rows. Death/despawn teardown goes
 //! through the shared archetype helpers — teardown_profile for players, despawn_enemy_archetype
 //! for enemies — so there is exactly one table list per entity type.
+//!
+//! Damage model (Game Design Doc 02): defence is a FLAT per-bullet subtraction with
+//! minimum damage 1, which is what makes many-weak-bullets patterns trade off against
+//! few-strong-bullets ones. Weapon damage is per trigger pull, divided among the
+//! pattern's bullets. True-damage enchantment bonuses apply after defence.
 
 use spacetimedb::{ReducerContext, Table};
 use std::time::Duration;
-use crate::player::tables::{logged_in_player, logged_out_player, player_data, player_inventory, player_stats, LoggedInPlayer, LoggedOutPlayer, PlayerData};
-use crate::player::methods::{internal_gain_xp, teardown_profile, weapon_behavior};
+use crate::player::tables::{logged_in_player, logged_out_player, player_data, player_stats, LoggedInPlayer, LoggedOutPlayer, PlayerData};
+use crate::player::methods::{internal_gain_xp, resolve_effective_weapon, teardown_profile};
 use crate::enemy::def_tables::enemy_template;
 use crate::enemy::instance_tables::{enemy, enemy_behavior, Enemy};
 use crate::enemy::methods::{compute_phase, despawn_enemy_archetype, recompute_aggro};
-use crate::item::tables::item;
 
 // Payloads are part of the pipeline API for upcoming callers (e.g. the slash/bullet-despawn
 // reducers in src/plan.md); today's reducers only branch on the variant.
@@ -31,24 +35,24 @@ pub enum EnemyDamageOutcome {
     Died { xp_reward: u32 },
 }
 
-/// Outgoing player damage: weapon base damage scaled by strength.
-pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64) -> u32 {
+/// Outgoing player damage per reported bullet hit: the effective weapon's per-trigger
+/// damage divided among its bullets (toggle + enchantment composition already applied by
+/// resolve_effective_weapon), scaled by strength, then flat enemy defence (min 1), then
+/// true-damage bonuses (which defence does not touch).
+pub fn compute_player_damage(ctx: &ReducerContext, profile_id: u64, enemy_defense: u32) -> u32 {
     let stats = match ctx.db.player_stats().profile_id().find(&profile_id) { Some(s) => s, None => return 1 };
-    let inv = match ctx.db.player_inventory().profile_id().find(&profile_id) { Some(i) => i, None => return 1 };
-    let weapon_item = inv.slots.get(0)
-        .and_then(|s| s.item_id.as_ref())
-        .and_then(|id| ctx.db.item().item_id().find(id));
-    let weapon = weapon_item.as_ref().and_then(|i| weapon_behavior(i));
-    match weapon {
-        Some(w) => (w.damage as f32 * (1.0 + stats.strength as f32 * 0.002)).max(1.0) as u32,
-        None => 0,
-    }
+    let weapon = match resolve_effective_weapon(ctx, profile_id) { Some(w) => w, None => return 0 };
+    let raw = weapon.behavior.damage as f32
+        * (1.0 + stats.strength as f32 * 0.002)
+        / weapon.behavior.shot_count.max(1) as f32;
+    let mitigated = (raw + weapon.flat_bullet_mod - enemy_defense as f32).max(1.0);
+    (mitigated + weapon.true_flat + raw * weapon.true_pct) as u32
 }
 
-/// Incoming player damage after defense mitigation (minimum 1).
+/// Incoming player damage after the player's flat defence (minimum 1).
 pub fn compute_incoming_damage(ctx: &ReducerContext, profile_id: u64, base_damage: u32) -> u32 {
-    let stats = match ctx.db.player_stats().profile_id().find(&profile_id) { Some(s) => s, None => return base_damage.max(1) };
-    (base_damage as f32 * (1.0 - stats.defense as f32 * 0.002)).max(1.0) as u32
+    let data = match ctx.db.player_data().profile_id().find(&profile_id) { Some(d) => d, None => return base_damage.max(1) };
+    (base_damage as i32 - data.defense).max(1) as u32
 }
 
 /// Applies damage to a player: mitigates, subtracts, and on zero performs the full death
@@ -74,7 +78,8 @@ pub fn deal_damage_to_player(ctx: &ReducerContext, player: &LoggedInPlayer, base
 /// onto the attacker (ctx.sender()).
 pub fn deal_damage_to_enemy(ctx: &ReducerContext, profile_id: u64, enemy: Enemy) -> EnemyDamageOutcome {
     let template = ctx.db.enemy_template().template_id().find(&enemy.template_id);
-    let damage = compute_player_damage(ctx, profile_id);
+    let defense = template.as_ref().map(|t| t.defense).unwrap_or(0);
+    let damage = compute_player_damage(ctx, profile_id, defense);
     let new_hp = enemy.hp.saturating_sub(damage);
 
     if new_hp == 0 {

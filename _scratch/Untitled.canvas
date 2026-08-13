@@ -1,0 +1,19 @@
+{
+	"nodes":[
+		{"id":"3973b1162e18f409","type":"group","x":2020,"y":-580,"width":4720,"height":520,"label":"Untitled group"},
+		{"id":"8ea7905d11a196ff","type":"file","file":"docs/Game Design Docs/01 Executive Summary.md","x":2040,"y":-560,"width":480,"height":480},
+		{"id":"ec5152c6f1364965","type":"file","file":"docs/Game Design Docs/02 Gameplay.md","x":2560,"y":-560,"width":480,"height":480},
+		{"id":"46b6e25f256b7852","type":"file","file":"docs/Game Design Docs/03 Class system, Item system, and Equipment system.md","x":3090,"y":-560,"width":480,"height":480},
+		{"id":"4f67b447cb50059f","type":"file","file":"docs/Game Design Docs/04 Lore.md","x":3610,"y":-560,"width":480,"height":480},
+		{"id":"8518027dfdc9f656","type":"file","file":"docs/Game Design Docs/05 Biomes.md","x":4140,"y":-560,"width":480,"height":480},
+		{"id":"41edf7cd9bf1b9b3","type":"file","file":"docs/Game Design Docs/Art/Art style 2D.md","x":4660,"y":-560,"width":480,"height":480},
+		{"id":"56e8612856a5b02e","type":"file","file":"docs/Game Design Docs/Art/Art style 3D.md","x":5190,"y":-560,"width":480,"height":480},
+		{"id":"70d9a78e9e29a48f","type":"file","file":"docs/Game Design Docs/Art/Hollow Knight References.md","x":5710,"y":-560,"width":480,"height":480},
+		{"id":"9e67de3e71259106","type":"file","file":"docs/Game Design Docs/Inspirations, research, and new things to add.md","x":6240,"y":-560,"width":480,"height":480}
+	],
+	"edges":[],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
+}

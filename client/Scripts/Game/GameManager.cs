@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
-/// Root of main.tscn ("Main") and the IEntity that the scene-level components register
+/// Root of characters.tscn ("Main") and the IEntity that the scene-level components register
 /// with: TableSubscriber, CatalogComponent,
 /// EntitySpawnerComponent, LobbyComponent, and the camera/overlay components. Holds no
 /// logic of its own — the static facade below delegates to those components (and to the
@@ -19,7 +19,7 @@ public partial class GameManager : Node2D, IEntity
 {
     private static GameManager? instance;
 
-    // IEntity — GameManager needs Node2D (main.tscn root), so it implements the interface
+    // IEntity — GameManager needs Node2D (characters.tscn root), so it implements the interface
     // directly with its own registry; same pattern as LocalPlayer/Enemy.
     private readonly EntityRegistry componentRegistry = new();
     public void RegisterComponent(IComponent component) => componentRegistry.Register(component);

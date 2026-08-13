@@ -1,0 +1,64 @@
+{
+	"nodes":[
+		{"id":"cac4fc7f4752d8d2","type":"group","x":-710,"y":-1210,"width":6530,"height":1370,"label":"Untitled group"},
+		{"id":"34ffb40650bf7491","type":"group","contentRotation":90,"x":-2165,"y":2440,"width":4720,"height":649,"label":"Untitled group"},
+		{
+			"id":"71a4c79f627c5d6f",
+			"type":"file",
+			"file":"fire-flames-transparent.gif",
+			"styleAttributes":{"border":"invisible"},
+			"x":-1603,
+			"y":130,
+			"width":274,
+			"height":480
+		},
+		{
+			"id":"52b4af19ec2ffe9c",
+			"type":"file",
+			"file":"_scratch/Untitled.canvas",
+			"portal":true,
+			"x":-240,
+			"y":-980,
+			"width":4820,
+			"height":620,
+			"interdimensionalEdges":[
+				{
+					"id":"95dc5abfb58e64c3",
+					"styleAttributes":{},
+					"toFloating":false,
+					"fromNode":"4c5f2fe3782bb274",
+					"fromSide":"top",
+					"toNode":"acportal||52b4af19ec2ffe9c||ec5152c6f1364965",
+					"toSide":"bottom"
+				}
+			]
+		},
+		{"id":"4c5f2fe3782bb274","type":"file","file":"Rotating_earth_(large).gif","x":-1569,"y":800,"width":480,"height":480},
+		{"id":"9028a64fd0998638","type":"file","file":"docs/Game Design Docs/05 Biomes.md","x":-45,"y":2589,"width":480,"height":480},
+		{"id":"970ad23d9b833d26","type":"file","file":"docs/Game Design Docs/Art/Art style 3D.md","x":1005,"y":2589,"width":480,"height":480},
+		{"id":"9663d0ff0e3c68a0","type":"file","file":"docs/Game Design Docs/Art/Hollow Knight References.md","x":1525,"y":2589,"width":480,"height":480},
+		{"id":"98acfa663723b761","type":"file","file":"docs/Game Design Docs/Inspirations, research, and new things to add.md","x":2055,"y":2589,"width":480,"height":480},
+		{"id":"26c87720a79006b3","type":"file","file":"docs/Game Design Docs/Art/Art style 2D.md","x":475,"y":2589,"width":480,"height":480},
+		{"id":"6c9fe1d265786c20","type":"file","file":"docs/Game Design Docs/01 Executive Summary.md","x":-2145,"y":2589,"width":480,"height":480},
+		{"id":"821fb39438558b28","type":"file","file":"docs/Game Design Docs/02 Gameplay.md","x":-1625,"y":2589,"width":480,"height":480},
+		{"id":"154ae3ef8b9df6bd","type":"file","file":"docs/Game Design Docs/04 Lore.md","x":-575,"y":2589,"width":480,"height":480},
+		{"id":"a80e27ca84fca2c3","type":"file","file":"docs/Game Design Docs/03 Class system, Item system, and Equipment system.md","x":400,"y":1200,"width":1000,"height":480}
+	],
+	"edges":[
+		{
+			"id":"d426c6a7e93aad9e",
+			"styleAttributes":{},
+			"toFloating":false,
+			"fromFloating":false,
+			"fromNode":"4c5f2fe3782bb274",
+			"fromSide":"right",
+			"toNode":"a80e27ca84fca2c3",
+			"toSide":"top"
+		}
+	],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{},
+		"startNode":"7175f643006c1c34"
+	}
+}

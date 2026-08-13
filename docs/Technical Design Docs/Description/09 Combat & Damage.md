@@ -9,7 +9,7 @@
 - [[02 The Component Framework]] — entities/components, the ancestor-walk registration that lets a dynamically spawned `HitZone` belong to the `LocalPlayer` entity, and the server-side "one table per concern" mirror that `combat/mod.rs` explicitly models itself on.
 - [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
 - [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `combat` section.
-- Maintainer references for orientation (not restated here): [[CLAUDE.md]] at the repo root, plus the `CLAUDE.md` files in `client/` and `server/`.
+- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
 
 ## The 30-second version
 

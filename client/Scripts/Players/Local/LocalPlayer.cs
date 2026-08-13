@@ -56,11 +56,15 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
     public int Strength => StatsComponent?.GetValue(StatKind.Strength) ?? 0;
     public int Wisdom => StatsComponent?.GetValue(StatKind.Wisdom) ?? 0;
     public int Dexterity => StatsComponent?.GetValue(StatKind.Dexterity) ?? 0;
-    public int Defense => StatsComponent?.GetValue(StatKind.Defense) ?? 0;
-    public int Vitality => StatsComponent?.GetValue(StatKind.Vitality) ?? 0;
-    public int Speed => StatsComponent?.GetValue(StatKind.Speed) ?? 0;
+    public int DamageDealer => StatsComponent?.GetValue(StatKind.DamageDealer) ?? 0;
+    public int Supporter => StatsComponent?.GetValue(StatKind.Supporter) ?? 0;
+    public int Artisan => StatsComponent?.GetValue(StatKind.Artisan) ?? 0;
+    // Modifier-only stats live on the data row, not in StatsComponent.
+    public int Defense => DataComponent?.Defense ?? 0;
+    public uint UnspentPoints => DataComponent?.UnspentPoints ?? 0;
 
-    private const float SpeedPerStat = 10f;
+    // Flat move speed — there is no Speed stat (doc 03's six stats are str/wis/dex/dps/sup/art).
+    private const float MoveSpeed = 100f;
 
     private CharacterModel3D? _model3D;
     private AnimatedSprite2D sprite = null!;
@@ -77,19 +81,19 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
     // Slots 1-4: consumables only hotbar
     public IReadOnlyList<Item?> HotbarSlots => InventoryState?.HotbarSlots ?? [];
 
-    // Slots 5-8: accessories only
+    // Slot 5: accessory only
     public IReadOnlyList<Item?> AccessorySlots => InventoryState?.AccessorySlots ?? [];
 
-    // Slots 9-12: armor only
+    // Slot 6: armor only
     public IReadOnlyList<Item?> ArmorSlots => InventoryState?.ArmorSlots ?? [];
 
-    // Slots 13-14: artifact only
-    public IReadOnlyList<Item?> ArtifactSlots => InventoryState?.ArtifactSlots ?? [];
-
-    // Slots 15-22: general mixed
+    // Slots 7-30: general mixed (backpack)
     public IReadOnlyList<ResolvedSlot> GeneralSlots => InventoryState?.GeneralSlots ?? [];
 
-    // Slots that count as worn equipment (enchantable): 0 weapon, 5-8 accessories, 9-12 armor, 13-14 artifacts
+    // Slots 32-37: abilities (artifacts are 1-cost abilities)
+    public IReadOnlyList<ResolvedSlot> AbilitySlots => InventoryState?.AbilitySlots ?? [];
+
+    // Slots that count as worn equipment (enchantable): 0 weapon, 5 accessory, 6 armor, 32-37 abilities
     public static bool IsEquipmentSlot(int index) => LocalPlayerInventoryComponent.IsEquipmentSlot(index);
 
     public ResolvedSlot ResolveSlotAt(int index) => InventoryState?.ResolveSlotAt(index) ?? new ResolvedSlot();
@@ -126,7 +130,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 
         // Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
 
-        Velocity = input * Speed * SpeedPerStat;
+        Velocity = input * MoveSpeed;
 
         if (Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down"))
         {

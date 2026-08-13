@@ -1,55 +1,15 @@
 {
-	"nodes": [
-		{
-			"id": "e258dbd0d2cc7fa0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/lobby_gui_codefile/lobby_gui_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "281da2ae65dcadf8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/main_codefile/main_codefile.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "194079a7791dc546",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "4414d6e4f159cb40",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
-			"color": "5",
-			"x": 920,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		}
+	"nodes":[
+		{"id":"e258dbd0d2cc7fa0","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/lobby_gui_codefile/lobby_gui_codefile.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
+		{"id":"281da2ae65dcadf8","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/main_codefile/main_codefile.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
+		{"id":"194079a7791dc546","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas","color":"5","x":460,"y":500,"width":400,"height":400},
+		{"id":"4414d6e4f159cb40","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas","color":"5","x":920,"y":0,"width":400,"height":400}
 	],
-	"edges": [
-		{
-			"id": "c0aec0ac3a74de58",
-			"fromNode": "281da2ae65dcadf8",
-			"fromSide": "bottom",
-			"toNode": "194079a7791dc546",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "script"
-		}
-	]
+	"edges":[
+		{"id":"c0aec0ac3a74de58","fromNode":"281da2ae65dcadf8","fromSide":"bottom","toNode":"194079a7791dc546","toSide":"top","toEnd":"arrow","label":"script"}
+	],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
 }

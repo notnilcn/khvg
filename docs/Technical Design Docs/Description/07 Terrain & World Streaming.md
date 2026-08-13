@@ -8,7 +8,7 @@
 - [[02 The Component Framework]] — how `TableBinderComponent` re-emits subscribed rows as Godot signals (`LastRow`, `ReplayExistingRows`), and what an entity/component pair is (`TileComponent` implements `IEntity` directly, like `LocalPlayer`).
 - [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
 - [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `terrain` section.
-- Maintainer references for orientation (not restated here): [[CLAUDE.md]] at the repo root, plus the `CLAUDE.md` files in `client/` and `server/` (the server one has the hex-grid background reading list).
+- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/` (the server one has the hex-grid background reading list).
 
 ## The 30-second version
 
@@ -148,7 +148,7 @@ Batching is where the rendering cost actually lives. Godot's `MultiMeshInstance2
 
 ## Known gaps / stubs
 
-- **Stale `.gd` reference in `hex.rs`.** The comment above [[server/spacetimedb/src/world/hex.rs##pub fn spiral_chunk_index|spiral_chunk_index]] says it "Mirrors `_hex_spiral_index` in `hex_grid_overlay.gd`" — that GDScript file no longer exists. The real client duplicates are the C# [[HexGridOverlayComponent.cs##private static long HexSpiralIndex|HexSpiralIndex]] in `HexGridOverlayComponent.cs` and `HexGridOverlay3DComponent.cs`; all three implementations must change together (as server `CLAUDE.md` notes).
+- **Stale `.gd` reference in `hex.rs`.** The comment above [[server/spacetimedb/src/world/hex.rs##pub fn spiral_chunk_index|spiral_chunk_index]] says it "Mirrors `_hex_spiral_index` in `hex_grid_overlay.gd`" — that GDScript file no longer exists. The real client duplicates are the C# [[HexGridOverlayComponent.cs##private static long HexSpiralIndex|HexSpiralIndex]] in `HexGridOverlayComponent.cs` and `HexGridOverlay3DComponent.cs`; all three implementations must change together (as server `AGENTS.md` notes).
 - **Stale `TerrainManager.cs` references.** `TerrainManager` was a pre-refactor client class that no longer exists; its successor is `TerrainComponent`. It is still cited by two wedge-geometry comments in `hex.rs` (above [[server/spacetimedb/src/world/hex.rs##pub fn same_hex_neighbor_indices|same_hex_neighbor_indices]] and [[server/spacetimedb/src/world/hex.rs##pub fn cross_hex_neighbor|cross_hex_neighbor]] — the math they describe now lives in `TerrainComponent.GetWedgeVertices`) and by the "TerrainManager rendering" remark in the [[server/spacetimedb/src/main/seeds.rs##pub fn seed_world_defs|seed_world_defs]] comment.
 - **Stale `TerrainComponent` docstring.** The [[TerrainComponent.cs##public partial class TerrainComponent : Node2DComponent|TerrainComponent]] summary says its binders are "declared in terrain_component.tscn, signals wired in the editor" — but `terrain_component.tscn` is one of the nine unreferenced duplicate scenes; the live declaration and all eight signal connections are inline in `main.tscn` (terrain-7).
 - **Leftover debug prints.** `TerrainComponent._Ready` prints a `DEBUG binders:` line on startup, and [[TerrainComponent.cs##private void OnTileRowInserted|OnTileRowInserted]] prints `DEBUG first tile row received` once per session — dev scaffolding that shipped.

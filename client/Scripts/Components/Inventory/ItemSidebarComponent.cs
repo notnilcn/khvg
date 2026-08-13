@@ -2,18 +2,21 @@
 using Godot;
 using SpacetimeDB.Types;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
 /// The item-details sidebar in inventory_panel.tscn: shows the hovered slot's item
-/// name/icon/description plus full composition — base stat modifiers, behavior summary,
-/// socketed enchantments (N / MaxEnchantments), and, for enchantable items in equipment
-/// slots, applicable enchantments with Socket/Remove buttons calling the
-/// ApplyEnchantment/RemoveEnchantment reducers. One enchantment_row.tscn instance per
-/// enchantment (data-driven count). Reached by the sibling SlotComponents through
-/// GetSibling — no singleton. Refreshes on InventoryChanged and
-/// GameManager.EnchantmentsChanged; stays open while the mouse is over it so buttons
-/// are clickable.
+/// name/icon/description plus full composition — base stat modifiers, stat requirements
+/// (red when unmet), behavior summary (weapon items show their toggle-pattern list with
+/// the active one marked; abilities show effect/cooldown/charges), innate enchantments
+/// (unremovable, no socket cost), socketed enchantments (N / MaxEnchantments), and — for
+/// enchantable items in equipment slots — applicable enchantments with Socket/Remove
+/// buttons calling the ApplyEnchantment/RemoveEnchantment reducers. One
+/// enchantment_row.tscn instance per enchantment (data-driven count). Reached by the
+/// sibling SlotComponents through GetSibling — no singleton. Refreshes on
+/// InventoryChanged and GameManager.EnchantmentsChanged; stays open while the mouse is
+/// over it so buttons are clickable.
 /// </summary>
 public partial class ItemSidebarComponent : ControlComponent
 {
@@ -105,8 +108,50 @@ public partial class ItemSidebarComponent : ControlComponent
         if (item.StatModifiers.Count > 0)
             DetailsList.AddChild(MakeLabel(string.Join("\n", item.StatModifiers.Select(FormatModifier))));
 
+        RenderRequirements(item);
+
+        // Weapon toggle patterns: the equipped weapon lists every option (its own
+        // behaviors + enchantment grants) with the active one marked; elsewhere the
+        // item's own behaviors are listed plain.
+        var ownWeapons = new List<WeaponBehavior>();
         foreach (var behavior in item.Behaviors)
-            DetailsList.AddChild(MakeLabel(FormatBehavior(behavior)));
+            if (behavior is ItemBehavior.Weapon(var weapon)) ownWeapons.Add(weapon);
+        if (shownSlot == 0 && LocalPlayer.Local != null)
+        {
+            var options = EffectiveWeaponResolver.ToggleOptions(LocalPlayer.Local);
+            uint active = resolved.Slot?.ActiveToggle ?? 0;
+            for (int i = 0; i < options.Count; i++)
+                DetailsList.AddChild(MakeLabel($"{(i == (int)active ? "▶ " : "  ")}{FormatWeaponOption(options[i])}"));
+        }
+        else
+        {
+            foreach (var weapon in ownWeapons)
+                DetailsList.AddChild(MakeLabel(FormatWeaponOption(weapon)));
+        }
+
+        foreach (var behavior in item.Behaviors)
+        {
+            var text = behavior switch
+            {
+                ItemBehavior.Weapon => null, // rendered above
+                ItemBehavior.Consumable(var consumable) => FormatConsumable(consumable),
+                ItemBehavior.Ability(var ability) => FormatAbility(ability),
+                _ => null,
+            };
+            if (!string.IsNullOrEmpty(text))
+                DetailsList.AddChild(MakeLabel(text));
+        }
+
+        if (item.InnateEnchantmentIds.Count > 0)
+        {
+            DetailsList.AddChild(MakeLabel("Innate:"));
+            foreach (var enchantmentId in item.InnateEnchantmentIds)
+            {
+                var enchantment = GameManager.GetEnchantment(enchantmentId);
+                if (enchantment != null)
+                    DetailsList.AddChild(MakeEnchantmentRow(enchantment, socketed: true, disabled: false, interactive: false));
+            }
+        }
 
         var slot = resolved.Slot;
         if (slot != null && item.MaxEnchantments > 0)
@@ -137,6 +182,30 @@ public partial class ItemSidebarComponent : ControlComponent
         DetailsScroll.Visible = DetailsList.GetChildCount() > 0;
     }
 
+    // Stat requirements (doc 03 class thresholds) — only shown when the item gates on
+    // anything; red while the player's resolved stats fall short.
+    private void RenderRequirements(Item item)
+    {
+        var req = item.StatRequirements;
+        var parts = new List<string>();
+        if (req.Strength > 0) parts.Add($"STR {req.Strength}");
+        if (req.Wisdom > 0) parts.Add($"WIS {req.Wisdom}");
+        if (req.Dexterity > 0) parts.Add($"DEX {req.Dexterity}");
+        if (req.DamageDealer > 0) parts.Add($"DPS {req.DamageDealer}");
+        if (req.Supporter > 0) parts.Add($"SUP {req.Supporter}");
+        if (req.Artisan > 0) parts.Add($"ART {req.Artisan}");
+        if (parts.Count == 0) return;
+
+        var label = MakeLabel("Requires " + string.Join(", ", parts));
+        var local = LocalPlayer.Local;
+        bool unmet = local != null && (
+            local.Strength < req.Strength || local.Wisdom < req.Wisdom || local.Dexterity < req.Dexterity ||
+            local.DamageDealer < req.DamageDealer || local.Supporter < req.Supporter || local.Artisan < req.Artisan);
+        if (unmet)
+            label.Modulate = new Color(1f, 0.4f, 0.4f);
+        DetailsList.AddChild(label);
+    }
+
     private Control MakeEnchantmentRow(Enchantment enchantment, bool socketed, bool disabled, bool interactive)
     {
         var row = EnchantmentRowScene.Instantiate<HBoxContainer>();
@@ -151,8 +220,10 @@ public partial class ItemSidebarComponent : ControlComponent
         var text = row.GetNode<VBoxContainer>("Text");
         text.GetNode<Label>("Name").Text = enchantment.DisplayName;
         var stats = text.GetNode<Label>("Stats");
-        if (enchantment.StatModifiers.Count > 0)
-            stats.Text = string.Join("\n", enchantment.StatModifiers.Select(FormatModifier));
+        var lines = enchantment.StatModifiers.Select(FormatModifier)
+            .Concat(enchantment.Behaviors.Select(FormatEnchantmentBehavior)).ToList();
+        if (lines.Count > 0)
+            stats.Text = string.Join("\n", lines);
         else
             stats.Hide();
 
@@ -201,12 +272,10 @@ public partial class ItemSidebarComponent : ControlComponent
             : $"{sign}{magnitude:0.#} {modifier.Stat}";
     }
 
-    private static string FormatBehavior(ItemBehavior behavior) => behavior switch
-    {
-        ItemBehavior.Weapon(var weapon) => $"Damage {weapon.Damage} | {weapon.FireRate:0.#}/s | Range {weapon.Range:0}",
-        ItemBehavior.Consumable(var consumable) => FormatConsumable(consumable),
-        _ => "",
-    };
+    // Per-bullet damage is Damage / ShotCount (server divides the per-trigger damage
+    // among the bullets) — shown so the shot-count tradeoff is visible.
+    private static string FormatWeaponOption(WeaponBehavior weapon) =>
+        $"{weapon.Pattern} — {(float)weapon.Damage / Math.Max(1u, weapon.ShotCount):0.#} dmg × {weapon.ShotCount} | {weapon.FireRate:0.#}/s | Range {weapon.Range:0}";
 
     private static string FormatConsumable(ConsumableBehavior consumable) => consumable.Effect switch
     {
@@ -215,14 +284,41 @@ public partial class ItemSidebarComponent : ControlComponent
         _ => "",
     };
 
+    private static string FormatAbility(AbilityBehavior ability)
+    {
+        string effect = ability.Effect switch
+        {
+            AbilityEffect.Heal => $"Heals {ability.Potency:0.#} HP",
+            AbilityEffect.Buff(var buff) => $"{FormatBuff(buff)} for {ability.Duration:0.#}s",
+            AbilityEffect.DeleteBullets(var radius) => $"Erases enemy bullets within {radius:0} of the cursor",
+            AbilityEffect.SplitBullets(var radius) => $"Splits enemy bullets within {radius:0} of the cursor",
+            AbilityEffect.AttractBullets(var radius) => $"Drags enemy bullets within {radius:0} toward the cursor",
+            _ => "",
+        };
+        string charges = ability.MaxCharges > 0 ? $" | {ability.MaxCharges} charges" : "";
+        return $"{effect} | {ability.CooldownSeconds:0.#}s CD{charges}";
+    }
+
     private static string FormatBuff(ConsumableBuffEffect buff) => buff switch
     {
         ConsumableBuffEffect.Strength(var value) => $"+{value:0.#} Strength",
         ConsumableBuffEffect.Wisdom(var value) => $"+{value:0.#} Wisdom",
         ConsumableBuffEffect.Dexterity(var value) => $"+{value:0.#} Dexterity",
-        ConsumableBuffEffect.Defense(var value) => $"+{value:0.#} Defense",
-        ConsumableBuffEffect.Vitality(var value) => $"+{value:0.#} Vitality",
-        ConsumableBuffEffect.Speed(var value) => $"+{value:0.#} Speed",
+        ConsumableBuffEffect.DamageDealer(var value) => $"+{value:0.#} DamageDealer",
+        ConsumableBuffEffect.Supporter(var value) => $"+{value:0.#} Supporter",
+        ConsumableBuffEffect.Artisan(var value) => $"+{value:0.#} Artisan",
+        _ => "",
+    };
+
+    private static string FormatEnchantmentBehavior(EnchantmentBehavior behavior) => behavior switch
+    {
+        EnchantmentBehavior.AddShots(var n) => $"{(n >= 0 ? "+" : "")}{n} bullets",
+        EnchantmentBehavior.ShotCountMult(var m) => $"×{1f + m:0.#} bullets",
+        EnchantmentBehavior.FlatBulletDamageMod(var v) => $"{(v >= 0 ? "+" : "")}{v:0.#} bullet damage",
+        EnchantmentBehavior.TrueDamageFlat(var v) => $"+{v:0.#} true damage",
+        EnchantmentBehavior.TrueDamagePercent(var v) => $"+{v * 100f:0.#}% true damage",
+        EnchantmentBehavior.OnAbilityUseBuff(var p) => $"On ability use: {FormatBuff(p.Buff)} for {p.Duration:0.#}s",
+        EnchantmentBehavior.WeaponToggle(var w) => $"Toggle: {FormatWeaponOption(w)}",
         _ => "",
     };
 

@@ -22,7 +22,8 @@ public partial class RemotePlayer : Node2D, IEntity
 	public IComponent? GetComponent(System.Type type) => componentRegistry.Get(type);
 	public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
 
-	private const float SpeedPerStat = 4f;
+	// Flat move speed, mirroring LocalPlayer.MoveSpeed — there is no Speed stat anymore.
+	private const float MoveSpeed = 100f;
 
 	/// Child binder (declared in non_local_player.tscn) feeding NearbyRemotePlayers position rows.
 	private TableBinderComponent positionBinder = null!;
@@ -47,9 +48,7 @@ public partial class RemotePlayer : Node2D, IEntity
 		var position = (PlayerPosition)positionBinder.LastRow!;
 		if (position.PlayerId != PlayerId) return;
 
-		var stats = GameManager.Conn?.Db.PlayerStats.ProfileId.Find(ProfileId);
-		float speed = (stats?.Speed ?? 0) * SpeedPerStat;
-		var velocity = new Vector2(Mathf.Cos(position.Rotation), Mathf.Sin(position.Rotation)) * speed;
+		var velocity = new Vector2(Mathf.Cos(position.Rotation), Mathf.Sin(position.Rotation)) * MoveSpeed;
 		GetComponent<InterpolationComponent>()?.SetTarget(new Vector2(position.X, position.Y), position.Rotation, velocity);
 	}
 }

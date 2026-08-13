@@ -62,12 +62,20 @@ fn local_player_stats(ctx: &ViewContext) -> impl Query<PlayerStats> {
     ctx.from.player_stats().r#where(move |s| s.profile_id.eq(profile_id)).build()
 }
 
-#[spacetimedb::view(accessor = local_player_inventory, public)]
-fn local_player_inventory(ctx: &ViewContext) -> impl Query<PlayerInventory> {
+#[spacetimedb::view(accessor = local_player_stat_allocation, public)]
+fn local_player_stat_allocation(ctx: &ViewContext) -> impl Query<PlayerStatAllocation> {
     let profile_id = ctx.db.logged_in_player().player_id().find(ctx.sender())
         .map(|p| p.profile_id)
         .unwrap_or(u64::MAX);
-    ctx.from.player_inventory().r#where(move |i| i.profile_id.eq(profile_id)).build()
+    ctx.from.player_stat_allocation().r#where(move |a| a.profile_id.eq(profile_id)).build()
+}
+
+#[spacetimedb::view(accessor = local_player_inventory, public)]
+fn local_player_inventory(ctx: &ViewContext) -> impl Query<PlayerInventorySlot> {
+    let profile_id = ctx.db.logged_in_player().player_id().find(ctx.sender())
+        .map(|p| p.profile_id)
+        .unwrap_or(u64::MAX);
+    ctx.from.player_inventory_slot().r#where(move |s| s.profile_id.eq(profile_id)).build()
 }
 
 #[spacetimedb::view(accessor = local_player_position, public)]

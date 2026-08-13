@@ -1,9 +1,8 @@
 use spacetimedb::{ReducerContext, Table};
 use crate::item::tables::*;
 use crate::player::tables::*;
-use crate::player::methods::{is_admin, find_profile_by_name};
+use crate::player::methods::{is_admin, find_profile_by_name, update_slot, clear_span};
 use crate::main::admin::find_player_by_username;
-use crate::main::global::{GENERAL_SLOT_START, GENERAL_SLOT_COUNT};
 
 #[spacetimedb::reducer]
 pub fn give_item(ctx: &ReducerContext, target_username: String, profile_name: String, item_id: String) -> Result<(), String> {
@@ -12,15 +11,10 @@ pub fn give_item(ctx: &ReducerContext, target_username: String, profile_name: St
         .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
     let profile = find_profile_by_name(ctx, target_id, &profile_name)
         .ok_or_else(|| format!("Profile '{}' not found.", profile_name))?;
-    let inv = ctx.db.player_inventory().profile_id().find(&profile.profile_id).ok_or("Inventory not found.")?;
-    let empty_slot = inv.slots.iter().enumerate()
-        .skip(GENERAL_SLOT_START).take(GENERAL_SLOT_COUNT)
-        .find(|(_, s)| s.item_id.is_none())
-        .map(|(i, _)| i)
+    let empty_slot = ctx.db.player_inventory_slot().profile_id().filter(&profile.profile_id)
+        .find(|s| s.role == SlotRole::General && s.item_id.is_none() && s.occupied_by.is_none())
         .ok_or("No empty general slots available.")?;
-    let mut slots = inv.slots.clone();
-    slots[empty_slot].item_id = Some(item_id);
-    ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
+    update_slot(ctx, PlayerInventorySlot { item_id: Some(item_id), ..empty_slot });
     Ok(())
 }
 
@@ -31,13 +25,17 @@ pub fn remove_item(ctx: &ReducerContext, target_username: String, profile_name: 
         .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
     let profile = find_profile_by_name(ctx, target_id, &profile_name)
         .ok_or_else(|| format!("Profile '{}' not found.", profile_name))?;
-    let inv = ctx.db.player_inventory().profile_id().find(&profile.profile_id).ok_or("Inventory not found.")?;
-    let slots: Vec<InventorySlot> = inv.slots.iter().map(|s| {
-        if s.item_id.as_deref() == Some(item_id.as_str()) {
-            InventorySlot { item_id: None, ..s.clone() }
-        } else { s.clone() }
-    }).collect();
-    ctx.db.player_inventory().profile_id().update(PlayerInventory { slots, ..inv });
+    let matches: Vec<PlayerInventorySlot> = ctx.db.player_inventory_slot().profile_id().filter(&profile.profile_id)
+        .filter(|s| s.item_id.as_deref() == Some(item_id.as_str()))
+        .collect();
+    for slot in matches {
+        if slot.role == SlotRole::Ability {
+            let cost = ctx.db.item().item_id().find(&item_id).map(|i| i.slot_cost).unwrap_or(1);
+            clear_span(ctx, profile.profile_id, slot.slot_index, cost);
+        } else {
+            update_slot(ctx, PlayerInventorySlot { item_id: None, ..slot });
+        }
+    }
     Ok(())
 }
 

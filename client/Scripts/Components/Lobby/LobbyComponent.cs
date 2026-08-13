@@ -5,7 +5,7 @@ using SpacetimeDB.Types;
 
 /// <summary>
 /// The lobby / character-select UI: the CharSlots markup lives in lobby_component.tscn
-/// (instanced under the UI CanvasLayer in main.tscn) and the profile panels are instanced
+/// (instanced under the UI CanvasLayer in characters.tscn) and the profile panels are instanced
 /// per LocalPlayerProfiles row (data-driven count, so code instantiation is allowed).
 /// Owns the show/hide flow with the main-menu PhantomCamera2D priority and the
 /// create/join/delete profile reducer calls (logic moved out of GameManager.cs).

@@ -1,25 +1,28 @@
 #nullable enable
 using Godot;
+using SpacetimeDB.Types;
+using System;
 
 /// <summary>
 /// The local player's inventory UI root (the InventoryComponent node in
 /// inventory_panel.tscn, instanced under LocalPlayer): hotbar/backpack visibility
-/// toggle, hotbar key presses (UseItem reducer), and slot icon refresh on
-/// InventoryChanged. Registers with the LocalPlayer entity through the ancestor walk,
-/// so Entity IS the LocalPlayer. The Hotbar/Backpack containers stay plain nodes — the
-/// slot-section wiring crosses both containers, so splitting them into their own
-/// components would be artificial.
+/// toggle, hotbar key presses (UseItem reducer), ability key presses (ActivateAbility
+/// reducer), and slot icon refresh on InventoryChanged. Registers with the LocalPlayer
+/// entity through the ancestor walk, so Entity IS the LocalPlayer. The always-visible
+/// Equipment panel (weapon / abilities / armor / accessory columns) sits next to the
+/// Hotbar on the HUD; the Backpack (general storage) stays in the Tab-toggled Menu.
 /// </summary>
 public partial class InventoryComponent : ControlComponent
 {
     private static readonly string[] HotbarActions = ["Hotbar1", "Hotbar2", "Hotbar3", "Hotbar4"];
+    private static readonly string[] AbilityActions = ["Ability1", "Ability2", "Ability3", "Ability4", "Ability5", "Ability6"];
 
     [Export] public Godot.Collections.Array<SlotComponent> HotbarSlots { get; set; } = [];
-    [Export] public Godot.Collections.Array<SlotComponent> ArmorSlots { get; set; } = [];
-    [Export] public Godot.Collections.Array<SlotComponent> AccessorySlots { get; set; } = [];
-    [Export] public Godot.Collections.Array<SlotComponent> ArtifactSlots { get; set; } = [];
+    [Export] public Godot.Collections.Array<SlotComponent> EquipmentWeaponSlots { get; set; } = [];
+    [Export] public Godot.Collections.Array<SlotComponent> AbilitySlots { get; set; } = [];
+    [Export] public Godot.Collections.Array<SlotComponent> EquipmentArmorSlots { get; set; } = [];
+    [Export] public Godot.Collections.Array<SlotComponent> EquipmentAccessorySlots { get; set; } = [];
     [Export] public Godot.Collections.Array<SlotComponent> GeneralSlots { get; set; } = [];
-    [Export] public Godot.Collections.Array<SlotComponent> InventoryHotbarSlots { get; set; } = [];
 
     private Control menuLayout = null!;
     private Control hotbar = null!;
@@ -47,14 +50,23 @@ public partial class InventoryComponent : ControlComponent
 
     public override void _Process(double delta)
     {
-        if (player == null || !hotbar.Visible) return;
+        if (player == null) return;
 
-        for (int i = 0; i < HotbarActions.Length; i++)
+        if (hotbar.Visible)
         {
-            if (!Input.IsActionJustPressed(HotbarActions[i])) continue;
-            int slotIndex = i + 1;
-            if (player.GetSlotItemId(slotIndex) == null) continue;
-            GameManager.Conn?.Reducers.UseItem((uint)slotIndex);
+            for (int i = 0; i < HotbarActions.Length; i++)
+            {
+                if (!Input.IsActionJustPressed(HotbarActions[i])) continue;
+                int slotIndex = i + 1;
+                if (player.GetSlotItemId(slotIndex) == null) continue;
+                GameManager.Conn?.Reducers.UseItem((uint)slotIndex);
+            }
+        }
+
+        for (int i = 0; i < AbilityActions.Length; i++)
+        {
+            if (!Input.IsActionJustPressed(AbilityActions[i])) continue;
+            LocalPlayerInventoryComponent.TryActivateAbility(player, LocalPlayerInventoryComponent.AbilitySlotStart + i);
         }
     }
 
@@ -63,18 +75,36 @@ public partial class InventoryComponent : ControlComponent
         if (player == null) return;
 
         UpdateSection(player, HotbarSlots);
-        UpdateSection(player, ArmorSlots);
-        UpdateSection(player, AccessorySlots);
-        UpdateSection(player, ArtifactSlots);
+        UpdateSection(player, EquipmentWeaponSlots);
+        UpdateSection(player, AbilitySlots);
+        UpdateSection(player, EquipmentArmorSlots);
+        UpdateSection(player, EquipmentAccessorySlots);
         UpdateSection(player, GeneralSlots);
-        UpdateSection(player, InventoryHotbarSlots);
     }
 
     private static void UpdateSection(LocalPlayer player, Godot.Collections.Array<SlotComponent> slots)
     {
         foreach (var slot in slots)
-            SetSlotTexture(slot.Icon, player.GetSlotItemId((int)slot.SlotIndex));
+            UpdateSlotIcon(player, slot);
     }
+
+    private static void UpdateSlotIcon(LocalPlayer player, SlotComponent slot)
+    {
+        var own = player.ResolveSlotAt((int)slot.SlotIndex).Slot;
+        // Span followers show their head's icon; runtime state (cooldown) lives on the head.
+        var head = own?.OccupiedBy is uint h ? player.ResolveSlotAt((int)h).Slot : own;
+        var itemId = own?.ItemId ?? head?.ItemId;
+
+        SetSlotTexture(slot.Icon, itemId);
+
+        float alpha = 1f;
+        if (itemId != null && own?.OccupiedBy != null) alpha = 0.4f; // follower cell
+        if (itemId != null && head?.CooldownUntil is SpacetimeDB.Timestamp until && IsOnCooldown(until)) alpha = 0.4f;
+        slot.Icon.Modulate = new Color(1, 1, 1, alpha);
+    }
+
+    private static bool IsOnCooldown(SpacetimeDB.Timestamp until) =>
+        until.MicrosecondsSinceUnixEpoch > DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L;
 
     private static void SetSlotTexture(TextureRect rect, string? itemId)
     {

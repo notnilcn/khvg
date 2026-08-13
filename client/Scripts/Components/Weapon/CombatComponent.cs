@@ -6,8 +6,8 @@ public partial class CombatComponent : Component
 {
     [Export] public PackedScene HitZoneScene { get; set; } = null!;
 
-    private WeaponBehavior? _weapon;
-    private string? _weaponItemId;
+    private EffectiveWeapon? _weapon;
+    private string _weaponFingerprint = "";
     private float _fireTimer;
     private float _firePeriod;
     private float _zoneStep;
@@ -38,6 +38,9 @@ public partial class CombatComponent : Component
 
     public override void _Process(double delta)
     {
+        if (Input.IsActionJustPressed("weapon_toggle"))
+            CycleWeaponToggle();
+
         if (_weapon == null) return;
 
         _fireTimer = Mathf.Min(_fireTimer + (float)delta, _firePeriod);
@@ -62,6 +65,19 @@ public partial class CombatComponent : Component
 
         _fireTimer = 0f;
         Fire();
+    }
+
+    /// Cycles the weapon slot's shot-pattern toggle (doc 03's swap-out-meta replacement).
+    /// The server validates the index against the same toggle-option list we mirror here.
+    private void CycleWeaponToggle()
+    {
+        var local = LocalPlayer.Local;
+        var conn = GameManager.Conn;
+        if (local == null || conn == null) return;
+        int count = EffectiveWeaponResolver.ToggleOptions(local).Count;
+        if (count < 2) return;
+        uint current = local.ResolveSlotAt(0).Slot?.ActiveToggle ?? 0;
+        conn.Reducers.SetSlotToggle(0, (current + 1) % (uint)count);
     }
 
     private void OnAimSettingsChanged()
@@ -93,7 +109,7 @@ public partial class CombatComponent : Component
             if (node == null || !IsInstanceValid(node)) continue;
 
             float dist = playerPos.DistanceTo(node.GlobalPosition);
-            if (_weapon == null || dist > _weapon.Range) continue;
+            if (_weapon == null || dist > _weapon.Behavior.Range) continue;
 
             if (_lockOn)
             {
@@ -131,21 +147,19 @@ public partial class CombatComponent : Component
 
     private void OnInventoryChanged()
     {
-        var newWeaponItem = LocalPlayer.Local?.EquippedWeapon;
-        if (newWeaponItem?.ItemId == _weaponItemId) return;
-        _weaponItemId = newWeaponItem?.ItemId;
-        _weapon = null;
-        if (newWeaponItem != null)
-        {
-            foreach (var behavior in newWeaponItem.Behaviors)
-            {
-                if (behavior is ItemBehavior.Weapon(var weapon)) { _weapon = weapon; break; }
-            }
-        }
-        if (_weapon == null || _weapon.ZoneCount == 0) { _fireTimer = 0f; return; }
+        var local = LocalPlayer.Local;
+        if (local == null) return;
+        // The fingerprint covers the weapon item, its ActiveToggle, and every equipped
+        // slot's enchantments — anything that changes the effective weapon re-resolves it.
+        var fingerprint = EffectiveWeaponResolver.Fingerprint(local);
+        if (fingerprint == _weaponFingerprint) return;
+        _weaponFingerprint = fingerprint;
+
+        _weapon = EffectiveWeaponResolver.Resolve(local);
+        if (_weapon == null || _weapon.Behavior.ZoneCount == 0) { _fireTimer = 0f; return; }
         _fireTimer = _firePeriod;
-        _firePeriod = 1f / Mathf.Max(0.001f, _weapon.FireRate);
-        _zoneStep = _weapon.Range / _weapon.ZoneCount;
+        _firePeriod = 1f / Mathf.Max(0.001f, _weapon.Behavior.FireRate);
+        _zoneStep = _weapon.Behavior.Range / _weapon.Behavior.ZoneCount;
     }
 
     private void Fire()
@@ -155,7 +169,7 @@ public partial class CombatComponent : Component
         var aimDir = GetAimDir(player);
         var origin = player.GlobalPosition + aimDir * _playerRadius;
 
-        switch (_weapon.Pattern)
+        switch (_weapon.Behavior.Pattern)
         {
             case WeaponPattern.Single:
                 FireSingle(origin, aimDir);
@@ -171,46 +185,50 @@ public partial class CombatComponent : Component
 
     private void FireSingle(Vector2 origin, Vector2 aimDir)
     {
-        BulletManager.Instance.SpawnPlayerBullet(origin, aimDir.Angle(), _weapon!.Range / _weapon.ProjectileSpeed, _weapon.ProjectileSpeed, _weapon.ProjectileTextureId);
-        SpawnZonesAlong(origin, aimDir.Angle(), _weapon.Range, _weapon.ProjectileSpeed);
+        var behavior = _weapon!.Behavior;
+        BulletManager.Instance.SpawnPlayerBullet(origin, aimDir.Angle(), behavior.Range / behavior.ProjectileSpeed, behavior.ProjectileSpeed, behavior.ProjectileTextureId);
+        SpawnZonesAlong(origin, aimDir.Angle(), behavior.Range, behavior.ProjectileSpeed);
     }
 
     private void FireTriple(Vector2 origin, Vector2 aimDir)
     {
-        int shotCount = (int)_weapon!.ShotCount;
+        var behavior = _weapon!.Behavior;
+        int shotCount = (int)behavior.ShotCount;
         float baseAngle = aimDir.Angle();
-        float halfSpread = _weapon.SpreadAngle * 0.5f;
-        float angleStep = shotCount > 1 ? _weapon.SpreadAngle / (shotCount - 1) : 0f;
+        float halfSpread = behavior.SpreadAngle * 0.5f;
+        float angleStep = shotCount > 1 ? behavior.SpreadAngle / (shotCount - 1) : 0f;
 
         var angles = new float[shotCount];
         for (int b = 0; b < shotCount; b++)
             angles[b] = baseAngle + (-halfSpread + angleStep * b);
 
-        BulletManager.Instance.SpawnPlayerBullets(origin, angles, _weapon.Range / _weapon.ProjectileSpeed, _weapon.ProjectileSpeed, _weapon.ProjectileTextureId);
+        BulletManager.Instance.SpawnPlayerBullets(origin, angles, behavior.Range / behavior.ProjectileSpeed, behavior.ProjectileSpeed, behavior.ProjectileTextureId);
         foreach (var angle in angles)
-            SpawnZonesAlong(origin, angle, _weapon.Range, _weapon.ProjectileSpeed);
+            SpawnZonesAlong(origin, angle, behavior.Range, behavior.ProjectileSpeed);
     }
 
     private void FireCluster(Vector2 origin, Vector2 aimDir)
     {
-        int shotCount = (int)_weapon!.ShotCount;
+        var behavior = _weapon!.Behavior;
+        int shotCount = (int)behavior.ShotCount;
         float baseAngle = aimDir.Angle();
-        float halfSpread = _weapon.SpreadAngle * 0.5f;
+        float halfSpread = behavior.SpreadAngle * 0.5f;
 
         for (int b = 0; b < shotCount; b++)
         {
             float angle = baseAngle + (float)GD.RandRange(-halfSpread, halfSpread);
-            float pelletRange = (float)GD.RandRange(_weapon.Range * 0.5f, _weapon.Range);
-            float pelletSpeed = (float)GD.RandRange(_weapon.ProjectileSpeed * 0.8f, _weapon.ProjectileSpeed * 1.1f);
+            float pelletRange = (float)GD.RandRange(behavior.Range * 0.5f, behavior.Range);
+            float pelletSpeed = (float)GD.RandRange(behavior.ProjectileSpeed * 0.8f, behavior.ProjectileSpeed * 1.1f);
             SpawnBulletWithZones(origin, angle, pelletRange, pelletSpeed);
         }
     }
 
     private void SpawnBulletWithZones(Vector2 origin, float angle, float range = -1f, float speed = -1f)
     {
-        float r = range > 0f ? range : _weapon!.Range;
-        float s = speed > 0f ? speed : _weapon!.ProjectileSpeed;
-        BulletManager.Instance.SpawnPlayerBullet(origin, angle, r / s, s, _weapon!.ProjectileTextureId);
+        var behavior = _weapon!.Behavior;
+        float r = range > 0f ? range : behavior.Range;
+        float s = speed > 0f ? speed : behavior.ProjectileSpeed;
+        BulletManager.Instance.SpawnPlayerBullet(origin, angle, r / s, s, behavior.ProjectileTextureId);
         SpawnZonesAlong(origin, angle, r, s);
     }
 

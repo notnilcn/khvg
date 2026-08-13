@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENTS.md
 
 This file provides guidance to Claude Code when working with code in this repository. ^e7e4af
 
@@ -23,8 +23,8 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 | Admin tools, seeding, debug overlay, connect/disconnect | `main/` | `Game/DebugOverlay.cs` |
 | Connection, subscriptions, table→signal binding | — | `client/sstdbsdk/` |
 
-- `server/CLAUDE.md` — per-module server breakdown **plus the SpacetimeDB Rust rules**. Read it before writing any Rust here.
-- `client/CLAUDE.md` — per-file client breakdown plus the component naming convention.
+- `server/AGENTS.md` — per-module server breakdown **plus the SpacetimeDB Rust rules**. Read it before writing any Rust here.
+- `client/AGENTS.md` — per-file client breakdown plus the component naming convention.
 
 ## Folders to skip
 
@@ -38,7 +38,7 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 ## Running and Developing
 
 - **Engine:** `Godot/Godot-stable_mono_win64.exe` — the mono build is required for C# and SpacetimeDB.
-- **Run:** F5 in the editor. The project's main scene is `client/Scenes/lobby_gui.tscn`; gameplay lives in `Scenes/main.tscn`, entered from the lobby. Same entry point when launching via open-godot-mcp.
+- **Run:** F5 in the editor. The project's main scene is `client/Scenes/main.tscn` — despite the name, that is the *menu* scene (root `main`, `LobbyGui.cs`); its Character Slots button `ChangeSceneToFile`s to `Scenes/characters.tscn`, the actual gameplay scene (root `Characters`, GameManager). There is no `lobby_gui.tscn`.
 - **Client build:** no build system — Godot compiles `client/khvg.csproj` internally.
 - **Server publish:** `server/build.sh` regenerates the C# bindings into `client/Scripts/module_bindings/` and publishes the `bullethell` module to the `local` server with `--delete-data`. **Every publish wipes the database**, so schema changes are hard cuts — no migrations, no dual-write; seeds re-run from `main/seeds.rs`. Logs: `spacetime logs bullethell`.
 - **Export:** Web/HTML5 preset in `client/export_presets.cfg`.

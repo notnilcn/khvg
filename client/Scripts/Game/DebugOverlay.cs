@@ -14,7 +14,7 @@ public partial class DebugOverlay : CanvasLayer
 
 	public override void _Input(InputEvent @event)
 	{
-		if (@event is InputEventKey { Pressed: true, Echo: false } key && key.PhysicalKeycode == Key.P)
+		if (Input.IsActionJustPressed("toggle_debug_overlay"))
 			Visible = !Visible;
 	}
 

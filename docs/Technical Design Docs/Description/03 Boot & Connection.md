@@ -5,7 +5,7 @@
 - [[02 The Component Framework]] — the entity/component model: this doc is where the `DatabaseConnector` autoload and the `TableSubscriber` component that every `TableBinderComponent` depends on actually come to life.
 - [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
 - [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `boot`/`conn` sections.
-- Maintainer references for orientation (not restated here): [[CLAUDE.md]] at the repo root, plus the `CLAUDE.md` files in `client/` and `server/`.
+- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
 
 ## The 30-second version
 

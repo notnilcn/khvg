@@ -116,6 +116,9 @@ pub struct EnemyTemplate {
     pub texture_id: String,
     pub display_name: String,
     pub max_hp: u32,
+    // Flat per-bullet damage subtraction (doc 02: minimum damage 1) — high defence is
+    // what makes many-weak-bullets patterns worse than few-strong-bullets ones.
+    pub defense: u32,
     // Multiples of CAMERA_VIEW_RADIUS, not absolute world units — so every template stays
     // correctly scaled if the client's camera/viewport ever changes.
     pub move_sim_factor: f32,

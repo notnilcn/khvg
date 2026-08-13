@@ -4,15 +4,15 @@ A **bullet-hell MMO roguelike**: Godot 4.7 mono C# client (`client/`) + Spacetim
 
 The docs you're writing live in `docs/Technical Design Docs/Description/`. **The Obsidian vault is the repo root**, not `docs/` — that's the only way the docs' wikilinks to code files (`client/`, `server/`) and to the canvases (`flowcharts/`) can resolve. The vault needs the `sync-embeds` and `block-link-plus` community plugins enabled — the conventions below depend on both — plus `advanced-canvas` (hard dependency of every flowchart command) and the local `vscode-editor` fork, whose "Generate flowcharts from code" feature produces the `.canvas` flowcharts under `flowcharts/`. (A nested `docs/.obsidian` also exists; ignore it — it can't see the code or the flowcharts.)
 
-The docs are the narrative, learn-from-scratch companion to the terse maintainer references (`CLAUDE.md` at repo root, `client/CLAUDE.md`, `server/CLAUDE.md`).
+The docs are the narrative, learn-from-scratch companion to the terse maintainer references (`AGENTS.md` at repo root, `client/AGENTS.md`, `server/AGENTS.md`).
 
 ## Hard rules for every session
 
-1. **The code is the only source of truth.** `CLAUDE.md` files are accurate jump-off points (use their module maps to find files fast), but verify every claim against the actual code before writing it. Where they disagree, code wins.
+1. **The code is the only source of truth.** `AGENTS.md` files are accurate jump-off points (use their module maps to find files fast), but verify every claim against the actual code before writing it. Where they disagree, code wins.
 2. **Never read `client/Scripts/module_bindings/`** — generated SpacetimeDB bindings.
 3. **Never read `flowcharts/Subflowcharts/` canvas contents wholesale.** Use the doc's main canvas (`flowcharts/main-<name>.canvas`) plus at most a handful of targeted subflowchart canvases. *Listing* directory paths is fine — that's how you seed and curate `flows.json`. Link canvases by **file path**, never deep-link to a node. (Node ids are deterministic content hashes since the flows.json update, so they no longer re-roll — but path links remain the robust convention.)
 4. **Document what the code does, not what it's planned to do.** Flag TODOs/stubs/known bugs explicitly in the doc's "Known gaps" section and inline where relevant (e.g. "`LobbyGui` is scene navigation only — all profile reducer calls live in `LobbyComponent`").
-5. **Don't restate the CLAUDE.md files.** Link to them; these docs are the narrative complement.
+5. **Don't restate the AGENTS.md files.** Link to them; these docs are the narrative complement.
 6. **Audience**: intermediate programmer, brand new to Godot, C#, Rust, and SpacetimeDB. Explain unfamiliar concepts (reducers, views, subscriptions, node trees, scenes, `.tscn` files) briefly inline or with an analogy. Don't explain general programming ideas (loops, classes, dictionaries).
 7. **Style**: dense causal prose — "X does Y *because* Z". One step = one cause-and-effect beat. Every mechanism claim should name the file/function that implements it.
 8. Each session updates the **Status** column of the table in `01 Roadmap.md` before finishing.

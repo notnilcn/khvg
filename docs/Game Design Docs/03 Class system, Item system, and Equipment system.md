@@ -11,7 +11,7 @@ Right now, the stats are going to be:
 - Strength
 - Wisdom
 I can't think of any other stats to add that would make meaningful sense. I don't like having a luck stat.
-# Temperament
+## Temperament
 There are also going to be other stats called Temperament stats. Temperament stats work exactly like normal stats — the only difference is conceptual, not mechanical. They flavour what a character does with their normal stats:
 - Damage dealer
 - Supporter
@@ -51,37 +51,37 @@ usage: len(list(compositions(6)))=32
 			```
 		- I think I want the order to matter, since the integer composition function grows quickly ($2^{n-1}$). You could make the order matter by making the first ability stronger than the second ability and so on.
 - Items have enchantments. Inspired by the Borderlands item system, though this game won't have any item instancing.
+- Non-weapon items can have enchantments that modify or add to the player's shot pattern or ability activation. E.g. a ring could double the player's number of bullets, or an armor could make it so that whenever you use an ability it buffs you to increase your fire rate or adds a shot to your shot pattern.
 
-In RotMG, one of the main ways people maximize DPS is swapping gear sets mid-fight — usually because when an enemy is staggered or armor-broken, a set with a higher bullet count suddenly out-DPSes a set with fewer, harder-hitting bullets (higher defense disproportionately punishes low-bullet-count builds). That swap-out meta was clunky, and I don't want it to be as central here.
+In RotMG, one of the main ways people maximize DPS is swapping gear sets mid-fight — usually because when an enemy is staggered or armor-broken, a set with a higher bullet count suddenly out-DPSes a set with fewer, harder-hitting bullets (higher defense disproportionately punishes low-bullet-count builds). That swap-out meta was clunky, and I don't want it to be viable in my game.
 
 Instead: weapons get toggles, tied to enchantments, that flip the shot pattern between low-count/high-damage and high-count/low-damage. Same tactical decision, no inventory shuffling.
 
 RotMG's Staff of Extreme Prejudice is the reference case — it fires 10 bullets in a circle and does the highest DPS in the game, but only if you're standing directly on top of the enemy, so it's only good against staggered targets. I want that shot pattern to exist here as a modifier/enchantment: useless early, game-breaking late. Off-meta builds with a huge late-game payoff is a classic RPG fantasy and I want it in this game.
 
-All the buffs and status conditions in [[02 Gameplay#Buffs, debuffs, and damage calculation nuances]] should be able to show up as enchantments/modifiers. If the enchantments are good enough, a lower-tier weapon should sometimes beat a higher-tier one.
+All the buffs and status conditions in [[02 Gameplay#Buffs, status conditions, and damage calculation nuances]] should be able to show up as enchantments/modifiers. If the enchantments are good enough, a lower-tier weapon should sometimes beat a higher-tier one.
 
-Enchantment slots should be player-modifiable, plus some innate enchantments that can't be changed but also don't eat a slot. A weapon born with the Extreme-Prejudice-style toggle as an *innate* enchantment should be extremely valuable to minmaxers.
+Enchantment slots should be player-modifiable, plus some innate enchantments that can't be changed but also don't eat up a slot. A weapon born with the Extreme-Prejudice-style toggle as an *innate* enchantment should be extremely valuable to minmaxers.
 
 Abilities are tied to equipment (n=6 ability slots, some abilities eating multiple). Some ability items passively modify your kit just by being equipped (paladin buffs), others require you to actively swap to them to use them (wizard spells).
-# Classes
-The stat distribution syntax is kinda self explanatory. If a stat isn't mentioned, then it can be anything. If a stat is mentioned, then it needs to be greater than 0. i.e. every time you see a ")" replace it with ">0)". I use "≳" instead of ">" is because ">" can't be used in filenames.
-## Class items
+# Classes & Class items
+The stat distribution syntax for each of the classes is kinda self explanatory.
 Class items are going to be locked behind stat thresholds.
 ### DPS
-#### Gunner (dex) & (dps)
-Maybe make it so that the gunner can store and delay their dps to blast counter phases or wait out invulnerability phases. In the long run, they should do less dps than other classes but when you take into account invulnerability and whatnot then these guys should out-damage other classes because of their ability to store and delay the damage they deal.
-##### Gunner Weapons
-- Guns
-##### Gunner Abilities
+#### Bullet master (dex > 0) & (dps > 0)
+Maybe make it so that the bullet master can store and delay their dps to blast counter phases or wait out invulnerability phases. In the long run, they should do less dps than other classes but when you take into account invulnerability and whatnot then these guys should out-damage other classes because of their ability to store and delay the damage they deal.
+##### Bullet master Weapons
+- Guns?
+##### Bullet master Abilities
 Weapons toggles I guess.
 - (innate?) toggle between charge/shotgun/piercing/etc. shot patterns
 - Big charge shot: self-slows, fires a single shot that gets stronger the longer it's charged
 - Big volley shot: self-slows, fires a large spread that gets stronger the longer it's charged — especially strong against low-defense enemies
-- Spawn a dummy/blackhole that allies can shoot; the archer can absorb the accumulated damage and release it as a big charge/volley shot
+- Spawn a dummy on self that allies can shoot; the archer absorbs the damage that the dummy takes and releases it as a big charge/volley shot
 - Mark an enemy to take increased damage
 - Quick slash that destroys enemy bullets, if the slash is stronger than the bullet
 - Grapple hook toward a point on the ground (still takes damage while grappling)
-#### Warrior (str) & (dps)
+#### Warrior (str > 0) & (dps > 0)
 ##### Warrior Weapons:
 - Sword
 	- Play pixel quest on roblox or look up the sword strike animation for it.
@@ -102,7 +102,7 @@ To make warriors special you could probably make these items a consumable or som
 - a tattoo that stores all damage dealt/received over n seconds and negates/multiplies it if some condition is met - same "high risk high reward" shape as the sword-storing-damage idea above
 	- you could balance this by making bosses aggro when too much damage is dealt.
 		- you could have a boss who's thematically blind and becomes impossible to dodge if you do too much damage.
-#### Wizard (wis) & (dps)
+#### Wizard (wis > 0) & (dps > 0)
 ##### Wizard Weapons
 - staffs/staves (similar to RotMG)
 	- S.T.A.F.F. ripoff (don't copy the bullet pattern exactly 1 for 1)
@@ -123,7 +123,7 @@ To make warriors special you could probably make these items a consumable or som
 - Spell that calls down a meteor that breaks into shrapnel after it lands
 - Spell that shoots out a laser
 ### SUP
-#### Witch Doctor (wis) & (sup)
+#### Witch Doctor (wis > 0) & (sup > 0)
 ##### Witch Doctor Weapons
 - Staves and wands.
 ##### Witch Doctor Ability
@@ -162,7 +162,7 @@ The actual item that RotMG uses are seals but that's kinda boring. You could pro
 - Buff all allies to heal over time
 - Redirect all damage that party members receive over the next n seconds to self
 - Store all pre-mitigated damage received over the next n seconds and release it as a smite
-#### Tank (str) & (sup)
+#### Tank (str > 0) & (sup > 0)
 Similar to the knight in RotMG.
 Knights will have more defence than paladins but will have a lower health pool. The lower health pool effectively shouldn't matter if the healer is good.
 There should be some end game bosses where knights will only be useful for their stagger and armour break debuffs.
@@ -179,12 +179,10 @@ There should be some end game bosses where knights will only be useful for their
 - Store pre-mitigated damage received for the next n seconds and release it as a shield bash
 - Shield bash that debuffs enemies to receive more damage and contributes to a stagger bar
 - Shield wall that absorbs all bullets that hit it
-#### Trickster (wis ≳ dex) & (sup)
+#### Trickster (wis > dex > 0) & (sup > 0)
 This class combines the assassin, rogue, and trickster from RotMG into one class.
 ##### Trickster Weapons
-- Guns
-Crossbow probably? Idk. I don't like how daggers are implemented in RotMG and idk how to implement them in this game. Could probably just give them magic throwing knives but i feel like we can come up with something better.
-Terraria has magic throwing knifes but thats kinda weird.
+- Guns?
 ##### Trickster Ability
 Maybe make this class's magic be tied to physical items rather than magic scrolls like the wizard.
 - Invisibility (cloak)
@@ -192,3 +190,6 @@ Maybe make this class's magic be tied to physical items rather than magic scroll
 - Teleport
 - Decoy — summons a mirror image that takes aggro
 - Teleports all party members to a pocket dimension that makes them briefly invisible + immune to all damage
+
+# Accessory items
+Accessory items 

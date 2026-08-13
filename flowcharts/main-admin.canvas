@@ -1,80 +1,18 @@
 {
-	"nodes": [
-		{
-			"id": "281da2ae65dcadf8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/main_codefile/main_codefile.canvas",
-			"color": "5",
-			"x": 230,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "916e18fd110ee05a",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "803eb7303a83a4c0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "4414d6e4f159cb40",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 1000,
-			"width": 400,
-			"height": 400
-		}
+	"nodes":[
+		{"id":"281da2ae65dcadf8","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/main_codefile/main_codefile.canvas","color":"5","x":230,"y":0,"width":400,"height":400},
+		{"id":"916e18fd110ee05a","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas","color":"5","x":460,"y":500,"width":400,"height":400},
+		{"id":"803eb7303a83a4c0","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas","color":"5","x":0,"y":500,"width":400,"height":400},
+		{"id":"4414d6e4f159cb40","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas","color":"5","x":0,"y":1000,"width":400,"height":400}
 	],
-	"edges": [
-		{
-			"id": "52adc4f99d4644d6",
-			"fromNode": "281da2ae65dcadf8",
-			"fromSide": "bottom",
-			"toNode": "916e18fd110ee05a",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "script"
-		},
-		{
-			"id": "7a61812284f71700",
-			"fromNode": "281da2ae65dcadf8",
-			"fromSide": "bottom",
-			"toNode": "803eb7303a83a4c0",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "bind"
-		},
-		{
-			"id": "50b95b0a813a0d44",
-			"fromNode": "803eb7303a83a4c0",
-			"fromSide": "bottom",
-			"toNode": "4414d6e4f159cb40",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "dfe63c46f64327cc",
-			"fromNode": "4414d6e4f159cb40",
-			"fromSide": "bottom",
-			"toNode": "803eb7303a83a4c0",
-			"toSide": "top",
-			"toEnd": "arrow"
-		}
-	]
+	"edges":[
+		{"id":"52adc4f99d4644d6","fromNode":"281da2ae65dcadf8","fromSide":"bottom","toNode":"916e18fd110ee05a","toSide":"top","toEnd":"arrow","label":"script"},
+		{"id":"7a61812284f71700","fromNode":"281da2ae65dcadf8","fromSide":"bottom","toNode":"803eb7303a83a4c0","toSide":"top","toEnd":"arrow","label":"bind"},
+		{"id":"50b95b0a813a0d44","fromNode":"803eb7303a83a4c0","fromSide":"bottom","toNode":"4414d6e4f159cb40","toSide":"top","toEnd":"arrow"},
+		{"id":"dfe63c46f64327cc","fromNode":"4414d6e4f159cb40","fromSide":"bottom","toNode":"803eb7303a83a4c0","toSide":"top","toEnd":"arrow"}
+	],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
 }

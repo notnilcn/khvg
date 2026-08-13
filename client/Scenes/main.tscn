@@ -1,221 +1,133 @@
-[gd_scene format=3 uid="uid://bk4d3bkeqrqvu"]
+[gd_scene format=3 uid="uid://b6lwr7bsg1b0u"]
 
-[ext_resource type="Script" uid="uid://cqiavfx25o6be" path="res://Scripts/Game/GameManager.cs" id="1_8gbba"]
-[ext_resource type="Script" uid="uid://t5dudwr4e8ss" path="res://sstdbsdk/TableSubscriber.cs" id="3_b3802"]
-[ext_resource type="Script" uid="uid://kprjwmx8qekg" path="res://Scripts/Components/Catalog/CatalogComponent.cs" id="3_pdsj5"]
-[ext_resource type="Script" uid="uid://enddugsgfdov" path="res://Scripts/Components/Spawning/EntitySpawnerComponent.cs" id="5_ee4r6"]
-[ext_resource type="PackedScene" uid="uid://bbjjh55yrwyfn" path="res://Scenes/local_player.tscn" id="6_gt3je"]
-[ext_resource type="PackedScene" uid="uid://dxx5w0ohddwun" path="res://Scenes/Components/Lobby/lobby_component.tscn" id="6_lobby"]
-[ext_resource type="PackedScene" uid="uid://8oytx5u0vik3" path="res://Scenes/non_local_player.tscn" id="7_3pmx8"]
-[ext_resource type="PackedScene" uid="uid://oq20q8miyvsa" path="res://Scenes/world_3d.tscn" id="8_fdnlq"]
-[ext_resource type="PackedScene" uid="uid://djjulhvulxtyc" path="res://Scenes/default_enemy.tscn" id="8_u50mg"]
-[ext_resource type="PackedScene" uid="uid://i7v5ssc1g45q" path="res://Scenes/drop.tscn" id="9_cbgmd"]
-[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="9_ynf5e"]
-[ext_resource type="Script" uid="uid://cl7qy3eeo4jep" path="res://Scripts/Game/BulletManager.cs" id="10_gt3je"]
-[ext_resource type="PackedScene" uid="uid://dly5ocjb0vcx4" path="res://Scenes/Components/Bullets/bullet_spawner_component.tscn" id="11_3pmx8"]
-[ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="11_6iyac"]
-[ext_resource type="Script" uid="uid://4vtm5wwxgp2d" path="res://Scripts/Components/Camera/CameraRigComponent.cs" id="11_ueoa1"]
-[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="12_fdnlq"]
-[ext_resource type="PackedScene" uid="uid://dw7m1ev54lshc" path="res://Scenes/Components/Bullets/bullet_hit_router_component.tscn" id="12_u50mg"]
-[ext_resource type="Script" uid="uid://dyg400ij28uph" path="res://Scripts/Components/Bullets/BulletControllerComponent.cs" id="13_3pmx8"]
-[ext_resource type="Script" uid="uid://wwivmweabnsm" path="res://Scripts/Components/Terrain/TerrainComponent.cs" id="14_h1bgf"]
-[ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/Components/Camera/Camera2DPresenterComponent.cs" id="15_6vcvc"]
-[ext_resource type="PackedScene" uid="uid://b1nvedybn2tn5" path="res://Scenes/Components/Terrain/tile_component.tscn" id="15_b3802"]
-[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="15_k12tt"]
-[ext_resource type="Script" uid="uid://c3l165fibt4wq" path="res://Scripts/Components/Camera/HexGridOverlayComponent.cs" id="18_7k868"]
-[ext_resource type="Script" uid="uid://bdh2fwurk1uh7" path="res://Scripts/Game/DebugOverlay.cs" id="21_hpc6h"]
+[ext_resource type="Script" uid="uid://bwx5qb387ayfm" path="res://Scripts/Game/LobbyGui.cs" id="1_jjgbg"]
 
-[sub_resource type="Resource" id="Resource_jkdf5"]
-script = ExtResource("12_fdnlq")
-duration = 0.0
-
-[node name="Main" type="Node2D" unique_id=24548255]
-script = ExtResource("1_8gbba")
-
-[node name="TableSubscriber" type="Node" parent="." unique_id=2063233651]
-script = ExtResource("3_b3802")
-
-[node name="CatalogComponent" type="Node" parent="." unique_id=1072502500]
-script = ExtResource("3_pdsj5")
-
-[node name="AllTexturesBinder" type="Node" parent="CatalogComponent" unique_id=977226497]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "AllTextures"
-
-[node name="AllItemsBinder" type="Node" parent="CatalogComponent" unique_id=1961804414]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "AllItems"
-
-[node name="AllEnchantmentsBinder" type="Node" parent="CatalogComponent" unique_id=1591097744]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "AllEnchantments"
-
-[node name="EntitySpawnerComponent" type="Node" parent="." unique_id=1156729041]
-script = ExtResource("5_ee4r6")
-LocalPlayerScene = ExtResource("6_gt3je")
-NonLocalPlayerScene = ExtResource("7_3pmx8")
-EnemyScene = ExtResource("8_u50mg")
-DropScene = ExtResource("9_cbgmd")
-
-[node name="LocalPlayerBinder" type="Node" parent="EntitySpawnerComponent" unique_id=738526938]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "LocalPlayer"
-
-[node name="NearbyRemotePlayersBinder" type="Node" parent="EntitySpawnerComponent" unique_id=1992952743]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "NearbyRemotePlayers"
-
-[node name="NearbyEnemiesBinder" type="Node" parent="EntitySpawnerComponent" unique_id=1559288739]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "NearbyEnemies"
-
-[node name="NearbyLootDropsBinder" type="Node" parent="EntitySpawnerComponent" unique_id=1952409924]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "NearbyLootDrops"
-
-[node name="BulletManager" type="Node2D" parent="." unique_id=347694252 node_paths=PackedStringArray("BlastBullets")]
-z_index = 1
-script = ExtResource("10_gt3je")
-BlastBullets = NodePath("BlastBullets")
-
-[node name="BlastBullets" type="BulletFactory2D" parent="BulletManager" unique_id=1590443171]
-
-[node name="BulletSpawnerComponent" parent="BulletManager" unique_id=1703170528 instance=ExtResource("11_3pmx8")]
-
-[node name="BulletHitRouterComponent" parent="BulletManager" unique_id=72256238 instance=ExtResource("12_u50mg")]
-
-[node name="BulletControllerComponent" type="Node" parent="BulletManager" unique_id=77774317]
-script = ExtResource("13_3pmx8")
-
-[node name="BulletControlEventBinder" type="Node" parent="BulletManager/BulletControllerComponent" unique_id=1670808940]
-script = ExtResource("15_k12tt")
-TableName = "BulletControlEvent"
-
-[node name="CameraRigComponent" type="Node" parent="." unique_id=429369880]
-script = ExtResource("11_ueoa1")
-PitchMax = 0.0
-
-[node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
-visible = false
-
-[node name="SubViewportContainer" type="SubViewportContainer" parent="3D" unique_id=1047841400]
-texture_filter = 1
+[node name="main" type="Control" unique_id=847043116]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stretch = true
-stretch_shrink = 3
+script = ExtResource("1_jjgbg")
 
-[node name="SubViewport" type="SubViewport" parent="3D/SubViewportContainer" unique_id=803652251]
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(384, 216)
-render_target_update_mode = 0
+[node name="MainMenu" type="CenterContainer" parent="." unique_id=868648525]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="World3DComponent" parent="3D/SubViewportContainer/SubViewport" unique_id=1360330812 instance=ExtResource("8_fdnlq")]
+[node name="Panel" type="Panel" parent="MainMenu" unique_id=1425122617]
+custom_minimum_size = Vector2(146, 121)
+layout_mode = 2
 
-[node name="UI" type="CanvasLayer" parent="." unique_id=152855753]
+[node name="CenterContainer" type="CenterContainer" parent="MainMenu/Panel" unique_id=2070197861]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="LobbyComponent" parent="UI" unique_id=596879783 instance=ExtResource("6_lobby")]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/Panel/CenterContainer" unique_id=982118341]
+layout_mode = 2
 
-[node name="MainCamera2D" type="Camera2D" parent="." unique_id=1285666996]
-top_level = true
-position = Vector2(320, 180)
-ignore_rotation = false
-editor_draw_limits = true
+[node name="CharSlots" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=1754694892]
+layout_mode = 2
+text = "Character Slots"
 
-[node name="PhantomCameraHost" type="Node" parent="MainCamera2D" unique_id=856034263]
-process_priority = 300
-process_physics_priority = 300
-script = ExtResource("9_ynf5e")
-metadata/_custom_type_script = "uid://bd046eokvcnu2"
+[node name="ServerList" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=1146796576]
+layout_mode = 2
+text = "Server List"
 
-[node name="Camera2DPresenterComponent" type="Node2D" parent="." unique_id=1135188737]
-script = ExtResource("15_6vcvc")
+[node name="Settings" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=723901937]
+layout_mode = 2
+text = "Settings"
 
-[node name="MainMenuPhantomCamera2D" type="Node2D" parent="." unique_id=891273475]
-unique_name_in_owner = true
-position = Vector2(320, 180)
-script = ExtResource("11_6iyac")
-priority = 1
-tween_resource = SubResource("Resource_jkdf5")
-draw_limits = true
-metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
-
-[node name="HexGridOverlayComponent" type="Node2D" parent="." unique_id=596614871]
+[node name="ServerList" type="Panel" parent="." unique_id=215366892]
 visible = false
-script = ExtResource("18_7k868")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="MapConfigBinder" type="Node" parent="HexGridOverlayComponent" unique_id=866081349]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "MapConfig"
+[node name="Panel" type="Panel" parent="ServerList" unique_id=1575786603]
+custom_minimum_size = Vector2(720, 40)
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 40.0
 
-[node name="TerrainComponent" type="Node2D" parent="." unique_id=1575457739]
-z_index = -10
-script = ExtResource("14_h1bgf")
-TileScene = ExtResource("15_b3802")
+[node name="CenterContainer" type="CenterContainer" parent="ServerList/Panel" unique_id=800181761]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="MapConfigBinder" type="Node" parent="TerrainComponent" unique_id=1580265458]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "MapConfig"
+[node name="Button" type="Button" parent="ServerList/Panel/CenterContainer" unique_id=2045478315]
+layout_mode = 2
+text = "BACK"
 
-[node name="TerrainTilesBinder" type="Node" parent="TerrainComponent" unique_id=1504131275]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "NearbyTerrainTiles"
+[node name="ScrollContainer" type="ScrollContainer" parent="ServerList" unique_id=1836654141]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 42.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
 
-[node name="HexDecorBinder" type="Node" parent="TerrainComponent" unique_id=259520872]
-script = ExtResource("15_k12tt")
-ReplayExistingRows = true
-TableName = "NearbyHexDecor"
+[node name="VBoxContainer" type="VBoxContainer" parent="ServerList/ScrollContainer" unique_id=73376750]
+layout_mode = 2
 
-[node name="DebugOverlay" type="CanvasLayer" parent="." unique_id=1183131993]
-layer = 100
+[node name="Settings" type="Panel" parent="." unique_id=1192864034]
 visible = false
-script = ExtResource("21_hpc6h")
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="Label" type="Label" parent="DebugOverlay" unique_id=1570498550]
-offset_left = 8.0
-offset_top = 8.0
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
+[node name="Panel" type="Panel" parent="Settings" unique_id=1024146705]
+custom_minimum_size = Vector2(720, 40)
+layout_mode = 0
+offset_right = 720.0
+offset_bottom = 40.0
 
-[connection signal="RowDeleted" from="CatalogComponent/AllTexturesBinder" to="CatalogComponent" method="OnTextureRowDeleted"]
-[connection signal="RowInserted" from="CatalogComponent/AllTexturesBinder" to="CatalogComponent" method="OnTextureRow"]
-[connection signal="RowUpdated" from="CatalogComponent/AllTexturesBinder" to="CatalogComponent" method="OnTextureRow"]
-[connection signal="RowDeleted" from="CatalogComponent/AllItemsBinder" to="CatalogComponent" method="OnItemRowDeleted"]
-[connection signal="RowInserted" from="CatalogComponent/AllItemsBinder" to="CatalogComponent" method="OnItemRow"]
-[connection signal="RowUpdated" from="CatalogComponent/AllItemsBinder" to="CatalogComponent" method="OnItemRow"]
-[connection signal="RowDeleted" from="CatalogComponent/AllEnchantmentsBinder" to="CatalogComponent" method="OnEnchantmentRowDeleted"]
-[connection signal="RowInserted" from="CatalogComponent/AllEnchantmentsBinder" to="CatalogComponent" method="OnEnchantmentRow"]
-[connection signal="RowUpdated" from="CatalogComponent/AllEnchantmentsBinder" to="CatalogComponent" method="OnEnchantmentRow"]
-[connection signal="RowDeleted" from="EntitySpawnerComponent/LocalPlayerBinder" to="EntitySpawnerComponent" method="OnLocalPlayerDelete"]
-[connection signal="RowInserted" from="EntitySpawnerComponent/LocalPlayerBinder" to="EntitySpawnerComponent" method="OnLocalPlayerInsert"]
-[connection signal="RowDeleted" from="EntitySpawnerComponent/NearbyRemotePlayersBinder" to="EntitySpawnerComponent" method="OnNearbyRemotePlayerDelete"]
-[connection signal="RowInserted" from="EntitySpawnerComponent/NearbyRemotePlayersBinder" to="EntitySpawnerComponent" method="OnNearbyRemotePlayerInsert"]
-[connection signal="RowDeleted" from="EntitySpawnerComponent/NearbyEnemiesBinder" to="EntitySpawnerComponent" method="OnEnemyDelete"]
-[connection signal="RowInserted" from="EntitySpawnerComponent/NearbyEnemiesBinder" to="EntitySpawnerComponent" method="OnEnemyInsert"]
-[connection signal="RowDeleted" from="EntitySpawnerComponent/NearbyLootDropsBinder" to="EntitySpawnerComponent" method="OnDropDelete"]
-[connection signal="RowInserted" from="EntitySpawnerComponent/NearbyLootDropsBinder" to="EntitySpawnerComponent" method="OnDropInsert"]
-[connection signal="RowInserted" from="BulletManager/BulletControllerComponent/BulletControlEventBinder" to="BulletManager/BulletControllerComponent" method="OnBulletControlEventRow"]
-[connection signal="RowInserted" from="HexGridOverlayComponent/MapConfigBinder" to="HexGridOverlayComponent" method="OnMapConfigRow"]
-[connection signal="RowUpdated" from="HexGridOverlayComponent/MapConfigBinder" to="HexGridOverlayComponent" method="OnMapConfigRow"]
-[connection signal="RowInserted" from="TerrainComponent/MapConfigBinder" to="TerrainComponent" method="OnMapConfigRow"]
-[connection signal="RowUpdated" from="TerrainComponent/MapConfigBinder" to="TerrainComponent" method="OnMapConfigRow"]
-[connection signal="RowDeleted" from="TerrainComponent/TerrainTilesBinder" to="TerrainComponent" method="OnTileRowDeleted"]
-[connection signal="RowInserted" from="TerrainComponent/TerrainTilesBinder" to="TerrainComponent" method="OnTileRowInserted"]
-[connection signal="RowUpdated" from="TerrainComponent/TerrainTilesBinder" to="TerrainComponent" method="OnTileRowUpdated"]
-[connection signal="RowDeleted" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowDeleted"]
-[connection signal="RowInserted" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowInserted"]
-[connection signal="RowUpdated" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowUpdated"]
+[node name="CenterContainer" type="CenterContainer" parent="Settings/Panel" unique_id=370842680]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Button" type="Button" parent="Settings/Panel/CenterContainer" unique_id=700481866]
+layout_mode = 2
+text = "BACK"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Settings" unique_id=1991317474]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 42.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Settings/ScrollContainer" unique_id=444352849]
+layout_mode = 2
+
+[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/CharSlots" to="." method="CharSlotsPressed"]
+[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/ServerList" to="." method="ServerListPressed"]
+[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/Settings" to="." method="SettingsPressed"]
+[connection signal="pressed" from="ServerList/Panel/CenterContainer/Button" to="." method="BackPressed"]
+[connection signal="pressed" from="Settings/Panel/CenterContainer/Button" to="." method="BackPressed"]
