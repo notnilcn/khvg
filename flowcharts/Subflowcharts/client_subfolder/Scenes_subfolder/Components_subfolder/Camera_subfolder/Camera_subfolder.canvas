@@ -1,14 +1,64 @@
 {
-	"nodes":[
-		{"id":"e54b1f93c2b2a4cc","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/camera_2d_presenter_component_codefile/camera_2d_presenter_component_codefile.canvas","x":0,"y":0,"width":400,"height":400,"color":"5"},
-		{"id":"1fe3d4f73bd0aa14","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/hex_grid_overlay_component_codefile/hex_grid_overlay_component_codefile.canvas","x":920,"y":0,"width":400,"height":400,"color":"5"},
-		{"id":"3cc8fddf8677b1d4","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/camera_rig_component_codefile/camera_rig_component_codefile.canvas","x":460,"y":0,"width":400,"height":400,"color":"5"}
-	],
-	"edges":[],
-	"metadata":{
-		"frontmatter":{
-			"tags":["includeInAggregateFlowchart","subfolder","edge-_colon_-client/Scripts/Components/Camera/Camera2DPresenterComponent-_dot_-cs-_hashtag_-Camera2DPresenterComponent-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/Camera2DPresenterComponent_codefile-_dot_-canvas-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder-_dot_-canvas-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script","edge-_colon_-client/Scripts/Components/Camera/CameraRigComponent-_dot_-cs-_hashtag_-CameraRigComponent-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/CameraRigComponent_codefile-_dot_-canvas-_colon_-script","edge-_colon_-client/Scripts/Components/Camera/HexGridOverlayComponent-_dot_-cs-_hashtag_-HexGridOverlayComponent-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HexGridOverlayComponent_codefile-_dot_-canvas-_colon_-script","edge-_colon_-client/sstdbsdk/TableBinderComponent-_dot_-cs-_hashtag_-TableBinderComponent-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent_codefile-_dot_-canvas-_colon_-script","edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script","edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-bind","edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind","edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-bind","edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-bind","edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-bind","edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-bind","edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-bind"]
+	"nodes": [
+		{
+			"id": "e54b1f93c2b2a4cc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/camera_2d_presenter_component_codefile/camera_2d_presenter_component_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
 		},
-		"version":"1.0-1.0"
+		{
+			"id": "3cc8fddf8677b1d4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/camera_rig_component_codefile/camera_rig_component_codefile.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1fe3d4f73bd0aa14",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/hex_grid_overlay_component_codefile/hex_grid_overlay_component_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"subfolder",
+				"edge-_colon_-client/Scripts/Components/Camera/Camera2DPresenterComponent-_dot_-cs-_hashtag_-Camera2DPresenterComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/Camera2DPresenterComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Camera/CameraRigComponent-_dot_-cs-_hashtag_-CameraRigComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/CameraRigComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Camera/HexGridOverlayComponent-_dot_-cs-_hashtag_-HexGridOverlayComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HexGridOverlayComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/sstdbsdk/TableBinderComponent-_dot_-cs-_hashtag_-TableBinderComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-bind"
+			]
+		}
 	}
 }

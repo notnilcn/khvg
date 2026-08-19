@@ -30,7 +30,7 @@ public partial class TableSubscriber : Component
         "LocalPlayer", "LocalPlayerData", "LocalPlayerStats", "LocalPlayerInventory",
         "LocalPlayerPosition", "LocalPlayerActiveProfile", "LocalPlayerProfiles",
         "LocalPlayerStatAllocation",
-        "NearbyRemotePlayers", "NearbyRemotePlayersProfiles", "NearbyEnemies",
+        "NearbyRemotePlayers", "NearbyRemotePlayersProfiles", "NearbyRemotePlayerRotations", "NearbyEnemies",
         "NearbyLootDrops", "NearbyTerrainTiles", "NearbyHexDecor", "EnemyTemplates",
         "BulletPatternEvent", "BulletControlEvent", "MapConfig",
     };

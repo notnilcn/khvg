@@ -15,8 +15,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/Terrain_subfolder.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 0,
 			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4414d6e4f159cb40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
+			"color": "5",
+			"x": 690,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -25,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/terrain_subfolder.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 680,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -35,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -59,6 +69,23 @@
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "bind"
+		},
+		{
+			"id": "8142c790a761d380",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "5e4d7d7c6ee91818",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "c6da2a6820d41d30",
+			"toSide": "top",
+			"toEnd": "arrow"
 		},
 		{
 			"id": "14a755374900ebea",

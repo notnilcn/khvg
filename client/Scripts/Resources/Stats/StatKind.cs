@@ -4,8 +4,9 @@
 /// Client mirror of the server's StatKind (server/spacetimedb/src/item/tables.rs). The
 /// generated bindings also define SpacetimeDB.Types.StatKind — qualify with the full
 /// namespace when you need that one. The first six are the allocatable stats (players
-/// get skill points per level — see allocate_stat); Hp and Defense are modifier-only
-/// (granted by gear/buffs, resolved into PlayerData.max_hp / PlayerData.defense).
+/// get skill points per level — see allocate_stat); Hp, Defense and BaseSpeed are
+/// modifier-only (granted by gear/buffs, resolved into PlayerData.max_hp /
+/// PlayerData.defense / PlayerData.base_speed).
 /// </summary>
 public enum StatKind
 {
@@ -17,4 +18,5 @@ public enum StatKind
     Artisan,
     Hp,
     Defense,
+    BaseSpeed,
 }

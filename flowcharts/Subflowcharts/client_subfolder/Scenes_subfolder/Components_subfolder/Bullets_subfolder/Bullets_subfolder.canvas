@@ -1,11 +1,21 @@
 {
 	"nodes": [
 		{
+			"id": "325f3b0fe1b973a6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/bullet_ability_component_codefile/bullet_ability_component_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "e2128df5a9c4a8b2",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/bullet_hit_router_component_codefile/bullet_hit_router_component_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/bullet_spawner_component_codefile/bullet_spawner_component_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -27,13 +37,15 @@
 			"tags": [
 				"includeInAggregateFlowchart",
 				"subfolder",
-				"edge-_colon_-client/Scripts/Components/Bullets/BulletHitRouterComponent-_dot_-cs-_hashtag_-BulletHitRouterComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletHitRouterComponent_codefile/BulletHitRouterComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Bullets/BulletControllerComponent-_dot_-cs-_hashtag_-BulletControllerComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Bullets/BulletHitRouterComponent-_dot_-cs-_hashtag_-BulletHitRouterComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletHitRouterComponent_codefile/BulletHitRouterComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Bullets/BulletSpawnerComponent-_dot_-cs-_hashtag_-BulletSpawnerComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/BulletSpawnerComponent_codefile-_dot_-canvas-_colon_-script"
 			]

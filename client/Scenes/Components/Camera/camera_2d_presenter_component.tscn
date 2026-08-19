@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://c5m2a6kms6ufc"]
-
-[ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/Components/Camera/Camera2DPresenterComponent.cs" id="1_presenter"]
-
-[node name="Camera2DPresenterComponent" type="Node2D" unique_id=1393663269]
-script = ExtResource("1_presenter")

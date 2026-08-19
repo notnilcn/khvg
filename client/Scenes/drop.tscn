@@ -1,13 +1,11 @@
 [gd_scene format=3 uid="uid://i7v5ssc1g45q"]
 
 [ext_resource type="Script" uid="uid://bnc70m8tlxmif" path="res://Scripts/Items/Drop.cs" id="1_lbfjw"]
-[ext_resource type="Script" uid="uid://dyy36qgfhs6k2" path="res://Scripts/Components/Visual/DropVisualComponent.cs" id="2_visual"]
 [ext_resource type="PackedScene" path="res://Scenes/Components/Interaction/pickup_component.tscn" id="3_pickup"]
 
 [node name="Drop" type="Node2D" unique_id=1237467754]
 script = ExtResource("1_lbfjw")
 
-[node name="DropVisualComponent" type="Sprite2D" parent="." unique_id=2030667601]
-script = ExtResource("2_visual")
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2030667601]
 
 [node name="PickupComponent" parent="." unique_id=1023584969 instance=ExtResource("3_pickup")]

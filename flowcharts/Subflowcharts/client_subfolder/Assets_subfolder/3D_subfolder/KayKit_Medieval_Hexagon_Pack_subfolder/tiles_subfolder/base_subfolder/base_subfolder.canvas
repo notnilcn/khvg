@@ -1,11 +1,21 @@
 {
 	"nodes": [
 		{
+			"id": "05a30f090116c5b6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_bullet_codefile/hex_bullet_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "6834c87160d5d6ae",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_grey_codefile/hex_grey_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_pink_codefile/hex_pink_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400

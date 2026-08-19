@@ -21,7 +21,6 @@ public partial class Enemy : CharacterBody2D, IEntity
     public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
 
     private HealthComponent? HealthComponent => GetComponent<HealthComponent>();
-    private StatsComponent? StatsComponent => GetComponent<StatsComponent>();
 
     private InterpolationComponent? interpolation;
     private AnimatedSprite2D? sprite;
@@ -77,8 +76,6 @@ public partial class Enemy : CharacterBody2D, IEntity
         // The server defines the component values: max_hp from the template, hp from the live row.
         maxHp = template?.MaxHp ?? row.Hp;
         HealthComponent?.SetFromServer(row.Hp, maxHp);
-        if (HealthComponent != null && StatsComponent != null)
-            StatsComponent.RegisterStat(StatKind.Hp, HealthComponent.Health);
     }
 
     private void OnEnemyRowUpdated()

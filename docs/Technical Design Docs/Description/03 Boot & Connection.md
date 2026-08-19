@@ -2,21 +2,19 @@
 
 ## Assumed knowledge
 
-- [[02 The Component Framework]] — the entity/component model: this doc is where the `DatabaseConnector` autoload and the `TableSubscriber` component that every `TableBinderComponent` depends on actually come to life.
-- [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
-- [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `boot`/`conn` sections.
-- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
+- [[00 End-to-End Timeline Flowchart]] — the global timeline this doc expands (its *Boot & Connection* section is transcluded below).
+- [[02 The Component Framework]] — what a `Component` is, how components register with an `IEntity`, and how `TableBinderComponent` re-fires table row events as Godot signals. `TableSubscriber` and `GameManager` are both framework citizens.
 
 ## The 30-second version
 
-Two sides boot independently. The Godot client loads its `DatabaseConnector` **autoload** (a node kept alive across all scenes) before any scene, and that autoload immediately opens the SpacetimeDB connection — reusing a per-host auth token file so returning players keep their identity — while the main-menu scene `lobby_gui.tscn` appears on screen. The server module, on publish, runs its `init` reducer once: it arms the game's three scheduled timers, seeds every catalog/definition table, builds the hex grid (`BuildingTile` rows + the `MapConfig` row), and generates the "Earth" world's terrain. When a client connects, the server's `client_connected` reducer puts a new identity into the lobby (`LoggedOutPlayer` row plus a default "Knight" profile), and the client, once the player clicks through to `main.tscn`, subscribes its first two **subscription waves** — the static catalogs and the lobby views — through the inline `TableSubscriber` component. The game wave waits until join ([[05 Joining the World]]).
+Boot happens twice, once per side. **Server:** publishing the module (`server/build.sh`) wipes the database and fires the `init` reducer exactly once, which inserts the three scheduled-job rows that drive all server-side time, seeds every static content table (textures, terrain rules, enemy templates, items, enchantments, world definitions), lays down the hex/chunk grid as `BuildingTile` rows plus the singleton `MapConfig`, and procedurally generates the "Earth" terrain. **Client:** Godot reads `project.godot`, registers the `DatabaseConnector` autoload (a singleton that owns the SpacetimeDB connection), and opens the menu scene. The autoload connects immediately — reusing a persisted auth token so a returning player keeps their identity — and fires a `Connected` signal. Nothing subscribes yet; when the gameplay scene `game.tscn` loads, its inline `TableSubscriber` component opens the base and lobby subscription waves, and from then on every server row the client cares about flows in through those subscriptions.
 
 ## Flowcharts
 
-- [[flowcharts/main-boot.canvas]] — the composed boot & connection flow (the `sstdbsdk` layer, both boot scenes, and the server's `main` module).
-![[flowcharts/main-boot.canvas]]
-- [[flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas]] — deep dive: `DatabaseConnector`, `AuthToken`, `TableSubscriber`, `TableBinderComponent`.
-- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas]] — deep dive: `lifecycle.rs` (init/connect hooks), `seeds.rs`, `admin.rs` (world-gen reducers), `global.rs` (constants).
+- [[flowcharts/main-boot.canvas]] — the composed boot & connection flow (server `init` pipeline + client connect/subscribe path).
+- [[flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas]] — the first-party SDK layer: `DatabaseConnector`, `TableSubscriber`, `TableBinderComponent`.
+- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas]] — the server `main` module: `lifecycle.rs` (`init`/`client_connected`), `seeds.rs`, `admin.rs`, `global.rs`.
+- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/terrain_subfolder.canvas]] — the terrain generation pipeline `init` ends in.
 
 ## System flowchart
 
@@ -37,87 +35,110 @@ Two sides boot independently. The Godot client loads its `DatabaseConnector` **a
 ```
 
 ```sync
-![[00 End-to-End Timeline Flowchart#^boot-5{seamless:true,title:false,marker:05.}]]
+![[00 End-to-End Timeline Flowchart#^conn-1{seamless:true,title:false,marker:05.}]]
 ```
 
 ```sync
-![[00 End-to-End Timeline Flowchart#^boot-6{seamless:true,title:false,marker:06.}]]
+![[00 End-to-End Timeline Flowchart#^conn-2{seamless:true,title:false,marker:06.}]]
 ```
 
 ```sync
-![[00 End-to-End Timeline Flowchart#^conn-1{seamless:true,title:false,marker:07.}]]
+![[00 End-to-End Timeline Flowchart#^conn-3{seamless:true,title:false,marker:07.}]]
 ```
 
 ```sync
-![[00 End-to-End Timeline Flowchart#^conn-2{seamless:true,title:false,marker:08.}]]
+![[00 End-to-End Timeline Flowchart#^conn-4{seamless:true,title:false,marker:08.}]]
 ```
 
 ```sync
-![[00 End-to-End Timeline Flowchart#^conn-3{seamless:true,title:false,marker:09.}]]
+![[00 End-to-End Timeline Flowchart#^conn-5{seamless:true,title:false,marker:09.}]]
 ```
 
 ```sync
-![[00 End-to-End Timeline Flowchart#^conn-4{seamless:true,title:false,marker:10.}]]
-```
-
-```sync
-![[00 End-to-End Timeline Flowchart#^conn-5{seamless:true,title:false,marker:11.}]]
+![[00 End-to-End Timeline Flowchart#^conn-6{seamless:true,title:false,marker:10.}]]
 ```
 
 ## Main body
 
-### Why the connection is an autoload
+### Server boot: publish is a hard reset, `init` rebuilds everything
 
-The connection must outlive every scene: the game switches scenes at least twice per session (main menu → world on join, world → menu on exit), and a `DbConnection` bound to a scene node would die with it. Godot's answer is the **autoload** — entries in [[project.godot##[autoload]|project.godot]]'s `[autoload]` section are instanced before the main scene and never unloaded. Three are registered: `PhantomCameraManager` and `McpRuntimeAutoload` belong to plugins (camera system and a dev MCP bridge); the game-relevant one is [[DatabaseConnector.cs##public partial class DatabaseConnector : Node|DatabaseConnector]].
+The server has no persistent state across publishes. [[server/build.sh|build.sh]] does exactly two things: regenerate the C# client bindings into `client/Scripts/module_bindings/`, then `spacetime publish bullethell --delete-data -y`. The `--delete-data` flag drops every table row, so the database the `init` reducer runs against is always empty — schema changes are hard cuts with no migration path, and `init` is therefore not a first-run convenience but *the* world constructor, re-run in full on every publish.
 
-Because the autoload exists before any entity does, it can't be found through the component registry of doc 02 — so it inverts the pattern: [[DatabaseConnector.cs##public override void _Ready()|_Ready]] stores itself in the static `Instance` property, and consumers (including the [[GameManager.cs##public static DbConnection? Conn|GameManager.Conn]] facade) read through that. The class docstring states the contract: hook the `Connected` signal to wire table callbacks, but **guard against the connection already being active first**, because the autoload usually finishes connecting before `main.tscn` loads. Both [[TableSubscriber.cs##protected override void OnRegistered|TableSubscriber.OnRegistered]] and every `TableBinderComponent` implement exactly that both-orders guard; the timeline's conn-4 step shows the subscriber's version.
+```sync
+![[00 End-to-End Timeline Flowchart#^boot-1{seamless:true,title:false}]]
+```
 
-Two smaller mechanisms in the same file: `_Process` pumps [[DatabaseConnector.cs##public override void _Process(double delta)|Conn.FrameTick()]] every rendered frame because the SpacetimeDB C# SDK is explicitly non-threaded — network messages queue up and only dispatch (as row events, reducer callbacks, signal emissions) when the client pumps them, which conveniently lands all of it on Godot's main thread where touching the node tree is legal. And [[DatabaseConnector.cs##public override void _ExitTree()|_ExitTree]] disconnects cleanly when the app quits, so the server's `client_disconnected` hook fires (its consequences belong to [[13 Disconnect & Teardown]]).
+A **scheduled table** is a SpacetimeDB table whose rows carry a `ScheduleAt` field; while such a row exists, the host re-fires the reducer named by the table's `scheduled_reducer` attribute on that schedule. [[server/spacetimedb/src/main/lifecycle.rs#init#1|init]] inserts exactly one row into each of the three: `EnemyBehaviorSchedule` at a 100 ms interval (the fixed-timestep enemy simulation — `BEHAVIOR_TICK_DT` in [[server/spacetimedb/src/main/global.rs|global.rs]] matches at 0.1 s), `EnemySpawnSchedule` at 2 s (top-up passes over the biome regions), and `ConsumableEffectSchedule` at `CONSUMABLE_EFFECT_TICK_SECONDS` = 1.0 s (damage-over-time / regen ticks). These three rows are the entire server clock: nothing on the server moves, spawns, or ticks except through them. Deleting a schedule row would stop that subsystem — there is no other timer mechanism in play.
 
-### Identity is a file: `AuthToken`
+```sync
+![[00 End-to-End Timeline Flowchart#^boot-2{seamless:true,title:false}]]
+```
 
-SpacetimeDB identifies a client by an `Identity` derived from an auth token; with no token supplied, the server mints a fresh anonymous identity per connection — which would orphan the player's profiles every launch. [[AuthToken.cs##public static class AuthToken|AuthToken]] is the whole fix: [[AuthToken.cs##public static void Init(string filePath)|Init]] reads a token file from the user-data dir at connect time, and [[AuthToken.cs##public static void SaveToken(string token)|SaveToken]] overwrites it with the server-issued token on every successful connect. The filename embeds a sanitized host tag (`http_127.0.0.1_3000`, etc.) — the code comment in [[DatabaseConnector.cs##public void Connect(string host, string dbName)|Connect]] gives the reason: a token is signed by the SpacetimeDB instance that minted it, so offering a local token to maincloud (or vice versa) earns a 401, and per-host files keep the two worlds from clobbering each other.
+Two idempotency patterns share the seeding work, because the tables differ in whether they have a natural key to upsert against. Catalog rows — `TextureEntry`, `EnemyTemplate`, `WorldDef`, `BiomeDef`, `BiomeRegionDef`, `Enchantment`, `MapConfig` — go through the `Seed` trait in [[server/spacetimedb/src/main/seeds.rs#seed#4|seeds.rs]]: find by the string/id key, update if present, insert otherwise. The rule tables (`LayeringRule`, `BaseAdjacencyRule`, `OverlayAdjacencyRule`, `DecorGroundRule`) have only an auto-increment surrogate key, so [[server/spacetimedb/src/main/seeds.rs#seed_layering_rules#1|seed_layering_rules]] and its siblings instead delete every existing row and reinsert the full set — same "republish overwrites, never duplicates" guarantee by different means. The order `init` calls these in matters: [[server/spacetimedb/src/world/terrain/mod.rs#internal_generate_world_proc#1|internal_generate_world_proc]] looks up the `WorldDef`/`BiomeDef`/`BiomeRegionDef` rows by id, so [[server/spacetimedb/src/main/seeds.rs#seed_world_defs#1|seed_world_defs]] must run before world generation, and the enemy templates must exist before any `BiomeRegion` references them at spawn time. What gets seeded is demo-scale content: three biomes (Grassland 40 / Meadow 30 / Highlands 30 by weight), nine `BiomeRegionDef`s each allowing up to 5 enemies from a uniform Enemy+Archer pool, and — notably — **no decor**: every `BiomeDef` has `decor_configs: vec![]`, so the decor pipeline (ground → overlay → decor passes) runs but emits zero `HexDecor` rows at boot. The mechanism stays built; the content is parked (see the comment block above `seed_world_defs`).
 
-### What `main.tscn` contributes at load time
+```sync
+![[00 End-to-End Timeline Flowchart#^boot-3{seamless:true,title:false}]]
+```
 
-The boot scene is the menu, so the world scene's arrival (conn-3) is a second mini-boot. [[main.tscn##[node name="Main" type="Node2D"|main.tscn]] declares every scene-level component inline under the `Main` root — `TableSubscriber`, `CatalogComponent` with its three catalog binders, `EntitySpawnerComponent` with its four spawn binders, the terrain/camera/overlay components, and the `DebugOverlay` — with the binder→component signal wiring as `[connection]` entries at the bottom of the file. Those components register with `GameManager` through the standard lifecycle of doc 02, and their binders then bind against the already-live connection. Note the doc-02 warning applies here too: the live wiring is *this file*; the standalone `subscription_component.tscn` under `Scenes/Components/Subscription/` is one of the nine unreferenced duplicates, not a wiring site.
+The world is a flat hex grid that wraps like a torus — walking off one edge brings you back on the opposite one — and this step is where that geometry becomes rows. [[server/spacetimedb/src/main/admin.rs#internal_add_chunks#1|internal_add_chunks]] is called with the [[server/spacetimedb/src/main/global.rs|global.rs]] defaults: `DEFAULT_CHUNK_HEX_RADIUS` = 2 (each chunk is a hex of radius 2 measured in tiles, i.e. `hex_area(2)` = 19 tiles via `Hex::range_count`), `DEFAULT_CHUNK_COLS` = `DEFAULT_CHUNK_ROWS` = 6, `DEFAULT_HEX_OUTER_RADIUS` = 48.0 world units per tile. For each of the 36 chunks it computes the chunk's center tile with [[server/spacetimedb/src/world/hex.rs#chunk_center_hex#1|chunk_center_hex]] and its stable id with [[server/spacetimedb/src/world/hex.rs#spiral_chunk_index#1|spiral_chunk_index]] (a bijective spiral ordering of the axial chunk coordinates, so chunk ids are small dense integers the AOI views can range over), then inserts one empty `BuildingTile` per tile — 36 × 19 = 684 rows that are the base-building substrate (`place_building` later writes into them). It finishes by deriving the two **lap vectors**: the world-space displacement of crossing the whole grid once along each axis, computed as `hex_to_world` of the chunk centers `(cols, 0)` and `(0, rows)`, and upserts them with the grid dimensions into the singleton `MapConfig` row (id 0). Every wrap-aware distance on both sides — server Voronoi bucketing, client movement interpolation — is computed "mod the lap vectors," which is why the client also subscribes `MapConfig` (conn-5) instead of hardcoding the grid size. The comment on `DEFAULT_CHUNK_COLS` records why the map is 6×6 and not the original 22: with the ~45-enemy cap, a ~9000-unit map felt empty; ~2500 units is walkable.
 
-### Subscription waves, and why there are three
+```sync
+![[00 End-to-End Timeline Flowchart#^boot-4{seamless:true,title:false}]]
+```
 
-A SpacetimeDB **subscription** is a SQL query whose matching rows the server pushes to the client and keeps pushed as they change; `TableSubscriber` groups the game's queries into three waves, subscribed at three different life moments so the client never holds rows it can't use yet. The static name lists — [[TableSubscriber.cs##public static readonly string[] BaseTables|BaseTables]], `LobbyTables`, `GameTables` — are the single source of truth for "what is subscribed":
+`init` passes the literal seed `0` to [[server/spacetimedb/src/world/terrain/mod.rs#internal_generate_world_proc#1|internal_generate_world_proc]], and the whole pipeline threads one mutable `draw` counter through [[server/spacetimedb/src/world/prng.rs#pick_index#1|pick_index]] — every random choice consumes the next draw — so the published world is bit-for-bit reproducible: same code, same map, every publish. The pipeline itself (`run_generation`, shared with the admin manual-generation front-end) is: clear any prior geometry, distribute the `BIOME_VORONOI_SEED_BUDGET` = 16 Voronoi seed points proportionally to biome weights via [[server/spacetimedb/src/world/terrain/voronoi.rs#distribute_biome_seeds#1|distribute_biome_seeds]], bucket every one of the 684 world hexes under its nearest seed (lap-vector-aware, so biome regions can straddle the wrap seam), then per biome draw one region seed per `RegionWeight` entry, insert the `BiomeRegion` rows the 2-second spawn tick later populates with enemies, and finally per hex emit six `TriangleTile` wedge rows through ground → overlay → decor passes that consult already-written neighbors for the adjacency/layering rules. The pass order and the draw-counter discipline are the determinism: reorder two passes and every downstream random pick shifts. Terrain pass internals are [[07 Terrain & World Streaming]]'s subject; from boot's perspective the takeaway is that after `init` returns, the server holds a complete, queryable world before the first client ever connects.
 
-- **Base** (`AllTextures`, `AllItems`, `AllEnchantments`): static catalogs needed by every screen, subscribed the moment the connection is up (conn-4).
-- **Lobby** (`LocalLobbyPlayer`, `LocalPlayerProfiles`): the profile-selection views, subscribed right after base and unsubscribed when leaving the lobby (their contents are doc 04's subject).
-- **Game** (sixteen tables: local player data, nearby remotes/enemies/loot/terrain, `MapConfig`, …): subscribed only on `join_world` — see [[05 Joining the World]]. This is why the `MapConfig` hooks installed at conn-4 don't deliver a row until the game wave lands: `MapConfig` is in `GameTables`, not base.
+### Client boot: autoloads, and the swapped scene names
 
-The SQL is built indirectly on purpose: [[TableSubscriber.cs##private static string TableSql|TableSql]] resolves each PascalCase name through the generated `From` API and calls `ToSql()`, so a server-side table rename followed by a bindings regenerate surfaces as a compile break, not a silent runtime miss. The same lists feed `AllSubscribedTables`, which populates `TableBinderComponent`'s inspector dropdown — a binder pointed at an unsubscribed table can never fire, and the binder warns about exactly that at configuration time.
+```sync
+![[00 End-to-End Timeline Flowchart#^conn-1{seamless:true,title:false}]]
+```
 
-### Server boot: one `init`, written to be re-runnable
+An **autoload** is Godot's singleton mechanism: a scene the engine instantiates before the main scene and keeps alive across scene changes, reachable from anywhere. [[client/project.godot|project.godot]] registers three — `PhantomCameraManager` (the phantom-camera plugin's own manager), `McpRuntimeAutoload` (editor tooling), and `DatabaseConnector` pointing at [[client/sstdbsdk/DatabaseConnector.tscn|DatabaseConnector.tscn]], a one-node scene whose only job is to attach [[client/sstdbsdk/DatabaseConnector.cs|DatabaseConnector.cs]] to a `Node`. The autoload is a *scene*, not the bare `.cs`, because Godot can only autoload scenes and scripts — and the scene form is what older notes get wrong. Because autoload `_Ready` runs before the main scene's, the connection attempt starts before any UI exists; every consumer of the connection is written to tolerate "already connected" for exactly this reason (see `TableSubscriber.OnRegistered` below). The `run/main_scene` uid resolves to [[client/Scenes/main_menu.tscn|main_menu.tscn]] — and the file names are genuinely swapped relative to their roles: `main_menu.tscn` is the *menu* (root `MainMenu`, a `Control` running [[client/Scripts/Game/LobbyGui.cs|LobbyGui]], three buttons and two show/hide-only panels), while `game.tscn` is the gameplay scene. The only exit from the menu is **Character Slots** → [[client/Scripts/Game/LobbyGui.cs#CharSlotsPressed#1|CharSlotsPressed]] → `ChangeSceneToFile("res://Scenes/game.tscn")`; that transition is lobby-1, covered by [[04 Lobby & Profiles]].
 
-SpacetimeDB runs the reducer marked `init` when the module is published. [[server/spacetimedb/src/main/lifecycle.rs##pub fn init|init]] does three kinds of work, in order:
+### The connection: `DatabaseConnector`
 
-1. **Arm the timers.** It inserts the three schedule rows — `EnemyBehaviorSchedule` (100 ms, the enemy sim tick), `EnemySpawnSchedule` (2 s), `ConsumableEffectSchedule` ([[server/spacetimedb/src/main/global.rs##pub const CONSUMABLE_EFFECT_TICK_SECONDS|CONSUMABLE_EFFECT_TICK_SECONDS]] = 1 s) — the recurring reducers those rows drive are covered by docs 08 and 10.
-2. **Seed the definitions.** The `seed_*` functions in `main/seeds.rs` fill the catalog and def tables: the texture catalog ([[server/spacetimedb/src/main/seeds.rs##pub fn seed_default_textures|seed_default_textures]]), terrain layering/adjacency/decor rules, enemy templates and the test bosses ([[server/spacetimedb/src/main/seeds.rs##pub fn seed_default_enemies|seed_default_enemies]] and `seed_test_boss_p2`–`p6`), world items/enchantments, and the biome/world defs ([[server/spacetimedb/src/main/seeds.rs##pub fn seed_world_defs|seed_world_defs]]). Re-runnability is designed in two ways: most seeds go through the `Seed` trait, which upserts by natural key (find by id → update, else insert), while the rule tables have no natural key and instead clear-and-reinsert — the file's own comments call out both strategies as what keeps republishes correct.
-3. **Build the world.** [[server/spacetimedb/src/main/admin.rs##pub fn internal_add_chunks|internal_add_chunks]] materializes the hex grid — one `BuildingTile` row per hex across the 6×6 chunk map — and upserts the `MapConfig` row whose lap vectors define the torus wrap; then [[server/spacetimedb/src/world/terrain/mod.rs##pub fn internal_generate_world_proc|internal_generate_world_proc]] generates "Earth" from the just-seeded defs. Both calls are prefixed with `let _ =`, so a world-gen failure at init is silently discarded — no log, no retry. In practice the seeded defs are consistent, so this is a robustness gap rather than a live bug.
+```sync
+![[00 End-to-End Timeline Flowchart#^conn-2{seamless:true,title:false}]]
+```
 
-The grid constants deserve one sentence because everything downstream divides by them: [[server/spacetimedb/src/main/global.rs##pub const DEFAULT_CHUNK_HEX_RADIUS|DEFAULT_CHUNK_HEX_RADIUS]] = 2 (a chunk is a hex of hexes), `DEFAULT_CHUNK_COLS`/`ROWS` = 6×6 chunks, and `DEFAULT_HEX_OUTER_RADIUS` = 48 world units per hex — global.rs's own comment explains the map was shrunk from 22 chunks to 6 so players actually meet enemies on the demo map.
+[[client/sstdbsdk/DatabaseConnector.cs#Connect#1|Connect]] builds the `DbConnection` from the exported `Host` (default `http://127.0.0.1:3000`) and `DbName` (`bullethell`). The auth token is how a returning player keeps their identity: the SpacetimeDB SDK persists one token per host on disk, and `Connect` reads/writes it through the SDK's own `AuthToken` helper under a key derived from the host string (`://`, `:`, `/` all replaced by `_`) — *because tokens are signed per host instance*, the comment notes. There is deliberately **no first-party `AuthToken.cs`**; older notes citing one are stale. `_Ready` first scans both `OS.GetCmdlineArgs()` and `OS.GetCmdlineUserArgs()` for a `--pN` argument (via `IsPlayerArg`) and suffixes the token key with `_pN`, so launching several debug instances from the editor gives each a distinct identity instead of them fighting over one token — this is the entire local-multiplayer-testing story at the connection layer. After connecting, `_Process` calls `Conn?.FrameTick()` every frame: the SDK's network thread queues callbacks, and `FrameTick` drains them onto the Godot main thread, which is the only thread allowed to touch the scene tree. `_ExitTree` disconnects cleanly so closing the game fires the server's `client_disconnected` rather than leaving a timed-out ghost.
 
-### Who are you? `client_connected`
+```sync
+![[00 End-to-End Timeline Flowchart#^conn-3{seamless:true,title:false}]]
+```
 
-Every successful handshake — boot-2's connect, and every later reconnect — runs [[server/spacetimedb/src/main/lifecycle.rs##pub fn client_connected|client_connected]] with `ctx.sender()` set to the connecting identity. The reducer is a three-way branch on where that identity already stands:
+The two sides of one connect, spelled out. Client side, [[client/sstdbsdk/DatabaseConnector.cs#OnConnected#1|OnConnected]] caches the `Identity` (SpacetimeDB's stable per-token account id — same token, same identity, same player), persists the (possibly rotated) token, subscribes its own `Username` property to the `LocalLobbyPlayer` view's insert/update events, and only then fires `Connected` — so by the time any consumer reacts to `Connected`, identity is known and username will track the lobby row. Server side, [[server/spacetimedb/src/main/lifecycle.rs#client_connected#1|client_connected]] branches on where the identity already sits: a brand-new identity gets a `LoggedOutPlayer` row (empty username, not admin) plus a default "Knight" `PlayerProfile`, which is the guarantee that the character-select screen is never empty; an identity already in the lobby gets nothing (reconnect while seated — the row survived); an identity already *in the world* hits the bug path described in Known gaps below. Note what does *not* happen here: no stats, no position, no inventory — those are per-profile and are scaffolded at join time (join-2), not at connect time.
 
-- **In the world** (`LoggedInPlayer` row exists): shouldn't be possible through the normal client, and the handler is buggy — see Known gaps.
-- **In the lobby already** (`LoggedOutPlayer` row exists): a reconnect; nothing to do.
-- **Nowhere**: a genuinely new identity. The server inserts a `LoggedOutPlayer` row (empty username, `is_admin: false`) **and** a starter `PlayerProfile` named "Knight" with the "Knight" texture — so even a first-time player lands in the lobby with one selectable profile. How profiles are listed, renamed, created, and deleted from there is [[04 Lobby & Profiles]].
+### Subscriptions: `TableSubscriber` and the wave model
 
-The lobby/world split itself is the invariant to carry forward: an identity is represented by exactly one of `LoggedInPlayer` / `LoggedOutPlayer` (or nothing, before first connect), and reducers move the row between the two tables rather than flipping a flag — `join_world`/`leave_world` (doc 05) and `client_disconnected` (doc 13) are the other movers.
+```sync
+![[00 End-to-End Timeline Flowchart#^conn-4{seamless:true,title:false}]]
+```
+
+A **subscription** is a standing SQL query the server evaluates for you: it pushes the matching rows once, then pushes every later insert/update/delete that changes the match set. The client never polls; the subscribed row set *is* its picture of the world. `TableSubscriber` is a `Component` (framework base class — [[02 The Component Framework]]) declared inline in [[client/Scenes/game.tscn|game.tscn]] as the first child of the root, and its `OnRegistered` encodes the autoload-ordering fact from conn-1: if `Conn.IsActive` it subscribes immediately, otherwise it defers to the `Connected` signal — both orders work, so the menu-to-game scene change can never race the connection.
+
+```sync
+![[00 End-to-End Timeline Flowchart#^conn-5{seamless:true,title:false}]]
+```
+
+The waves exist because each screen needs a different slice of the database, and subscriptions are the bandwidth bill. Base (`AllTextures`, `AllItems`, `AllEnchantments`) is static catalog data every screen reads, so it opens first and never closes. Lobby (`LocalLobbyPlayer`, `LocalPlayerProfiles`) is exactly the character-select screen's data, opened alongside base and closed at join. Game (19 tables in [[client/sstdbsdk/TableSubscriber.cs#GameTables#1|GameTables]]) opens at join-1 — [[05 Joining the World]] — and includes `MapConfig`, whose insert/update [[client/sstdbsdk/TableSubscriber.cs#OnConnected#1|TableSubscriber.OnConnected]] mirrors into its `LapQ`/`LapR` `Vector2` properties; those are the client's copy of the torus lap vectors from boot-3, consumed by the movement/interpolation math ([[06 Movement & Position Sync]]) via the `GameManager` facade. The SQL itself is built by [[client/sstdbsdk/TableSubscriber.cs#TableSql#1|TableSql]], which reflects over the generated bindings' `From` API by table *name* and calls `ToSql()`: if a table is renamed server-side, the regenerated bindings drop the method and the lookup throws an `InvalidOperationException` naming the offender at subscribe time, instead of hand-written SQL silently returning zero rows forever. The same `BaseTables`/`LobbyTables`/`GameTables` arrays also feed `TableBinderComponent`'s editor dropdown (`AllSubscribedTables`), so "what is subscribed" has exactly one source of truth. The lobby and game waves keep their `SubscriptionHandle`s (`lobbySub`/`gameSub`) so `UnsubscribeLobby`/`UnsubscribeGame` can retire each wave independently — the join/death transitions that call those are join-1 and end-3.
+
+```sync
+![[00 End-to-End Timeline Flowchart#^conn-6{seamless:true,title:false}]]
+```
+
+That transcluded step is the whole row-delivery contract for this doc too: everything `TableSubscriber` pulls in reaches game logic exclusively through `TableBinderComponent` children wired inline in the live scenes. The binder mechanics (`LastRow`/`ReplayExistingRows`, signal signatures) are framework territory and documented in [[02 The Component Framework]].
+
+### `GameManager`: the scene-root facade
+
+[[client/Scenes/game.tscn|game.tscn]]'s root node `game` (a `Node2D`) runs [[client/Scripts/Game/GameManager.cs|GameManager]], an `IEntity` with its own `EntityRegistry` that the scene-level components — `TableSubscriber`, `CatalogComponent`, `EntitySpawnerComponent`, the camera/terrain/overlay components — register with as they ready up. It holds no logic of its own; its value is the static facade. Spawned entities (a freshly instanced player puppet, a bullet, a drop) live in their own subtrees with their own component registries and cannot see the scene-level components through the framework's sibling lookup, and walking node paths upward is brittle; so `GameManager` exposes static pass-throughs — `Conn` and `Username` straight to the `DatabaseConnector` autoload, `LapQ`/`LapR` to the registered `TableSubscriber`, `GetItem`/`GetEnchantment`/`GetResPath` to `CatalogComponent`, `GetEnemy`/`EnemyCount` to `EntitySpawnerComponent`. Every static accessor null-guards through `IsInstanceValid(instance)` and the component registry, because during scene teardown the facade can be called after parts of the scene are already freed — a no-op returning an empty default is the designed failure mode once `game.tscn` is gone (see the `EnchantmentsChanged` event's comment).
 
 ## Known gaps / stubs
 
-- **Leftover debug prints in the binder.** [[TableBinderComponent.cs##private void Bind(DbConnection conn)|TableBinderComponent.Bind]] ends with a `GD.Print($"[TableBinderComponent] DEBUG bound …")` and [[TableBinderComponent.cs##private void HandleInsert<TRow>|HandleInsert]] prints a `DEBUG first insert` line once per binder — with a dozen-plus binders inline in `main.tscn`, every boot spams the output log.
-- **`client_connected` mishandles the already-in-world case.** When a connecting identity still has a `LoggedInPlayer` row, the handler logs [[server/spacetimedb/src/main/lifecycle.rs##connected while already in world|log::error!("…this is a bug.")]] — and then does the buggy thing anyway: it deletes the `LoggedInPlayer` row and inserts a `LoggedOutPlayer` row, silently dropping the player back to the lobby instead of rejecting the duplicate connection. The bug is flagged only inside that log message; there is no comment or TODO marking it in code.
-- **Init world-gen errors are swallowed.** The `let _ = internal_add_chunks(...)` / `let _ = internal_generate_world_proc(...)` calls in `init` discard `Err` results without logging (noted in the main body; listed here so it isn't mistaken for error handling).
+- **`client_connected` mishandles the already-in-world case** ([[server/spacetimedb/src/main/lifecycle.rs#client_connected#1|client_connected]]): if an identity connects while it still has a `LoggedInPlayer` row (e.g. a duplicate login or a stale row after a crash), the reducer logs `log::error!("Player ... connected while already in world — this is a bug.")` and then *enacts* the bug-adjacent behavior anyway — it deletes the `LoggedInPlayer` row and inserts a `LoggedOutPlayer` row, silently dropping the player back to the lobby, instead of rejecting the connection. The only flag that this is unintended is the error message itself; there is no code comment or tracking TODO.
+- **Leftover debug prints in the binder plumbing**: [[client/sstdbsdk/TableBinderComponent.cs#Bind#1|TableBinderComponent.Bind]] ends with a `GD.Print($"[TableBinderComponent] DEBUG bound ...")` that fires once per binder per scene load, and [[client/sstdbsdk/TableBinderComponent.cs#HandleInsert#1|HandleInsert]] prints a `DEBUG first insert` line per table. Harmless but noisy; they ship in every session's output.
 
 ## Where to go next
 
-The player is now sitting in the lobby with a "Knight" profile and two subscription waves live. Continue to [[04 Lobby & Profiles]] for the profile-selection UI and its reducers/views, then [[05 Joining the World]] for what happens when the game wave subscribes and entities start spawning.
+With the lobby subscriptions open, the next beat is the character-select screen itself — profiles, usernames, and the XP math behind them: [[04 Lobby & Profiles]]. The third (game) subscription wave and everything it spawns is [[05 Joining the World]]; the terrain rows generated at boot are rendered in [[07 Terrain & World Streaming]].

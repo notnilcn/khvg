@@ -15,6 +15,8 @@ pub struct MultiStepRef {
     pub shot_index: u32
 }
 
+// Per-enemy copy of a RepeatStepDef so repeat_count can advance independently per enemy.
+// Field semantics (angle_step, repeat_target: 0 = infinite, angular_speed) live on RepeatStepDef.
 #[table(accessor = repeat_step_instance, public)]
 pub struct RepeatStepInstance {
     #[primary_key] #[auto_inc] pub repeat_id: u64,
@@ -26,8 +28,11 @@ pub struct RepeatStepInstance {
     pub texture_id: String,
     pub lifetime: f32,
     pub damage: u32,
+    pub angular_speed: f32,
+    pub speed_acceleration: f32,
     pub repeat_interval: f32,
     pub repeat_target: u32,
+    pub angle_step: f32,
     pub next_step_delay: f32,
     pub repeat_count: u32,
 }
@@ -49,6 +54,9 @@ pub struct EnemyAttack {
     pub step_timer: Timestamp,
     pub step_waiting: bool,
     pub start_delaying: bool,
+    // True while a looping sequence (AttackSequence.loop_delay >= 0) is waiting out its
+    // loop delay before restarting. step_timer doubles as the loop timer during the wait.
+    pub loop_waiting: bool,
 }
 
 #[table(accessor = enemy_phases, public)]
@@ -112,12 +120,17 @@ pub enum BulletControlKind {
     Delete,
     Split,
     Attract,
+    Slash,
 }
 
-/// Relay of a player's bullet-controller ability cast (delete/split/blackhole). The server
+/// Relay of a player's bullet-controller ability cast (delete/split/blackhole/slash). The server
 /// tracks no live bullets — it validates the caller and rebroadcasts the cast; every client
 /// resolves the proximity query against its own local bullets. Ephemeral event table, same
 /// shape as BulletPatternEvent.
+/// Field encoding: Delete/Split use (x, y) as the center and `radius` as the radius; Attract
+/// adds (target_x, target_y) as the homing target. Slash is the rectangle variant: (x, y) is
+/// the cast origin, (target_x, target_y) the far end of the slash, and `radius` the rectangle
+/// width.
 #[table(accessor = bullet_control_event, public, event)]
 pub struct BulletControlEvent {
     #[primary_key] #[auto_inc]
@@ -146,6 +159,10 @@ pub struct BulletPatternEvent {
     pub target: Option<Identity>,
     pub texture_id: String,
     pub lifetime: f32,
+    // Degrees/second of mid-flight bullet curving (0 = straight). Rendered client-side.
+    pub angular_speed: f32,
+    // World units/second² of bullet speed growth over its lifetime (0 = constant speed).
+    pub speed_acceleration: f32,
     #[index(btree)]
     pub chunk_index: i64,
 }

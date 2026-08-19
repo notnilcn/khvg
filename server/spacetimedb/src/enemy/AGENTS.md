@@ -1,0 +1,83 @@
+# enemy/AGENTS.md
+
+Everything an agent needs to work in this module without re-deriving the model. Read
+`server/AGENTS.md` first (module-wide map + SpacetimeDB Rust rules — they apply here).
+
+## File map
+
+| File | Role | Edit it when |
+|---|---|---|
+| `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`), the four step-def tables, `PatternType` + param structs, `MovementBehavior`, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
+| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, event tables (`BulletPatternEvent`, `BulletControlEvent`), schedules | Rarely — schema changes |
+| `methods.rs` | Pure logic: archetype helpers, behavior-tree build/teardown, `tick_phase`/`tick_sequence`, movement, biome spawning | Changing *how* enemies simulate |
+| `reducers.rs` | `tick_enemy_spawn`/`tick_enemy_behavior` (scheduled), `report_enemy_hit`, `control_bullets` | Wiring, not content |
+| `emitters.rs` | **Authoring vocabulary**: `Emitter` builder + `Difficulty`/`DifficultySteps`; `compile()` lowers an emitter to an `AttackSequence` | Extending the vocabulary (e.g. a new builder) |
+| `defs/` | **Enemy content lives here.** `mod.rs` = raw step helpers + module declarations; one file per enemy/boss (`gorgon_boss.rs` is the reference) | Adding/changing enemies — usually the only place |
+| `views.rs` | `nearby_enemies` (AOI), `enemy_templates` (global) | Exposing new data to clients |
+
+## The model in one paragraph
+
+Template = data. A behavior tick (100 ms, `BEHAVIOR_TICK_DT`) walks every in-range enemy,
+ticks its current phase's attack sequences (concurrent), and appends one
+`BulletPatternEvent` per shot; the client renders events verbatim (angles/offsets are
+baked server-side at fire time). HP thresholds advance phases via `compute_phase` in the
+combat path. Spawn/despawn always goes through `spawn_enemy_archetype` /
+`despawn_enemy_archetype` — the behavior tree (EnemyBehavior → EnemyPhase → EnemyAttack →
+EnemySequenceStep → RepeatStepInstance) must not have orphan rows.
+
+## Semantics that will bite you
+
+- **`repeat_target: 0` = fire forever** (not "skip"). Infinite repeats never finish, so
+  their sequence never advances and the phase never restarts from them.
+- **A phase restarts only when EVERY sequence finishes.** Windowed (finite) emitters are
+  what make a phase loop; `phase_loop_delay` is the silence between loops and also the
+  rest after an HP-threshold phase change.
+- **`loop_delay` on AttackSequence**: `< 0` = run once per phase cycle (default);
+  `>= 0` = self-restart after that delay, excluded from the phase-level restart check.
+  This is burst cadence (`Emitter::burst` compiles to it).
+- **Catch-up firing**: intervals < 100 ms fire multiple shots per tick, capped at
+  `MAX_CATCHUP_SHOTS` (8) — ceiling ~80 shots/s per sequence. `step_timer` advances by
+  whole intervals (no drift).
+- **`angle_step` bakes spin per shot** (`base + step × repeat_count`) and rotates the
+  origin **offset** by the same accumulated spin (orbiting-arm model); `base_angle_offset`
+  itself tilts only the firing direction.
+- **Angles are degrees**, except `spread` (and `CurtainParams.angle_span`) which are
+  radians in the raw structs. `Emitter::shotgun` takes degrees.
+- **`line`/`line_speed_step`** (Ring/Volley/Shotgun): bullet j of a stack flies at
+  `speed + step × (j+1)` — a speed ladder, not spatial copies.
+- **`angular_speed`/`speed_acceleration`** (every step + `BulletPatternEvent`): mid-flight
+  curve/accel, rendered client-side via BlastBullets2D rotation/speed data. If you add an
+  event field, the client (`BulletSpawnerComponent.cs`) must learn to render it, and
+  bindings regenerate via `server/build.sh` (never hand-edit `module_bindings/`).
+- **Difficulty is compile-time.** Variants are separate `EnemyTemplate` rows seeded per
+  `Difficulty` tier (`Foo_Easy` … `Foo_Madness`); spawn by name. No runtime difficulty flag.
+
+## How to add an enemy (the recipe)
+
+1. New file `defs/my_enemy.rs`: one `fn` per emitter returning a base `Emitter`; phases via
+   `make_phase(ctx, index, hp_threshold, movement, loop_delay, vec![emitter.compile(ctx, difficulty), …])`;
+   `pub fn seed(ctx)` building the template(s) (`EnemyTemplate::seed` upserts by `template_id`).
+2. `pub mod my_enemy;` in `defs/mod.rs`; seed call in `main/lifecycle.rs::init`.
+3. `cargo check` → `server/build.sh` → `dotnet build client/khvg.csproj`.
+4. Spawn with admin `spawn_enemy <template_id> x y false false`; inspect with `spacetime sql`.
+Full tutorial: `docs/Technical Design Docs/Workflows/Adding a Boss (Enemy Authoring Workflow).md`.
+
+## Anti-patterns — don't
+
+- **Don't hand-unroll steps** (40 `seq_single` calls with incrementing angles). If the model
+  can't express a pattern, add a primitive to `def_tables.rs` + `methods.rs` the way
+  `angle_step`/`loop_delay` were added — or compose with `window()`/loops in content.
+- Don't insert `Enemy`/behavior rows directly; use the archetype helpers.
+- Don't skip `defs/` and seed from `main/seeds.rs` — that file is for world/item/shared
+  seeds and the `TestBoss` movement/pattern showcase (kept as a second example).
+- Don't give a phase a mix of infinite emitters and an expected loop — see semantics above.
+- Don't invent SpacetimeDB APIs; `server/AGENTS.md`'s rules apply (`ctx.sender()` with
+  parens, `ctx.db.table()` method calls, `..row` spreads on update, no panics on expected errors).
+
+## Verification
+
+`cargo check --manifest-path server/spacetimedb/Cargo.toml` is the only automated gate on
+this side; publish flow is `server/build.sh` (wipes DB, reseeds — schema changes are hard
+cuts). Row-level sanity: `spacetime sql bullethell "SELECT … FROM enemy_template /
+repeat_step_def / movement_def"`. Anything past that (patterns looking right, phase pacing,
+multiplayer) is verified by the user in-game — describe spawn steps per variant and stop.

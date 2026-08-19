@@ -57,6 +57,7 @@ fn stat_index(stat: StatKind) -> usize {
         StatKind::Artisan => 5,
         StatKind::Hp => 6,
         StatKind::Defense => 7,
+        StatKind::BaseSpeed => 8,
     }
 }
 
@@ -92,8 +93,8 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         None => return,
     };
 
-    let mut flat = [0f32; 8];
-    let mut mult = [0f32; 8];
+    let mut flat = [0f32; 9];
+    let mut mult = [0f32; 9];
 
     // Allocated skill points fold into the flat accumulator, so gear mults scale them
     // like any other flat source — temperaments work exactly like normal stats. (Folded
@@ -165,12 +166,14 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         ctx.db.player_stats().insert(new_stats);
     }
 
-    // Modifier-only kinds resolve onto PlayerData: Hp into max_hp, Defense into defense.
+    // Modifier-only kinds resolve onto PlayerData: Hp into max_hp, Defense into defense,
+    // BaseSpeed into base_speed (f32 — speed isn't rounded to int like the others).
     let new_max_hp = resolve(6, compute_base_max_hp(data.level)).max(1) as u32;
     let new_defense = resolve(7, 0).max(0);
-    if new_max_hp != data.max_hp || data.hp > new_max_hp || new_defense != data.defense {
+    let new_base_speed = ((BASE_SPEED + flat[8]) * (1.0 + mult[8])).max(1.0);
+    if new_max_hp != data.max_hp || data.hp > new_max_hp || new_defense != data.defense || new_base_speed != data.base_speed {
         let new_hp = data.hp.min(new_max_hp);
-        ctx.db.player_data().profile_id().update(PlayerData { max_hp: new_max_hp, hp: new_hp, defense: new_defense, ..data });
+        ctx.db.player_data().profile_id().update(PlayerData { max_hp: new_max_hp, hp: new_hp, defense: new_defense, base_speed: new_base_speed, ..data });
     }
 }
 
@@ -277,6 +280,7 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     if ctx.db.player_data().profile_id().find(&profile_id).is_none() {
         ctx.db.player_data().insert(PlayerData {
             profile_id, level: 1, xp: 0, hp: BASE_MAX_HP as u32, max_hp: BASE_MAX_HP as u32, defense: 0,
+            base_speed: BASE_SPEED,
         });
     }
 
@@ -321,7 +325,14 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
         let cfg = MapConfig::load(ctx, 0, 0);
         let (cq, cr) = world_to_chunk(0.0, 0.0, cfg.chunk_hex_radius, cfg.hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);
-        ctx.db.player_position().insert(PlayerPosition { profile_id, player_id: ctx.sender(), x: 0.0, y: 0.0, rotation: 0.0, chunk_index});
+        ctx.db.player_position().insert(PlayerPosition { profile_id, player_id: ctx.sender(), x: 0.0, y: 0.0, movement_direction: 0.0, movement_speed: 0.0, chunk_index});
+    }
+
+    if ctx.db.player_rotation().profile_id().find(&profile_id).is_none() {
+        let chunk_index = ctx.db.player_position().profile_id().find(&profile_id)
+            .map(|p| p.chunk_index)
+            .unwrap_or(0);
+        ctx.db.player_rotation().insert(PlayerRotation { profile_id, player_id: ctx.sender(), screen_rotation: 0.0, chunk_index });
     }
 
     if ctx.db.player_chunk().profile_id().find(&profile_id).is_none() {

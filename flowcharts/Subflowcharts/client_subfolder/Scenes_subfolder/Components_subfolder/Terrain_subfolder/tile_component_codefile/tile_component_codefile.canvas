@@ -14,7 +14,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Components/Terrain/TileComponent-_dot_-cs-_hashtag_-TileComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TileComponent_codefile/TileComponent_codefile-_dot_-canvas-_colon_-script",
@@ -30,7 +29,8 @@
 				"edge-_colon_-client/Scripts/Components/Terrain/DecorShadowComponent-_dot_-cs-_hashtag_-DecorShadowComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorShadowComponent_codefile/DecorShadowComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Terrain/DecorComponent-_dot_-cs-_hashtag_-DecorComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent_codefile-_dot_-canvas-_colon_-script"
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorComponent_codefile/DecorComponent_codefile-_dot_-canvas-_colon_-script",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

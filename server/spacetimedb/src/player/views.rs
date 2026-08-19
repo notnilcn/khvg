@@ -103,6 +103,25 @@ fn nearby_remote_players(ctx: &ViewContext) -> impl Query<PlayerPosition> {
         .build()
 }
 
+// Same AOI filter as nearby_remote_players, over the separate rotation table — rotation
+// is reported on its own (faster) cadence than movement.
+#[spacetimedb::view(accessor = nearby_remote_player_rotations, public)]
+fn nearby_remote_player_rotations(ctx: &ViewContext) -> impl Query<PlayerRotation> {
+    let empty = ctx.from.player_rotation().r#where(|p| p.profile_id.eq(u64::MAX)).build();
+    let indices = match nearby_indices(ctx) {
+        Some(i) if !i.is_empty() => i,
+        _ => return empty,
+    };
+    ctx.from.player_rotation()
+        .r#where(move |p| {
+            let mut cond = p.chunk_index.eq(indices[0]);
+            for &idx in &indices[1..] { cond = cond.or(p.chunk_index.eq(idx)); }
+            cond
+        })
+        .left_semijoin(ctx.from.logged_in_player(), |rot, player| rot.profile_id.eq(player.profile_id))
+        .build()
+}
+
 #[spacetimedb::view(accessor = nearby_remote_players_profiles, public)]
 fn nearby_remote_players_profiles(ctx: &ViewContext) -> impl Query<PlayerProfile> {
     ctx.from.player_profile()

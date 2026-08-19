@@ -15,7 +15,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Enchantment",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
@@ -27,7 +26,13 @@
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-StatModifier",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-StatKind",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-StatMode",
-				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EquipSlot"
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EquipSlot",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EnchantmentBehavior",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-AbilityUseBuffParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConsumableBuffEffect",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WeaponBehavior",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WeaponPattern",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

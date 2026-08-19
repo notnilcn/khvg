@@ -176,6 +176,7 @@
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-WorldDef-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_hex",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerRotation-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebug-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebug-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/main/debug-_dot_-rs-_hashtag_-PlayerPositionDebugSchedule-_colon_-read",

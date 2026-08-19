@@ -5,11 +5,11 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Spawns and despawns the server-row entities — LocalPlayer, RemotePlayers, Enemies,
-/// Drops — from child TableBinderComponent row signals (declared in
-/// entity_spawner_component.tscn, signals wired in the editor; ReplayExistingRows covers rows
+/// Drops — from child TableBinderComponent row signals (declared inline in game.tscn,
+/// signals wired in the editor; ReplayExistingRows covers rows
 /// already in the client cache), and tracks them in lookup dictionaries. Instantiation stays
 /// in code because the count is data-driven by server rows (logic moved out of GameManager.cs).
-/// The BulletManager is not row-driven, so it lives directly in characters.tscn instead.
+/// The BulletManager is not row-driven, so it lives directly in game.tscn instead.
 /// </summary>
 public partial class EntitySpawnerComponent : Component
 {
@@ -23,7 +23,7 @@ public partial class EntitySpawnerComponent : Component
     private readonly Dictionary<ulong, Enemy> enemies = new();
     private readonly Dictionary<ulong, Drop> drops = new();
 
-    /// Child binders (declared in entity_spawner_component.tscn) feeding the spawn tables.
+    /// Child binders (declared inline in game.tscn) feeding the spawn tables.
     private TableBinderComponent localPlayerBinder = null!;
     private TableBinderComponent nearbyRemotePlayersBinder = null!;
     private TableBinderComponent nearbyEnemiesBinder = null!;
@@ -42,7 +42,7 @@ public partial class EntitySpawnerComponent : Component
         nearbyLootDropsBinder = GetNode<TableBinderComponent>("NearbyLootDropsBinder");
     }
 
-    // --- TableBinderComponent signal handlers (wired in entity_spawner_component.tscn) ---
+    // --- TableBinderComponent signal handlers (wired in game.tscn) ---
 
     private void OnLocalPlayerInsert()
     {
@@ -112,9 +112,7 @@ public partial class EntitySpawnerComponent : Component
     private void OnDropInsert()
     {
         var lootDrop = (LootDrop)nearbyLootDropsBinder.LastRow!;
-        GD.Print("Drop Inserted");
         if (drops.ContainsKey(lootDrop.DropId)) return;
-        GD.Print("Drop Being Instantiated");
         var node = DropScene.Instantiate<Drop>();
         node.DropId = lootDrop.DropId;
         node.ItemId = lootDrop.ItemId;

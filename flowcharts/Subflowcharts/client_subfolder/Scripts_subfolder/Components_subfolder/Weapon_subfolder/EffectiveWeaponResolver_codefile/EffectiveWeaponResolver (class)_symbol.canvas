@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "1a397bbdc1aa0022",
+			"type": "file",
+			"file": "client/Scripts/Components/Weapon/EffectiveWeaponResolver.cs",
+			"subpath": "#EffectiveWeaponResolver",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

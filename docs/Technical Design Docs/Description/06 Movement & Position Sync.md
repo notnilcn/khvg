@@ -2,24 +2,21 @@
 
 ## Assumed knowledge
 
-- [[05 Joining the World]] — the game subscription wave that carries the position views (join-3), how `EntitySpawnerComponent` spawns `LocalPlayer`/`RemotePlayer` from binder rows (join-4, join-5), and why `PlayerChunk` exists as a separate row.
-- [[02 The Component Framework]] — how `TableBinderComponent` re-emits subscribed rows as Godot signals (`LastRow`, `ReplayExistingRows`), and how `GetSibling<T>()` resolves sibling components through the entity registry.
-- [[03 Boot & Connection]] — the connection itself and the `FrameTick` pumping that makes SpacetimeDB callbacks fire on the Godot main thread (boot-3); the lap vectors mirrored from `MapConfig` (conn-4).
-- [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
-- [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `move` section.
-- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
+- [[02 The Component Framework]] — what a `*Component` node is, how it registers with its `IEntity` root, and what a `TableBinderComponent` does (re-exposes subscribed table row events as Godot signals).
+- [[03 Boot & Connection]] — how the client connects and what a subscription is.
+- [[05 Joining the World]] — how `join_world` scaffolds the position rows this doc streams, and how `EntitySpawnerComponent` turns row inserts into spawned scenes.
+- [[00 End-to-End Timeline Flowchart]] — the whole-timeline view this doc's steps are transcluded from.
 
 ## The 30-second version
 
-Movement is **client-authoritative with a server relay**. Your `LocalPlayer` reads WASD and moves itself with Godot physics; the server never simulates you. Ten times a second, a `PositionSyncComponent` reports your position to the `report_movement` reducer, which wraps the coordinates onto the torus world, recomputes which hex chunk you're in, and rewrites your `PlayerPosition` row. That row update flows back to you as a desync sanity check (snap only if impossibly far) and out to everyone nearby through the AOI-filtered `nearby_remote_players` view — "nearby" meaning "within two chunk rings", keyed off the slowly-changing `PlayerChunk` row so the views don't recompute ten times a second. Remote players are puppets: an `InterpolationComponent` lerps them toward each arriving position, picking the nearest wrapped copy of the target so crossing the world's wrap seam looks like normal walking instead of a map-wide teleport.
+Movement is **client-authoritative physics with server-canonicalized reporting**. Your `LocalPlayer` moves itself with plain Godot physics — the server is never in the input loop. Several times a second (and instantly on every start/stop), the client calls the `report_movement` reducer with its position plus its *actual* movement encoded as an angle and a scalar speed. The server wraps the position onto the torus, recomputes which hex chunk you're in, clamps the speed to your gear-resolved cap, and stores the row. Every other client subscribes to an area-of-interest view of those rows, spawns a puppet per nearby player, and each frame extrapolates the puppet's last reported position by its last reported velocity (dead reckoning) while lerping toward it. Facing/camera rotation streams on its own faster channel in a separate table. Because the world is a torus, all distance and position comparisons on both sides go through a "nearest wrapped copy" trick so nothing ever snaps when you cross a map seam.
 
 ## Flowcharts
 
-- [[flowcharts/main-movement.canvas]] — the composed movement flow (the movement components and their scenes, the local/remote player scripts, the torus math, and the server's `player` and `world` modules).
-![[flowcharts/main-movement.canvas]]
-- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas]] — deep dive: `PositionSyncComponent.cs` and `InterpolationComponent.cs`.
-- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/Remote_subfolder.canvas]] — deep dive: `RemotePlayer.cs`.
-- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas]] — deep dive: `hex.rs`, `wrap.rs`, `aoi.rs` (the chunk/wrap math `report_movement` and the AOI views share).
+- [[flowcharts/main-movement.canvas]] — the composed movement flow (client movement components, both player scenes, server `player/` + `world/`).
+- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas]] — `PositionSyncComponent` + `InterpolationComponent` symbol-level deep dive.
+- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/TorusMath_codefile/TorusMath_codefile.canvas]] — the torus nearest-candidate math.
+- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile.canvas]] — the AOI views (`nearby_remote_players`, `nearby_remote_player_rotations`, `nearby_indices`).
 
 ## System flowchart
 
@@ -47,85 +44,163 @@ Movement is **client-authoritative with a server relay**. Your `LocalPlayer` rea
 ![[00 End-to-End Timeline Flowchart#^move-6{seamless:true,title:false,marker:06.}]]
 ```
 
+```sync
+![[00 End-to-End Timeline Flowchart#^move-7{seamless:true,title:false,marker:07.}]]
+```
+
 ## Main body
 
-### Your movement never leaves your machine
+### The shape of the system: report out, mirror in
+
+Position sync runs in two asymmetric directions, and keeping them straight is the key to reading the code.
+
+**Outbound (your client → server):** your machine owns your character's physics entirely. Nothing asks the server "may I move here?". Instead, after the fact, the client *reports* where it ended up by calling a **reducer** — SpacetimeDB's only mutation path, a transactional remote function that returns nothing. The two movement reducers are [[server/spacetimedb/src/player/reducers.rs#report_movement#1|report_movement]] (position + movement state) and [[server/spacetimedb/src/player/reducers.rs#report_screen_rotation#1|report_screen_rotation]] (facing angle only).
+
+**Inbound (server → every client):** clients never query for positions. They *subscribe* to **views** — per-client filtered queries the server keeps live — and the SDK mirrors matching rows into a local client cache, firing insert/update/delete callbacks as rows change. Your own row arrives through [[server/spacetimedb/src/player/views.rs#local_player_position#1|local_player_position]]; everyone else's through the AOI views [[server/spacetimedb/src/player/views.rs#nearby_remote_players#1|nearby_remote_players]] and [[server/spacetimedb/src/player/views.rs#nearby_remote_player_rotations#1|nearby_remote_player_rotations]]. On the client, no script hooks those callbacks directly: each consuming component owns a child `TableBinderComponent` that re-exposes one table's row events as editor-wireable Godot signals, and the wiring lives in the scene files (`local_player.tscn`, `non_local_player.tscn`).
+
+Three server tables carry the whole system, all in [[server/spacetimedb/src/player/tables.rs#PlayerPosition#1|player/tables.rs]]:
+
+- `PlayerPosition` — one row per profile: `x`, `y`, `movement_direction` (angle), `movement_speed` (scalar), and a btree-indexed `chunk_index`. Updated on every `report_movement` call.
+- `PlayerRotation` — one row per profile: `screen_rotation` plus a `chunk_index` mirrored from the position row. Split into its own table *because* rotation needs a faster cadence than movement — if it rode on `PlayerPosition`, either camera-facing would lag at the movement rate or the position row would churn at the rotation rate.
+- `PlayerChunk` — one row per profile: just the chunk coordinates `(chunk_q, chunk_r)`, rewritten **only when the chunk actually changes**. This row exists so the AOI views can key off it and recompute only on real chunk crossings instead of on every movement report — the table's own comment says exactly this, and the server `AGENTS.md` elevates it to a rule: never "simplify" an AOI view to read `PlayerPosition`.
+
+All three rows are created at join time by [[server/spacetimedb/src/player/methods.rs#try_scaffold_profile#1|try_scaffold_profile]], which places every new profile at world origin `(0, 0)` with zero movement and the chunk containing the origin.
+
+### Local movement: plain physics, server-priced speed
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^move-1{seamless:true,title:false,marker:01.}]]
 ```
 
-Two design facts fall out of this step. First, **the server trusts the client completely**: nothing in `report_movement` checks speed, teleports, or collision — whatever x/y arrives gets wrapped and stored. That's a deliberate simplicity call for a co-op roguelike (no server physics to keep in lockstep), and its cost is documented in Known gaps. Second, the **Speed stat is applied on the client**: `LocalPlayer` multiplies input by `Speed * SpeedPerStat` where Speed comes from the server-computed `PlayerStats` row (its flat/mult pipeline is [[10 Inventory, Items & Enchantments]]), so equipment that buffs Speed genuinely makes you faster — but the enforcement is honor-system, since the server never validates the positions that result.
+Godot runs a fixed-rate physics step and calls `_PhysicsProcess` on every physics body each tick. [[client/Scripts/Players/Local/LocalPlayer.cs#_PhysicsProcess#1|LocalPlayer._PhysicsProcess]] is the entire input-to-motion pipeline: read the four movement actions as a vector, rotate it by the camera rig's yaw so "up" on the keyboard always means "up" on screen, multiply by a speed, assign the body's `Velocity`, and call `MoveAndSlide()` — Godot's built-in "move and resolve wall collisions" for `CharacterBody2D`. While any movement key is held, the node's `Rotation` is pinned to the camera yaw (so the sprite faces screen-up relative to the camera).
 
-The yaw rotation deserves a word: input is rotated by the camera rig's yaw so controls stay camera-relative while the camera spins ([[11 Camera & Presentation]] owns the rig), and while any movement key is held the body's `Rotation` is set to that same yaw — which is the value later reported to the server and used by remote clients as the puppet's facing (move-6).
+The speed is the one server-flavored ingredient, and it's worth unpacking *because* it shows how the server stays authoritative without being in the input loop. `LocalPlayer` reads `positionSync?.CurrentSpeed` each physics frame, where [[client/Scripts/Components/Movement/PositionSyncComponent.cs#CurrentSpeed#1|PositionSyncComponent.CurrentSpeed]] computes:
 
-### The 10 Hz heartbeat
+```
+CurrentSpeed = BaseSpeed × speedScale × (SlowHeld ? SelfSlowFactor : 1)
+```
+
+- `BaseSpeed` is the server-resolved move-speed cap from the `PlayerData.base_speed` row (mirrored locally by `LocalPlayerDataComponent`), defaulting to the [[server/spacetimedb/src/main/global.rs#BASE_SPEED#1|BASE_SPEED]] constant of 100 world units/sec. Items raise it via the modifier-only `StatKind.BaseSpeed`; it is never allocatable with skill points. The `100f` fallback in code only applies before the first data row arrives.
+- `speedScale` is a *persistent, client-side* player setting: Ctrl+scroll (`increase_move_speed`/`decrease_move_speed`) steps it by `SpeedStep` (0.1), clamped to `[MinSpeedScale, 1]` = [0.1, 1]. It can only ever *lower* you below the server cap.
+- `self_slow` (hold R) multiplies by `SelfSlowFactor` = 0.4 — the classic bullet-hell "focus mode" for fine dodging.
+
+So the server sets the ceiling, the player chooses how far under it to cruise, and the local physics integrate the result with zero network involvement.
+
+### Reporting: angle + speed, on a timer plus on edges
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^move-2{seamless:true,title:false,marker:02.}]]
 ```
 
-[[PositionSyncComponent.cs##public partial class PositionSyncComponent : Component|PositionSyncComponent]] owns both directions of local position sync — the doc-02 pattern of "one component per server-table concern", declared inline in `local_player.tscn` with its binder child and two `[connection]` entries (`RowInserted`/`RowUpdated`). The reporting loop is a plain accumulator: add `delta`, fire at `ReportInterval`, reset to zero. Resetting to zero (rather than subtracting the interval) discards the per-frame overshoot, so the true rate is a hair under 10 Hz — irrelevant at this cadence, but it means reports are not evenly spaced.
+[[client/Scripts/Components/Movement/PositionSyncComponent.cs#ReportNow#1|PositionSyncComponent.ReportNow]] is the outbound heart. Its most important design decision is *what it sends*: not a velocity vector, and never a value derived from facing, but the body's **actual** current `Velocity` decomposed into an angle (`velocity.Angle()`) and a scalar (`velocity.Length()`). Two details fall out of that:
 
-Note what is *not* here: there is no dirty check and no rate adaptation. Standing still for an hour produces 36,000 identical reducer calls, each rewriting the `PlayerPosition` row and re-echoing it to every subscriber. The row's `chunk_index` is what shields the expensive consumers (AOI views key off `PlayerChunk`, move-3), but the view itself still re-evaluates per call.
+1. **Zero speed when idle, last direction retained.** When you stop, speed reports as 0 but `lastMovementDirection` keeps its previous value (the `if (speed > 0.001f)` guard only overwrites it while moving). Remote puppets reconstruct `velocity = direction × speed` from the pair for dead reckoning, so a puppet of an idle player gets a zero vector and stands still. The code comments on both sides record why: an earlier version invented velocity from the facing angle, which meant idle puppets kept drifting in whatever direction they faced — the "constant-drift bug".
+2. **The report is a state snapshot, not a delta.** Each call carries the full current `(x, y, direction, speed)`, so a lost or delayed packet costs nothing — the next report fully re-syncs.
 
-### The server canonicalizes, then keeps two clocks
+Reports fire from [[client/Scripts/Components/Movement/PositionSyncComponent.cs#_PhysicsProcess#1|PositionSyncComponent._PhysicsProcess]] on two triggers:
 
-```sync
-![[00 End-to-End Timeline Flowchart#^move-3{seamless:true,title:false,marker:03.}]]
-```
+- **A timer.** `reportTimer` accumulates `delta` and fires `ReportNow` every `ReportInterval` seconds. The default is 0.1 s (10 Hz), but `local_player.tscn` overrides the export to **1.0 s** — the shipped cadence is 1 Hz.
+- **Edges, via `reportNextFrame`.** Movement-key presses *and* releases, Ctrl+scroll speed changes, and `self_slow` press/release all set a flag that triggers a report on the next physics frame. The one-frame deferral exists because `LocalPlayer._PhysicsProcess` integrates `Velocity` earlier in the frame than this child component runs — reporting immediately would send the *previous* frame's velocity, so a key release would report "still moving". Deferring one frame guarantees the report reflects the new input. This is what makes starts and stops appear on remote screens instantly instead of up to a second late.
 
-The reducer's first job is making the position canonical. `wrap_world_pos` computes which chunk the raw x/y falls in, Euclidean-wraps the chunk coords into the grid, and — only if they changed — shifts x/y by whole **lap vectors**: the world-space displacement of one full traversal of the grid in the q or r axis, derived from `chunk_center_hex`/`hex_to_world`. Shifting by whole laps is what makes the wrap invisible: the position moves to a different *representative* of the same torus point without changing where it sits relative to the hex grid. One edge case: the config comes from [[server/spacetimedb/src/world/tables.rs##pub fn load|MapConfig::load]](ctx, 0, 0), so if the `MapConfig` row were ever missing, the zero fallback makes `wrap_world_pos` early-return and positions accumulate unwrapped (in practice `init` upserts the row at publish, boot-5).
+`ReportInterval` also has an event-driven mode: set it to `-1` and the timer comparison never fires, leaving key edges as the only reports (a held key then sends nothing until release). No shipped scene uses it — `local_player.tscn` sets 1.0 — but the mode is implemented and documented in the export's comment.
 
-The second job is the two-clock split. `PlayerPosition` is the fast clock — rewritten every call, carrying x/y/rotation plus a btree-indexed `chunk_index`. `PlayerChunk` is the slow clock — same chunk, stored as (q, r), touched only on crossings. The reason for paying a whole extra row is stated in the comment above [[server/spacetimedb/src/player/tables.rs##pub struct PlayerChunk|PlayerChunk]] and restated at [[server/spacetimedb/src/player/views.rs##pub(crate) fn nearby_indices_from_chunk|nearby_indices_from_chunk]]: SpacetimeDB views re-evaluate when the rows they read change, so a view keyed on `PlayerPosition` would recompute ten times a second per moving player, while one keyed on `PlayerChunk` recomputes only when someone crosses a chunk boundary.
-
-`spiral_chunk_index` is what makes a hex grid indexable: it maps 2D axial chunk coords to a single bijective `i64` by walking rings outward from the origin (ring ρ starts at `3ρ(ρ−1)+1`, then an arm/step pair locates the chunk within its ring). AOI views need *equality* comparisons — an OR-chain over a candidate set — and "is this chunk in my ring?" isn't expressible as a range query on axial coordinates, so every chunk gets one dense scalar id instead.
-
-### The torus, once
-
-The world is a 6×6 grid of hex chunks whose edges are glued together: walk off the east edge and you reappear on the west. Topologically that's a torus, and it has one consequence that shapes every position comparison in the game — **there is no single true coordinate for anything**. The stored, canonical position lives in one arbitrary copy of the world; the same point also exists at canonical ± lapQ, ± lapR, and every combination thereof.
-
-The client and server pick different representatives on purpose. The server always canonicalizes (move-3). The local `LocalPlayer` instead runs in an **unbounded continuous frame**: it never wraps its own `GlobalPosition`, so walking three laps east just keeps increasing x — physics, camera, and input never feel a seam. The price is that any comparison between the local frame and a server position is meaningless until you pick matching copies, which is exactly what [[TorusMath.cs##public static Vector2 NearestCandidate|TorusMath.NearestCandidate]] does: try the canonical position and its 8 lap-shifted neighbors (±lapQ, ±lapR, and the four diagonal combinations), return whichever is closest to a reference point. The lap vectors themselves are server-computed, stored on the `MapConfig` row at world setup (boot-5), and mirrored client-side into [[GameManager.cs##public static Vector2 LapQ|GameManager.LapQ]]/[[GameManager.cs##public static Vector2 LapR|LapR]] (conn-4). The server has the mirror-image helper, [[server/spacetimedb/src/world/wrap.rs##pub fn wrapped_distance_sq|wrapped_distance_sq]], which checks the same 9 combinations for distance comparisons.
-
-### The echo is a sanity check, not a puppet string
+### The rotation side-channel
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^move-4{seamless:true,title:false,marker:04.}]]
 ```
 
-The round trip is: report (move-2) → row update (move-3) → view re-evaluation → binder `RowUpdated` → handler. Naively you'd expect the client to snap itself to whatever the echo says — that would rubber-band the player every 100 ms, since the echo is always ~one network round trip stale. Instead [[PositionSyncComponent.cs##private void OnPositionRowUpdated|OnPositionRowUpdated]] treats the echo as a desync detector: unwrap the server position into the local frame with `NearestCandidate`, and only if the closest copy is *still* beyond `WrapSnapThreshold` (50 units — several player widths) conclude the positions genuinely disagree and hard-set. Routine wraps, latency, and frame jitter all stay far under the threshold, so in steady state the handler is a no-op that runs ten times a second. The initial-placement path is separate: the binder's `ReplayExistingRows` guarantees the first cached row fires `RowInserted`, and [[PositionSyncComponent.cs##private void OnPositionRowInserted|OnPositionRowInserted]] applies it unconditionally — that's how a rejoining player lands at their saved position instead of world origin (join-2 parked the row there; every report since kept it current).
+Facing (which way the character and its camera are turned) streams on its own faster timer *because* a rotating camera makes stale facing far more visible than stale position. A second accumulator fires `ReportScreenRotation(node.Rotation)` every `RotationReportInterval` (0.033 s, ~30 Hz) — but only when the facing actually changed by more than `RotationEpsilon` (0.001 rad) since the last report, so a stationary player costs zero rotation traffic. The first report after spawn always fires (`lastReportedScreenRotation` starts as `NaN`, which fails every epsilon comparison).
 
-### AOI: two chunk rings, one OR-chain
+### Server: canonicalize, clamp, store
+
+```sync
+![[00 End-to-End Timeline Flowchart#^move-3{seamless:true,title:false,marker:03.}]]
+```
+
+The server treats every report as untrusted input and runs three normalizations in [[server/spacetimedb/src/player/reducers.rs#report_movement#1|report_movement]]:
+
+1. **Wrap.** The reported `(x, y)` passes through [[server/spacetimedb/src/world/wrap.rs#wrap_world_pos#1|wrap_world_pos]], which maps any continuous position back into the canonical lap of the torus (details in the torus section below). The server *stores* only canonical positions; clients handle their own local continuity.
+2. **Chunk recompute.** [[server/spacetimedb/src/world/hex.rs#world_to_chunk#1|world_to_chunk]] converts the wrapped position to a chunk coordinate (it maps world → hex via the `hexx` crate, then the hex to its parent chunk at `chunk_hex_radius` resolution), and [[server/spacetimedb/src/world/hex.rs#spiral_chunk_index#1|spiral_chunk_index]] flattens the 2D chunk coordinate into a single bijective `i64` — the `chunk_index` column every AOI view filters on.
+3. **Speed clamp.** The reported `movement_speed` is clamped into `[0, base_speed]` where `base_speed` is the resolved `PlayerData.base_speed` (gear included), falling back to `BASE_SPEED` if the data row is somehow missing. Since the client's own `CurrentSpeed` formula can never exceed the cap, anything above it is a cheat or a bug — and the clamp silently neutralizes it rather than rejecting the whole report (position is still accepted; teleport-reporting is not policed at all — the server has no movement validation beyond this).
+
+The reducer then updates the `PlayerPosition` row, and — the load-bearing subtlety — rewrites the `PlayerChunk` row **only if `(chunk_q, chunk_r)` actually changed**. Because every AOI view keys off `PlayerChunk` (see below), this is the line that makes subscription churn happen on chunk crossings instead of on every report.
+
+[[server/spacetimedb/src/player/reducers.rs#report_screen_rotation#1|report_screen_rotation]] is simpler: it updates `PlayerRotation.screen_rotation`, copying `chunk_index` from the current position row so the rotation AOI view filters identically to the position one. The two tables never disagree about which chunk you're in *because* rotation never computes its own chunk.
+
+### The torus: why nothing ever snaps at the edge
+
+The world is a finite hex-chunk grid (`DEFAULT_CHUNK_COLS` × `DEFAULT_CHUNK_ROWS` = 6 × 6 chunks) whose *continuous* space wraps: walk off one edge and you reappear on the opposite one. Topologically it's a torus; the hex grid itself is not wrapped (chunk coordinates wrap via [[server/spacetimedb/src/world/wrap.rs#wrap_chunk_coords#1|wrap_chunk_coords]]'s `rem_euclid`, and continuous positions wrap by whole "lap" vectors).
+
+The consequence that shapes all the code: **a stored canonical position has infinitely many equivalent on-screen copies** — itself, plus itself shifted by ±`LapQ`, ±`LapR`, and the four diagonal combinations. The lap vectors are the world-space displacement of one full grid traversal in each axis, precomputed server-side and published on the singleton [[server/spacetimedb/src/world/tables.rs#MapConfig#1|MapConfig]] row (`lap_q_x/y`, `lap_r_x/y`) precisely so clients don't re-derive the hex-of-hexes math. The client's [[client/sstdbsdk/TableSubscriber.cs#LapQ#1|TableSubscriber]] mirrors them into `LapQ`/`LapR` from the subscribed `MapConfig` row, and `GameManager` re-exposes them as statics.
+
+Both sides then use the same "nearest candidate" trick wherever a stored position meets a live reference point:
+
+- **Client:** [[client/Scripts/World/TorusMath.cs#NearestCandidate#1|TorusMath.NearestCandidate]] checks the canonical position plus all 8 lap-shifted copies and returns whichever is closest to a reference (the local player, the camera, a puppet). Rendering and interpolation always work with the nearest copy, so crossing a seam looks continuous and nothing teleports across the map.
+- **Server:** [[server/spacetimedb/src/world/wrap.rs#wrapped_distance_sq#1|wrapped_distance_sq]] mirrors the same 9-candidate check (a 3×3 loop over lap combinations) wherever it compares distances between two world points — e.g. an offset from a chunk center can cross a seam even when the center itself is canonical, and plain Euclidean distance would silently never match.
+
+The threshold that decides "routine wrap" from "real desync" is `WrapSnapThreshold` (50 world units): if even the *nearest* copy of the server's position is farther than that from where the client thinks things are, it's lag, rubber-banding, or a teleport — snap; otherwise keep interpolating.
+
+### AOI: who sees your rows
+
+Your position row is `public`, but no client downloads the whole table — *because* every movement-relevant view filters to the caller's area of interest. The shared helper [[server/spacetimedb/src/player/views.rs#nearby_indices#1|nearby_indices]] looks up the caller's `PlayerChunk` (deliberately not `PlayerPosition` — see above) and expands it to the surrounding chunk ring via [[server/spacetimedb/src/world/aoi.rs#surrounding_chunk_indices#1|surrounding_chunk_indices]]: `Hex::range(rings)` around the caller's chunk with [[server/spacetimedb/src/main/global.rs#DEFAULT_AOI_CHUNK_RADIUS#1|DEFAULT_AOI_CHUNK_RADIUS]] = 2 (19 chunks: `1 + 3R(R+1)`), each coordinate wrapped onto the grid and converted to its spiral `chunk_index`, deduplicated.
+
+[[server/spacetimedb/src/player/views.rs#nearby_remote_players#1|nearby_remote_players]] then filters `PlayerPosition` to rows whose `chunk_index` is in that set. Two SpacetimeDB 2.x view idioms are on display, *because* the query builder has no `IN` operator and a view must always return a query:
+
+- The `IN` is an **OR-chain**: seed with `chunk_index == indices[0]`, fold `.or(chunk_index == idx)` for the rest.
+- The empty case returns a **sentinel query** (`profile_id == u64::MAX`, matching nothing) built up front, instead of returning early with nothing.
+
+A `left_semijoin` against `LoggedInPlayer` keeps only positions of players currently in the world — which is what stops the "ghost rows" of logged-out players (their `PlayerPosition` rows persist until teardown; see [[13 Disconnect & Teardown]]) from spawning puppets. Note the semijoin does **not** exclude the caller: your own position row is in the result set too, and the *client* filters self out at spawn time — [[client/Scripts/Components/Spawning/EntitySpawnerComponent.cs#OnNearbyRemotePlayerInsert#1|EntitySpawnerComponent.OnNearbyRemotePlayerInsert]] skips any row whose `PlayerId` passes the `DatabaseConnector.IsLocal` identity check. [[server/spacetimedb/src/player/views.rs#nearby_remote_player_rotations#1|nearby_remote_player_rotations]] is the same view over `PlayerRotation` — identical filter, faster-changing table.
+
+The net effect, combined with the `PlayerChunk` write-on-crossing rule: standing still costs you one 1 Hz row update visible to a fixed set of subscribers, and crossing a chunk boundary silently re-computes everyone's AOI — inserts for the chunks you gained, deletes for the ones you lost, on every nearby client.
+
+### Remote puppets: reconstruct, extrapolate, lerp
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^move-5{seamless:true,title:false,marker:05.}]]
 ```
 
-The view is caller-scoped like the lobby views from doc 04, but scoped by *space* instead of identity: `nearby_indices_from_chunk` resolves the caller's profile → `PlayerChunk` → chunk coords, and `surrounding_chunk_indices` expands those into every chunk within `DEFAULT_AOI_CHUNK_RADIUS` (2) rings, wrapping ring cells around the torus and re-indexing each to its spiral id. The view then builds `chunk_index == i0 OR chunk_index == i1 OR …` over that set and semijoins `logged_in_player` so only in-world players (not logged-out ghosts — [[13 Disconnect & Teardown]]) match. A caller with no in-world row gets a deliberately empty query (`profile_id == u64::MAX`, the doc-05 impossible-id pattern), so the view is safe to subscribe before `join_world` commits.
+A remote player exists on your screen as a `RemotePlayer` — the `Node2D` root of `non_local_player.tscn`, spawned by `EntitySpawnerComponent` when a `NearbyRemotePlayers` row inserts (doc 05 covers spawning). It's deliberately thin glue; the scene wires two child binders (`NearbyRemotePlayersBinder`, `NearbyRemotePlayerRotationsBinder`, both declared inline in `non_local_player.tscn`) whose `RowUpdated` signals land on [[client/Scripts/Players/Remote/RemotePlayer.cs#OnPositionRowUpdated#1|RemotePlayer.OnPositionRowUpdated]] and [[client/Scripts/Players/Remote/RemotePlayer.cs#OnRotationRowUpdated#1|OnRotationRowUpdated]]. Both handlers filter by `PlayerId` *because* a binder fires for every row update in its table, not just this puppet's row.
 
-The client half is split across two nodes, and the split matters. The *spawner's* binder (join-5, wired in `main.tscn`) sees inserts/deletes — entering or leaving the ring — and creates/destroys `RemotePlayer` nodes. Each *spawned* `RemotePlayer` then carries its own `NearbyRemotePlayersBinder` ([[non_local_player.tscn##[node name="NearbyRemotePlayersBinder" type="Node" parent="."|non_local_player.tscn]], no replay, only `RowUpdated` wired) that receives the 10 Hz position stream for the *whole* nearby set and discards everything whose `PlayerId` isn't its own. So position fan-out is per-puppet filtering of a shared feed, not a per-player subscription. The initial position comes from the spawner's insert row itself ([[EntitySpawnerComponent.cs##private void OnNearbyRemotePlayerInsert|OnNearbyRemotePlayerInsert]] sets `GlobalPosition` before adding the node); the puppet's binder only ever handles updates, which arrive within 100 ms anyway.
+`OnPositionRowUpdated` reconstructs `velocity = Vector2.FromAngle(movement_direction) × movement_speed` — the inverse of the sender's decomposition, which is why the angle+speed encoding round-trips exactly — and hands position + velocity to [[client/Scripts/Components/Movement/InterpolationComponent.cs#SetTarget#1|InterpolationComponent.SetTarget]]. From there the per-frame math in `_Process` is:
 
-[[RemotePlayer.cs##private void OnPositionRowUpdated|RemotePlayer.OnPositionRowUpdated]] also fabricates a **velocity** the server never sent: it reads the puppet's `PlayerStats` for Speed and multiplies by the reported rotation's direction vector. The intent is extrapolation — between 10 Hz updates, keep drifting the target along the last known heading. What actually happens today is in Known gaps.
+```
+target_canonical = last reported position + velocity × time since report   (dead reckoning)
+target           = NearestCandidate(target_canonical, my position)          (torus fix)
+position         = Lerp(position, target, LerpSpeed × delta)                (10/s smoothing)
+rotation         = LerpAngle(rotation, rotationTarget, LerpSpeed × delta)
+```
 
-### Interpolation: living a fraction of a second in the past
+**Dead reckoning** — extrapolating the last known velocity forward between reports — is what makes a 1 Hz report cadence look like continuous motion: between reports the target itself keeps moving, and the lerp just trails it. `Moving` (true while the puppet is more than 1 unit from its target) drives the sprite's Walk/Idle animation in [[client/Scripts/Components/Visual/RemoteVisualComponent.cs#_Process#1|RemoteVisualComponent._Process]]. The scene sets `WrapSnapThreshold = 50.0` on the instanced `InterpolationComponent` in `non_local_player.tscn`, so `SetTarget` hard-snaps the puppet when even the nearest wrapped copy of the target is implausibly far (a real teleport/desync), while routine wraps are absorbed by the per-frame nearest-candidate pick.
+
+The puppet's visuals come from a deliberate exception to the binder pattern: [[client/Scripts/Players/Remote/RemotePlayer.cs#_Ready#1|RemotePlayer._Ready]] does a one-shot `Iter()` over the `NearbyRemotePlayersProfiles` client cache to find its profile row and calls [[client/Scripts/Components/Visual/RemoteVisualComponent.cs#SetTexture#1|RemoteVisualComponent.SetTexture]], which resolves the `texture_id` through the catalog and loads the `SpriteFrames`. This works as a plain cache read because that view is *not* AOI-filtered (see Known gaps) — the profile row is guaranteed present even though the player might be at the edge of the AOI.
+
+`InterpolationComponent` is deliberately shared: `Enemy` uses the same component with position-only targets and no snap threshold (doc 08) — the component's doc comment notes it absorbed lerp logic that `RemotePlayer` and `Enemy` used to carry inline.
+
+### Your own row's echo: advisory, not authoritative
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^move-6{seamless:true,title:false,marker:06.}]]
 ```
 
-If remote puppets snapped to each arriving position you'd see 10 Hz teleport-stutter. [[InterpolationComponent.cs##public partial class InterpolationComponent : Component|InterpolationComponent]] (instanced into `non_local_player.tscn` from `interpolation_component.tscn` — a live scene reference, not one of the nine unreferenced duplicates) instead turns the position stream into motion: each frame it advances the target by `snapVelocity * timeSinceSnap` (dead reckoning), converts the extrapolated target into the puppet's frame via `NearestCandidate`, then eases toward it with `Lerp(current, target, LerpSpeed * delta)`. The lerp is frame-rate independent in spirit — `LerpSpeed * delta` is a per-second weight — so the remaining gap decays exponentially and the puppet trails the server by a small, smooth lag rather than a fixed offset. Rotation gets the same treatment through `LerpAngle`, which interpolates the short way around the circle.
+Because you subscribe to `local_player_position`, your own reports echo back to you through the `LocalPlayerPositionBinder` child of `PositionSyncComponent` (wired in `local_player.tscn`, `ReplayExistingRows = true` so the row already in cache at bind time replays through the insert path). The two handlers treat the echo very differently:
 
-The wrap handling is the subtle part: because the *candidate pick happens every frame*, a target that crosses a lap seam never produces a snap — the nearest copy glides continuously from one side of the canonical world to the other. Snapping is reserved for `WrapSnapThreshold` (50 units, set on the instance in [[non_local_player.tscn##WrapSnapThreshold = 50.0|non_local_player.tscn]]): if even the nearest copy of a fresh target is impossibly far, that's a teleport or a lost-threads desync and the puppet jumps ([[InterpolationComponent.cs##public void SetTarget(Vector2 position, float rotation, Vector2 velocity = default)|SetTarget]]). `Enemy` reuses the same component with position-only targets and the default threshold of 0 — enemies teleport-snap never, because their server sim moves them continuously (see [[08 Enemies & AI]]).
+- **Insert = initial placement.** [[client/Scripts/Components/Movement/PositionSyncComponent.cs#OnPositionRowInserted#1|OnPositionRowInserted]] hard-sets `GlobalPosition` to the row — this is how a joining player lands at the scaffolded origin.
+- **Update = desync check only.** [[client/Scripts/Components/Movement/PositionSyncComponent.cs#OnPositionRowUpdated#1|OnPositionRowUpdated]] never copies the server's position. Your local `GlobalPosition` is a *continuous, unbounded* reference frame (it drifts ever further from the canonical `[0, lap)` range as you lap the torus, and the physics don't care), while the server stores only the wrapped canonical. Forcing one onto the other would snap you across the map at every seam crossing. Instead the handler asks: is even the *nearest wrapped copy* of the server's position farther than `WrapSnapThreshold` (50) from me? Only then — genuine desync, not a routine wrap — does it hard-correct to that nearest copy (and currently prints a `[Desync]` debug line; see Known gaps).
 
-The puppet's sprite is the last consumer of this machinery: [[RemoteVisualComponent.cs##public partial class RemoteVisualComponent : VisualComponent|RemoteVisualComponent]] plays `"Walk"` whenever `Moving` is true (more than 1 unit from the current target) and `"Idle"` otherwise, and its texture comes from the profile the puppet looked up at spawn — [[RemotePlayer.cs##public override void _Ready()|RemotePlayer._Ready]] scans the `NearbyRemotePlayersProfiles` cache for its `ProfileId` and calls [[RemoteVisualComponent.cs##public void SetTexture(string textureId)|SetTexture]], resolving the texture id through the base-wave catalog (conn-4).
+This is the same nearest-candidate rule the puppets use, applied in the opposite direction: puppets chase the server's canonical position from a continuous local one; you ignore the canonical position unless it implies you're truly lost.
+
+```sync
+![[00 End-to-End Timeline Flowchart#^move-7{seamless:true,title:false,marker:07.}]]
+```
 
 ## Known gaps / stubs
 
-- **`nearby_remote_players_profiles` is not AOI-filtered, despite the name.** [[server/spacetimedb/src/player/views.rs##fn nearby_remote_players_profiles|nearby_remote_players_profiles]] semijoins `player_profile` against *all* `logged_in_player` rows — no chunk filter at all (contrast [[server/spacetimedb/src/player/views.rs##fn nearby_remote_players(ctx|nearby_remote_players]], which runs the chunk OR-chain first). Every in-world client therefore downloads the profile — name, texture, aim settings — of *every* logged-in player, nearby or not. It's correctness-harmless (`RemotePlayer._Ready` just finds its `ProfileId` in a bigger-than-needed cache, and far-away profiles sit unused), but it leaks the full player list to every client and scales with total population, not neighborhood size.
-- **Leftover debug print on the desync path.** [[PositionSyncComponent.cs##private void OnPositionRowUpdated|OnPositionRowUpdated]] fires `GD.Print($"[Desync] …")` on every hard correction. Corrections should be rare, but any sustained desync spams the console at 10 Hz.
-- **Remote velocity extrapolation is dead code in practice.** [[RemotePlayer.cs##private void OnPositionRowUpdated|RemotePlayer.OnPositionRowUpdated]] computes `speed` from `conn.Db.PlayerStats.ProfileId.Find(ProfileId)` — but no subscription wave includes the raw `PlayerStats` table ([[TableSubscriber.cs##public static readonly string[] GameTables|GameTables]] carries only the caller-scoped `LocalPlayerStats` view), so the lookup always misses, speed is 0, and `InterpolationComponent`'s dead-reckoning always receives `Vector2.Zero`. Even if the table were subscribed, the extrapolation would still be wrong twice over: `RemotePlayer`'s [[RemotePlayer.cs##private const float SpeedPerStat = 4f|SpeedPerStat is 4f]] while real movement uses [[LocalPlayer.cs##private const float SpeedPerStat = 10f|10f]], and the direction vector assumes the reported rotation is the heading — but move-1 sets rotation to the *camera* yaw, which need not match the direction of travel.
-- **Movement is unvalidated.** `report_movement` accepts any coordinates the client sends (it wraps and stores them), so a modified client can teleport or move at arbitrary speed. There is no speed cap, no distance-per-report check, and no server-side collision — acceptable for a co-op prototype, but it's a cheat surface, not an oversight that types can catch.
+- **`nearby_remote_players_profiles` is not AOI-filtered despite its name.** [[server/spacetimedb/src/player/views.rs#nearby_remote_players_profiles#1|The view]] semijoins `PlayerProfile` against *all* `LoggedInPlayer` rows — every logged-in player's profile is in every client's cache, contrast `nearby_remote_players` which applies the AOI OR-chain first. In practice this is what makes `RemotePlayer._Ready`'s one-shot profile `Iter()` reliable, but the name lies about the filter and the table is larger than it needs to be.
+- **Leftover debug print in `PositionSyncComponent`.** The desync hard-correction in `OnPositionRowUpdated` still fires `GD.Print($"[Desync] …")` on every snap — fine for development, noise in production.
+- **The event-driven reporting mode is implemented but unwired.** `ReportInterval = -1` (report only on key edges) has full code support in `PositionSyncComponent`, but no scene sets it — `local_player.tscn` overrides the export to `1.0`, so the live cadence is 1 Hz timed plus edge-triggered.
+- **No server-side movement validation beyond the speed clamp.** `report_movement` accepts any reported position (wrapped, but not distance-checked against the previous row), so teleport-reporting is possible; only speed is clamped. Whether that's a gap or a deliberate trust decision is undocumented in the code.
 
 ## Where to go next
 
-The chunk grid these positions live on — hex layout, world generation, terrain streaming through `NearbyTerrainTiles`/`NearbyHexDecor` — is [[07 Terrain & World Streaming]]. The other big consumer of position rows is the enemy sim, which spawns and steers enemies against the same chunk/AOI machinery: [[08 Enemies & AI]].
+Chunk crossings are the same event that drives terrain streaming — read [[07 Terrain & World Streaming]] for what the AOI ring change inserts and deletes on the world side. [[08 Enemies & AI]] reuses `InterpolationComponent` for server-driven enemy puppets, where the *server* computes movement on a 100 ms tick instead of mirroring player reports. When you're done in the world, [[13 Disconnect & Teardown]] covers what happens to these rows on logout and death — including the ghost-row problem the AOI semijoins work around.

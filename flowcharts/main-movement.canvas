@@ -5,7 +5,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
 			"color": "5",
+			"x": 480,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b715f8cabe07b138",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/local_player_codefile/local_player_codefile.canvas",
+			"color": "5",
 			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e2a267a20ff56b88",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/non_local_player_codefile/non_local_player_codefile.canvas",
+			"color": "5",
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,38 +35,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
 			"color": "5",
-			"x": 0,
-			"y": 500,
+			"x": 130,
+			"y": 1000,
 			"width": 400,
 			"height": 400
 		},
 		{
-			"id": "048460f3ecc5ac34",
+			"id": "0bfa04cd733308ca",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
 			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "fe3cafe1dfc71c2a",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/Local_subfolder.canvas",
-			"color": "5",
-			"x": 920,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "f95bd4215b500416",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/Remote_subfolder.canvas",
-			"color": "5",
-			"x": 920,
-			"y": 500,
+			"x": 590,
+			"y": 1000,
 			"width": 400,
 			"height": 400
 		},
@@ -55,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/World_subfolder.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,8 +65,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 690,
-			"y": 1000,
+			"x": 0,
+			"y": 1500,
 			"width": 400,
 			"height": 400
 		},
@@ -75,8 +75,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
 			"color": "5",
-			"x": 690,
-			"y": 1500,
+			"x": 0,
+			"y": 2000,
 			"width": 400,
 			"height": 400
 		}
@@ -92,6 +92,60 @@
 			"label": "script"
 		},
 		{
+			"id": "cb31c853da95776e",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "0bfa04cd733308ca",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "b63b603e7870e31c",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "1d60b7451412fc10",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "577b24018954304a",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "4d4dd83955c4b42a",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "0bfa04cd733308ca",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "6b0f0bd6a2bd9f68",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "773ad628851456c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "scene"
+		},
+		{
+			"id": "128cb08f385ea2da",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
 			"id": "d6b2486fee4cd478",
 			"fromNode": "1d60b7451412fc10",
 			"fromSide": "bottom",
@@ -101,8 +155,8 @@
 			"label": "rpc"
 		},
 		{
-			"id": "f41bc88b06ba2122",
-			"fromNode": "f95bd4215b500416",
+			"id": "0657c0ad473cd6b6",
+			"fromNode": "0bfa04cd733308ca",
 			"fromSide": "bottom",
 			"toNode": "23ad101c7f63b520",
 			"toSide": "top",

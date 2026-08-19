@@ -22,15 +22,19 @@ public partial class RemotePlayer : Node2D, IEntity
 	public IComponent? GetComponent(System.Type type) => componentRegistry.Get(type);
 	public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
 
-	// Flat move speed, mirroring LocalPlayer.MoveSpeed — there is no Speed stat anymore.
-	private const float MoveSpeed = 100f;
+	// Velocity is reconstructed from the server row's movement_direction + movement_speed
+	// (real, reported; speed is 0 when the player is idle) — never invented from facing,
+	// which caused the constant-drift bug.
 
-	/// Child binder (declared in non_local_player.tscn) feeding NearbyRemotePlayers position rows.
+	/// Child binders (declared in non_local_player.tscn) feeding NearbyRemotePlayers
+	/// position rows and NearbyRemotePlayerRotations screen-rotation rows.
 	private TableBinderComponent positionBinder = null!;
+	private TableBinderComponent rotationBinder = null!;
 
 	public override void _Ready()
 	{
 		positionBinder = GetNode<TableBinderComponent>("NearbyRemotePlayersBinder");
+		rotationBinder = GetNode<TableBinderComponent>("NearbyRemotePlayerRotationsBinder");
 
 		var conn = GameManager.Conn;
 		if (conn == null) return;
@@ -48,7 +52,15 @@ public partial class RemotePlayer : Node2D, IEntity
 		var position = (PlayerPosition)positionBinder.LastRow!;
 		if (position.PlayerId != PlayerId) return;
 
-		var velocity = new Vector2(Mathf.Cos(position.Rotation), Mathf.Sin(position.Rotation)) * MoveSpeed;
-		GetComponent<InterpolationComponent>()?.SetTarget(new Vector2(position.X, position.Y), position.Rotation, velocity);
+		var velocity = Vector2.FromAngle(position.MovementDirection) * position.MovementSpeed;
+		GetComponent<InterpolationComponent>()?.SetTarget(new Vector2(position.X, position.Y), velocity);
+	}
+
+	private void OnRotationRowUpdated()
+	{
+		var rotation = (PlayerRotation)rotationBinder.LastRow!;
+		if (rotation.PlayerId != PlayerId) return;
+
+		GetComponent<InterpolationComponent>()?.SetScreenRotationTarget(rotation.ScreenRotation);
 	}
 }

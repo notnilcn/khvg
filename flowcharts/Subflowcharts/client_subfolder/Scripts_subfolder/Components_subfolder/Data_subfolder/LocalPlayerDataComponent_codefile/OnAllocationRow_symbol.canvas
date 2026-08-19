@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "9b6bca1d16094998",
+			"type": "file",
+			"file": "client/Scripts/Components/Data/LocalPlayerDataComponent.cs",
+			"subpath": "#OnAllocationRow",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

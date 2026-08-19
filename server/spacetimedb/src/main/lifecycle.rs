@@ -4,7 +4,7 @@ use crate::main::global::*;
 use crate::world::terrain::internal_generate_world_proc;
 use crate::player::tables::*;
 use crate::enemy::instance_tables::*;
-use super::seeds::{seed_default_textures, seed_layering_rules, seed_adjacency_rules, seed_decor_ground_rules, seed_default_enemies, seed_world_defs, seed_test_boss_p2, seed_test_boss_p3, seed_test_boss_p4, seed_test_boss_p5, seed_test_boss_p6};
+use super::seeds::{seed_default_textures, seed_layering_rules, seed_adjacency_rules, seed_decor_ground_rules, seed_default_enemies, seed_world_defs};
 use super::admin::internal_add_chunks;
 use crate::item::seeds::{seed_world_items, seed_world_enchantments};
 
@@ -27,11 +27,7 @@ pub fn init(ctx: &ReducerContext) {
     seed_adjacency_rules(ctx);
     seed_decor_ground_rules(ctx);
     seed_default_enemies(ctx);
-    seed_test_boss_p2(ctx);
-    seed_test_boss_p3(ctx);
-    seed_test_boss_p4(ctx);
-    seed_test_boss_p5(ctx);
-    seed_test_boss_p6(ctx);
+    crate::enemy::defs::gorgon_boss::seed(ctx);
     seed_world_items(ctx);
     seed_world_enchantments(ctx);
     seed_world_defs(ctx);

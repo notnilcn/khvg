@@ -1,9 +1,14 @@
 use spacetimedb::{table, SpacetimeType};
 
-#[derive(SpacetimeType, Clone)] pub struct RingParams { pub speed: f32, pub count: u32 }
-#[derive(SpacetimeType, Clone)] pub struct VolleyParams { pub speed: f32, pub count: u32, pub speed_variance: f32, pub angle_jitter: f32 }
+// `line` is the number of bullets stacked per fired direction (DanmakU's Arc.Of(Line)
+// composition): bullet j flies at `speed + line_speed_step * (j + 1)` — a speed ladder that
+// strings out into a line as it travels. line: 1 with line_speed_step: 0 = a single bullet
+// per direction at exactly `speed`. The client renders the ladder; the server only carries
+// the parameters.
+#[derive(SpacetimeType, Clone)] pub struct RingParams { pub speed: f32, pub count: u32, pub line: u32, pub line_speed_step: f32 }
+#[derive(SpacetimeType, Clone)] pub struct VolleyParams { pub speed: f32, pub count: u32, pub line: u32, pub line_speed_step: f32, pub speed_variance: f32, pub angle_jitter: f32 }
 #[derive(SpacetimeType, Clone)] pub struct CurtainParams { pub speed: f32, pub count: u32, pub angle_span: f32, pub gap_index: u32 }
-#[derive(SpacetimeType, Clone)] pub struct ShotgunParams { pub speed: f32, pub count: u32, pub spread: f32, pub speed_variance: f32, pub lifetime_variance: f32 }
+#[derive(SpacetimeType, Clone)] pub struct ShotgunParams { pub speed: f32, pub count: u32, pub line: u32, pub line_speed_step: f32, pub spread: f32, pub speed_variance: f32, pub lifetime_variance: f32 }
 #[derive(SpacetimeType, Clone)] pub struct ExplosionParams { pub speed: f32, pub count: u32, pub speed_variance: f32, pub lifetime_variance: f32 }
 
 #[derive(SpacetimeType, Clone)] pub struct WanderParams { pub speed: f32, pub active_duration: f32, pub pause_duration: f32 }
@@ -39,6 +44,10 @@ pub struct MovementDef {
     pub movement: MovementBehavior,
 }
 
+// `angular_speed` (degrees/second) curves bullets mid-flight; 0 = straight.
+// `speed_acceleration` (world units/second²) grows bullet speed over its lifetime
+// (DanmakuAcceleration in the source material); 0 = constant speed. Both are carried
+// through to BulletPatternEvent; the client renders them.
 #[table(accessor = single_step_def, public)]
 pub struct SingleStepDef {
     #[primary_key] #[auto_inc] pub def_id: u64,
@@ -50,9 +59,17 @@ pub struct SingleStepDef {
     pub texture_id: String,
     pub lifetime: f32,
     pub damage: u32,
+    pub angular_speed: f32,
+    pub speed_acceleration: f32,
     pub next_step_delay: f32,
 }
 
+// `angle_step` rotates each successive shot: at fire number `repeat_count` the step fires at
+// `base_angle_offset + angle_step * repeat_count`, with the origin offset rotated by the same
+// angle (an emitter riding a spinning arm). This is what expresses rotating/spiralling
+// emitters without unrolling steps by hand.
+// `repeat_target: 0` = fire forever (never advances to the next step) — the right shape for
+// continuously-firing emitters in HP-driven phases. (No legacy content uses 0.)
 #[table(accessor = repeat_step_def, public)]
 pub struct RepeatStepDef {
     #[primary_key] #[auto_inc] pub def_id: u64,
@@ -64,8 +81,11 @@ pub struct RepeatStepDef {
     pub texture_id: String,
     pub lifetime: f32,
     pub damage: u32,
+    pub angular_speed: f32,
+    pub speed_acceleration: f32,
     pub repeat_interval: f32,
     pub repeat_target: u32,
+    pub angle_step: f32,
     pub next_step_delay: f32,
 }
 
@@ -79,6 +99,8 @@ pub struct MultiShot {
     pub texture_id: String,
     pub lifetime: f32,
     pub damage: u32,
+    pub angular_speed: f32,
+    pub speed_acceleration: f32,
 }
 
 #[table(accessor = multi_step_def, public)]
@@ -95,10 +117,16 @@ pub enum SequenceStepDef {
     Multi(u64),
 }
 
+// `loop_delay` < 0: run once per phase cycle (the phase restarts when every attack in the
+// phase finishes — the original behavior). `loop_delay` >= 0: the sequence restarts itself
+// that many seconds after exhausting its steps, independently of the other attacks — a
+// self-contained emitter cadence (e.g. burst, pause, burst) that never gates or gets gated
+// by sibling sequences.
 #[derive(SpacetimeType, Clone)]
 pub struct AttackSequence {
     pub steps: Vec<SequenceStepDef>,
     pub start_delay: f32,
+    pub loop_delay: f32,
 }
 
 #[derive(SpacetimeType, Clone)]

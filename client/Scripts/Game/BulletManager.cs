@@ -3,7 +3,7 @@ using Godot;
 using SpacetimeDB.Types;
 
 /// <summary>
-/// Root of bullet_manager.tscn and the IEntity for the bullet components. Owns the
+/// Bullet entity root, declared inline in game.tscn, and the IEntity for the bullet components. Owns the
 /// reference to the BlastBullets2D BulletFactory2D child (a GDExtension node — stays a
 /// plain child, reached via [Export] NodePath instead of GetChild(0)); spawning lives in
 /// BulletSpawnerComponent and overlap routing in BulletHitRouterComponent. Keeps a static

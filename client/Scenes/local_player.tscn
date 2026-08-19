@@ -5,12 +5,16 @@
 [ext_resource type="PackedScene" uid="uid://c3lln0nygubmm" path="res://Assets/3D/characters/Knight.fbx" id="2_tfukw"]
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="7_g7ri8"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="8_tfukw"]
-[ext_resource type="PackedScene" uid="uid://cds1jjkirfii" path="res://Scenes/UI/inventory_panel.tscn" id="9_inv"]
 [ext_resource type="PackedScene" uid="uid://d1kw27sttw8j1" path="res://Scenes/Components/hit_zone.tscn" id="10_hit"]
+[ext_resource type="Script" uid="uid://qxrq17k705ef" path="res://Scripts/Components/Inventory/InventoryPanel.cs" id="10_qdkmc"]
+[ext_resource type="Script" uid="uid://701vhi4srkpg" path="res://Scripts/Components/Inventory/SlotComponent.cs" id="11_s6n6a"]
 [ext_resource type="PackedScene" uid="uid://d38b31qyrgif1" path="res://Scenes/Components/Data/stats_component.tscn" id="11_stats"]
 [ext_resource type="PackedScene" uid="uid://crw7iwu08algx" path="res://Scenes/Components/Combat/health_component.tscn" id="12_health"]
+[ext_resource type="Script" uid="uid://blemhphivh11e" path="res://Scripts/Components/Inventory/StatsSidebar.cs" id="12_xp8rr"]
 [ext_resource type="Script" uid="uid://cvf3pb2g8fcrw" path="res://Scripts/Components/Combat/FactionComponent.cs" id="13_faction"]
+[ext_resource type="Script" uid="uid://fs5pxnesqgbg" path="res://Scripts/Components/Inventory/ItemSidebar.cs" id="13_g1gg7"]
 [ext_resource type="PackedScene" uid="uid://bf6l41xsuwqcr" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="14_hurtbox"]
+[ext_resource type="PackedScene" uid="uid://dcq2iaph4ucdh" path="res://Scenes/UI/enchantment_row.tscn" id="14_j7yhh"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="15_binder"]
 [ext_resource type="Script" uid="uid://cn6ohebphqkmq" path="res://Scripts/Components/Movement/PositionSyncComponent.cs" id="16_pos"]
 [ext_resource type="Script" uid="uid://b4npu50mqoy3h" path="res://Scripts/Components/Data/LocalPlayerDataComponent.cs" id="17_data"]
@@ -20,6 +24,54 @@
 [sub_resource type="SpriteFrames" id="SpriteFrames_rmvjh"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_mrxaf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1vum"]
+bg_color = Color(0.4115005, 0.4115005, 0.4115005, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.23096949, 0.23096949, 0.23096949, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t6pqr"]
+bg_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rmvjh"]
+bg_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.23137255, 0.23137255, 0.23137255, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_h1vum"]
 
@@ -42,6 +94,1344 @@ shape = SubResource("CapsuleShape2D_mrxaf")
 visible = false
 ignore_rotation = false
 zoom = Vector2(0.75, 0.75)
+
+[node name="InventoryCanvas" type="CanvasLayer" parent="." unique_id=925443749]
+
+[node name="InventoryPanel" type="Control" parent="InventoryCanvas" unique_id=375106985 node_paths=PackedStringArray("HotbarSlots", "EquipmentWeaponSlots", "AbilitySlots", "EquipmentArmorSlots", "EquipmentAccessorySlots", "GeneralSlots")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("10_qdkmc")
+HotbarSlots = [NodePath("Hotbar/Weapon - 0"), NodePath("Hotbar/Consumable - 1"), NodePath("Hotbar/Consumable - 2"), NodePath("Hotbar/Consumable - 3"), NodePath("Hotbar/Consumable - 4")]
+EquipmentWeaponSlots = [NodePath("Equipment/Weapon/Weapon - 0")]
+AbilitySlots = [NodePath("Equipment/Abilities/Ability - 32"), NodePath("Equipment/Abilities/Ability - 33"), NodePath("Equipment/Abilities/Ability - 34"), NodePath("Equipment/Abilities/Ability - 35"), NodePath("Equipment/Abilities/Ability - 36"), NodePath("Equipment/Abilities/Ability - 37")]
+EquipmentArmorSlots = [NodePath("Equipment/Armor/Armor - 6")]
+EquipmentAccessorySlots = [NodePath("Equipment/Accessory/Accessory - 5")]
+GeneralSlots = [NodePath("Menu/Backpack/Row - 1/General - 7"), NodePath("Menu/Backpack/Row - 1/General - 8"), NodePath("Menu/Backpack/Row - 1/General - 9"), NodePath("Menu/Backpack/Row - 1/General - 10"), NodePath("Menu/Backpack/Row - 2/General - 11"), NodePath("Menu/Backpack/Row - 2/General - 12"), NodePath("Menu/Backpack/Row - 2/General - 13"), NodePath("Menu/Backpack/Row - 2/General - 14"), NodePath("Menu/Backpack/Row - 3/General - 15"), NodePath("Menu/Backpack/Row - 3/General - 16"), NodePath("Menu/Backpack/Row - 3/General - 17"), NodePath("Menu/Backpack/Row - 3/General - 18"), NodePath("Menu/Backpack/Row - 4/General - 19"), NodePath("Menu/Backpack/Row - 4/General - 20"), NodePath("Menu/Backpack/Row - 4/General - 21"), NodePath("Menu/Backpack/Row - 4/General - 22"), NodePath("Menu/Backpack/Row - 5/General - 23"), NodePath("Menu/Backpack/Row - 5/General - 24"), NodePath("Menu/Backpack/Row - 5/General - 25"), NodePath("Menu/Backpack/Row - 5/General - 26"), NodePath("Menu/Backpack/Row - 6/General - 27"), NodePath("Menu/Backpack/Row - 6/General - 28"), NodePath("Menu/Backpack/Row - 6/General - 29"), NodePath("Menu/Backpack/Row - 6/General - 30")]
+
+[node name="Hotbar" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel" unique_id=1852483177]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -30.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 0
+pivot_offset = Vector2(63, 8)
+theme_override_constants/separation = 6
+
+[node name="Weapon - 0" type="Panel" parent="InventoryCanvas/InventoryPanel/Hotbar" unique_id=581933243 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Hotbar/Weapon - 0" unique_id=1056446447]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Consumable - 1" type="Panel" parent="InventoryCanvas/InventoryPanel/Hotbar" unique_id=821817778 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 1
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Hotbar/Consumable - 1" unique_id=782528158]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Consumable - 2" type="Panel" parent="InventoryCanvas/InventoryPanel/Hotbar" unique_id=1102005494 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 2
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Hotbar/Consumable - 2" unique_id=635868162]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Consumable - 3" type="Panel" parent="InventoryCanvas/InventoryPanel/Hotbar" unique_id=2049080542 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 3
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Hotbar/Consumable - 3" unique_id=1837313331]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Consumable - 4" type="Panel" parent="InventoryCanvas/InventoryPanel/Hotbar" unique_id=485332424 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 4
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Hotbar/Consumable - 4" unique_id=841152112]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Equipment" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel" unique_id=852542520]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.1
+anchor_bottom = 0.1
+offset_right = 90.0
+scale = Vector2(2, 2)
+theme_override_constants/separation = 2
+
+[node name="Weapon" type="VBoxContainer" parent="InventoryCanvas/InventoryPanel/Equipment" unique_id=122461623]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Weapon - 0" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Weapon" unique_id=2041837121 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Weapon/Weapon - 0" unique_id=577665602]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Abilities" type="VBoxContainer" parent="InventoryCanvas/InventoryPanel/Equipment" unique_id=560454101]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Ability - 32" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities" unique_id=396708487 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 32
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities/Ability - 32" unique_id=25568564]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Ability - 33" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities" unique_id=1505622435 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 33
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities/Ability - 33" unique_id=1575791041]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Ability - 34" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities" unique_id=1547913537 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 34
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities/Ability - 34" unique_id=1581131780]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Ability - 35" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities" unique_id=485726669 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 35
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities/Ability - 35" unique_id=1969218351]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Ability - 36" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities" unique_id=2009091407 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 36
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities/Ability - 36" unique_id=1258246599]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Ability - 37" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities" unique_id=395112611 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 37
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Abilities/Ability - 37" unique_id=1889967516]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Armor" type="VBoxContainer" parent="InventoryCanvas/InventoryPanel/Equipment" unique_id=1128864198]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Armor - 6" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Armor" unique_id=1719102207 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 6
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Armor/Armor - 6" unique_id=915468928]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Accessory" type="VBoxContainer" parent="InventoryCanvas/InventoryPanel/Equipment" unique_id=1578291856]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Accessory - 5" type="Panel" parent="InventoryCanvas/InventoryPanel/Equipment/Accessory" unique_id=1044118620 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 5
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Equipment/Accessory/Accessory - 5" unique_id=139161592]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Menu" type="Control" parent="InventoryCanvas/InventoryPanel" unique_id=1601652152]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0.5)
+mouse_filter = 2
+
+[node name="Backpack" type="VBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu" unique_id=357711280]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.1
+anchor_right = 0.5
+anchor_bottom = 0.1
+scale = Vector2(2, 2)
+pivot_offset_ratio = Vector2(1, 0)
+offset_transform_position_ratio = Vector2(0.5, 0.5)
+
+[node name="Row - 1" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu/Backpack" unique_id=1865730411]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="General - 7" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1" unique_id=1286898925 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 7
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1/General - 7" unique_id=353700178]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 8" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1" unique_id=566936695 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 8
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1/General - 8" unique_id=962663702]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 9" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1" unique_id=982975072 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 9
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1/General - 9" unique_id=759168509]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 10" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1" unique_id=683466658 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 10
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1/General - 10" unique_id=1497952917]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Row - 2" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu/Backpack" unique_id=923081837]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="General - 11" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 2" unique_id=1983276824 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 11
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 2/General - 11" unique_id=360914962]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 12" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 2" unique_id=1585559665 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 12
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 2/General - 12" unique_id=1026960503]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 13" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 2" unique_id=1741661689 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 13
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 2/General - 13" unique_id=31639763]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 14" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 2" unique_id=272421055 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 14
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 2/General - 14" unique_id=1231316829]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Row - 3" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu/Backpack" unique_id=1219794006]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="General - 15" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 3" unique_id=1196010204 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 15
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 3/General - 15" unique_id=1523922451]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 16" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 3" unique_id=315218971 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 16
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 3/General - 16" unique_id=375673062]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 17" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 3" unique_id=1702376456 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 17
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 3/General - 17" unique_id=1321502371]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 18" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 3" unique_id=1498487618 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 18
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 3/General - 18" unique_id=139204541]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Row - 4" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu/Backpack" unique_id=930407270]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="General - 19" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 4" unique_id=149527735 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 19
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 4/General - 19" unique_id=111590466]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 20" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 4" unique_id=1557014756 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 20
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 4/General - 20" unique_id=2123776039]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 21" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 4" unique_id=1642535695 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 21
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 4/General - 21" unique_id=54814458]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 22" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 4" unique_id=240949352 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 22
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 4/General - 22" unique_id=1857366564]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Row - 5" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu/Backpack" unique_id=1980983245]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="General - 23" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 5" unique_id=1046081425 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 23
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 5/General - 23" unique_id=490103624]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 24" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 5" unique_id=257745054 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 24
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 5/General - 24" unique_id=558086809]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 25" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 5" unique_id=2073369798 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 25
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 5/General - 25" unique_id=1519588324]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 26" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 5" unique_id=972479707 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 26
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 5/General - 26" unique_id=344984651]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Row - 6" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu/Backpack" unique_id=1057315593]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="General - 27" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 6" unique_id=1778586701 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 27
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 6/General - 27" unique_id=1151468128]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 28" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 6" unique_id=2009671924 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 28
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 6/General - 28" unique_id=1469429539]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 29" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 6" unique_id=1110774 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 29
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 6/General - 29" unique_id=2127438163]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="General - 30" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 6" unique_id=1240386237 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 30
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 6/General - 30" unique_id=1713924809]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="Row - 7" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu/Backpack" unique_id=1268977844]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="Bag - 31" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 7" unique_id=1464305533 node_paths=PackedStringArray("Icon")]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1vum")
+script = ExtResource("11_s6n6a")
+SlotIndex = 31
+Icon = NodePath("TextureRect")
+
+[node name="TextureRect" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 7/Bag - 31" unique_id=1501653578]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -8.0
+offset_right = 8.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.75, 0.75)
+pivot_offset = Vector2(8, 8)
+
+[node name="StatsSidebar" type="Control" parent="InventoryCanvas/InventoryPanel/Menu" unique_id=1162261805 node_paths=PackedStringArray("LevelLabel", "HpLabel", "StrengthLabel", "WisdomLabel", "DexterityLabel", "DamageDealerLabel", "SupporterLabel", "ArtisanLabel", "DefenseLabel", "UnspentLabel", "AllocateButtons")]
+layout_mode = 1
+anchor_left = 0.35
+anchor_top = 0.1
+anchor_right = 0.35
+anchor_bottom = 0.1
+offset_transform_position_ratio = Vector2(0.5, 0.5)
+script = ExtResource("12_xp8rr")
+LevelLabel = NodePath("Panel/Level")
+HpLabel = NodePath("Panel/Health")
+StrengthLabel = NodePath("Panel/Strength")
+WisdomLabel = NodePath("Panel/Wisdom")
+DexterityLabel = NodePath("Panel/Dexterity")
+DamageDealerLabel = NodePath("Panel/DamageDealer")
+SupporterLabel = NodePath("Panel/Supporter")
+ArtisanLabel = NodePath("Panel/Artisan")
+DefenseLabel = NodePath("Panel/Defense")
+UnspentLabel = NodePath("Panel/Unspent")
+AllocateButtons = [NodePath("Panel/StrengthPlus"), NodePath("Panel/WisdomPlus"), NodePath("Panel/DexterityPlus"), NodePath("Panel/DamageDealerPlus"), NodePath("Panel/SupporterPlus"), NodePath("Panel/ArtisanPlus")]
+
+[node name="Panel" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar" unique_id=1295769779]
+propagate_maximum_size = true
+layout_mode = 1
+anchors_preset = -1
+offset_left = -90.0
+offset_right = 90.0
+offset_bottom = 324.0
+grow_vertical = 2
+pivot_offset_ratio = Vector2(0.5, 0)
+theme_override_styles/panel = SubResource("StyleBoxFlat_t6pqr")
+
+[node name="Level" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=329687630]
+layout_mode = 0
+offset_top = 12.0
+offset_right = 180.0
+offset_bottom = 42.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="Health" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=2039844626]
+layout_mode = 0
+offset_top = 42.0
+offset_right = 180.0
+offset_bottom = 72.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="Strength" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=185543596]
+layout_mode = 0
+offset_top = 72.0
+offset_right = 180.0
+offset_bottom = 102.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="StrengthPlus" type="Button" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=1326518734]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 75.0
+offset_right = 176.0
+offset_bottom = 99.0
+text = "+"
+
+[node name="Wisdom" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=1683875093]
+layout_mode = 0
+offset_top = 102.0
+offset_right = 180.0
+offset_bottom = 132.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="WisdomPlus" type="Button" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=1515763684]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 105.0
+offset_right = 176.0
+offset_bottom = 129.0
+text = "+"
+
+[node name="Dexterity" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=949091831]
+layout_mode = 0
+offset_top = 132.0
+offset_right = 180.0
+offset_bottom = 162.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="DexterityPlus" type="Button" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=547930650]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 135.0
+offset_right = 176.0
+offset_bottom = 159.0
+text = "+"
+
+[node name="DamageDealer" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=845962947]
+layout_mode = 0
+offset_top = 162.0
+offset_right = 180.0
+offset_bottom = 192.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="DamageDealerPlus" type="Button" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=1194025927]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 165.0
+offset_right = 176.0
+offset_bottom = 189.0
+text = "+"
+
+[node name="Supporter" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=896194259]
+layout_mode = 0
+offset_top = 192.0
+offset_right = 180.0
+offset_bottom = 222.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="SupporterPlus" type="Button" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=155675404]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 195.0
+offset_right = 176.0
+offset_bottom = 219.0
+text = "+"
+
+[node name="Artisan" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=711779852]
+layout_mode = 0
+offset_top = 222.0
+offset_right = 180.0
+offset_bottom = 252.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="ArtisanPlus" type="Button" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=1289204864]
+layout_mode = 0
+offset_left = 150.0
+offset_top = 225.0
+offset_right = 176.0
+offset_bottom = 249.0
+text = "+"
+
+[node name="Defense" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=2033000442]
+layout_mode = 0
+offset_top = 252.0
+offset_right = 180.0
+offset_bottom = 282.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="Unspent" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel" unique_id=911623687]
+layout_mode = 0
+offset_top = 282.0
+offset_right = 180.0
+offset_bottom = 312.0
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="ItemSidebar" type="Control" parent="InventoryCanvas/InventoryPanel/Menu" unique_id=984716298 node_paths=PackedStringArray("ItemNameLabel", "ItemIcon", "DescriptionLabel", "EmptyLabel", "DetailsScroll", "DetailsList")]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.65
+anchor_top = 0.1
+anchor_right = 0.65
+anchor_bottom = 0.1
+pivot_offset_ratio = Vector2(0.5, 0)
+script = ExtResource("13_g1gg7")
+ItemNameLabel = NodePath("Panel/Name")
+ItemIcon = NodePath("Panel/Texture")
+DescriptionLabel = NodePath("Panel/Description")
+EmptyLabel = NodePath("Panel/Name")
+DetailsScroll = NodePath("Panel/DetailsScroll")
+DetailsList = NodePath("Panel/DetailsScroll/DetailsList")
+EnchantmentRowScene = ExtResource("14_j7yhh")
+
+[node name="Panel" type="Panel" parent="InventoryCanvas/InventoryPanel/Menu/ItemSidebar" unique_id=1603939778]
+layout_mode = 0
+offset_left = -90.0
+offset_right = 90.0
+offset_bottom = 400.0
+pivot_offset_ratio = Vector2(0.5, 0)
+theme_override_styles/panel = SubResource("StyleBoxFlat_rmvjh")
+
+[node name="Name" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/ItemSidebar/Panel" unique_id=1497775880]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.02
+anchor_right = 0.5
+anchor_bottom = 0.02
+offset_left = -90.0
+offset_right = 90.0
+offset_bottom = 40.0
+pivot_offset_ratio = Vector2(0.5, 0)
+theme_override_font_sizes/font_size = 16
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="Description" type="Label" parent="InventoryCanvas/InventoryPanel/Menu/ItemSidebar/Panel" unique_id=1229348937]
+layout_mode = 1
+offset_left = 82.0
+offset_top = 44.0
+offset_right = 202.0
+offset_bottom = 112.0
+pivot_offset = Vector2(56, 34)
+theme_override_constants/line_spacing = 0
+theme_override_constants/shadow_outline_size = 1
+theme_override_font_sizes/font_size = 12
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+uppercase = true
+
+[node name="Texture" type="TextureRect" parent="InventoryCanvas/InventoryPanel/Menu/ItemSidebar/Panel" unique_id=516922307]
+layout_mode = 1
+offset_left = 12.0
+offset_top = 46.0
+offset_right = 76.0
+offset_bottom = 110.0
+pivot_offset = Vector2(32, 32)
+
+[node name="DetailsScroll" type="ScrollContainer" parent="InventoryCanvas/InventoryPanel/Menu/ItemSidebar/Panel" unique_id=1504871495]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 118.0
+offset_right = 186.0
+offset_bottom = 388.0
+horizontal_scroll_mode = 0
+
+[node name="DetailsList" type="VBoxContainer" parent="InventoryCanvas/InventoryPanel/Menu/ItemSidebar/Panel/DetailsScroll" unique_id=1839626243]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
 
 [node name="CombatComponent" type="Node" parent="." unique_id=1107745331]
 script = ExtResource("2_h1vum")
@@ -66,8 +1456,6 @@ collision_mask = 2
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DamageReceivingComponent" unique_id=775089985]
 shape = SubResource("CapsuleShape2D_h1vum")
 
-[node name="InventoryCanvas" parent="." unique_id=925443749 instance=ExtResource("9_inv")]
-
 [node name="LocalPlayerPhantomCamera2D" type="Node2D" parent="." unique_id=2115189460 node_paths=PackedStringArray("follow_target")]
 unique_name_in_owner = true
 top_level = true
@@ -81,6 +1469,7 @@ metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 
 [node name="PositionSyncComponent" type="Node" parent="." unique_id=185419315]
 script = ExtResource("16_pos")
+ReportInterval = 1.0
 
 [node name="LocalPlayerPositionBinder" type="Node" parent="PositionSyncComponent" unique_id=1246579541]
 script = ExtResource("15_binder")
@@ -100,7 +1489,7 @@ script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerStats"
 
-[node name="LocalPlayerStatAllocationBinder" type="Node" parent="LocalPlayerDataComponent"]
+[node name="LocalPlayerStatAllocationBinder" type="Node" parent="LocalPlayerDataComponent" unique_id=969327814]
 script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerStatAllocation"

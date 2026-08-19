@@ -1,6 +1,0 @@
-[gd_scene format=3]
-
-[ext_resource type="Script" path="res://Scripts/Components/Bullets/BulletControllerComponent.cs" id="1_ability"]
-
-[node name="BulletControllerComponent" type="Node"]
-script = ExtResource("1_ability")

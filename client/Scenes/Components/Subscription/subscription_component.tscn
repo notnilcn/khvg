@@ -1,6 +1,0 @@
-[gd_scene format=3 uid="uid://pjefojuiwg6v"]
-
-[ext_resource type="Script" uid="uid://t5dudwr4e8ss" path="res://sstdbsdk/TableSubscriber.cs" id="1_sub"]
-
-[node name="TableSubscriber" type="Node" unique_id=155049204]
-script = ExtResource("1_sub")

@@ -5,12 +5,11 @@ using System;
 
 /// <summary>
 /// Hex grid debug overlay (2D), child of Main. Hidden by default. MapConfig rows
-/// arrive via a child TableBinderComponent (declared in hex_grid_overlay_component.tscn,
-/// signals wired in the editor); draws chunk/hex lines around the camera.
+/// arrive via a child TableBinderComponent (declared inline in game.tscn, signals
+/// wired in the editor); draws chunk/hex lines around the camera.
 /// </summary>
 public partial class HexGridOverlayComponent : Node2DComponent
 {
-	private const float Sqrt3 = 1.7320508075688772f;
 	private const int DefaultChunkHexRadius = 5;
 	private const float DefaultHexOuterRadius = 32.0f;
 
@@ -65,7 +64,7 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		}
 	}
 
-	// --- TableBinderComponent signal handlers (wired in hex_grid_overlay_component.tscn) ---
+	// --- TableBinderComponent signal handlers (wired in game.tscn) ---
 
 	private void OnMapConfigRow()
 	{
@@ -90,8 +89,8 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		var worldMin = _camPos - half;
 		var worldMax = _camPos + half;
 
-		var hMin = WorldToHex(worldMin.X, worldMin.Y);
-		var hMax = WorldToHex(worldMax.X, worldMax.Y);
+		var hMin = HexMath.WorldToHex(worldMin.X, worldMin.Y, _outerRadius);
+		var hMax = HexMath.WorldToHex(worldMax.X, worldMax.Y, _outerRadius);
 		int qMin = Mathf.Min(hMin.X, hMax.X) - 1;
 		int qMax = Mathf.Max(hMin.X, hMax.X) + 1;
 		int rMin = Mathf.Min(hMin.Y, hMax.Y) - 1;
@@ -115,11 +114,11 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		if (player == null) return;
 
 		var pos = player.GlobalPosition;
-		var fineHex = WorldToHex(pos.X, pos.Y);
-		var chunk = ToLowerRes(fineHex.X, fineHex.Y, _chunkRadius);
-		long cidx = HexSpiralIndex(chunk.X, chunk.Y);
+		var fineHex = HexMath.WorldToHex(pos.X, pos.Y, _outerRadius);
+		var chunk = HexMath.ToLowerRes(fineHex.X, fineHex.Y, _chunkRadius);
+		long cidx = HexMath.SpiralIndex(chunk.X, chunk.Y);
 
-		var center = HexToWorld(fineHex.X, fineHex.Y);
+		var center = HexMath.HexToWorld(fineHex.X, fineHex.Y, _outerRadius);
 
 		var verts = new Vector2[6];
 		for (int i = 0; i < 6; i++)
@@ -171,8 +170,8 @@ public partial class HexGridOverlayComponent : Node2DComponent
 
 	private void DrawHex(int q, int r)
 	{
-		var center = HexToWorld(q, r);
-		var chunk = ToLowerRes(q, r, _chunkRadius);
+		var center = HexMath.HexToWorld(q, r, _outerRadius);
+		var chunk = HexMath.ToLowerRes(q, r, _chunkRadius);
 
 		var verts = new Vector2[6];
 		for (int i = 0; i < 6; i++)
@@ -202,7 +201,7 @@ public partial class HexGridOverlayComponent : Node2DComponent
 
 		if (_font == null) return;
 
-		long cidx = HexSpiralIndex(chunk.X, chunk.Y);
+		long cidx = HexMath.SpiralIndex(chunk.X, chunk.Y);
 		string hexStr = $"{q},{r}";
 		string chunkStr = $"{chunk.X},{chunk.Y}";
 		string cidxStr = cidx.ToString();
@@ -215,60 +214,5 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		DrawString(_font, new Vector2(center.X - hw * 0.5f, center.Y - line), hexStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
 		DrawString(_font, new Vector2(center.X - cw * 0.5f, center.Y + 2f), chunkStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
 		DrawString(_font, new Vector2(center.X - iw * 0.5f, center.Y + line + 3f), cidxStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
-	}
-
-	// ── Hex math (mirrors server methods.rs / hex_grid_overlay.gd) ──────────────
-
-	private Vector2 HexToWorld(int q, int r)
-	{
-		float R = _outerRadius;
-		return new Vector2(R * (Sqrt3 * q + Sqrt3 * 0.5f * r), R * 1.5f * r);
-	}
-
-	private Vector2I WorldToHex(float wx, float wy)
-	{
-		float R = _outerRadius;
-		float q = (wx * Sqrt3 / 3f - wy / 3f) / R;
-		float r = wy * 2f / 3f / R;
-		float s = -q - r;
-		float rq = MathF.Round(q);
-		float rr = MathF.Round(r);
-		float rs = MathF.Round(s);
-		if (MathF.Abs(rq - q) > MathF.Abs(rr - r) && MathF.Abs(rq - q) > MathF.Abs(rs - s))
-			rq = -rr - rs;
-		else if (MathF.Abs(rr - r) > MathF.Abs(rs - s))
-			rr = -rq - rs;
-		return new Vector2I((int)rq, (int)rr);
-	}
-
-	// Bijection Z² → ℕ using hex spiral order. Mirrors spiral_chunk_index in methods.rs.
-	private static long HexSpiralIndex(int cq, int cr)
-	{
-		int x = cq, z = cr, y = -cq - cr;
-		int rho = Math.Max(Math.Abs(x), Math.Max(Math.Abs(y), Math.Abs(z)));
-		if (rho == 0) return 0;
-		long b = 3L * rho * (rho - 1) + 1;
-		long arm, step;
-		if (z == -rho && x > 0) { arm = 0; step = y; }
-		else if (y == rho && x > -rho) { arm = 1; step = -x; }
-		else if (x == -rho && z < rho) { arm = 2; step = z; }
-		else if (z == rho && x < 0) { arm = 3; step = x + rho; }
-		else if (y == -rho && x >= 0 && x < rho) { arm = 4; step = x; }
-		else { arm = 5; step = y + rho; }
-		return b + arm * rho + step;
-	}
-
-	// Port of hexx Hex::to_lower_res. Mirrors _to_lower_res in hex_grid_overlay.gd.
-	private static Vector2I ToLowerRes(int q, int r, int radius)
-	{
-		int s = -q - r;
-		float area = 3f * radius * (radius + 1) + 1f;
-		int shift = 3 * radius + 2;
-		int a = Mathf.FloorToInt((r + shift * q) / area);
-		int b = Mathf.FloorToInt((s + shift * r) / area);
-		int c = Mathf.FloorToInt((q + shift * s) / area);
-		return new Vector2I(
-			Mathf.FloorToInt((1f + a - b) / 3f),
-			Mathf.FloorToInt((1f + b - c) / 3f));
 	}
 }

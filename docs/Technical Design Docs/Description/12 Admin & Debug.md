@@ -2,29 +2,22 @@
 
 ## Assumed knowledge
 
-- [[03 Boot & Connection]] — boot-4's `init` seeds and boot-5/boot-6's `internal_add_chunks`/`internal_generate_world_proc`, the publish-time machinery this doc's admin reducers re-expose at runtime.
-- [[05 Joining the World]] — join-1's `LoggedOutPlayer`→`LoggedInPlayer` row move, which is what carries `is_admin` into the world.
-- [[06 Movement & Position Sync]] — move-3's wrap/chunk canonicalization pipeline, reused by `spawn_enemy`.
-- [[07 Terrain & World Streaming]] — terrain-1's two generation front-ends and terrain-6's AOI terrain views, the two halves of what a live regen touches.
-- [[08 Enemies & AI]] — enemy-1's seeded templates and `seq_*` def helpers, enemy-3's archetype spawn/despawn helpers.
-- [[09 Combat & Damage]] — the `immortal` early-return in `report_enemy_hit`, reachable only through this doc's `spawn_enemy`.
-- [[10 Inventory, Items & Enchantments]] — `recompute_stats` and the equip/loot reducers `change_stats`/`give_item`/`remove_item` bypass.
-- [[02 The Component Framework]] — the nine unreferenced duplicate component scenes (one of them is this doc's drift hazard).
-- [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
-- [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `admin` section.
-- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
+- [[03 Boot & Connection]] — how the module is published, why every publish wipes the database, and what `init` seeds on boot.
+- [[04 Lobby & Profiles]] — the `LoggedInPlayer`/`LoggedOutPlayer` split and what a profile is (admin reducers target players by *username + profile name*).
+- [[07 Terrain & World Streaming]] — chunks, hexes, `MapConfig`, and what world generation produces (admin reducers re-run or replace it).
+- [[08 Enemies & AI]] — enemy templates, phases, and the archetype helpers (admin spawn/despawn routes through them).
+- [[10 Inventory, Items & Enchantments]] — the item/enchantment catalog and inventory slots (admin item tooling writes both).
 
 ## The 30-second version
 
-There is no admin UI anywhere — administration is a set of **reducers called from the SpacetimeDB CLI** (`spacetime call`), gated by a single `is_admin` flag that one player at a time claims with `claim_admin` and frees with `release_admin`. Once flagged, an admin can edit players (`change_stats`, `give_item`, `remove_item` — the latter two living in `item/reducers.rs`), patch catalog content live (texture/item/enchantment/enemy-template upserts), author enemy behavior defs at runtime, spawn and despawn arbitrary enemies (the only source of elite/immortal enemies and of the seeded test bosses), and reshape the world (`add_chunks`/`clear_chunks`, world/biome def upserts, `generate_world_proc`/`generate_world_manual`). On the debug side, the admin-gated `toggle_debug` arms a 1-second scheduled reducer that mirrors every `PlayerPosition` into a `PlayerPositionDebug` table with hex coordinates decoded, inspectable via `spacetime sql`; and the client ships a `DebugOverlay` CanvasLayer, declared inline in `main.tscn` and hidden by default, that the P key toggles to show local performance counters.
+Admin is a **single global slot**: exactly one player identity at a time may hold the `is_admin` flag, claimed and released through two reducers, and every privileged reducer re-checks that flag before acting. The privileged surface is 18 reducers in `main/admin.rs` (stat edits, catalog upserts, enemy spawn/despawn, chunk and world management), four more in `item/reducers.rs` (give/remove items, item/enchantment upserts), and one opt-in debug feed in `main/debug.rs` that mirrors player positions into a server-side table once a second. None of it has client UI — everything is driven from the `spacetime` CLI. The client side of "debug" is just the `DebugOverlay` HUD (FPS/memory/enemy count) declared inline in `game.tscn` and toggled with a key. Operationally, the whole loop is publish-driven: `build.sh` regenerates bindings and republishes with `--delete-data`, so the seed functions double as the content pipeline that admin upserts modify at runtime.
 
 ## Flowcharts
 
-- [[flowcharts/main-admin.canvas]] — the composed admin flow (the client's `Game` scripts including `DebugOverlay`, `main.tscn`'s inline wiring, the server `main` module with `admin.rs`/`debug.rs`/`seeds.rs`, and the `item` module's admin reducers).
-![[flowcharts/main-admin.canvas]]
-- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/admin_codefile.canvas]] — deep dive: `admin.rs`, all 18 admin reducers plus `internal_add_chunks` and `find_player_by_username`.
-- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/debug_codefile/debug_codefile.canvas]] — deep dive: `debug.rs`, the `PlayerPositionDebug` mirror and its schedule.
-- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay_codefile.canvas]] — deep dive: `DebugOverlay.cs`, the client perf overlay.
+- [[flowcharts/main-admin.canvas]] — this system's composed flow (composed later from `flows.json`; link intentionally unresolved until then).
+- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/admin_codefile.canvas]] — the 18 admin reducers + `find_player_by_username`, one symbol node each.
+- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/debug_codefile/debug_codefile.canvas]] — the position-debug feed: `toggle_debug`, `tick_player_position_debug`, and the two tables.
+- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay_codefile.canvas]] — the client debug HUD.
 
 ## System flowchart
 
@@ -56,98 +49,90 @@ There is no admin UI anywhere — administration is a set of **reducers called f
 ![[00 End-to-End Timeline Flowchart#^admin-7{seamless:true,title:false,marker:07.}]]
 ```
 
-```sync
-![[00 End-to-End Timeline Flowchart#^admin-8{seamless:true,title:false,marker:08.}]]
-```
-
-```sync
-![[00 End-to-End Timeline Flowchart#^admin-9{seamless:true,title:false,marker:09.}]]
-```
-
 ## Main body
 
-### Becoming admin: one global slot
+### The admin model: one flag, one holder, one gate
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^admin-1{seamless:true,title:false,marker:01.}]]
 ```
 
-A **reducer** is SpacetimeDB's unit of server-side work — a function clients invoke by name over the connection, executed transactionally against the database — and admin reducers are invoked from the SpacetimeDB CLI rather than from game code, so "whoever runs the CLI against this database" is the real access boundary. The single-slot design means there is no role system to keep consistent: `is_admin` is one boolean on the same lobby/world row that tracks login state, it rides along on the join-1 row move for free, and the [[server/spacetimedb/src/player/methods.rs##pub fn is_admin|is_admin]] guard is a two-line lookup every gated reducer shares. The cost of that simplicity is operational: `claim_admin` refuses while *any* row in either table has the flag, and `release_admin` only works for the flag's owner — so if the admin disconnects without releasing, the slot is stuck until the database is reset or edited directly (see Known gaps).
+The flag itself is a plain `is_admin: bool` column on both login-state tables in [[server/spacetimedb/src/player/tables.rs#is_admin#1|player/tables.rs]] — remember from [[04 Lobby & Profiles]] that a connected client always has exactly one of a `LoggedInPlayer` (in the world) or `LoggedOutPlayer` (in the lobby) row, keyed by its SpacetimeDB `Identity`. Admin state therefore survives moving between lobby and world, because [[server/spacetimedb/src/main/admin.rs#claim_admin#1|claim_admin]] sets the flag on whichever row the caller currently has, and [[server/spacetimedb/src/player/reducers.rs#join_world#1|join_world]]/[[server/spacetimedb/src/player/reducers.rs#leave_world#1|leave_world]] carry it across: each deletes the old login-state row and inserts the other with `is_admin` copied verbatim from the row it replaces.
 
-Because `claim_admin` works on the `LoggedOutPlayer` row too, the intended flow is: connect (conn-2 plants the lobby row), claim admin from the lobby, then join the world with the flag already on.
+The single-slot rule is enforced inside `claim_admin`, not by a table constraint: before granting, it scans **both** tables (`ctx.db.logged_in_player().iter().any(|p| p.is_admin) || ctx.db.logged_out_player().iter().any(...)`) and refuses with "An admin already exists" if anyone holds the flag. Two subtleties follow. First, calling `claim_admin` when you already *are* the admin is a no-op success (the early `if p.is_admin { return Ok(()); }`), so the CLI command is idempotent. Second, because the scan covers logged-out rows too, an admin who disconnects still occupies the slot — a second operator can't sneak in while the first is offline; [[server/spacetimedb/src/main/admin.rs#release_admin#1|release_admin]] is the only exit, and it errors unless the caller actually holds the flag. There is no timeout or revoke-by-identity path; if the admin's credentials are lost, the slot is stuck until the next publish wipes the database (and every publish does — see the ops section below).
 
-### Targeting other players
+Every privileged reducer then gates on the same helper: [[server/spacetimedb/src/player/methods.rs#is_admin#1|is_admin]] looks up the caller's `LoggedInPlayer` row, falls back to the `LoggedOutPlayer` row, and defaults to `false` when neither exists. That means the gate works from the lobby *and* from inside the world, and a caller with no player row at all is never admin. The one place admin status is more than an on/off gate is [[server/spacetimedb/src/world/reducers.rs#remove_building#1|remove_building]]: it checks `tile.owner_id != Some(ctx.sender()) && !is_admin(ctx)`, so the admin can demolish any player's building — the only admin power reachable through a normal gameplay reducer.
+
+### The 18 reducers of `main/admin.rs`
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^admin-2{seamless:true,title:false,marker:02.}]]
 ```
 
-The prefix-hex match in [[server/spacetimedb/src/main/admin.rs##pub fn find_player_by_username|find_player_by_username]] is a convenience for CLI use — identities are 32 hex characters, and typing a handful is enough — but it returns the *first* row in table-iteration order that matches, so a prefix short enough to collide picks an arbitrary victim. Full usernames are matched case-insensitively and only when non-empty (a fresh conn-2 row has an empty username, which can never be matched — deliberately, so "no username" isn't a targetable name). Note that targeting searches *both* player tables, so an admin can `change_stats` or `give_item` to a player sitting in the lobby as readily as one in the world.
+They cluster into five groups. All of them open with the same `if !is_admin(ctx) { return Err("Admin only.".to_string()); }` line (except `claim_admin`/`release_admin`, which manage the flag itself), and all of them return `Result<(), String>` — reducers return nothing to the caller, so an `Err` string is the entire feedback channel and shows up in `spacetime logs`.
 
-### Editing players: stats and inventory
+**Player targeting.** [[server/spacetimedb/src/main/admin.rs#change_stats#1|change_stats]] overwrites a profile's six core stats (`strength`…`artisan`) in the `PlayerStats` table. Admin commands address players by name, not by raw identity, so the module needs a resolver: [[server/spacetimedb/src/main/admin.rs#find_player_by_username#1|find_player_by_username]] chains both login tables into one iterator and accepts three forms — an exact (case-insensitive) username, a full identity hex string, or an unambiguous hex *prefix* (`id_hex.starts_with(hex)`), with an optional `0x` stripped first. It returns the first match, so a prefix that collides resolves arbitrarily — fine for a two-person dev server, worth knowing before trusting it anywhere bigger. `change_stats` then resolves the profile with [[server/spacetimedb/src/player/methods.rs#find_profile_by_name#1|find_profile_by_name]] and updates the row in place, preserving the fields it wasn't passed via the `..stats` spread.
+
+**Catalog upserts.** `upsert_texture_entry`, `upsert_enemy_template`, `upsert_world_def`, `upsert_biome_def`, and `upsert_biome_region_def` all share one shape: take a whole row struct as the reducer argument, update it if the primary key exists, insert otherwise. SpacetimeDB reducer arguments are just deserialized rows, so "authoring content" is `spacetime call bullethell upsert_biome_def '{...}'`. These are the runtime counterparts of the seed functions — they write the same def tables `init` populates on publish (see the seeding section below).
+
+**Runtime enemy authoring.** The four step/movement upserts — `upsert_movement_def`, `upsert_single_step_def`, `upsert_repeat_step_def`, `upsert_multi_step_def` — write the def tables that enemy attack sequences are built from (the phase/sequence model is [[08 Enemies & AI]]'s topic). Their `def_id` columns are auto-increment, which forces a convention the code states in a comment: pass `def_id: 0` to insert (the reducer rewrites the struct with `def_id: 0` so the database assigns the real id, and you discover it afterwards via `spacetime sql`), or pass an existing id to update. This is how you prototype a new bullet pattern without a republish: upsert the step defs, upsert a template referencing them, then `spawn_enemy`.
+
+**Enemy spawn/despawn.** [[server/spacetimedb/src/main/admin.rs#spawn_enemy#1|spawn_enemy]] looks up the template, loads the world geometry with [[server/spacetimedb/src/world/tables.rs#load#1|MapConfig::load]] (the `(1, 1)` fallback arguments only matter if no `MapConfig` row exists yet), wraps the requested coordinates onto the torus with [[server/spacetimedb/src/world/wrap.rs#wrap_world_pos#1|wrap_world_pos]], converts to a chunk with [[server/spacetimedb/src/world/hex.rs#world_to_chunk#1|world_to_chunk]] + [[server/spacetimedb/src/world/hex.rs#spiral_chunk_index#1|spiral_chunk_index]], and hands off to [[server/spacetimedb/src/enemy/methods.rs#spawn_enemy_archetype#1|spawn_enemy_archetype]]. `despawn_enemy` similarly routes through [[server/spacetimedb/src/enemy/methods.rs#despawn_enemy_archetype#1|despawn_enemy_archetype]]. Routing through the archetype helpers is the invariant that matters: an enemy is a *bundle* of rows across several tables (instance, behavior, schedule — the server-side mirror of the client component model), and only the helpers insert/delete the whole bundle. Admin spawns therefore behave exactly like natural spawns, and admin despawns can't orphan behavior rows — which is also why `immortal` and `is_elite` are explicit arguments: they're archetype fields the natural spawner computes, so the admin path has to supply them by hand.
+
+**World management.** `add_chunks` is the admin-gated wrapper around [[server/spacetimedb/src/main/admin.rs#internal_add_chunks#1|internal_add_chunks]], the same function `init` calls at publish time: it validates the geometry (`chunk_cols` must divide `chunk_rows`, `hex_outer_radius` must be positive), inserts every `BuildingTile` row for the chunk grid (hex coordinates from `hex_area`/`hex_shift`/`inv_hexmod`/`chunk_center_hex` in [[server/spacetimedb/src/world/hex.rs#hex_area#1|world/hex.rs]]), computes the torus lap vectors, and upserts the single `MapConfig` row. `clear_chunks` deletes every `BuildingTile` row. `generate_world_proc`/`generate_world_manual` are the gated wrappers around [[server/spacetimedb/src/world/terrain/mod.rs#internal_generate_world_proc#1|internal_generate_world_proc]] and `internal_generate_world_manual` — the very calls `init` makes in boot — so an admin can regenerate the terrain of a live server (with a new seed, or a hand-authored biome layout) without republishing. The generation internals are [[07 Terrain & World Streaming]]'s subject; the point here is that `main/admin.rs` owns the *authorization boundary* while `world/terrain` owns the mechanism.
+
+### Item administration
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^admin-3{seamless:true,title:false,marker:03.}]]
 ```
 
-The asymmetry between the two edit paths is worth internalizing. `change_stats` writes the *derived* table directly, so it is overwritten by the stat pipeline's next run — recompute_stats treats `PlayerStats` as a pure function of level + equipment + effects, with no room for an admin override. `give_item`/`remove_item` write the *source* table (`PlayerInventory`) but skip the pipeline, so their stat effects don't materialize until an unrelated equip/enchantment/consumable change triggers a recompute. Neither reducer is wrong in isolation; they just disagree about which table is authoritative, and the practical recipe is "give the item, then change the stats last" — or accept that the next recompute reverts the stats.
+The four item reducers live in `item/reducers.rs` rather than `main/admin.rs` because they reuse the item module's slot machinery. [[server/spacetimedb/src/item/reducers.rs#give_item#1|give_item]] resolves the target the same way `change_stats` does (username → identity via `find_player_by_username`, then profile via `find_profile_by_name`), finds the first empty `General`-role slot, and writes the item id into it — it errors with "No empty general slots available" rather than dropping or stacking. [[server/spacetimedb/src/item/reducers.rs#remove_item#1|remove_item]] removes *every* slot holding that item id, and it's span-aware: ability items occupy `slot_cost` consecutive slots (the extra slots are marked via `occupied_by`), so removing one calls the slot helper `clear_span` to free the whole run instead of leaving phantom occupied slots behind. [[server/spacetimedb/src/item/reducers.rs#upsert_item#1|upsert_item]] and [[server/spacetimedb/src/item/reducers.rs#upsert_enchantment#1|upsert_enchantment]] are the same key-based upsert shape as the world-def upserts. Because the client's `CatalogComponent` caches the catalog tables from its base subscription, any of these edits reaches every connected client on the next table event — no restart, no republish.
 
-### Live content editing: catalog and enemy authoring
+### Seeding as the admin content pipeline
+
+The seed functions are not a separate system from admin tooling — they are its baseline. [[server/spacetimedb/src/main/lifecycle.rs#init#1|init]] calls, in a fixed order: the texture catalog ([[server/spacetimedb/src/main/seeds.rs#seed_default_textures#1|seed_default_textures]]), the terrain rule sets ([[server/spacetimedb/src/main/seeds.rs#seed_layering_rules#1|seed_layering_rules]], `seed_adjacency_rules`, `seed_decor_ground_rules` — each clear-and-reinsert so republishes can't leave stale rules), the enemy roster ([[server/spacetimedb/src/main/seeds.rs#seed_default_enemies#1|seed_default_enemies]] plus the `seed_test_boss_p2`…`p6` variants, built with the `make_phase`/`make_sequence`/`seq_single`/`seq_repeat`/`seq_multi` helper DSL that inserts the movement/step def rows and returns the ids), the item and enchantment catalogs ([[server/spacetimedb/src/item/seeds.rs#seed_world_items#1|seed_world_items]] / [[server/spacetimedb/src/item/seeds.rs#seed_world_enchantments#1|seed_world_enchantments]]), the world defs ([[server/spacetimedb/src/main/seeds.rs#seed_world_defs#1|seed_world_defs]]), and finally `internal_add_chunks` + `internal_generate_world_proc` — the two `internal_*` functions the admin world reducers wrap.
+
+Every seed goes through the same idempotent pattern as the admin upserts, factored into a tiny [[server/spacetimedb/src/main/seeds.rs#Seed#1|Seed]] trait (`fn seed(ctx, data)`) with one impl per table: find by primary key, update if present, insert otherwise. That's what makes the publish loop safe to repeat — and since `build.sh` publishes with `--delete-data`, "present" only ever means "seeded twice in one boot," which the layering/adjacency rule seeds additionally guard against by clearing first. The practical workflow: edit a seed file for permanent content changes (survive republish), use the admin upsert reducers for live experiments (lost on next publish). Biomes-as-gameplay, guild territory, and base-building beyond `place_building`/`remove_building` are aspirational design-doc systems and deliberately out of scope here — the seeds' biome/world defs are terrain paint and spawn pools, nothing more.
+
+### The client debug HUD
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^admin-4{seamless:true,title:false,marker:04.}]]
 ```
 
+Wiring detail the timeline step compresses: the node is declared inline in [[client/Scenes/game.tscn|game.tscn]] as a `CanvasLayer` named `DebugOverlay` with `layer = 100` (so it draws above every gameplay layer) and `visible = false`, with a single child `Label` that has a 4px black outline so the text reads over any background. The script, [[client/Scripts/Game/DebugOverlay.cs#_Ready#1|DebugOverlay]], grabs that label in `_Ready`. Two Godot concepts carry the whole thing: `_Input` runs on every unhandled input event, and the check `Input.IsActionJustPressed("toggle_debug_overlay")` ([[client/Scripts/Game/DebugOverlay.cs#_Input#1|_Input]]) refers to an input *action* — a named key binding declared in `client/project.godot`, here bound to the physical P key — so `Visible = !Visible` flips the HUD on P. `_Process` runs every frame; the early `if (!Visible) return;` plus a 0.25 s accumulator means the expensive part — reading six counters from Godot's `Performance` singleton and formatting the string — happens four times a second and only while shown ([[client/Scripts/Game/DebugOverlay.cs#_Process#1|_Process]]). The enemy count comes from the `GameManager` facade ([[client/Scripts/Game/GameManager.cs#EnemyCount#1|GameManager.EnemyCount]]), which just forwards `EntitySpawnerComponent`'s live dictionary size ([[client/Scripts/Components/Spawning/EntitySpawnerComponent.cs#EnemyCount#1|EnemyCount]]) — so the HUD reads client-side mirrors only and never touches the network. Note this overlay is *not* a component and has no `TableBinderComponent`; it's a plain script node, the one debug tool that works with no server connection at all.
+
+### The server-side debug feed
+
 ```sync
 ![[00 End-to-End Timeline Flowchart#^admin-5{seamless:true,title:false,marker:05.}]]
 ```
 
-These reducers exist because boot-4's seeds only run at publish: without them, tuning a texture path, an item's modifiers, or a boss's bullet pattern would require republishing the module (which re-runs every seed and regenerates the world). The upsert shape mirrors the `Seed` trait in [[server/spacetimedb/src/main/seeds.rs##pub trait Seed|main/seeds.rs]] — look up by natural key, update-or-insert — so runtime edits and publish-time seeds can't create divergent duplicates of the same def. What they *don't* give you is rollback: an upsert overwrites the row in place, and the next republish's seeds overwrite it again, so runtime edits are always provisional relative to the seeded baseline.
+Mechanically this is the same scheduled-table pattern `init` uses for enemy ticks (boot-1): a row in [[server/spacetimedb/src/main/debug.rs#PlayerPositionDebugSchedule#1|PlayerPositionDebugSchedule]] declares a 1-second interval and names the reducer it re-fires. [[server/spacetimedb/src/main/debug.rs#toggle_debug#1|toggle_debug]] is the on/off switch — if a schedule row exists it deletes the row *and* wipes the whole `PlayerPositionDebug` table (so "off" also means "clean"), otherwise it inserts one. While scheduled, [[server/spacetimedb/src/main/debug.rs#tick_player_position_debug#1|tick_player_position_debug]] iterates every `PlayerPosition` row, enriches it with the player's `PlayerRotation` (defaulting to 0.0 when absent) and the hex coordinates from [[server/spacetimedb/src/world/hex.rs#world_to_hex#1|world_to_hex]], upserts the mirror row keyed by `player_id`, and finally deletes mirror rows whose positions disappeared — so the table always mirrors *current* positions, including the logged-out "ghost" position rows that [[13 Disconnect & Teardown]] documents. The intended consumer is a human running `spacetime sql 'SELECT * FROM player_position_debug'` or watching `spacetime logs`; no client subscribes to it.
 
-The enemy-authoring upserts have one more subtlety beyond the def_id-0 footgun in admin-5: because enemy-3's spawn helper copies defs into per-enemy instance rows, editing a `SingleStepDef` mid-test only changes enemies spawned *after* the edit — a live boss keeps firing the old pattern, which is usually what you want when A/B-testing patterns but surprises anyone expecting a hot patch.
-
-### Spawning and despawning enemies by hand
+### Scattered debug prints
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^admin-6{seamless:true,title:false,marker:06.}]]
 ```
 
-This is the only reducer pair that creates or destroys live gameplay state rather than editing defs, and it deliberately reuses the exact helpers the scheduled spawner uses — an admin-spawned enemy enters the same behavior tick, the same AOI view, and the same client spawner as a natural one, so nothing downstream can tell the difference (and no special-case teardown is possible either). The two flags are the point — or half of it: `immortal` arms the early-return in `report_enemy_hit`, an unkillable target dummy for testing patterns, while `is_elite` is written onto the `Enemy` row and then *never read anywhere* — a stub field only this reducer can set (see Known gaps). And because `seed_region_def` hardcodes every region's template list to `["Enemy", "Archer"]`, the entire seeded boss roster (`TestBoss`, `TestBossP2`–`TestBossP6`) has no natural spawn path at all: this reducer is the only door into a boss fight.
-
-### Reshaping the world
+### The operational loop
 
 ```sync
 ![[00 End-to-End Timeline Flowchart#^admin-7{seamless:true,title:false,marker:07.}]]
 ```
 
-The world-shape reducers are the heaviest hammer in the set and the least guarded: `generate_world_proc`/`generate_world_manual` run the full terrain-1 pipeline synchronously inside the reducer call, and since a reducer is one transaction, every in-world client's terrain AOI views tear down and rebuild in a single commit — correct (the client's terrain-7/terrain-8 rebuild machinery is built for exactly this row churn) but indiscriminate, with no "maintenance mode" to warn players. `internal_add_chunks`'s own validation survives into `add_chunks` (`chunk_cols` must evenly divide `chunk_rows`, positive hex radius), and the `MapConfig` upsert is what re-broadcasts new lap vectors to every client's `TableSubscriber` (conn-4) if the grid is resized — the client mirrors them, so a live resize at least propagates coherently.
-
-### The server debug channel
-
-```sync
-![[00 End-to-End Timeline Flowchart#^admin-8{seamless:true,title:false,marker:08.}]]
-```
-
-`PlayerPositionDebug` answers the question "where does the *server* think everyone is, in hex terms?" — the positions clients are reporting (move-2/move-3), decoded into the hex/chunk addressing that terrain, AOI, and spawning all key on, so a mismatch between what you see in-game and what this table shows localizes the bug to the client, the network, or the server's canonicalization. The mirror is off by default because it costs a full `PlayerPosition` scan every second; `toggle_debug` is a genuine toggle whose "off" path also wipes the data table, so a stale snapshot can't be mistaken for live data. It mirrors *every* `PlayerPosition` row — including the ghost rows that outlive logout ([[13 Disconnect & Teardown]] covers those) — which makes the table double as a ghost-row detector.
-
-### The client debug overlay
-
-```sync
-![[00 End-to-End Timeline Flowchart#^admin-9{seamless:true,title:false,marker:09.}]]
-```
-
-`DebugOverlay` is deliberately not a component — it's a plain `CanvasLayer` node with a script, sitting next to the component tree in `main.tscn`, because it needs nothing from the entity framework: no registration, no binders, no server data. A `CanvasLayer` draws in screen space on its own layer (here 100, above the game world and the 3D backdrop's layer), which is why the readout stays put while the camera rotates and zooms. All six counters come from Godot's `Performance.GetMonitor` — the engine's built-in profiler counters — except `EnemyCount`, which rides the [[GameManager.cs##public static int EnemyCount|GameManager facade]] down to the spawner's tracking dictionary (join-5). The 0.25 s throttle exists because formatting six monitors into a label every frame would itself show up in the frame-time counter. The hidden default is set in the scene (`visible = false`), not the script, so the shipped game starts clean and the P key is the only switch.
+Concretely, [[server/build.sh|server/build.sh]] is two commands: `spacetime generate --lang csharp --out-dir ../client/Scripts/module_bindings --module-path ./spacetimedb -y` (regenerates the client bindings so the C# reducer/table stubs match the module — never hand-edit that output) and `spacetime publish bullethell --delete-data -y`. The `--delete-data` flag is why there are no migrations anywhere in this codebase: schema changes are hard cuts, `init` rebuilds schedules and seeds from scratch, and any runtime state — including admin upserts and the admin flag itself — is gone. The typical admin session is therefore: publish → `spacetime call bullethell claim_admin` from a connected client identity → experiment via the upsert/spawn reducers → `spacetime logs bullethell` to read the `log::info!`/`log::error!` trail every admin reducer leaves → codify whatever worked into `main/seeds.rs` or `item/seeds.rs` so the next publish keeps it.
 
 ## Known gaps / stubs
 
-- **A departed admin bricks the slot.** [[server/spacetimedb/src/main/admin.rs##pub fn claim_admin|claim_admin]] refuses while any row in either player table has `is_admin`, and [[server/spacetimedb/src/main/admin.rs##pub fn release_admin|release_admin]] errors unless the *caller* is the admin — there is no force-release. If the admin disconnects (or loses their token/identity) without releasing, no one can become admin short of direct database surgery.
-- **`change_stats` is silently reverted by the next stat recompute.** It overwrites the six `PlayerStats` fields directly, but [[server/spacetimedb/src/player/methods.rs##pub fn recompute_stats|recompute_stats]] rebuilds them from `compute_base_stats(level)` + modifiers on every gear/effect change, discarding the admin's values.
-- **`give_item`/`remove_item` skip `recompute_stats`.** Already flagged in [[10 Inventory, Items & Enchantments]] → Known gaps; repeated here because it's the admin path — a granted or revoked equipment piece doesn't change stats until something else triggers a recompute.
-- **Prefix identity matching can hit the wrong player.** [[server/spacetimedb/src/main/admin.rs##pub fn find_player_by_username|find_player_by_username]] returns the first iteration-order row matching a hex prefix; a short prefix that collides picks an arbitrary target with no confirmation.
-- **`is_elite` is a write-only field.** [[server/spacetimedb/src/enemy/instance_tables.rs##pub struct Enemy {|Enemy]] stores it and [[server/spacetimedb/src/main/admin.rs##pub fn spawn_enemy|spawn_enemy]] is the only writer that can set it true (natural spawns hardcode false), but no combat, XP, loot, or client code ever reads it — grep finds zero reads outside the table definition and the spawn helper.
-- **No in-game admin console.** Every admin reducer is CLI-only — no client script calls any of them (verified by grep) — so administration requires shell access to the SpacetimeDB CLI. That's a deliberate boundary, but it means there is also no audit log, no confirmation prompt, and no partial permissioning anywhere in the stack.
-- **`debug_overlay.tscn` is an unreferenced duplicate.** The live overlay is declared inline in `main.tscn` (admin-9); `Scenes/UI/debug_overlay.tscn` declares the same script and node names but nothing instances it — one of the nine duplicate component scenes from [[02 The Component Framework]] → Known gaps, and a drift hazard if anyone edits the wrong copy.
+- **No client UI for any admin reducer.** Nothing in `client/Scripts` calls `claim_admin`, `release_admin`, `change_stats`, the upserts, `spawn_enemy`, `give_item`, or `toggle_debug` (grep finds callers only in the generated `module_bindings`). Every admin action is a `spacetime call` CLI command. If an in-game admin panel is ever built, `claim_admin` and the item/catalog upserts are the entry points.
+- **`toggle_debug`/`PlayerPositionDebug` have no consumer.** The position-debug feed is server-side only; no client subscribes to the table and no tooling renders it beyond `spacetime sql`.
+- **`Scenes/UI/debug_overlay.tscn` is an unreferenced duplicate.** The live `DebugOverlay` is declared inline in `game.tscn`; the standalone scene is one of seven stale component scenes kept only as drift hazards — the full list and its consequences live in [[02 The Component Framework]]. Never wire new code against the duplicate.
+- **The admin slot has no recovery path.** If the admin identity's credentials are lost while it holds the flag (even logged out), no reducer can free the slot short of a `--delete-data` republish.
+- **`find_player_by_username` hex prefixes can collide.** A prefix matching multiple identities returns the first iteration hit; fine on a dev server, not a resolver to build player-facing features on.
 
 ## Where to go next
 
-The last doc in the series, [[13 Disconnect & Teardown]], covers what happens when rows go away: `client_disconnected`, `leave_world`, death teardown, and the ghost `PlayerPosition`/`PlayerChunk` rows that admin-8's debug table happens to make visible.
+You've now seen every runtime system; [[13 Disconnect & Teardown]] closes the loop — what `client_disconnected`, `leave_world`, and `teardown_profile` clean up, and the ghost rows they deliberately don't. If you landed here out of order, [[00 End-to-End Timeline Flowchart]] re-sequences this doc's steps against the whole timeline, and [[01 Roadmap]] has the full doc map.

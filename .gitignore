@@ -45,3 +45,6 @@ client/Assets/3D/world_3d.tres
 code_examples/
 .tmp.driveupload/
 .tmp.drivedownload/
+
+flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/
+flowcharts/Subflowcharts/client_subfolder/addons_subfolder/

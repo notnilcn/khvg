@@ -14,7 +14,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Components/Spawning/EntitySpawnerComponent-_dot_-cs-_hashtag_-EntitySpawnerComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/EntitySpawnerComponent_codefile-_dot_-canvas-_colon_-script",
@@ -37,7 +36,8 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/views-_dot_-rs-_hashtag_-nearby_enemies-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-bind",
-				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_loot_drops-_colon_-bind"
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_loot_drops-_colon_-bind",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

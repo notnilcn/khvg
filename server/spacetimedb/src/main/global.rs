@@ -51,6 +51,9 @@ pub const SKILL_POINTS_PER_LEVEL: u32 = 2;
 // Max distance from the player an ability target point may be; activate_ability clamps
 // the client-supplied cursor position to this range.
 pub const MAX_ABILITY_TARGET_RANGE: f32 = 600.0;
+// Move speed (world units/sec) with no gear — the base PlayerData.base_speed resolves
+// over. Items raise it via StatKind::BaseSpeed modifiers; it is not allocatable.
+pub const BASE_SPEED: f32 = 100.0;
 
 // ===== Player Inventory =====
 
@@ -69,6 +72,11 @@ pub const ABILITY_POSITION_MULTIPLIERS: [f32; ABILITY_SLOT_COUNT as usize] = [1.
 
 // Fixed timestep (seconds) for enemy movement/phase simulation.
 pub const BEHAVIOR_TICK_DT: f32 = 0.1;
+
+// Max shots one Repeat step may fire in a single behavior tick when catching up on elapsed
+// intervals (a 25/s emitter needs ~3 per tick in steady state). Bounds the burst dumped
+// after a stall, e.g. when an enemy re-enters simulation range.
+pub const MAX_CATCHUP_SHOTS: usize = 8;
 
 // ===== World Timers =====
 

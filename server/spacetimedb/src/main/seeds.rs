@@ -2,6 +2,7 @@ use spacetimedb::{ReducerContext, Table};
 use crate::world::tables::*;
 use crate::world::def_tables::*;
 use crate::enemy::def_tables::*;
+use crate::enemy::defs::*;
 use crate::item::tables::*;
 
 fn texture(texture_id: &str, res_path: &str, kind: TextureKind) -> TextureEntry {
@@ -16,6 +17,7 @@ pub fn seed_default_textures(ctx: &ReducerContext) {
     TextureEntry::seed(ctx, texture("Helmet", "res://Textures/Items/Armor/Helmet.tres", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Hat", "res://Textures/Items/Accesories/Hat.tres", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Skull", "res://Textures/Items/Artifacts/Skull.tres", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Orb", "res://Textures/Items/Artifacts/Orb.tres", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Bag", "res://Textures/Items/Bags/Bag.tres", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Bread", "res://Textures/Items/Consumables/Bread.tres", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Bow", "res://Textures/Items/Weapons/Bow.tres", TextureKind::Item));
@@ -90,7 +92,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Wander(WanderParams { speed: 30.0, active_duration: 2.5, pause_duration: 1.5 }), 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Ring(RingParams { speed: 70.0, count: 8 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.9),
+                    seq_single(ctx, PatternType::Ring(RingParams { speed: 70.0, count: 8, line: 1, line_speed_step: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.0, 0.0, 0.9),
                 ], 0.0),
             ]),
         ],
@@ -107,15 +109,19 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Flee(FleeParams { speed: 40.0, min_range: 180.0, active_duration: 2.0, pause_duration: 1.5 }), 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Volley(VolleyParams { speed: 200.0, count: 3, speed_variance: 20.0, angle_jitter: 0.05 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.0),
+                    seq_single(ctx, PatternType::Volley(VolleyParams { speed: 200.0, count: 3, line: 1, line_speed_step: 0.0, speed_variance: 20.0, angle_jitter: 0.05 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Shotgun(ShotgunParams { speed: 130.0, count: 5, spread: 0.4, speed_variance: 20.0, lifetime_variance: 0.4 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.0),
+                    seq_single(ctx, PatternType::Shotgun(ShotgunParams { speed: 130.0, count: 5, line: 1, line_speed_step: 0.0, spread: 0.4, speed_variance: 20.0, lifetime_variance: 0.4 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.0, 0.0, 0.0),
                 ], 0.5),
             ]),
         ],
     });
 
+    // Reference example, not content: one phase per movement behavior × pattern family, so
+    // contributors (and manual testing) can see every primitive in a single template. For
+    // emitter-style authoring with spin/burst/difficulty composition, see enemy/emitters.rs
+    // and the boss in enemy/defs/gorgon_boss.rs.
     EnemyTemplate::seed(ctx, EnemyTemplate {
         template_id: "TestBoss".to_string(),
         texture_id: "Enemy".to_string(),
@@ -129,128 +135,36 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
             // Phase 0 (100% HP): turret — Ring read cleanly with no movement noise
             make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Ring(RingParams { speed: 130.0, count: 24 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.5, 10, 0.0),
+                    seq_single(ctx, PatternType::Ring(RingParams { speed: 130.0, count: 24, line: 1, line_speed_step: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.5, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
             // Phase 1 (<=80% HP): patrols while sweeping an aimed fan — repositioning shifts where the gap lands
             make_phase(ctx, 1, 0.8, MovementBehavior::Wander(WanderParams { speed: 40.0, active_duration: 2.5, pause_duration: 1.5 }), 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Curtain(CurtainParams { speed: 120.0, count: 11, angle_span: 1.6, gap_index: 5 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 3.0, 10, 0.0),
+                    seq_single(ctx, PatternType::Curtain(CurtainParams { speed: 120.0, count: 11, angle_span: 1.6, gap_index: 5 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 3.0, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
             // Phase 2 (<=60% HP): rusher — closes the gap while spraying jittered aimed shots
             make_phase(ctx, 2, 0.6, MovementBehavior::Chase(ChaseParams { speed: 55.0, active_duration: 3.0, pause_duration: 1.0 }), 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Volley(VolleyParams { speed: 180.0, count: 5, speed_variance: 25.0, angle_jitter: 0.07 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.2, 10, 0.0),
+                    seq_single(ctx, PatternType::Volley(VolleyParams { speed: 180.0, count: 5, line: 1, line_speed_step: 0.0, speed_variance: 25.0, angle_jitter: 0.07 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.2, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
             // Phase 3 (<=40% HP): kiter — keeps its distance while peppering with randomized pellets
             make_phase(ctx, 3, 0.4, MovementBehavior::Flee(FleeParams { speed: 45.0, min_range: 200.0, active_duration: 2.0, pause_duration: 1.0 }), 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Shotgun(ShotgunParams { speed: 120.0, count: 7, spread: 0.8, speed_variance: 25.0, lifetime_variance: 0.5 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.2, 10, 0.0),
+                    seq_single(ctx, PatternType::Shotgun(ShotgunParams { speed: 120.0, count: 7, line: 1, line_speed_step: 0.0, spread: 0.8, speed_variance: 25.0, lifetime_variance: 0.5 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.2, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
             // Phase 4 (<=20% HP): plants itself and erupts in a randomized 360° nova — desperation finale
             make_phase(ctx, 4, 0.2, MovementBehavior::Stationary, 0.0, vec![
                 make_sequence(vec![
-                    seq_single(ctx, PatternType::Explosion(ExplosionParams { speed: 100.0, count: 20, speed_variance: 35.0, lifetime_variance: 0.9 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 3.0, 10, 0.0),
+                    seq_single(ctx, PatternType::Explosion(ExplosionParams { speed: 100.0, count: 20, speed_variance: 35.0, lifetime_variance: 0.9 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 3.0, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
         ],
     });
 }
-
-pub fn seed_test_boss_p2(ctx: &ReducerContext) {
-    EnemyTemplate::seed(ctx, EnemyTemplate {
-        template_id: "TestBossP2".to_string(),
-        texture_id: "Enemy".to_string(),
-        display_name: "Test Boss P2".to_string(),
-        max_hp: 100,
-        defense: 5,
-        move_sim_factor: 2.75,
-        attack_sim_factor: 1.35,
-        aggro_lock_seconds: 30.0,
-        phases: vec![
-            make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
-                make_sequence(vec![
-                    seq_single(ctx, PatternType::Ring(RingParams { speed: 50.0, count: 6 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.5),
-                    seq_multi(ctx, vec![
-                        multi_shot(PatternType::Shotgun(ShotgunParams { speed: 50.0, count: 25, spread: 100.0_f32.to_radians(), speed_variance: 0.0, lifetime_variance: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10),
-                        multi_shot(PatternType::Shotgun(ShotgunParams { speed: 50.0, count: 14, spread: 12.5_f32.to_radians(), speed_variance: 0.0, lifetime_variance: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10),
-                    ], 0.5),
-                    seq_repeat(ctx, PatternType::Ring(RingParams { speed: 50.0, count: 6 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.5, 2, 0.5),
-                ], 0.0),
-            ]),
-        ],
-    });
-}
-
-pub fn seed_test_boss_p3(ctx: &ReducerContext) {
-    let bullet = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 65.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, angle, "Arrow", 2.0, 10);
-    let bullet_many = |offset: f32, wait: f32| seq_multi(ctx, vec![bullet(offset), bullet(offset + 60.0), bullet(offset + 120.0), bullet(offset + 180.0), bullet(offset + 240.0), bullet(offset + 300.0)], wait);
-    let arrow = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 50.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, angle, "Arrow", 2.0, 10);
-    let arrow_many = |offset: f32, wait: f32| seq_multi(ctx, vec![arrow(offset), arrow(offset + 60.0), arrow(offset + 120.0), arrow(offset + 180.0), arrow(offset + 240.0), arrow(offset + 300.0)], wait);
-
-    EnemyTemplate::seed(ctx, EnemyTemplate {
-        template_id: "TestBossP3".to_string(),
-        texture_id: "Enemy".to_string(),
-        display_name: "Test Boss P3".to_string(),
-        max_hp: 100,
-        defense: 5,
-        move_sim_factor: 2.75,
-        attack_sim_factor: 1.35,
-        aggro_lock_seconds: 30.0,
-        phases: vec![
-            make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
-                make_sequence(vec![
-                    bullet_many(30.0, 0.15), bullet_many(40.0, 0.15), bullet_many(50.0, 0.15),
-                    bullet_many(0.0, 0.15), bullet_many(10.0, 0.15), bullet_many(20.0, 0.15),
-                ], 0.0),
-                make_sequence(vec![
-                    arrow_many(0.0, 0.1), arrow_many(10.0, 0.1), arrow_many(20.0, 0.1),
-                    arrow_many(30.0, 0.1), arrow_many(40.0, 0.1), arrow_many(50.0, 0.1),
-                ], 0.0),
-                make_sequence(vec![
-                    seq_single(ctx, PatternType::Volley(VolleyParams { speed: 100.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 1.0),
-                ], 0.0),
-            ]),
-        ],
-    });
-}
-
-fn seed_test_boss_p3_clone(ctx: &ReducerContext, template_id: &str, display_name: &str) {
-    let bullet = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 50.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::AggroTarget, 0.0, 0.0, angle, "Arrow", 2.0, 10);
-    let bullet_many = |offset: f32| seq_multi(ctx, vec![bullet(offset), bullet(offset + 60.0), bullet(offset + 120.0), bullet(offset + 180.0), bullet(offset + 240.0), bullet(offset + 300.0)], 0.1);
-    let arrow = |angle: f32| multi_shot(PatternType::Volley(VolleyParams { speed: 50.0, count: 1, speed_variance: 0.0, angle_jitter: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, angle, "Arrow", 2.0, 10);
-    let arrow_many = |offset: f32| seq_multi(ctx, vec![arrow(offset), arrow(offset + 60.0), arrow(offset + 120.0), arrow(offset + 180.0), arrow(offset + 240.0), arrow(offset + 300.0)], 0.1);
-
-    EnemyTemplate::seed(ctx, EnemyTemplate {
-        template_id: template_id.to_string(),
-        texture_id: "Enemy".to_string(),
-        display_name: display_name.to_string(),
-        max_hp: 100,
-        defense: 5,
-        move_sim_factor: 2.75,
-        attack_sim_factor: 1.35,
-        aggro_lock_seconds: 30.0,
-        phases: vec![
-            make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
-                make_sequence(vec![
-                    bullet_many(30.0), bullet_many(40.0), bullet_many(50.0),
-                    bullet_many(0.0), bullet_many(10.0), bullet_many(20.0),
-                ], 0.0),
-                make_sequence(vec![
-                    arrow_many(0.0), arrow_many(10.0), arrow_many(20.0),
-                    arrow_many(30.0), arrow_many(40.0), arrow_many(50.0),
-                ], 0.0),
-            ]),
-        ],
-    });
-}
-
-pub fn seed_test_boss_p4(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "TestBossP4", "Test Boss P4"); }
-pub fn seed_test_boss_p5(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "TestBossP5", "Test Boss P5"); }
-pub fn seed_test_boss_p6(ctx: &ReducerContext) { seed_test_boss_p3_clone(ctx, "TestBossP6", "Test Boss P6"); }
 
 // Mixed melee/ranged spawn pool, uniform across every region for now — no info yet suggesting
 // density or radius should vary per region.
@@ -352,34 +266,6 @@ pub fn seed_world_defs(ctx: &ReducerContext) {
             BiomeWeight { biome_id: "Highlands".to_string(), weight: 30.0 },
         ],
     });
-}
-
-pub fn make_phase(ctx: &ReducerContext, phase_index: u8, hp_threshold: f32, movement: MovementBehavior, phase_loop_delay: f32, attacks: Vec<AttackSequence>) -> PhaseDef {
-    let def = ctx.db.movement_def().insert(MovementDef { def_id: 0, movement });
-    PhaseDef { phase_index, hp_threshold, movement_def_id: def.def_id, phase_loop_delay, attacks }
-}
-
-pub fn make_sequence(steps: Vec<SequenceStepDef>, start_delay: f32) -> AttackSequence {
-    AttackSequence { steps, start_delay }
-}
-
-pub fn seq_single(ctx: &ReducerContext, pattern_type: PatternType, target: EnemyTarget, offset_x: f32, offset_y: f32, base_angle_offset: f32, texture_id: &str, lifetime: f32, damage: u32, next_step_delay: f32) -> SequenceStepDef {
-    let def = ctx.db.single_step_def().insert(SingleStepDef { def_id: 0, pattern_type, target, offset_x, offset_y, base_angle_offset, texture_id: texture_id.to_string(), lifetime, damage, next_step_delay });
-    SequenceStepDef::Single(def.def_id)
-}
-
-pub fn seq_repeat(ctx: &ReducerContext, pattern_type: PatternType, target: EnemyTarget, offset_x: f32, offset_y: f32, base_angle_offset: f32, texture_id: &str, lifetime: f32, damage: u32, repeat_interval: f32, repeat_target: u32, next_step_delay: f32) -> SequenceStepDef {
-    let def = ctx.db.repeat_step_def().insert(RepeatStepDef { def_id: 0, pattern_type, target, offset_x, offset_y, base_angle_offset, texture_id: texture_id.to_string(), lifetime, damage, repeat_interval, repeat_target, next_step_delay });
-    SequenceStepDef::Repeat(def.def_id)
-}
-
-pub fn multi_shot(pattern_type: PatternType, target: EnemyTarget, offset_x: f32, offset_y: f32, base_angle_offset: f32, texture_id: &str, lifetime: f32, damage: u32) -> MultiShot {
-    MultiShot { pattern_type, target, offset_x, offset_y, base_angle_offset, texture_id: texture_id.to_string(), lifetime, damage }
-}
-
-pub fn seq_multi(ctx: &ReducerContext, shots: Vec<MultiShot>, next_step_delay: f32) -> SequenceStepDef {
-    let def = ctx.db.multi_step_def().insert(MultiStepDef { def_id: 0, shots, next_step_delay });
-    SequenceStepDef::Multi(def.def_id)
 }
 
 pub trait Seed: Sized {

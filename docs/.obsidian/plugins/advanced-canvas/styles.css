@@ -328,6 +328,9 @@
 .canvas-node[data-group-opacity] .canvas-node-container > .canvas-node-content {
   background-color: color-mix(in oklch, var(--canvas-color) calc(var(--group-opacity, 0.07) * 100%), transparent);
 }
+.canvas-wrapper[data-canvas-color-format=triplet] .canvas-node[data-group-opacity] .canvas-node-container > .canvas-node-content {
+  background-color: rgba(var(--canvas-color), var(--group-opacity, 0.07));
+}
 .canvas-wrapper[data-boxed-node-labels=true] .canvas-node:not(.canvas-node-group) .canvas-node-label {
   padding: var(--size-4-1) var(--size-4-2);
   border-radius: var(--radius-s);
@@ -336,6 +339,12 @@
 }
 .canvas-wrapper[data-boxed-node-labels=true] .canvas-node:not(.canvas-node-group).is-themed .canvas-node-label:not([contenteditable=true]) {
   background-color: var(--canvas-color);
+}
+.canvas-wrapper[data-canvas-color-format=triplet][data-boxed-node-labels=true] .canvas-node:not(.canvas-node-group) .canvas-node-label {
+  background-color: rgba(var(--canvas-color), 0.1);
+}
+.canvas-wrapper[data-canvas-color-format=triplet][data-boxed-node-labels=true] .canvas-node:not(.canvas-node-group).is-themed .canvas-node-label:not([contenteditable=true]) {
+  background-color: rgb(var(--canvas-color));
 }
 .canvas-node[data-border=dashed] .canvas-node-container {
   box-shadow: none;
@@ -415,6 +424,12 @@
 .canvas-edges path[data-edge-width][data-edge-width="3"] {
   --edge-width-multiplier: 3;
 }
+.canvas-edges path[data-edge-width][data-edge-width="4"] {
+  --edge-width-multiplier: 4;
+}
+.canvas-edges path[data-edge-width][data-edge-width="8"] {
+  --edge-width-multiplier: 8;
+}
 .canvas-edges path.canvas-display-path[data-edge-width] {
   stroke-width: calc(2px * var(--zoom-multiplier) * var(--edge-width-multiplier, 1));
 }
@@ -422,14 +437,14 @@
 .canvas:not(.is-connecting) .canvas-edges g:hover path.canvas-display-path[data-edge-width] {
   stroke-width: calc(5.5px * var(--zoom-multiplier) * var(--edge-width-multiplier, 1));
 }
-.canvas-edges [data-arrow-size][data-arrow-size="0.5"] {
-  --arrow-size-multiplier: 0.5;
-}
-.canvas-edges [data-arrow-size][data-arrow-size="1.5"] {
-  --arrow-size-multiplier: 1.5;
-}
 .canvas-edges [data-arrow-size][data-arrow-size="2"] {
   --arrow-size-multiplier: 2;
+}
+.canvas-edges [data-arrow-size][data-arrow-size="3"] {
+  --arrow-size-multiplier: 3;
+}
+.canvas-edges [data-arrow-size][data-arrow-size="4"] {
+  --arrow-size-multiplier: 4;
 }
 .canvas-edges [data-arrow-size] polygon.canvas-path-end {
   transform: scale(calc(var(--zoom-multiplier) * var(--arrow-size-multiplier, 1)));
@@ -507,6 +522,9 @@
 .canvas-wrapper[data-default-group-label-size] .canvas-node .canvas-group-label {
   font-size: calc(1.5em * var(--group-label-size-multiplier, var(--default-group-label-size-multiplier, 1)));
 }
+.canvas-wrapper[data-default-group-opacity][data-default-group-opacity="0"] {
+  --default-group-opacity: 0;
+}
 .canvas-wrapper[data-default-group-opacity][data-default-group-opacity="0.25"] {
   --default-group-opacity: 0.25;
 }
@@ -522,14 +540,17 @@
 .canvas-wrapper[data-default-group-opacity] .canvas-node.canvas-node-group .canvas-node-container > .canvas-node-content {
   background-color: color-mix(in oklch, var(--canvas-color) calc(var(--group-opacity, var(--default-group-opacity, 0.07)) * 100%), transparent);
 }
-.canvas-wrapper[data-default-edge-width][data-default-edge-width="0.5"] {
-  --default-edge-width-multiplier: 0.5;
+.canvas-wrapper[data-canvas-color-format=triplet][data-default-group-opacity] .canvas-node.canvas-node-group .canvas-node-container > .canvas-node-content {
+  background-color: rgba(var(--canvas-color), var(--group-opacity, var(--default-group-opacity, 0.07)));
 }
 .canvas-wrapper[data-default-edge-width][data-default-edge-width="2"] {
   --default-edge-width-multiplier: 2;
 }
-.canvas-wrapper[data-default-edge-width][data-default-edge-width="3"] {
-  --default-edge-width-multiplier: 3;
+.canvas-wrapper[data-default-edge-width][data-default-edge-width="4"] {
+  --default-edge-width-multiplier: 4;
+}
+.canvas-wrapper[data-default-edge-width][data-default-edge-width="8"] {
+  --default-edge-width-multiplier: 8;
 }
 .canvas-wrapper[data-default-edge-width] .canvas-edges path.canvas-display-path {
   stroke-width: calc(2px * var(--zoom-multiplier) * var(--edge-width-multiplier, var(--default-edge-width-multiplier, 1)));
@@ -538,14 +559,14 @@
 .canvas-wrapper[data-default-edge-width] .canvas:not(.is-connecting) .canvas-edges g:hover path.canvas-display-path {
   stroke-width: calc(5.5px * var(--zoom-multiplier) * var(--edge-width-multiplier, var(--default-edge-width-multiplier, 1)));
 }
-.canvas-wrapper[data-default-arrow-size][data-default-arrow-size="0.5"] {
-  --default-arrow-size-multiplier: 0.5;
-}
-.canvas-wrapper[data-default-arrow-size][data-default-arrow-size="1.5"] {
-  --default-arrow-size-multiplier: 1.5;
-}
 .canvas-wrapper[data-default-arrow-size][data-default-arrow-size="2"] {
   --default-arrow-size-multiplier: 2;
+}
+.canvas-wrapper[data-default-arrow-size][data-default-arrow-size="3"] {
+  --default-arrow-size-multiplier: 3;
+}
+.canvas-wrapper[data-default-arrow-size][data-default-arrow-size="4"] {
+  --default-arrow-size-multiplier: 4;
 }
 .canvas-wrapper[data-default-arrow-size] .canvas-edges polygon.canvas-path-end {
   transform: scale(calc(var(--zoom-multiplier) * var(--arrow-size-multiplier, var(--default-arrow-size-multiplier, 1))));

@@ -1,9 +1,9 @@
 {
 	"nodes": [
 		{
-			"id": "e258dbd0d2cc7fa0",
+			"id": "69206441fa058f50",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/lobby_gui_codefile/lobby_gui_codefile.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
 			"color": "5",
 			"x": 0,
 			"y": 0,
@@ -11,9 +11,9 @@
 			"height": 400
 		},
 		{
-			"id": "69206441fa058f50",
+			"id": "916e18fd110ee05a",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 0,

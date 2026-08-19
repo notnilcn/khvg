@@ -3,7 +3,7 @@ using Godot;
 using SpacetimeDB;
 
 /// <summary>
-/// A server-spawned loot drop. Entity glue only: the DropVisualComponent shows the item
+/// A server-spawned loot drop. Entity glue only: the Sprite2D child shows the item
 /// texture and the PickupComponent owns pickup detection + the pickup lock; this root
 /// just mirrors the LootDrop row into them. GameManager sets the row properties before
 /// AddChild, so _Ready (after the component children have registered) is the forward point.
@@ -26,7 +26,10 @@ public partial class Drop : Node2D, IEntity
 
     public override void _Ready()
     {
-        GetComponent<DropVisualComponent>()?.SetItem(ItemId);
+        var item = GameManager.GetItem(ItemId);
+        var resPath = item != null ? GameManager.GetResPath(item.TextureId) : null;
+        if (resPath != null)
+            GetNode<Sprite2D>("Sprite2D").Texture = GD.Load<Texture2D>(resPath);
         GetComponent<PickupComponent>()?.SetFromServer(DropId, DroppedBy);
     }
 }

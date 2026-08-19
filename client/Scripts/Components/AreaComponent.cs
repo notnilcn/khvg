@@ -4,7 +4,7 @@ using System;
 
 /// <summary>
 /// Component base for components whose scene root is an Area2D (hitboxes/hurtboxes such as
-/// DamageComponent and DamageReceivingComponent) — the comedot rule that a component scene's
+/// DamageReceivingComponent and HitZone) — the comedot rule that a component scene's
 /// root is the closest matching builtin type. Registration behavior mirrors Component; the
 /// bases share ComponentRegistration because C# allows only one base class.
 /// </summary>

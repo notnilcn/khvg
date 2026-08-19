@@ -31,9 +31,9 @@
 			"height": 400
 		},
 		{
-			"id": "885b956992e8d4c8",
+			"id": "c2bfc4d55b168cd2",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/FormatBehavior_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/FormatAbility_symbol.canvas",
 			"color": "5",
 			"x": 1380,
 			"y": 0,
@@ -61,11 +61,31 @@
 			"height": 400
 		},
 		{
+			"id": "263524f4ee336560",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/FormatEnchantmentBehavior_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "7409264ec8f72cc4",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/FormatModifier_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d3fd175e6768f338",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/FormatWeaponOption_symbol.canvas",
+			"color": "5",
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/ItemSidebarComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/MakeEnchantmentRow_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/MakeLabel_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/player_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/QueueHoverClear_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/RefreshShownSlot_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/Render_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +175,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/RenderDetails_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fbb37eece4fdb9d8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/RenderRequirements_symbol.canvas",
+			"color": "5",
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/shownSlot_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/ShowSlot_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400

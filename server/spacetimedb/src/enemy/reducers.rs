@@ -66,16 +66,18 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         // it's close — but it only opens fire once a player is within attack_sim_factor, so it
         // never shoots from off-screen.
         if has_player_in_simulation_range(ctx, enemy.x, enemy.y, template.attack_sim_factor * CAMERA_VIEW_RADIUS) {
-            for (pt, step_target, ox, oy, bao, tex, lifetime, source_step) in tick_phase(ctx, &mut phase, phase_def) {
-                let target = resolve_step_target(step_target, behavior.aggro_target);
+            for ev in tick_phase(ctx, &mut phase, phase_def) {
+                let target = resolve_step_target(ev.target, behavior.aggro_target);
                 ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
                     event_id: 0, enemy_id: enemy.enemy_id,
-                    source_step,
+                    source_step: ev.source_step,
                     origin_x: enemy.x, origin_y: enemy.y,
-                    origin_offset_x: ox, origin_offset_y: oy,
-                    base_angle_offset: bao,
-                    pattern_type: pt,
-                    target, texture_id: tex, lifetime,
+                    origin_offset_x: ev.offset_x, origin_offset_y: ev.offset_y,
+                    base_angle_offset: ev.base_angle_offset,
+                    pattern_type: ev.pattern_type,
+                    target, texture_id: ev.texture_id, lifetime: ev.lifetime,
+                    angular_speed: ev.angular_speed,
+                    speed_acceleration: ev.speed_acceleration,
                     chunk_index: enemy.chunk_index,
                 });
             }

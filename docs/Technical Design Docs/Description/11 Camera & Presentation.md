@@ -2,28 +2,22 @@
 
 ## Assumed knowledge
 
-- [[04 Lobby & Profiles]] — lobby-2/lobby-7's phantom-camera priority flip (menu camera at 60 while the lobby is open, 0 once hidden); this doc is the other half of that mechanism.
-- [[05 Joining the World]] — join-4's `LocalPlayer._Ready` (the spawn moment this doc's registration and 3D-model setup hang off) and join-3's game wave, which delivers the `MapConfig` row both hex overlays consume.
-- [[06 Movement & Position Sync]] — `LocalPlayer._PhysicsProcess` (WASD and body rotation; here only its camera-yaw coupling matters) and move-6's `RemoteVisualComponent` Walk/Idle coverage.
-- [[07 Terrain & World Streaming]] — the `MapConfig` row's origin, and the server hex math (`spiral_chunk_index`, `to_lower_res`) that both overlays port to C#.
-- [[08 Enemies & AI]] — enemy-4/enemy-5's sim ranges, the consumers of this doc's `CAMERA_VIEW_RADIUS`.
-- [[02 The Component Framework]] — entity/component registration (including across the SubViewport ancestor walk) and the nine unreferenced duplicate component scenes.
-- [[03 Boot & Connection]] — boot-1's `PhantomCameraManager` autoload, which makes the phantom-camera addon tick.
-- [[01 Roadmap]] — purpose, audience, and the linking conventions used throughout.
-- [[00 End-to-End Timeline Flowchart]] — the runtime spine; this doc's steps are the `camera` section.
-- Maintainer references for orientation (not restated here): [[AGENTS.md]] at the repo root, plus the `AGENTS.md` files in `client/` and `server/`.
+- [[02 The Component Framework]] — what a `*Component` is, how components register with their entity, and how a `TableBinderComponent` re-exposes server table rows as Godot signals.
+- [[03 Boot & Connection]] — how `game.tscn` (the gameplay scene, root `game`) is reached and what the `GameManager` entity is.
+- [[05 Joining the World]] — how the `LocalPlayer` entity is spawned and how the subscription waves deliver profile rows.
+- [[06 Movement & Position Sync]] — `InterpolationComponent` and its `Moving` flag, which drive remote Walk/Idle animation here.
+- [[07 Terrain & World Streaming]] — the `MapConfig` table (hex outer radius, chunk radius, world dimensions) and the server's hex math, which the overlays re-derive client-side.
 
 ## The 30-second version
 
-The camera is **one shared rig with two presenters**, switched by phantom-camera priority. All camera input lands in `CameraRigComponent` (a component of the `Main` entity), which owns the only copy of yaw, pitch, and zoom-distance; it owns no camera. The 2D presenter (`Camera2DPresenterComponent`) copies yaw/zoom each frame into the local player's `PhantomCamera2D`, and the phantom-camera host on the real `MainCamera2D` tracks whichever phantom camera has the highest priority — the lobby's menu camera and the player's camera swap control purely by flipping priorities between 60 and 0. The 3D backdrop is a separate world: a transparent `SubViewport` inside a full-screen `CanvasLayer` renders `world_3d.tscn` *over* the 2D world, containing a third-person `PhantomCamera3D` driven by the same rig (yaw negated) and a scale-50 3D knight model of the local player — and only the local player — synced from the 2D body every physics frame. Two hex overlays draw the chunk grid from the shared `MapConfig` row: the 2D one is hidden-but-subscribed, the 3D one doubles as the visible ground. The server never sees any of this; it just hard-codes the assumed view size (`CAMERA_VIEW_RADIUS` = 240 world units from a 360 px viewport at 0.75 zoom) to size enemy simulation ranges.
+One component owns the camera: [[client/Scripts/Components/Camera/CameraRigComponent.cs|CameraRigComponent]] keeps the canonical yaw, pitch, and zoom-distance and handles every camera input. Two *presenters* read that state every frame and each drive their own PhantomCamera — [[client/Scripts/Components/Camera/Camera2DPresenterComponent.cs|Camera2DPresenterComponent]] for the 2D gameplay view, [[client/Scripts/Components/Camera/World3DComponent.cs|World3DComponent]] for an optional 3D backdrop rendered inside a `SubViewport`. Because neither presenter holds state, the two views can never disagree. Around that core sit the presentation mirrors: 3D character models and 3D enemy bullets that copy 2D transforms into the backdrop viewport, two debug hex-grid overlays that re-derive the server's hex math, and the row-driven sprite pipeline that turns server `texture_id`s into `SpriteFrames` for the local player, remote players, enemies, and drops. The camera even reaches into the simulation: the server derives enemy aggro/attack ranges from constants that encode the client's viewport height and zoom.
 
 ## Flowcharts
 
-- [[flowcharts/main-camera.canvas]] — the composed camera flow (the five `Camera` components and their scene wiring, `world_3d.tscn`, the player scripts, and the server `main` module holding the camera constants).
-![[flowcharts/main-camera.canvas]]
-- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas]] — deep dive: the five camera components (`CameraRigComponent`, `Camera2DPresenterComponent`, `World3DComponent`, `HexGridOverlayComponent`, `HexGridOverlay3DComponent`).
-- [[flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/world_3d_codefile/world_3d_codefile.canvas]] — deep dive: `world_3d.tscn`, the 3D backdrop scene.
-- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/CharacterModel3D_codefile.canvas]] — deep dive: `CharacterModel3D`, the 2D→3D model bridge.
+- [[flowcharts/main-camera.canvas]] — the composed flow for this system (composed from `flows.json`; may not exist until the next regeneration run).
+- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas]] — the whole `Scripts/Components/Camera/` folder: rig, both presenters, both hex-grid overlays.
+- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/CameraRigComponent_codefile.canvas]] — deep dive into the rig's input handling and canonical state.
+- [[flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/world_3d_codefile/world_3d_codefile.canvas]] — the `world_3d.tscn` backdrop scene: 3D presenter, hex tiles, bullet mirror, PhantomCamera3D.
 
 ## System flowchart
 
@@ -55,89 +49,95 @@ The camera is **one shared rig with two presenters**, switched by phantom-camera
 ![[00 End-to-End Timeline Flowchart#^camera-7{seamless:true,title:false,marker:07.}]]
 ```
 
-## Main body
+## The rig: one camera state, zero camera authority
 
-### One rig, two presenters
+`CameraRigComponent` (declared inline as a child of the `game.tscn` root, next to `DebugOverlay`) is a plain data-and-input component: three properties — `Yaw`, `PitchDegrees`, `Distance` — plus tuning `[Export]`s. It writes to no camera node anywhere. The presenters poll it in their own `_Process`, so the rig never needs to know which views exist; adding a third view would mean adding a third reader, not touching the rig. `Zoom2D` is *derived*, not stored: `ZoomReferenceDistance / Distance` ([[client/Scripts/Components/Camera/CameraRigComponent.cs#Zoom2D#1|Zoom2D]]), because Godot 2D zoom is inverse to distance — a larger zoom factor means a closer camera, while a 3D spring arm gets *longer* as you zoom out. Storing one `Distance` and deriving the 2D zoom from it keeps the two views in lockstep by construction.
 
-```sync
-![[00 End-to-End Timeline Flowchart#^camera-1{seamless:true,title:false,marker:01.}]]
+The rig's placement is a hard-won invariant, stated in the file's own header comment: it lives in the **main scene tree, not inside the 3D `SubViewport`**, because a node inside a `SubViewport` only receives input the `SubViewportContainer` forwards — and mouse-motion events never arrive there. The old arcball control was wired inside `World3DComponent` and *silently did nothing* for exactly this reason. That is why all `_Input` handling ([[client/Scripts/Components/Camera/CameraRigComponent.cs#_Input#1|_Input]]) sits in the rig.
+
+Input falls into five groups, all gated on `LocalPlayer.Local != null` (no camera control before you possess a body):
+
+- **Held-key yaw** in `_Process`: `Camera_Left`/`Camera_Right` rotate `Yaw` at `YawSpeed` degrees per second.
+- **Scroll zoom**: `Zoom_In`/`Zoom_Out` multiply or divide `Distance` by `ZoomStep` (1.1×, clamped to `DistanceMin`–`DistanceMax`), which simultaneously changes the 2D zoom and the 3D spring-arm length — one gesture, both views.
+- **Resets**: `Reset_Camera_Yaw` / `Reset_Camera_Pitch` snap back to north / straight-down.
+- **Arcball drag** (`Arcball_Camera_Controls` held): mouse motion adds yaw and clamps pitch between `PitchMin` and `PitchMax`. On press the cursor is *captured* (`Input.MouseModeEnum.Captured`) so it can't leave the window mid-drag, and on release `WarpMouse` puts the cursor back where the drag started — the standard "infinite drag" trick.
+- **Cursor-relative snap rotates** — the bullet-hell affordance. `Camera_Snap_So_That_Cursor_Is_North` rotates the world so the cursor ends up straight above the player; the East/West variant puts it level left or right. The math measures the angle from the player's *canvas* position to the mouse (`GetGlobalTransformWithCanvas().Origin.AngleToPoint(mousePosition)`), adds `5π/2` (π/2 to convert "angle to point" into "rotation needed to make it north", plus a full 2π turn) and mods by 2π to get a positive minimal rotation. While held, mouse motion fine-tunes the yaw at `MouseRotateSensitivity` radians per pixel; on release the mouse is warped to the snap-computed screen position (`center + (0, -_snapDist)` for north), so the cursor lands exactly where the camera rotation implies it should — aim is preserved across the snap. `_snapDist` is multiplied by `Zoom2D` because the warp happens in screen pixels while the measurement started in canvas space.
+
+Every step above happens only when the local player exists; the rig is otherwise inert, which is why the menu works without any camera components at all (see the priority handoff below).
+
+## The 2D presenter and the PhantomCamera priority handoff
+
+The project uses the `phantom_camera` addon: instead of moving a `Camera2D` directly, you place `PhantomCamera2D` nodes that each describe a framing (follow target, zoom, rotation offset, tween), and a `PhantomCameraHost` child of the real camera blends toward whichever phantom has the highest `Priority`. The real `MainCamera2D` and its `PhantomCameraHost` live in `game.tscn` (lines ~130–140); no gameplay code ever touches them.
+
+[[client/Scripts/Components/Camera/Camera2DPresenterComponent.cs|Camera2DPresenterComponent]] holds no state of its own — its `_Process` copies `_rig.Yaw` into the local player's PhantomCamera2D `RotationOffset` and `_rig.Zoom2D` into its `Zoom` every frame. Which phantom it writes to is decided by registration: `LocalPlayer._Ready` grabs its `%LocalPlayerPhantomCamera2D` child and calls `RegisterCamera`, which sets that phantom's `Priority = 60` ([[client/Scripts/Components/Camera/Camera2DPresenterComponent.cs#RegisterCamera#1|RegisterCamera]]). On death `_ExitTree` calls `UnregisterCamera`, which drops the priority to 0 — guarded by `IsInstanceValid`, because the phantom is a child of the dying `LocalPlayer` and may already be freed.
+
+Authority is therefore a pure priority contest:
+
+- While the lobby is up, `LobbyComponent.ShowLobby` sets the menu phantom (`MainMenuPhantomCamera2D` in `game.tscn`) to priority 60; `HideLobby` drops it to 0 ([[client/Scripts/Components/Lobby/LobbyComponent.cs#ShowLobby#1|ShowLobby]]). The menu phantom is declared with `priority = 1` in the scene, so even with no lobby logic it still wins over a default-priority phantom.
+- At join, the player phantom jumps to 60 and takes over; on death it yields.
+
+The player phantom in `local_player.tscn` (lines ~71–80) follows the `DamageReceivingComponent` node (not the entity root — the hurtbox *is* the canonical body position), has `rotate_with_target = true`, and uses a tween resource with `duration = 0.0`: camera rotation snaps instantly rather than lagging, which matters in a dodge game where a rotated view must never trail the dodge. That phantom supersedes a **disabled legacy `Camera2D`** child (`visible = false`, zoom 0.75) still present in the scene — kept, not deleted (see Known gaps).
+
+`LocalPlayer._PhysicsProcess` also *reads* the rig: movement input is rotated by `cameraRig.Yaw` before being applied ([[client/Scripts/Players/Local/LocalPlayer.cs#_PhysicsProcess#1|_PhysicsProcess]]), and the body `Rotation` is set to the yaw while moving — so "up" on the keyboard always means "up on screen" no matter how the camera is turned, and the character sprite faces along the view. The rig is thus not just a camera; it is the frame of reference for player control.
+
+## The 3D backdrop pipeline
+
+The 3D view is pure decoration layered *under* the 2D game: `game.tscn` declares a `3D` `CanvasLayer` (behind the `UI` layer) containing a full-rect `SubViewportContainer` (`stretch = true`, `stretch_shrink = 3`) and a `SubViewport` with `transparent_bg = true` — the 2D world shows through wherever the 3D scene draws nothing. Two viewport properties carry the design constraints already mentioned: `handle_input_locally = false` (input stays in the main tree — the reason the rig can live outside) and `render_target_update_mode = 0` (always update — the backdrop animates every frame even though it's a separate render target).
+
+Inside the viewport sits an instance of `world_3d.tscn`: a directional light, a procedural-sky `WorldEnvironment`, the `HexGridOverlay3DComponent` tile field, the `EnemyBullets3DComponent` bullet mirror, and a `PhantomCamera3D` (follow mode 6 = third person, spring arm) with its own host on the viewport's `Camera3D`. [[client/Scripts/Components/Camera/World3DComponent.cs|World3DComponent]] — the scene's root and the 3D presenter — registers with the `GameManager` entity through the component framework's SubViewport ancestor walk, so `GetSibling<CameraRigComponent>()` finds the rig even across the viewport boundary. Its `_Process` writes the rig's pitch and *negated* yaw into the phantom's third-person rotation and the rig's `Distance` into `SpringLength`. The negation is stated once in the code and nowhere else: 2D rotation is clockwise in Godot's y-down space, while 3D yaw about +Y is counter-clockwise, so every 2D→3D rotation copy in the project flips the sign.
+
+Entities opt into the backdrop with [[client/Scripts/Players/CharacterModel3D.cs|CharacterModel3D]] — a plain C# `IDisposable`, *not* a node or component: it instantiates a `PackedScene` model under the `World3DComponent`, and its `SyncFrom2D(pos, yaw)` copies the 2D global position to `(x, 0, y)` and the negated yaw each frame. `LocalPlayer` creates one from its exported `KnightScene` in `_Ready` and — crucially — passes the model to `world3D.SetCameraFollowTarget`, which is what makes the 3D PhantomCamera3D track the player (`ClearCameraFollowTarget` on exit calls the addon's `erase_follow_target` through untyped `Call`, because the phantom camera is a GDScript addon node with no C# type). `Enemy._Ready` does the same with its `SkeletonScene` ([[client/Scripts/Players/Enemies/Enemy.cs#_Ready#1|Enemy._Ready]]) and syncs in `_Process`, disposing in `_ExitTree`. `World3DComponent.DefaultModelScale` (50) matches `CharacterModel3D`'s default scale argument; callers currently rely on the default.
+
+**Verified against the scene:** the `3D` CanvasLayer is declared `visible = false` in `game.tscn` (line ~106). All of this machinery — model mirroring, tile field, bullet mirror, spring-arm camera — runs every frame, but the layer renders nothing in the shipped scene. Flip that one property to re-enable the backdrop.
+
+## Enemy bullets, mirrored into 3D
+
+Enemy bullets exist only in 2D: the BlastBullets2D factory (a GDExtension node) simulates and renders them into the 2D world, so without help the 3D viewport would show enemies firing nothing. [[client/Scripts/Components/Bullets/EnemyBullets3DComponent.cs|EnemyBullets3DComponent]] (a child in `world_3d.tscn`, `BulletScene` = the KayKit `hex_bullet.tscn`) rebuilds them in 3D each frame. Its `_Process` walks `BulletSpawnerComponent.LiveEnemyBullets` — the live `DirectionalBullets2D` instances — and for each one reads bullet transforms through untyped `Call("all_bullets_get_transforms")`, because the GDExtension exposes no C# API (the same calling convention `BulletSpawnerComponent`/`BulletControllerComponent` use).
+
+Two details are load-bearing:
+
+- **Per-index liveness.** The bulk `get_all_bullets_status` array is unreliable for multi-bullet instances — only index 0 ever reports true — so liveness goes through `Call("is_bullet_status_enabled", i)` per bullet ([[client/Scripts/Components/Bullets/EnemyBullets3DComponent.cs#SyncInstance#1|SyncInstance]]). The comment says `BulletControllerComponent` hits the same quirk; this is a factory bug the client works around in two places.
+- **A flat, never-shrinking pool.** `NextNode()` hands out the first `_used` entries of a `List<Node3D>`, growing on demand; `HideUnused()` hides the tail. Bullet counts spike and settle every fight, so the pool trades a bounded memory overhead for zero allocation in the steady state. Each pooled node is placed at `(x, BulletHeight, y)` with the sign-flipped yaw — `BulletHeight` (20) hovers bullets above the tile plane so they read against the ground.
+
+## Debug overlays and the tripled hex math
+
+Two overlays visualize the server's hex coordinate system, both fed by `MapConfig` rows through a child `TableBinderComponent` with `ReplayExistingRows = true` (a cached config row still arrives via the insert path, so no manual re-query is needed):
+
+- [[client/Scripts/Components/Camera/HexGridOverlayComponent.cs|HexGridOverlayComponent]] (2D, child of the `game.tscn` root) redraws whenever the camera position or zoom changes: `_Draw` converts the viewport rect to world bounds, then to a hex range via `WorldToHex`, and draws each hex — outline, plus per-hex labels for hex coords, chunk coords, and the chunk's spiral index. Chunks are 3-colored by `(cq − cr) mod 3`, which provably gives adjacent chunks different colors; out-of-bounds chunks (beyond `ChunkCols`/`ChunkRows`) get a flat grey. Its signals are wired inline in `game.tscn` (lines ~154–161, 212–213), where the node is also declared `visible = false` — hidden, but still subscribed (see Known gaps).
+- [[client/Scripts/Components/Camera/HexGridOverlay3DComponent.cs|HexGridOverlay3DComponent]] (3D, in `world_3d.tscn`) instances KayKit hex tile scenes in a ring of `ViewRadiusHexes` (12) around the player, refreshing only when the player has moved at least one hex (`DistanceSquaredTo` vs `_outerRadius²` — the hysteresis avoids rebuilding the ring every frame). Its 3-coloring uses a *different* formula, `(2cq + cr) mod 3`, selecting among the exported purple/pink/grey tile scenes; each tile optionally gets a code-created `Label3D` with hex/chunk/spiral coords.
+
+Both overlays re-derive the server's hex geometry — `HexToWorld`, `WorldToHex` (cube-coordinate rounding), `ToLowerRes` (a port of the `hexx` crate's `Hex::to_lower_res`), and `HexSpiralIndex` (the analytic Z²→ℕ spiral bijection) — because Godot can't call into the SpacetimeDB module. That is why `HexSpiralIndex` exists three times: the server's [[server/spacetimedb/src/world/hex.rs#spiral_chunk_index#1|spiral_chunk_index]] and both overlay components. Any change to the chunk-indexing scheme must land in all three or the overlays will label chunks with indices the server disagrees with. (The terrain system is the third consumer of this math — see [[07 Terrain & World Streaming]].)
+
+## The camera's reach into the simulation
+
+The coupling in camera-6 deserves emphasis because it violates the usual "presentation can't affect gameplay" intuition — deliberately. [[server/spacetimedb/src/main/global.rs#CAMERA_VIEW_RADIUS#1|main/global.rs]] defines:
+
+```
+CAMERA_VIEW_RADIUS = (CLIENT_VIEWPORT_HEIGHT_PX / CLIENT_CAMERA_ZOOM) / 2
+                   = (360 / 0.75) / 2 = 240 px
 ```
 
-The split is a deliberate invariant, stated twice in the code: `CameraRigComponent.cs`'s header says both presenters read the rig and "neither owns state and neither writes back", and `World3DComponent.cs` opens with "Do NOT try to combine World3DComponent with Camera2DPresenterComponent." The reason is that the two presenters write to *different kinds of camera with different conventions* — the 2D one wants a `RotationOffset` in clockwise y-down radians and a `Vector2` zoom, the 3D one wants spring-arm Euler angles in degrees and a length — so any merged class would be two code paths behind one interface anyway. Keeping the state in a third, camera-less component means the 2D and 3D views can never drift apart: there is exactly one `Yaw` in the process.
+— the vertical half-extent of what the client can see at reference zoom. The enemy tick reducers then compute activation and attack ranges as `template.move_sim_factor * CAMERA_VIEW_RADIUS` and `template.attack_sim_factor * CAMERA_VIEW_RADIUS` ([[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_behavior#1|tick_enemy_behavior]]), with seeded factors like 1.5/0.85 up to 2.75/1.35. So an enemy wakes up and starts approaching from off-screen, and opens fire at roughly the moment it becomes visible — the seeded factors encode "how far beyond the edge of the screen" each enemy type starts acting. The invariant, stated in the constants' own comment, runs the other way too: `SIMULATION_CHUNK_RINGS` must cover the largest sim-factor range or simulation silently stops for that enemy. Changing the client's zoom reference changes server behavior; treat `CLIENT_CAMERA_ZOOM` as a gameplay constant, not a cosmetic one.
 
-The rig's placement is load-bearing. It registers with the `GameManager` entity in the main scene tree ([[02 The Component Framework]]'s ancestor walk), and the header comment explains why it can't live next to the 3D presenter: a node inside a `SubViewport` only receives input the `SubViewportContainer` forwards, and mouse motion never arrives — the old arcball, wired inside `World3DComponent`, "silently did nothing". `World3DComponent` itself *can* live in the SubViewport because it only reads state (the ancestor walk crosses the viewport boundary); it just can't listen.
+## Row-driven character presentation
 
-### Camera input: yaw, zoom, arcball, cursor snaps
+Every sprite in the game is chosen by a server row, resolved through the same path: the row carries a `texture_id`, [[client/Scripts/Game/GameManager.cs#GetResPath#1|GameManager.GetResPath]] forwards it to `CatalogComponent.GetResPath`, which looks the id up in the seeded `TextureEntry` catalog and returns a `res://` path; the caller `GD.Load`s the `SpriteFrames`.
 
-```sync
-![[00 End-to-End Timeline Flowchart#^camera-2{seamless:true,title:false,marker:02.}]]
-```
+- **Local player:** [[client/Scripts/Components/Visual/LocalPlayerProfileComponent.cs|LocalPlayerProfileComponent]] (in `local_player.tscn`) receives `LocalPlayerActiveProfile` rows from its binder and applies `profile.TextureId` to the entity's `AnimatedSprite2D` on insert. Updates are deliberately notification-only — it raises `AimSettingsChanged` on the entity so observers like `CombatComponent` stay wired to the entity, but does not re-apply the texture, matching the pre-refactor behavior.
+- **Remote players:** [[client/Scripts/Components/Visual/RemoteVisualComponent.cs|RemoteVisualComponent]] is itself an `AnimatedSprite2D` (via the `VisualComponent` base — the component scene's root *is* the sprite). `SetTexture` resolves the profile texture id the same way; its `_Process` plays `Walk` or `Idle` from the sibling `InterpolationComponent.Moving` flag — animation state comes from the movement system, not from any server row.
+- **Enemies and drops** follow the same catalog path from their own rows (template texture, item texture) — covered in [[08 Enemies & AI]] and [[10 Inventory, Items & Enchantments]].
 
-Two Godot input idioms are worth unpacking. **Mouse capture** (`Input.MouseModeEnum.Captured`) hides the cursor and keeps delivering relative motion even at screen edges — that's what makes drag-to-rotate viable — and on release the rig warps the cursor back to where the drag started, so the mouse doesn't "travel" while you orbit. The **cursor snaps** are the unusual feature: instead of dragging the world under a fixed cursor, one keypress computes the player→cursor angle in canvas space (`GetGlobalTransformWithCanvas().Origin.AngleToPoint(mouse)`), adds it to yaw so that direction becomes screen-north (or east/west), and warps the cursor to the matching screen edge at the same distance — the view rotates to meet the cursor, and the cursor's on-screen meaning is preserved. The `+ 5π/2 mod 2π` in the angle math converts `AngleToPoint`'s signed angle (0 = east) into an unsigned angle measured from north. Holding the snap key keeps a slower manual rotation active (`MouseRotateSensitivity`, rad/px) until release.
-
-Because movement input is rotated by the same yaw (camera-2's last beat), rotating the camera never changes what "press W" does relative to the screen — it only changes which world direction that is. The body `Rotation = yaw` assignment doubles as the sprite's facing and the 3D model's heading (camera-5), so all three stay locked together.
-
-### The 2D presenter and the priority handoff
-
-```sync
-![[00 End-to-End Timeline Flowchart#^camera-3{seamless:true,title:false,marker:03.}]]
-```
-
-A **phantom camera** (the PhantomCamera addon, kept ticking by boot-1's `PhantomCameraManager` autoload) is a virtual camera: it holds position/rotation/zoom intent but renders nothing itself. A `PhantomCameraHost` node attached to a real camera continuously copies the state of the highest-`Priority` phantom camera in its layer set, tweening over the pcam's `tween_resource` duration. The upshot is that *which camera is live* is just an integer comparison, and this game drives every camera transition with it: the menu pcam sits at 60 while the lobby is open (lobby-2) and drops to 0 on join (lobby-7), while the player's pcam goes 0 → 60 in `RegisterCamera` — both tweens have duration 0, so the handoff is a hard cut, not a pan.
-
-The player pcam being a child of `local_player.tscn` (rather than `main.tscn`) is what makes respawn/leave work without any camera bookkeeping in the spawner: the camera is born with the player, registered in `_Ready`, and dies with it. The two `IsInstanceValid` guards in `UnregisterCamera`/`_Process` exist because C# wrappers outlive freed Godot nodes — on death the pcam can be gone before the presenter runs again, and touching it would throw `ObjectDisposedException`.
-
-One harmless dead switch: the pcam sets `rotate_with_target = true`, which would add the follow target's rotation on top of `RotationOffset` — but the follow target is the `DamageReceivingComponent` child, whose *local* rotation never changes (`LocalPlayer` rotates its own body, not the child), so the flag contributes 0 and every degree of camera rotation comes from the presenter's `RotationOffset` write.
-
-### The 3D backdrop: a second world composited on top
-
-```sync
-![[00 End-to-End Timeline Flowchart#^camera-4{seamless:true,title:false,marker:04.}]]
-```
-
-The 2D/3D mixing is standard Godot machinery, three nodes deep. A `SubViewport` is an off-screen render target with its own scene tree; a `SubViewportContainer` displays that texture as a UI element (here stretched full-rect, `stretch_shrink = 3`, so the 384×216 render is upscaled to the window); and a `CanvasLayer` draws UI-space content on its own layer above the world canvas — which is what puts the 3D render *on top of* the 2D world rather than behind it. With `transparent_bg = true` the viewport clears to transparent, so only actual 3D geometry (the knight, the hex tiles) occludes the 2D scene below. `handle_input_locally = false` is why camera-1's rig can't live in there: the viewport simply doesn't process input.
-
-Inside, `world_3d.tscn` is a complete miniature 3D scene — light, sky environment, camera — whose `PhantomCamera3D` runs `follow_mode` 6 (third person: an internal `SpringArm3D` positioned at the follow target, rotated and extended by the presenter). The two phantom cameras never compete because of **host layers**: the 2D host listens on the default layer, the 3D pcam and host are on layer 2, and each host only considers pcams whose layers intersect its own. The negated yaw (camera-4) is the entire 2D↔3D convention bridge, and the code's claim that the sign convention "is stated once, here, and nowhere else" is accurate — `CharacterModel3D.SyncFrom2D` repeats the same negation for the model with its own local comment (camera-5).
-
-### The local player's 3D model
-
-```sync
-![[00 End-to-End Timeline Flowchart#^camera-5{seamless:true,title:false,marker:05.}]]
-```
-
-`CharacterModel3D` is a handle class rather than a component because the thing it manages can't participate in the component framework: it lives in the SubViewport's tree, parented under `World3DComponent`, while its owner (`LocalPlayer`) lives in the main tree. So `LocalPlayer` news it up, pumps it from `_PhysicsProcess`, and `Dispose()`s it from `_ExitTree` — manual lifetime management exactly where the framework can't reach. The model's *only* inputs are position and yaw; animation, scale, and facing never change after construction. Note the 3D model is a pure visual echo: gameplay (collision, hit detection, position sync) all happens on the 2D `CharacterBody2D`, and the 2D `AnimatedSprite2D` stays visible under the 3D render — the model just draws over it.
-
-### Hex grid overlays: one hidden, one doubling as the ground
-
-```sync
-![[00 End-to-End Timeline Flowchart#^camera-6{seamless:true,title:false,marker:06.}]]
-```
-
-Both overlays exist to make the server's hex addressing visible — every terrain tile, AOI query, and spawn region is keyed by the chunk coordinates these grids draw — and both re-implement the server's hex math in C# (`HexToWorld`/`WorldToHex`/`ToLowerRes`/`HexSpiralIndex`), so they drift in lockstep risk with [[07 Terrain & World Streaming]]'s stale-`hex_grid_overlay.gd`-comment gap. Their `MapConfigBinder` children are how they learn the grid dimensions: the same single `MapConfig` row (join-3) feeds terrain-7's `TerrainComponent`, the 2D overlay, and the 3D overlay, three binders over one table.
-
-The 3D overlay is doing double duty: labeled "debug overlay" in its docstring, it is in fact the only ground the 3D backdrop has — the tinted KayKit tiles under the knight *are* its output, and its `ShowTileLabels` export defaults to true, so the hex/chunk coordinate `Label3D`s are part of the shipped view. Tiles refresh only when the player has moved more than one hex-width since the last refresh (`_lastRefreshPos` hysteresis in `_Process`), so walking within a hex costs nothing.
-
-### What the server assumes about the camera
-
-```sync
-![[00 End-to-End Timeline Flowchart#^camera-7{seamless:true,title:false,marker:07.}]]
-```
-
-The constants exist so enemy *template data* can be resolution-independent: a template says "start simulating at 3× the view radius" rather than "at 720 units", so retuning the client camera would in principle only require updating these two numbers. The chain to keep straight is `CLIENT_VIEWPORT_HEIGHT_PX / CLIENT_CAMERA_ZOOM / 2` → `CAMERA_VIEW_RADIUS` → `move/attack_sim_factor ×` that → gated by a `SIMULATION_CHUNK_RINGS` chunk pre-filter (`has_player_in_simulation_range`, enemy-4) that must cover the largest product. The mismatch between the assumed 0.75 zoom and the live rig is in Known gaps.
-
-### Sprite presentation for players
-
-The 2D sprite side of presentation is small because earlier docs own most of it. The local player's sprite is dressed by [[LocalPlayerProfileComponent.cs##public partial class LocalPlayerProfileComponent : Component|LocalPlayerProfileComponent]]: its `LocalPlayerActiveProfileBinder` child (wired in [[local_player.tscn##[node name="LocalPlayerActiveProfileBinder" type="Node" parent="LocalPlayerProfileComponent"]|local_player.tscn]], replay on) feeds [[LocalPlayerProfileComponent.cs##private void OnProfileRowInserted()|OnProfileRowInserted]] the active `PlayerProfile` row, which resolves the profile's `TextureId` through equip-1's catalog (`GameManager.GetResPath`) and swaps the `AnimatedSprite2D`'s `SpriteFrames`; Walk/Idle selection is move-doc territory (`LocalPlayer._PhysicsProcess` plays by input). Profile *updates* deliberately don't re-apply the texture — a comment in `OnProfileRowUpdated` says the pre-refactor code didn't either. Remote players do the same thing once at spawn through `RemoteVisualComponent.SetTexture` (move-6) — and, unlike the local player, they get no 3D counterpart at all.
+Walk/Idle for the *local* sprite is driven directly in `LocalPlayer._PhysicsProcess` from the input vector — the only presentation path that doesn't wait for a server round-trip, because local input feedback can't afford one.
 
 ## Known gaps / stubs
 
-- **Leftover debug print.** [[Camera2DPresenterComponent.cs##public void RegisterCamera(Node2D pcamNode)|RegisterCamera]] ends with a `GD.Print` of the registered pcam's offset and zoom — fires once per join/respawn.
-- **The 2D hex overlay is hidden but fully live.** The [[main.tscn##[node name="HexGridOverlayComponent" type="Node2D" parent="."]|HexGridOverlayComponent]] in `main.tscn` is `visible = false`, which suppresses only drawing: its `MapConfigBinder` is still wired and replaying (so `OnMapConfigRow` still runs) and its `_Process` still polls the camera every frame. It's a debug tool left off, not dead code — flip `visible` in the editor to use it. (Its docstring still cites `hex_grid_overlay_component.tscn` as the wiring site — one of the nine unreferenced duplicate component scenes; the live wiring is inline in `main.tscn`, see [[02 The Component Framework]] → Known gaps. The `camera_rig_component.tscn` and `camera_2d_presenter_component.tscn` scenes are duplicates of the same kind.)
-- **Disabled legacy camera.** The [[local_player.tscn##[node name="Camera" type="Camera2D" parent="."]|`Camera` (Camera2D) child]] in `local_player.tscn` is `visible = false`, superseded by the phantom-camera setup — but its `zoom = 0.75` is still the value the server's camera constants encode (next item), so it isn't quite dead weight.
-- **Server camera constants are stale relative to the live rig.** [[server/spacetimedb/src/main/global.rs##pub const CLIENT_CAMERA_ZOOM|CLIENT_CAMERA_ZOOM]] = 0.75 matches the disabled legacy camera, while the rig's defaults map to zoom 1.0 and the player can zoom from 6× down to 0.25× at will. `CAMERA_VIEW_RADIUS` (240) is therefore a fixed guess that routinely misestimates the real visible area — consequential only for *when* enemies start/stop simulating (enemy-4/enemy-5), since the AOI subscription radii use their own chunk constants.
-- **Dead export.** `World3DComponent.DefaultModelScale` (50) is never read — the 3D model's scale 50 comes from `CharacterModel3D`'s constructor default, and `LocalPlayer` doesn't override it. Two sources of the same magic number.
-- **Debug labels ship visible.** `HexGridOverlay3DComponent.ShowTileLabels` defaults to true and `world_3d.tscn` doesn't override it, so every 3D ground tile carries a floating hex/chunk/spiral-index `Label3D` in normal play.
+- **Leftover debug print:** `Camera2DPresenterComponent.RegisterCamera` still `GD.Print`s the registered phantom's offset and zoom on every join ([[client/Scripts/Components/Camera/Camera2DPresenterComponent.cs#RegisterCamera#1|RegisterCamera]]).
+- **Hidden but subscribed:** `HexGridOverlayComponent` in `game.tscn` is `visible = false` yet its `MapConfigBinder` still subscribes and its `_Process`/`QueueRedraw` still run against camera movement — known waste; the overlay is toggled only by editing the scene.
+- **Disabled legacy camera:** `local_player.tscn` keeps a `visible = false` legacy `Camera2D` child (zoom 0.75) superseded by the PhantomCamera2D setup — retained deliberately, but a drift hazard if anyone re-enables it.
+- **3D backdrop off in the shipped scene:** the `3D` CanvasLayer in `game.tscn` is `visible = false` (line ~106) — all 3D machinery (models, tiles, bullet mirror, spring arm) runs without rendering. Verified against the scene file; an earlier note elsewhere in the repo claims the opposite — the scene file wins.
+- **Dead overlay code:** `HexGridOverlayComponent.DrawHudText` is fully written but its call in `_Draw` is commented out, and the `SeamLineColor`/`SeamLineWidth` fields are declared but never used (a world-wrap seam visualization that was never hooked up). `World3DComponent.DefaultModelScale` is exported but unread — callers rely on `CharacterModel3D`'s own default.
+- **Duplicate component scenes (drift hazard):** `camera_rig_component.tscn`, `camera_2d_presenter_component.tscn`, and `hex_grid_overlay_component.tscn` under `Scenes/Components/` are unreferenced duplicates — the live wiring is inline in `game.tscn` as documented above. Don't cite or edit them as if they were the live setup.
 
 ## Where to go next
 
-The debug tooling that sits beside this system — the `DebugOverlay` canvas, the admin reducers (including the world-regeneration reducers that rewrite the `MapConfig` these overlays read) — is [[12 Admin & Debug]]. What happens to the camera registration and the 3D model when the player leaves or dies — the `_ExitTree` unwinding this doc introduced — is [[13 Disconnect & Teardown]].
+The debug-overlay side of presentation continues in [[12 Admin & Debug]] (the inline `DebugOverlay` in `game.tscn`). For the systems this one mirrors, read [[06 Movement & Position Sync]] (where `InterpolationComponent.Moving` comes from) and [[07 Terrain & World Streaming]] (the server original of the hex math the overlays re-derive).

@@ -6,10 +6,13 @@ using Godot;
 /// the shared home of the lerp logic RemotePlayer and Enemy used to carry inline.
 /// The torus wrap is handled by picking the nearest wrapped candidate of the target
 /// each frame, so routine wraps lerp smoothly without ever snapping. RemotePlayer
-/// additionally passes the server's velocity, and each frame the target is advanced by
-/// velocity * time-since-last-update — dead reckoning (velocity extrapolation between
-/// snapshots) blended with the lerp. RemotePlayer also sets WrapSnapThreshold (hard
-/// correction on real desync); Enemy uses position targets only.
+/// additionally passes the server's reported velocity (reconstructed from
+/// movement_direction + movement_speed; zero when idle), and each frame the target is
+/// advanced by velocity * time-since-last-update — dead reckoning (velocity
+/// extrapolation between snapshots) blended with the lerp. Screen rotation arrives
+/// separately via SetScreenRotationTarget (it lives in its own server table on a faster
+/// cadence). RemotePlayer also sets WrapSnapThreshold (hard correction on real
+/// desync); Enemy uses position targets only.
 /// </summary>
 public partial class InterpolationComponent : Component
 {
@@ -27,7 +30,7 @@ public partial class InterpolationComponent : Component
     private Vector2 canonicalPosition;
     private Vector2 snapVelocity;
     private float timeSinceSnap;
-    private float targetRotation;
+    private float targetScreenRotation;
 
     /// The entity root this component moves (the IEntity ancestor cast to Node2D).
     private Node2D? EntityNode => Entity as Node2D;
@@ -36,18 +39,19 @@ public partial class InterpolationComponent : Component
     {
         if (EntityNode is not { } node) return;
         canonicalPosition = node.GlobalPosition;
-        targetRotation = node.Rotation;
+        targetScreenRotation = node.Rotation;
     }
 
     /// Sets a new position target; rotation target and extrapolation velocity are unchanged.
-    public void SetTarget(Vector2 position) => SetTarget(position, targetRotation, Vector2.Zero);
+    public void SetTarget(Vector2 position) => SetTarget(position, Vector2.Zero);
 
-    /// Sets a new position/rotation target, optionally with the server's current velocity
-    /// (used to extrapolate the target between updates).
-    public void SetTarget(Vector2 position, float rotation, Vector2 velocity = default)
+    /// Sets a new position target, optionally with the server's reported velocity
+    /// (used to extrapolate the target between updates). Screen rotation is set
+    /// separately via SetScreenRotationTarget — it arrives from its own table on a
+    /// faster cadence.
+    public void SetTarget(Vector2 position, Vector2 velocity)
     {
         canonicalPosition = position;
-        targetRotation = rotation;
         snapVelocity = velocity;
         timeSinceSnap = 0f;
 
@@ -55,6 +59,13 @@ public partial class InterpolationComponent : Component
         var nearest = TorusMath.NearestCandidate(canonicalPosition, node.GlobalPosition, GameManager.LapQ, GameManager.LapR);
         if (node.GlobalPosition.DistanceSquaredTo(nearest) > WrapSnapThreshold * WrapSnapThreshold)
             node.GlobalPosition = nearest;
+    }
+
+    /// Sets a new screen-rotation target; position target and extrapolation velocity
+    /// are unchanged.
+    public void SetScreenRotationTarget(float screenRotation)
+    {
+        targetScreenRotation = screenRotation;
     }
 
     /// Hard-sets both the entity position and the interpolation target (initial placement).
@@ -75,6 +86,6 @@ public partial class InterpolationComponent : Component
         var nearest = TorusMath.NearestCandidate(canonicalExtrapolated, node.GlobalPosition, GameManager.LapQ, GameManager.LapR);
         Moving = node.GlobalPosition.DistanceSquaredTo(nearest) > 1f;
         node.GlobalPosition = node.GlobalPosition.Lerp(nearest, LerpSpeed * (float)delta);
-        node.Rotation = Mathf.LerpAngle(node.Rotation, targetRotation, LerpSpeed * (float)delta);
+        node.Rotation = Mathf.LerpAngle(node.Rotation, targetScreenRotation, LerpSpeed * (float)delta);
     }
 }

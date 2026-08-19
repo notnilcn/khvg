@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "2c3a9dd4caa0c728",
+			"type": "file",
+			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
+			"subpath": "#positionSync",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -11,21 +11,11 @@
 			"height": 400
 		},
 		{
-			"id": "76342588b6ad5940",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/bulletManager_symbol.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "95f6e59940495ea0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/drops_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/enemies_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/EntitySpawnerComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/GetEnemy_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/localPlayer_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/localPlayerBinder_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/nearbyEnemiesBinder_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/nearbyLootDropsBinder_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/nearbyRemotePlayersBinder_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/OnDropDelete_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/OnDropInsert_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/OnEnemyDelete_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/OnEnemyInsert_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/OnLocalPlayerDelete_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/OnLocalPlayerInsert_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/OnNearbyRemotePlayerDelete_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -185,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/OnNearbyRemotePlayerInsert_symbol.canvas",
 			"color": "5",
-			"x": 8280,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -195,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/remotePlayers_symbol.canvas",
 			"color": "5",
-			"x": 8740,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400

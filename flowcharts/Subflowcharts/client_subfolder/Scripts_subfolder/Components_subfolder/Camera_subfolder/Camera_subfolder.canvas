@@ -1,16 +1,63 @@
 {
-	"nodes":[
-		{"id":"6933fa9cfdc68510","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/Camera2DPresenterComponent_codefile.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
-		{"id":"df405fe45a8afff0","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/CameraRigComponent_codefile.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
-		{"id":"e07960f8956c94b0","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlay3DComponent_codefile/HexGridOverlay3DComponent_codefile.canvas","color":"5","x":920,"y":0,"width":400,"height":400},
-		{"id":"584bd86ab51c07cc","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HexGridOverlayComponent_codefile.canvas","color":"5","x":1380,"y":0,"width":400,"height":400},
-		{"id":"69598cc4248a7450","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/World3DComponent_codefile/World3DComponent_codefile.canvas","color":"5","x":1840,"y":0,"width":400,"height":400}
-	],
-	"edges":[],
-	"metadata":{
-		"frontmatter":{
-			"tags":["includeInAggregateFlowchart","subfolder"]
+	"nodes": [
+		{
+			"id": "6933fa9cfdc68510",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera2DPresenterComponent_codefile/Camera2DPresenterComponent_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
 		},
-		"version":"1.0-1.0"
+		{
+			"id": "df405fe45a8afff0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/CameraRigComponent_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e07960f8956c94b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlay3DComponent_codefile/HexGridOverlay3DComponent_codefile.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "584bd86ab51c07cc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HexGridOverlayComponent_codefile.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69598cc4248a7450",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/World3DComponent_codefile/World3DComponent_codefile.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"subfolder"
+			]
+		}
 	}
 }

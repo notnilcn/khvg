@@ -14,7 +14,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Components/Catalog/CatalogComponent-_dot_-cs-_hashtag_-CatalogComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/CatalogComponent_codefile-_dot_-canvas-_colon_-script",
@@ -36,7 +35,8 @@
 				"edge-_colon_-server/spacetimedb/src/item/views-_dot_-rs-_hashtag_-all_items-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas-_colon_-bind",
-				"edge-_colon_-server/spacetimedb/src/item/views-_dot_-rs-_hashtag_-all_enchantments-_colon_-bind"
+				"edge-_colon_-server/spacetimedb/src/item/views-_dot_-rs-_hashtag_-all_enchantments-_colon_-bind",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

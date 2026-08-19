@@ -11,21 +11,11 @@
 			"height": 400
 		},
 		{
-			"id": "e258dbd0d2cc7fa0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/lobby_gui_codefile/lobby_gui_codefile.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "3da1f6e0399b76c0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/profile_panel_codefile/profile_panel_codefile.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -37,6 +27,16 @@
 			"color": "5",
 			"x": 120,
 			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5a21b129c8a4e508",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui_codefile.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},

@@ -18,7 +18,7 @@ public class ResolvedSlot
 /// dictionary and resolves items through GameManager's catalog. The server stores one
 /// PlayerInventorySlot row per slot, so insert/update/delete each touch a single entry —
 /// no whole-list replacement. LocalPlayer keeps pass-through accessors and raises
-/// InventoryChanged on itself so UI readers (InventoryComponent, ItemSidebarComponent,
+/// InventoryChanged on itself so UI readers (InventoryPanel, ItemSidebar,
 /// CombatComponent) stay stable.
 /// </summary>
 public partial class LocalPlayerInventoryComponent : Component
@@ -59,7 +59,7 @@ public partial class LocalPlayerInventoryComponent : Component
     /// the cursor's world position, and — for bullet-control effects — the optimistic
     /// local apply (remote clients apply the same cast from the BulletControlEvent echo;
     /// the caster's own echo is skipped via cast_by). Passive ability items (no Ability
-    /// behavior) silently do nothing. Shared by the hotkeys (InventoryComponent) and the
+    /// behavior) silently do nothing. Shared by the hotkeys (InventoryPanel) and the
     /// slot click path (SlotComponent).
     public static void TryActivateAbility(LocalPlayer player, int cellIndex)
     {
@@ -91,6 +91,15 @@ public partial class LocalPlayerInventoryComponent : Component
             case AbilityEffect.DeleteBullets(var radius): controller?.DeleteNear(target, radius * multiplier); break;
             case AbilityEffect.SplitBullets(var radius): controller?.SplitNear(target, radius * multiplier); break;
             case AbilityEffect.AttractBullets(var radius): controller?.AttractNear(target, radius * multiplier, target); break;
+            case AbilityEffect.SlashBullets(var p):
+            {
+                var origin = player.GlobalPosition;
+                var axis = target - origin;
+                // Same zero-length fallback as the server so the optimistic rect matches the echo.
+                var dir = axis.LengthSquared() > 0.000001f ? axis.Normalized() : Vector2.Right;
+                controller?.Slash(origin, origin + dir * (p.Length * multiplier), p.Width * multiplier);
+                break;
+            }
         }
     }
 

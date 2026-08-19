@@ -121,11 +121,21 @@
 			"height": 400
 		},
 		{
+			"id": "c4cbba4f7a73a7a8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/positionSync_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "0972b6ffc76f996e",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/RaiseAimSettingsChanged_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/RaiseInventoryChanged_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/RaiseStatsChanged_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/RegisterComponent_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -164,16 +174,6 @@
 			"id": "dc081c4e31e3fc20",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/ResolveSlotAt_symbol.canvas",
-			"color": "5",
-			"x": 7360,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "aebd8a0b4f3fd9e8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/LocalPlayer_codefile/SpeedPerStat_symbol.canvas",
 			"color": "5",
 			"x": 7820,
 			"y": 0,

@@ -1,17 +1,103 @@
 {
-	"nodes":[
-		{"id":"771bdf0c0e7a81c0","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
-		{"id":"0e8ce4568e986a60","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/world_3d_codefile/world_3d_codefile.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
-		{"id":"9c40649d704c108c","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas","color":"5","x":230,"y":500,"width":400,"height":400},
-		{"id":"0bfa04cd733308ca","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas","color":"5","x":920,"y":0,"width":400,"height":400},
-		{"id":"4414d6e4f159cb40","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas","color":"5","x":1380,"y":0,"width":400,"height":400}
+	"nodes": [
+		{
+			"id": "771bdf0c0e7a81c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas",
+			"color": "5",
+			"x": 480,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0e8ce4568e986a60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/world_3d_codefile/world_3d_codefile.canvas",
+			"color": "5",
+			"x": 10,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d494bc0768d25948",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9c40649d704c108c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas",
+			"color": "5",
+			"x": 470,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "048460f3ecc5ac34",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
+			"color": "5",
+			"x": 940,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0bfa04cd733308ca",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
+			"color": "5",
+			"x": 1400,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4414d6e4f159cb40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
+			"color": "5",
+			"x": 1860,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
 	],
-	"edges":[
-		{"id":"a134cd7c6f60d850","fromNode":"771bdf0c0e7a81c0","fromSide":"bottom","toNode":"9c40649d704c108c","toSide":"top","toEnd":"arrow","label":"script"},
-		{"id":"5c7a80ecf8cc5560","fromNode":"0e8ce4568e986a60","fromSide":"bottom","toNode":"9c40649d704c108c","toSide":"top","toEnd":"arrow","label":"script"}
-	],
-	"metadata":{
-		"version":"1.0-1.0",
-		"frontmatter":{}
-	}
+	"edges": [
+		{
+			"id": "a134cd7c6f60d850",
+			"fromNode": "771bdf0c0e7a81c0",
+			"fromSide": "bottom",
+			"toNode": "9c40649d704c108c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "5c7a80ecf8cc5560",
+			"fromNode": "0e8ce4568e986a60",
+			"fromSide": "bottom",
+			"toNode": "9c40649d704c108c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "1548c4c89839b710",
+			"fromNode": "0e8ce4568e986a60",
+			"fromSide": "bottom",
+			"toNode": "d494bc0768d25948",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		}
+	]
 }

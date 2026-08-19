@@ -125,6 +125,7 @@ public partial class BulletSpawnerComponent : Component
         EnemyBulletSpawner.Set("bullets_custom_data", new BulletData { SourceStep = bulletPattern.SourceStep });
         EnemyBulletSpawner.Set("max_life_time", bulletPattern.Lifetime);
         ApplyBulletTexture(EnemyBulletSpawner, bulletPattern.TextureId);
+        ApplyMotion(bulletPattern.AngularSpeed, bulletPattern.SpeedAcceleration, bulletPattern.Lifetime);
 
         if (bulletPattern.PatternType is PatternType.Ring(var ring))
             SpawnRing(origin, ring, baseAngle);
@@ -137,6 +138,28 @@ public partial class BulletSpawnerComponent : Component
         else if (bulletPattern.PatternType is PatternType.Explosion(var explosion))
             SpawnExplosion(origin, explosion, baseAngle, bulletPattern.EventId, bulletPattern.Lifetime);
     }
+
+    // Curving for enemy bullets (server-baked per event; 0 = off): BlastBullets2D rotation
+    // data + adjust_direction_based_on_rotation makes each bullet re-derive its velocity from
+    // its rotating transform every physics frame. The flag is re-set on every event because
+    // the spawner resource is shared across spawns. Acceleration rides along in SetSpeed.
+    private void ApplyMotion(float angularSpeedDeg, float speedAcceleration, float lifetime)
+    {
+        float angularSpeed = Mathf.DegToRad(angularSpeedDeg);
+        EnemyBulletSpawner.Set("adjust_direction_based_on_rotation", angularSpeed != 0f);
+        if (angularSpeed != 0f)
+        {
+            var rotationData = ClassDB.Instantiate("BulletRotationData2D").AsGodotObject()
+                .Call("generate_random_data", 1, angularSpeed, angularSpeed, Mathf.Abs(angularSpeed), Mathf.Abs(angularSpeed), 0, 0);
+            EnemyBulletSpawner.Set("all_bullet_rotation_data", rotationData);
+        }
+        // Stashed for SetSpeed, which each Spawn* method calls with its own base speed.
+        currentSpeedAcceleration = speedAcceleration;
+        currentMaxSpeedBonus = speedAcceleration > 0f ? speedAcceleration * lifetime : 0f;
+    }
+
+    private float currentSpeedAcceleration;
+    private float currentMaxSpeedBonus;
 
     private static float ResolveTargetAngle(Vector2 origin, SpacetimeDB.Identity? target)
     {
@@ -166,7 +189,10 @@ public partial class BulletSpawnerComponent : Component
 
     private void SetSpeed(float speed)
     {
-        EnemyBulletSpawner.Set("all_bullet_speed_data", ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject().Call("generate_random_data", 1, speed, speed, speed, speed, 0, 0));
+        // The plugin clamps speed with a plain min() against max_speed, so acceleration gets
+        // an explicit ceiling that never binds early; deceleration (accel < 0) never binds.
+        float maxSpeed = speed + currentMaxSpeedBonus;
+        EnemyBulletSpawner.Set("all_bullet_speed_data", ClassDB.Instantiate("BulletSpeedData2D").AsGodotObject().Call("generate_random_data", 1, speed, speed, maxSpeed, maxSpeed, currentSpeedAcceleration, currentSpeedAcceleration));
     }
 
     // Deterministic PRNG (SplitMix64) mirroring the server's hash technique in enemy/methods.rs,
@@ -201,22 +227,30 @@ public partial class BulletSpawnerComponent : Component
 
     private void SpawnRing(Vector2 origin, RingParams p, float baseAngle)
     {
-        SetSpeed(p.Speed);
         var transforms = new Godot.Collections.Array<Transform2D>();
         float angleStep = Mathf.Tau / p.Count;
         for (int i = 0; i < p.Count; i++)
             transforms.Add(BulletTransform(baseAngle + angleStep * i, origin));
-        EnemyBulletSpawner.Set("transforms", transforms);
-        SpawnControllable();
+        // DanmakU Line composition: stack copy j flies at speed + step * (j + 1), stringing
+        // the copies out into a line as they travel. One spawn call per stack level.
+        int line = System.Math.Max(1, (int)p.Line);
+        for (int j = 1; j <= line; j++)
+        {
+            SetSpeed(p.Speed + p.LineSpeedStep * j);
+            EnemyBulletSpawner.Set("transforms", transforms);
+            SpawnControllable();
+        }
     }
 
     private void SpawnVolley(Vector2 origin, VolleyParams p, float baseAngle, ulong eventId, float lifetime)
     {
+        int line = System.Math.Max(1, (int)p.Line);
         for (uint i = 0; i < p.Count; i++)
         {
             float speed = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
             float angle = baseAngle + Jitter(eventId, i, 1, p.AngleJitter);
-            SpawnSingle(origin, angle, speed, lifetime);
+            for (int j = 1; j <= line; j++)
+                SpawnSingle(origin, angle, speed + p.LineSpeedStep * j, lifetime);
         }
     }
 
@@ -241,12 +275,14 @@ public partial class BulletSpawnerComponent : Component
         if (p.Count == 0) return;
         float halfSpread = p.Spread * 0.5f;
         float angleStep = p.Count > 1 ? p.Spread / (p.Count - 1) : 0f;
+        int line = System.Math.Max(1, (int)p.Line);
         for (uint i = 0; i < p.Count; i++)
         {
             float angle = baseAngle - halfSpread + angleStep * i;
             float speed = p.Speed + Jitter(eventId, i, 0, p.SpeedVariance);
             float pelletLifetime = lifetime + Jitter(eventId, i, 1, p.LifetimeVariance);
-            SpawnSingle(origin, angle, speed, pelletLifetime);
+            for (int j = 1; j <= line; j++)
+                SpawnSingle(origin, angle, speed + p.LineSpeedStep * j, pelletLifetime);
         }
     }
 
@@ -271,6 +307,9 @@ public partial class BulletSpawnerComponent : Component
         if (count == 0) return;
         if (customData != null)
             EnemyBulletSpawner.Set("bullets_custom_data", customData);
+        // Player-ability spawn, not a server pattern event — no motion modifiers.
+        currentSpeedAcceleration = 0f;
+        currentMaxSpeedBonus = 0f;
         EnemyBulletSpawner.Set("max_life_time", lifetime);
         SetSpeed(speed);
         var transforms = new Godot.Collections.Array<Transform2D>();

@@ -61,6 +61,15 @@ pub fn seconds_since(ctx: &ReducerContext, since: Timestamp) -> f32 {
     now.saturating_sub(then) as f32 / 1_000_000.0
 }
 
+// Rotates a step's origin offset by `angle_deg` (degrees). Repeat steps apply this with
+// their accumulated spin (angle_step * repeat_count), so an emitter mounted on a rotating
+// arm orbits with the same angle its shots rotate by. Zero angle or zero offset is a no-op.
+fn rotate_offset(x: f32, y: f32, angle_deg: f32) -> (f32, f32) {
+    if angle_deg == 0.0 || (x == 0.0 && y == 0.0) { return (x, y); }
+    let r = angle_deg.to_radians();
+    (x * r.cos() - y * r.sin(), x * r.sin() + y * r.cos())
+}
+
 // Returns (is_in_active_phase, cycle_index) for a move/pause cycle measured from `since`.
 pub fn cycle_phase(ctx: &ReducerContext, since: Timestamp, active_duration: f32, pause_duration: f32) -> (bool, u64) {
     let cycle = (active_duration + pause_duration).max(f32::EPSILON);
@@ -127,6 +136,7 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
                 step_timer: ctx.timestamp,
                 step_waiting: false,
                 start_delaying: false,
+                loop_waiting: false,
             });
 
             for (step_index, step_def) in attack_def.steps.iter().enumerate() {
@@ -150,8 +160,11 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
                             texture_id: r.texture_id.clone(),
                             lifetime: r.lifetime,
                             damage: r.damage,
+                            angular_speed: r.angular_speed,
+                            speed_acceleration: r.speed_acceleration,
                             repeat_interval: r.repeat_interval,
                             repeat_target: r.repeat_target,
+                            angle_step: r.angle_step,
                             next_step_delay: r.next_step_delay,
                             repeat_count: 0,
                         });
@@ -226,6 +239,7 @@ pub fn activate_all_attacks(ctx: &ReducerContext, phase_id: u64, phase_def: &Pha
         attack.step_waiting = false;
         attack.step_timer = ctx.timestamp;
         attack.start_delaying = attack_def.start_delay > 0.0;
+        attack.loop_waiting = false;
         reset_repeat_counts(ctx, attack.attack_id);
         ctx.db.enemy_attack().attack_id().update(attack);
     }
@@ -240,6 +254,7 @@ pub fn begin_phase_cycle(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def
             attack.step_index = 0;
             attack.step_waiting = false;
             attack.start_delaying = false;
+            attack.loop_waiting = false;
             reset_repeat_counts(ctx, attack.attack_id);
             ctx.db.enemy_attack().attack_id().update(attack);
         }
@@ -249,11 +264,28 @@ pub fn begin_phase_cycle(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def
     }
 }
 
-pub type BulletStepEvent = (PatternType, EnemyTarget, f32, f32, f32, String, f32, SequenceStepRef);
+/// One fired shot, collected by tick_phase/tick_sequence and inserted as a BulletPatternEvent
+/// by the behavior reducer. offset/base_angle_offset are already baked (angle_step applied);
+/// the client renders them verbatim.
+pub struct BulletStepEvent {
+    pub pattern_type: PatternType,
+    pub target: EnemyTarget,
+    pub offset_x: f32,
+    pub offset_y: f32,
+    pub base_angle_offset: f32,
+    pub texture_id: String,
+    pub lifetime: f32,
+    pub angular_speed: f32,
+    pub speed_acceleration: f32,
+    pub source_step: SequenceStepRef,
+}
 
 // Per-tick entry point for one phase. Advances every attack sequence in the phase by at
 // most one step each, collecting any bullet events fired this tick. Once all attacks have
-// exhausted their steps, the phase loop restarts via begin_phase_cycle.
+// exhausted their steps, the phase loop restarts via begin_phase_cycle — except sequences
+// with loop_delay >= 0, which restart themselves after their loop delay and never count
+// toward the phase-level restart (a self-paced emitter must not gate or be gated by its
+// siblings).
 pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &PhaseDef) -> Vec<BulletStepEvent> {
     if phase.phase_waiting {
         if ctx.timestamp < phase.phase_loop_timer + Duration::from_secs_f32(phase.phase_loop_delay) {
@@ -267,6 +299,30 @@ pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &Phas
     let mut all_finished = true;
     for mut attack in ctx.db.enemy_attack().phase_id().filter(&phase.phase_id) {
         let attack_def = &phase_def.attacks[attack.attack_index as usize];
+        if attack_def.loop_delay >= 0.0 {
+            all_finished = false;
+            if is_attack_finished(&attack, attack_def) {
+                if !attack.loop_waiting {
+                    attack.loop_waiting = true;
+                    attack.step_timer = ctx.timestamp;
+                }
+                if ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(attack_def.loop_delay) {
+                    attack.step_index = 0;
+                    attack.step_waiting = false;
+                    attack.loop_waiting = false;
+                    attack.step_timer = ctx.timestamp;
+                    reset_repeat_counts(ctx, attack.attack_id);
+                } else {
+                    ctx.db.enemy_attack().attack_id().update(attack);
+                    continue;
+                }
+            }
+            if !is_attack_finished(&attack, attack_def) {
+                events.extend(tick_sequence(ctx, &mut attack, attack_def));
+            }
+            ctx.db.enemy_attack().attack_id().update(attack);
+            continue;
+        }
         if is_attack_finished(&attack, attack_def) { continue; }
         events.extend(tick_sequence(ctx, &mut attack, attack_def));
         if !is_attack_finished(&attack, attack_def) { all_finished = false; }
@@ -322,7 +378,15 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
                     return vec![];
                 }
                 attack.step_timer = ctx.timestamp;
-                let event = (s.pattern_type.clone(), s.target.clone(), s.offset_x, s.offset_y, s.base_angle_offset, s.texture_id.clone(), s.lifetime, SequenceStepRef::Single(def_id));
+                let event = BulletStepEvent {
+                    pattern_type: s.pattern_type.clone(), target: s.target.clone(),
+                    offset_x: s.offset_x, offset_y: s.offset_y,
+                    base_angle_offset: s.base_angle_offset,
+                    texture_id: s.texture_id.clone(), lifetime: s.lifetime,
+                    angular_speed: s.angular_speed,
+                    speed_acceleration: s.speed_acceleration,
+                    source_step: SequenceStepRef::Single(def_id),
+                };
                 if s.next_step_delay > 0.0 {
                     attack.step_waiting = true;
                 } else {
@@ -345,9 +409,8 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
                     }
                     return vec![];
                 }
-                if r.repeat_target == 0 || r.repeat_count >= r.repeat_target {
+                if r.repeat_target > 0 && r.repeat_count >= r.repeat_target {
                     if r.next_step_delay > 0.0 {
-                        if r.repeat_target == 0 { attack.step_timer = ctx.timestamp; }
                         attack.step_waiting = true;
                         return vec![];
                     }
@@ -356,16 +419,32 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
                     ctx.db.repeat_step_instance().repeat_id().update(r);
                     continue;
                 }
-                let should_fire = r.repeat_count == 0
-                    || ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(r.repeat_interval);
-                if should_fire {
+                // Fire with catch-up: the behavior tick is 100 ms (BEHAVIOR_TICK_DT), so a
+                // repeat_interval below that can only reach its true rate by firing multiple
+                // times per tick. step_timer advances by whole intervals — no drift. The cap
+                // bounds the burst an enemy dumps after a stall (e.g. re-entering sim range).
+                // angle_step bakes the per-shot rotation (and matching origin-offset orbit)
+                // in here, so the client renders spinning emitters verbatim.
+                let interval = Duration::from_secs_f32(r.repeat_interval.max(0.001));
+                let mut events = Vec::new();
+                while (r.repeat_target == 0 || r.repeat_count < r.repeat_target) && events.len() < MAX_CATCHUP_SHOTS {
+                    if r.repeat_count > 0 && ctx.timestamp < attack.step_timer + interval { break; }
+                    let spin = r.angle_step * r.repeat_count as f32;
+                    let (offset_x, offset_y) = rotate_offset(r.offset_x, r.offset_y, spin);
+                    events.push(BulletStepEvent {
+                        pattern_type: r.pattern_type.clone(), target: r.target.clone(),
+                        offset_x, offset_y,
+                        base_angle_offset: r.base_angle_offset + spin,
+                        texture_id: r.texture_id.clone(), lifetime: r.lifetime,
+                        angular_speed: r.angular_speed,
+                        speed_acceleration: r.speed_acceleration,
+                        source_step: SequenceStepRef::Repeat(repeat_id),
+                    });
                     r.repeat_count += 1;
-                    attack.step_timer = ctx.timestamp;
-                    let event = (r.pattern_type.clone(), r.target.clone(), r.offset_x, r.offset_y, r.base_angle_offset, r.texture_id.clone(), r.lifetime, SequenceStepRef::Repeat(repeat_id));
-                    ctx.db.repeat_step_instance().repeat_id().update(r);
-                    return vec![event];
+                    attack.step_timer = if r.repeat_count > 1 { attack.step_timer + interval } else { ctx.timestamp };
                 }
-                return vec![];
+                ctx.db.repeat_step_instance().repeat_id().update(r);
+                return events;
             }
             SequenceStepRef::Multi(multi_ref) => {
                 let m = match ctx.db.multi_step_def().def_id().find(&multi_ref.def_id) {
@@ -381,7 +460,15 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
                     return vec![];
                 }
                 attack.step_timer = ctx.timestamp;
-                let events = m.shots.iter().enumerate().map(|(i, s)| (s.pattern_type.clone(), s.target.clone(), s.offset_x, s.offset_y, s.base_angle_offset, s.texture_id.clone(), s.lifetime, SequenceStepRef::Multi(MultiStepRef { def_id: multi_ref.def_id, shot_index: i as u32 }))).collect();
+                let events = m.shots.iter().enumerate().map(|(i, s)| BulletStepEvent {
+                    pattern_type: s.pattern_type.clone(), target: s.target.clone(),
+                    offset_x: s.offset_x, offset_y: s.offset_y,
+                    base_angle_offset: s.base_angle_offset,
+                    texture_id: s.texture_id.clone(), lifetime: s.lifetime,
+                    angular_speed: s.angular_speed,
+                    speed_acceleration: s.speed_acceleration,
+                    source_step: SequenceStepRef::Multi(MultiStepRef { def_id: multi_ref.def_id, shot_index: i as u32 }),
+                }).collect();
                 if m.next_step_delay > 0.0 {
                     attack.step_waiting = true;
                 } else {

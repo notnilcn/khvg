@@ -9,7 +9,7 @@ using System.Collections.Generic;
 /// and resolves lookups against them (GetItem/GetEnchantment/GetEnchantments/GetResPath).
 /// Emits <see cref="EnchantmentsChanged"/> whenever the enchantment view changes so UI
 /// observers can refresh (logic moved out of GameManager.cs). Rows arrive via the child
-/// TableBinderComponents declared in catalog_component.tscn (signals wired in the editor;
+/// TableBinderComponents declared inline in game.tscn (signals wired in the editor;
 /// ReplayExistingRows replaces the old OnConnected hookup order handling).
 /// </summary>
 public partial class CatalogComponent : Component
@@ -21,7 +21,7 @@ public partial class CatalogComponent : Component
     private readonly Dictionary<string, SpacetimeDB.Types.Item> itemCache = new();
     private readonly Dictionary<string, Enchantment> enchantmentCache = new();
 
-    /// Child binders (declared in catalog_component.tscn) feeding the three catalog views.
+    /// Child binders (declared inline in game.tscn) feeding the three catalog views.
     private TableBinderComponent allTexturesBinder = null!;
     private TableBinderComponent allItemsBinder = null!;
     private TableBinderComponent allEnchantmentsBinder = null!;
@@ -34,7 +34,7 @@ public partial class CatalogComponent : Component
         allEnchantmentsBinder = GetNode<TableBinderComponent>("AllEnchantmentsBinder");
     }
 
-    // --- TableBinderComponent signal handlers (wired in catalog_component.tscn) ---
+    // --- TableBinderComponent signal handlers (wired in game.tscn) ---
     // Each binder has ReplayExistingRows on, so rows already in the client cache come through
     // the same insert path — no separate connection-order handling here.
 

@@ -16,6 +16,7 @@ public partial class LocalPlayerDataComponent : Component
 {
     public uint Level { get; private set; }
     public int Defense { get; private set; }
+    public float BaseSpeed { get; private set; } = 100f;
     public uint UnspentPoints { get; private set; }
 
     private TableBinderComponent dataBinder = null!;
@@ -50,6 +51,7 @@ public partial class LocalPlayerDataComponent : Component
         var data = (PlayerData)dataBinder.LastRow!;
         Level = data.Level;
         Defense = data.Defense;
+        BaseSpeed = data.BaseSpeed;
         HealthComponent?.SetFromServer(data.Hp, data.MaxHp);
         (Entity as LocalPlayer)?.RaiseStatsChanged();
     }

@@ -10,8 +10,8 @@ using System.Collections.Generic;
 /// PositionSyncComponent (position rows + ReportMovement), LocalPlayerDataComponent
 /// (data/stats rows → Health/Stats mirrors), LocalPlayerInventoryComponent (slot state),
 /// LocalPlayerProfileComponent (active profile → SpriteFrames). The signals and
-/// pass-through properties below keep UI readers (StatsSidebarComponent,
-/// InventoryComponent, CombatComponent) on one stable surface.
+/// pass-through properties below keep UI readers (StatsSidebar,
+/// InventoryPanel, CombatComponent) on one stable surface.
 /// </summary>
 public partial class LocalPlayer : CharacterBody2D, IEntity
 {
@@ -40,7 +40,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
     public string Username => GameManager.Username;
 
     // Stat/hp/inventory/profile values live in the child components (mirrors of server
-    // rows); these pass-throughs keep UI readers (e.g. StatsSidebarComponent) stable.
+    // rows); these pass-throughs keep UI readers (e.g. StatsSidebar) stable.
     // GetComponent works before this node's _Ready because component children register
     // during their own _Ready.
     private HealthComponent? HealthComponent => GetComponent<HealthComponent>();
@@ -63,11 +63,13 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
     public int Defense => DataComponent?.Defense ?? 0;
     public uint UnspentPoints => DataComponent?.UnspentPoints ?? 0;
 
-    // Flat move speed — there is no Speed stat (doc 03's six stats are str/wis/dex/dps/sup/art).
-    private const float MoveSpeed = 100f;
+    // Move speed is a server-resolved stat (PlayerData.base_speed, item-only — not
+    // allocatable). The 100f fallback only applies before the first data row arrives.
+    public float BaseSpeed => DataComponent?.BaseSpeed ?? 100f;
 
     private CharacterModel3D? _model3D;
     private AnimatedSprite2D sprite = null!;
+    private PositionSyncComponent? positionSync;
 
     // Camera components of the Main entity, cached in _Ready (per-frame access in
     // _PhysicsProcess makes an ancestor/registry walk per call wasteful).
@@ -104,6 +106,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
     {
         Local = this;
         sprite = GetNode<AnimatedSprite2D>("Sprite");
+        positionSync = GetComponent<PositionSyncComponent>();
 
         var gameManager = this.GetAncestor<GameManager>();
         world3D = gameManager?.GetComponent<World3DComponent>();
@@ -130,7 +133,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 
         // Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
 
-        Velocity = input * MoveSpeed;
+        Velocity = input * (positionSync?.CurrentSpeed ?? BaseSpeed);
 
         if (Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down"))
         {

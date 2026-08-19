@@ -11,11 +11,51 @@
 			"height": 400
 		},
 		{
+			"id": "fc5557c246fa5fc8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/AbilityPositionMultipliers_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "43080efc16ad7380",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/AbilitySlotCount_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "33f32be3d9c9a0b2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/AbilitySlotStart_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "aea20fe739689da2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/BagSlotIndex_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "a81359b804f62370",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/BuildResolvedSlots_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/BuildTypedSlots_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/GetSlotItem_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/GetSlotItemId_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/inventoryBinder_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +105,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/inventorySlots_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "dfe1094bf6adf94c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/IsAbilitySlot_symbol.canvas",
+			"color": "5",
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/IsEquipmentSlot_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/LocalPlayerInventoryComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +145,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/OnInventoryRow_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69bd0c6f9c0dc378",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/OnInventoryRowDeleted_symbol.canvas",
+			"color": "5",
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/ResolvedSlot_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +175,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/ResolveSlotAt_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4e607c6bf5c92176",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/LocalPlayerInventoryComponent_codefile/TryActivateAbility_symbol.canvas",
+			"color": "5",
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -126,7 +196,14 @@
 		"frontmatter": {
 			"tags": [
 				"includeInAggregateFlowchart",
-				"codefile"
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-activate_ability-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-rpc"
 			]
 		}
 	}

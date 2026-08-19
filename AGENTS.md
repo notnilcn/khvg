@@ -33,12 +33,12 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 - `client/.godot/`, `client/.vscode/` — editor cache/config. `client/Assets/`, `client/Textures/` — art.
 - `server/spacetimedb/target/` — Rust build output.
 - `docs/` — an Obsidian vault of design and ideation notes, **not a spec**; nothing in it is guaranteed to be implemented (see `docs/edualc.md`). Consult `docs/Technical Design Docs/` only once a design decision has been finalized.
-- `flowcharts/` — Obsidian canvas diagrams of the tree.
+- `flowcharts/` — ~1100 generated Obsidian canvases; **do not scan it**. The aggregate map is `docs/Technical Design Docs/AGENTS.canvas` (guidance files + composed flows, with drill-down), generated/updated via the `agents-flowchart` skill — the canvas is a generated artifact and may be absent; regenerate it with the skill rather than hand-editing.
 
 ## Running and Developing
 
 - **Engine:** `Godot/Godot-stable_mono_win64.exe` — the mono build is required for C# and SpacetimeDB.
-- **Run:** F5 in the editor. The project's main scene is `client/Scenes/main.tscn` — despite the name, that is the *menu* scene (root `main`, `LobbyGui.cs`); its Character Slots button `ChangeSceneToFile`s to `Scenes/characters.tscn`, the actual gameplay scene (root `Characters`, GameManager). There is no `lobby_gui.tscn`.
+- **Run:** F5 in the editor. The project's main scene is `client/Scenes/main_menu.tscn` — despite the name, that is the *menu* scene (root `main`, `LobbyGui.cs`); its Character Slots button `ChangeSceneToFile`s to `Scenes/game.tscn`, the actual gameplay scene (root `Characters`, GameManager). There is no `lobby_gui.tscn`.
 - **Client build:** no build system — Godot compiles `client/khvg.csproj` internally.
 - **Server publish:** `server/build.sh` regenerates the C# bindings into `client/Scripts/module_bindings/` and publishes the `bullethell` module to the `local` server with `--delete-data`. **Every publish wipes the database**, so schema changes are hard cuts — no migrations, no dual-write; seeds re-run from `main/seeds.rs`. Logs: `spacetime logs bullethell`.
 - **Export:** Web/HTML5 preset in `client/export_presets.cfg`.

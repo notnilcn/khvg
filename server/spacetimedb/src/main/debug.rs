@@ -11,8 +11,11 @@ pub fn tick_player_position_debug(ctx: &ReducerContext, _job: PlayerPositionDebu
     let mut active_ids = std::collections::HashSet::new();
     for pos in ctx.db.player_position().iter() {
         let (hex_q, hex_r) = world_to_hex(pos.x, pos.y, hex_outer_radius);
+        let screen_rotation = ctx.db.player_rotation().profile_id().find(&pos.profile_id)
+            .map(|r| r.screen_rotation)
+            .unwrap_or(0.0);
         let row = PlayerPositionDebug {
-            player_id: pos.player_id, x: pos.x, y: pos.y, rotation: pos.rotation,
+            player_id: pos.player_id, x: pos.x, y: pos.y, screen_rotation,
             chunk_index: pos.chunk_index, hex_q, hex_r,
         };
         if ctx.db.player_position_debug().player_id().find(&pos.player_id).is_some() {
@@ -55,7 +58,7 @@ pub struct PlayerPositionDebug {
     pub player_id: Identity,
     pub x: f32,
     pub y: f32,
-    pub rotation: f32,
+    pub screen_rotation: f32,
     pub chunk_index: i64,
     pub hex_q: i32,
     pub hex_r: i32,

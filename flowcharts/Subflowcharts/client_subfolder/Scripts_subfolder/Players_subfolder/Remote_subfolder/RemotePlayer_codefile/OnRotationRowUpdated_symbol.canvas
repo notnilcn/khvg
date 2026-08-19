@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "09e1016a8eec1c30",
+			"type": "file",
+			"file": "client/Scripts/Players/Remote/RemotePlayer.cs",
+			"subpath": "#OnRotationRowUpdated",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

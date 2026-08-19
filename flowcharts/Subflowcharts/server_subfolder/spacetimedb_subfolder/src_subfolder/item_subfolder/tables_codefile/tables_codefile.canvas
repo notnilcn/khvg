@@ -1,11 +1,41 @@
 {
 	"nodes": [
 		{
+			"id": "679fb383dcee06c2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/AbilityBehavior_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "628a6354454ce510",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/AbilityEffect_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c41fb5d924fd2a6c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/AbilityUseBuffParams_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "0354bcd2ab35d814",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableBehavior_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableBuffEffect_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableEffect_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +65,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/Enchantment_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fe6c8934ba8bdac0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/EnchantmentBehavior_symbol.canvas",
+			"color": "5",
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/EquipSlot_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/Item_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +105,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ItemBehavior_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1cfd1da072aff700",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/SlashParams_symbol.canvas",
+			"color": "5",
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatKind_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatMode_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +145,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatModifier_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8fd3bfeda7ab8ba4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatRequirements_symbol.canvas",
+			"color": "5",
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/WeaponBehavior_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/WeaponPattern_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400

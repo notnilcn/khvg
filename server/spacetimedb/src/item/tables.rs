@@ -21,11 +21,12 @@ pub enum EquipSlot {
 // (DamageDealer/Supporter/Artisan) — temperaments are mechanically identical to normal
 // stats, only conceptually different (Game Design Doc 03). Players get
 // SKILL_POINTS_PER_LEVEL points per level to allocate across the six (see
-// PlayerStatAllocation). Hp and Defense are modifier-only: gear/buffs grant them, but
-// they can't be allocated into and have no PlayerStats field — Hp resolves into
-// PlayerData.max_hp and Defense into PlayerData.defense.
+// PlayerStatAllocation). Hp, Defense and BaseSpeed are modifier-only: gear/buffs grant
+// them, but they can't be allocated into and have no PlayerStats field — Hp resolves
+// into PlayerData.max_hp, Defense into PlayerData.defense, BaseSpeed into
+// PlayerData.base_speed.
 #[derive(SpacetimeType, Clone, Copy, PartialEq)]
-pub enum StatKind { Strength, Wisdom, Dexterity, DamageDealer, Supporter, Artisan, Hp, Defense }
+pub enum StatKind { Strength, Wisdom, Dexterity, DamageDealer, Supporter, Artisan, Hp, Defense, BaseSpeed }
 
 #[derive(SpacetimeType, Clone, Copy, PartialEq)]
 pub enum StatMode { Flat, Mult }
@@ -80,6 +81,11 @@ pub struct ConsumableBehavior { pub effect: ConsumableEffect, pub potency: f32, 
 // duration = buff seconds). The bullet-control effects are cast at a target point with
 // the f32 as the effect radius — the server appends a BulletControlEvent and every
 // client resolves the proximity query locally (server tracks no live bullets).
+// SlashBullets is the rectangle variant: a slash from the player toward the cursor,
+// encoded in the event as origin + far-end + width (see BulletControlEvent).
+#[derive(SpacetimeType, Clone, Copy, PartialEq)]
+pub struct SlashParams { pub length: f32, pub width: f32 }
+
 #[derive(SpacetimeType, Clone, PartialEq)]
 pub enum AbilityEffect {
     Heal,
@@ -87,6 +93,7 @@ pub enum AbilityEffect {
     DeleteBullets(f32),
     SplitBullets(f32),
     AttractBullets(f32),
+    SlashBullets(SlashParams),
 }
 
 // Abilities are not consumed on use — they go on cooldown and optionally spend charges.

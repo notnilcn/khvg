@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d3ff6bc1db850f14",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/EnemyBullets3DComponent.cs",
+			"subpath": "#_used",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

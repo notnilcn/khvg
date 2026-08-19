@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "0e203f8c14cafdd8",
+			"type": "file",
+			"file": "client/Scripts/Components/Movement/InterpolationComponent.cs",
+			"subpath": "#targetScreenRotation",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -11,7 +11,6 @@ using System.Collections.Generic;
 /// </summary>
 public partial class HexGridOverlay3DComponent : Node3DComponent
 {
-	private const float Sqrt3 = 1.7320508075688772f;
 	private const int DefaultChunkHexRadius = 5;
 	private const float DefaultHexOuterRadius = 32.0f;
 
@@ -91,7 +90,7 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 
 	private void RefreshTiles(Vector3 center)
 	{
-		var ch = WorldToHex(center.X, center.Z);
+		var ch = HexMath.WorldToHex(center.X, center.Z, _outerRadius);
 		int R = ViewRadiusHexes;
 
 		// Build the set of hexes that should be visible (hex ring of radius R).
@@ -119,21 +118,21 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 
 	private void SpawnTile(int q, int r)
 	{
-		var chunk = ToLowerRes(q, r, _chunkRadius);
+		var chunk = HexMath.ToLowerRes(q, r, _chunkRadius);
 		int colorIdx = ((chunk.X * 2 + chunk.Y) % 3 + 3) % 3;
 		var scene = _scenes.Length > colorIdx ? _scenes[colorIdx] : null;
 		if (scene == null) return;
 
 		var tile = scene.Instantiate<Node3D>();
 		float s = _outerRadius * TileScaleMultiplier;
-		tile.Position = HexToWorld3D(q, r);
+		tile.Position = HexMath.HexToWorld3D(q, r, _outerRadius);
 		tile.Scale = new Vector3(s, 1f, s);
 		AddChild(tile);
 		_tiles[new Vector2I(q, r)] = tile;
 
 		if (!ShowTileLabels) return;
 
-		long spiralIdx = HexSpiralIndex(chunk.X, chunk.Y);
+		long spiralIdx = HexMath.SpiralIndex(chunk.X, chunk.Y);
 		var label = new Label3D();
 		label.Text = $"({q},{r})\nc({chunk.X},{chunk.Y}) i={spiralIdx}";
 		label.HorizontalAlignment = HorizontalAlignment.Center;
@@ -142,7 +141,7 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 		label.Modulate = Colors.White;
 		label.OutlineSize = 2;
 		label.OutlineModulate = Colors.Black;
-		label.Position = HexToWorld3D(q, r) + new Vector3(0f, 0.15f, 0f);
+		label.Position = HexMath.HexToWorld3D(q, r, _outerRadius) + new Vector3(0f, 0.15f, 0f);
 		label.RotationDegrees = new Vector3(-90f, 0f, 0f);
 		AddChild(label);
 		_labels[new Vector2I(q, r)] = label;
@@ -155,67 +154,5 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 		_tiles.Clear();
 		_labels.Clear();
 		_lastRefreshPos = new Vector3(float.MaxValue, 0f, float.MaxValue);
-	}
-
-	// ── Hex math (mirrors server methods.rs) ─────────────────────────────────
-
-	// Pointy-top: server (x,y) ↔ Godot (x, 0, z).
-	private Vector3 HexToWorld3D(int q, int r)
-	{
-		float R = _outerRadius;
-		return new Vector3(
-			R * (Sqrt3 * q + Sqrt3 * 0.5f * r),
-			0f,
-			R * 1.5f * r);
-	}
-
-	private Vector2I WorldToHex(float wx, float wz)
-	{
-		float R = _outerRadius;
-		float q = (wx * Sqrt3 / 3f - wz / 3f) / R;
-		float r = wz * 2f / 3f / R;
-		float s = -q - r;
-		float rq = MathF.Round(q);
-		float rr = MathF.Round(r);
-		float rs = MathF.Round(s);
-		if (MathF.Abs(rq - q) > MathF.Abs(rr - r) && MathF.Abs(rq - q) > MathF.Abs(rs - s))
-			rq = -rr - rs;
-		else if (MathF.Abs(rr - r) > MathF.Abs(rs - s))
-			rr = -rq - rs;
-		return new Vector2I((int)rq, (int)rr);
-	}
-
-	// Port of hexx Hex::to_lower_res. Maps fine hex (q,r) → chunk (cq,cr).
-	private static Vector2I ToLowerRes(int q, int r, int radius)
-	{
-		int s = -q - r;
-		float area = 3f * radius * (radius + 1) + 1f;
-		int shift = 3 * radius + 2;
-		int a = Mathf.FloorToInt((r + shift * q) / area);
-		int b = Mathf.FloorToInt((s + shift * r) / area);
-		int c = Mathf.FloorToInt((q + shift * s) / area);
-		return new Vector2I(
-			Mathf.FloorToInt((1f + a - b) / 3f),
-			Mathf.FloorToInt((1f + b - c) / 3f));
-	}
-
-	// Direct port of the server's spiral_chunk_index in methods.rs.
-	// Analytical arm detection — no ring walk, exact match guaranteed.
-	private static long HexSpiralIndex(int cq, int cr)
-	{
-		int x = cq;
-		int z = cr;
-		int y = -cq - cr;
-		int rho = Math.Max(Math.Max(Math.Abs(x), Math.Abs(y)), Math.Abs(z));
-		if (rho == 0) return 0L;
-		long b = 3L * rho * (rho - 1) + 1;
-		long arm, step;
-		if (z == -rho && x > 0) { arm = 0; step = y; }
-		else if (y == rho && x > -rho) { arm = 1; step = -x; }
-		else if (x == -rho && z < rho) { arm = 2; step = z; }
-		else if (z == rho && x < 0) { arm = 3; step = x + rho; }
-		else if (y == -rho && x >= 0 && x < rho) { arm = 4; step = x; }
-		else { arm = 5; step = y + rho; }
-		return b + arm * rho + step;
 	}
 }

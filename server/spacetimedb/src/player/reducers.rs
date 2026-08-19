@@ -82,7 +82,7 @@ pub fn leave_world(ctx: &ReducerContext) -> Result<(), String> {
 }
 
 #[spacetimedb::reducer]
-pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> Result<(), String> {
+pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction: f32, movement_speed: f32) -> Result<(), String> {
     let player = require_in_world(ctx)?;
     let profile_id = player.profile_id;
 
@@ -92,13 +92,36 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, rotation: f32) -> R
     let (x, y) = wrap_world_pos(x, y, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
     let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
     let chunk_index = spiral_chunk_index(cq, cr);
-    ctx.db.player_position().profile_id().update(PlayerPosition { x, y, rotation, chunk_index, ..pos });
+
+    // Clamp reported speed into [0, resolved base_speed] (gear/buffs included) — clients
+    // should never exceed base_speed, so anything over is a cheat or a bug.
+    let base_speed = ctx.db.player_data().profile_id().find(&profile_id)
+        .map(|d| d.base_speed)
+        .unwrap_or(BASE_SPEED);
+    let movement_speed = movement_speed.clamp(0.0, base_speed);
+
+    ctx.db.player_position().profile_id().update(PlayerPosition { x, y, movement_direction, movement_speed, chunk_index, ..pos });
 
     if let Some(chunk) = ctx.db.player_chunk().profile_id().find(&profile_id) {
         if (chunk.chunk_q, chunk.chunk_r) != (cq, cr) {
             ctx.db.player_chunk().profile_id().update(PlayerChunk { chunk_q: cq, chunk_r: cr, ..chunk });
         }
     }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn report_screen_rotation(ctx: &ReducerContext, screen_rotation: f32) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+
+    let rot = ctx.db.player_rotation().profile_id().find(&profile_id)
+        .ok_or_else(|| format!("Rotation not found for profile {}", profile_id))?;
+    // Keep chunk_index mirroring the position row so the AOI view filters correctly.
+    let chunk_index = ctx.db.player_position().profile_id().find(&profile_id)
+        .map(|p| p.chunk_index)
+        .unwrap_or(rot.chunk_index);
+    ctx.db.player_rotation().profile_id().update(PlayerRotation { screen_rotation, chunk_index, ..rot });
     Ok(())
 }
 
@@ -374,6 +397,7 @@ fn scale_ability_effect(effect: &AbilityEffect, multiplier: f32) -> AbilityEffec
         AbilityEffect::DeleteBullets(r) => AbilityEffect::DeleteBullets(r * multiplier),
         AbilityEffect::SplitBullets(r) => AbilityEffect::SplitBullets(r * multiplier),
         AbilityEffect::AttractBullets(r) => AbilityEffect::AttractBullets(r * multiplier),
+        AbilityEffect::SlashBullets(p) => AbilityEffect::SlashBullets(SlashParams { length: p.length * multiplier, width: p.width * multiplier }),
     }
 }
 
@@ -430,6 +454,20 @@ pub fn activate_ability(ctx: &ReducerContext, slot_index: u32, target_x: f32, ta
             };
             ctx.db.bullet_control_event().insert(BulletControlEvent {
                 event_id: 0, kind, x: tx, y: ty, radius: *radius, target_x: tx, target_y: ty, cast_by: ctx.sender(),
+            });
+        }
+        AbilityEffect::SlashBullets(p) => {
+            // The slash is a rectangle from the player toward the cursor: relay origin +
+            // far end + width. Direction comes from the clamped cursor target, with a
+            // fixed fallback when the cursor sits on the player (clients mirror it).
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let (dx, dy) = (target_x - pos.x, target_y - pos.y);
+            let dist = (dx * dx + dy * dy).sqrt();
+            let (ux, uy) = if dist > 0.001 { (dx / dist, dy / dist) } else { (1.0, 0.0) };
+            ctx.db.bullet_control_event().insert(BulletControlEvent {
+                event_id: 0, kind: BulletControlKind::Slash, x: pos.x, y: pos.y,
+                target_x: pos.x + ux * p.length, target_y: pos.y + uy * p.length,
+                radius: p.width, cast_by: ctx.sender(),
             });
         }
     }
@@ -492,7 +530,7 @@ pub fn allocate_stat(ctx: &ReducerContext, stat: StatKind, points: u32) -> Resul
         StatKind::DamageDealer => alloc.damage_dealer += points,
         StatKind::Supporter => alloc.supporter += points,
         StatKind::Artisan => alloc.artisan += points,
-        StatKind::Hp | StatKind::Defense => return Err("Hp and Defense come from gear, not allocation.".to_string()),
+        StatKind::Hp | StatKind::Defense | StatKind::BaseSpeed => return Err("Hp, Defense and BaseSpeed come from gear, not allocation.".to_string()),
     }
     ctx.db.player_stat_allocation().profile_id().update(alloc);
     recompute_stats(ctx, profile_id);

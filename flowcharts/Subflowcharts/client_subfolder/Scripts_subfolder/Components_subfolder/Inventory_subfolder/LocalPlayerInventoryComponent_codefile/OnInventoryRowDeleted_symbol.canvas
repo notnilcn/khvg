@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "110571309f8b79c0",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs",
+			"subpath": "#OnInventoryRowDeleted",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

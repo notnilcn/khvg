@@ -1,32 +1,22 @@
 {
 	"nodes": [
 		{
-			"id": "45b98b4ca2b3edd0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
-			"color": "5",
-			"x": 940,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "629715202c23bac0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Subscription_subfolder/Subscription_subfolder.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "b715f8cabe07b138",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/local_player_codefile/local_player_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 480,
 			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "30e96d437fcb3e10",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
 			"width": 400,
 			"height": 400
 		},
@@ -35,7 +25,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
 			"color": "5",
-			"x": 1060,
+			"x": 940,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fe3cafe1dfc71c2a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/Local_subfolder.canvas",
+			"color": "5",
+			"x": 940,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -45,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
 			"color": "5",
-			"x": 580,
+			"x": 480,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -55,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 580,
+			"x": 120,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -63,37 +63,10 @@
 	],
 	"edges": [
 		{
-			"id": "2308430d4bb4cfaa",
-			"fromNode": "45b98b4ca2b3edd0",
+			"id": "55b0674e3b204fa8",
+			"fromNode": "b715f8cabe07b138",
 			"fromSide": "bottom",
-			"toNode": "69206441fa058f50",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "script"
-		},
-		{
-			"id": "35bf415bca79e0c2",
-			"fromNode": "45b98b4ca2b3edd0",
-			"fromSide": "bottom",
-			"toNode": "194079a7791dc546",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "script"
-		},
-		{
-			"id": "a22729962960d64c",
-			"fromNode": "45b98b4ca2b3edd0",
-			"fromSide": "bottom",
-			"toNode": "23ad101c7f63b520",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "bind"
-		},
-		{
-			"id": "feca295da02125ee",
-			"fromNode": "629715202c23bac0",
-			"fromSide": "bottom",
-			"toNode": "194079a7791dc546",
+			"toNode": "fe3cafe1dfc71c2a",
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "script"
@@ -117,6 +90,15 @@
 			"label": "bind"
 		},
 		{
+			"id": "eb05797342b6c400",
+			"fromNode": "30e96d437fcb3e10",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
 			"id": "efc2f30642c9adb4",
 			"fromNode": "194079a7791dc546",
 			"fromSide": "bottom",
@@ -125,9 +107,5 @@
 			"toEnd": "arrow",
 			"label": "read"
 		}
-	],
-	"metadata": {
-		"version": "1.0-1.0",
-		"frontmatter": {}
-	}
+	]
 }

@@ -115,9 +115,5 @@
 			"toSide": "top",
 			"toEnd": "arrow"
 		}
-	],
-	"metadata": {
-		"version": "1.0-1.0",
-		"frontmatter": {}
-	}
+	]
 }

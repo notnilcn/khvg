@@ -9,7 +9,7 @@ public partial class LobbyGui : Control
 
 	public void CharSlotsPressed()
 	{
-		GetTree().ChangeSceneToFile("res://Scenes/characters.tscn");
+		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
 	}
 
 	public void ServerListPressed()

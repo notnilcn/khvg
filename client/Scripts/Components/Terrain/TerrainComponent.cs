@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// Terrain system, child of Main: renders NearbyTerrainTiles/NearbyHexDecor/MapConfig rows
 /// through a pool of TileComponent scenes — one per visible chunk, pre-warmed to
 /// the AOI ring count (AoiChunkRadius, matching the server's DEFAULT_TERRAIN_AOI_CHUNK_RADIUS).
-/// Table rows arrive via three child TableBinderComponents (declared in terrain_component.tscn,
+/// Table rows arrive via three child TableBinderComponents (declared inline in game.tscn,
 /// signals wired in the editor); row callbacks only set a dirty flag, and one rebuild per frame
 /// collapses burst chunk crossings.
 ///
@@ -24,7 +24,6 @@ using System.Collections.Generic;
 /// </summary>
 public partial class TerrainComponent : Node2DComponent
 {
-    private const float Sqrt3 = 1.7320508075688772f;
     private const float DefaultHexOuterRadius = 96.0f;
     private static readonly Color FallbackColor = new(0.2f, 0.5f, 0.2f, 1f);
 
@@ -36,7 +35,7 @@ public partial class TerrainComponent : Node2DComponent
     /// tile_component.tscn — the per-chunk scaffolding the pool instantiates.
     [Export] public PackedScene TileScene { get; set; } = null!;
 
-    /// Child binders (declared in terrain_component.tscn) feeding MapConfig / tile / decor rows.
+    /// Child binders (declared inline in game.tscn) feeding MapConfig / tile / decor rows.
     private TableBinderComponent _mapConfigBinder = null!;
     private TableBinderComponent _terrainTilesBinder = null!;
     private TableBinderComponent _hexDecorBinder = null!;
@@ -70,7 +69,6 @@ public partial class TerrainComponent : Node2DComponent
         _mapConfigBinder = GetNode<TableBinderComponent>("MapConfigBinder");
         _terrainTilesBinder = GetNode<TableBinderComponent>("TerrainTilesBinder");
         _hexDecorBinder = GetNode<TableBinderComponent>("HexDecorBinder");
-        GD.Print($"[TerrainComponent] DEBUG binders: map={_mapConfigBinder}, tiles={_terrainTilesBinder}, decor={_hexDecorBinder}");
     }
 
     protected override void OnEntityReady()
@@ -104,7 +102,7 @@ public partial class TerrainComponent : Node2DComponent
         }
     }
 
-    // --- TableBinderComponent signal handlers (wired in terrain_component.tscn) ---
+    // --- TableBinderComponent signal handlers (wired in game.tscn) ---
     // Each binder has ReplayExistingRows on, so rows already in the client cache come through
     // the same insert path — no separate Iter() replay here.
 
@@ -136,7 +134,6 @@ public partial class TerrainComponent : Node2DComponent
 
     private void OnTileRowInserted()
     {
-        if (_tilesById.Count == 0) GD.Print("[TerrainComponent] DEBUG first tile row received");
         AddTile((TriangleTile)_terrainTilesBinder.LastRow!);
         _dirty = true;
     }
@@ -239,7 +236,7 @@ public partial class TerrainComponent : Node2DComponent
         // wrapped copy of each hex is actually near the camera before we can cull it.
         foreach (var ((q, r), tiles) in _tilesByHex)
         {
-            var canonicalCenter = HexToWorld(q, r);
+            var canonicalCenter = HexMath.HexToWorld(q, r, _outerRadius);
             var center = TorusMath.NearestCandidate(canonicalCenter, _camPos, lapQ, lapR);
             if (center.X < worldMin.X - margin || center.X > worldMax.X + margin ||
                 center.Y < worldMin.Y - margin || center.Y > worldMax.Y + margin)
@@ -264,7 +261,7 @@ public partial class TerrainComponent : Node2DComponent
 
         foreach (var decor in _decorById.Values)
         {
-            var canonicalCenter = HexToWorld(decor.HexQ, decor.HexR);
+            var canonicalCenter = HexMath.HexToWorld(decor.HexQ, decor.HexR, _outerRadius);
             var center = TorusMath.NearestCandidate(canonicalCenter, _camPos, lapQ, lapR);
             if (center.X < worldMin.X - margin || center.X > worldMax.X + margin ||
                 center.Y < worldMin.Y - margin || center.Y > worldMax.Y + margin)
@@ -471,11 +468,5 @@ public partial class TerrainComponent : Node2DComponent
             return (atlas.Atlas, new Rect2(region.Position / size, region.Size / size));
         }
         return (texture, new Rect2(0f, 0f, 1f, 1f));
-    }
-
-    private Vector2 HexToWorld(int q, int r)
-    {
-        float R = _outerRadius;
-        return new Vector2(R * (Sqrt3 * q + Sqrt3 * 0.5f * r), R * 1.5f * r);
     }
 }

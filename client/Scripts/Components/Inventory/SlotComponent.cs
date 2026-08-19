@@ -7,7 +7,7 @@ using Godot;
 /// `<Type> - <Index>` because the exported slot-section arrays reference those paths).
 /// Drag/drop reports the SwapSlots reducer, left-click on an ability slot reports
 /// ActivateAbility, right-click in the backpack reports DropItem, and hover shows the
-/// sibling ItemSidebarComponent.
+/// scene-unique ItemSidebar.
 /// </summary>
 public partial class SlotComponent : ControlComponent
 {
@@ -15,6 +15,7 @@ public partial class SlotComponent : ControlComponent
     [Export] public TextureRect Icon { get; set; } = null!;
 
     private bool inBackpack;
+    private ItemSidebar _sidebar = null!;
 
     protected override void OnRegistered()
     {
@@ -28,8 +29,9 @@ public partial class SlotComponent : ControlComponent
             inBackpack = true;
             break;
         }
-        MouseEntered += () => GetSibling<ItemSidebarComponent>()?.ShowSlot(SlotIndex);
-        MouseExited += () => GetSibling<ItemSidebarComponent>()?.QueueHoverClear();
+        _sidebar = GetNode<ItemSidebar>("%ItemSidebar");
+        MouseEntered += () => _sidebar.ShowSlot(SlotIndex);
+        MouseExited += () => _sidebar.QueueHoverClear();
     }
 
     public override void _GuiInput(InputEvent @event)

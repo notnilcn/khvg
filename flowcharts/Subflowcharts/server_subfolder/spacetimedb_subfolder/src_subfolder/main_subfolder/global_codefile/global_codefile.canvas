@@ -1,11 +1,61 @@
 {
 	"nodes": [
 		{
+			"id": "76e6d34092996880",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/ABILITY_POSITION_MULTIPLIERS_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "96eae50c72a98998",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/ABILITY_SLOT_COUNT_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7ea7bcf3077d2fcc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/ABILITY_SLOT_START_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "13706532b88efe2c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/BASE_MAX_HP_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "53c27bfab295d3f0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/BASE_SPEED_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "861992d353f436ee",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/BASE_STAT_symbol.canvas",
+			"color": "5",
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/BEHAVIOR_TICK_DT_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/BIOME_VORONOI_SEED_BUDGET_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/CAMERA_VIEW_RADIUS_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/CLIENT_CAMERA_ZOOM_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/CLIENT_VIEWPORT_HEIGHT_PX_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/CONSUMABLE_EFFECT_TICK_SECONDS_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/DEFAULT_AOI_CHUNK_RADIUS_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/DEFAULT_CHUNK_COLS_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/DEFAULT_CHUNK_HEX_RADIUS_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/DEFAULT_CHUNK_ROWS_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/DEFAULT_HEX_OUTER_RADIUS_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,27 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/DEFAULT_TERRAIN_AOI_CHUNK_RADIUS_symbol.canvas",
 			"color": "5",
-			"x": 5520,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "3d09735292b02038",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/GENERAL_SLOT_COUNT_symbol.canvas",
-			"color": "5",
-			"x": 5980,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "15d59725dec3c2d0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/GENERAL_SLOT_START_symbol.canvas",
-			"color": "5",
-			"x": 6440,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/HP_PER_LEVEL_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +195,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/LOOT_DROP_EXPIRY_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 8740,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "90c0e2880d5e57f0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/MAX_ABILITY_TARGET_RANGE_symbol.canvas",
+			"color": "5",
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +215,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/SIMULATION_CHUNK_RINGS_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 9660,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b11644b33838d094",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/SKILL_POINTS_PER_LEVEL_symbol.canvas",
+			"color": "5",
+			"x": 10120,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -185,7 +235,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/global_codefile/SPAWN_LOOKAHEAD_CHUNK_RINGS_symbol.canvas",
 			"color": "5",
-			"x": 8280,
+			"x": 10580,
 			"y": 0,
 			"width": 400,
 			"height": 400

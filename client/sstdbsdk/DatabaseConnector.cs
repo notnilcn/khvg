@@ -20,7 +20,7 @@ public partial class DatabaseConnector : Node
     /// The autoload singleton. Null only before the autoload's _Ready or after shutdown.
     public static DatabaseConnector? Instance { get; private set; }
 
-    [Export] public string Host { get; set; } = "http://127.0.0.1:3000"; // "https://maincloud.spacetimedb.com"
+    [Export] public string Host { get; set; } = "http://127.0.0.1:3000"; // "https://khvgames.com/server" // "https://maincloud.spacetimedb.com"
     [Export] public string DbName { get; set; } = "bullethell";
     [Export] public string TokenAppend { get; set; } = "";
 

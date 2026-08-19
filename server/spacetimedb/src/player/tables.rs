@@ -74,6 +74,10 @@ pub struct PlayerData {
     // rather than in PlayerStats for the same reason max_hp does: it's modifier-only,
     // not one of the six allocatable stats.
     pub defense: i32,
+    // Resolved move speed cap (world units/sec) over BASE_SPEED — modifier-only like
+    // defense: items raise it via StatKind::BaseSpeed, it is never allocatable.
+    // report_movement clamps reported velocity to this.
+    pub base_speed: f32,
 }
 
 // The six allocatable stats (doc 03): three attributes + three temperaments, resolved
@@ -114,7 +118,25 @@ pub struct PlayerPosition {
     pub player_id: Identity,
     pub x: f32,
     pub y: f32,
-    pub rotation: f32,
+    // Movement as an angle + scalar speed instead of a velocity vector — clients
+    // reconstruct velocity = direction * speed for dead reckoning. movement_speed is the
+    // player's current speed (0 when idle), clamped server-side to the resolved
+    // base_speed; movement_direction keeps its last value while idle.
+    pub movement_direction: f32,
+    pub movement_speed: f32,
+    #[index(btree)]
+    pub chunk_index: i64,
+}
+
+// Screen (camera/facing) rotation, split out of PlayerPosition so it can be reported on
+// its own (faster) cadence — camera rotation needs more frequent updates than the 10Hz
+// movement report. chunk_index mirrors the position row so AOI views filter identically.
+#[table(accessor = player_rotation, public)]
+pub struct PlayerRotation {
+    #[primary_key]
+    pub profile_id: u64,
+    pub player_id: Identity,
+    pub screen_rotation: f32,
     #[index(btree)]
     pub chunk_index: i64,
 }
