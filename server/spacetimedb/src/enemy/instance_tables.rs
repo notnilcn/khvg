@@ -120,16 +120,18 @@ pub enum BulletControlKind {
     Delete,
     Split,
     Attract,
-    Slash,
+    DeleteRect,
+    SplitRect,
 }
 
-/// Relay of a player's bullet-controller ability cast (delete/split/blackhole/slash). The server
-/// tracks no live bullets — it validates the caller and rebroadcasts the cast; every client
-/// resolves the proximity query against its own local bullets. Ephemeral event table, same
-/// shape as BulletPatternEvent.
+/// Relay of a player's bullet-controller ability cast (delete/split/blackhole/rectangle).
+/// The server tracks no live bullets — it validates the caller and rebroadcasts the cast;
+/// every client resolves the proximity query against its own local bullets. Ephemeral
+/// event table, same shape as BulletPatternEvent.
 /// Field encoding: Delete/Split use (x, y) as the center and `radius` as the radius; Attract
-/// adds (target_x, target_y) as the homing target. Slash is the rectangle variant: (x, y) is
-/// the cast origin, (target_x, target_y) the far end of the slash, and `radius` the rectangle
+/// adds (target_x, target_y) as the homing target and `duration` as the black hole's linger
+/// time in seconds (0 = one-shot pull). DeleteRect/SplitRect are the rectangle variants:
+/// (x, y) is the cast origin, (target_x, target_y) the far end, and `radius` the rectangle
 /// width.
 #[table(accessor = bullet_control_event, public, event)]
 pub struct BulletControlEvent {
@@ -141,6 +143,7 @@ pub struct BulletControlEvent {
     pub radius: f32,
     pub target_x: f32,
     pub target_y: f32,
+    pub duration: f32,
     pub cast_by: Identity,
 }
 

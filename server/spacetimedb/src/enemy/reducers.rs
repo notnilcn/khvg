@@ -116,6 +116,7 @@ pub fn control_bullets(
         radius,
         target_x,
         target_y,
+        duration: 0.0,
         cast_by: ctx.sender(),
     });
     Ok(())

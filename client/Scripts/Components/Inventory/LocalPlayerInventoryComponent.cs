@@ -89,15 +89,26 @@ public partial class LocalPlayerInventoryComponent : Component
         switch (ability.Effect)
         {
             case AbilityEffect.DeleteBullets(var radius): controller?.DeleteNear(target, radius * multiplier); break;
-            case AbilityEffect.SplitBullets(var radius): controller?.SplitNear(target, radius * multiplier); break;
-            case AbilityEffect.AttractBullets(var radius): controller?.AttractNear(target, radius * multiplier, target); break;
-            case AbilityEffect.SlashBullets(var p):
+            case AbilityEffect.AttractBullets(var radius):
+                if (ability.Duration > 0f) controller?.SpawnAttractZone(target, radius * multiplier, target, ability.Duration);
+                else controller?.AttractNear(target, radius * multiplier, target);
+                break;
+            case AbilityEffect.SplitBullets(var p):
             {
                 var origin = player.GlobalPosition;
                 var axis = target - origin;
                 // Same zero-length fallback as the server so the optimistic rect matches the echo.
                 var dir = axis.LengthSquared() > 0.000001f ? axis.Normalized() : Vector2.Right;
-                controller?.Slash(origin, origin + dir * (p.Length * multiplier), p.Width * multiplier);
+                controller?.SplitInRect(origin, origin + dir * (p.Length * multiplier), p.Width * multiplier);
+                break;
+            }
+            case AbilityEffect.DeleteBulletsInRect(var p):
+            {
+                var origin = player.GlobalPosition;
+                var axis = target - origin;
+                // Same zero-length fallback as the server so the optimistic rect matches the echo.
+                var dir = axis.LengthSquared() > 0.000001f ? axis.Normalized() : Vector2.Right;
+                controller?.DeleteInRect(origin, origin + dir * (p.Length * multiplier), p.Width * multiplier);
                 break;
             }
         }

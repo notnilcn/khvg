@@ -291,9 +291,11 @@ public partial class ItemSidebar : Control
             AbilityEffect.Heal => $"Heals {ability.Potency:0.#} HP",
             AbilityEffect.Buff(var buff) => $"{FormatBuff(buff)} for {ability.Duration:0.#}s",
             AbilityEffect.DeleteBullets(var radius) => $"Erases enemy bullets within {radius:0} of the cursor",
-            AbilityEffect.SplitBullets(var radius) => $"Splits enemy bullets within {radius:0} of the cursor",
-            AbilityEffect.AttractBullets(var radius) => $"Drags enemy bullets within {radius:0} toward the cursor",
-            AbilityEffect.SlashBullets(var p) => $"Slashes {p.Length:0}×{p.Width:0} in front of you, erasing enemy bullets",
+            AbilityEffect.SplitBullets(var p) => $"Splits enemy bullets in two in a {p.Length:0}×{p.Width:0} rectangle in front of you",
+            AbilityEffect.AttractBullets(var radius) => ability.Duration > 0
+                ? $"Summons a black hole at the cursor for {ability.Duration:0.#}s, dragging in enemy bullets within {radius:0}"
+                : $"Drags enemy bullets within {radius:0} toward the cursor",
+            AbilityEffect.DeleteBulletsInRect(var p) => $"Deletes enemy bullets in a {p.Length:0}×{p.Width:0} rectangle in front of you",
             _ => "",
         };
         string charges = ability.MaxCharges > 0 ? $" | {ability.MaxCharges} charges" : "";

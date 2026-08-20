@@ -15,144 +15,144 @@ using System.Collections.Generic;
 /// </summary>
 public partial class LocalPlayer : CharacterBody2D, IEntity
 {
-    [Signal] public delegate void InventoryChangedEventHandler();
-    [Signal] public delegate void AimSettingsChangedEventHandler();
-    [Signal] public delegate void StatsChangedEventHandler();
-    [Export] public PackedScene? KnightScene { get; set; }
+	[Signal] public delegate void InventoryChangedEventHandler();
+	[Signal] public delegate void AimSettingsChangedEventHandler();
+	[Signal] public delegate void StatsChangedEventHandler();
+	[Export] public PackedScene? KnightScene { get; set; }
 
-    public static LocalPlayer? Local { get; private set; }
+	public static LocalPlayer? Local { get; private set; }
 
-    // IEntity — LocalPlayer can't derive from Entity (it needs CharacterBody2D), so it
-    // implements the interface directly with its own registry. Component children
-    // (Stats, Health, Faction, Combat…) register themselves here from their _Ready.
-    private readonly EntityRegistry componentRegistry = new();
-    public void RegisterComponent(IComponent component) => componentRegistry.Register(component);
-    public void UnregisterComponent(IComponent component) => componentRegistry.Unregister(component);
-    public IComponent? GetComponent(System.Type type) => componentRegistry.Get(type);
-    public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
+	// IEntity — LocalPlayer can't derive from Entity (it needs CharacterBody2D), so it
+	// implements the interface directly with its own registry. Component children
+	// (Stats, Health, Faction, Combat…) register themselves here from their _Ready.
+	private readonly EntityRegistry componentRegistry = new();
+	public void RegisterComponent(IComponent component) => componentRegistry.Register(component);
+	public void UnregisterComponent(IComponent component) => componentRegistry.Unregister(component);
+	public IComponent? GetComponent(System.Type type) => componentRegistry.Get(type);
+	public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
 
-    // Raised by the data components; the signals themselves stay on the entity so UI
-    // readers keep one stable source.
-    internal void RaiseInventoryChanged() => EmitSignal(SignalName.InventoryChanged);
-    internal void RaiseAimSettingsChanged() => EmitSignal(SignalName.AimSettingsChanged);
-    internal void RaiseStatsChanged() => EmitSignal(SignalName.StatsChanged);
+	// Raised by the data components; the signals themselves stay on the entity so UI
+	// readers keep one stable source.
+	internal void RaiseInventoryChanged() => EmitSignal(SignalName.InventoryChanged);
+	internal void RaiseAimSettingsChanged() => EmitSignal(SignalName.AimSettingsChanged);
+	internal void RaiseStatsChanged() => EmitSignal(SignalName.StatsChanged);
 
-    public string Username => GameManager.Username;
+	public string Username => GameManager.Username;
 
-    // Stat/hp/inventory/profile values live in the child components (mirrors of server
-    // rows); these pass-throughs keep UI readers (e.g. StatsSidebar) stable.
-    // GetComponent works before this node's _Ready because component children register
-    // during their own _Ready.
-    private HealthComponent? HealthComponent => GetComponent<HealthComponent>();
-    private StatsComponent? StatsComponent => GetComponent<StatsComponent>();
-    private LocalPlayerDataComponent? DataComponent => GetComponent<LocalPlayerDataComponent>();
-    private LocalPlayerInventoryComponent? InventoryState => GetComponent<LocalPlayerInventoryComponent>();
-    private LocalPlayerProfileComponent? ProfileComponent => GetComponent<LocalPlayerProfileComponent>();
+	// Stat/hp/inventory/profile values live in the child components (mirrors of server
+	// rows); these pass-throughs keep UI readers (e.g. StatsSidebar) stable.
+	// GetComponent works before this node's _Ready because component children register
+	// during their own _Ready.
+	private HealthComponent? HealthComponent => GetComponent<HealthComponent>();
+	private StatsComponent? StatsComponent => GetComponent<StatsComponent>();
+	private LocalPlayerDataComponent? DataComponent => GetComponent<LocalPlayerDataComponent>();
+	private LocalPlayerInventoryComponent? InventoryState => GetComponent<LocalPlayerInventoryComponent>();
+	private LocalPlayerProfileComponent? ProfileComponent => GetComponent<LocalPlayerProfileComponent>();
 
-    public uint Level => DataComponent?.Level ?? 0;
-    public string ProfileName => ProfileComponent?.ProfileName ?? "";
-    public uint Hp => (uint)(HealthComponent?.Hp ?? 0);
-    public uint MaxHp => (uint)(HealthComponent?.MaxHp ?? 0);
-    public int Strength => StatsComponent?.GetValue(StatKind.Strength) ?? 0;
-    public int Wisdom => StatsComponent?.GetValue(StatKind.Wisdom) ?? 0;
-    public int Dexterity => StatsComponent?.GetValue(StatKind.Dexterity) ?? 0;
-    public int DamageDealer => StatsComponent?.GetValue(StatKind.DamageDealer) ?? 0;
-    public int Supporter => StatsComponent?.GetValue(StatKind.Supporter) ?? 0;
-    public int Artisan => StatsComponent?.GetValue(StatKind.Artisan) ?? 0;
-    // Modifier-only stats live on the data row, not in StatsComponent.
-    public int Defense => DataComponent?.Defense ?? 0;
-    public uint UnspentPoints => DataComponent?.UnspentPoints ?? 0;
+	public uint Level => DataComponent?.Level ?? 0;
+	public string ProfileName => ProfileComponent?.ProfileName ?? "";
+	public uint Hp => (uint)(HealthComponent?.Hp ?? 0);
+	public uint MaxHp => (uint)(HealthComponent?.MaxHp ?? 0);
+	public int Strength => StatsComponent?.GetValue(StatKind.Strength) ?? 0;
+	public int Wisdom => StatsComponent?.GetValue(StatKind.Wisdom) ?? 0;
+	public int Dexterity => StatsComponent?.GetValue(StatKind.Dexterity) ?? 0;
+	public int DamageDealer => StatsComponent?.GetValue(StatKind.DamageDealer) ?? 0;
+	public int Supporter => StatsComponent?.GetValue(StatKind.Supporter) ?? 0;
+	public int Artisan => StatsComponent?.GetValue(StatKind.Artisan) ?? 0;
+	// Modifier-only stats live on the data row, not in StatsComponent.
+	public int Defense => DataComponent?.Defense ?? 0;
+	public uint UnspentPoints => DataComponent?.UnspentPoints ?? 0;
 
-    // Move speed is a server-resolved stat (PlayerData.base_speed, item-only — not
-    // allocatable). The 100f fallback only applies before the first data row arrives.
-    public float BaseSpeed => DataComponent?.BaseSpeed ?? 100f;
+	// Move speed is a server-resolved stat (PlayerData.base_speed, item-only — not
+	// allocatable). The 100f fallback only applies before the first data row arrives.
+	public float BaseSpeed => DataComponent?.BaseSpeed ?? 100f;
 
-    private CharacterModel3D? _model3D;
-    private AnimatedSprite2D sprite = null!;
-    private PositionSyncComponent? positionSync;
+	private CharacterModel3D? _model3D;
+	private AnimatedSprite2D sprite = null!;
+	private PositionSyncComponent? positionSync;
 
-    // Camera components of the Main entity, cached in _Ready (per-frame access in
-    // _PhysicsProcess makes an ancestor/registry walk per call wasteful).
-    private World3DComponent? world3D;
-    private Camera2DPresenterComponent? camera2D;
-    private CameraRigComponent? cameraRig;
+	// Camera components of the Main entity, cached in _Ready (per-frame access in
+	// _PhysicsProcess makes an ancestor/registry walk per call wasteful).
+	private World3DComponent? world3D;
+	private Camera2DPresenterComponent? camera2D;
+	private CameraRigComponent? cameraRig;
 
-    // Slot 0: weapon only
-    public Item? EquippedWeapon => InventoryState?.EquippedWeapon;
+	// Slot 0: weapon only
+	public Item? EquippedWeapon => InventoryState?.EquippedWeapon;
 
-    // Slots 1-4: consumables only hotbar
-    public IReadOnlyList<Item?> HotbarSlots => InventoryState?.HotbarSlots ?? [];
+	// Slots 1-4: consumables only hotbar
+	public IReadOnlyList<Item?> HotbarSlots => InventoryState?.HotbarSlots ?? [];
 
-    // Slot 5: accessory only
-    public IReadOnlyList<Item?> AccessorySlots => InventoryState?.AccessorySlots ?? [];
+	// Slot 5: accessory only
+	public IReadOnlyList<Item?> AccessorySlots => InventoryState?.AccessorySlots ?? [];
 
-    // Slot 6: armor only
-    public IReadOnlyList<Item?> ArmorSlots => InventoryState?.ArmorSlots ?? [];
+	// Slot 6: armor only
+	public IReadOnlyList<Item?> ArmorSlots => InventoryState?.ArmorSlots ?? [];
 
-    // Slots 7-30: general mixed (backpack)
-    public IReadOnlyList<ResolvedSlot> GeneralSlots => InventoryState?.GeneralSlots ?? [];
+	// Slots 7-30: general mixed (backpack)
+	public IReadOnlyList<ResolvedSlot> GeneralSlots => InventoryState?.GeneralSlots ?? [];
 
-    // Slots 32-37: abilities (artifacts are 1-cost abilities)
-    public IReadOnlyList<ResolvedSlot> AbilitySlots => InventoryState?.AbilitySlots ?? [];
+	// Slots 32-37: abilities (artifacts are 1-cost abilities)
+	public IReadOnlyList<ResolvedSlot> AbilitySlots => InventoryState?.AbilitySlots ?? [];
 
-    // Slots that count as worn equipment (enchantable): 0 weapon, 5 accessory, 6 armor, 32-37 abilities
-    public static bool IsEquipmentSlot(int index) => LocalPlayerInventoryComponent.IsEquipmentSlot(index);
+	// Slots that count as worn equipment (enchantable): 0 weapon, 5 accessory, 6 armor, 32-37 abilities
+	public static bool IsEquipmentSlot(int index) => LocalPlayerInventoryComponent.IsEquipmentSlot(index);
 
-    public ResolvedSlot ResolveSlotAt(int index) => InventoryState?.ResolveSlotAt(index) ?? new ResolvedSlot();
+	public ResolvedSlot ResolveSlotAt(int index) => InventoryState?.ResolveSlotAt(index) ?? new ResolvedSlot();
 
-    public string? GetSlotItemId(int index) => InventoryState?.GetSlotItemId(index);
+	public string? GetSlotItemId(int index) => InventoryState?.GetSlotItemId(index);
 
-    public override void _Ready()
-    {
-        Local = this;
-        sprite = GetNode<AnimatedSprite2D>("Sprite");
-        positionSync = GetComponent<PositionSyncComponent>();
+	public override void _Ready()
+	{
+		Local = this;
+		sprite = GetNode<AnimatedSprite2D>("Sprite");
+		positionSync = GetComponent<PositionSyncComponent>();
 
-        var gameManager = this.GetAncestor<GameManager>();
-        world3D = gameManager?.GetComponent<World3DComponent>();
-        camera2D = gameManager?.GetComponent<Camera2DPresenterComponent>();
-        cameraRig = gameManager?.GetComponent<CameraRigComponent>();
+		var gameManager = this.GetAncestor<GameManager>();
+		world3D = gameManager?.GetComponent<World3DComponent>();
+		camera2D = gameManager?.GetComponent<Camera2DPresenterComponent>();
+		cameraRig = gameManager?.GetComponent<CameraRigComponent>();
 
-        if (KnightScene != null && world3D != null)
-        {
-            _model3D = new CharacterModel3D(KnightScene, GlobalPosition, world3D);
-            world3D.SetCameraFollowTarget(_model3D.Node);
-        }
+		if (KnightScene != null && world3D != null)
+		{
+			_model3D = new CharacterModel3D(KnightScene, GlobalPosition, world3D);
+			world3D.SetCameraFollowTarget(_model3D.Node);
+		}
 
-        var pcamNode = GetNode<Node2D>("%LocalPlayerPhantomCamera2D");
-        camera2D?.RegisterCamera(pcamNode);
-    }
-
-
-    public override void _PhysicsProcess(double delta)
-    {
-        var raw = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
-        float yaw = cameraRig?.Yaw ?? 0f;
-        var rot2d = new Vector2(raw.X, raw.Y).Rotated(yaw);
-        var input = new Vector2(rot2d.X, rot2d.Y);
-
-        // Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
-
-        Velocity = input * (positionSync?.CurrentSpeed ?? BaseSpeed);
-
-        if (Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down"))
-        {
-            Rotation = yaw;
-        }
+		var pcamNode = GetNode<Node2D>("%LocalPlayerPhantomCamera2D");
+		camera2D?.RegisterCamera(pcamNode);
+	}
 
 
-        MoveAndSlide();
-        _model3D?.SyncFrom2D(GlobalPosition, Rotation);
+	public override void _PhysicsProcess(double delta)
+	{
+		var raw = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
+		float yaw = cameraRig?.Yaw ?? 0f;
+		var rot2d = new Vector2(raw.X, raw.Y).Rotated(yaw);
+		var input = new Vector2(rot2d.X, rot2d.Y);
 
-        if (sprite.SpriteFrames != null)
-            sprite.Play(input != Vector2.Zero ? "Walk" : "Idle");
-    }
+		// Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
 
-    public override void _ExitTree()
-    {
-        if (Local == this) Local = null;
-        _model3D?.Dispose();
-        if (IsInstanceValid(world3D)) world3D!.ClearCameraFollowTarget();
-        if (IsInstanceValid(camera2D)) camera2D!.UnregisterCamera();
-    }
+		Velocity = input * (positionSync?.CurrentSpeed ?? BaseSpeed);
+
+		if (Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down"))
+		{
+			Rotation = yaw;
+		}
+
+
+		MoveAndSlide();
+		_model3D?.SyncFrom2D(GlobalPosition, Rotation);
+
+		if (sprite.SpriteFrames != null)
+			sprite.Play(input != Vector2.Zero ? "Walk" : "Idle");
+	}
+
+	public override void _ExitTree()
+	{
+		if (Local == this) Local = null;
+		_model3D?.Dispose();
+		if (IsInstanceValid(world3D)) world3D!.ClearCameraFollowTarget();
+		if (IsInstanceValid(camera2D)) camera2D!.UnregisterCamera();
+	}
 }

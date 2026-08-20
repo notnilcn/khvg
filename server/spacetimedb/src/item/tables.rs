@@ -78,22 +78,23 @@ pub enum ConsumableEffect {
 pub struct ConsumableBehavior { pub effect: ConsumableEffect, pub potency: f32, pub duration: f32 }
 
 // What an ability actually does. Heal/Buff are self-targeted (potency = heal amount,
-// duration = buff seconds). The bullet-control effects are cast at a target point with
+// duration = buff seconds). DeleteBullets/AttractBullets are cast at a target point with
 // the f32 as the effect radius — the server appends a BulletControlEvent and every
 // client resolves the proximity query locally (server tracks no live bullets).
-// SlashBullets is the rectangle variant: a slash from the player toward the cursor,
-// encoded in the event as origin + far-end + width (see BulletControlEvent).
+// AttractBullets uses the ability's duration as the black hole's linger time (0 = one-shot).
+// DeleteBulletsInRect/SplitBullets are the rectangle variants: from the player toward the
+// cursor, encoded in the event as origin + far-end + width (see BulletControlEvent).
 #[derive(SpacetimeType, Clone, Copy, PartialEq)]
-pub struct SlashParams { pub length: f32, pub width: f32 }
+pub struct RectParams { pub length: f32, pub width: f32 }
 
 #[derive(SpacetimeType, Clone, PartialEq)]
 pub enum AbilityEffect {
     Heal,
     Buff(ConsumableBuffEffect),
     DeleteBullets(f32),
-    SplitBullets(f32),
+    SplitBullets(RectParams),
     AttractBullets(f32),
-    SlashBullets(SlashParams),
+    DeleteBulletsInRect(RectParams),
 }
 
 // Abilities are not consumed on use — they go on cooldown and optionally spend charges.

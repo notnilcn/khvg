@@ -67,11 +67,20 @@ Abilities are tied to equipment (n=6 ability slots, some abilities eating multip
 # Classes & Class items
 The stat distribution syntax for each of the classes is kinda self explanatory.
 Class items are going to be locked behind stat thresholds.
+
+Bullet master has access to all 3 bullet interaction abilities: delete, split, attract. Warrior + tank + paladin have delete, wizard + witch doctor have attract, trickster has split.
+
+Trickster has access to all 3 dodge abilities: telegraphed short range teleport, ground grapple, instant medium range teleport. Trickster also has access to a bunch of other abilities: invisibility, poisons, decoys.
 ### DPS
 #### Bullet master (dex > 0) & (dps > 0)
+
+
 Maybe make it so that the bullet master can store and delay their dps to blast counter phases or wait out invulnerability phases. In the long run, they should do less dps than other classes but when you take into account invulnerability and whatnot then these guys should out-damage other classes because of their ability to store and delay the damage they deal.
+
+
 ##### Bullet master Weapons
 - Guns?
+- what if they just used their hands to summon bullets
 ##### Bullet master Abilities
 Weapons toggles I guess.
 - (innate?) toggle between charge/shotgun/piercing/etc. shot patterns
@@ -127,9 +136,7 @@ To make warriors special you could probably make these items a consumable or som
 ##### Witch Doctor Weapons
 - Staves and wands.
 ##### Witch Doctor Ability
-- Mushroom tome ripoff
-	- Spawns a spire at a location and heals everyone in a radius around it.
-	- Back when RotMG had more players there used to be some tech around using this for group coordination because healers could direct where the melee players would have to stand, which was useful if they knew all the boss phases and shit. i remember hearing raid leaders saying "guys, push up. stop staying in the back of the group, you're safer if you push up because that's where all the mushroom tomes are. you'll heal more if you push up."
+Back when RotMG had more players there used to be some tech around using mushroom tomes for group coordination because healers could direct where the melee players would have to stand, which was useful if they knew all the boss phases and shit. i remember hearing raid leaders saying "guys, push up. stop staying in the back of the group, you're safer if you push up because that's where all the mushroom tomes are. you'll heal more if you push up."
 - AoE heal
 - Targeted heal (heals player closest to cursor or heals the lowest health player that's within a radius of the cursor)
 - Debuff removal

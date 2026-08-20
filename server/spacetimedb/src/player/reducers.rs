@@ -395,9 +395,9 @@ fn scale_ability_effect(effect: &AbilityEffect, multiplier: f32) -> AbilityEffec
             ConsumableBuffEffect::Artisan(v) => ConsumableBuffEffect::Artisan(v * multiplier),
         }),
         AbilityEffect::DeleteBullets(r) => AbilityEffect::DeleteBullets(r * multiplier),
-        AbilityEffect::SplitBullets(r) => AbilityEffect::SplitBullets(r * multiplier),
         AbilityEffect::AttractBullets(r) => AbilityEffect::AttractBullets(r * multiplier),
-        AbilityEffect::SlashBullets(p) => AbilityEffect::SlashBullets(SlashParams { length: p.length * multiplier, width: p.width * multiplier }),
+        AbilityEffect::SplitBullets(p) => AbilityEffect::SplitBullets(RectParams { length: p.length * multiplier, width: p.width * multiplier }),
+        AbilityEffect::DeleteBulletsInRect(p) => AbilityEffect::DeleteBulletsInRect(RectParams { length: p.length * multiplier, width: p.width * multiplier }),
     }
 }
 
@@ -435,10 +435,11 @@ pub fn activate_ability(ctx: &ReducerContext, slot_index: u32, target_x: f32, ta
                 duration: ability.duration,
             });
         }
-        AbilityEffect::DeleteBullets(radius) | AbilityEffect::SplitBullets(radius) | AbilityEffect::AttractBullets(radius) => {
+        AbilityEffect::DeleteBullets(radius) | AbilityEffect::AttractBullets(radius) => {
             // Clamp the client-supplied cursor target into range of the server's own
             // position row, then relay the cast as a BulletControlEvent — the server tracks
-            // no live bullets; every client resolves the proximity query locally.
+            // no live bullets; every client resolves the proximity query locally. Attract
+            // carries the ability's duration as the black hole's linger time (0 = one-shot).
             let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
             let (dx, dy) = (target_x - pos.x, target_y - pos.y);
             let dist = (dx * dx + dy * dy).sqrt();
@@ -449,25 +450,29 @@ pub fn activate_ability(ctx: &ReducerContext, slot_index: u32, target_x: f32, ta
             };
             let kind = match &effect {
                 AbilityEffect::DeleteBullets(_) => BulletControlKind::Delete,
-                AbilityEffect::SplitBullets(_) => BulletControlKind::Split,
                 _ => BulletControlKind::Attract,
             };
             ctx.db.bullet_control_event().insert(BulletControlEvent {
-                event_id: 0, kind, x: tx, y: ty, radius: *radius, target_x: tx, target_y: ty, cast_by: ctx.sender(),
+                event_id: 0, kind, x: tx, y: ty, radius: *radius, target_x: tx, target_y: ty,
+                duration: ability.duration, cast_by: ctx.sender(),
             });
         }
-        AbilityEffect::SlashBullets(p) => {
-            // The slash is a rectangle from the player toward the cursor: relay origin +
-            // far end + width. Direction comes from the clamped cursor target, with a
+        AbilityEffect::DeleteBulletsInRect(p) | AbilityEffect::SplitBullets(p) => {
+            // The delete/split rectangle goes from the player toward the cursor: relay
+            // origin + far end + width. Direction comes from the clamped cursor target, with a
             // fixed fallback when the cursor sits on the player (clients mirror it).
             let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
             let (dx, dy) = (target_x - pos.x, target_y - pos.y);
             let dist = (dx * dx + dy * dy).sqrt();
             let (ux, uy) = if dist > 0.001 { (dx / dist, dy / dist) } else { (1.0, 0.0) };
+            let kind = match &effect {
+                AbilityEffect::SplitBullets(_) => BulletControlKind::SplitRect,
+                _ => BulletControlKind::DeleteRect,
+            };
             ctx.db.bullet_control_event().insert(BulletControlEvent {
-                event_id: 0, kind: BulletControlKind::Slash, x: pos.x, y: pos.y,
+                event_id: 0, kind, x: pos.x, y: pos.y,
                 target_x: pos.x + ux * p.length, target_y: pos.y + uy * p.length,
-                radius: p.width, cast_by: ctx.sender(),
+                radius: p.width, duration: 0.0, cast_by: ctx.sender(),
             });
         }
     }

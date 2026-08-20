@@ -222,15 +222,55 @@ pub fn seed_world_items(ctx: &ReducerContext) {
     });
 
     Item::seed(ctx, Item {
-        item_id: "Slash Orb".to_string(),
-        display_name: "Slash Orb".to_string(),
-        description: "A void-dark orb. Activate to slash the space in front of you, erasing any enemy bullets caught in the arc.".to_string(),
+        item_id: "Delete Orb".to_string(),
+        display_name: "Delete Orb".to_string(),
+        description: "A void-dark orb. Activate to summon a black rectangle in front of you, erasing any enemy bullets caught inside it.".to_string(),
         texture_id: "Orb".to_string(),
         equip_slot: EquipSlot::Ability,
         slot_cost: 1,
         stat_modifiers: vec![],
         behaviors: vec![ItemBehavior::Ability(AbilityBehavior {
-            effect: AbilityEffect::SlashBullets(SlashParams { length: 100.0, width: 60.0 }),
+            effect: AbilityEffect::DeleteBulletsInRect(RectParams { length: 100.0, width: 60.0 }),
+            potency: 1.0,
+            duration: 0.0,
+            cooldown_seconds: 1.5,
+            max_charges: 0, // unlimited
+        })],
+        max_enchantments: 0,
+        innate_enchantment_ids: vec![],
+        stat_requirements: NO_REQUIREMENTS,
+    });
+
+    Item::seed(ctx, Item {
+        item_id: "Attract Orb".to_string(),
+        display_name: "Attract Orb".to_string(),
+        description: "A void-dark orb. Activate to summon a black hole at the cursor that lingers for 3 seconds, sucking in enemy bullets.".to_string(),
+        texture_id: "Orb".to_string(),
+        equip_slot: EquipSlot::Ability,
+        slot_cost: 1,
+        stat_modifiers: vec![],
+        behaviors: vec![ItemBehavior::Ability(AbilityBehavior {
+            effect: AbilityEffect::AttractBullets(120.0),
+            potency: 1.0,
+            duration: 3.0,
+            cooldown_seconds: 5.0,
+            max_charges: 0, // unlimited
+        })],
+        max_enchantments: 0,
+        innate_enchantment_ids: vec![],
+        stat_requirements: NO_REQUIREMENTS,
+    });
+
+    Item::seed(ctx, Item {
+        item_id: "Split Orb".to_string(),
+        display_name: "Split Orb".to_string(),
+        description: "A void-dark orb. Activate to summon a black rectangle in front of you, splitting any enemy bullets caught inside it in two.".to_string(),
+        texture_id: "Orb".to_string(),
+        equip_slot: EquipSlot::Ability,
+        slot_cost: 1,
+        stat_modifiers: vec![],
+        behaviors: vec![ItemBehavior::Ability(AbilityBehavior {
+            effect: AbilityEffect::SplitBullets(RectParams { length: 100.0, width: 60.0 }),
             potency: 1.0,
             duration: 0.0,
             cooldown_seconds: 1.5,
