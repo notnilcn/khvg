@@ -5,7 +5,8 @@ using Godot;
 /// A single inventory slot (declared across inventory_panel.tscn for the hotbar, the
 /// always-visible Equipment panel, and the Backpack grid; the node names stay
 /// `<Type> - <Index>` because the exported slot-section arrays reference those paths).
-/// Drag/drop reports the SwapSlots reducer, left-click on an ability slot reports
+/// Drag/drop reports the SwapSlots reducer (a drag from a ChestSlotComponent instead
+/// reports TakeFromChest — the server picks the slot), left-click on an ability slot reports
 /// ActivateAbility, right-click in the backpack reports DropItem, and hover shows the
 /// scene-unique ItemSidebar.
 /// </summary>
@@ -59,12 +60,24 @@ public partial class SlotComponent : ControlComponent
         return SlotIndex;
     }
 
-    public override bool _CanDropData(Vector2 atPosition, Variant data) => data.VariantType == Variant.Type.Int;
+    public override bool _CanDropData(Vector2 atPosition, Variant data) =>
+        data.VariantType == Variant.Type.Int || IsChestDrag(data);
 
     public override void _DropData(Vector2 atPosition, Variant data)
     {
+        // Drag from a chest slot (ChestSlotComponent): TakeFromChest — the server picks
+        // the inventory slot per its own placement rules.
+        if (IsChestDrag(data))
+        {
+            GameManager.Conn?.Reducers.TakeFromChest(data.AsGodotDictionary()["chest_item_id"].AsUInt64());
+            return;
+        }
         var fromIndex = data.AsUInt32();
         if (fromIndex == SlotIndex) return;
         GameManager.Conn?.Reducers.SwapSlots(fromIndex, SlotIndex);
     }
+
+    /// Chest-slot drags carry a Dictionary with a "chest_item_id" key instead of a slot index.
+    private static bool IsChestDrag(Variant data) =>
+        data.VariantType == Variant.Type.Dictionary && data.AsGodotDictionary().ContainsKey("chest_item_id");
 }

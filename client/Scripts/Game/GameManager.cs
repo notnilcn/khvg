@@ -51,6 +51,7 @@ public partial class GameManager : Node2D, IEntity
 	public static Item? GetItem(string itemId) => Get<CatalogComponent>()?.GetItem(itemId);
 	public static Enchantment? GetEnchantment(string enchantmentId) => Get<CatalogComponent>()?.GetEnchantment(enchantmentId);
 	public static IEnumerable<Enchantment> GetEnchantments() => Get<CatalogComponent>()?.GetEnchantments() ?? Enumerable.Empty<Enchantment>();
+	public static SpellVisualComponent? SpellVisuals => Get<SpellVisualComponent>();
 
 	/// Forwarded from the CatalogComponent; subscribe/unsubscribe are no-ops once Main is gone.
 	public static event Action? EnchantmentsChanged

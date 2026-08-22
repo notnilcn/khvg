@@ -1,4 +1,4 @@
-# 00 End-to-End Timeline Flowchart
+**# 00 End-to-End Timeline Flowchart
 
 The whole game as one causal timeline, from server boot to disconnect. Each numbered step is one cause-and-effect beat ("X does Y because Z"), names the file/function that implements it, and ends in a `^prefix-N` block anchor so the system docs (02–13) can transclude steps instead of re-typing them. Steps cross-refer to each other by anchor name ("the subscription opened in join-1"). Where a step only sketches a mechanism, it links the system doc that owns the details.
 

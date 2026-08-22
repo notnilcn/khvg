@@ -122,7 +122,7 @@ public partial class BulletSpawnerComponent : Component
         var origin = new Vector2(bulletPattern.OriginX, bulletPattern.OriginY) + new Vector2(bulletPattern.OriginOffsetX, bulletPattern.OriginOffsetY);
         var baseAngle = ResolveTargetAngle(origin, bulletPattern.Target) + Mathf.DegToRad(bulletPattern.BaseAngleOffset);
 
-        EnemyBulletSpawner.Set("bullets_custom_data", new BulletData { SourceStep = bulletPattern.SourceStep });
+        EnemyBulletSpawner.Set("bullets_custom_data", new BulletData { SourceStep = bulletPattern.SourceStep, EnemyId = bulletPattern.EnemyId, Damage = bulletPattern.Damage });
         EnemyBulletSpawner.Set("max_life_time", bulletPattern.Lifetime);
         ApplyBulletTexture(EnemyBulletSpawner, bulletPattern.TextureId);
         ApplyMotion(bulletPattern.AngularSpeed, bulletPattern.SpeedAcceleration, bulletPattern.Lifetime);

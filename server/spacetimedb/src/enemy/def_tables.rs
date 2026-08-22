@@ -32,10 +32,22 @@ pub enum PatternType {
     Explosion(ExplosionParams),
 }
 
-#[derive(SpacetimeType, Clone)]
+#[derive(SpacetimeType, Clone, Copy, PartialEq)]
 pub enum EnemyTarget {
     Idle,
     AggroTarget,
+}
+
+/// What a Stunned enemy status does to this template (P2 stagger). The Stunned row's
+/// magnitude only matters for Slowed/Enraged; all current seeds use Pause.
+#[derive(SpacetimeType, Clone, Copy, PartialEq)]
+pub enum StunBehavior {
+    /// Attacks and movement halt entirely for the stun's duration.
+    Pause,
+    /// The stun acts as a Slow of the Stunned row's magnitude (enemy keeps attacking).
+    Slowed,
+    /// The enemy rages: movement ×(1+magnitude), fire intervals /(1+magnitude).
+    Enraged,
 }
 
 #[table(accessor = movement_def, public)]
@@ -152,5 +164,7 @@ pub struct EnemyTemplate {
     pub move_sim_factor: f32,
     pub attack_sim_factor: f32,
     pub aggro_lock_seconds: f32,
+    // What a Stunned status does to this enemy (see StunBehavior). Pause for all current seeds.
+    pub stun_behavior: StunBehavior,
     pub phases: Vec<PhaseDef>,
 }

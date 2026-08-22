@@ -36,10 +36,14 @@ can differ slightly between clients; that's accepted by design.
 
 Two kinds of ability authoring:
 
-- **Reusing an existing effect** (`Heal`, `Buff`, `DeleteBullets`, `SplitBullets`,
-  `AttractBullets`, `SlashBullets`): you only write a **seed entry** and a texture entry.
+- **Reusing an existing effect** (`Heal`, `Buff`, the bullet-control effects
+  `DeleteBullets`/`SplitBullets`/`AttractBullets`/`DeleteBulletsInRect`/`Slash`/`Wall`,
+  the status effects `MarkBleed`/`MarkStore`/`StoreIncoming`/`Invulnerable`/
+  `DamageShield`/`ReduceDamage`/`RedirectToCaster`/`RegenAura`, the enemy-side
+  `Curse`/`Bash`, the ground-zone `CastZone`, the movement effects `Teleport`/`Grapple`,
+  and the shape-damage `Spell`): you only write a **seed entry** and a texture entry.
   Skip to Part 2.
-- **A new effect type**: the full pipeline — Part 3.
+- **A new effect type**: the full pipeline — Part 3, plus the subsystem notes in Part 4.
 
 ---
 
@@ -60,19 +64,26 @@ Item::seed(ctx, Item {
     slot_cost: 1,                            // contiguous ability cells occupied
     stat_modifiers: vec![],                  // passive stats while equipped (scaled by position)
     behaviors: vec![ItemBehavior::Ability(AbilityBehavior {
-        effect: AbilityEffect::SlashBullets(SlashParams { length: 100.0, width: 60.0 }),
+        effect: AbilityEffect::Slash(SlashParams { length: 100.0, width: 60.0, max_bullet_damage: 15 }),
         potency: 1.0,                        // heal amount / buff magnitude (unused for bullet control)
-        duration: 0.0,                       // buff seconds (0 = instant)
+        duration: 0.0,                       // buff/status seconds (0 = instant)
         cooldown_seconds: 1.5,
         max_charges: 0,                      // 0 = unlimited
     })],
     max_enchantments: 0,
     innate_enchantment_ids: vec![],
-    stat_requirements: NO_REQUIREMENTS,      // all-zero = no gate
+    stat_requirements: REQ_BULLET_MASTER,    // class gate — see below
 });
 ```
 
 Rules of the shape:
+
+- **`stat_requirements` is the class gate.** Pick one of the `REQ_*` consts at the top of
+  `seeds.rs` (P6: primary stat ≥ 15, secondary ≥ 12 per the class headers in
+  `docs/Game Design Docs/Items/Abilities/Abilities.md`; `NO_REQUIREMENTS` for generic
+  gear). Enforced server-side when the item enters an equipped slot; the item sidebar
+  shows the gate in red while unmet. Single-effect ability seeds should go through the
+  `ability_item` helper, which takes the gate as its last parameter.
 
 - **`slot_cost` spans cells.** A cost-3 item's head row holds the item; the next two cells
   are followers marked `occupied_by`. Activating a follower activates its head. Ability
@@ -105,17 +116,28 @@ blank with no error.
 ### Hotkeys
 
 `Ability1`–`Ability6` (input map, `project.godot`) map to ability cells 32–37 in order —
-`Ability2` activates cell 33. `InventoryComponent.AbilityActions` owns the mapping; you
-never wire keys per ability.
+`Ability2` activates cell 33. `InventoryPanel.AbilityActions` owns the mapping; you
+never wire keys per ability. Charge-capable abilities (Part 4) get hold-to-charge on the
+same keys automatically.
 
 ---
 
 ## Part 2 — Reusing an existing effect (seed-only)
 
-1. Pick an effect and numbers: `Heal`, `Buff(ConsumableBuffEffect::Strength(v))`,
-   `DeleteBullets(radius)`, `SplitBullets(radius)`, `AttractBullets(radius)`,
-   `SlashBullets(SlashParams { length, width })`.
-2. Add the `Item::seed` entry in `item/seeds.rs` (shape above).
+1. Pick an effect and numbers. The full reusable menu (see `AbilityEffect` in
+   `item/tables.rs` for the param structs): `Heal`, `Buff(ConsumableBuffEffect::Strength(v))`,
+   `DeleteBullets(radius)`, `SplitBullets(RectParams)`, `AttractBullets(radius)`,
+   `DeleteBulletsInRect(RectParams)`, `Slash(SlashParams)` (damage-aware — deletes only
+   bullets ≤ `max_bullet_damage`), `Wall(WallParams)` (a lingering delete-rect), the
+   status effects (`MarkBleed`/`MarkStore`/`StoreIncoming` with their purge/wager/release
+   params, `Invulnerable(ally_radius)`, `DamageShield(ally_radius)`,
+   `ReduceDamage(ReduceParams)`, `RedirectToCaster(ally_radius)`,
+   `RegenAura(RegenParams)`), `Curse(CurseParams)` (single-target enemy debuff),
+   `Bash(BashParams)` (melee stagger swing), `CastZone(ZoneParams)` (ground zone, one per
+   `ZoneKind`), `Teleport(TeleportParams)`, `Grapple(range)`, and `Spell(SpellParams)`
+   (Circle/Line/Cone shape damage with an `AbilityVisualKind`).
+2. Add the `Item::seed` entry in `item/seeds.rs` (shape above) — via the `ability_item`
+   helper for single-effect items, with the class gate (`REQ_*`) as the last parameter.
 3. Add the `TextureEntry` in `main/seeds.rs` if the texture id is new.
 4. Build and publish:
 
@@ -145,16 +167,16 @@ from the player toward the cursor.
 
 ```rust
 #[derive(SpacetimeType, Clone, Copy, PartialEq)]
-pub struct SlashParams { pub length: f32, pub width: f32 }
+pub struct SlashParams { pub length: f32, pub width: f32, pub max_bullet_damage: u32 }
 
 pub enum AbilityEffect {
     // ... existing variants ...
-    SlashBullets(SlashParams),
+    Slash(SlashParams),
 }
 ```
 
 **Gotcha that actually happened:** SpacetimeType enum variants must be *unit* or
-*single-field* (newtype). `SlashBullets(f32, f32)` fails to compile ("must be a unit
+*single-field* (newtype). `Slash(f32, f32)` fails to compile ("must be a unit
 variant or a newtype variant") with a cascade of confusing `Serialize`/`Deserialize`
 errors pointing at unrelated lines. Two or more payload values ⇒ wrap them in a struct.
 
@@ -176,7 +198,9 @@ In `player/reducers.rs`:
 
 - `scale_ability_effect` — multiply every scalable dim by the position multiplier
   (`length * m`, `width * m`).
-- `activate_ability` — new match arm next to the existing bullet-control arm. It derives
+- `apply_ability_effect` — new match arm next to the existing bullet-control arm. This
+  is the shared dispatch both `activate_ability` and the P4 charge release call, so an
+  arm here serves both input models. It derives
   the direction from the (range-clamped) cursor target and inserts the event. One edge
   case matters: cursor exactly on the player gives a zero-length direction. Pick a fixed
   fallback (`(1, 0)`) and **mirror it on the client**, or the optimistic visual and the
@@ -220,7 +244,7 @@ out of `(X, Y, TargetX, TargetY, Radius)` and call `Slash`. Own echoes stay skip
 *and* clicking the slot) needs one switch arm for the **optimistic local apply**:
 
 ```csharp
-case AbilityEffect.SlashBullets(var p):
+case AbilityEffect.Slash(var p):
 {
     var origin = player.GlobalPosition;
     var axis = target - origin;
@@ -232,7 +256,7 @@ case AbilityEffect.SlashBullets(var p):
 
 Note the reducer call (`Conn.Reducers.ActivateAbility(...)`) is generic — it was already
 there; only the optimistic apply is per-effect. Also add a display line in
-`ItemSidebarComponent.FormatAbility` so the hover panel describes the effect.
+`ItemSidebar.FormatAbility` so the hover panel describes the effect.
 
 ### Step 5: Ship it
 
@@ -246,6 +270,87 @@ dotnet build client/khvg.csproj
 
 Multiplayer test with two clients: caster sees the optimistic cast; the second client sees
 the rectangle and the deletions via the event echo.
+
+---
+
+## Part 4 — The P1b–P5 subsystems (where each piece goes)
+
+Part 3's case study was a bullet-control effect. Five more subsystems exist; a new
+effect in one of them touches different tables and different client components. All of
+them share Part 1's seed/texture steps and Part 3's `scale_ability_effect` +
+`apply_ability_effect` arms — this part lists only what changes per subsystem. The
+authoritative module rules live in `server/spacetimedb/src/item/AGENTS.md` and the
+`status/` section of `server/AGENTS.md`.
+
+### Status effects (self/ally buffs, marks, wagers)
+
+- **Types** — `status/tables.rs`: a `StatusEffectKind` variant plus the `StatusParams`
+  fields it consults (one flat struct, unused fields stay zero; field dual-uses are
+  documented on the table). One row per (profile, kind) in `ActiveStatusEffect` — the
+  mark kinds (`DamageToBleed`/`StoreDamage`) deliberately share one slot.
+- **Apply/consult** — `status/methods.rs::apply_status_effect` is the shared entry
+  point every targeting variant calls (self / allies-in-radius / zone). A *persistent*
+  effect needs a consult point: incoming hits go through `intercept_incoming` (fixed
+  order, documented there), outgoing through `outgoing_damage_mult`/`withhold_outgoing`/
+  `convert_outgoing_to_bleed`, and per-second behavior hangs off `tick` — the single
+  1 Hz schedule (`tick_status_effects`). Never add a second schedule.
+- **Client** — nothing per ability. The local player's statuses render in
+  `StatusBarComponent` automatically (the raw `ActiveStatusEffect` subscription,
+  filtered to the local profile).
+
+### Enemy debuffs + stagger
+
+- **Types** — `EnemyStatusKind` + `ActiveEnemyStatusEffect` in `status/tables.rs` (one
+  row per (enemy_id, kind)).
+- **Apply/consult** — `status/methods.rs::apply_enemy_status`; consults live in the
+  combat sink (`combat/mod.rs::apply_damage_to_enemy` — ArmorBreak zeroes defence,
+  Vulnerability multiplies) and the enemy behavior tick (Slow/Stunned movement + fire
+  pacing per the template's `stun_behavior`). DoT ticks and expiry hang off the same
+  1 Hz `tick`. The stagger bar is `Enemy.stagger`: filled by `Bash`, decayed by the
+  tick, full = Stunned.
+- **Client** — nothing per ability. `EnemyDebuffIndicatorComponent` renders the chips +
+  stagger bar from the raw `ActiveEnemyStatusEffect` subscription, filtered per enemy
+  instance.
+
+### Ground zones
+
+- **Types** — `ZoneKind` + `GroundZone` in `status/tables.rs`; the effect is
+  `CastZone(ZoneParams)`.
+- **Behavior** — the 1 Hz `tick` re-evaluates membership live each tick: ally zones
+  re-apply their status (shed ~1.5s after leaving), enemy zones refresh debuffs, burst
+  kinds fire once at expiry. Zones die with their caster (`purge_profile_zones`).
+- **Client** — `ZoneRendererComponent` draws every zone; a new kind wants a color there
+  and nothing else.
+
+### Movement + hold-to-charge
+
+- **Charge-capability is decided in ONE place** — `player/methods.rs::ability_is_charge_capable`,
+  mirrored client-side in `LocalPlayerInventoryComponent.IsChargeCapable`. Change both.
+  Charge-capable items route through `status/reducers.rs::begin_ability_charge`/
+  `release_ability_charge`; the release reuses the same validation/dispatch/spend
+  helpers, so a charge variant of an existing effect is a params flag (`charge_scaled`
+  on `TeleportParams`/`SpellParams`), not a new arm.
+- **Client state** — `AbilityChargeComponent` mirrors the echoed `AbilityCharge` row
+  (fire suppression in `CombatComponent`, cosmetic SelfSlow). The charge-range
+  multiplier (`charge_range_multiplier` server,
+  `AbilityChargeComponent.ChargeRangeMultiplier` client) is a two-sided mirror like the
+  position multipliers.
+
+### Spells (shape damage)
+
+- **Types** — `SpellParams`/`SpellShape`/`ScalingStat` in `item/tables.rs`; the visual
+  kind is `AbilityVisualKind` on `enemy/instance_tables.rs`'s `AbilityVisualEvent`
+  (append-only event table — the visual relays the cast; damage is applied server-side
+  in the same dispatch).
+- **Client** — `SpellVisualComponent` renders the flash per visual kind: a new kind is
+  a new draw arm there plus the optimistic arm in
+  `LocalPlayerInventoryComponent.TryActivateAbility` (echo skips own `cast_by`, the
+  BulletControllerComponent pattern).
+- **Replay follows the table kind.** Event tables (`BulletPatternEvent`/
+  `BulletControlEvent`/`AbilityVisualEvent`): the binder keeps `ReplayExistingRows =
+  false` — no last-seen-id tracking exists, so replay would re-fire the table's whole
+  history. Persistent tables (`GroundZone`, statuses, charges, enemy debuffs): replay ON,
+  so late joiners and re-entered scenes see still-live rows.
 
 ---
 
@@ -268,15 +373,24 @@ the rectangle and the deletions via the event echo.
   new query in-game.
 - **Texture ids are soft references.** A missing `TextureEntry` means a blank icon, not an
   error.
+- **Replay follows the table kind.** Event tables: binder `ReplayExistingRows` OFF, or
+  scene entry re-fires the table's whole history. Persistent tables: ON, or late joiners
+  see nothing until the next row change.
+- **Charge-capability is a two-sided mirror** — `ability_is_charge_capable` (server) and
+  `IsChargeCapable` (client) must agree, or the hotkey begins a charge the server rejects
+  (or vice versa).
 
 ## New-ability checklist
 
 - [ ] New effect type? `AbilityEffect` variant (struct payload if >1 value) →
-      `scale_ability_effect` arm → `activate_ability` arm (+ event encoding documented) →
+      `scale_ability_effect` arm → `apply_ability_effect` arm (+ event encoding documented) →
       client query/visual in `BulletControllerComponent` → echo handler arm → optimistic
-      arm in `TryActivateAbility` → `FormatAbility` line
+      arm in `TryActivateAbility` → `FormatAbility` line. Other subsystems (status,
+      enemy debuff, zone, charge, spell): the per-subsystem touch points in Part 4
 - [ ] `Item::seed` entry (cooldown, charges, slot_cost, position-scaled dims are sane)
+      with the class gate — the right `REQ_*` const from `seeds.rs`
 - [ ] `TextureEntry` seed for any new texture id
 - [ ] `cargo check` → `server/build.sh` → `dotnet build client/khvg.csproj`
-- [ ] In-game: hotkey activation from an equipped slot; cooldown/charge behavior correct;
-      second client sees the effect and the visual
+- [ ] In-game: stat gate blocks equipping until the points are allocated; hotkey
+      activation from an equipped slot; cooldown/charge behavior correct; second client
+      sees the effect and the visual

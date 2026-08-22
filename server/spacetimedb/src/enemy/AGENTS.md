@@ -7,7 +7,7 @@ Everything an agent needs to work in this module without re-deriving the model. 
 
 | File | Role | Edit it when |
 |---|---|---|
-| `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`), the four step-def tables, `PatternType` + param structs, `MovementBehavior`, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
+| `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`/`StunBehavior`), the four step-def tables, `PatternType` + param structs, `MovementBehavior`, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
 | `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, event tables (`BulletPatternEvent`, `BulletControlEvent`), schedules | Rarely — schema changes |
 | `methods.rs` | Pure logic: archetype helpers, behavior-tree build/teardown, `tick_phase`/`tick_sequence`, movement, biome spawning | Changing *how* enemies simulate |
 | `reducers.rs` | `tick_enemy_spawn`/`tick_enemy_behavior` (scheduled), `report_enemy_hit`, `control_bullets` | Wiring, not content |
@@ -51,6 +51,12 @@ EnemySequenceStep → RepeatStepInstance) must not have orphan rows.
   bindings regenerate via `server/build.sh` (never hand-edit `module_bindings/`).
 - **Difficulty is compile-time.** Variants are separate `EnemyTemplate` rows seeded per
   `Difficulty` tier (`Foo_Easy` … `Foo_Madness`); spawn by name. No runtime difficulty flag.
+- **Enemy statuses + stagger (status/ module, P2).** `Enemy.stagger` (0–100) decays on the
+  1 Hz status tick; a full bar applies a Stunned debuff whose effect depends on the
+  template's `stun_behavior`: Pause freezes the enemy wholesale in `tick_enemy_behavior`,
+  Slowed/Enraged scale movement in `apply_movement`, and Enraged additionally divides every
+  fire-pacing interval via `effective_interval` — convert ANY new wall-clock timing in
+  `tick_phase`/`tick_sequence` through it. All current seeds are Pause.
 
 ## How to add an enemy (the recipe)
 

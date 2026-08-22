@@ -7,8 +7,11 @@ using SpacetimeDB.Types;
 /// <summary>
 /// Player abilities that manipulate live enemy bullets: DeleteNear, SplitNear and
 /// AttractNear near a point, DeleteInRect and SplitInRect as a rectangle from the caster
-/// toward the cursor (DeleteInRect deletes, SplitInRect splits), and SpawnAttractZone, a
-/// lingering black hole that keeps dragging nearby bullets toward itself for its duration.
+/// toward the cursor (DeleteInRect deletes, SplitInRect splits), SlashInRect (deletes only
+/// bullets whose BulletData.Damage is at most the threshold) in the same rectangle shape,
+/// SpawnAttractZone, a lingering black hole that keeps dragging nearby bullets toward
+/// itself for its duration, and SpawnWallZone, a lingering delete-rect that keeps erasing
+/// bullets for its duration.
 /// All share the proximity queries over the live DirectionalBullets2D instances tracked by
 /// BulletSpawnerComponent, which is why they live in one component.
 /// Casts are networked by relaying the cast itself: the caster applies the effect locally
@@ -17,13 +20,16 @@ using SpacetimeDB.Types;
 /// skipped via cast_by). Each client resolves the proximity query against its own bullets,
 /// so edge-of-radius results can differ slightly. DeleteRect/SplitRect events encode the
 /// rectangle as origin (x, y) + far end (target_x, target_y) + width (radius); every client
-/// also draws the black rectangle, so the visual replicates with the cast. Attract events
-/// carry a duration: 0 is a one-shot pull, &gt; 0 spawns the lingering black hole (visual
-/// included) on every client.
+/// also draws the black rectangle, so the visual replicates with the cast. SlashRect uses
+/// the same encoding with Duration carrying the damage threshold as f32 bits
+/// (BitConverter.SingleToUInt32Bits). WallRect uses it with Duration as the wall's linger
+/// seconds. Attract events carry a duration: 0 is a one-shot pull, &gt; 0 spawns the
+/// lingering black hole (visual included) on every client.
 /// Driven by the real ability system: ability items with a DeleteBullets/SplitBullets/
-/// AttractBullets/DeleteBulletsInRect AbilityEffect call the public methods below from
-/// LocalPlayerInventoryComponent.TryActivateAbility, and activate_ability appends the
-/// event server-side (radius/dims from the item, cursor target clamped to cast range).
+/// AttractBullets/DeleteBulletsInRect/Slash/Wall AbilityEffect call the public methods
+/// below from LocalPlayerInventoryComponent.TryActivateAbility, and activate_ability
+/// appends the event server-side (radius/dims from the item, cursor target clamped to cast
+/// range).
 /// </summary>
 public partial class BulletControllerComponent : Component
 {
@@ -33,6 +39,7 @@ public partial class BulletControllerComponent : Component
 	[Export] public float SplitLifetime = 3f;
 	[Export] public float SplitDefaultSpeed = 150f;
 	[Export] public float HomingSmoothing = 5f;
+	// Re-application cadence of the lingering zones (black holes AND shield walls).
 	[Export] public float AttractTickInterval = 0.2f;
 
 	/// A live black hole: keeps re-applying AttractNear until TimeLeft runs out.
@@ -46,7 +53,19 @@ public partial class BulletControllerComponent : Component
 		public Polygon2D Visual = null!;
 	}
 
+	/// A live shield wall: keeps re-applying the delete-rect query until TimeLeft runs out.
+	private class WallZone
+	{
+		public Vector2 Origin;
+		public Vector2 End;
+		public float Width;
+		public float TimeLeft;
+		public float TickAccumulator;
+		public Polygon2D Visual = null!;
+	}
+
 	private readonly List<AttractZone> attractZones = [];
+	private readonly List<WallZone> wallZones = [];
 	private BulletSpawnerComponent spawner = null!;
 	private TableBinderComponent bulletControlEventBinder = null!;
 
@@ -62,6 +81,9 @@ public partial class BulletControllerComponent : Component
 
 	/// BulletControlEventBinder RowInserted handler (wired in game.tscn). Replays another
 	/// player's cast locally; the caster's own echo is skipped (already applied optimistically).
+	/// The binder MUST keep ReplayExistingRows = false: there is no last-seen-id tracking, so
+	/// replaying would re-fire every control event in the table's history (every wall/slash/
+	/// delete ever cast) each time the scene is entered.
 	private void OnBulletControlEventRow()
 	{
 		var row = (BulletControlEvent)bulletControlEventBinder.LastRow!;
@@ -79,6 +101,10 @@ public partial class BulletControllerComponent : Component
 			DeleteInRect(point, new Vector2(row.TargetX, row.TargetY), row.Radius);
 		else if (row.Kind is BulletControlKind.SplitRect)
 			SplitInRect(point, new Vector2(row.TargetX, row.TargetY), row.Radius);
+		else if (row.Kind is BulletControlKind.SlashRect)
+			SlashInRect(point, new Vector2(row.TargetX, row.TargetY), row.Radius, BitConverter.SingleToUInt32Bits(row.Duration));
+		else if (row.Kind is BulletControlKind.WallRect)
+			SpawnWallZone(point, new Vector2(row.TargetX, row.TargetY), row.Radius, row.Duration);
 	}
 
 	/// Every enabled live enemy bullet (instance, index) whose position is within radius of point.
@@ -154,13 +180,40 @@ public partial class BulletControllerComponent : Component
 		SpawnRectVisual(origin, end, width);
 	}
 
+	/// The Quick Slash's cast: deletes only the rectangle's bullets whose damage (stamped
+	/// into BulletData from BulletPatternEvent.Damage at spawn) is at most maxDamage, and
+	/// draws the slash. Runs on the caster (optimistic) and on every other client via the
+	/// BulletControlEvent echo. The damage read is per-instance — a spawn batch shares one
+	/// BulletData, same as SplitHits.
+	public void SlashInRect(Vector2 origin, Vector2 end, float width, uint maxDamage)
+	{
+		foreach (var (inst, index) in FindBulletsInRect(origin, end, width))
+		{
+			var data = inst.Get("bullets_custom_data").As<BulletData>();
+			if (data != null && data.Damage > maxDamage) continue;
+			inst.Call("disable_bullet", index);
+		}
+		SpawnRectVisual(origin, end, width);
+	}
+
 	/// The black rectangle, drawn for everyone who sees the cast (DeleteInRect and SplitInRect
 	/// alike): a code-created Polygon2D (data-driven count, like HitZones) under the parent
 	/// BulletManager (z_index 1 keeps it above entities), flashed briefly then freed.
 	private void SpawnRectVisual(Vector2 origin, Vector2 end, float width)
 	{
+		var rect = MakeRectPolygon(origin, end, width);
+		if (rect == null) return;
+		var tween = rect.CreateTween();
+		tween.TweenProperty(rect, "modulate:a", 0f, 0.2);
+		tween.TweenCallback(Callable.From(rect.QueueFree));
+	}
+
+	/// The shared rectangle polygon (origin→end, full width), parented under the
+	/// BulletManager. Null for a degenerate (zero-length) rectangle.
+	private Polygon2D? MakeRectPolygon(Vector2 origin, Vector2 end, float width)
+	{
 		var axis = end - origin;
-		if (axis.Length() < 0.001f) return;
+		if (axis.Length() < 0.001f) return null;
 		var offset = axis.Orthogonal().Normalized() * (width * 0.5f);
 		var rect = new Polygon2D
 		{
@@ -168,9 +221,7 @@ public partial class BulletControllerComponent : Component
 			Color = new Color(0f, 0f, 0f, 0.85f),
 		};
 		GetParent().AddChild(rect);
-		var tween = rect.CreateTween();
-		tween.TweenProperty(rect, "modulate:a", 0f, 0.2);
-		tween.TweenCallback(Callable.From(rect.QueueFree));
+		return rect;
 	}
 
 	/// Disables each nearby bullet and respawns it as a fan of SplitCount pellets around its
@@ -245,6 +296,33 @@ public partial class BulletControllerComponent : Component
 		AttractNear(point, radius, target); // instant first pull
 	}
 
+	/// The Shield Wall's cast: a rectangle from origin to end that lingers for duration
+	/// seconds, re-applying the delete query every AttractTickInterval so bullets entering it
+	/// later are erased too (the SpawnAttractZone pattern as a rectangle). Runs on the caster
+	/// (optimistic) and on every other client via the BulletControlEvent echo, so the black
+	/// wall replicates with the cast.
+	public void SpawnWallZone(Vector2 origin, Vector2 end, float width, float duration)
+	{
+		var visual = MakeRectPolygon(origin, end, width);
+		if (visual == null) return;
+		wallZones.Add(new WallZone
+		{
+			Origin = origin,
+			End = end,
+			Width = width,
+			TimeLeft = duration,
+			Visual = visual,
+		});
+		DeleteWallBullets(origin, end, width); // instant first sweep
+	}
+
+	/// Deletes every bullet inside the wall's rectangle (no visual — the wall persists).
+	private void DeleteWallBullets(Vector2 origin, Vector2 end, float width)
+	{
+		foreach (var (inst, index) in FindBulletsInRect(origin, end, width))
+			inst.Call("disable_bullet", index);
+	}
+
 	/// Ticks the live black holes: periodic re-attraction, then a fade + free on expiry.
 	public override void _Process(double delta)
 	{
@@ -260,6 +338,24 @@ public partial class BulletControllerComponent : Component
 			zone.TimeLeft -= (float)delta;
 			if (zone.TimeLeft > 0f) continue;
 			attractZones.RemoveAt(i);
+			if (!GodotObject.IsInstanceValid(zone.Visual)) continue;
+			var tween = zone.Visual.CreateTween();
+			tween.TweenProperty(zone.Visual, "modulate:a", 0f, 0.2);
+			tween.TweenCallback(Callable.From(zone.Visual.QueueFree));
+		}
+		// Live shield walls: periodic re-sweep on the same tick interval, fade + free on expiry.
+		for (int i = wallZones.Count - 1; i >= 0; i--)
+		{
+			var zone = wallZones[i];
+			zone.TickAccumulator += (float)delta;
+			if (zone.TickAccumulator >= AttractTickInterval)
+			{
+				zone.TickAccumulator = 0f;
+				DeleteWallBullets(zone.Origin, zone.End, zone.Width);
+			}
+			zone.TimeLeft -= (float)delta;
+			if (zone.TimeLeft > 0f) continue;
+			wallZones.RemoveAt(i);
 			if (!GodotObject.IsInstanceValid(zone.Visual)) continue;
 			var tween = zone.Visual.CreateTween();
 			tween.TweenProperty(zone.Visual, "modulate:a", 0f, 0.2);

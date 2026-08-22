@@ -4,7 +4,7 @@ use crate::main::global::*;
 use crate::world::prng::{hash_to_unit, next_unit, splitmix64};
 use crate::world::hex::{hex_to_world, spiral_chunk_index, world_to_chunk};
 use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
-use crate::world::aoi::surrounding_chunk_indices;
+use crate::world::aoi::{surrounding_chunk_indices, chunk_indices_covering};
 use crate::world::tables::MapConfig;
 use crate::world::instance_tables::*;
 use crate::player::tables::*;
@@ -55,10 +55,49 @@ pub fn find_nearest_player_id(ctx: &ReducerContext, x: f32, y: f32) -> Option<Id
         .map(|p| p.player_id)
 }
 
+/// Reducer-side AOI query: every enemy whose (wrap-aware) distance to (x, y) is within
+/// `radius`, resolved through the Enemy.chunk_index btree. The view-side nearby_indices
+/// helpers are ViewContext-only and cannot serve reducers. Used by ability targeting
+/// (cursor-pick) and spell/zone shape queries.
+pub fn enemies_near_point(ctx: &ReducerContext, x: f32, y: f32, radius: f32) -> Vec<Enemy> {
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let lap_q = (cfg.lap_q_x, cfg.lap_q_y);
+    let lap_r = (cfg.lap_r_x, cfg.lap_r_y);
+    let radius_sq = radius * radius;
+    chunk_indices_covering(x, y, radius, cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows)
+        .iter()
+        .flat_map(|idx| ctx.db.enemy().chunk_index().filter(idx))
+        .filter(|e| wrapped_distance_sq(x, y, e.x, e.y, lap_q, lap_r) <= radius_sq)
+        .collect()
+}
+
 pub fn seconds_since(ctx: &ReducerContext, since: Timestamp) -> f32 {
     let now = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros();
     let then = since.to_duration_since_unix_epoch().unwrap_or_default().as_micros();
     now.saturating_sub(then) as f32 / 1_000_000.0
+}
+
+/// A step's per-bullet damage, resolved from a SequenceStepRef. Shared by report_hit (hit
+/// attribution) and the behavior tick (stamps BulletPatternEvent.damage for damage-aware
+/// bullet controllers).
+pub fn step_damage(ctx: &ReducerContext, step: &SequenceStepRef) -> Option<u32> {
+    match step {
+        SequenceStepRef::Single(def_id) => ctx.db.single_step_def().def_id().find(def_id).map(|s| s.damage),
+        SequenceStepRef::Repeat(repeat_id) => ctx.db.repeat_step_instance().repeat_id().find(repeat_id).map(|r| r.damage),
+        SequenceStepRef::Multi(multi_ref) => ctx.db.multi_step_def().def_id().find(&multi_ref.def_id).and_then(|m| m.shots.get(multi_ref.shot_index as usize).map(|s| s.damage)),
+    }
+}
+
+/// Fire-pacing consult (Stunned on an Enraged template): every interval runs faster —
+/// `base / (1 + magnitude)`. Anything else (no stun, Pause/Slowed template) returns base.
+/// Applied at every wall-clock fire-timing comparison in tick_phase/tick_sequence.
+pub fn effective_interval(ctx: &ReducerContext, base: f32, enemy_id: u64, stun_behavior: &StunBehavior) -> f32 {
+    if *stun_behavior == StunBehavior::Enraged {
+        if let Some(magnitude) = crate::status::methods::stunned_magnitude(ctx, enemy_id) {
+            return base / (1.0 + magnitude);
+        }
+    }
+    base
 }
 
 // Rotates a step's origin offset by `angle_deg` (degrees). Repeat steps apply this with
@@ -199,7 +238,7 @@ pub fn spawn_enemy_archetype(ctx: &ReducerContext, template: &EnemyTemplate, x: 
     ctx.db.enemy().insert(Enemy {
         enemy_id: 0, template_id: template.template_id.clone(), behavior_id: behavior.behavior_id,
         x, y, spawn_time: ctx.timestamp,
-        hp: template.max_hp, phase: 0, is_elite, immortal, chunk_index,
+        hp: template.max_hp, phase: 0, is_elite, immortal, stagger: 0.0, chunk_index,
     })
 }
 
@@ -285,10 +324,11 @@ pub struct BulletStepEvent {
 // exhausted their steps, the phase loop restarts via begin_phase_cycle — except sequences
 // with loop_delay >= 0, which restart themselves after their loop delay and never count
 // toward the phase-level restart (a self-paced emitter must not gate or be gated by its
-// siblings).
-pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &PhaseDef) -> Vec<BulletStepEvent> {
+// siblings). enemy_id/stun_behavior feed effective_interval: a Stunned Enraged enemy runs
+// every pacing interval faster.
+pub fn tick_phase(ctx: &ReducerContext, enemy_id: u64, stun_behavior: &StunBehavior, phase: &mut EnemyPhase, phase_def: &PhaseDef) -> Vec<BulletStepEvent> {
     if phase.phase_waiting {
-        if ctx.timestamp < phase.phase_loop_timer + Duration::from_secs_f32(phase.phase_loop_delay) {
+        if ctx.timestamp < phase.phase_loop_timer + Duration::from_secs_f32(effective_interval(ctx, phase.phase_loop_delay, enemy_id, stun_behavior)) {
             return vec![];
         }
         phase.phase_waiting = false;
@@ -306,7 +346,7 @@ pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &Phas
                     attack.loop_waiting = true;
                     attack.step_timer = ctx.timestamp;
                 }
-                if ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(attack_def.loop_delay) {
+                if ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(effective_interval(ctx, attack_def.loop_delay, enemy_id, stun_behavior)) {
                     attack.step_index = 0;
                     attack.step_waiting = false;
                     attack.loop_waiting = false;
@@ -318,13 +358,13 @@ pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &Phas
                 }
             }
             if !is_attack_finished(&attack, attack_def) {
-                events.extend(tick_sequence(ctx, &mut attack, attack_def));
+                events.extend(tick_sequence(ctx, enemy_id, stun_behavior, &mut attack, attack_def));
             }
             ctx.db.enemy_attack().attack_id().update(attack);
             continue;
         }
         if is_attack_finished(&attack, attack_def) { continue; }
-        events.extend(tick_sequence(ctx, &mut attack, attack_def));
+        events.extend(tick_sequence(ctx, enemy_id, stun_behavior, &mut attack, attack_def));
         if !is_attack_finished(&attack, attack_def) { all_finished = false; }
         ctx.db.enemy_attack().attack_id().update(attack);
     }
@@ -340,14 +380,15 @@ pub fn tick_phase(ctx: &ReducerContext, phase: &mut EnemyPhase, phase_def: &Phas
 // (step_index/step_waiting/step_timer) is persisted on the EnemyAttack row between ticks.
 // Single/Multi: fire once, then optionally wait `next_step_delay` before moving to the next
 // step. Repeat: re-fire on `repeat_interval` until `repeat_count` reaches `repeat_target`,
-// then behaves like the others.
-pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def: &AttackSequence) -> Vec<BulletStepEvent> {
+// then behaves like the others. Every wall-clock comparison goes through effective_interval
+// so a Stunned Enraged enemy fires proportionally faster.
+pub fn tick_sequence(ctx: &ReducerContext, enemy_id: u64, stun_behavior: &StunBehavior, attack: &mut EnemyAttack, attack_def: &AttackSequence) -> Vec<BulletStepEvent> {
     if attack_def.steps.is_empty() {
         return vec![];
     }
 
     if attack.start_delaying {
-        if attack_def.start_delay > 0.0 && ctx.timestamp < attack.step_timer + Duration::from_secs_f32(attack_def.start_delay) {
+        if attack_def.start_delay > 0.0 && ctx.timestamp < attack.step_timer + Duration::from_secs_f32(effective_interval(ctx, attack_def.start_delay, enemy_id, stun_behavior)) {
             return vec![];
         }
         attack.start_delaying = false;
@@ -370,7 +411,7 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
                     None => return vec![],
                 };
                 if attack.step_waiting {
-                    if s.next_step_delay <= 0.0 || ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(s.next_step_delay) {
+                    if s.next_step_delay <= 0.0 || ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(effective_interval(ctx, s.next_step_delay, enemy_id, stun_behavior)) {
                         attack.step_index += 1;
                         attack.step_waiting = false;
                         continue;
@@ -400,7 +441,7 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
                     None => return vec![],
                 };
                 if attack.step_waiting {
-                    if r.next_step_delay <= 0.0 || ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(r.next_step_delay) {
+                    if r.next_step_delay <= 0.0 || ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(effective_interval(ctx, r.next_step_delay, enemy_id, stun_behavior)) {
                         attack.step_index += 1;
                         r.repeat_count = 0;
                         attack.step_waiting = false;
@@ -425,7 +466,7 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
                 // bounds the burst an enemy dumps after a stall (e.g. re-entering sim range).
                 // angle_step bakes the per-shot rotation (and matching origin-offset orbit)
                 // in here, so the client renders spinning emitters verbatim.
-                let interval = Duration::from_secs_f32(r.repeat_interval.max(0.001));
+                let interval = Duration::from_secs_f32(effective_interval(ctx, r.repeat_interval.max(0.001), enemy_id, stun_behavior));
                 let mut events = Vec::new();
                 while (r.repeat_target == 0 || r.repeat_count < r.repeat_target) && events.len() < MAX_CATCHUP_SHOTS {
                     if r.repeat_count > 0 && ctx.timestamp < attack.step_timer + interval { break; }
@@ -452,7 +493,7 @@ pub fn tick_sequence(ctx: &ReducerContext, attack: &mut EnemyAttack, attack_def:
                     None => return vec![],
                 };
                 if attack.step_waiting {
-                    if m.next_step_delay <= 0.0 || ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(m.next_step_delay) {
+                    if m.next_step_delay <= 0.0 || ctx.timestamp >= attack.step_timer + Duration::from_secs_f32(effective_interval(ctx, m.next_step_delay, enemy_id, stun_behavior)) {
                         attack.step_index += 1;
                         attack.step_waiting = false;
                         continue;
@@ -495,9 +536,13 @@ pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 {
     phase
 }
 
-pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, phase: &EnemyPhase) -> (f32, f32, f32, f32) {
+pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, phase: &EnemyPhase, stun_behavior: &StunBehavior) -> (f32, f32, f32, f32) {
     let dt = BEHAVIOR_TICK_DT;
     let idle = (enemy.x, enemy.y, behavior.velocity_x, behavior.velocity_y);
+    // Enemy-status consult: Slow scales displacement ×(1−magnitude); a Stunned row counts as
+    // a Slow of its magnitude for Slowed templates and speeds the enemy up for Enraged ones
+    // (Pause templates never reach here — the behavior tick skips them wholesale).
+    let move_mult = crate::status::methods::enemy_movement_mult(ctx, enemy.enemy_id, stun_behavior);
     let movement = match ctx.db.movement_def().def_id().find(&phase.movement_def_id) {
         Some(m) => m.movement,
         None => return idle,
@@ -511,7 +556,7 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
             // so the path is reproducible (for audits) without storing any extra state.
             let angle = hash_to_unit(splitmix64(enemy.enemy_id.wrapping_add(cycle_index))) * std::f32::consts::TAU;
             let (dir_x, dir_y) = (angle.cos(), angle.sin());
-            (enemy.x + dir_x * p.speed * dt, enemy.y + dir_y * p.speed * dt, dir_x, dir_y)
+            (enemy.x + dir_x * p.speed * move_mult * dt, enemy.y + dir_y * p.speed * move_mult * dt, dir_x, dir_y)
         }
         MovementBehavior::Chase(p) => {
             let (active, _) = cycle_phase(ctx, phase.move_cycle_started_at, p.active_duration, p.pause_duration);
@@ -522,7 +567,7 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
                     let dy = py - enemy.y;
                     let len = (dx * dx + dy * dy).sqrt().max(f32::EPSILON);
                     let (nx, ny) = (dx / len, dy / len);
-                    (enemy.x + nx * p.speed * dt, enemy.y + ny * p.speed * dt, nx, ny)
+                    (enemy.x + nx * p.speed * move_mult * dt, enemy.y + ny * p.speed * move_mult * dt, nx, ny)
                 }
                 None => idle,
             }
@@ -537,7 +582,7 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
                     let dist = (dx * dx + dy * dy).sqrt();
                     if dist < p.min_range {
                         let (nx, ny) = (dx / dist.max(f32::EPSILON), dy / dist.max(f32::EPSILON));
-                        (enemy.x + nx * p.speed * dt, enemy.y + ny * p.speed * dt, nx, ny)
+                        (enemy.x + nx * p.speed * move_mult * dt, enemy.y + ny * p.speed * move_mult * dt, nx, ny)
                     } else {
                         idle
                     }

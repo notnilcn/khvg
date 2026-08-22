@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bylri1y7swjqa" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="6_interp"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="7_binder"]
 [ext_resource type="PackedScene" uid="uid://coj1g8ajq2fnh" path="res://Assets/3D/skeletons/Skeleton_Warrior.fbx" id="8_skeleton"]
+[ext_resource type="Script" path="res://Scripts/Components/Status/EnemyDebuffIndicatorComponent.cs" id="9_debuff"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kjvdn"]
 
@@ -49,6 +50,21 @@ TableName = "NearbyEnemies"
 script = ExtResource("7_binder")
 TableName = "BulletPatternEvent"
 
+[node name="DebuffAttach" type="Node2D" parent="."]
+position = Vector2(0, -100)
+
+[node name="EnemyDebuffIndicatorComponent" type="Node2D" parent="DebuffAttach"]
+scale = Vector2(2, 2)
+script = ExtResource("9_debuff")
+
+[node name="ActiveEnemyStatusEffectBinder" type="Node" parent="DebuffAttach/EnemyDebuffIndicatorComponent"]
+script = ExtResource("7_binder")
+ReplayExistingRows = true
+TableName = "ActiveEnemyStatusEffect"
+
 [connection signal="RowInserted" from="NearbyEnemiesBinder" to="." method="OnEnemyRowInserted"]
 [connection signal="RowUpdated" from="NearbyEnemiesBinder" to="." method="OnEnemyRowUpdated"]
 [connection signal="RowInserted" from="BulletPatternEventBinder" to="." method="OnBulletPatternRowInserted"]
+[connection signal="RowInserted" from="DebuffAttach/EnemyDebuffIndicatorComponent/ActiveEnemyStatusEffectBinder" to="DebuffAttach/EnemyDebuffIndicatorComponent" method="OnStatusRow"]
+[connection signal="RowUpdated" from="DebuffAttach/EnemyDebuffIndicatorComponent/ActiveEnemyStatusEffectBinder" to="DebuffAttach/EnemyDebuffIndicatorComponent" method="OnStatusRow"]
+[connection signal="RowDeleted" from="DebuffAttach/EnemyDebuffIndicatorComponent/ActiveEnemyStatusEffectBinder" to="DebuffAttach/EnemyDebuffIndicatorComponent" method="OnStatusRowDeleted"]

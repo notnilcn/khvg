@@ -1,6 +1,6 @@
 use spacetimedb::{table, SpacetimeType, Identity, Timestamp, ScheduleAt};
 use crate::item::tables::StatModifier;
-use super::reducers::tick_active_consumable_effects;
+use super::reducers::tick_status_effects;
 
 // What a slot is for. Replaces the old "equipped iff allowed_slots.len() == 1" inference —
 // the acceptance set for a slot is derived from its role (see slot_allowed in methods.rs).
@@ -162,7 +162,7 @@ pub struct ActiveConsumableEffect {
     pub remaining: f32,
 }
 
-#[table(accessor = consumable_effect_schedule, scheduled(tick_active_consumable_effects))]
+#[table(accessor = consumable_effect_schedule, scheduled(tick_status_effects))]
 pub struct ConsumableEffectSchedule {
     #[primary_key] #[auto_inc]
     pub scheduled_id: u64,

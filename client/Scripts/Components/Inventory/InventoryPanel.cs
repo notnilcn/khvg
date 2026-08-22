@@ -6,7 +6,8 @@ using System;
 /// The local player's inventory UI root (the InventoryPanel node in
 /// inventory_panel.tscn, instanced under LocalPlayer): hotbar/backpack visibility
 /// toggle, hotbar key presses (UseItem reducer), ability key presses (ActivateAbility
-/// reducer), and slot icon refresh on InventoryChanged. Reaches the LocalPlayer
+/// reducer; charge-capable items route key-down/up to Begin/ReleaseAbilityCharge),
+/// and slot icon refresh on InventoryChanged. Reaches the LocalPlayer
 /// through the ancestor walk. The always-visible
 /// Equipment panel (weapon / abilities / armor / accessory columns) sits next to the
 /// Hotbar on the HUD; the Backpack (general storage) stays in the Tab-toggled Menu.
@@ -61,8 +62,22 @@ public partial class InventoryPanel : Control
 
 		for (int i = 0; i < AbilityActions.Length; i++)
 		{
-			if (!Input.IsActionJustPressed(AbilityActions[i])) continue; // echo filtered by default
-			LocalPlayerInventoryComponent.TryActivateAbility(player, LocalPlayerInventoryComponent.AbilitySlotStart + i);
+			int cellIndex = LocalPlayerInventoryComponent.AbilitySlotStart + i;
+			// Charge-capable abilities (P4) are hold-to-charge: key-DOWN begins the
+			// charge, key-UP releases it at the cursor. Instant abilities stay on the
+			// existing press-edge path.
+			if (Input.IsActionJustPressed(AbilityActions[i])) // echo filtered by default
+			{
+				if (LocalPlayerInventoryComponent.IsChargeCapableAt(player, cellIndex))
+					LocalPlayerInventoryComponent.TryBeginCharge(player, cellIndex);
+				else
+					LocalPlayerInventoryComponent.TryActivateAbility(player, cellIndex);
+			}
+			else if (Input.IsActionJustReleased(AbilityActions[i])
+				&& LocalPlayerInventoryComponent.IsChargeCapableAt(player, cellIndex))
+			{
+				LocalPlayerInventoryComponent.TryReleaseCharge(player, cellIndex);
+			}
 		}
 	}
 

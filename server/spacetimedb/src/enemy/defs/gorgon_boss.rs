@@ -325,6 +325,7 @@ fn build(ctx: &ReducerContext, difficulty: Difficulty) {
         move_sim_factor: 2.75,
         attack_sim_factor: 1.35,
         aggro_lock_seconds: 30.0,
+        stun_behavior: StunBehavior::Pause,
         phases,
     });
 }

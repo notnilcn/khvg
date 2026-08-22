@@ -67,6 +67,11 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	// allocatable). The 100f fallback only applies before the first data row arrives.
 	public float BaseSpeed => DataComponent?.BaseSpeed ?? 100f;
 
+	/// P4 grapple: while an external mover (the grapple tween) owns the position, input
+	/// movement is suspended and velocity pinned to zero so MoveAndSlide doesn't fight
+	/// the externally-set position.
+	public bool ExternalMovementActive { get; set; }
+
 	private CharacterModel3D? _model3D;
 	private AnimatedSprite2D sprite = null!;
 	private PositionSyncComponent? positionSync;
@@ -133,7 +138,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 
 		// Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
 
-		Velocity = input * (positionSync?.CurrentSpeed ?? BaseSpeed);
+		Velocity = ExternalMovementActive ? Vector2.Zero : input * (positionSync?.CurrentSpeed ?? BaseSpeed);
 
 		if (Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down"))
 		{

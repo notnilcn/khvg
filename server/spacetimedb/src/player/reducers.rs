@@ -2,14 +2,16 @@ use std::time::Duration;
 use spacetimedb::{ReducerContext, Table};
 use crate::main::global::*;
 use crate::world::hex::{spiral_chunk_index, world_to_chunk};
-use crate::world::wrap::wrap_world_pos;
+use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
 use crate::world::tables::MapConfig;
 use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::combat::deal_damage_to_player;
 use crate::item::tables::*;
-use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
+use crate::enemy::methods::enemies_near_point;
+use crate::status::tables::*;
+use crate::status::methods::{ally_targets, apply_status_effect};
 
 #[spacetimedb::reducer]
 pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String> {
@@ -76,6 +78,10 @@ pub fn join_world(ctx: &ReducerContext, profile_id: u64) -> Result<(), String> {
 #[spacetimedb::reducer]
 pub fn leave_world(ctx: &ReducerContext) -> Result<(), String> {
     let player = ctx.db.logged_in_player().player_id().find(ctx.sender()).ok_or("Not in world.")?;
+    // Runtime rows (statuses, charges, zones) never outlive the world session — no status
+    // may kill or tick a logged-out player, and a caster's zones die with them.
+    crate::status::methods::purge_profile_statuses(ctx, player.profile_id);
+    crate::status::methods::purge_profile_zones(ctx, player.profile_id);
     ctx.db.logged_in_player().player_id().delete(ctx.sender());
     ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: player.player_id, username: player.username, is_admin: player.is_admin});
     Ok(())
@@ -94,13 +100,35 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     let chunk_index = spiral_chunk_index(cq, cr);
 
     // Clamp reported speed into [0, resolved base_speed] (gear/buffs included) — clients
-    // should never exceed base_speed, so anything over is a cheat or a bug.
+    // should never exceed base_speed, so anything over is a cheat or a bug. While any
+    // SelfSlow status row is held (P4 ability charge), the cap tightens to
+    // base_speed × the minimum slow_factor — the client-side slow is cosmetic without this.
     let base_speed = ctx.db.player_data().profile_id().find(&profile_id)
         .map(|d| d.base_speed)
         .unwrap_or(BASE_SPEED);
-    let movement_speed = movement_speed.clamp(0.0, base_speed);
+    let slow_factor = ctx.db.active_status_effect().profile_id().filter(&profile_id)
+        .filter(|r| r.kind == StatusEffectKind::SelfSlow)
+        .map(|r| r.params.slow_factor)
+        .fold(f32::MAX, f32::min);
+    let speed_cap = if slow_factor < f32::MAX { base_speed * slow_factor } else { base_speed };
+    let movement_speed = movement_speed.clamp(0.0, speed_cap);
 
     ctx.db.player_position().profile_id().update(PlayerPosition { x, y, movement_direction, movement_speed, chunk_index, ..pos });
+
+    // Radius-exit stamping for active radius wagers (stamped from movement reports, NOT
+    // sampled at 1 Hz — darting out and back between ticks must not cheat "never leave r2").
+    let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
+    for row in ctx.db.active_status_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
+        if row.kind != StatusEffectKind::StoreDamage || row.params.wager != WagerKind::Radius { continue; }
+        let Some(marked) = ctx.db.enemy().enemy_id().find(&row.marked_enemy_id) else { continue };
+        let dist_sq = wrapped_distance_sq(x, y, marked.x, marked.y, lap_q, lap_r);
+        if dist_sq > row.params.r2 * row.params.r2 {
+            ctx.db.active_status_effect().effect_id().update(ActiveStatusEffect { violated: true, last_event_at: ctx.timestamp, ..row });
+        } else if dist_sq > row.params.r1 * row.params.r1 && row.progress < 1.0 {
+            // `progress` doubles as the r1-exit flag for the radius wager.
+            ctx.db.active_status_effect().effect_id().update(ActiveStatusEffect { progress: 1.0, last_event_at: ctx.timestamp, ..row });
+        }
+    }
 
     if let Some(chunk) = ctx.db.player_chunk().profile_id().find(&profile_id) {
         if (chunk.chunk_q, chunk.chunk_r) != (cq, cr) {
@@ -126,16 +154,26 @@ pub fn report_screen_rotation(ctx: &ReducerContext, screen_rotation: f32) -> Res
 }
 
 #[spacetimedb::reducer]
-pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef) -> Result<(), String> {
+pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef, enemy_id: u64) -> Result<(), String> {
     let player = require_in_world(ctx)?;
 
-    let base_damage = match attack {
-        SequenceStepRef::Single(def_id) => ctx.db.single_step_def().def_id().find(&def_id).map(|s| s.damage),
-        SequenceStepRef::Repeat(repeat_id) => ctx.db.repeat_step_instance().repeat_id().find(&repeat_id).map(|r| r.damage),
-        SequenceStepRef::Multi(multi_ref) => ctx.db.multi_step_def().def_id().find(&multi_ref.def_id).and_then(|m| m.shots.get(multi_ref.shot_index as usize).map(|s| s.damage)),
-    }.ok_or("Attack step not found.")?;
+    // Hit attribution: the client stamps each spawned enemy bullet with the enemy_id of its
+    // BulletPatternEvent and reports it back (a SequenceStepRef identifies the step def, not
+    // the enemy). Validate the enemy exists and is plausibly near the player — report_hit
+    // remains self-reported (see the trust model), this only rejects nonsense attributions.
+    let enemy = ctx.db.enemy().enemy_id().find(&enemy_id).ok_or("Attack source enemy not found.")?;
+    let pos = ctx.db.player_position().profile_id().find(&player.profile_id).ok_or("Position not found.")?;
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let dist_sq = wrapped_distance_sq(pos.x, pos.y, enemy.x, enemy.y, (cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
+    if dist_sq > HIT_VALIDATION_RADIUS * HIT_VALIDATION_RADIUS {
+        return Err("Attack source enemy is not near the player.".to_string());
+    }
 
-    deal_damage_to_player(ctx, &player, base_damage)?;
+    // step_damage is the same resolution the behavior tick uses to stamp
+    // BulletPatternEvent.damage — keep them on one implementation.
+    let base_damage = crate::enemy::methods::step_damage(ctx, &attack).ok_or("Attack step not found.")?;
+
+    deal_damage_to_player(ctx, &player, Some(enemy_id), base_damage)?;
     Ok(())
 }
 
@@ -148,35 +186,7 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
     if drop.item_id.is_empty() { return Ok(()); }
     let item = ctx.db.item().item_id().find(&drop.item_id).ok_or("Item not found.")?;
 
-    if item.equip_slot == EquipSlot::Ability {
-        // Multi-slot ability items auto-equip into the first contiguous free span, falling
-        // back to loose single-cell storage in the backpack (slot_cost only applies in the
-        // ability region). Auto-equip respects stat requirements — unmet requirements just
-        // divert the item to the backpack.
-        if check_stat_requirements(ctx, profile_id, &item).is_ok() {
-            if let Some(head) = find_free_span(ctx, profile_id, item.slot_cost.max(1)) {
-                place_span(ctx, profile_id, head, &item, drop.enchantment_ids.clone());
-                ctx.db.loot_drop().drop_id().delete(&drop_id);
-                recompute_stats(ctx, profile_id);
-                return Ok(());
-            }
-        }
-    }
-
-    {
-        let slots: Vec<PlayerInventorySlot> = ctx.db.player_inventory_slot().profile_id().filter(&profile_id).collect();
-        let is_free = |s: &&PlayerInventorySlot| s.item_id.is_none() && s.occupied_by.is_none() && slot_allowed(s.role, item.equip_slot);
-        // Prefer a matching typed slot, fall back to general. Ability-role cells are skipped —
-        // ability items only enter the region through span placement, never loose. A typed
-        // (equipped) slot also requires the item's stat requirements — otherwise backpack.
-        let target = slots.iter().filter(|s| s.role != SlotRole::General && s.role != SlotRole::Ability).find(is_free)
-            .filter(|_| check_stat_requirements(ctx, profile_id, &item).is_ok())
-            .or_else(|| slots.iter().filter(|s| s.role == SlotRole::General).find(is_free))
-            .ok_or("No suitable slot available.")?;
-        update_slot(ctx, PlayerInventorySlot {
-            item_id: Some(drop.item_id.clone()), enchantment_ids: drop.enchantment_ids.clone(), ..target.clone()
-        });
-    }
+    store_item_in_inventory(ctx, profile_id, &item, drop.enchantment_ids.clone())?;
 
     ctx.db.loot_drop().drop_id().delete(&drop_id);
     recompute_stats(ctx, profile_id);
@@ -345,8 +355,11 @@ pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Resul
     Ok(())
 }
 
+/// The single 1 Hz status tick (renamed from tick_active_consumable_effects): today it only
+/// expires consumable buff rows; the status module (P1b+) adds bleed-pool drains, regen,
+/// purge/wager evaluation, charge timeouts, zone ticks, and stagger decay to this same tick.
 #[spacetimedb::reducer]
-pub fn tick_active_consumable_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule) {
+pub fn tick_status_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule) {
     let mut affected_profiles = Vec::new();
     for active in ctx.db.active_consumable_effect().iter() {
         let remaining = active.remaining - CONSUMABLE_EFFECT_TICK_SECONDS;
@@ -360,6 +373,7 @@ pub fn tick_active_consumable_effects(ctx: &ReducerContext, _job: ConsumableEffe
     for profile_id in affected_profiles {
         recompute_stats(ctx, profile_id);
     }
+    crate::status::methods::tick(ctx);
 }
 
 #[spacetimedb::reducer]
@@ -398,14 +412,45 @@ fn scale_ability_effect(effect: &AbilityEffect, multiplier: f32) -> AbilityEffec
         AbilityEffect::AttractBullets(r) => AbilityEffect::AttractBullets(r * multiplier),
         AbilityEffect::SplitBullets(p) => AbilityEffect::SplitBullets(RectParams { length: p.length * multiplier, width: p.width * multiplier }),
         AbilityEffect::DeleteBulletsInRect(p) => AbilityEffect::DeleteBulletsInRect(RectParams { length: p.length * multiplier, width: p.width * multiplier }),
+        AbilityEffect::MarkBleed(p) => AbilityEffect::MarkBleed(MarkBleedParams { ally_radius: p.ally_radius * multiplier, ..*p }),
+        AbilityEffect::MarkStore(p) => AbilityEffect::MarkStore(MarkStoreParams { ally_radius: p.ally_radius * multiplier, ..*p }),
+        AbilityEffect::Invulnerable(r) => AbilityEffect::Invulnerable(r * multiplier),
+        AbilityEffect::DamageShield(r) => AbilityEffect::DamageShield(r * multiplier),
+        AbilityEffect::ReduceDamage(p) => AbilityEffect::ReduceDamage(ReduceParams { pct: p.pct * multiplier, ally_radius: p.ally_radius * multiplier }),
+        AbilityEffect::RedirectToCaster(r) => AbilityEffect::RedirectToCaster(r * multiplier),
+        AbilityEffect::RegenAura(p) => AbilityEffect::RegenAura(RegenParams { per_second: p.per_second * multiplier, ally_radius: p.ally_radius * multiplier }),
+        AbilityEffect::StoreIncoming(p) => AbilityEffect::StoreIncoming(StoreIncomingParams { release_radius: p.release_radius * multiplier, ..*p }),
+        AbilityEffect::Curse(p) => AbilityEffect::Curse(CurseParams { magnitude: p.magnitude * multiplier, ..*p }),
+        AbilityEffect::Bash(p) => AbilityEffect::Bash(BashParams { stagger: p.stagger * multiplier, range: p.range * multiplier, ..*p }),
+        AbilityEffect::Slash(p) => AbilityEffect::Slash(SlashParams { length: p.length * multiplier, width: p.width * multiplier, ..*p }),
+        AbilityEffect::Wall(p) => AbilityEffect::Wall(WallParams { length: p.length * multiplier, width: p.width * multiplier }),
+        AbilityEffect::CastZone(p) => AbilityEffect::CastZone(ZoneParams { radius: p.radius * multiplier, magnitude: p.magnitude * multiplier, ..*p }),
+        AbilityEffect::Teleport(p) => AbilityEffect::Teleport(TeleportParams { range: p.range * multiplier, ..*p }),
+        AbilityEffect::Grapple(r) => AbilityEffect::Grapple(r * multiplier),
+        // Damage and the Circle radius scale; Line/Cone dims and the volley hit count don't.
+        AbilityEffect::Spell(p) => AbilityEffect::Spell(SpellParams {
+            shape: match p.shape {
+                SpellShape::Circle(c) => SpellShape::Circle(CircleParams { radius: c.radius * multiplier }),
+                shape => shape,
+            },
+            damage: p.damage * multiplier,
+            ..*p
+        }),
     }
 }
 
-#[spacetimedb::reducer]
-pub fn activate_ability(ctx: &ReducerContext, slot_index: u32, target_x: f32, target_y: f32) -> Result<(), String> {
-    let player = require_in_world(ctx)?;
-    let profile_id = player.profile_id;
+/// Charge-scaled range multiplier (P4): 25% at a 0-charge release up to 100% at full
+/// charge. The client's optimistic path mirrors this formula
+/// (AbilityChargeComponent.ChargeRangeMultiplier) — both must change together.
+pub fn charge_range_multiplier(charge_fraction: f32) -> f32 {
+    CHARGE_MIN_RANGE_FRACTION + (1.0 - CHARGE_MIN_RANGE_FRACTION) * charge_fraction.clamp(0.0, 1.0)
+}
 
+/// The shared ability-slot validation preamble (P4: factored out of activate_ability so
+/// begin/release_ability_charge run the identical checks): ability head slot with an item
+/// that has an Ability behavior, not on cooldown, not out of charges. Unlike use_item,
+/// the item is not consumed on use — it goes on cooldown and may spend a charge.
+pub fn resolve_ability_slot(ctx: &ReducerContext, profile_id: u64, slot_index: u32) -> Result<(PlayerInventorySlot, AbilityBehavior), String> {
     let slot = get_slot(ctx, profile_id, slot_index).ok_or("Invalid slot index.")?;
     if slot.role != SlotRole::Ability { return Err("Not an ability slot.".to_string()); }
     if slot.occupied_by.is_some() { return Err("Activate the ability's head slot.".to_string()); }
@@ -417,9 +462,67 @@ pub fn activate_ability(ctx: &ReducerContext, slot_index: u32, target_x: f32, ta
         if ctx.timestamp < until { return Err("Ability is on cooldown.".to_string()); }
     }
     if slot.charges == 0 { return Err("Ability is out of charges.".to_string()); }
+    Ok((slot, ability))
+}
 
-    // Unlike use_item, the item is not consumed — it goes on cooldown and may spend a charge.
-    // Potency scales by span-head position (first ability stronger).
+/// The shared post-effect spend (P4: factored out of activate_ability so
+/// release_ability_charge spends exactly the same way): the "whenever you use an
+/// ability..." enchantment triggers (doc 03), then cooldown + a charge.
+pub fn spend_ability(ctx: &ReducerContext, profile_id: u64, slot: PlayerInventorySlot, ability: &AbilityBehavior) {
+    for b in equipped_enchantment_behaviors(ctx, profile_id) {
+        if let EnchantmentBehavior::OnAbilityUseBuff(params) = b {
+            apply_consumable_effect(ctx, profile_id, &ConsumableBehavior {
+                effect: ConsumableEffect::Buff(params.buff),
+                potency: 0.0,
+                duration: params.duration,
+            });
+        }
+    }
+
+    let charges = if ability.max_charges == 0 { u32::MAX } else { slot.charges - 1 };
+    update_slot(ctx, PlayerInventorySlot {
+        cooldown_until: Some(ctx.timestamp + Duration::from_secs_f32(ability.cooldown_seconds)),
+        charges,
+        ..slot
+    });
+}
+
+/// Mark targeting, shared by every mark ability: the enemy nearest the (range-clamped)
+/// cursor point within MARK_PICK_RADIUS, resolved server-side. The client mirrors the same
+/// pick optimistically; on divergence the server row wins (the mark indicator is
+/// server-echoed). Both sides must clamp and pick identically.
+fn cursor_pick_enemy(ctx: &ReducerContext, pos: &PlayerPosition, target_x: f32, target_y: f32) -> Result<Enemy, String> {
+    let (dx, dy) = (target_x - pos.x, target_y - pos.y);
+    let dist = (dx * dx + dy * dy).sqrt();
+    let (tx, ty) = if dist > MAX_ABILITY_TARGET_RANGE {
+        (pos.x + dx / dist * MAX_ABILITY_TARGET_RANGE, pos.y + dy / dist * MAX_ABILITY_TARGET_RANGE)
+    } else {
+        (target_x, target_y)
+    };
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
+    enemies_near_point(ctx, tx, ty, MARK_PICK_RADIUS)
+        .into_iter()
+        .min_by(|a, b| {
+            let da = wrapped_distance_sq(tx, ty, a.x, a.y, lap_q, lap_r);
+            let db = wrapped_distance_sq(tx, ty, b.x, b.y, lap_q, lap_r);
+            da.partial_cmp(&db).unwrap_or(std::cmp::Ordering::Equal)
+        })
+        .ok_or_else(|| "No enemy near the target point.".to_string())
+}
+
+/// The shared ability-effect dispatch (P4: factored out of activate_ability so
+/// release_ability_charge dispatches the identical effect scaled by its charge fraction;
+/// instant casts pass 1.0). Potency scales by span-head position (first ability stronger).
+pub fn apply_ability_effect(
+    ctx: &ReducerContext,
+    profile_id: u64,
+    slot: &PlayerInventorySlot,
+    ability: &AbilityBehavior,
+    target_x: f32,
+    target_y: f32,
+    charge_fraction: f32,
+) -> Result<(), String> {
     let multiplier = ability_position_multiplier(slot.slot_index);
     let effect = scale_ability_effect(&ability.effect, multiplier);
     match &effect {
@@ -475,25 +578,263 @@ pub fn activate_ability(ctx: &ReducerContext, slot_index: u32, target_x: f32, ta
                 radius: p.width, duration: 0.0, cast_by: ctx.sender(),
             });
         }
-    }
-
-    // "Whenever you use an ability..." enchantment triggers (doc 03).
-    for b in equipped_enchantment_behaviors(ctx, profile_id) {
-        if let EnchantmentBehavior::OnAbilityUseBuff(params) = b {
-            apply_consumable_effect(ctx, profile_id, &ConsumableBehavior {
-                effect: ConsumableEffect::Buff(params.buff),
-                potency: 0.0,
-                duration: params.duration,
+        AbilityEffect::MarkBleed(p) => {
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let marked = cursor_pick_enemy(ctx, &pos, target_x, target_y)?;
+            let params = StatusParams {
+                purge: p.purge,
+                conversion: p.conversion,
+                pool_seconds: p.pool_seconds,
+                r1: BLEED_STAY_CLOSE_RADIUS,
+                x: BLEED_DEAL_DAMAGE_THRESHOLD,
+                outgoing: p.outgoing,
+                ..StatusParams::none()
+            };
+            for target in ally_targets(ctx, profile_id, pos.x, pos.y, p.ally_radius) {
+                apply_status_effect(ctx, target, StatusEffectKind::DamageToBleed, params, ability.duration, marked.enemy_id, profile_id);
+            }
+        }
+        AbilityEffect::MarkStore(p) => {
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let marked = cursor_pick_enemy(ctx, &pos, target_x, target_y)?;
+            let params = StatusParams {
+                wager: p.wager,
+                x: p.x, z: p.z, r1: p.r1, r2: p.r2, max_hits: p.max_hits,
+                ..StatusParams::none()
+            };
+            for target in ally_targets(ctx, profile_id, pos.x, pos.y, p.ally_radius) {
+                apply_status_effect(ctx, target, StatusEffectKind::StoreDamage, params, ability.duration, marked.enemy_id, profile_id);
+            }
+        }
+        AbilityEffect::StoreIncoming(p) => {
+            let kind = match p.release {
+                ReleaseKind::Smite => StatusEffectKind::StoreIncomingSmite,
+                ReleaseKind::Bash => StatusEffectKind::StoreIncomingBash,
+            };
+            // Smite recast during an active window releases the pool early — at the cursor,
+            // which is the only release path that has one (window expiry bursts around the
+            // paladin instead).
+            if p.release == ReleaseKind::Smite {
+                if let Some(existing) = ctx.db.active_status_effect().profile_id().filter(&profile_id)
+                    .find(|r| r.kind == StatusEffectKind::StoreIncomingSmite)
+                {
+                    if existing.pool >= 1.0 {
+                        let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+                        let (dx, dy) = (target_x - pos.x, target_y - pos.y);
+                        let dist = (dx * dx + dy * dy).sqrt();
+                        let (tx, ty) = if dist > MAX_ABILITY_TARGET_RANGE {
+                            (pos.x + dx / dist * MAX_ABILITY_TARGET_RANGE, pos.y + dy / dist * MAX_ABILITY_TARGET_RANGE)
+                        } else {
+                            (target_x, target_y)
+                        };
+                        for enemy in enemies_near_point(ctx, tx, ty, p.release_radius) {
+                            crate::combat::apply_damage_to_enemy(ctx, enemy, existing.pool as u32, 0, crate::combat::MitigationMode::Normal, Some(profile_id), Some(ctx.sender()));
+                        }
+                    }
+                    ctx.db.active_status_effect().effect_id().delete(&existing.effect_id);
+                }
+            }
+            let params = StatusParams { release: p.release, release_radius: p.release_radius, ..StatusParams::none() };
+            apply_status_effect(ctx, profile_id, kind, params, ability.duration, 0, profile_id);
+        }
+        AbilityEffect::Invulnerable(radius) | AbilityEffect::DamageShield(radius) => {
+            let kind = match &effect {
+                AbilityEffect::Invulnerable(_) => StatusEffectKind::Invulnerable,
+                _ => StatusEffectKind::DamageShield,
+            };
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            for target in ally_targets(ctx, profile_id, pos.x, pos.y, *radius) {
+                apply_status_effect(ctx, target, kind, StatusParams::none(), ability.duration, 0, profile_id);
+            }
+        }
+        AbilityEffect::ReduceDamage(p) => {
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let params = StatusParams { pct: p.pct, ..StatusParams::none() };
+            for target in ally_targets(ctx, profile_id, pos.x, pos.y, p.ally_radius) {
+                apply_status_effect(ctx, target, StatusEffectKind::DamageReductionPct, params, ability.duration, 0, profile_id);
+            }
+        }
+        AbilityEffect::RedirectToCaster(radius) => {
+            // Allies in radius EXCLUDING the caster — the paladin is the sink, not a beneficiary.
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            for target in ally_targets(ctx, profile_id, pos.x, pos.y, *radius) {
+                if target == profile_id { continue; }
+                apply_status_effect(ctx, target, StatusEffectKind::RedirectToCaster, StatusParams::none(), ability.duration, 0, profile_id);
+            }
+        }
+        AbilityEffect::RegenAura(p) => {
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let params = StatusParams { per_second: p.per_second, ..StatusParams::none() };
+            for target in ally_targets(ctx, profile_id, pos.x, pos.y, p.ally_radius) {
+                apply_status_effect(ctx, target, StatusEffectKind::Regen, params, ability.duration, 0, profile_id);
+            }
+        }
+        AbilityEffect::Curse(p) => {
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let target = cursor_pick_enemy(ctx, &pos, target_x, target_y)?;
+            crate::status::methods::apply_enemy_status(ctx, target.enemy_id, p.kind, p.magnitude, ability.duration, profile_id);
+        }
+        AbilityEffect::Slash(_) | AbilityEffect::Wall(_) => {
+            // Same rectangle relay as DeleteRect/SplitRect: origin + far end + width, with a
+            // fixed fallback direction when the cursor sits on the player (clients mirror
+            // it). Slash carries its damage threshold in duration as f32 bits; Wall carries
+            // the ability's duration as the linger time (the Attract pattern). The server
+            // stays bullet-agnostic — clients resolve the query locally.
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let (dx, dy) = (target_x - pos.x, target_y - pos.y);
+            let dist = (dx * dx + dy * dy).sqrt();
+            let (ux, uy) = if dist > 0.001 { (dx / dist, dy / dist) } else { (1.0, 0.0) };
+            let (kind, length, width, duration) = match &effect {
+                AbilityEffect::Slash(p) => (BulletControlKind::SlashRect, p.length, p.width, f32::from_bits(p.max_bullet_damage)),
+                AbilityEffect::Wall(p) => (BulletControlKind::WallRect, p.length, p.width, ability.duration),
+                _ => unreachable!(),
+            };
+            ctx.db.bullet_control_event().insert(BulletControlEvent {
+                event_id: 0, kind, x: pos.x, y: pos.y,
+                target_x: pos.x + ux * length, target_y: pos.y + uy * length,
+                radius: width, duration, cast_by: ctx.sender(),
             });
         }
+        AbilityEffect::Bash(p) => {
+            // Melee swing around the PLAYER: every enemy in range takes weapon damage through
+            // the shared weapon path (true-damage/mitigation/status consults all apply) plus
+            // stagger-bar points; at 100 the enemy is Stunned per its template's
+            // stun_behavior and the bar resets. An ARMED StoreIncomingBash row (P1c:
+            // violated == armed, pool frozen) rides the hit — its pool merges pre-mitigation
+            // into every enemy hit — and is consumed.
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let armed_store = ctx.db.active_status_effect().profile_id().filter(&profile_id)
+                .find(|r| r.kind == StatusEffectKind::StoreIncomingBash && r.violated);
+            let bonus = armed_store.as_ref().map(|r| r.pool as u32).unwrap_or(0);
+            for enemy in enemies_near_point(ctx, pos.x, pos.y, p.range) {
+                let enemy_id = enemy.enemy_id;
+                crate::combat::deal_damage_to_enemy_bonus(ctx, profile_id, enemy, bonus);
+                // The hit may have killed it — no stagger on a corpse.
+                let Some(alive) = ctx.db.enemy().enemy_id().find(&enemy_id) else { continue; };
+                let stagger = alive.stagger + p.stagger;
+                if stagger >= 100.0 {
+                    crate::status::methods::apply_enemy_status(ctx, enemy_id, EnemyStatusKind::Stunned, BASH_STUN_MAGNITUDE, p.stun_seconds, profile_id);
+                    if p.armor_break {
+                        crate::status::methods::apply_enemy_status(ctx, enemy_id, EnemyStatusKind::ArmorBreak, 1.0, p.stun_seconds, profile_id);
+                    }
+                    ctx.db.enemy().enemy_id().update(Enemy { stagger: 0.0, ..alive });
+                } else {
+                    ctx.db.enemy().enemy_id().update(Enemy { stagger, ..alive });
+                }
+            }
+            if let Some(store) = armed_store {
+                ctx.db.active_status_effect().effect_id().delete(&store.effect_id);
+            }
+        }
+        AbilityEffect::CastZone(p) => {
+            // Ground zone (P3) at the range-clamped cursor point — the same clamp math as
+            // the bullet-control arms. Owned by the caster (zones die with them), lives
+            // ability.duration seconds; the 1 Hz status tick drives the zone's effects.
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let (dx, dy) = (target_x - pos.x, target_y - pos.y);
+            let dist = (dx * dx + dy * dy).sqrt();
+            let (tx, ty) = if dist > MAX_ABILITY_TARGET_RANGE {
+                (pos.x + dx / dist * MAX_ABILITY_TARGET_RANGE, pos.y + dy / dist * MAX_ABILITY_TARGET_RANGE)
+            } else {
+                (target_x, target_y)
+            };
+            ctx.db.ground_zone().insert(GroundZone {
+                zone_id: 0, owner_profile_id: profile_id, kind: p.kind,
+                x: tx, y: ty, radius: p.radius, magnitude: p.magnitude,
+                remaining: ability.duration,
+            });
+        }
+        AbilityEffect::Spell(p) => {
+            // P5: shape damage at/toward the range-clamped cursor. Damage per enemy is
+            // damage × (1 + scaling stat × 0.002) — mirroring the strength formula in
+            // compute_player_damage, but off the ability's ScalingStat (wizard spells scale
+            // off Wisdom, bullet-master spells off Dexterity) — × the charge-range
+            // multiplier on a charged release. A volley (hits > 1) lands as hits SEPARATE
+            // mitigated hits of damage/hits each, the enemy row re-found before every
+            // pellet so a kill mid-volley makes the rest no-ops. The cast is relayed as an
+            // AbilityVisualEvent — every client draws the flash (the caster skips its own
+            // echo, having rendered optimistically).
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let (dx, dy) = (target_x - pos.x, target_y - pos.y);
+            let dist = (dx * dx + dy * dy).sqrt();
+            let (tx, ty) = if dist > MAX_ABILITY_TARGET_RANGE {
+                (pos.x + dx / dist * MAX_ABILITY_TARGET_RANGE, pos.y + dy / dist * MAX_ABILITY_TARGET_RANGE)
+            } else {
+                (target_x, target_y)
+            };
+            let (ux, uy) = if dist > 0.001 { (dx / dist, dy / dist) } else { (1.0, 0.0) };
+            let charge_mult = if p.charge_scaled { charge_range_multiplier(charge_fraction) } else { 1.0 };
+            let stat = match ctx.db.player_stats().profile_id().find(&profile_id) {
+                Some(s) => match p.scaling {
+                    ScalingStat::Strength => s.strength,
+                    ScalingStat::Wisdom => s.wisdom,
+                    ScalingStat::Dexterity => s.dexterity,
+                },
+                None => 0,
+            };
+            let total = p.damage * (1.0 + stat as f32 * 0.002) * charge_mult;
+            let hits = p.hits.max(1);
+            let per_hit = (total / hits as f32) as u32;
+            for enemy in spell_targets(ctx, (pos.x, pos.y), (ux, uy), (tx, ty), &p.shape) {
+                let enemy_id = enemy.enemy_id;
+                for _ in 0..hits {
+                    let Some(alive) = ctx.db.enemy().enemy_id().find(&enemy_id) else { break };
+                    crate::combat::apply_damage_to_enemy(ctx, alive, per_hit, 0, crate::combat::MitigationMode::Normal, Some(profile_id), Some(ctx.sender()));
+                }
+            }
+            // The visual event encodes the shape per AbilityVisualEvent's field encoding:
+            // Circle kinds center on the clamped cursor; Line/Cone run origin → far end.
+            let (vx, vy, vr) = match &p.shape {
+                SpellShape::Circle(c) => (tx, ty, c.radius),
+                SpellShape::Line(l) => (pos.x + ux * l.length, pos.y + uy * l.length, l.width),
+                SpellShape::Cone(c) => (pos.x + ux * c.length, pos.y + uy * c.length, c.spread),
+            };
+            ctx.db.ability_visual_event().insert(AbilityVisualEvent {
+                event_id: 0, kind: p.visual, x: pos.x, y: pos.y,
+                target_x: vx, target_y: vy, radius: vr,
+                duration: SPELL_VISUAL_SECONDS, cast_by: ctx.sender(),
+            });
+        }
+        AbilityEffect::Teleport(p) => {
+            // P4: clamp the cursor into `range` around the server's own position row
+            // (the charge path shrinks that range by charge_range_multiplier), then move
+            // the caster server-side — wrap + chunk write exactly like report_movement.
+            // No extra client report needed: the echoed row hard-corrects puppets via
+            // the desync snap, and the next scheduled report carries the new position.
+            let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+            let range = p.range * charge_range_multiplier(charge_fraction);
+            let (dx, dy) = (target_x - pos.x, target_y - pos.y);
+            let dist = (dx * dx + dy * dy).sqrt();
+            let (tx, ty) = if dist > range {
+                (pos.x + dx / dist * range, pos.y + dy / dist * range)
+            } else {
+                (target_x, target_y)
+            };
+            teleport_player(ctx, profile_id, tx, ty)?;
+        }
+        AbilityEffect::Grapple(_) => {
+            // P4: the pull is client-tweened and client-authoritative — validation,
+            // cooldown/charges and enchantment triggers all run through the shared
+            // activate/spend path; the client's next movement reports carry the position.
+        }
+    }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn activate_ability(ctx: &ReducerContext, slot_index: u32, target_x: f32, target_y: f32) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+
+    let (slot, ability) = resolve_ability_slot(ctx, profile_id, slot_index)?;
+    // Charge-capable abilities (P4) go through begin/release_ability_charge — activating
+    // one directly would bypass the charge (and its SelfSlow) at full effect.
+    if ability_is_charge_capable(&ability) {
+        return Err("Hold the ability key to charge, release to cast.".to_string());
     }
 
-    let charges = if ability.max_charges == 0 { u32::MAX } else { slot.charges - 1 };
-    update_slot(ctx, PlayerInventorySlot {
-        cooldown_until: Some(ctx.timestamp + Duration::from_secs_f32(ability.cooldown_seconds)),
-        charges,
-        ..slot
-    });
+    apply_ability_effect(ctx, profile_id, &slot, &ability, target_x, target_y, 1.0)?;
+    spend_ability(ctx, profile_id, slot, &ability);
     Ok(())
 }
 

@@ -97,6 +97,9 @@ pub struct Enemy {
     pub phase: u8,
     pub is_elite: bool,
     pub immortal: bool,
+    // Stagger bar (0–100, spawns at 0): bash abilities add to it, the 1 Hz status tick
+    // decays it (STAGGER_DECAY_PER_SECOND), and at 100 the enemy is Stunned and it resets.
+    pub stagger: f32,
     #[index(btree)]
     pub chunk_index: i64,
 }
@@ -122,6 +125,8 @@ pub enum BulletControlKind {
     Attract,
     DeleteRect,
     SplitRect,
+    SlashRect,
+    WallRect,
 }
 
 /// Relay of a player's bullet-controller ability cast (delete/split/blackhole/rectangle).
@@ -132,7 +137,10 @@ pub enum BulletControlKind {
 /// adds (target_x, target_y) as the homing target and `duration` as the black hole's linger
 /// time in seconds (0 = one-shot pull). DeleteRect/SplitRect are the rectangle variants:
 /// (x, y) is the cast origin, (target_x, target_y) the far end, and `radius` the rectangle
-/// width.
+/// width. SlashRect is the DeleteRect encoding with `duration` repurposed to carry the
+/// max-bullet-damage threshold as the f32 BITS of the u32 (f32::from_bits — clients decode
+/// with BitConverter.SingleToUInt32Bits). WallRect is the DeleteRect encoding with
+/// `duration` as the wall's linger time in seconds (the Attract pattern).
 #[table(accessor = bullet_control_event, public, event)]
 pub struct BulletControlEvent {
     #[primary_key] #[auto_inc]
@@ -147,12 +155,46 @@ pub struct BulletControlEvent {
     pub cast_by: Identity,
 }
 
+#[derive(SpacetimeType, Clone, Copy, PartialEq)]
+pub enum AbilityVisualKind {
+    Circle,
+    Line,
+    Cone,
+    Meteor,
+    Converge,
+}
+
+/// Visual-only relay of a Spell ability cast (P5): damage is applied server-side in the
+/// same dispatch — this row only tells every client to draw the flash. Ephemeral event
+/// table, same shape as BulletControlEvent. The caster renders optimistically and skips
+/// its own echo via cast_by (the BulletControlEvent pattern).
+/// Field encoding per kind: (x, y) is always the cast origin (the player's position row).
+/// Circle/Meteor/Converge use (target_x, target_y) as the effect center and `radius` as the
+/// circle radius; Line uses (target_x, target_y) as the far end and `radius` as the line
+/// width; Cone uses the Line encoding with `radius` as the spread in RADIANS. `duration` is
+/// the visual linger in seconds (SPELL_VISUAL_SECONDS).
+#[table(accessor = ability_visual_event, public, event)]
+pub struct AbilityVisualEvent {
+    #[primary_key] #[auto_inc]
+    pub event_id: u64,
+    pub kind: AbilityVisualKind,
+    pub x: f32,
+    pub y: f32,
+    pub target_x: f32,
+    pub target_y: f32,
+    pub radius: f32,
+    pub duration: f32,
+    pub cast_by: Identity,
+}
+
 #[table(accessor = bullet_pattern_event, public, event)]
 pub struct BulletPatternEvent {
     #[primary_key] #[auto_inc]
     pub event_id: u64,
     pub enemy_id: u64,
     pub source_step: SequenceStepRef,
+    /// damage-aware bullet controllers (SlashRect) can compare without subscribing step defs.
+    pub damage: u32,
     pub origin_x: f32,
     pub origin_y: f32,
     pub origin_offset_x: f32,

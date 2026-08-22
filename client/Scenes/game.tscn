@@ -24,6 +24,9 @@
 [ext_resource type="Script" uid="uid://wwivmweabnsm" path="res://Scripts/Components/Terrain/TerrainComponent.cs" id="22_vs120"]
 [ext_resource type="PackedScene" uid="uid://b1nvedybn2tn5" path="res://Scenes/Components/Terrain/tile_component.tscn" id="23_v2cs8"]
 [ext_resource type="Script" uid="uid://bdh2fwurk1uh7" path="res://Scripts/Game/DebugOverlay.cs" id="24_32sfa"]
+[ext_resource type="Script" uid="uid://v70obiup0lmw" path="res://Scripts/Components/Zones/ZoneRendererComponent.cs" id="25_zones"]
+[ext_resource type="Script" uid="uid://brkqgof8l6tam" path="res://Scripts/Components/Visual/SpellVisualComponent.cs" id="26_spells"]
+[ext_resource type="PackedScene" path="res://Scenes/chest.tscn" id="27_chest"]
 
 [sub_resource type="Resource" id="Resource_jkdf5"]
 script = ExtResource("20_6a4tp")
@@ -59,6 +62,7 @@ LocalPlayerScene = ExtResource("6_cwurv")
 NonLocalPlayerScene = ExtResource("7_mucmn")
 EnemyScene = ExtResource("8_8m3t6")
 DropScene = ExtResource("9_ese38")
+ChestScene = ExtResource("27_chest")
 
 [node name="LocalPlayerBinder" type="Node" parent="EntitySpawnerComponent" unique_id=738526938]
 script = ExtResource("4_81klo")
@@ -79,6 +83,11 @@ TableName = "NearbyEnemies"
 script = ExtResource("4_81klo")
 ReplayExistingRows = true
 TableName = "NearbyLootDrops"
+
+[node name="NearbyChestsBinder" type="Node" parent="EntitySpawnerComponent" unique_id=10460586]
+script = ExtResource("4_81klo")
+ReplayExistingRows = true
+TableName = "NearbyChests"
 
 [node name="BulletManager" type="Node2D" parent="." unique_id=347694252 node_paths=PackedStringArray("BlastBullets")]
 z_index = 1
@@ -180,6 +189,21 @@ script = ExtResource("4_81klo")
 ReplayExistingRows = true
 TableName = "NearbyHexDecor"
 
+[node name="ZoneRendererComponent" type="Node" parent="." unique_id=846213590]
+script = ExtResource("25_zones")
+
+[node name="GroundZoneBinder" type="Node" parent="ZoneRendererComponent" unique_id=1295847301]
+script = ExtResource("4_81klo")
+ReplayExistingRows = true
+TableName = "GroundZone"
+
+[node name="SpellVisualComponent" type="Node" parent="." unique_id=1717271434]
+script = ExtResource("26_spells")
+
+[node name="AbilityVisualEventBinder" type="Node" parent="SpellVisualComponent" unique_id=325881303]
+script = ExtResource("4_81klo")
+TableName = "AbilityVisualEvent"
+
 [node name="DebugOverlay" type="CanvasLayer" parent="." unique_id=1183131993]
 layer = 100
 visible = false
@@ -208,6 +232,8 @@ theme_override_constants/outline_size = 4
 [connection signal="RowInserted" from="EntitySpawnerComponent/NearbyEnemiesBinder" to="EntitySpawnerComponent" method="OnEnemyInsert"]
 [connection signal="RowDeleted" from="EntitySpawnerComponent/NearbyLootDropsBinder" to="EntitySpawnerComponent" method="OnDropDelete"]
 [connection signal="RowInserted" from="EntitySpawnerComponent/NearbyLootDropsBinder" to="EntitySpawnerComponent" method="OnDropInsert"]
+[connection signal="RowDeleted" from="EntitySpawnerComponent/NearbyChestsBinder" to="EntitySpawnerComponent" method="OnChestDelete"]
+[connection signal="RowInserted" from="EntitySpawnerComponent/NearbyChestsBinder" to="EntitySpawnerComponent" method="OnChestInsert"]
 [connection signal="RowInserted" from="BulletManager/BulletControllerComponent/BulletControlEventBinder" to="BulletManager/BulletControllerComponent" method="OnBulletControlEventRow"]
 [connection signal="RowInserted" from="HexGridOverlayComponent/MapConfigBinder" to="HexGridOverlayComponent" method="OnMapConfigRow"]
 [connection signal="RowUpdated" from="HexGridOverlayComponent/MapConfigBinder" to="HexGridOverlayComponent" method="OnMapConfigRow"]
@@ -219,3 +245,6 @@ theme_override_constants/outline_size = 4
 [connection signal="RowDeleted" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowDeleted"]
 [connection signal="RowInserted" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowInserted"]
 [connection signal="RowUpdated" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowUpdated"]
+[connection signal="RowDeleted" from="ZoneRendererComponent/GroundZoneBinder" to="ZoneRendererComponent" method="OnZoneRowDeleted"]
+[connection signal="RowInserted" from="ZoneRendererComponent/GroundZoneBinder" to="ZoneRendererComponent" method="OnZoneRow"]
+[connection signal="RowInserted" from="SpellVisualComponent/AbilityVisualEventBinder" to="SpellVisualComponent" method="OnAbilityVisualEventRow"]

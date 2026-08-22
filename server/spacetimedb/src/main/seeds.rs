@@ -89,6 +89,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         move_sim_factor: 1.5,
         attack_sim_factor: 0.85,
         aggro_lock_seconds: 15.0,
+        stun_behavior: StunBehavior::Pause,
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Wander(WanderParams { speed: 30.0, active_duration: 2.5, pause_duration: 1.5 }), 0.0, vec![
                 make_sequence(vec![
@@ -106,6 +107,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         move_sim_factor: 2.0,
         attack_sim_factor: 1.05,
         aggro_lock_seconds: 25.0,
+        stun_behavior: StunBehavior::Pause,
         phases: vec![
             make_phase(ctx, 0, 0.0, MovementBehavior::Flee(FleeParams { speed: 40.0, min_range: 180.0, active_duration: 2.0, pause_duration: 1.5 }), 0.0, vec![
                 make_sequence(vec![
@@ -131,6 +133,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         move_sim_factor: 2.75,
         attack_sim_factor: 1.35,
         aggro_lock_seconds: 30.0,
+        stun_behavior: StunBehavior::Pause,
         phases: vec![
             // Phase 0 (100% HP): turret — Ring read cleanly with no movement noise
             make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![

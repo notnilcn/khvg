@@ -18,6 +18,7 @@ public partial class CombatComponent : Component
     private float _scanTimer;
     private LocalPlayer player = null!;
     private TableBinderComponent nearbyEnemiesBinder = null!;
+    private AbilityChargeComponent? chargeComponent;
     private const float ScanInterval = 0.5f;
     private const float AimConeHalfAngle = 0.52f;
 
@@ -32,6 +33,7 @@ public partial class CombatComponent : Component
         player = (LocalPlayer)Entity!;
         player.InventoryChanged += OnInventoryChanged;
         player.AimSettingsChanged += OnAimSettingsChanged;
+        chargeComponent = GetSibling<AbilityChargeComponent>();
         _playerRadius = (player.GetNode<CollisionShape2D>("Collider").Shape as CapsuleShape2D)?.Radius ?? 0f;
         OnAimSettingsChanged();
     }
@@ -61,6 +63,10 @@ public partial class CombatComponent : Component
         }
 
         if (!Input.IsActionPressed("fire")) return;
+        // P4: firing is client-authoritative, so charge fire-suppression lives here —
+        // hold fire while an ability charge is held (server-echoed AbilityCharge row;
+        // timeout auto-releases and lifecycle purges clear it the same way).
+        if (chargeComponent?.Charging == true) return;
         if (_fireTimer < _firePeriod) return;
 
         _fireTimer = 0f;

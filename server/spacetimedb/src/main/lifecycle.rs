@@ -14,10 +14,8 @@ pub fn init(ctx: &ReducerContext) {
         scheduled_id: 0,
         scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_millis(100))),
     });
-    ctx.db.enemy_spawn_schedule().insert(EnemySpawnSchedule {
-        scheduled_id: 0,
-        scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_secs(2))),
-    });
+    // Biome-region enemy spawning starts disarmed for debugging: no EnemySpawnSchedule
+    // job row is inserted here. An admin re-arms the 2s tick with toggle_enemy_spawning(true).
     ctx.db.consumable_effect_schedule().insert(ConsumableEffectSchedule {
         scheduled_id: 0,
         scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_secs_f32(CONSUMABLE_EFFECT_TICK_SECONDS))),
@@ -62,6 +60,10 @@ pub fn client_connected(ctx: &ReducerContext) {
 #[spacetimedb::reducer(client_disconnected)]
 pub fn client_disconnected(ctx: &ReducerContext) {
     if let Some(p) = ctx.db.logged_in_player().player_id().find(ctx.sender()) {
+        // Same runtime-row purge as leave_world — no status may kill or tick a logged-out
+        // player, and a caster's zones die with them.
+        crate::status::methods::purge_profile_statuses(ctx, p.profile_id);
+        crate::status::methods::purge_profile_zones(ctx, p.profile_id);
         ctx.db.logged_in_player().player_id().delete(ctx.sender());
         ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: p.player_id, username: p.username, is_admin: p.is_admin });
     }

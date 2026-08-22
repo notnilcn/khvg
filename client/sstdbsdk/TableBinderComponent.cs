@@ -41,6 +41,10 @@ public partial class TableBinderComponent : Component
 
     /// When true, RowInserted fires once per row already in the client cache when the binder
     /// connects (late bind or rows delivered before the parent's signals were wired).
+    /// MUST stay false for EVENT tables (BulletPatternEvent, BulletControlEvent): there is
+    /// no last-seen-id tracking, so replaying would re-fire every event in the table's
+    /// history — every bullet pattern, wall, slash, and control cast ever appended — each
+    /// time the scene is entered.
     [Export] public bool ReplayExistingRows { get; set; }
 
     /// The inserted row, or the new row after an update. Cast to the bound table's row type.

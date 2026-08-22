@@ -20,6 +20,8 @@
 [ext_resource type="Script" uid="uid://b4npu50mqoy3h" path="res://Scripts/Components/Data/LocalPlayerDataComponent.cs" id="17_data"]
 [ext_resource type="Script" uid="uid://dmplf8ey4jjs5" path="res://Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs" id="18_inv"]
 [ext_resource type="Script" uid="uid://dxruader1ioc2" path="res://Scripts/Components/Visual/LocalPlayerProfileComponent.cs" id="19_profile"]
+[ext_resource type="Script" path="res://Scripts/Components/Inventory/AbilityChargeComponent.cs" id="20_charge"]
+[ext_resource type="Script" path="res://Scripts/Components/Status/StatusBarComponent.cs" id="21_status"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_rmvjh"]
 
@@ -1433,6 +1435,37 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 4
 
+[node name="StatusBarComponent" type="Control" parent="InventoryCanvas/InventoryPanel"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -150.0
+offset_top = -50.0
+offset_right = 150.0
+offset_bottom = -34.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+script = ExtResource("21_status")
+
+[node name="Row" type="HBoxContainer" parent="InventoryCanvas/InventoryPanel/StatusBarComponent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="ActiveStatusEffectBinder" type="Node" parent="InventoryCanvas/InventoryPanel/StatusBarComponent"]
+script = ExtResource("15_binder")
+ReplayExistingRows = true
+TableName = "ActiveStatusEffect"
+
 [node name="CombatComponent" type="Node" parent="." unique_id=1107745331]
 script = ExtResource("2_h1vum")
 HitZoneScene = ExtResource("10_hit")
@@ -1510,6 +1543,14 @@ script = ExtResource("15_binder")
 ReplayExistingRows = true
 TableName = "LocalPlayerActiveProfile"
 
+[node name="AbilityChargeComponent" type="Node" parent="."]
+script = ExtResource("20_charge")
+
+[node name="AbilityChargeBinder" type="Node" parent="AbilityChargeComponent"]
+script = ExtResource("15_binder")
+ReplayExistingRows = true
+TableName = "AbilityCharge"
+
 [connection signal="RowDeleted" from="CombatComponent/NearbyEnemiesBinder" to="CombatComponent" method="OnNearbyEnemyDeletedRow"]
 [connection signal="RowInserted" from="PositionSyncComponent/LocalPlayerPositionBinder" to="PositionSyncComponent" method="OnPositionRowInserted"]
 [connection signal="RowUpdated" from="PositionSyncComponent/LocalPlayerPositionBinder" to="PositionSyncComponent" method="OnPositionRowUpdated"]
@@ -1524,3 +1565,9 @@ TableName = "LocalPlayerActiveProfile"
 [connection signal="RowUpdated" from="LocalPlayerInventoryComponent/LocalPlayerInventoryBinder" to="LocalPlayerInventoryComponent" method="OnInventoryRow"]
 [connection signal="RowInserted" from="LocalPlayerProfileComponent/LocalPlayerActiveProfileBinder" to="LocalPlayerProfileComponent" method="OnProfileRowInserted"]
 [connection signal="RowUpdated" from="LocalPlayerProfileComponent/LocalPlayerActiveProfileBinder" to="LocalPlayerProfileComponent" method="OnProfileRowUpdated"]
+[connection signal="RowInserted" from="AbilityChargeComponent/AbilityChargeBinder" to="AbilityChargeComponent" method="OnChargeRow"]
+[connection signal="RowUpdated" from="AbilityChargeComponent/AbilityChargeBinder" to="AbilityChargeComponent" method="OnChargeRow"]
+[connection signal="RowDeleted" from="AbilityChargeComponent/AbilityChargeBinder" to="AbilityChargeComponent" method="OnChargeRowDeleted"]
+[connection signal="RowInserted" from="InventoryCanvas/InventoryPanel/StatusBarComponent/ActiveStatusEffectBinder" to="InventoryCanvas/InventoryPanel/StatusBarComponent" method="OnStatusRow"]
+[connection signal="RowUpdated" from="InventoryCanvas/InventoryPanel/StatusBarComponent/ActiveStatusEffectBinder" to="InventoryCanvas/InventoryPanel/StatusBarComponent" method="OnStatusRow"]
+[connection signal="RowDeleted" from="InventoryCanvas/InventoryPanel/StatusBarComponent/ActiveStatusEffectBinder" to="InventoryCanvas/InventoryPanel/StatusBarComponent" method="OnStatusRowDeleted"]

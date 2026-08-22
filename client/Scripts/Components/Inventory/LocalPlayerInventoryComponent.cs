@@ -54,13 +54,123 @@ public partial class LocalPlayerInventoryComponent : Component
     // ("first ability stronger") — both must change together.
     public static readonly float[] AbilityPositionMultipliers = [1.5f, 1.25f, 1.1f, 1.0f, 0.9f, 0.8f];
 
+    // Mirrors MAX_ABILITY_TARGET_RANGE in server/spacetimedb/src/main/global.rs — the
+    // server clamps the cursor to this range around the player's position row; the
+    // optimistic spell visual (P5) clamps identically so it lands where the echo will.
+    public const float MaxAbilityTargetRange = 600f;
+
+    /// Mirror of the server's ability_is_charge_capable (player/methods.rs) — charge-capable
+    /// abilities are hold-to-charge (BeginAbilityCharge/ReleaseAbilityCharge) instead of the
+    /// instant ActivateAbility path. Both must change together.
+    public static bool IsChargeCapable(AbilityBehavior ability) =>
+        ability.Effect is AbilityEffect.Teleport(var p) && p.ChargeScaled
+        || ability.Effect is AbilityEffect.Spell(var s) && s.ChargeScaled;
+
+    /// Charge-capable check for an ability cell, reading the item's resolved
+    /// AbilityBehavior from the catalog (following span followers to the head). Used by
+    /// InventoryPanel's key routing.
+    public static bool IsChargeCapableAt(LocalPlayer player, int cellIndex)
+    {
+        var slot = player.ResolveSlotAt(cellIndex).Slot;
+        if (slot == null) return false;
+        int head = (int)(slot.OccupiedBy ?? (uint)cellIndex);
+        var item = player.ResolveSlotAt(head).Item;
+        if (item == null) return false;
+        foreach (var behavior in item.Behaviors)
+            if (behavior is ItemBehavior.Ability(var a)) return IsChargeCapable(a);
+        return false;
+    }
+
+    /// P4 charge path, key-down: the same cooldown/charge pre-checks as
+    /// TryActivateAbility, then the BeginAbilityCharge reducer. No optimistic state —
+    /// the echoed AbilityCharge row is authoritative (see AbilityChargeComponent).
+    public static void TryBeginCharge(LocalPlayer player, int cellIndex)
+    {
+        var slot = player.ResolveSlotAt(cellIndex).Slot;
+        if (slot == null) return;
+        int head = (int)(slot.OccupiedBy ?? (uint)cellIndex);
+        var resolved = player.ResolveSlotAt(head);
+        if (resolved.Slot is not { } headSlot || resolved.Item is not { } item) return;
+
+        AbilityBehavior? ability = null;
+        foreach (var behavior in item.Behaviors)
+            if (behavior is ItemBehavior.Ability(var a)) { ability = a; break; }
+        if (ability == null || !IsChargeCapable(ability)) return;
+
+        if (headSlot.Charges == 0) return;
+        if (headSlot.CooldownUntil is SpacetimeDB.Timestamp until
+            && until.MicrosecondsSinceUnixEpoch > DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L) return;
+
+        GameManager.Conn?.Reducers.BeginAbilityCharge((uint)head);
+    }
+
+    /// P4 charge path, key-up: the ReleaseAbilityCharge reducer with the cursor's world
+    /// position — only while the echoed charge row says we're charging this slot. No
+    /// optimistic teleport: the server moves the position row and the desync snap in
+    /// PositionSyncComponent hard-corrects us from the echo (same as instant Teleport).
+    /// A charge-scaled Spell (P5) renders its flash optimistically exactly like the
+    /// instant path — the visual doesn't depend on the charge fraction (only damage does).
+    public static void TryReleaseCharge(LocalPlayer player, int cellIndex)
+    {
+        if (player.GetComponent<AbilityChargeComponent>() is not { Charging: true } charge) return;
+        var slot = player.ResolveSlotAt(cellIndex).Slot;
+        if (slot == null) return;
+        int head = (int)(slot.OccupiedBy ?? (uint)cellIndex);
+        if (charge.ChargedSlot != head) return;
+
+        var target = player.GetGlobalMousePosition();
+        GameManager.Conn?.Reducers.ReleaseAbilityCharge((uint)head, target.X, target.Y);
+
+        if (player.ResolveSlotAt(head).Item is { } item)
+        {
+            foreach (var behavior in item.Behaviors)
+                if (behavior is ItemBehavior.Ability(var a) && a.Effect is AbilityEffect.Spell(var p))
+                {
+                    SpawnOptimisticSpellVisual(player, head, p, target);
+                    break;
+                }
+        }
+    }
+
+    /// P5 optimistic spell flash — shared by TryActivateAbility and the charge-release
+    /// path. Mirrors the server's Spell dispatch encoding so the optimistic render matches
+    /// the echo it suppresses: the cursor is clamped to MaxAbilityTargetRange around the
+    /// player for the Circle center (with the same zero-length fallback direction),
+    /// Line/Cone run their full length in the cursor's direction, and only the Circle
+    /// radius is position-scaled (matching scale_ability_effect server-side).
+    private static void SpawnOptimisticSpellVisual(LocalPlayer player, int head, SpellParams p, Vector2 target)
+    {
+        var visuals = GameManager.SpellVisuals;
+        if (visuals == null) return;
+        var origin = player.GlobalPosition;
+        var axis = target - origin;
+        var clamped = axis.Length() > MaxAbilityTargetRange ? origin + axis.Normalized() * MaxAbilityTargetRange : target;
+        var dir = axis.LengthSquared() > 0.000001f ? axis.Normalized() : Vector2.Right;
+        int position = Mathf.Clamp(head - AbilitySlotStart, 0, AbilityPositionMultipliers.Length - 1);
+        float multiplier = AbilityPositionMultipliers[position];
+        switch (p.Shape)
+        {
+            case SpellShape.Circle(var c):
+                visuals.Render(p.Visual, origin, clamped, c.Radius * multiplier, SpellVisualComponent.DefaultDuration);
+                break;
+            case SpellShape.Line(var l):
+                visuals.Render(p.Visual, origin, origin + dir * l.Length, l.Width, SpellVisualComponent.DefaultDuration);
+                break;
+            case SpellShape.Cone(var c):
+                visuals.Render(p.Visual, origin, origin + dir * c.Length, c.Spread, SpellVisualComponent.DefaultDuration);
+                break;
+        }
+    }
+
     /// Activates whatever occupies ability cell `cellIndex` (following span followers to
     /// the head): client-side cooldown/charge pre-check, the ActivateAbility reducer with
-    /// the cursor's world position, and — for bullet-control effects — the optimistic
-    /// local apply (remote clients apply the same cast from the BulletControlEvent echo;
-    /// the caster's own echo is skipped via cast_by). Passive ability items (no Ability
-    /// behavior) silently do nothing. Shared by the hotkeys (InventoryPanel) and the
-    /// slot click path (SlotComponent).
+    /// the cursor's world position, and — for bullet-control and spell effects — the
+    /// optimistic local apply (remote clients apply the same cast from the
+    /// BulletControlEvent/AbilityVisualEvent echo; the caster's own echo is skipped via
+    /// cast_by). Passive ability items (no Ability behavior) silently do nothing, as do
+    /// charge-capable items (P4) — those route through the hold-to-charge key path
+    /// instead. Shared by the hotkeys (InventoryPanel) and the slot click path
+    /// (SlotComponent).
     public static void TryActivateAbility(LocalPlayer player, int cellIndex)
     {
         var slot = player.ResolveSlotAt(cellIndex).Slot;
@@ -73,6 +183,7 @@ public partial class LocalPlayerInventoryComponent : Component
         foreach (var behavior in item.Behaviors)
             if (behavior is ItemBehavior.Ability(var a)) { ability = a; break; }
         if (ability == null) return; // passive item — nothing to activate
+        if (IsChargeCapable(ability)) return; // hold-to-charge items route through the key path (InventoryPanel)
 
         if (headSlot.Charges == 0) return;
         if (headSlot.CooldownUntil is SpacetimeDB.Timestamp until
@@ -111,7 +222,70 @@ public partial class LocalPlayerInventoryComponent : Component
                 controller?.DeleteInRect(origin, origin + dir * (p.Length * multiplier), p.Width * multiplier);
                 break;
             }
+            case AbilityEffect.Slash(var p):
+            {
+                var origin = player.GlobalPosition;
+                var axis = target - origin;
+                // Same zero-length fallback as the server so the optimistic rect matches the echo.
+                var dir = axis.LengthSquared() > 0.000001f ? axis.Normalized() : Vector2.Right;
+                controller?.SlashInRect(origin, origin + dir * (p.Length * multiplier), p.Width * multiplier, p.MaxBulletDamage);
+                break;
+            }
+            case AbilityEffect.Wall(var p):
+            {
+                var origin = player.GlobalPosition;
+                var axis = target - origin;
+                // Same zero-length fallback as the server so the optimistic rect matches the echo.
+                var dir = axis.LengthSquared() > 0.000001f ? axis.Normalized() : Vector2.Right;
+                controller?.SpawnWallZone(origin, origin + dir * (p.Length * multiplier), p.Width * multiplier, ability.Duration);
+                break;
+            }
+            case AbilityEffect.Grapple(var range):
+                StartGrappleTween(player, target, range * multiplier);
+                break;
+            case AbilityEffect.Spell(var p):
+                SpawnOptimisticSpellVisual(player, head, p, target);
+                break;
+            case AbilityEffect.Teleport:
+                // No optimistic apply: the server moves the position row itself and the
+                // desync snap in PositionSyncComponent hard-corrects us from the echo.
+                break;
         }
+    }
+
+    /// P4 grapple (bullet master): tween the local player toward the cursor (clamped to
+    /// the position-scaled range) over ~0.25s. The pull is client-authoritative — the
+    /// server arm only validates and spends — so the tween reports every frame (the
+    /// timed reports run at 1 Hz) for remotes to track it, and suspends input movement
+    /// so MoveAndSlide doesn't fight the externally-set position. Remotes will see a
+    /// snap: acceptable — their WrapSnapThreshold self-corrects, and their dead-reckoning
+    /// clamps to base_speed mid-tween.
+    private const float GrappleTweenSeconds = 0.25f;
+
+    private static void StartGrappleTween(LocalPlayer player, Vector2 target, float range)
+    {
+        var origin = player.GlobalPosition;
+        var offset = target - origin;
+        if (offset.Length() > range) offset = offset.Normalized() * range;
+        var destination = origin + offset;
+
+        var sync = player.GetComponent<PositionSyncComponent>();
+        player.ExternalMovementActive = true;
+        var tween = player.CreateTween();
+        tween.TweenMethod(Callable.From<Vector2>(pos =>
+        {
+            if (!GodotObject.IsInstanceValid(player)) return;
+            player.GlobalPosition = pos;
+            player.Velocity = Vector2.Zero;
+            sync?.RequestMovementReport();
+        }), origin, destination, GrappleTweenSeconds);
+        tween.Finished += () =>
+        {
+            if (!GodotObject.IsInstanceValid(player)) return;
+            player.Velocity = Vector2.Zero;
+            player.ExternalMovementActive = false;
+            sync?.RequestMovementReport(); // final report carries the zeroed velocity
+        };
     }
 
     // Slots that count as worn equipment (enchantable): 0 weapon, 5 accessory, 6 armor, 32-37 abilities

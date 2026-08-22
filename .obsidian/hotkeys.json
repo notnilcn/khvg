@@ -105,5 +105,15 @@
       ],
       "key": "F"
     }
+  ],
+  "track-changes:delete-selected-markup": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "D"
+    }
   ]
 }

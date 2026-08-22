@@ -25,6 +25,6 @@ public partial class BulletHitRouterComponent : Component
         else if (hitTargetArea is RemoteHitWitnessComponent witness)
             witness.ProcessBulletHit();
         else
-            GameManager.Conn?.Reducers.ReportHit(data.SourceStep);
+            GameManager.Conn?.Reducers.ReportHit(data.SourceStep, data.EnemyId);
     }
 }

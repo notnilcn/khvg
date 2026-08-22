@@ -13,15 +13,33 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Game Design Docs/Items/Abilities/Abilities.md",
+                "file": "Untitled.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Abilities"
+              "title": "Untitled"
+            }
+          },
+          {
+            "id": "db4991a9dd1e9d70",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "docs/Game Design Docs/00.canvas",
+                "viewState": {
+                  "x": -1331.332554095049,
+                  "y": -538.8840779267965,
+                  "zoom": -2.3629292694896686
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "00"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -176,8 +194,8 @@
             "state": {
               "type": "git-view",
               "state": {},
-              "icon": "lucide-ghost",
-              "title": "git-view"
+              "icon": "git-pull-request",
+              "title": "Source Control"
             }
           },
           {
@@ -197,8 +215,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 432.699951171875
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -214,12 +231,28 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "87eca17e48d96970",
+  "active": "db4991a9dd1e9d70",
   "lastOpenFiles": [
-    "client/Scenes/game.tscn50280906894.tmp",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcI5ADuc/linker-arguments",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcI5ADuc",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.93tc5u7s9nxq7yxoy1njgb6ui.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.05.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.06.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.00.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.04.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.07.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.12.rcgu.o",
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hlkwsta0w0-1bbntdk-e8mqkq6n5h6s7zw6slu8y6lwj/dep-graph.bin",
+    "Untitled.md",
+    "Untitled.png",
+    "docs/Game Design Docs/00.canvas",
+    "docs/Game Design Docs/Untitled.canvas",
+    "docs/Rotating_earth_(large).gif",
+    "docs/fire-flames-transparent.gif",
     "server/spacetimedb/src/AGENTS.md",
-    "docs/Game Design Docs/01 Executive Summary.md",
     "docs/Game Design Docs/Items/Abilities/Abilities.md",
+    "docs/Game Design Docs/01 Executive Summary.md",
     "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
     "docs/Game Design Docs/Items/Accessories/Accessories.md",
     "docs/Game Design Docs/Items/Weapons/Weapons.md",
@@ -227,20 +260,10 @@
     "docs/Game Design Docs/04 Lore.md",
     "docs/Game Design Docs/Items/Items.md",
     "docs/Game Design Docs/02 Gameplay.md",
-    "docs/Game Design Docs/Items/Accessories",
-    "docs/Game Design Docs/Items/Armors",
     "docs/Game Design Docs/Items/Untitled.canvas",
-    "docs/Game Design Docs/Items/Weapons",
-    "docs/Game Design Docs/Items/Abilities",
-    "docs/Game Design Docs/Items",
     "docs/Technical Design Docs/To Do.md",
     "docs/Technical Design Docs/REGENERATION PLAN.md",
     "docs/Technical Design Docs/Workflows/Adding an Ability (Ability Authoring Workflow).md",
-    "client/Scripts/module_bindings/Types/RectParams.g.cs.uid",
-    "client/Scripts/module_bindings/Types/RectParams.g.cs",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.08.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.15.rcgu.o",
     "docs/Technical Design Docs/Workflows/Adding a Boss (Enemy Authoring Workflow).md",
     "docs/Technical Design Docs/Workflows/AGENTS.md",
     "server/spacetimedb/src/item/AGENTS.md",
@@ -249,7 +272,6 @@
     "server/spacetimedb/src/enemy/AGENTS.md",
     "docs/Technical Design Docs/Description/01 Roadmap.md",
     "docs/Technical Design Docs/Description/02 The Component Framework.md",
-    "docs/Game Design Docs/00.canvas",
     "flowcharts/main-combat.canvas",
     "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
     "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent_codefile.canvas",
@@ -258,13 +280,10 @@
     "flowcharts/Subflowcharts/root_subfolder.canvas",
     "docs/Technical Design Docs/Description/03 Boot & Connection.md",
     "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
-    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/addons_subfolder.canvas",
     "docs/Game Design Docs - Copy/05 Biomes.md",
     "docs/Game Design Docs new/05 Biomes.md",
-    "docs/Game Design Docs new/01 Executive Summary.md",
     "Rotating_earth_(large).gif",
     "fire-flames-transparent.gif",
-    "Untitled.png",
     "docs/attachments/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
     "docs/attachments/Pasted image 20260530125508.png",
     "docs/attachments/Pasted image 20260530130436.png",

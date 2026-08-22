@@ -20,6 +20,7 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 | World/hex grid, terrain generation, buildings | `world/` | `Components/Terrain/`, `Components/Camera/HexGridOverlay*Component.cs` |
 | Item/enchantment catalog, equipping, inventory UI | `item/` | `Components/Catalog/`, `Components/Inventory/` |
 | Loot drops and pickups | `player/` (`LootDrop`, `pickup_drop`) | `Items/Drop.cs`, `Components/Interaction/PickupComponent.cs` |
+| Chests | `chest/` | `Items/Chest.cs`, `Components/Interaction/InteractComponent.cs`, `Components/Inventory/ChestSlotComponent.cs` |
 | Admin tools, seeding, debug overlay, connect/disconnect | `main/` | `Game/DebugOverlay.cs` |
 | Connection, subscriptions, table→signal binding | — | `client/sstdbsdk/` |
 
@@ -37,8 +38,8 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 
 ## Running and Developing
 
-- **Engine:** `Godot/Godot-stable_mono_win64.exe` — the mono build is required for C# and SpacetimeDB.
-- **Run:** F5 in the editor. The project's main scene is `client/Scenes/main_menu.tscn` — despite the name, that is the *menu* scene (root `main`, `LobbyGui.cs`); its Character Slots button `ChangeSceneToFile`s to `Scenes/game.tscn`, the actual gameplay scene (root `Characters`, GameManager). There is no `lobby_gui.tscn`.
+- **Engine:** `C:/Users/Clinton/g/Godot/Godot-stable_mono_win64_console.exe` — the mono build is required for C# and SpacetimeDB; the console variant keeps stdout/stderr visible.
+- **Run:** F5 in the editor. The project's main scene is `client/Scenes/main_menu.tscn` — despite the name, that is the *menu* scene (root `MainMenu`, `LobbyGui.cs`); its Character Slots button `ChangeSceneToFile`s to `Scenes/game.tscn`, the actual gameplay scene (GameManager root — named `game` in the current scene file; resolve the runtime root name rather than assuming). There is no `lobby_gui.tscn`.
 - **Client build:** no build system — Godot compiles `client/khvg.csproj` internally.
 - **Server publish:** `server/build.sh` regenerates the C# bindings into `client/Scripts/module_bindings/` and publishes the `bullethell` module to the `local` server with `--delete-data`. **Every publish wipes the database**, so schema changes are hard cuts — no migrations, no dual-write; seeds re-run from `main/seeds.rs`. Logs: `spacetime logs bullethell`.
 - **Export:** Web/HTML5 preset in `client/export_presets.cfg`.
@@ -46,4 +47,4 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 
 ## Verification
 
-Automated checks stop at compilation: `cargo check` for the server, `dotnet build client/khvg.csproj` for the client. Anything beyond that — running the game, multiplayer behavior, visuals — is done **by the user**. When a change needs runtime verification, describe the manual test steps and ask the user to run them; do not launch the editor or game yourself.
+Automated checks stop at compilation: `cargo check` for the server, `dotnet build client/khvg.csproj` for the client. Runtime verification (playing the game, driving UI, spawning/wiping entities) goes through the two project skills: `.kimi-code/skills/godot-playtest/` (drive the running game via the open-godot-mcp MCP tools — launch the editor with the console exe above if the bridge is down, always run from `main_menu.tscn`) and `.kimi-code/skills/spacetimedb-cli/` (call reducers / SQL / logs via the `spacetime` CLI).

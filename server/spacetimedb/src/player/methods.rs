@@ -1,6 +1,8 @@
 use spacetimedb::{ReducerContext, Table};
 use crate::main::global::*;
 use crate::world::hex::{spiral_chunk_index, world_to_chunk};
+use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
+use crate::world::aoi::chunk_indices_covering;
 use crate::world::tables::MapConfig;
 use crate::player::tables::*;
 use crate::item::tables::*;
@@ -85,6 +87,140 @@ pub fn ability_behavior(item: &Item) -> Option<&AbilityBehavior> {
         ItemBehavior::Ability(a) => Some(a),
         _ => None,
     })
+}
+
+/// Charge-capable abilities (P4) route through begin/release_ability_charge instead of
+/// activate_ability. One helper so a future charge-capable variant adds a single arm
+/// here; the client mirrors this check (LocalPlayerInventoryComponent.IsChargeCapable).
+pub fn ability_is_charge_capable(ability: &AbilityBehavior) -> bool {
+    matches!(&ability.effect, AbilityEffect::Teleport(p) if p.charge_scaled)
+        || matches!(&ability.effect, AbilityEffect::Spell(p) if p.charge_scaled)
+}
+
+/// The lap-shifted copy of point (x, y) nearest to the reference point — the same 9-shift
+/// search as wrapped_distance_sq, but returning the shifted point so segment/angle tests
+/// can run in ordinary Euclidean space (P5 spell geometry).
+pub fn nearest_lap_copy(x: f32, y: f32, ref_x: f32, ref_y: f32, lap_q: (f32, f32), lap_r: (f32, f32)) -> (f32, f32) {
+    let mut best = (x, y);
+    let mut best_d = f32::MAX;
+    for lq in -1..=1 {
+        for lr in -1..=1 {
+            let cx = x + lq as f32 * lap_q.0 + lr as f32 * lap_r.0;
+            let cy = y + lq as f32 * lap_q.1 + lr as f32 * lap_r.1;
+            let d = (cx - ref_x).powi(2) + (cy - ref_y).powi(2);
+            if d < best_d { best_d = d; best = (cx, cy); }
+        }
+    }
+    best
+}
+
+/// Exact point-in-shape test for a Spell ability (P5), in world coordinates: `anchor` is
+/// the shape's reference point (the clamped cursor for Circle, the player for Line/Cone),
+/// `dir` the normalized cast direction (unused by Circle), `point` the test position
+/// (lap-shifted near the anchor by the caller). Pure math — unit-tested below.
+pub fn spell_shape_contains(shape: &SpellShape, anchor: (f32, f32), dir: (f32, f32), point: (f32, f32)) -> bool {
+    let (rx, ry) = (point.0 - anchor.0, point.1 - anchor.1);
+    match shape {
+        SpellShape::Circle(c) => rx * rx + ry * ry <= c.radius * c.radius,
+        SpellShape::Line(l) => {
+            let along = rx * dir.0 + ry * dir.1;
+            if along < 0.0 || along > l.length { return false; }
+            let across = (rx * dir.1 - ry * dir.0).abs();
+            across <= l.width * 0.5
+        }
+        SpellShape::Cone(c) => {
+            let along = rx * dir.0 + ry * dir.1;
+            if along <= 0.0 { return false; }
+            let across = (rx * dir.1 - ry * dir.0).abs();
+            if along * along + across * across > c.length * c.length { return false; }
+            across <= along * (c.spread * 0.5).tan()
+        }
+    }
+}
+
+/// The enemies a Spell shape hits (P5): wrap-filtered candidates from enemies_near_point
+/// (a covering circle per shape — for Circle it IS the exact test), then the exact
+/// geometry test on lap-shifted positions. Wrap simplification: the cast DIRECTION is
+/// torus-naive (raw cursor − player, matching the target clamp in apply_ability_effect and
+/// every other ability arm); only enemy positions are lap-shifted. A cast aimed across a
+/// lap seam can therefore point the "long way" — the same seam case every other targeted
+/// ability already has.
+pub fn spell_targets(ctx: &ReducerContext, origin: (f32, f32), dir: (f32, f32), target: (f32, f32), shape: &SpellShape) -> Vec<crate::enemy::instance_tables::Enemy> {
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
+    let (anchor, reach) = match shape {
+        SpellShape::Circle(c) => (target, c.radius),
+        SpellShape::Line(l) => (origin, l.length + l.width * 0.5),
+        SpellShape::Cone(c) => (origin, c.length),
+    };
+    crate::enemy::methods::enemies_near_point(ctx, anchor.0, anchor.1, reach)
+        .into_iter()
+        .filter(|e| {
+            let p = nearest_lap_copy(e.x, e.y, anchor.0, anchor.1, lap_q, lap_r);
+            spell_shape_contains(shape, anchor, dir, p)
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn circle_contains_by_radius() {
+        let shape = SpellShape::Circle(CircleParams { radius: 100.0 });
+        assert!(spell_shape_contains(&shape, (0.0, 0.0), (1.0, 0.0), (60.0, 80.0)));
+        assert!(!spell_shape_contains(&shape, (0.0, 0.0), (1.0, 0.0), (60.0, 80.1)));
+    }
+
+    #[test]
+    fn line_tests_along_and_across() {
+        let shape = SpellShape::Line(LineParams { length: 500.0, width: 40.0 });
+        let dir = (1.0, 0.0);
+        assert!(spell_shape_contains(&shape, (0.0, 0.0), dir, (250.0, 19.9)));
+        assert!(!spell_shape_contains(&shape, (0.0, 0.0), dir, (250.0, 20.1))); // too wide
+        assert!(!spell_shape_contains(&shape, (0.0, 0.0), dir, (500.1, 0.0)));  // too far
+        assert!(!spell_shape_contains(&shape, (0.0, 0.0), dir, (-0.1, 0.0)));   // behind
+    }
+
+    #[test]
+    fn cone_tests_angle_and_length() {
+        // spread 0.6 rad: half-angle 0.3, tan ≈ 0.3093.
+        let shape = SpellShape::Cone(ConeParams { length: 350.0, spread: 0.6 });
+        let dir = (1.0, 0.0);
+        assert!(spell_shape_contains(&shape, (0.0, 0.0), dir, (300.0, 90.0)));  // ~17° < 0.3 rad
+        assert!(!spell_shape_contains(&shape, (0.0, 0.0), dir, (300.0, 96.0))); // just outside
+        assert!(!spell_shape_contains(&shape, (0.0, 0.0), dir, (351.0, 0.0)));  // beyond length
+        assert!(!spell_shape_contains(&shape, (0.0, 0.0), dir, (-10.0, 0.0)));  // behind
+    }
+
+    #[test]
+    fn nearest_lap_copy_picks_the_shifted_copy() {
+        // World 1000 wide in q, laps in r irrelevant (zero vector).
+        let p = nearest_lap_copy(990.0, 0.0, 10.0, 0.0, (1000.0, 0.0), (0.0, 0.0));
+        assert_eq!(p, (-10.0, 0.0));
+    }
+}
+
+/// Server-side teleport (P4): moves the position row to (x, y) exactly like a
+/// report_movement write — wrap, chunk recompute, PlayerChunk updated only on a real
+/// crossing (AOI views recompute on chunk changes, not every position write). No extra
+/// client report is needed afterward: the echoed row hard-corrects local/remote puppets
+/// via the desync snap, and the next scheduled report carries the new position.
+pub fn teleport_player(ctx: &ReducerContext, profile_id: u64, x: f32, y: f32) -> Result<(), String> {
+    let pos = ctx.db.player_position().profile_id().find(&profile_id)
+        .ok_or_else(|| format!("Position not found for profile {}", profile_id))?;
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (x, y) = wrap_world_pos(x, y, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
+    let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
+    let chunk_index = spiral_chunk_index(cq, cr);
+    ctx.db.player_position().profile_id().update(PlayerPosition { x, y, chunk_index, ..pos });
+    if let Some(chunk) = ctx.db.player_chunk().profile_id().find(&profile_id) {
+        if (chunk.chunk_q, chunk.chunk_r) != (cq, cr) {
+            ctx.db.player_chunk().profile_id().update(PlayerChunk { chunk_q: cq, chunk_r: cr, ..chunk });
+        }
+    }
+    Ok(())
 }
 
 pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
@@ -321,11 +457,15 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
         recompute_stats(ctx, profile_id);
     }
 
-    if ctx.db.player_position().profile_id().find(&profile_id).is_none() {
-        let cfg = MapConfig::load(ctx, 0, 0);
-        let (cq, cr) = world_to_chunk(0.0, 0.0, cfg.chunk_hex_radius, cfg.hex_outer_radius);
-        let chunk_index = spiral_chunk_index(cq, cr);
-        ctx.db.player_position().insert(PlayerPosition { profile_id, player_id: ctx.sender(), x: 0.0, y: 0.0, movement_direction: 0.0, movement_speed: 0.0, chunk_index});
+    // Spawn is always at the world origin: leave_world keeps the position/chunk rows,
+    // so without this reset a re-join would resume wherever the player last was.
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (spawn_cq, spawn_cr) = world_to_chunk(0.0, 0.0, cfg.chunk_hex_radius, cfg.hex_outer_radius);
+    let spawn_chunk_index = spiral_chunk_index(spawn_cq, spawn_cr);
+    if let Some(pos) = ctx.db.player_position().profile_id().find(&profile_id) {
+        ctx.db.player_position().profile_id().update(PlayerPosition { x: 0.0, y: 0.0, movement_direction: 0.0, movement_speed: 0.0, chunk_index: spawn_chunk_index, ..pos });
+    } else {
+        ctx.db.player_position().insert(PlayerPosition { profile_id, player_id: ctx.sender(), x: 0.0, y: 0.0, movement_direction: 0.0, movement_speed: 0.0, chunk_index: spawn_chunk_index });
     }
 
     if ctx.db.player_rotation().profile_id().find(&profile_id).is_none() {
@@ -335,10 +475,10 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
         ctx.db.player_rotation().insert(PlayerRotation { profile_id, player_id: ctx.sender(), screen_rotation: 0.0, chunk_index });
     }
 
-    if ctx.db.player_chunk().profile_id().find(&profile_id).is_none() {
-        let cfg = MapConfig::load(ctx, 0, 0);
-        let (cq, cr) = world_to_chunk(0.0, 0.0, cfg.chunk_hex_radius, cfg.hex_outer_radius);
-        ctx.db.player_chunk().insert(PlayerChunk { profile_id, chunk_q: cq, chunk_r: cr });
+    if let Some(chunk) = ctx.db.player_chunk().profile_id().find(&profile_id) {
+        ctx.db.player_chunk().profile_id().update(PlayerChunk { chunk_q: spawn_cq, chunk_r: spawn_cr, ..chunk });
+    } else {
+        ctx.db.player_chunk().insert(PlayerChunk { profile_id, chunk_q: spawn_cq, chunk_r: spawn_cr });
     }
 }
 
@@ -355,10 +495,15 @@ pub fn teardown_profile(ctx: &ReducerContext, profile_id: u64) {
         ctx.db.player_inventory_slot().slot_id().delete(slot.slot_id);
     }
     ctx.db.player_position().profile_id().delete(profile_id);
+    ctx.db.player_rotation().profile_id().delete(profile_id);
     ctx.db.player_chunk().profile_id().delete(profile_id);
     for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
         ctx.db.active_consumable_effect().effect_id().delete(active.effect_id);
     }
+    crate::status::methods::purge_profile_statuses(ctx, profile_id);
+    // A caster's ground zones die with them (P3) — the same purge leave_world and
+    // client_disconnected run.
+    crate::status::methods::purge_profile_zones(ctx, profile_id);
 }
 
 use crate::combat::heal_player;
@@ -402,6 +547,23 @@ pub fn internal_gain_xp(ctx: &ReducerContext, profile_id: u64, amount: u32) {
 pub fn find_profile_by_name(ctx: &ReducerContext, player_id: spacetimedb::Identity, profile_name: &str) -> Option<PlayerProfile> {
     let lower = profile_name.to_lowercase();
     ctx.db.player_profile().player_id().filter(&player_id).find(|p| p.profile_name.to_lowercase() == lower)
+}
+
+/// Reducer-side AOI query: position rows of every *logged-in* player within (wrap-aware)
+/// `radius` of (x, y), via the PlayerPosition.chunk_index btree. Ghost positions of
+/// logged-out players are excluded (their rows outlive logout). Used by AoE ability
+/// targeting (paladin/trickster ally buffs) and zone membership checks.
+pub fn players_near_point(ctx: &ReducerContext, x: f32, y: f32, radius: f32) -> Vec<PlayerPosition> {
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let lap_q = (cfg.lap_q_x, cfg.lap_q_y);
+    let lap_r = (cfg.lap_r_x, cfg.lap_r_y);
+    let radius_sq = radius * radius;
+    chunk_indices_covering(x, y, radius, cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows)
+        .iter()
+        .flat_map(|idx| ctx.db.player_position().chunk_index().filter(idx))
+        .filter(|pos| ctx.db.logged_in_player().profile_id().find(&pos.profile_id).is_some())
+        .filter(|pos| wrapped_distance_sq(x, y, pos.x, pos.y, lap_q, lap_r) <= radius_sq)
+        .collect()
 }
 
 // ===== Slot helpers =====
@@ -512,5 +674,35 @@ pub fn check_stat_requirements(ctx: &ReducerContext, profile_id: u64, item: &Ite
             return Err(format!("Item '{}' requires {} {}.", item.item_id, name, required));
         }
     }
+    Ok(())
+}
+
+/// The shared "player acquires an item" placement path, used by pickup_drop and
+/// take_from_chest. Ability items auto-equip into the first contiguous free span if stat
+/// requirements pass, else fall back to loose backpack storage; other items prefer a
+/// matching typed slot (stat requirements gate equipped roles) and fall back to general.
+/// Does not recompute stats — the caller decides.
+pub fn store_item_in_inventory(ctx: &ReducerContext, profile_id: u64, item: &Item, enchantment_ids: Vec<String>) -> Result<(), String> {
+    if item.equip_slot == EquipSlot::Ability {
+        if check_stat_requirements(ctx, profile_id, item).is_ok() {
+            if let Some(head) = find_free_span(ctx, profile_id, item.slot_cost.max(1)) {
+                place_span(ctx, profile_id, head, item, enchantment_ids);
+                return Ok(());
+            }
+        }
+    }
+
+    let slots: Vec<PlayerInventorySlot> = ctx.db.player_inventory_slot().profile_id().filter(&profile_id).collect();
+    let is_free = |s: &&PlayerInventorySlot| s.item_id.is_none() && s.occupied_by.is_none() && slot_allowed(s.role, item.equip_slot);
+    // Prefer a matching typed slot, fall back to general. Ability-role cells are skipped —
+    // ability items only enter the region through span placement, never loose. A typed
+    // (equipped) slot also requires the item's stat requirements — otherwise backpack.
+    let target = slots.iter().filter(|s| s.role != SlotRole::General && s.role != SlotRole::Ability).find(is_free)
+        .filter(|_| check_stat_requirements(ctx, profile_id, item).is_ok())
+        .or_else(|| slots.iter().filter(|s| s.role == SlotRole::General).find(is_free))
+        .ok_or("No suitable slot available.")?;
+    update_slot(ctx, PlayerInventorySlot {
+        item_id: Some(item.item_id.clone()), enchantment_ids, ..target.clone()
+    });
     Ok(())
 }

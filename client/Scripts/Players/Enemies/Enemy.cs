@@ -11,6 +11,8 @@ public partial class Enemy : CharacterBody2D, IEntity
     public ulong EnemyId { get; set; }
     public byte Phase { get; private set; }
     public bool IsElite { get; private set; }
+    /// 0–100 stagger bar, mirrored from the row for EnemyDebuffIndicatorComponent.
+    public float Stagger { get; private set; }
 
     // IEntity — Enemy can't derive from Entity (it needs CharacterBody2D), so it implements
     // the interface directly with its own registry; same pattern as LocalPlayer.
@@ -65,6 +67,7 @@ public partial class Enemy : CharacterBody2D, IEntity
         interpolation?.SnapTo(new Vector2(row.X, row.Y));
         Phase = row.Phase;
         IsElite = row.IsElite;
+        Stagger = row.Stagger;
         sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
         var template = GameManager.Conn?.Db.EnemyTemplates.Iter().FirstOrDefault(t => t.TemplateId == row.TemplateId);
         if (template != null && sprite != null)
@@ -85,8 +88,12 @@ public partial class Enemy : CharacterBody2D, IEntity
         interpolation?.SetTarget(new Vector2(enemy.X, enemy.Y));
         HealthComponent?.SetFromServer(enemy.Hp, maxHp);
         Phase = enemy.Phase;
+        Stagger = enemy.Stagger;
     }
 
+    // The BulletPatternEvent binder MUST keep ReplayExistingRows = false: there is no
+    // last-seen-id tracking, so replaying would re-spawn every bullet pattern in the
+    // table's history each time the scene is entered.
     private void OnBulletPatternRowInserted()
     {
         var bulletPattern = (BulletPatternEvent)bulletPatternEventBinder.LastRow!;

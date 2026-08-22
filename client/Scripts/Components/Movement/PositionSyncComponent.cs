@@ -17,7 +17,9 @@ using SpacetimeDB.Types;
 /// Also owns the player's speed controls: increase_move_speed/decrease_move_speed
 /// (Ctrl+scroll) adjust a persistent scale in SpeedStep increments (clamped
 /// [MinSpeedScale, 1] of the server-resolved BaseSpeed), and self_slow (hold R)
-/// multiplies SelfSlowFactor on top. LocalPlayer reads CurrentSpeed each physics frame.
+/// multiplies SelfSlowFactor on top. An external slow (P4 ability-charge SelfSlow, set
+/// via SetExternalSlow) stacks on top of both — cosmetic only, the server clamps the
+/// reported speed for real. LocalPlayer reads CurrentSpeed each physics frame.
 /// </summary>
 public partial class PositionSyncComponent : Component
 {
@@ -43,8 +45,20 @@ public partial class PositionSyncComponent : Component
     [Export] public float SelfSlowFactor { get; set; } = 0.4f;
 
     /// Current movement speed in world units/sec: the server-resolved base speed scaled
-    /// by the player's persistent speed setting and the hold-to-slow factor.
-    public float CurrentSpeed => BaseSpeed * speedScale * (SlowHeld ? SelfSlowFactor : 1f);
+    /// by the player's persistent speed setting, the hold-to-slow factor, and any
+    /// external slow (P4 charge SelfSlow).
+    public float CurrentSpeed => BaseSpeed * speedScale * (SlowHeld ? SelfSlowFactor : 1f) * (externalSlow ?? 1f);
+
+    /// External speed multiplier (P4 ability-charge SelfSlow), driven by
+    /// AbilityChargeComponent from the server-echoed charge row. Cosmetic only — the
+    /// server clamps reported speed to base_speed × slow_factor while a SelfSlow status
+    /// row exists (report_movement).
+    public void SetExternalSlow(float? factor) => externalSlow = factor;
+
+    /// Public movement-report trigger (P4 grapple tween): sends a report on the next
+    /// physics frame. The tween calls this per frame so remotes track the pull between
+    /// the 1 Hz timed reports.
+    public void RequestMovementReport() => reportNextFrame = true;
 
     private TableBinderComponent positionBinder = null!;
     private float reportTimer;
@@ -52,6 +66,7 @@ public partial class PositionSyncComponent : Component
     private float lastReportedScreenRotation = float.NaN;
     private float lastMovementDirection;
     private float speedScale = 1f;
+    private float? externalSlow;
     private bool reportNextFrame;
 
     /// The entity root this component moves (the IEntity ancestor cast to Node2D).

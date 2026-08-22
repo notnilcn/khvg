@@ -1,0 +1,59 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://Scripts/Items/Chest.cs" id="1_chest"]
+[ext_resource type="Script" path="res://Scripts/Components/Interaction/InteractComponent.cs" id="2_interact"]
+[ext_resource type="Script" path="res://sstdbsdk/TableBinderComponent.cs" id="3_binder"]
+[ext_resource type="AtlasTexture" uid="uid://caofp58qlbtgg" path="res://Textures/Items/Artifacts/Chest.tres" id="4_texture"]
+[ext_resource type="PackedScene" path="res://Scenes/UI/chest_slot.tscn" id="5_slot"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_interact"]
+radius = 48.0
+
+[node name="Chest" type="Node2D"]
+script = ExtResource("1_chest")
+ChestSlotScene = ExtResource("5_slot")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("4_texture")
+
+[node name="InteractComponent" type="Area2D" parent="."]
+script = ExtResource("2_interact")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractComponent"]
+shape = SubResource("CircleShape2D_interact")
+
+[node name="NearbyChestItemsBinder" type="Node" parent="."]
+script = ExtResource("3_binder")
+ReplayExistingRows = true
+TableName = "NearbyChestItems"
+
+[node name="ChestCanvas" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="ChestPanel" type="PanelContainer" parent="ChestCanvas"]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="ChestCanvas/ChestPanel"]
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ChestCanvas/ChestPanel/MarginContainer"]
+
+[node name="Title" type="Label" parent="ChestCanvas/ChestPanel/MarginContainer/VBoxContainer"]
+text = "Chest"
+horizontal_alignment = 1
+
+[node name="ItemsGrid" type="GridContainer" parent="ChestCanvas/ChestPanel/MarginContainer/VBoxContainer"]
+columns = 6
+
+[connection signal="RowInserted" from="NearbyChestItemsBinder" to="." method="OnChestItemRowInserted"]
+[connection signal="RowDeleted" from="NearbyChestItemsBinder" to="." method="OnChestItemRowDeleted"]

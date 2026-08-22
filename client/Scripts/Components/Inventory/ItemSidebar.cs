@@ -296,14 +296,101 @@ public partial class ItemSidebar : Control
                 ? $"Summons a black hole at the cursor for {ability.Duration:0.#}s, dragging in enemy bullets within {radius:0}"
                 : $"Drags enemy bullets within {radius:0} toward the cursor",
             AbilityEffect.DeleteBulletsInRect(var p) => $"Deletes enemy bullets in a {p.Length:0}×{p.Width:0} rectangle in front of you",
+            AbilityEffect.MarkBleed(var p) => (p.AllyRadius > 0 ? $"For you and allies within {p.AllyRadius:0}: " : "")
+                + $"mark the enemy near the cursor for {ability.Duration:0.#}s — {p.Conversion * 100f:0}% of its hits bleed over ~{p.PoolSeconds:0.#}s"
+                + (p.Outgoing ? ", and your hits on it become a bleed on the enemy" : "")
+                + $" (sheds: {FormatPurge(p.Purge)})",
+            AbilityEffect.MarkStore(var p) => (p.AllyRadius > 0 ? $"For you and allies within {p.AllyRadius:0}: " : "")
+                + $"mark the enemy near the cursor for {ability.Duration:0.#}s — your damage to it is stored, then released ({FormatWager(p)})",
+            AbilityEffect.StoreIncoming(var p) => p.Release == SpacetimeDB.Types.ReleaseKind.Smite
+                ? $"Store the damage you take for {ability.Duration:0.#}s, then unleash it within {p.ReleaseRadius:0} — recast to release early at the cursor"
+                : $"Store the damage you take for {ability.Duration:0.#}s; your next shield bash unleashes it",
+            AbilityEffect.Invulnerable(var radius) => radius > 0
+                ? $"You and allies within {radius:0} are invulnerable for {ability.Duration:0.#}s"
+                : $"Invulnerable for {ability.Duration:0.#}s",
+            AbilityEffect.DamageShield(var radius) => radius > 0
+                ? $"You and allies within {radius:0} absorb your next hit within {ability.Duration:0.#}s"
+                : $"Absorbs your next hit within {ability.Duration:0.#}s",
+            AbilityEffect.ReduceDamage(var p) => (p.AllyRadius > 0 ? $"For you and allies within {p.AllyRadius:0}: " : "")
+                + $"{p.Pct * 100f:0}% reduced damage taken for {ability.Duration:0.#}s",
+            AbilityEffect.RedirectToCaster(var radius) => $"Hits on allies within {radius:0} are redirected to you for {ability.Duration:0.#}s",
+            AbilityEffect.RegenAura(var p) => (p.AllyRadius > 0 ? $"You and allies within {p.AllyRadius:0} regenerate" : "Regenerate")
+                + $" {p.PerSecond:0.#} HP/s for {ability.Duration:0.#}s",
+            AbilityEffect.Curse(var p) => $"Curses the enemy near the cursor for {ability.Duration:0.#}s: {FormatEnemyStatus(p.Kind, p.Magnitude)}",
+            AbilityEffect.Bash(var p) => $"Bashes enemies within {p.Range:0} for weapon damage and {p.Stagger:0} stagger; a full stagger bar stuns for {p.StunSeconds:0.#}s"
+                + (p.ArmorBreak ? " and breaks their armor" : ""),
+            AbilityEffect.Slash(var p) => $"Erases enemy bullets dealing {p.MaxBulletDamage} damage or less in a {p.Length:0}×{p.Width:0} slash in front of you",
+            AbilityEffect.Wall(var p) => $"Raises a {p.Length:0}×{p.Width:0} wall in front of you for {ability.Duration:0.#}s, erasing enemy bullets that cross it",
+            AbilityEffect.CastZone(var p) => $"Draws a {FormatZoneKind(p.Kind, p.Magnitude)} at the cursor (radius {p.Radius:0}) for {ability.Duration:0.#}s",
+            AbilityEffect.Teleport(var p) => p.ChargeScaled
+                ? $"Hold to charge (slowed, can't fire), release to teleport toward the cursor — up to {p.Range:0} at full charge"
+                : $"Teleport up to {p.Range:0} toward the cursor",
+            AbilityEffect.Grapple(var range) => $"Pull yourself up to {range:0} toward the cursor",
+            AbilityEffect.Spell(var p) => FormatSpell(p),
             _ => "",
         };
         string charges = ability.MaxCharges > 0 ? $" | {ability.MaxCharges} charges" : "";
         return $"{effect} | {ability.CooldownSeconds:0.#}s CD{charges}";
     }
 
-    private static string FormatBuff(ConsumableBuffEffect buff) => buff switch
+    private static string FormatSpell(SpellParams p)
     {
+        string shape = p.Shape switch
+        {
+            SpellShape.Circle(var c) => $"a circle (radius {c.Radius:0}) at the cursor",
+            SpellShape.Line(var l) => $"a {l.Length:0}×{l.Width:0} line in front of you",
+            SpellShape.Cone(var c) => $"a cone ({c.Length:0} long, {c.Spread:0.##} rad spread) in front of you",
+            _ => "an area",
+        };
+        string hits = p.Hits > 1 ? $" in {p.Hits} hits of {p.Damage / p.Hits:0.#}" : "";
+        string charge = p.ChargeScaled ? " — hold to charge (slowed, can't fire)" : "";
+        return $"Deals {p.Damage:0} damage{hits} in {shape}, scaling with {p.Scaling}{charge}";
+    }
+
+    private static string FormatWager(SpacetimeDB.Types.MarkStoreParams p) => p.Wager switch
+    {
+        SpacetimeDB.Types.WagerKind.NoHits => $"2× at 0 hits taken, 0× at {p.MaxHits + 1}+",
+        SpacetimeDB.Types.WagerKind.Radius => $"2× if you never leave {p.R1:0}, 0× if you ever leave {p.R2:0}",
+        SpacetimeDB.Types.WagerKind.Damage => $"2× at {p.X:0}+ stored, 0× below {p.Z:0}",
+        _ => "",
+    };
+
+    private static string FormatEnemyStatus(SpacetimeDB.Types.EnemyStatusKind kind, float magnitude) => kind switch
+    {
+        SpacetimeDB.Types.EnemyStatusKind.DoT => $"{magnitude:0.#} damage/s",
+        SpacetimeDB.Types.EnemyStatusKind.Slow => $"slowed {magnitude * 100f:0}%",
+        SpacetimeDB.Types.EnemyStatusKind.Vulnerability => $"takes +{magnitude * 100f:0}% damage",
+        SpacetimeDB.Types.EnemyStatusKind.ArmorBreak => "defense ignored",
+        SpacetimeDB.Types.EnemyStatusKind.Stunned => "stunned",
+        _ => "",
+    };
+
+    // Ground zones (P3) — the witch doctor's circles and the wizard's spire.
+    private static string FormatZoneKind(SpacetimeDB.Types.ZoneKind kind, float magnitude) => kind switch
+    {
+        SpacetimeDB.Types.ZoneKind.DebuffImmunity => "warding circle: allies inside are debuff-immune",
+        SpacetimeDB.Types.ZoneKind.DamageReduction => $"aegis circle: allies inside take {magnitude * 100f:0}% reduced damage",
+        SpacetimeDB.Types.ZoneKind.HpFloor => "sanctuary circle: allies inside cannot drop below 1 HP",
+        SpacetimeDB.Types.ZoneKind.HealOverTime => $"mending circle: allies inside regenerate {magnitude:0.#} HP/s",
+        SpacetimeDB.Types.ZoneKind.BurstHeal => $"surging circle: detonates at expiry, healing allies inside for {magnitude:0.#} HP",
+        SpacetimeDB.Types.ZoneKind.DamageBuff => $"empowering circle: allies inside deal {(magnitude - 1f) * 100f:0}% more damage",
+        SpacetimeDB.Types.ZoneKind.EnemyDot => $"withering circle: enemies inside bleed for {magnitude:0.#} damage/s",
+        SpacetimeDB.Types.ZoneKind.EnemyBurst => $"ruin circle: detonates at expiry for {magnitude:0.#} damage to enemies inside",
+        SpacetimeDB.Types.ZoneKind.EnemySlow => $"hindering circle: enemies inside are slowed {magnitude * 100f:0}%",
+        SpacetimeDB.Types.ZoneKind.EnemyVulnerability => $"exposing circle: enemies inside take +{magnitude * 100f:0}% damage",
+        SpacetimeDB.Types.ZoneKind.DamageShare => "communion circle: hits on anyone inside are split across everyone inside",
+        _ => "circle",
+    };
+
+    private static string FormatPurge(SpacetimeDB.Types.PurgeKind purge) => purge switch    {
+        SpacetimeDB.Types.PurgeKind.NoDamageTaken => "2s without taking a hit",
+        SpacetimeDB.Types.PurgeKind.StayClose => "staying near the mark for 5s",
+        SpacetimeDB.Types.PurgeKind.DealDamage => "damaging the mark",
+        SpacetimeDB.Types.PurgeKind.OnKill => "the mark dies",
+        _ => "",
+    };
+
+    private static string FormatBuff(ConsumableBuffEffect buff) => buff switch    {
         ConsumableBuffEffect.Strength(var value) => $"+{value:0.#} Strength",
         ConsumableBuffEffect.Wisdom(var value) => $"+{value:0.#} Wisdom",
         ConsumableBuffEffect.Dexterity(var value) => $"+{value:0.#} Dexterity",

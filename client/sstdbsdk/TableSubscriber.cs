@@ -18,107 +18,126 @@ using System.Linq;
 /// </summary>
 public partial class TableSubscriber : Component
 {
-    /// Base wave: static catalog tables every screen needs.
-    public static readonly string[] BaseTables = { "AllTextures", "AllItems", "AllEnchantments" };
+	/// Base wave: static catalog tables every screen needs.
+	public static readonly string[] BaseTables = { "AllTextures", "AllItems", "AllEnchantments" };
 
-    /// Lobby wave: profile selection before joining the world.
-    public static readonly string[] LobbyTables = { "LocalLobbyPlayer", "LocalPlayerProfiles" };
+	/// Lobby wave: profile selection before joining the world.
+	public static readonly string[] LobbyTables = { "LocalLobbyPlayer", "LocalPlayerProfiles" };
 
-    /// Game wave: everything the live world needs.
-    public static readonly string[] GameTables =
-    {
-        "LocalPlayer", "LocalPlayerData", "LocalPlayerStats", "LocalPlayerInventory",
-        "LocalPlayerPosition", "LocalPlayerActiveProfile", "LocalPlayerProfiles",
-        "LocalPlayerStatAllocation",
-        "NearbyRemotePlayers", "NearbyRemotePlayersProfiles", "NearbyRemotePlayerRotations", "NearbyEnemies",
-        "NearbyLootDrops", "NearbyTerrainTiles", "NearbyHexDecor", "EnemyTemplates",
-        "BulletPatternEvent", "BulletControlEvent", "MapConfig",
-    };
+	/// Game wave: everything the live world needs.
+	public static readonly string[] GameTables =
+	{
+		"LocalPlayer", "LocalPlayerData", "LocalPlayerStats", "LocalPlayerInventory",
+		"LocalPlayerPosition", "LocalPlayerActiveProfile", "LocalPlayerProfiles",
+		"LocalPlayerStatAllocation",
+		"NearbyRemotePlayers", "NearbyRemotePlayersProfiles", "NearbyRemotePlayerRotations", "NearbyEnemies",
+		"NearbyLootDrops", "NearbyTerrainTiles", "NearbyHexDecor", "EnemyTemplates",
+		// AOI chest views — NearbyChests drives chest spawning, NearbyChestItems the open
+		// chest panel's contents (both persistent view tables: binder replay OK).
+		"NearbyChests", "NearbyChestItems",
+		"BulletPatternEvent", "BulletControlEvent", "MapConfig",
+		// Raw/unfiltered spell-visual event table (P5) — same known scaling debt as the
+		// other event tables; drives SpellVisualComponent. Event table: replay stays OFF.
+		"AbilityVisualEvent",
+		// Raw public status table (no view) — acceptable at co-op scale; drives
+		// StatusBarComponent (filtered to the local profile there).
+		"ActiveStatusEffect",
+		// Raw public enemy-debuff table (P2 rows, subscribed at P6) — same co-op-scale
+		// raw subscription as ActiveStatusEffect; drives EnemyDebuffIndicatorComponent
+		// (filtered per enemy instance there). Persistent table: binder replay OK.
+		"ActiveEnemyStatusEffect",
+		// Raw public ground-zone table (P3) — same co-op-scale raw subscription as
+		// ActiveStatusEffect; drives ZoneRendererComponent.
+		"GroundZone",
+		// Raw public charge table (P4, no view) — one row per charging player, filtered
+		// to the local profile by AbilityChargeComponent. Persistent table, replay OK.
+		"AbilityCharge",
+	};
 
-    /// Every table name across all waves — TableBinderComponent's dropdown source.
-    public static IEnumerable<string> AllSubscribedTables =>
-        BaseTables.Concat(LobbyTables).Concat(GameTables).Distinct();
+	/// Every table name across all waves — TableBinderComponent's dropdown source.
+	public static IEnumerable<string> AllSubscribedTables =>
+		BaseTables.Concat(LobbyTables).Concat(GameTables).Distinct();
 
-    /// MapConfig torus lap vectors, mirrored from the subscribed row (zero before it arrives).
-    public Vector2 LapQ { get; private set; } = Vector2.Zero;
-    public Vector2 LapR { get; private set; } = Vector2.Zero;
+	/// MapConfig torus lap vectors, mirrored from the subscribed row (zero before it arrives).
+	public Vector2 LapQ { get; private set; } = Vector2.Zero;
+	public Vector2 LapR { get; private set; } = Vector2.Zero;
 
-    private SubscriptionHandle? lobbySub;
-    private SubscriptionHandle? gameSub;
+	private SubscriptionHandle? lobbySub;
+	private SubscriptionHandle? gameSub;
 
-    protected override void OnRegistered()
-    {
-        var connector = DatabaseConnector.Instance;
-        if (connector == null) return;
-        // The autoload can finish connecting before Main loads — handle both orders.
-        if (connector.Conn?.IsActive == true) OnConnected();
-        else connector.Connected += OnConnected;
-    }
+	protected override void OnRegistered()
+	{
+		var connector = DatabaseConnector.Instance;
+		if (connector == null) return;
+		// The autoload can finish connecting before Main loads — handle both orders.
+		if (connector.Conn?.IsActive == true) OnConnected();
+		else connector.Connected += OnConnected;
+	}
 
-    private void OnConnected()
-    {
-        var conn = DatabaseConnector.Instance?.Conn;
-        if (conn == null) return;
+	private void OnConnected()
+	{
+		var conn = DatabaseConnector.Instance?.Conn;
+		if (conn == null) return;
 
-        conn.Db.MapConfig.OnInsert += (_, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
-        conn.Db.MapConfig.OnUpdate += (_, _, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
+		conn.Db.MapConfig.OnInsert += (_, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
+		conn.Db.MapConfig.OnUpdate += (_, _, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
 
-        conn.SubscriptionBuilder().Subscribe(TablesSql(BaseTables));
+		conn.SubscriptionBuilder().Subscribe(TablesSql(BaseTables));
 
-        SubscribeLobby();
-    }
+		SubscribeLobby();
+	}
 
-    public void SubscribeLobby()
-    {
-        lobbySub = DatabaseConnector.Instance?.Conn?.SubscriptionBuilder()
-            .OnApplied(OnLobbySubApplied)
-            .Subscribe(TablesSql(LobbyTables));
-    }
+	public void SubscribeLobby()
+	{
+		lobbySub = DatabaseConnector.Instance?.Conn?.SubscriptionBuilder()
+			.OnApplied(OnLobbySubApplied)
+			.Subscribe(TablesSql(LobbyTables));
+	}
 
-    public void SubscribeGame()
-    {
-        gameSub = DatabaseConnector.Instance?.Conn?.SubscriptionBuilder()
-            .OnApplied(OnGameSubApplied)
-            .OnError(OnGameSubError)
-            .Subscribe(TablesSql(GameTables));
-    }
+	public void SubscribeGame()
+	{
+		gameSub = DatabaseConnector.Instance?.Conn?.SubscriptionBuilder()
+			.OnApplied(OnGameSubApplied)
+			.OnError(OnGameSubError)
+			.Subscribe(TablesSql(GameTables));
+	}
 
-    public void UnsubscribeLobby()
-    {
-        lobbySub?.Unsubscribe();
-        lobbySub = null;
-    }
+	public void UnsubscribeLobby()
+	{
+		lobbySub?.Unsubscribe();
+		lobbySub = null;
+	}
 
-    public void UnsubscribeGame()
-    {
-        gameSub?.Unsubscribe();
-        gameSub = null;
-    }
+	public void UnsubscribeGame()
+	{
+		gameSub?.Unsubscribe();
+		gameSub = null;
+	}
 
-    private void OnGameSubError(ErrorContext ctx, Exception e)
-    {
-        GD.PrintErr($"[TableSubscriber] Game subscription error: {e.Message}");
-    }
+	private void OnGameSubError(ErrorContext ctx, Exception e)
+	{
+		GD.PrintErr($"[TableSubscriber] Game subscription error: {e.Message}");
+	}
 
-    private void OnLobbySubApplied(SubscriptionEventContext ctx)
-    {
-        GD.Print("[TableSubscriber] Lobby subscription ready");
-    }
+	private void OnLobbySubApplied(SubscriptionEventContext ctx)
+	{
+		GD.Print("[TableSubscriber] Lobby subscription ready");
+	}
 
-    private void OnGameSubApplied(SubscriptionEventContext ctx)
-    {
-        GD.Print("[TableSubscriber] Game subscription ready");
-    }
+	private void OnGameSubApplied(SubscriptionEventContext ctx)
+	{
+		GD.Print("[TableSubscriber] Game subscription ready");
+	}
 
-    private static string[] TablesSql(string[] tables) => tables.Select(TableSql).ToArray();
+	private static string[] TablesSql(string[] tables) => tables.Select(TableSql).ToArray();
 
-    /// "SELECT * FROM ..." for a PascalCase RemoteTables field name, via the generated From API
-    /// (so the SQL stays correct if a table is renamed server-side and bindings regenerate).
-    private static string TableSql(string tableName)
-    {
-        var method = typeof(From).GetMethod(tableName)
-            ?? throw new InvalidOperationException($"[TableSubscriber] Unknown table '{tableName}' — not in the generated module bindings");
-        var query = method.Invoke(new From(), null)!;
-        return (string)query.GetType().GetMethod("ToSql")!.Invoke(query, null)!;
-    }
+	/// "SELECT * FROM ..." for a PascalCase RemoteTables field name, via the generated From API
+	/// (so the SQL stays correct if a table is renamed server-side and bindings regenerate).
+	private static string TableSql(string tableName)
+	{
+		var method = typeof(From).GetMethod(tableName)
+			?? throw new InvalidOperationException($"[TableSubscriber] Unknown table '{tableName}' — not in the generated module bindings");
+		var query = method.Invoke(new From(), null)!;
+		return (string)query.GetType().GetMethod("ToSql")!.Invoke(query, null)!;
+	}
 }

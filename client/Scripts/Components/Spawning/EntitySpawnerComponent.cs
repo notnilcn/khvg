@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Spawns and despawns the server-row entities — LocalPlayer, RemotePlayers, Enemies,
-/// Drops — from child TableBinderComponent row signals (declared inline in game.tscn,
+/// Drops, Chests — from child TableBinderComponent row signals (declared inline in game.tscn,
 /// signals wired in the editor; ReplayExistingRows covers rows
 /// already in the client cache), and tracks them in lookup dictionaries. Instantiation stays
 /// in code because the count is data-driven by server rows (logic moved out of GameManager.cs).
@@ -17,17 +17,20 @@ public partial class EntitySpawnerComponent : Component
     [Export] public PackedScene NonLocalPlayerScene { get; set; } = null!;
     [Export] public PackedScene EnemyScene { get; set; } = null!;
     [Export] public PackedScene DropScene { get; set; } = null!;
+    [Export] public PackedScene ChestScene { get; set; } = null!;
 
     private LocalPlayer? localPlayer;
     private readonly Dictionary<string, RemotePlayer> remotePlayers = new();
     private readonly Dictionary<ulong, Enemy> enemies = new();
     private readonly Dictionary<ulong, Drop> drops = new();
+    private readonly Dictionary<ulong, Chest> chests = new();
 
     /// Child binders (declared inline in game.tscn) feeding the spawn tables.
     private TableBinderComponent localPlayerBinder = null!;
     private TableBinderComponent nearbyRemotePlayersBinder = null!;
     private TableBinderComponent nearbyEnemiesBinder = null!;
     private TableBinderComponent nearbyLootDropsBinder = null!;
+    private TableBinderComponent nearbyChestsBinder = null!;
 
     public int EnemyCount => enemies.Count;
 
@@ -40,6 +43,7 @@ public partial class EntitySpawnerComponent : Component
         nearbyRemotePlayersBinder = GetNode<TableBinderComponent>("NearbyRemotePlayersBinder");
         nearbyEnemiesBinder = GetNode<TableBinderComponent>("NearbyEnemiesBinder");
         nearbyLootDropsBinder = GetNode<TableBinderComponent>("NearbyLootDropsBinder");
+        nearbyChestsBinder = GetNode<TableBinderComponent>("NearbyChestsBinder");
     }
 
     // --- TableBinderComponent signal handlers (wired in game.tscn) ---
@@ -127,6 +131,26 @@ public partial class EntitySpawnerComponent : Component
         var lootDrop = (LootDrop)nearbyLootDropsBinder.LastDeletedRow!;
         if (!drops.TryGetValue(lootDrop.DropId, out var node)) return;
         drops.Remove(lootDrop.DropId);
+        if (IsInstanceValid(node))
+            node.QueueFree();
+    }
+
+    private void OnChestInsert()
+    {
+        var chest = (SpacetimeDB.Types.Chest)nearbyChestsBinder.LastRow!;
+        if (chests.ContainsKey(chest.ChestId)) return;
+        var node = ChestScene.Instantiate<Chest>();
+        node.ChestId = chest.ChestId;
+        node.GlobalPosition = new Vector2(chest.X, chest.Y);
+        GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
+        chests[chest.ChestId] = node;
+    }
+
+    private void OnChestDelete()
+    {
+        var chest = (SpacetimeDB.Types.Chest)nearbyChestsBinder.LastDeletedRow!;
+        if (!chests.TryGetValue(chest.ChestId, out var node)) return;
+        chests.Remove(chest.ChestId);
         if (IsInstanceValid(node))
             node.QueueFree();
     }

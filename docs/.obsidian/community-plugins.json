@@ -8,10 +8,10 @@
   "track-changes",
   "flexplorer",
   "advanced-canvas",
-  "better-embedded-canvas",
   "folder-notes",
   "optimize-canvas-connections",
   "remember-cursor-position",
   "sync-embeds",
-  "vscode-editor"
+  "vscode-editor",
+  "canvas-layer-order"
 ]

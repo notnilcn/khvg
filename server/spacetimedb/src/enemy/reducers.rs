@@ -44,6 +44,15 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         }
         behavior.was_simulating = true;
 
+        // Enemy-status consult: a Stunned row on a Pause template freezes the enemy — no
+        // attacks and no movement this tick (Slowed/Enraged templates keep simulating with
+        // scaled movement/pacing instead, via apply_movement/effective_interval).
+        if template.stun_behavior == StunBehavior::Pause
+            && crate::status::methods::stunned_magnitude(ctx, enemy.enemy_id).is_some()
+        {
+            continue;
+        }
+
         let phase_idx = enemy.phase as usize;
         let phase_def = match template.phases.get(phase_idx) {
             Some(p) => p,
@@ -66,11 +75,14 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         // it's close — but it only opens fire once a player is within attack_sim_factor, so it
         // never shoots from off-screen.
         if has_player_in_simulation_range(ctx, enemy.x, enemy.y, template.attack_sim_factor * CAMERA_VIEW_RADIUS) {
-            for ev in tick_phase(ctx, &mut phase, phase_def) {
+            for ev in tick_phase(ctx, enemy.enemy_id, &template.stun_behavior, &mut phase, phase_def) {
                 let target = resolve_step_target(ev.target, behavior.aggro_target);
                 ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
                     event_id: 0, enemy_id: enemy.enemy_id,
-                    source_step: ev.source_step,
+                    source_step: ev.source_step.clone(),
+                    // Resolved the way report_hit resolves it (step_damage), so clients can
+                    // compare bullet damage without subscribing the step-def tables.
+                    damage: step_damage(ctx, &ev.source_step).unwrap_or(0),
                     origin_x: enemy.x, origin_y: enemy.y,
                     origin_offset_x: ev.offset_x, origin_offset_y: ev.offset_y,
                     base_angle_offset: ev.base_angle_offset,
@@ -83,7 +95,7 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             }
         }
 
-        let (new_x, new_y, new_dir_x, new_dir_y) = apply_movement(ctx, &enemy, &behavior, &phase);
+        let (new_x, new_y, new_dir_x, new_dir_y) = apply_movement(ctx, &enemy, &behavior, &phase, &template.stun_behavior);
         let (new_x, new_y) = wrap_world_pos(new_x, new_y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
         let (cq, cr) = world_to_chunk(new_x, new_y, chunk_hex_radius, hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);

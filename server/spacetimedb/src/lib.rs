@@ -3,5 +3,7 @@ mod world;
 mod player;
 mod enemy;
 mod item;
+mod chest;
 mod combat;
+mod status;
 mod anticheat;

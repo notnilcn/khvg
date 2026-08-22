@@ -1,4 +1,5 @@
-use spacetimedb::{ReducerContext, Identity, Table};
+use spacetimedb::{ReducerContext, Identity, Table, ScheduleAt, TimeDuration};
+use std::time::Duration;
 use crate::world::hex::{chunk_center_hex, hex_area, hex_shift, hex_to_world, inv_hexmod, spiral_chunk_index, world_to_chunk};
 use crate::world::wrap::wrap_world_pos;
 use crate::world::terrain::{internal_generate_world_manual, internal_generate_world_proc};
@@ -51,8 +52,20 @@ pub fn change_stats(ctx: &ReducerContext, target_username: String, profile_name:
         .ok_or_else(|| format!("Player '{}' not found.", target_username))?;
     let profile = find_profile_by_name(ctx, target_id, &profile_name)
         .ok_or_else(|| format!("Profile '{}' not found.", profile_name))?;
-    let stats = ctx.db.player_stats().profile_id().find(&profile.profile_id).ok_or("Stats not found.")?;
-    ctx.db.player_stats().profile_id().update(PlayerStats { strength, wisdom, dexterity, damage_dealer, supporter, artisan, ..stats });
+    // Write the allocation input, not the PlayerStats output row — recompute_stats
+    // rebuilds PlayerStats from allocation + gear on every inventory reducer, so values
+    // written there are wiped on the next equip. Clamp negatives: allocation is unsigned.
+    let alloc = ctx.db.player_stat_allocation().profile_id().find(&profile.profile_id).ok_or("Stat allocation not found.")?;
+    ctx.db.player_stat_allocation().profile_id().update(PlayerStatAllocation {
+        strength: strength.max(0) as u32,
+        wisdom: wisdom.max(0) as u32,
+        dexterity: dexterity.max(0) as u32,
+        damage_dealer: damage_dealer.max(0) as u32,
+        supporter: supporter.max(0) as u32,
+        artisan: artisan.max(0) as u32,
+        ..alloc
+    });
+    recompute_stats(ctx, profile.profile_id);
     Ok(())
 }
 
@@ -97,6 +110,46 @@ pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> 
     let enemy = ctx.db.enemy().enemy_id().find(&enemy_id)
         .ok_or_else(|| format!("Enemy {} not found.", enemy_id))?;
     despawn_enemy_archetype(ctx, &enemy);
+    Ok(())
+}
+
+/// Toggles biome-region enemy spawning on/off by cancelling or re-arming the
+/// EnemySpawnSchedule job row (the 2s tick that drives spawn_from_biome_regions).
+/// Spawning starts disarmed — init does not insert the job row.
+/// Admin-spawned enemies and the behavior tick are unaffected.
+#[spacetimedb::reducer]
+pub fn toggle_enemy_spawning(ctx: &ReducerContext, enabled: bool) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if enabled {
+        if ctx.db.enemy_spawn_schedule().iter().next().is_none() {
+            ctx.db.enemy_spawn_schedule().insert(EnemySpawnSchedule {
+                scheduled_id: 0,
+                scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_secs(2))),
+            });
+            log::info!("toggle_enemy_spawning: re-armed by {:?}.", ctx.sender());
+        }
+    } else {
+        let ids: Vec<u64> = ctx.db.enemy_spawn_schedule().iter().map(|j| j.scheduled_id).collect();
+        for id in ids {
+            ctx.db.enemy_spawn_schedule().scheduled_id().delete(&id);
+        }
+        log::info!("toggle_enemy_spawning: disabled by {:?}.", ctx.sender());
+    }
+    Ok(())
+}
+
+/// Wipes every spawned enemy (biome-spawned and admin-spawned alike) through the
+/// archetype teardown + status purge — no XP, unlike the combat kill path.
+#[spacetimedb::reducer]
+pub fn despawn_all_enemies(ctx: &ReducerContext) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    let enemies: Vec<Enemy> = ctx.db.enemy().iter().collect();
+    let count = enemies.len();
+    for enemy in enemies {
+        despawn_enemy_archetype(ctx, &enemy);
+        crate::status::methods::on_enemy_killed(ctx, enemy.enemy_id);
+    }
+    log::info!("despawn_all_enemies: {:?} wiped {} enemies.", ctx.sender(), count);
     Ok(())
 }
 

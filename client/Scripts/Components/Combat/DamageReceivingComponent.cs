@@ -19,5 +19,5 @@ public partial class DamageReceivingComponent : AreaComponent
     /// Enemy-bullet path: BlastBullets2D reports overlaps through BulletManager rather than
     /// through a HitZone, so bullets reach the same reducer via this method.
     public void ProcessBulletHit(BulletData data) =>
-        GameManager.Conn?.Reducers.ReportHit(data.SourceStep);
+        GameManager.Conn?.Reducers.ReportHit(data.SourceStep, data.EnemyId);
 }

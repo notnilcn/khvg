@@ -51,6 +51,15 @@ pub const SKILL_POINTS_PER_LEVEL: u32 = 2;
 // Max distance from the player an ability target point may be; activate_ability clamps
 // the client-supplied cursor position to this range.
 pub const MAX_ABILITY_TARGET_RANGE: f32 = 600.0;
+// Visual linger (seconds) of a Spell cast's AbilityVisualEvent flash (P5) — damage is
+// instant; this is only how long clients keep the Polygon2D on screen. Mirrored client-side
+// as SpellVisualComponent.DefaultDuration for the caster's optimistic render.
+pub const SPELL_VISUAL_SECONDS: f32 = 0.5;
+// Max (wrap-aware) distance between a player and the enemy whose bullet they report being
+// hit by. Generous on purpose — bullets outlive their firing enemy's attack range and the
+// player may have moved — since report_hit is self-reported anyway; this only catches
+// nonsense attributions, and the no-hit wager corroborates against player_hit_flag.
+pub const HIT_VALIDATION_RADIUS: f32 = CAMERA_VIEW_RADIUS * 4.0;
 // Move speed (world units/sec) with no gear — the base PlayerData.base_speed resolves
 // over. Items raise it via StatKind::BaseSpeed modifiers; it is not allocatable.
 pub const BASE_SPEED: f32 = 100.0;
@@ -84,3 +93,43 @@ pub const MAX_CATCHUP_SHOTS: usize = 8;
 pub const LOOT_DROP_EXPIRY: u64 = 300;
 // Seconds between consumable effect ticks (DoT/regen).
 pub const CONSUMABLE_EFFECT_TICK_SECONDS: f32 = 1.0;
+
+// ===== Status Effects (status/ module) =====
+
+// Cursor-pick radius for mark abilities: the enemy nearest the (range-clamped) cursor
+// point within this radius is marked.
+pub const MARK_PICK_RADIUS: f32 = 100.0;
+// Bleed purge (NoDamageTaken): seconds without taking any hit before the mark sheds.
+pub const BLEED_NO_DAMAGE_SECONDS: f32 = 2.0;
+// Bleed purge (StayClose): accumulated seconds within BLEED_STAY_CLOSE_RADIUS of the
+// marked enemy before the mark sheds.
+pub const BLEED_STAY_CLOSE_SECONDS: f32 = 5.0;
+pub const BLEED_STAY_CLOSE_RADIUS: f32 = 200.0;
+// Bleed purge (DealDamage): total damage dealt to the marked enemy before the mark sheds.
+pub const BLEED_DEAL_DAMAGE_THRESHOLD: f32 = 1.0;
+// NoHits wager corroboration: this many independent witness flags (player_hit_flag) for the
+// victim during the window clamp a "0 hits taken" claim to a 1x payout. Solo play has no
+// witnesses — accepted and documented in the trust model.
+pub const NO_HIT_WITNESS_THRESHOLD: u32 = 2;
+// StoreIncomingBash: after the store window expires the pool freezes and the row re-arms
+// for this many seconds, waiting for the next shield bash to consume it.
+pub const BASH_HOLD_SECONDS: f32 = 30.0;
+// Stagger bar (Enemy.stagger, 0–100) bleed-off per second on the 1 Hz status tick.
+pub const STAGGER_DECAY_PER_SECOND: f32 = 20.0;
+// Ground zones (P3): the lifetime stamped on status rows a zone re-applies to its occupants
+// every 1 Hz tick — leaving the zone sheds the effect within roughly this many seconds.
+pub const ZONE_STATUS_REFRESH_SECONDS: f32 = 1.5;
+// Magnitude stamped on a bash's Stunned enemy-status row. Irrelevant for Pause templates
+// (all current seeds); it is the slow/speed-up factor for Slowed/Enraged ones.
+pub const BASH_STUN_MAGNITUDE: f32 = 0.5;
+// Ability charge (P4): max seconds a charge can be held — the 1 Hz status tick
+// auto-releases at this age so a dropped client can't hold the SelfSlow forever.
+pub const MAX_CHARGE_SECONDS: f32 = 3.0;
+// Move-speed multiplier while a charge is held: stamped as the SelfSlow status's
+// slow_factor and enforced by report_movement's speed clamp. Mirrored client-side
+// (AbilityChargeComponent) for the local feel.
+pub const CHARGE_SELF_SLOW_FACTOR: f32 = 0.5;
+// Charge-scaled range multiplier floor: range scales as
+// (CHARGE_MIN_RANGE_FRACTION + (1 − it) × charge_fraction) — a 0-charge release still
+// goes 25%. The client mirrors this formula (AbilityChargeComponent.ChargeRangeMultiplier).
+pub const CHARGE_MIN_RANGE_FRACTION: f32 = 0.25;
