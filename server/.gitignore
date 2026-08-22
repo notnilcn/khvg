@@ -1,0 +1,14 @@
+# Rust / SpacetimeDB server
+spacetimedb/target/
+
+
+# SpacetimeDB local config
+spacetime.local.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+*.log
+
+*.tmp
