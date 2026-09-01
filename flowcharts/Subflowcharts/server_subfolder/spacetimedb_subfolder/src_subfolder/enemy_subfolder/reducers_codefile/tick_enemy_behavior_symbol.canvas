@@ -16,6 +16,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyBehaviorSchedule",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
@@ -30,18 +31,24 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-has_player_in_simulation_range",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyBehavior",
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-apply_movement",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-effective_interval",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-StunBehavior",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-recompute_aggro",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-find_player_pos_by_id",
+				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrapped_distance_sq",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile/wrap_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-begin_phase_cycle",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-tick_phase",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-resolve_step_target",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-BulletPatternEvent",
-				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-apply_movement",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-step_damage",
 				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrap_world_pos",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile/wrap_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_chunk",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-spiral_chunk_index",
-				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-read",
@@ -62,8 +69,7 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyPhase-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-BulletPatternEvent-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyPhase-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy-_colon_-write",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy-_colon_-write"
 			]
 		}
 	}

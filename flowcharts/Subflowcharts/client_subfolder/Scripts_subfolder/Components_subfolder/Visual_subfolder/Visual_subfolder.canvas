@@ -1,21 +1,11 @@
 {
 	"nodes": [
 		{
-			"id": "b67f5397b8e2e42e",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/DropVisualComponent_codefile/DropVisualComponent_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "e04e321f5be0922e",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/LocalPlayerProfileComponent_codefile/LocalPlayerProfileComponent_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -24,6 +14,16 @@
 			"id": "19795f21389253be",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/RemoteVisualComponent_codefile/RemoteVisualComponent_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "70449761a8023166",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/SpellVisualComponent_codefile.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,

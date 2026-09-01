@@ -15,6 +15,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-ability_behavior",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
@@ -30,8 +31,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Item",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerInventorySlot",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas"
 			]
 		}
 	}

@@ -41,11 +41,31 @@
 			"height": 400
 		},
 		{
+			"id": "ed9e4f5c3eea5460",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/SlotComponent_codefile/_sidebar_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "b99939caf0b01784",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/SlotComponent_codefile/inBackpack_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7b69d87048186aa0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/SlotComponent_codefile/IsChestDrag_symbol.canvas",
+			"color": "5",
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/SlotComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/SlotComponent_codefile/SlotComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -77,13 +97,16 @@
 			"tags": [
 				"includeInAggregateFlowchart",
 				"codefile",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-take_from_chest-_colon_-rpc",
 				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-swap_slots-_colon_-rpc",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-drop_item-_colon_-rpc"
 			]
 		}

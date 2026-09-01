@@ -15,8 +15,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"symbol",
-				"includeInAggregateFlowchart"
+				"includeInAggregateFlowchart",
+				"symbol"
 			]
 		}
 	}

@@ -1,0 +1,30 @@
+{
+	"nodes": [
+		{
+			"id": "e1a5098644f8b99c",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/InventoryPanel.cs",
+			"subpath": "#_Input",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-use_item-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-rpc"
+			]
+		}
+	}
+}

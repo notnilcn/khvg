@@ -8,6 +8,10 @@ pub const OVERLAY_NOISE_SEED_OFFSET: u64 = 0x9E3779B97F4A7C15;
 // Same decorrelation purpose as OVERLAY_NOISE_SEED_OFFSET, for decor density's own noise field.
 pub const DECOR_NOISE_SEED_OFFSET: u64 = 0xC2B2AE3D27D4EB4F;
 
+// Same decorrelation purpose again, for the elevation field stamped onto BuildingTile rows
+// during world generation.
+pub const ELEVATION_NOISE_SEED_OFFSET: u64 = 0xD6E8FEB86659FD93;
+
 // Hash a lattice point to [0,1) — same hash family as the PRNG above, but keyed by integer grid
 // coordinates instead of a draw counter, so the same (seed, x, y) always reproduces the same value.
 fn noise_lattice_hash(ix: i32, iy: i32, seed: u64) -> f32 {

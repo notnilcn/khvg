@@ -11,15 +11,34 @@ public sealed class EntityRegistry
 {
     private readonly List<IComponent> components = new();
 
-    public void Register(IComponent component) => components.Add(component);
+    // Memoized Get() results by query type, cleared whenever the list mutates — repeated
+    // lookups (e.g. the GameManager facade's Get<T>()) stay O(1) while the subclass-friendly
+    // first-match semantics below remain exact.
+    private readonly Dictionary<Type, IComponent?> getCache = new();
 
-    public void Unregister(IComponent component) => components.Remove(component);
+    public void Register(IComponent component)
+    {
+        components.Add(component);
+        getCache.Clear();
+    }
+
+    public void Unregister(IComponent component)
+    {
+        components.Remove(component);
+        getCache.Clear();
+    }
 
     public IComponent? Get(Type type)
     {
+        if (getCache.TryGetValue(type, out var cached))
+            return cached;
         foreach (var component in components)
             if (type.IsInstanceOfType(component))
+            {
+                getCache[type] = component;
                 return component;
+            }
+        getCache[type] = null;
         return null;
     }
 }

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "8da2897ecd8765a0",
+			"type": "file",
+			"file": "client/Scripts/World/ServerConstants.cs",
+			"subpath": "#ChargeRangeMultiplier",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

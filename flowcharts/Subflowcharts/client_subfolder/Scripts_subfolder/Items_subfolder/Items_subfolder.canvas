@@ -1,11 +1,21 @@
 {
 	"nodes": [
 		{
+			"id": "2ee5d7abd7b5ee62",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Chest_codefile/Chest_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "9bd759b73af688be",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/Drop_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -16,7 +26,14 @@
 		"frontmatter": {
 			"tags": [
 				"includeInAggregateFlowchart",
-				"subfolder"
+				"subfolder",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-nearby_chest_items-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read"
 			]
 		}
 	}

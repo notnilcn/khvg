@@ -1,0 +1,37 @@
+{
+	"nodes": [
+		{
+			"id": "ec9e239434d9ac68",
+			"type": "file",
+			"file": "server/spacetimedb/src/chest/mod.rs",
+			"subpath": "#nearby_chest_items",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol",
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_indices",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-Chest-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read"
+			]
+		}
+	}
+}

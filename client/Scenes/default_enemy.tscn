@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://bf6l41xsuwqcr" path="res://Scenes/Components/Combat/damage_receiving_component.tscn" id="5_hurtbox"]
 [ext_resource type="PackedScene" uid="uid://bylri1y7swjqa" path="res://Scenes/Components/Movement/interpolation_component.tscn" id="6_interp"]
 [ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="7_binder"]
-[ext_resource type="PackedScene" uid="uid://coj1g8ajq2fnh" path="res://Assets/3D/skeletons/Skeleton_Warrior.fbx" id="8_skeleton"]
 [ext_resource type="Script" path="res://Scripts/Components/Status/EnemyDebuffIndicatorComponent.cs" id="9_debuff"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kjvdn"]
@@ -18,7 +17,6 @@ height = 60.0
 [node name="DefaultEnemy" type="CharacterBody2D" unique_id=1112231485]
 scale = Vector2(0.5, 0.5)
 script = ExtResource("1_tincf")
-SkeletonScene = ExtResource("8_skeleton")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=637474852]
 sprite_frames = SubResource("SpriteFrames_kjvdn")
@@ -46,10 +44,6 @@ script = ExtResource("7_binder")
 ReplayExistingRows = true
 TableName = "NearbyEnemies"
 
-[node name="BulletPatternEventBinder" type="Node" parent="." unique_id=673820194]
-script = ExtResource("7_binder")
-TableName = "BulletPatternEvent"
-
 [node name="DebuffAttach" type="Node2D" parent="."]
 position = Vector2(0, -100)
 
@@ -64,7 +58,6 @@ TableName = "ActiveEnemyStatusEffect"
 
 [connection signal="RowInserted" from="NearbyEnemiesBinder" to="." method="OnEnemyRowInserted"]
 [connection signal="RowUpdated" from="NearbyEnemiesBinder" to="." method="OnEnemyRowUpdated"]
-[connection signal="RowInserted" from="BulletPatternEventBinder" to="." method="OnBulletPatternRowInserted"]
 [connection signal="RowInserted" from="DebuffAttach/EnemyDebuffIndicatorComponent/ActiveEnemyStatusEffectBinder" to="DebuffAttach/EnemyDebuffIndicatorComponent" method="OnStatusRow"]
 [connection signal="RowUpdated" from="DebuffAttach/EnemyDebuffIndicatorComponent/ActiveEnemyStatusEffectBinder" to="DebuffAttach/EnemyDebuffIndicatorComponent" method="OnStatusRow"]
 [connection signal="RowDeleted" from="DebuffAttach/EnemyDebuffIndicatorComponent/ActiveEnemyStatusEffectBinder" to="DebuffAttach/EnemyDebuffIndicatorComponent" method="OnStatusRowDeleted"]

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "cc2ca6507721d580",
+			"type": "file",
+			"file": "client/Scripts/Components/Visual/SpellVisualComponent.cs",
+			"subpath": "#MakeRing",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

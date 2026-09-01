@@ -1,0 +1,56 @@
+{
+	"nodes": [
+		{
+			"id": "ce2d4a25f977c628",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/methods.rs",
+			"subpath": "#teleport_player",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerChunk",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrap_world_pos",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile/wrap_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_chunk",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-spiral_chunk_index",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerMovementState",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerChunk-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerMovementState-_colon_-write"
+			]
+		}
+	}
+}

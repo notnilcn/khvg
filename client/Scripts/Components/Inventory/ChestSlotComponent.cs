@@ -26,7 +26,7 @@ public partial class ChestSlotComponent : Control
     {
         ChestItemId = chestItemId;
         var item = GameManager.GetItem(itemId);
-        var resPath = item != null ? GameManager.GetResPath(item.TextureId) : null;
+        var resPath = item != null ? GameManager.GetResPath2D(item.TextureId) : null;
         if (resPath != null)
             icon.Texture = GD.Load<Texture2D>(resPath);
     }

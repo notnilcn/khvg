@@ -63,13 +63,20 @@ pub struct BuildingTile {
     pub chunk_index: i64,
     pub building_type: String,
     pub owner_id: Option<Identity>,
+    // Integer elevation level of this hex (0 = lowest), stamped by world generation
+    // (terrain::run_generation). Deltas within ±MAX_WALKABLE_*_DELTA are walkable; anything
+    // steeper is a cliff — too steep up blocks the move, too steep down is a fall (see
+    // report_movement).
+    pub elevation: i16,
 }
 
 #[table(accessor = texture_entry, public)]
 pub struct TextureEntry {
     #[primary_key]
     pub texture_id: String,
-    pub res_path: String,
+    pub res_path2d: String,
+    // Empty string = no 3D representation (e.g. 2D shadow decals — 3D lighting casts real shadows).
+    pub res_path3d: String,
     pub kind: TextureKind,
 }
 

@@ -1,0 +1,110 @@
+{
+	"nodes": [
+		{
+			"id": "9862860e092e0ff4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/make_looping_sequence_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b872a1655f8af646",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/make_phase_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "afbf7f7d181990f8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/make_sequence_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f28e7321884a5492",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/multi_shot_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "81c044d2116121dc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/seq_multi_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "14c8dbb018d965c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/seq_repeat_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "18b31553d02fe29e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/seq_single_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-AttackSequence",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SequenceStepDef",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementDef",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PhaseDef",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementBehavior",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementDef-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiShot",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-RepeatStepDef",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-RepeatStepDef-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef-_colon_-write"
+			]
+		}
+	}
+}

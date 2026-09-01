@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "9d7b03de8ad03770",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/AbilityChargeComponent.cs",
+			"subpath": "#chargeBinder",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -1,0 +1,37 @@
+{
+	"nodes": [
+		{
+			"id": "37abf5f3c08d8980",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/methods.rs",
+			"subpath": "#spell_targets",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-nearest_lap_copy",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-spell_shape_contains",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-SpellShape",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas"
+			]
+		}
+	}
+}

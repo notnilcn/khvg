@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e7b4862d4b0f1032",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/BulletControllerComponent.cs",
+			"subpath": "#attractZones",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

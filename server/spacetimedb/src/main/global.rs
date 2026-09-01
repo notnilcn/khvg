@@ -19,6 +19,37 @@ pub const DEFAULT_HEX_OUTER_RADIUS: f32 = 48.0;
 // currently only gate validation, not area share.
 pub const BIOME_VORONOI_SEED_BUDGET: usize = 16;
 
+// ===== Elevation =====
+
+// Discrete elevation levels stamped per hex (BuildingTile.elevation) by world generation.
+// The client mirrors this for its per-hex tint.
+pub const ELEVATION_LEVELS: i16 = 8;
+// Spatial frequency of the elevation noise field — low enough that plateaus span many hexes.
+pub const ELEVATION_NOISE_SCALE: f32 = 0.004;
+// Walkable deltas: a player may walk onto a hex up to this many levels above/below their
+// current hex with no block and no fall. Anything steeper is a cliff: rising more than
+// MAX_WALKABLE_UP_DELTA blocks the move; dropping more than MAX_WALKABLE_DOWN_DELTA is a fall.
+pub const MAX_WALKABLE_UP_DELTA: i16 = 1;
+pub const MAX_WALKABLE_DOWN_DELTA: i16 = 1;
+// A drop larger than this deals fall damage; drops of (MAX_WALKABLE_DOWN_DELTA,
+// FALL_SAFE_DROP] are still falls (lockout + displacement exemption) but deal zero damage.
+pub const FALL_SAFE_DROP: i16 = 2;
+// Fall damage per elevation level dropped.
+pub const FALL_DAMAGE_PER_LEVEL: u32 = 15;
+// Movement lockout (seconds) per level dropped — the client mirrors this for its fall tween.
+pub const FALL_SECONDS_PER_LEVEL: f64 = 0.35;
+// Max wrap-aware displacement a downhill-fall report may claim while staying exempt from
+// report_movement's displacement budget (~2.5 hexes — a bounded grapple-style exemption).
+pub const MAX_FALL_DISPLACEMENT: f32 = DEFAULT_HEX_OUTER_RADIUS * 2.5;
+// Bullet elevation tolerances, relative to the bullet's origin-hex band: a bullet survives
+// entering a hex up to BULLET_ELEVATION_CLIMB levels above its band, and can hit entities up
+// to BULLET_ELEVATION_DROP levels below it. Exported constants only — no server logic reads
+// them today (hence the allow); enforcement is client-side (the client mirrors these).
+#[allow(dead_code)]
+pub const BULLET_ELEVATION_CLIMB: i16 = 1;
+#[allow(dead_code)]
+pub const BULLET_ELEVATION_DROP: i16 = 2;
+
 // ===== Area of Interest (AOI) & Camera View =====
 
 // Subscription range (chunk rings) for players/enemies/loot.
@@ -90,7 +121,7 @@ pub const MAX_CATCHUP_SHOTS: usize = 8;
 // ===== World Timers =====
 
 // Seconds before an unclaimed loot drop expires.
-pub const LOOT_DROP_EXPIRY: u64 = 300;
+pub const LOOT_DROP_EXPIRY: u64 = 10;
 // Seconds between consumable effect ticks (DoT/regen).
 pub const CONSUMABLE_EFFECT_TICK_SECONDS: f32 = 1.0;
 
@@ -133,3 +164,45 @@ pub const CHARGE_SELF_SLOW_FACTOR: f32 = 0.5;
 // (CHARGE_MIN_RANGE_FRACTION + (1 − it) × charge_fraction) — a 0-charge release still
 // goes 25%. The client mirrors this formula (AbilityChargeComponent.ChargeRangeMultiplier).
 pub const CHARGE_MIN_RANGE_FRACTION: f32 = 0.25;
+
+// ===== Server-Side Validation (anti-cheat / rate limits) =====
+
+// report_movement displacement slack: a report may move at most
+// base_speed × dt_since_last_report × MOVE_SLACK from the stored position row before the
+// server clamps it (clamped along the reported direction, not rejected — rejecting
+// rubber-bands legit lag spikes). 2× absorbs jitter/bursted reports.
+pub const MOVE_SLACK: f32 = 2.0;
+// Floor for the movement-clamp budget, and the whole budget when there is no previous
+// report to measure dt against (first report after join/teleport). 64 units ≈ 1.3 hexes.
+pub const MIN_REPORT_DISPLACEMENT: f32 = 64.0;
+// report_enemy_hit sustained-rate budget per 1s window: equipped weapon fire_rate ×
+// effective shot_count × this slack. 2× absorbs buffered/burst client fire without
+// opening a damage-farming tap.
+pub const HIT_RATE_SLACK: f32 = 2.0;
+// report_hit (self-reported damage TAKEN) cap per 1s window. Generous on purpose —
+// bullet-hell games genuinely hit you a lot; this only bounds the StoreIncoming farming
+// loop's input rate.
+pub const INCOMING_HIT_RATE_CAP: u32 = 30;
+// Wrap-aware interaction distance for pickup_drop / take_from_chest, checked against the
+// caller's position row.
+pub const INTERACT_RADIUS: f32 = 128.0;
+// Enemy Repeat-step catch-up backlog cap, in fire intervals: an enemy re-entering
+// simulation range with a stale step_timer fires at most this many backlog shots per
+// tick instead of a seconds-long wall of bullets.
+pub const BACKLOG_CAP: u32 = 2;
+// Seconds a Grapple cast's PlayerDisplacementAllowance stays valid (the client tween is
+// 0.25s; the margin covers report latency).
+pub const GRAPPLE_ALLOWANCE_SECONDS: f32 = 1.0;
+// player_hit_flag rows older than this are swept by the 1 Hz status tick — no NoHits
+// wager window outlives it, and the table must not grow unbounded.
+pub const HIT_FLAG_MAX_AGE_SECONDS: u64 = 60;
+// Per-player cooldown between takes from a regenerating chest (the row is never
+// consumed, so the take rate is gated instead).
+pub const CHEST_TAKE_COOLDOWN_SECONDS: u64 = 1;
+// report_screen_rotation delta-check: updates smaller than this (radians, ~0.5 degrees)
+// don't rewrite the PlayerRotation row. The client already gates sends on facing change
+// (PositionSyncComponent.RotationEpsilon) — this is the server-side belt.
+pub const ROTATION_REPORT_EPSILON: f32 = 0.0087;
+// Safety bound for compute_level's loop. u64 xp_for_level math already prevents the old
+// u32 overflow (~level 2930); the bound just keeps a corrupt xp value from spinning.
+pub const MAX_LEVEL: u32 = 10_000;

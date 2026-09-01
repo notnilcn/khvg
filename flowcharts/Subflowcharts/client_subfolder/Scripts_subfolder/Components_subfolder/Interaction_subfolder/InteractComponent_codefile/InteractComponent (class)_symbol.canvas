@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a09cb447f110adf4",
+			"type": "file",
+			"file": "client/Scripts/Components/Interaction/InteractComponent.cs",
+			"subpath": "#InteractComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

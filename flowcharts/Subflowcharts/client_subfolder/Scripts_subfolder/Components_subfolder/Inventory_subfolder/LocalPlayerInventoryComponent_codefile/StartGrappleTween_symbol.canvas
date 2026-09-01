@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "6449ebd06e138440",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs",
+			"subpath": "#StartGrappleTween",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -15,6 +15,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EnchantmentBehavior",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
@@ -37,8 +38,7 @@
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Item-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Enchantment-_colon_-read",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Enchantment-_colon_-read"
 			]
 		}
 	}

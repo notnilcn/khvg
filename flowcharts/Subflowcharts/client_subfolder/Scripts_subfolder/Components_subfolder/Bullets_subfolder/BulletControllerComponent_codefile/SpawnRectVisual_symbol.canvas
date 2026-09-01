@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a543e17e8544abac",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/BulletControllerComponent.cs",
+			"subpath": "#SpawnRectVisual",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

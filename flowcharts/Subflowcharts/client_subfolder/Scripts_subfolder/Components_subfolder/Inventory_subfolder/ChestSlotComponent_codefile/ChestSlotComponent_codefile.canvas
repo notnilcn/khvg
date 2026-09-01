@@ -1,0 +1,63 @@
+{
+	"nodes": [
+		{
+			"id": "190f19a5e96c5458",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ChestSlotComponent_codefile/_GetDragData_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "efdaa2dc954f6e88",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ChestSlotComponent_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "724a188bd20e2080",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ChestSlotComponent_codefile/ChestSlotComponent (class)_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cf8bf3411014de58",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ChestSlotComponent_codefile/icon_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6103584bc12fec02",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ChestSlotComponent_codefile/Setup_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
+	}
+}

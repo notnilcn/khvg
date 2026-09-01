@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d9f0a6ded5381cf0",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#CHEST_TAKE_COOLDOWN_SECONDS",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

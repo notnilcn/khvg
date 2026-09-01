@@ -181,4 +181,50 @@ pub struct LootDrop {
     pub expires_at: Timestamp,
     pub dropped_by: Option<Identity>,
     pub enchantment_ids: Vec<String>,
+    // Runtime state carried from the dropped slot (ability cooldown/charges travel with
+    // the item — drop_item stamps them, pickup_drop restores them). None/u32::MAX = none.
+    pub cooldown_until: Option<Timestamp>,
+    pub charges: u32,
+}
+
+// Server-only movement-report bookkeeping behind report_movement's displacement clamp:
+// when the last report arrived, so the per-report budget is base_speed × dt × MOVE_SLACK.
+// falling_until locks movement while a downhill-fall tween plays out (see report_movement).
+// Not public — clients never read it. teleport_player restamps it (teleports are exempt
+// from the clamp); teardown_profile deletes it.
+#[table(accessor = player_movement_state)]
+pub struct PlayerMovementState {
+    #[primary_key]
+    pub profile_id: u64,
+    pub last_report: Timestamp,
+    // While in the future, report_movement ignores position claims — the client is
+    // tweening a downhill fall and movement is locked. None = not falling.
+    pub falling_until: Option<Timestamp>,
+}
+
+/// Server-only Grapple coordination (P4): Grapple's pull is client-tweened, so a cast
+/// stamps one allowance row here (max distance = the scaled grapple range, short expiry).
+/// report_movement's displacement clamp accepts ONE oversized report up to max_distance
+/// while the row lives and consumes it — without this the clamp would rubber-band every
+/// legit grapple. Deleted on use, on expiry contact, and by teardown_profile.
+#[table(accessor = player_displacement_allowance)]
+pub struct PlayerDisplacementAllowance {
+    #[primary_key]
+    pub profile_id: u64,
+    pub max_distance: f32,
+    pub expires_at: Timestamp,
+}
+
+/// Server-only token bucket behind the two self-reported hit reducers (one 1-second
+/// fixed window per profile): `outgoing` caps report_enemy_hit at weapon fire_rate ×
+/// effective shot_count × HIT_RATE_SLACK, `incoming` caps report_hit at
+/// INCOMING_HIT_RATE_CAP. Bounds hit-spam and StoreIncoming farming without touching
+/// damage math. See hit_rate_allow in player/methods.rs.
+#[table(accessor = player_hit_rate)]
+pub struct PlayerHitRate {
+    #[primary_key]
+    pub profile_id: u64,
+    pub window_start: Timestamp,
+    pub outgoing: u32,
+    pub incoming: u32,
 }

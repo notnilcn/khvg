@@ -40,6 +40,11 @@ pub fn client_connected(ctx: &ReducerContext) {
     if in_world {
         log::error!("Player {:?} connected while already in world — this is a bug.", ctx.sender());
         if let Some(p) = ctx.db.logged_in_player().player_id().find(ctx.sender()) {
+            // Same runtime-row purge as leave_world/client_disconnected — the recovery
+            // path must not leave statuses ticking or zones live for a player being
+            // bounced back to the lobby.
+            crate::status::methods::purge_profile_statuses(ctx, p.profile_id);
+            crate::status::methods::purge_profile_zones(ctx, p.profile_id);
             ctx.db.logged_in_player().player_id().delete(ctx.sender());
             ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: p.player_id, username: p.username, is_admin: p.is_admin });
         }

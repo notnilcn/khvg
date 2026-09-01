@@ -56,7 +56,7 @@ public partial class InterpolationComponent : Component
         timeSinceSnap = 0f;
 
         if (WrapSnapThreshold <= 0f || EntityNode is not { } node) return;
-        var nearest = TorusMath.NearestCandidate(canonicalPosition, node.GlobalPosition, GameManager.LapQ, GameManager.LapR);
+        var nearest = TorusMath.NearestCandidate(canonicalPosition, node.GlobalPosition, TableSubscriber.LapQ, TableSubscriber.LapR);
         if (node.GlobalPosition.DistanceSquaredTo(nearest) > WrapSnapThreshold * WrapSnapThreshold)
             node.GlobalPosition = nearest;
     }
@@ -75,7 +75,7 @@ public partial class InterpolationComponent : Component
         snapVelocity = Vector2.Zero;
         timeSinceSnap = 0f;
         if (EntityNode is { } node)
-            node.GlobalPosition = TorusMath.NearestCandidate(position, node.GlobalPosition, GameManager.LapQ, GameManager.LapR);
+            node.GlobalPosition = TorusMath.NearestCandidate(position, node.GlobalPosition, TableSubscriber.LapQ, TableSubscriber.LapR);
     }
 
     public override void _Process(double delta)
@@ -83,7 +83,7 @@ public partial class InterpolationComponent : Component
         if (EntityNode is not { } node) return;
         timeSinceSnap += (float)delta;
         var canonicalExtrapolated = canonicalPosition + snapVelocity * timeSinceSnap;
-        var nearest = TorusMath.NearestCandidate(canonicalExtrapolated, node.GlobalPosition, GameManager.LapQ, GameManager.LapR);
+        var nearest = TorusMath.NearestCandidate(canonicalExtrapolated, node.GlobalPosition, TableSubscriber.LapQ, TableSubscriber.LapR);
         Moving = node.GlobalPosition.DistanceSquaredTo(nearest) > 1f;
         node.GlobalPosition = node.GlobalPosition.Lerp(nearest, LerpSpeed * (float)delta);
         node.Rotation = Mathf.LerpAngle(node.Rotation, targetScreenRotation, LerpSpeed * (float)delta);

@@ -1,0 +1,163 @@
+{
+	"nodes": [
+		{
+			"id": "a73304e259244498",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/_Process_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "baf0d82096ddb880",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4a61fa8056be3000",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/effects_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b3ccd9082ecf2650",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/Label_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1bc5ed56b42ca874",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/MakeLabel_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "dc1f3bbf83dfd1d8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/OnStatusRow_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4ec13996a91c187c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/OnStatusRowDeleted_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c73945ead72e482c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/Remaining_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "06334e10f673d4a0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/Remove_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d4208e2a0ae47df0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/row_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0f70d8774f5a05c8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/ShortName_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2f6fd7f5ac812ff0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/StampedAt_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9682b37d938e7166",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/StatusBarComponent (class)_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e7a95b3e74e835cc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/statusBinder_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ca76fa48fbf8b720",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/Tracked_symbol.canvas",
+			"color": "5",
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
+	}
+}

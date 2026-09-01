@@ -50,14 +50,8 @@ public partial class LocalPlayerInventoryComponent : Component
     public IReadOnlyList<ResolvedSlot> AbilitySlots => BuildResolvedSlots(AbilitySlotStart, AbilitySlotCount);
     public static bool IsAbilitySlot(int index) => index >= AbilitySlotStart && index < AbilitySlotStart + AbilitySlotCount;
 
-    // Mirrors ABILITY_POSITION_MULTIPLIERS in server/spacetimedb/src/main/global.rs
-    // ("first ability stronger") — both must change together.
-    public static readonly float[] AbilityPositionMultipliers = [1.5f, 1.25f, 1.1f, 1.0f, 0.9f, 0.8f];
-
-    // Mirrors MAX_ABILITY_TARGET_RANGE in server/spacetimedb/src/main/global.rs — the
-    // server clamps the cursor to this range around the player's position row; the
-    // optimistic spell visual (P5) clamps identically so it lands where the echo will.
-    public const float MaxAbilityTargetRange = 600f;
+    // Ability potency/target-range and charge constants live in World/ServerConstants.cs —
+    // the single home for client mirrors of main/global.rs.
 
     /// Mirror of the server's ability_is_charge_capable (player/methods.rs) — charge-capable
     /// abilities are hold-to-charge (BeginAbilityCharge/ReleaseAbilityCharge) instead of the
@@ -80,6 +74,24 @@ public partial class LocalPlayerInventoryComponent : Component
             if (behavior is ItemBehavior.Ability(var a)) return IsChargeCapable(a);
         return false;
     }
+
+    // Optimistic-cast guard (per ability head slot): a cast is marked pending for roughly
+    // one round-trip after the reducer call and the TryActivateAbility pre-check rejects
+    // while pending, so a fast double-click can't fire two casts — and two optimistic
+    // bullet-deletes — before the server echo lands. The echo clears the slot early
+    // (OnInventoryRow), so legitimate fast recasts are gated on the echo, not the window.
+    private static readonly Dictionary<int, long> castPendingUntilMs = new();
+
+    /// Roughly one round-trip; generous on a local server, tight enough that recasts are
+    /// normally gated by the early-clearing echo rather than by this window.
+    private const long CastPendingWindowMs = 500;
+
+    private static bool IsCastPending(int head) =>
+        castPendingUntilMs.TryGetValue(head, out var until)
+        && until > DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+    private static void MarkCastPending(int head) =>
+        castPendingUntilMs[head] = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() + CastPendingWindowMs;
 
     /// P4 charge path, key-down: the same cooldown/charge pre-checks as
     /// TryActivateAbility, then the BeginAbilityCharge reducer. No optimistic state —
@@ -134,7 +146,8 @@ public partial class LocalPlayerInventoryComponent : Component
 
     /// P5 optimistic spell flash — shared by TryActivateAbility and the charge-release
     /// path. Mirrors the server's Spell dispatch encoding so the optimistic render matches
-    /// the echo it suppresses: the cursor is clamped to MaxAbilityTargetRange around the
+    /// the echo it suppresses: the cursor is clamped to ServerConstants.MaxAbilityTargetRange
+    /// around the
     /// player for the Circle center (with the same zero-length fallback direction),
     /// Line/Cone run their full length in the cursor's direction, and only the Circle
     /// radius is position-scaled (matching scale_ability_effect server-side).
@@ -144,10 +157,10 @@ public partial class LocalPlayerInventoryComponent : Component
         if (visuals == null) return;
         var origin = player.GlobalPosition;
         var axis = target - origin;
-        var clamped = axis.Length() > MaxAbilityTargetRange ? origin + axis.Normalized() * MaxAbilityTargetRange : target;
+        var clamped = axis.Length() > ServerConstants.MaxAbilityTargetRange ? origin + axis.Normalized() * ServerConstants.MaxAbilityTargetRange : target;
         var dir = axis.LengthSquared() > 0.000001f ? axis.Normalized() : Vector2.Right;
-        int position = Mathf.Clamp(head - AbilitySlotStart, 0, AbilityPositionMultipliers.Length - 1);
-        float multiplier = AbilityPositionMultipliers[position];
+        int position = Mathf.Clamp(head - AbilitySlotStart, 0, ServerConstants.AbilityPositionMultipliers.Length - 1);
+        float multiplier = ServerConstants.AbilityPositionMultipliers[position];
         switch (p.Shape)
         {
             case SpellShape.Circle(var c):
@@ -188,14 +201,16 @@ public partial class LocalPlayerInventoryComponent : Component
         if (headSlot.Charges == 0) return;
         if (headSlot.CooldownUntil is SpacetimeDB.Timestamp until
             && until.MicrosecondsSinceUnixEpoch > DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() * 1000L) return;
+        if (IsCastPending(head)) return; // a cast is already awaiting its echo — reject the double-click
 
         var target = player.GetGlobalMousePosition();
         GameManager.Conn?.Reducers.ActivateAbility((uint)head, target.X, target.Y);
+        MarkCastPending(head);
 
         // Optimistic local apply for bullet-control effects, with the same position
         // multiplier the server applies to the event radius.
-        int position = Mathf.Clamp(head - AbilitySlotStart, 0, AbilityPositionMultipliers.Length - 1);
-        float multiplier = AbilityPositionMultipliers[position];
+        int position = Mathf.Clamp(head - AbilitySlotStart, 0, ServerConstants.AbilityPositionMultipliers.Length - 1);
+        float multiplier = ServerConstants.AbilityPositionMultipliers[position];
         var controller = BulletManager.Instance?.GetComponent<BulletControllerComponent>();
         switch (ability.Effect)
         {
@@ -255,11 +270,15 @@ public partial class LocalPlayerInventoryComponent : Component
 
     /// P4 grapple (bullet master): tween the local player toward the cursor (clamped to
     /// the position-scaled range) over ~0.25s. The pull is client-authoritative — the
-    /// server arm only validates and spends — so the tween reports every frame (the
-    /// timed reports run at 1 Hz) for remotes to track it, and suspends input movement
-    /// so MoveAndSlide doesn't fight the externally-set position. Remotes will see a
-    /// snap: acceptable — their WrapSnapThreshold self-corrects, and their dead-reckoning
-    /// clamps to base_speed mid-tween.
+    /// server arm only validates and spends, and stamps a PlayerDisplacementAllowance so
+    /// the movement clamp accepts the landing jump — so the tween reports exactly twice:
+    /// once at the start and once at the end (mid-tween reports would each read as an
+    /// oversized jump and burn the one-shot allowance before the landing report;
+    /// PositionSyncComponent suppresses its timed/edge reports while
+    /// ExternalMovementActive for the same reason). Input movement stays suspended so
+    /// MoveAndSlide doesn't fight the externally-set position. Remotes track the pull
+    /// from the start/end reports plus interpolation; their WrapSnapThreshold
+    /// self-corrects any residual snap.
     private const float GrappleTweenSeconds = 0.25f;
 
     private static void StartGrappleTween(LocalPlayer player, Vector2 target, float range)
@@ -271,20 +290,20 @@ public partial class LocalPlayerInventoryComponent : Component
 
         var sync = player.GetComponent<PositionSyncComponent>();
         player.ExternalMovementActive = true;
+        sync?.RequestMovementReport(); // start report: remotes see the pull begin
         var tween = player.CreateTween();
         tween.TweenMethod(Callable.From<Vector2>(pos =>
         {
             if (!GodotObject.IsInstanceValid(player)) return;
             player.GlobalPosition = pos;
             player.Velocity = Vector2.Zero;
-            sync?.RequestMovementReport();
         }), origin, destination, GrappleTweenSeconds);
         tween.Finished += () =>
         {
             if (!GodotObject.IsInstanceValid(player)) return;
             player.Velocity = Vector2.Zero;
             player.ExternalMovementActive = false;
-            sync?.RequestMovementReport(); // final report carries the zeroed velocity
+            sync?.RequestMovementReport(); // final report carries the destination + zeroed velocity
         };
     }
 
@@ -303,6 +322,9 @@ public partial class LocalPlayerInventoryComponent : Component
     {
         var slot = (PlayerInventorySlot)inventoryBinder.LastRow!;
         inventorySlots[(int)slot.SlotIndex] = slot;
+        // The server echo for a cast lands as a row update on the head slot — clear the
+        // optimistic-cast guard early so recasts don't wait out the full pending window.
+        castPendingUntilMs.Remove((int)slot.SlotIndex);
         (Entity as LocalPlayer)?.RaiseInventoryChanged();
     }
 
@@ -310,6 +332,7 @@ public partial class LocalPlayerInventoryComponent : Component
     {
         var slot = (PlayerInventorySlot)inventoryBinder.LastDeletedRow!;
         inventorySlots.Remove((int)slot.SlotIndex);
+        castPendingUntilMs.Remove((int)slot.SlotIndex);
         (Entity as LocalPlayer)?.RaiseInventoryChanged();
     }
 

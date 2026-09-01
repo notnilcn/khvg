@@ -16,9 +16,15 @@ public partial class RemoteVisualComponent : VisualComponent
     }
 
     /// Resolves the texture id through the GameManager texture catalog and applies the SpriteFrames.
+    /// 3D mode renders no 2D sprite (RemotePlayer mirrors a catalog-driven 3D model instead).
     public void SetTexture(string textureId)
     {
-        var resPath = GameManager.GetResPath(textureId);
+        if (GameVisuals.Is3D)
+        {
+            Visible = false;
+            return;
+        }
+        var resPath = GameManager.GetResPath2D(textureId);
         if (resPath != null)
             SpriteFrames = GD.Load<SpriteFrames>(resPath);
     }

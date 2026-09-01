@@ -1,11 +1,21 @@
 {
 	"nodes": [
 		{
+			"id": "8828eadd6e9c8c9c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/_ExitTree_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "fd1c7e5e6819e740",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/BaseTables_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/gameSub_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/GameTables_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/lobbySub_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/LobbyTables_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/OnConnected_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/OnGameSubApplied_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/OnGameSubError_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +95,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/OnLobbySubApplied_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4c074d6a558951f4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/OnMapConfigInsert_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "da64195273c49b70",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/OnMapConfigUpdate_symbol.canvas",
+			"color": "5",
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +125,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d03db99be7379742",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/SetLap_symbol.canvas",
+			"color": "5",
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/SubscribeGame_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/SubscribeLobby_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/TableSql_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/TablesSql_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/TableSubscriber (class)_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/UnsubscribeGame_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableSubscriber_codefile/UnsubscribeLobby_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -204,9 +244,16 @@
 				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_terrain_tiles-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_hex_decor-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/enemy/views-_dot_-rs-_hashtag_-enemy_templates-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-nearby_chests-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-nearby_chest_items-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-BulletPatternEvent-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-BulletControlEvent-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-AbilityVisualEvent-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveStatusEffect-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveEnemyStatusEffect-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-GroundZone-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-subscribe",
@@ -219,8 +266,12 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas-_colon_-subscribe",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-subscribe"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-subscribe"
 			]
 		}
 	}

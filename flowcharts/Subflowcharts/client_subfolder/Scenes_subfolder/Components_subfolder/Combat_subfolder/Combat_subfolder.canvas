@@ -1,21 +1,11 @@
 {
 	"nodes": [
 		{
-			"id": "763f5a3ebde1ae24",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/damage_component_codefile/damage_component_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "d3879fb21e0df7b4",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/damage_receiving_component_codefile/damage_receiving_component_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/health_component_codefile/health_component_codefile.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -37,15 +27,13 @@
 			"tags": [
 				"includeInAggregateFlowchart",
 				"subfolder",
-				"edge-_colon_-client/Scripts/Components/Combat/DamageComponent-_dot_-cs-_hashtag_-DamageComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageComponent_codefile/DamageComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Combat/DamageReceivingComponent-_dot_-cs-_hashtag_-DamageReceivingComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageReceivingComponent_codefile/DamageReceivingComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Combat/DamageReceivingComponent-_dot_-cs-_hashtag_-DamageReceivingComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/DamageReceivingComponent_codefile/DamageReceivingComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Combat/HealthComponent-_dot_-cs-_hashtag_-HealthComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/HealthComponent_codefile-_dot_-canvas-_colon_-script"
 			]

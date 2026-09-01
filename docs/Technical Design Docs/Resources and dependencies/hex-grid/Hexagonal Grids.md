@@ -12,7 +12,7 @@
 
 Mar 2013 – Apr 2026
 
-This guide will cover various ways to make hexagonal grids, the relationships between different approaches, and common formulas and algorithms. I've been [collecting hex grid resources](http://www-cs-students.stanford.edu/~amitp/gameprog.html#hex) for 35 years. I wrote this guide to the most elegant approaches that lead to the simplest code, starting from the guides by [Charles Fu](http://www-cs-students.stanford.edu/~amitp/Articles/Hexagon2.html) and [Clark Verbrugge](http://www-cs-students.stanford.edu/~amitp/Articles/HexLOS.html). Most parts of this page are interactive. To get an offline copy of this page, use your browser's File → Save As (preserves interactivity) or File → Print (loses interactivity).
+This guide will cover various ways to make hexagonal grids, the relationships between different approaches, and common formulas and algorithms. I've been [[http://www-cs-students.stanford.edu/~amitp/gameprog.html#hex]] for 35 years. I wrote this guide to the most elegant approaches that lead to the simplest code, starting from the guides by [Charles Fu](http://www-cs-students.stanford.edu/~amitp/Articles/Hexagon2.html) and [Clark Verbrugge](http://www-cs-students.stanford.edu/~amitp/Articles/HexLOS.html). Most parts of this page are interactive. To get an offline copy of this page, use your browser's File → Save As (preserves interactivity) or File → Print (loses interactivity).
 
 ```table-of-contents
 ```
@@ -33,7 +33,7 @@ In the  orientation, the horizontal distance between adjacent hexagons centers
 
 In the  orientation, the horizontal distance between adjacent hexagon centers is `**horiz** = width == sqrt(3) * size == 2 * inradius`. The vertical distance is `**vert** = 3/4 * height == 3/2 * size`.
 
-Some games use pixel art for hexagons that does not match an exactly regular polygon, and these formulas will have to be adjusted slightly. We'll do that in the [hex to pixel](https://www.redblobgames.com/grids/hexagons/#hex-to-pixel) and [pixel to hex](https://www.redblobgames.com/grids/hexagons/#pixel-to-hex) functions.
+Some games use pixel art for hexagons that does not match an exactly regular polygon, and these formulas will have to be adjusted slightly. We'll do that in the [[https://www.redblobgames.com/grids/hexagons/#hex-to-pixel]] and [[https://www.redblobgames.com/grids/hexagons/#pixel-to-hex]] functions.
 
 ### Angles
 
@@ -86,7 +86,7 @@ Let's take a cube grid and **slice** out a diagonal plane at `x + y + z 
 Study how the cube coordinates work on the hex grid. Selecting the hexes will highlight the cube coordinates corresponding to the three axes.
 
 1. Each direction on the cube grid corresponds to a _line_ on the hex grid. Try highlighting a hex with `r` at 0, 1, 2, 3 to see how these are related. The row is marked in blue. Try the same for `q` (green) and `s` (purple).
-2. Each direction on the hex grid is a combination of _two_ directions on the cube grid. For example, north on the hex grid lies between the `+s` and `-r`, so every step north involves adding 1 to `s` and subtracting 1 from `r`. We'll use this to calculate [neighbors](https://www.redblobgames.com/grids/hexagons/#neighbors).
+2. Each direction on the hex grid is a combination of _two_ directions on the cube grid. For example, north on the hex grid lies between the `+s` and `-r`, so every step north involves adding 1 to `s` and subtracting 1 from `r`. We'll use this to calculate [[https://www.redblobgames.com/grids/hexagons/#neighbors]].
 
 The cube coordinates are a reasonable choice for a hex grid coordinate system. The constraint is that `q + r + s = 0` so the algorithms must preserve that. The constraint also ensures that there's a canonical coordinate for each hex.
 
@@ -108,7 +108,7 @@ doubles column values
 “double-height” horizontal layout  
 doubles row values
 
-I haven't found much information about this system — tri-bit.com called it [interlaced](https://web.archive.org/web/20090205120106/http://sc.tri-bit.com/Hex_Grids), rot.js calls it [double width](https://ondras.github.io/rot.js/manual/#hex/indexing), and [this paper](https://www.researchgate.net/publication/235779843_Storage_and_addressing_scheme_for_practical_hexagonal_image_processing?_sg=flKEA6rk1KmOpC4LBjQJN_-NBuiR1KJtJt-XeYRXnd0z_MNUrB2gjb2FKV3iBoKg988P2xHCpQ) calls it rectangular. Other possible names: brick or checkerboard. I'm not sure what to call it. Tamás Kenéz sent me the core algorithms (neighbors, distances, etc.). If you have any references, please send them to me.
+I haven't found much information about this system — tri-bit.com called it [interlaced](https://web.archive.org/web/20090205120106/http://sc.tri-bit.com/Hex_Grids), rot.js calls it [[https://ondras.github.io/rot.js/manual/#hex/indexing]], and [this paper](https://www.researchgate.net/publication/235779843_Storage_and_addressing_scheme_for_practical_hexagonal_image_processing?_sg=flKEA6rk1KmOpC4LBjQJN_-NBuiR1KJtJt-XeYRXnd0z_MNUrB2gjb2FKV3iBoKg988P2xHCpQ) calls it rectangular. Other possible names: brick or checkerboard. I'm not sure what to call it. Tamás Kenéz sent me the core algorithms (neighbors, distances, etc.). If you have any references, please send them to me.
 
 ### Others
 
@@ -118,7 +118,7 @@ There are _many_ different valid cube hex coordinate systems. Some of them hav
 
 There are also cube systems that use `q-r, r-s, s-q`. One of the interesting properties of that system is that it reveals [hexagonal directions](https://www.redblobgames.com/grids/hexagons/directions.html).
 
-In addition to the [flat spiral coordinate systems](https://www.redblobgames.com/grids/hexagons/#rings-spiral-coordinates) shown later on this page, there are nested/recursive spiral systems. See [this question](https://gamedev.stackexchange.com/questions/71785/converting-between-spiral-honeycomb-mosaic-and-axial-hex-coordinates) on stackoverflow, or this [Spiral Architecture for Machine Vision](https://opus.lib.uts.edu.au/bitstream/2100/280/11/02Whole.pdf) (1996), or this [diagram about "generalized balanced ternary" coordinates](https://web.archive.org/web/20120303114550/http://www.pyxisinnovation.com/pyxwiki/index.php?title=Generalized_Balanced_Ternary), or this [An isomorphism between the p-adic integers and a ring associated with a tiling of N-space by permutohedra](https://www.sciencedirect.com/science/article/pii/0166218X9200186P) (1994) ([DOI](https://doi.org/10.1016/0166-218X\(92\)00186-P)), or this [discussion on reddit](https://old.reddit.com/r/gamedev/comments/19wmvn/a_data_structure_for_a_game_board_with_hexagonal/c8s9qbe/). There's a [Clojure library](https://github.com/SimonWailand/hexwrench) implementing Generalized Balanced Ternary. Also see the Gosper Curve, [here](https://patricksurry.github.io/posts/flowsnake/) and [here](https://metacpan.org/pod/Math::PlanePath::FlowsnakeCentres).
+In addition to the [[https://www.redblobgames.com/grids/hexagons/#rings-spiral-coordinates]] shown later on this page, there are nested/recursive spiral systems. See [this question](https://gamedev.stackexchange.com/questions/71785/converting-between-spiral-honeycomb-mosaic-and-axial-hex-coordinates) on stackoverflow, or this [Spiral Architecture for Machine Vision](https://opus.lib.uts.edu.au/bitstream/2100/280/11/02Whole.pdf) (1996), or this [diagram about "generalized balanced ternary" coordinates](https://web.archive.org/web/20120303114550/http://www.pyxisinnovation.com/pyxwiki/index.php?title=Generalized_Balanced_Ternary), or this [An isomorphism between the p-adic integers and a ring associated with a tiling of N-space by permutohedra](https://www.sciencedirect.com/science/article/pii/0166218X9200186P) (1994) ([DOI](https://doi.org/10.1016/0166-218X\(92\)00186-P)), or this [discussion on reddit](https://old.reddit.com/r/gamedev/comments/19wmvn/a_data_structure_for_a_game_board_with_hexagonal/c8s9qbe/). There's a [Clojure library](https://github.com/SimonWailand/hexwrench) implementing Generalized Balanced Ternary. Also see the Gosper Curve, [here](https://patricksurry.github.io/posts/flowsnake/) and [here](https://metacpan.org/pod/Math::PlanePath::FlowsnakeCentres).
 
 ### Recommendations
 
@@ -135,7 +135,7 @@ What do I recommend?
 |Hexagonal symmetry|no|no|no|yes|
 |Easy algorithms|few|some|most|most|
 
-* rectangular maps require an adapter, shown in the [map storage section](https://www.redblobgames.com/grids/hexagons/#map-storage)
+* rectangular maps require an adapter, shown in the [[https://www.redblobgames.com/grids/hexagons/#map-storage]]
 
 My recommendation: if you are only going to use rectangular maps, consider the **Doubled** or **Offset** system that matches your map orientation. For maps with any other shaped maps, use **Axial** or **Cube**. Note that Axial (`q,r`) and Cube (`q,r,s`) are essentially the same system. Store coordinates as Axial, and calculate `s` in algorithms that need it.
 
@@ -189,7 +189,7 @@ function oddr_to_axial(hex):
 
 Convert to/from **axial** or **cube**.
 
-Implementation note: I use `a&1` ([bitwise and](https://en.wikipedia.org/wiki/Bitwise_operation#AND)) instead of `a%2` ([modulo](https://en.wikipedia.org/wiki/Modulo_operation)) to detect whether something is even (0) or odd (1), because it works with negative numbers too. See a longer explanation on [my implementation notes page](https://www.redblobgames.com/grids/hexagons/implementation.html#offset).
+Implementation note: I use `a&1` ([[[modulo](https://en.wikipedia.org/wiki/Modulo_operation|[https://en.wikipedia.org/wiki/Bitwise_operation#AND]]) to detect whether something is even (0) or odd (1), because it works with negative numbers too. See a longer explanation on [[https://www.redblobgames.com/grids/hexagons/implementation.html#offset]].
 
 ### Doubled coordinates
 
@@ -220,7 +220,7 @@ function axial_to_doublewidth(hex):
 */
 Convert to/from **axial** or **cube**.
 
-To convert from doubled to offset, chain the calls, e.g. `axial_to_oddq(doublewidth_to_axial(hex))`, or inline the call to write a direct conversion function. I include the direct conversion functions in the sample code in the [implementation guide](https://www.redblobgames.com/grids/hexagons/implementation.html#codegen).
+To convert from doubled to offset, chain the calls, e.g. `axial_to_oddq(doublewidth_to_axial(hex))`, or inline the call to write a direct conversion function. I include the direct conversion functions in the sample code in the [[https://www.redblobgames.com/grids/hexagons/implementation.html#codegen]].
 
 ## Neighbors
 
@@ -363,7 +363,7 @@ Xiangguo Li's 2013 paper [_Storage and addressing scheme for practical hexagona
 
 ### Axial coordinates
 
-In the axial system, the third coordinate is implicit. We can always [convert](https://www.redblobgames.com/grids/hexagons/#conversions) axial to cube to calculate distance:
+In the axial system, the third coordinate is implicit. We can always [[https://www.redblobgames.com/grids/hexagons/#conversions]] axial to cube to calculate distance:
 
 function axial_distance(a, b):
     var ac = axial_to_cube(a)
@@ -392,18 +392,18 @@ There are lots of different ways to write hex distance in axial coordinates. No 
 
 ### Offset coordinates
 
-As with axial coordinates, we'll [convert](https://www.redblobgames.com/grids/hexagons/#conversions) offset coordinates to axial/cube coordinates, then use axial/cube distance.
+As with axial coordinates, we'll [[https://www.redblobgames.com/grids/hexagons/#conversions]] offset coordinates to axial/cube coordinates, then use axial/cube distance.
 
 function offset_distance(a, b):
     var ac = offset_to_axial(a)
     var bc = offset_to_axial(b)
     return axial_distance(ac, bc)
 
-We'll use the same pattern for many of the algorithms: convert offset to axial/cube, run the axial/cube version of the algorithm, and convert any axial/cube results back to offset coordinates. There are also more direct formulas for distances; see [the rot.js manual](https://ondras.github.io/rot.js/manual/#hex/indexing) for a formula in the "Odd shift" section.
+We'll use the same pattern for many of the algorithms: convert offset to axial/cube, run the axial/cube version of the algorithm, and convert any axial/cube results back to offset coordinates. There are also more direct formulas for distances; see [[https://ondras.github.io/rot.js/manual/#hex/indexing]] for a formula in the "Odd shift" section.
 
 ### Doubled coordinates
 
-Although converting doubled coordinates to axial/cube coordinates works, there's also a direct formula for distances, from the [rot.js manual](https://ondras.github.io/rot.js/manual/#hex/indexing):
+Although converting doubled coordinates to axial/cube coordinates works, there's also a direct formula for distances, from the [[https://ondras.github.io/rot.js/manual/#hex/indexing]]:
 
 function doublewidth_distance(a, b):
     var dcol = abs(a.col - b.col)
@@ -419,9 +419,9 @@ function doubleheight_distance(a, b):
 
 How do we draw a line from one hex to another? I use [linear interpolation for line drawing](https://www.redblobgames.com/grids/line-drawing/). Evenly _sample_ the line at `N+1` points, and figure out which hexes those samples are in.
 
-1. First we calculate `N`=10 to be the [hex distance](https://www.redblobgames.com/grids/hexagons/#distances) between the endpoints.
+1. First we calculate `N`=10 to be the [[https://www.redblobgames.com/grids/hexagons/#distances]] between the endpoints.
 2. Then evenly sample `N+1` points between point `A` and point `B`. Using linear interpolation, each point will be `A + (B - A) * 1.0/N * i`, for values of `i` from `0` to `N`, inclusive. In the diagram these sample points are the dark blue dots. This results in floating point coordinates.
-3. Convert each sample point (float) back into a hex (int). The algorithm is called [cube_round](https://www.redblobgames.com/grids/hexagons/#rounding).
+3. Convert each sample point (float) back into a hex (int). The algorithm is called [[https://www.redblobgames.com/grids/hexagons/#rounding]].
 
 Putting these together to draw a line from `A` to `B`:
 /*
@@ -461,7 +461,7 @@ More notes:
 
 Given a hex `center` and a range N, which hexes are within N steps from it?
 
-We can work backwards from the [hex distance](https://www.redblobgames.com/grids/hexagons/#distances) formula, `distance = max(abs(q), abs(r), abs(s))`. To find all hexes within N steps, we need `max(abs(q), abs(r), abs(s)) ≤ N`. This means we need _all_ three to be true: `abs(q) ≤ N` and `abs(r) ≤ N` and `abs(s) ≤ N`. Removing absolute value, we get `-N ≤ q ≤ +N` and `-N ≤ r ≤ +N` and `-N ≤ s ≤ +N`. In code it's a nested loop:
+We can work backwards from the [[https://www.redblobgames.com/grids/hexagons/#distances]] formula, `distance = max(abs(q), abs(r), abs(s))`. To find all hexes within N steps, we need `max(abs(q), abs(r), abs(s)) ≤ N`. This means we need _all_ three to be true: `abs(q) ≤ N` and `abs(r) ≤ N` and `abs(s) ≤ N`. Removing absolute value, we get `-N ≤ q ≤ +N` and `-N ≤ r ≤ +N` and `-N ≤ s ≤ +N`. In code it's a nested loop:
 /*
 ``` */
 var results = []
@@ -559,11 +559,11 @@ As you play with diagram, notice that each 60° rotation _flips_ the signs and
 
 Here's the full recipe for rotating a position `hex` around a center position `center` to result in a new position `rotated`:
 
-1. [Convert](https://www.redblobgames.com/grids/hexagons/#conversions) positions `hex` and `center` to cube coordinates.
+1. [[https://www.redblobgames.com/grids/hexagons/#conversions]] positions `hex` and `center` to cube coordinates.
 2. Calculate a _vector_ by subtracting the center: `vec = cube_subtract(hex, center) = Cube(hex.q - center.q, hex.r - center.r, hex.s - center.s)`.
 3. Rotate the vector `vec` as described above, and call the resulting vector `rotated_vec`.
 4. Convert the vector back to a position by adding the center: `rotated = cube_add(rotated_vec, center) = Cube(rotated_vec.q + center.q, rotated_vec.r + center.r, rotated_vec.s + center.s)`.
-5. [Convert](https://www.redblobgames.com/grids/hexagons/#conversions) the cube position `rotated` back to to your preferred coordinate system.
+5. [[https://www.redblobgames.com/grids/hexagons/#conversions]] the cube position `rotated` back to to your preferred coordinate system.
 
 It's several conversion steps but each step is short. You can shortcut some of these steps by defining rotation directly on axial coordinates, but hex vectors don't work for offset coordinates and I don't know a shortcut for offset coordinates. Also see [this stackexchange discussion](https://gamedev.stackexchange.com/questions/15237/how-do-i-rotate-a-structure-of-hexagonal-tiles-on-a-hexagonal-grid/) for other ways to calculate rotation.
 
@@ -630,7 +630,7 @@ Spirals also give us a way to _count_ how many hexagon tiles are in the larger
 
  hexes.
 
-Visiting the hexes this way can also be used to calculate [movement range](https://www.redblobgames.com/grids/hexagons/#range).
+Visiting the hexes this way can also be used to calculate [[https://www.redblobgames.com/grids/hexagons/#range]].
 
 ### Spiral coordinates
 
@@ -664,7 +664,7 @@ function cube_to_spiral(hex):
 */
 To convert form a cube/axial coordinate to a spiral index is trickier. In the example `cube_to_spiral` function I linearly search the hexes in a ring, but this can be optimized.
 
-I haven't yet used any of the spiral coordinate systems in a real project. There are many possible variants, including [outside-in](https://x.com/BEBischof/status/969813312341917697), 1-based, making sure numbers are adjacent, alternating clockwise/counterclockwise, and probably more. See [ljedrz/hex-spiral](https://github.com/ljedrz/hex-spiral/) and [lucidBrot/hexgridspiral](https://github.com/lucidBrot/hexgridspiral?tab=readme-ov-file#coordinate-systems) for some implementations.
+I haven't yet used any of the spiral coordinate systems in a real project. There are many possible variants, including [outside-in](https://x.com/BEBischof/status/969813312341917697), 1-based, making sure numbers are adjacent, alternating clockwise/counterclockwise, and probably more. See [ljedrz/hex-spiral](https://github.com/ljedrz/hex-spiral/) and [[https://github.com/lucidBrot/hexgridspiral?tab=readme-ov-file#coordinate-systems]] for some implementations.
 
 ## Field of view
 
@@ -678,7 +678,7 @@ There are many different ways to define what's "visible". Do you want to be able
 
 ## Hex to pixel
 
-For hex to pixel, it's useful to review the [size and spacing diagram](https://www.redblobgames.com/grids/hexagons/#basics) at the top of the page where we defined the `horiz` and `vert` spacing between adjacent hexagons.
+For hex to pixel, it's useful to review the [[https://www.redblobgames.com/grids/hexagons/#basics]] at the top of the page where we defined the `horiz` and `vert` spacing between adjacent hexagons.
 
 ### Axial coordinates
 
@@ -704,7 +704,7 @@ This can also be viewed as a matrix multiply, where the basis vectors are the co
 ⎢ ⎥  =  size × ⎢                     ⎥ × ⎢ ⎥
 ⎣y⎦            ⎣    0          3/2   ⎦   ⎣r⎦
 
-The matrix approach will come in handy later when we want to [convert pixel coordinates back to hex coordinates](https://www.redblobgames.com/grids/hexagons/#pixel-to-hex). To invert the process of hex-to-pixel into a pixel-to-hex process, we will invert the hex-to-pixel matrix into a pixel-to-hex matrix.
+The matrix approach will come in handy later when we want to [[https://www.redblobgames.com/grids/hexagons/#pixel-to-hex]]. To invert the process of hex-to-pixel into a pixel-to-hex process, we will invert the hex-to-pixel matrix into a pixel-to-hex matrix.
 
 ### Offset coordinates
 
@@ -724,7 +724,7 @@ function **oddr**_offset_to_pixel(hex):
 */
 Offset coordinates:  odd-r   even-r   odd-q   even-q 
 
-Unfortunately offset coordinates don't have basis vectors that we can use with a matrix. This is one reason [pixel-to-hex](https://www.redblobgames.com/grids/hexagons/#pixel-to-hex) conversions are harder with offset coordinates.
+Unfortunately offset coordinates don't have basis vectors that we can use with a matrix. This is one reason [[https://www.redblobgames.com/grids/hexagons/#pixel-to-hex]] conversions are harder with offset coordinates.
 
 Another approach is to convert the offset coordinates into axial coordinates, then use the axial to pixel conversion. By inlining the conversion code then optimizing, it will end up being the same as above.
 
@@ -770,11 +770,11 @@ function *_to_pixel(hex):
 /*
 ```
 */
-Later, [when converting pixel to hex](https://www.redblobgames.com/grids/hexagons/#pixel-to-hex-mod-origin), we'll undo this by subtracting the origin at the beginning.
+Later, [[https://www.redblobgames.com/grids/hexagons/#pixel-to-hex-mod-origin]], we'll undo this by subtracting the origin at the beginning.
 
 ### Mod: pixel sizes
 
-Some projects need hexagons to fit a specific size. We can use the formulas from the [Geometry](https://www.redblobgames.com/grids/hexagons/#basics) section of this page to change the scaling for any of the hex-to-pixel functions to _separately_ multiply by x and y scales.
+Some projects need hexagons to fit a specific size. We can use the formulas from the [[https://www.redblobgames.com/grids/hexagons/#basics]] section of this page to change the scaling for any of the hex-to-pixel functions to _separately_ multiply by x and y scales.
 
 Desired size width= ✕ height= in pixels
 /*
@@ -790,7 +790,7 @@ function *_to_pixel(hex):
 */
 flat top or pointy top
 
-Later, [when converting pixel to hex](https://www.redblobgames.com/grids/hexagons/#pixel-to-hex-mod-pixelsize), we'll undo this by dividing by the x and y scales.
+Later, [[https://www.redblobgames.com/grids/hexagons/#pixel-to-hex-mod-pixelsize]], we'll undo this by dividing by the x and y scales.
 
 To further simplify, we can _inline_ the scaling into matrix multiply to cancel out the `sqrt(3)`. For example, here's the Axial code before inlining:
 /*
@@ -827,7 +827,7 @@ One of the most common questions is, how do I take a pixel location (such as a m
 1. First we _invert_ the hex to pixel conversion. This will give us a _fractional_ hex coordinate, shown as a small red circle in the diagram.
 2. Then we find the hex containing the fractional hex coordinate, shown as the highlighted hex in the diagram.
 
-To convert from [hex coordinates to pixel coordinates](https://www.redblobgames.com/grids/hexagons/#hex-to-pixel), we multiplied `q, r` by _basis vectors_ to get `x, y`. This was a matrix multiply:
+To convert from [[https://www.redblobgames.com/grids/hexagons/#hex-to-pixel]], we multiplied `q, r` by _basis vectors_ to get `x, y`. This was a matrix multiply:
 
 ⎡x⎤            ⎛ ⎡ sqrt(3)   sqrt(3)/2 ⎤   ⎡q⎤ ⎞
 ⎢ ⎥  =  size × ⎜ ⎢                     ⎥ × ⎢ ⎥ ⎥
@@ -841,7 +841,7 @@ To invert the hex-to-pixel process into a pixel-to-hex process we first invert t
 ⎢ ⎥  =  ⎢                    ⎥ × ⎜ ⎢ ⎥ ÷ size ⎥
 ⎣r⎦     ⎣     0          2/3 ⎦   ⎝ ⎣y⎦        ⎠
 
-This calculation will give us fractional axial coordinates (floats) for `q` and `r`. The [axial_round()](https://www.redblobgames.com/grids/hexagons/#rounding) function will convert the fractional axial coordinates into integer axial hex coordinates. Here's the code:
+This calculation will give us fractional axial coordinates (floats) for `q` and `r`. The [[https://www.redblobgames.com/grids/hexagons/#rounding]] function will convert the fractional axial coordinates into integer axial hex coordinates. Here's the code:
 /*
 ``` */
 function pixel_to_pointy_hex(point):
@@ -861,15 +861,15 @@ This algorithm reuses the round() function needed in line drawing. I'm making a�
 
 ### Offset coordinates
 
-If you use offset coordinates, you can convert to pixel to axial, then axial to offset. There are also more direct algorithms that I need to study; browse [this list](https://www.redblobgames.com/grids/hexagons/more-pixel-to-hex.html#more). In one project I used [a pixel map](https://www.redblobgames.com/grids/hexagons/more-pixel-to-hex.html#pixel-map), an precomputed array of pixels that stores the hex coordinate at each.
+If you use offset coordinates, you can convert to pixel to axial, then axial to offset. There are also more direct algorithms that I need to study; browse [[https://www.redblobgames.com/grids/hexagons/more-pixel-to-hex.html#more]]. In one project I used [[https://www.redblobgames.com/grids/hexagons/more-pixel-to-hex.html#pixel-map]], an precomputed array of pixels that stores the hex coordinate at each.
 
 ### Doubled coordinates
 
-The [hex-to-pixel](https://www.redblobgames.com/grids/hexagons/#hex-to-pixel-doubled) algorithm for doubled coordinates is a straight multiply, so the pixel-to-hex will divide by those same amounts. After that, we need to round to the nearest hex. I haven't worked that out yet for doubled coordinates.
+The [[https://www.redblobgames.com/grids/hexagons/#hex-to-pixel-doubled]] algorithm for doubled coordinates is a straight multiply, so the pixel-to-hex will divide by those same amounts. After that, we need to round to the nearest hex. I haven't worked that out yet for doubled coordinates.
 
 ### Mod: non-zero origin
 
-For hex-to-pixel, we implemented [a non-zero origin](https://www.redblobgames.com/grids/hexagons/#hex-to-pixel-mod-origin) by inserting an addition at the _end_ of the chain. To invert this operation, we need to insert a subtraction at the _beginning_ of the chain:
+For hex-to-pixel, we implemented [[https://www.redblobgames.com/grids/hexagons/#hex-to-pixel-mod-origin]] by inserting an addition at the _end_ of the chain. To invert this operation, we need to insert a subtraction at the _beginning_ of the chain:
 /*
 ``` */
 function *_to_hex(point):
@@ -887,7 +887,7 @@ This pattern is not limited to hexagons. Any chain of operations p → A → B �
 
 ### Mod: pixel sizes
 
-For hex-to-pixel, we implemented [non-uniform scaling](https://www.redblobgames.com/grids/hexagons/#hex-to-pixel-mod-pixelsize) by changing the multiplying by `size` to multiplying by a different scale for x and y. To invert this operation, we need to divide by those scaling values:
+For hex-to-pixel, we implemented [[https://www.redblobgames.com/grids/hexagons/#hex-to-pixel-mod-pixelsize]] by changing the multiplying by `size` to multiplying by a different scale for x and y. To invert this operation, we need to divide by those scaling values:
 
 Desired size width= ✕ height= in pixels
 /*
@@ -907,7 +907,7 @@ Similar to hex-to-pixel, inlining the scaling into the matrix multiply will simp
 
 ## Rounding to nearest hex
 
-Sometimes we'll end up with a _floating-point_ cube coordinate, and we'll want to know which hex it should be in. This comes up in [line drawing](https://www.redblobgames.com/grids/hexagons/#line-drawing) and [pixel to hex](https://www.redblobgames.com/grids/hexagons/#pixel-to-hex). Converting a floating point value to an integer value is called _rounding_ so I call this algorithm `cube_round`.
+Sometimes we'll end up with a _floating-point_ cube coordinate, and we'll want to know which hex it should be in. This comes up in [[https://www.redblobgames.com/grids/hexagons/#line-drawing]] and [[https://www.redblobgames.com/grids/hexagons/#pixel-to-hex]]. Converting a floating point value to an integer value is called _rounding_ so I call this algorithm `cube_round`.
 
 Just as with integer cube coordinates, `frac.q + frac.r + frac.s = 0` with fractional (floating point) cube coordinates. We can round each component to the nearest integer, `q = round(frac.q); r = round(frac.r); s = round(frac.s)`. However, after rounding we do _not_ have a guarantee that `q + r + s = 0`. We do have a way to correct the problem: _reset_ the component with the largest change back to what the constraint `q + r + s = 0` requires. For example, if the r-change `abs(r-frac.r)` is larger than `abs(q-frac.q)` and `abs(s-frac.s)`, then we reset `r = -q-s`. This guarantees that `q + r + s = 0`. Here's the algorithm:
 /*
@@ -932,7 +932,7 @@ function cube_round(frac):
 /*
 ```
 */
-For non-cube coordinates, the simplest thing to do is to [convert to cube coordinates](https://www.redblobgames.com/grids/hexagons/#conversions), use the rounding algorithm, then convert back:
+For non-cube coordinates, the simplest thing to do is to [[https://www.redblobgames.com/grids/hexagons/#conversions]], use the rounding algorithm, then convert back:
 
 function axial_round(hex):
     return cube_to_axial(cube_round(axial_to_cube(hex)))
@@ -974,9 +974,9 @@ Sometimes you may want the map to “wrap” around the edges. In a square map, 
 
 Corresponding to the center of the map, there are six “mirror” centers. When you go off the map, you subtract the mirror center closest to you until you are back on the main map. In the diagram, try exiting the center map, and watch one of the mirrors enter the map on the opposite side.
 
-The simplest implementation is to precompute the answers. Make a lookup table storing, for each hex just off the map, the corresponding cube on the other side. For each of the six mirror centers `M`, and each of the locations on the map `L`, store `mirror_table[cube_add(M, L)] = L`. Then any time you calculate a hex that's in the mirror table, replace it by the unmirrored version. See [stackoverflow](https://gamedev.stackexchange.com/a/137603/2472) for another approach.
+The simplest implementation is to precompute the answers. Make a lookup table storing, for each hex just off the map, the corresponding cube on the other side. For each of the six mirror centers `M`, and each of the locations on the map `L`, store `mirror_table[[M, L)] = L`. Then any time you calculate a hex that's in the mirror table, replace it by the unmirrored version. See [stackoverflow](https://gamedev.stackexchange.com/a/137603/2472|cube_add(M, L)]] for another approach.
 
-For a hexagonal shaped map with radius `N`, the mirror centers will be `Cube(2*N+1, -N, -N-1)` and its [six rotations](https://www.redblobgames.com/grids/hexagons/#rotation).
+For a hexagonal shaped map with radius `N`, the mirror centers will be `Cube(2*N+1, -N, -N-1)` and its [[https://www.redblobgames.com/grids/hexagons/#rotation]].
 
 Related: Sander Evers has a [nice explanation of how to combine small hexagons into a grid of large hexagons](https://observablehq.com/@sanderevers/hexagon-tiling-of-an-hexagonal-grid) and also a [coordinate system to represent small hexagons within a larger one](https://observablehq.com/@sanderevers/hexmod-representation).
 
@@ -986,8 +986,8 @@ If you're using graph-based pathfinding such as A* or Dijkstra's algorithm or Fl
 
 Mouse over a hex in the diagram to see the path to it. Click or drag to toggle walls.
 
-1. **Neighbors**. The sample code I provide in the pathfinding tutorial calls `graph.neighbors` to get the neighbors of a location. Use the function in the [neighbors](https://www.redblobgames.com/grids/hexagons/#neighbors) section for this. Filter out the neighbors that are impassable.
-2. **Heuristic**. The sample code for A* uses a `heuristic` function that gives a distance between two locations. Use the [distance formula](https://www.redblobgames.com/grids/hexagons/#distances), scaled to match the movement costs. For example if your movement cost is 5 per hex, then multiply the distance by 5.
+1. **Neighbors**. The sample code I provide in the pathfinding tutorial calls `graph.neighbors` to get the neighbors of a location. Use the function in the [[https://www.redblobgames.com/grids/hexagons/#neighbors]] section for this. Filter out the neighbors that are impassable.
+2. **Heuristic**. The sample code for A* uses a `heuristic` function that gives a distance between two locations. Use the [[https://www.redblobgames.com/grids/hexagons/#distances]], scaled to match the movement costs. For example if your movement cost is 5 per hex, then multiply the distance by 5.
 
 ## More Reading
 
@@ -1000,7 +1000,7 @@ I have an [**guide to implementing your own hex grid library**](https://www.red
 - [James McNeill has a nice visual explanation of grid transformations](https://playtechs.blogspot.com/2007/04/hex-grids.html).
 - [Overview of hex coordinate types](https://web.archive.org/web/20090205120106/http://sc.tri-bit.com/Hex_Grids): staggered (offset), interlaced, 3D (cube), and trapezoidal (axial).
 - Hexnet explains how the [correspondence between hexagons and cubes](https://hexnet.org/content/permutohedron) goes much deeper than what I described on this page, generalizing to higher dimensions.
-- [The Rot.js library](https://ondras.github.io/rot.js/manual/#hex/indexing) has a list of hex coordinate systems: non-orthogonal (axial), odd shift (offset), double width (interlaced), cube.
+- [[https://ondras.github.io/rot.js/manual/#hex/indexing]] has a list of hex coordinate systems: non-orthogonal (axial), odd shift (offset), double width (interlaced), cube.
 - [Range for cube coordinates](https://stackoverflow.com/questions/2049196/generating-triangular-hexagonal-coordinates-xyz): given a distance, which hexagons are that distance from the given one?
 - [Distances on hex grids](https://archive.ph/20141214082648/http://keekerdc.com/2011/03/hexagon-grids-coordinate-systems-and-distance-calculations/) using cube coordinates, and reasons to use cube coordinates instead of offset.
 - [This guide](https://web.archive.org/web/20130608235236/https://www.br-gs.com/tutorial/hexagon-grid.html) explains the basics of measuring and drawing hexagons, using an offset grid.
@@ -1019,7 +1019,7 @@ The code that powers this page is partially procedurally generated! The core alg
 
 There are more things I want to do for this guide. I'm [keeping a list on Notion](https://redblobgames.notion.site/Hexagonal-Grids-7d2d4d624bc5483dafbe615d75ab3902). Do you have suggestions for things to change or add? Comment below.
 
-Email me [redblobgames@gmail.com](mailto:redblobgames@gmail.com), or comment here:
+Email me [[mailto:redblobgames@gmail.com|redblobgames@gmail.com]], or comment here:
 
 Copyright © 2026 [Red Blob Games](https://www.redblobgames.com/)  
  [RSS Feed](https://www.redblobgames.com/blog/posts.xml)

@@ -3,11 +3,13 @@ extends RefCounted
 ## Game handler — godot_game / godot_game_time.
 ## Docs: 02-Tools/Game-Control.md
 ##
-## godot_game: play, stop, pause, resume, status
+## godot_game: play, stop, pause, resume, status, instances
 ## godot_game_time: freeze, unfreeze, step, step_until
 ##
 ## Runtime operations (freeze/step/step_until/input) are forwarded to the
-## runtime autoload via the debugger channel.
+## runtime autoload via the debugger channel. When the editor runs multiple
+## game instances, params.instance (1-based launch order) selects the target;
+## "instances" lists them. Omitted/0 targets the first instance.
 
 const _EC = preload("res://addons/open_godot_mcp/utils/error_codes.gd")
 
@@ -27,11 +29,13 @@ func _handle_game(action: String, params: Dictionary) -> Dictionary:
 		"stop":
 			return _stop()
 		"pause":
-			return await _pause()
+			return await _pause(params)
 		"resume":
-			return await _resume()
+			return await _resume(params)
 		"status":
-			return await _status()
+			return await _status(params)
+		"instances":
+			return _instances()
 		_:
 			return _EC.fail("INVALID_ARGUMENT", "Unknown action: %s" % action)
 
@@ -75,28 +79,46 @@ func _stop() -> Dictionary:
 	return _EC.ok()
 
 
-func _pause() -> Dictionary:
-	return await _call_runtime_game_time("pause", {})
+func _pause(params: Dictionary) -> Dictionary:
+	return await _call_runtime_game_time("pause", params)
 
 
-func _resume() -> Dictionary:
-	return await _call_runtime_game_time("resume", {})
+func _resume(params: Dictionary) -> Dictionary:
+	return await _call_runtime_game_time("resume", params)
 
 
-func _status() -> Dictionary:
+## List every PIE game instance (Debug → Run Multiple Instances) in launch
+## order — the 1-based "instance" index accepted by all runtime tools.
+func _instances() -> Dictionary:
+	if _bridge == null:
+		return _EC.fail("INTERNAL_ERROR", "Bridge not set")
+	var dbg: EditorDebuggerPlugin = _bridge.get_debugger()
+	if dbg == null:
+		return _EC.fail("RUNTIME_NOT_CONNECTED", "Debugger plugin not available")
+	var list: Array = dbg.get_instances()
+	return _EC.ok({"instances": list, "count": list.size(), "is_playing": EditorInterface.is_playing_scene()})
+
+
+func _status(params: Dictionary) -> Dictionary:
 	var is_playing := EditorInterface.is_playing_scene()
+	var instance := int(params.get("instance", 0))
 	var dbg_ready := false
 	if _bridge:
 		var dbg: EditorDebuggerPlugin = _bridge.get_debugger()
 		if dbg:
-			dbg_ready = dbg.is_game_ready()
+			dbg_ready = dbg.is_game_ready(instance)
 	var result := {"is_playing": is_playing, "runtime_connected": dbg_ready, "fps": 0}
+	if _bridge:
+		var dbg: EditorDebuggerPlugin = _bridge.get_debugger()
+		if dbg:
+			result["instances"] = dbg.get_instances()
+			result["instance_count"] = dbg.get_instance_count()
 	# FPS and viewport come from the game process — query the runtime
 	# autoload via the debugger channel. Fall back to 0 / unknown when
 	# the game isn't connected so `status` still works as a liveness probe.
 	if dbg_ready and _bridge:
 		var dbg: EditorDebuggerPlugin = _bridge.get_debugger()
-		var snap: Dictionary = await dbg.call_runtime("profiler", {"action": "snapshot"})
+		var snap: Dictionary = await dbg.call_runtime("profiler", {"action": "snapshot", "instance": instance})
 		if snap.get("ok", false):
 			result["fps"] = int(snap.get("fps", 0))
 			result["process_time_ms"] = float(snap.get("process_time", 0.0))
@@ -110,6 +132,7 @@ func _status() -> Dictionary:
 		# (Vector2/Vector2i do not survive the bridge as {x, y} reliably).
 		var vp: Dictionary = await dbg.call_runtime("exec", {
 			"action": "eval",
+			"instance": instance,
 			"code": (
 				"var _vp := get_viewport()\n"
 				+ "var _vs := _vp.get_visible_rect().size\n"
@@ -136,7 +159,7 @@ func _status() -> Dictionary:
 func _handle_game_time(action: String, params: Dictionary) -> Dictionary:
 	match action:
 		"freeze":
-			return await _call_runtime_game_time("freeze", {})
+			return await _call_runtime_game_time("freeze", params)
 		"unfreeze":
 			return await _call_runtime_game_time("unfreeze", params)
 		"step":
@@ -144,9 +167,9 @@ func _handle_game_time(action: String, params: Dictionary) -> Dictionary:
 		"step_until":
 			return await _call_runtime_game_time("step_until", params)
 		"pause":
-			return await _call_runtime_game_time("pause", {})
+			return await _call_runtime_game_time("pause", params)
 		"resume":
-			return await _call_runtime_game_time("resume", {})
+			return await _call_runtime_game_time("resume", params)
 		_:
 			return _EC.fail("INVALID_ARGUMENT", "Unknown action: %s" % action)
 

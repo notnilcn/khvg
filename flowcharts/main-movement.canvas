@@ -25,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/non_local_player_codefile/non_local_player_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 250,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,8 +35,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
 			"color": "5",
-			"x": 130,
+			"x": 240,
 			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69206441fa058f50",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
+			"color": "5",
+			"x": 710,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -45,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
 			"color": "5",
-			"x": 590,
+			"x": 800,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -55,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/World_subfolder.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1170,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 90,
 			"y": 1500,
 			"width": 400,
 			"height": 400
@@ -75,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 90,
 			"y": 2000,
 			"width": 400,
 			"height": 400

@@ -34,6 +34,14 @@ public partial class Chest : Node2D, IEntity
         chestPanel = GetNode<Control>("ChestCanvas/ChestPanel");
         itemsGrid = GetNode<GridContainer>("ChestCanvas/ChestPanel/MarginContainer/VBoxContainer/ItemsGrid");
         itemsBinder = GetNode<TableBinderComponent>("NearbyChestItemsBinder");
+
+        // The 2D chest texture loads in code (was scene-declared) so 3D mode never loads
+        // it; 3D mode has no chest model yet — invisible but InteractComponent still works.
+        var sprite = GetNode<Sprite2D>("Sprite2D");
+        if (GameVisuals.Is3D)
+            sprite.Visible = false;
+        else
+            sprite.Texture = GD.Load<Texture2D>("res://Textures/Items/Artifacts/Chest.tres");
     }
 
     public void TogglePanel()

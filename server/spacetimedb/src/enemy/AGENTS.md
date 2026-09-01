@@ -8,9 +8,9 @@ Everything an agent needs to work in this module without re-deriving the model. 
 | File | Role | Edit it when |
 |---|---|---|
 | `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`/`StunBehavior`), the four step-def tables, `PatternType` + param structs, `MovementBehavior`, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
-| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, event tables (`BulletPatternEvent`, `BulletControlEvent`), schedules | Rarely — schema changes |
+| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, schedules, and the event tables: `BulletPatternEvent` (`damage` resolved at insert), `BulletControlEvent` (rect kinds encode origin (x, y) + far end (target_x, target_y) + width (radius); Attract `duration` = linger, 0 = one-shot; SlashRect `duration` = damage threshold as f32 bits; WallRect `duration` = linger seconds), `AbilityVisualEvent` (P5 spell flashes; per-kind encoding documented on the table) | Rarely — schema changes |
 | `methods.rs` | Pure logic: archetype helpers, behavior-tree build/teardown, `tick_phase`/`tick_sequence`, movement, biome spawning | Changing *how* enemies simulate |
-| `reducers.rs` | `tick_enemy_spawn`/`tick_enemy_behavior` (scheduled), `report_enemy_hit`, `control_bullets` | Wiring, not content |
+| `reducers.rs` | `tick_enemy_spawn`/`tick_enemy_behavior` (scheduled), `report_enemy_hit` (rate-limited + range-checked, see below) | Wiring, not content |
 | `emitters.rs` | **Authoring vocabulary**: `Emitter` builder + `Difficulty`/`DifficultySteps`; `compile()` lowers an emitter to an `AttackSequence` | Extending the vocabulary (e.g. a new builder) |
 | `defs/` | **Enemy content lives here.** `mod.rs` = raw step helpers + module declarations; one file per enemy/boss (`gorgon_boss.rs` is the reference) | Adding/changing enemies — usually the only place |
 | `views.rs` | `nearby_enemies` (AOI), `enemy_templates` (global) | Exposing new data to clients |
@@ -37,7 +37,15 @@ EnemySequenceStep → RepeatStepInstance) must not have orphan rows.
   This is burst cadence (`Emitter::burst` compiles to it).
 - **Catch-up firing**: intervals < 100 ms fire multiple shots per tick, capped at
   `MAX_CATCHUP_SHOTS` (8) — ceiling ~80 shots/s per sequence. `step_timer` advances by
-  whole intervals (no drift).
+  whole intervals (no drift). `step_timer` doesn't advance while an enemy is out of sim
+  range, so before the catch-up loop it's clamped to `now − BACKLOG_CAP × interval` —
+  range re-entry fires at most a ~2-shot burst, not a seconds-long wall of bullets.
+- **`report_enemy_hit` is self-reported but gated**: a `PlayerHitRate` token bucket (player/
+  module) caps sustained rate at the equipped weapon's fire_rate × shot_count ×
+  `HIT_RATE_SLACK`, and a wrap-aware `HIT_VALIDATION_RADIUS` range check against the
+  attacker's position row rejects nonsense attributions. There is **no `control_bullets`
+  reducer** — player bullet-controller casts append `BulletControlEvent`s only via
+  `activate_ability` → `apply_ability_effect` with full ability validation.
 - **`angle_step` bakes spin per shot** (`base + step × repeat_count`) and rotates the
   origin **offset** by the same accumulated spin (orbiting-arm model); `base_angle_offset`
   itself tilts only the firing direction.

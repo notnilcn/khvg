@@ -15,16 +15,21 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
-				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyAttack",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-effective_interval",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-AttackSequence",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-rotate_offset",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-StunBehavior",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyAttack",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-AttackSequence",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-SequenceStepRef",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-MultiStepRef",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemySequenceStep-_colon_-read",
@@ -44,8 +49,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef-_colon_-read",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef-_colon_-read"
 			]
 		}
 	}

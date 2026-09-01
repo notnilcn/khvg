@@ -274,7 +274,7 @@ func _evaluate(params: Dictionary) -> Dictionary:
 	if session.has_method("is_breaked") and session.is_breaked():
 		return _EC.fail("NOT_SUPPORTED", "Evaluate is not available when game is paused at a breakpoint. Resume the game first, or use stack_trace/variables to inspect state.")
 	# Use call_runtime to evaluate in the game context
-	var result: Dictionary = await dbg.call_runtime("exec", {"action": "eval", "code": expression})
+	var result: Dictionary = await dbg.call_runtime("exec", {"action": "eval", "code": expression, "instance": int(params.get("instance", 0))})
 	return result
 
 

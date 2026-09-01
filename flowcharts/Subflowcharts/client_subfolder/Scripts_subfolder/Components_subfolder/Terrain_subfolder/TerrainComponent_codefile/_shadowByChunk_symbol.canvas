@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "11836c2530b53af8",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/TerrainComponent.cs",
+			"subpath": "#_shadowByChunk",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

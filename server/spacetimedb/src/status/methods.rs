@@ -244,10 +244,12 @@ pub fn intercept_incoming(ctx: &ReducerContext, profile_id: u64, source_enemy_id
                 ctx.db.active_status_effect().effect_id().update(ActiveStatusEffect { pool: row.pool + to_pool as f32, ..*row });
             }
         }
-        // StoreIncoming: the raw pre-mitigation hit accumulates into the pool (the hit
-        // itself still lands normally — this is a store, not a conversion).
+        // StoreIncoming: the POST-mitigation hit accumulates into the pool (the hit
+        // itself still lands normally — this is a store, not a conversion). Pooling what
+        // the player actually loses keeps 1 HP taken ≠ 10 stored.
         for row in rows.iter().filter(|r| matches!(r.kind, StatusEffectKind::StoreIncomingSmite | StatusEffectKind::StoreIncomingBash)) {
-            ctx.db.active_status_effect().effect_id().update(ActiveStatusEffect { pool: row.pool + base_damage as f32, ..*row });
+            let stored = crate::combat::compute_incoming_damage(ctx, profile_id, damage);
+            ctx.db.active_status_effect().effect_id().update(ActiveStatusEffect { pool: row.pool + stored as f32, ..*row });
         }
     }
 
@@ -258,10 +260,11 @@ pub fn intercept_incoming(ctx: &ReducerContext, profile_id: u64, source_enemy_id
 /// to the pre-mitigation amount so defence still eats proportionally.
 pub fn outgoing_damage_mult(ctx: &ReducerContext, attacker: Option<u64>) -> f32 {
     let Some(profile_id) = attacker else { return 1.0 };
+    // One row per (profile, kind) — see ActiveStatusEffect's uniqueness rule.
     ctx.db.active_status_effect().profile_id().filter(&profile_id)
-        .filter(|r| r.kind == StatusEffectKind::DamageDealtMult)
+        .find(|r| r.kind == StatusEffectKind::DamageDealtMult)
         .map(|r| r.params.mult)
-        .fold(1.0, |acc, m| acc * m)
+        .unwrap_or(1.0)
 }
 
 /// Outgoing consult (attacker side): records damage dealt to `enemy_id`. Drives the
@@ -334,10 +337,8 @@ fn settle_store_mark(ctx: &ReducerContext, row: &ActiveStatusEffect, login: &Log
 /// marks; store-damage wagers forfeit their unsettled pools) and every enemy-side debuff row
 /// on it. Called by combat::apply_damage_to_enemy on kill.
 pub fn on_enemy_killed(ctx: &ReducerContext, enemy_id: u64) {
-    for row in ctx.db.active_status_effect().iter().collect::<Vec<_>>() {
-        if row.marked_enemy_id == enemy_id {
-            ctx.db.active_status_effect().effect_id().delete(&row.effect_id);
-        }
+    for row in ctx.db.active_status_effect().marked_enemy_id().filter(&enemy_id).collect::<Vec<_>>() {
+        ctx.db.active_status_effect().effect_id().delete(&row.effect_id);
     }
     for row in ctx.db.active_enemy_status_effect().enemy_id().filter(&enemy_id).collect::<Vec<_>>() {
         ctx.db.active_enemy_status_effect().effect_id().delete(&row.effect_id);
@@ -442,8 +443,8 @@ pub fn tick(ctx: &ReducerContext) {
             StatusEffectKind::StoreIncomingSmite => {
                 row.remaining -= CONSUMABLE_EFFECT_TICK_SECONDS;
                 if row.remaining <= 0.0 {
-                    // Smite release: the stored pre-mitigation pool bursts around the paladin
-                    // (Normal mitigation at release). Plan deviation: centered on the
+                    // Smite release: the stored pool bursts around the paladin (Normal
+                    // mitigation at release). Plan deviation: centered on the
                     // paladin — a scheduled tick has no cursor; recasting releases early AT
                     // the cursor instead (see activate_ability).
                     if row.pool >= 1.0 {

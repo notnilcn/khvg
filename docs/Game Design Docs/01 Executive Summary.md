@@ -25,7 +25,7 @@ Humans discovered magic early. No scarcity > no conflict > no bureaucracy. This 
 ## World building vibes
 Players spawn into a post-catastrophe world that has recently been patch-work merged with out worlds because a bunch of wizards naively tried to implement world-wide long range teleportation bates and messed it up. The game is similar to post-apocalypse except less depressing/bleak - the survivors aren't being threatened by anything but they still have to figure out how to survive, so at a societal/narrative level it'll have survival game vibes (different colonies have to establish contact, trade, etc) but at an individual level it'll just be a standard mmorpg.
 ## Look
-This game will use realistically-proportional low-poly 3D models that're passed through a pixel art shader (heavily inspired by [t3ssel8r's dev log videos](<https://www.youtube.com/watch?v=1FrIBkuq0ZI&t=417s>)), however, there will be support for a 2D version of the game that uses 2D sprites.
+This game will use realistically-proportional low-poly 3D models that're passed through a pixel art shader (heavily inspired by [[<https://www.youtube.com/watch?v=1FrIBkuq0ZI&t=417s>|t3ssel8r's dev log videos]]), however, there will be support for a 2D version of the game that uses 2D sprites.
 
 The game will predominately be viewed from a top-down angle, however, players will be able to rotate, pan, and zoom the camera along any angle, similar to other mmorpgs that use 3d models.
 

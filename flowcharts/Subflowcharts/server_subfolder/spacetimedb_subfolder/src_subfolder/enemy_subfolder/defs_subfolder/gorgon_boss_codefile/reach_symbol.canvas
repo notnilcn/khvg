@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "0046885d16fc22e0",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/defs/gorgon_boss.rs",
+			"subpath": "#reach",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

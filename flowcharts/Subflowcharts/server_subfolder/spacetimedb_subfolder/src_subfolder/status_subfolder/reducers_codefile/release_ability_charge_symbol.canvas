@@ -1,0 +1,41 @@
+{
+	"nodes": [
+		{
+			"id": "deb897a3efc13588",
+			"type": "file",
+			"file": "server/spacetimedb/src/status/reducers.rs",
+			"subpath": "#release_ability_charge",
+			"color": "1",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol",
+				"edge-_colon_-server/spacetimedb/src/status/reducers-_dot_-rs-_hashtag_-internal_release_charge",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read"
+			]
+		}
+	}
+}

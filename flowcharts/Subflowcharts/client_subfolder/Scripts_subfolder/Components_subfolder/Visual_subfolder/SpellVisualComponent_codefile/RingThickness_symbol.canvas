@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "1a72a5648c1ba680",
+			"type": "file",
+			"file": "client/Scripts/Components/Visual/SpellVisualComponent.cs",
+			"subpath": "#RingThickness",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

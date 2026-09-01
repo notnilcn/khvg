@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "41b0a9530702df14",
+			"type": "file",
+			"file": "client/Scripts/World/ServerConstants.cs",
+			"subpath": "#MaxChargeSeconds",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -27,7 +27,7 @@ __export(main_exports, {
   default: () => AdvancedCanvasPlugin
 });
 module.exports = __toCommonJS(main_exports);
-var import_obsidian26 = require("obsidian");
+var import_obsidian28 = require("obsidian");
 
 // src/utils/icons-helper.ts
 var import_obsidian = require("obsidian");
@@ -207,7 +207,7 @@ var DebugHelper = class {
 };
 
 // src/settings.ts
-var import_obsidian4 = require("obsidian");
+var import_obsidian7 = require("obsidian");
 
 // src/utils/bbox-helper.ts
 var BBoxHelper = class {
@@ -1510,6 +1510,61 @@ var BUILTIN_EDGE_STYLE_ATTRIBUTES = [
         value: "a-star"
       }
     ]
+  },
+  {
+    // Added by an LLM agent: consumed by the bezier curvature feature (bezier-curvature-canvas-extension.ts)
+    // Only affects edges without a pathfinding method; the value scales the bezier control points
+    key: "bezierCurvature",
+    label: "Bezier Curvature",
+    options: [
+      {
+        icon: "spline",
+        label: "Default (100%)",
+        value: null
+      },
+      {
+        icon: "minus",
+        label: "Subtle (150%)",
+        value: "1.5"
+      },
+      {
+        icon: "corner-up-right",
+        label: "Gentle (200%)",
+        value: "2"
+      },
+      {
+        icon: "rainbow",
+        label: "Strong (300%)",
+        value: "3"
+      },
+      {
+        icon: "wind",
+        label: "Extreme (500%)",
+        value: "5"
+      }
+    ]
+  },
+  {
+    // Added by an LLM agent: consumed by the z-ordering feature (z-ordering-canvas-extension.ts)
+    key: "zIndex",
+    label: "Z-Index",
+    options: [
+      {
+        icon: "send-to-back",
+        label: "Back (-1)",
+        value: "-1"
+      },
+      {
+        icon: "minus",
+        label: "Default (0)",
+        value: null
+      },
+      {
+        icon: "bring-to-front",
+        label: "Front (1)",
+        value: "1"
+      }
+    ]
   }
 ];
 
@@ -1775,6 +1830,796 @@ var NodeStylesExtension = class extends CanvasExtension {
   }
 };
 
+// src/canvas-extensions/canvas-filter-canvas-extension.ts
+var import_obsidian6 = require("obsidian");
+
+// src/utils/modal-helper.ts
+var import_obsidian4 = require("obsidian");
+
+// src/utils/filepath-helper.ts
+var FilepathHelper = class {
+  static extension(path) {
+    var _a;
+    return (path == null ? void 0 : path.includes(".")) ? (_a = path == null ? void 0 : path.split(".")) == null ? void 0 : _a.pop() : void 0;
+  }
+};
+
+// src/utils/modal-helper.ts
+var AbstractSelectionModal = class extends import_obsidian4.FuzzySuggestModal {
+  constructor(app, placeholder, suggestions, arbitrary = false) {
+    super(app);
+    this.suggestions = suggestions;
+    this.arbitrary = arbitrary;
+    this.setPlaceholder(placeholder);
+    this.setInstructions([{
+      command: "\u2191\u2193",
+      purpose: "to navigate"
+    }, {
+      command: "esc",
+      purpose: "to dismiss"
+    }]);
+  }
+  getItems() {
+    return this.suggestions;
+  }
+  getItemText(item) {
+    return item;
+  }
+  getSuggestions(query) {
+    const suggestions = super.getSuggestions(query);
+    if (this.arbitrary && query.length > 0 && !suggestions.some((s) => s.item === query))
+      suggestions.splice(0, 0, { item: query, match: { score: 1, matches: [[0, query.length]] } });
+    return suggestions;
+  }
+  onChooseItem(_item, _evt) {
+  }
+  awaitInput() {
+    return new Promise((resolve, _reject) => {
+      this.onChooseItem = (item) => resolve(item);
+      this.open();
+    });
+  }
+};
+var FileNameModal = class extends import_obsidian4.SuggestModal {
+  constructor(app, parentPath, fileExtension) {
+    super(app);
+    this.parentPath = parentPath.replace(/^\//, "").replace(/\/$/, "");
+    this.fileExtension = fileExtension;
+  }
+  getSuggestions(query) {
+    const queryWithoutExtension = query.replace(new RegExp(`\\.${this.fileExtension}$`), "");
+    if (queryWithoutExtension === "") return [];
+    const queryWithExtension = queryWithoutExtension + "." + this.fileExtension;
+    const suggestions = [queryWithExtension];
+    if (this.parentPath.length > 0) suggestions.splice(0, 0, `${this.parentPath}/${queryWithExtension}`);
+    return suggestions.filter((s) => this.app.vault.getAbstractFileByPath(s) === null);
+  }
+  renderSuggestion(text, el) {
+    el.setText(text);
+  }
+  onChooseSuggestion(_text, _evt) {
+  }
+  awaitInput() {
+    return new Promise((resolve, _reject) => {
+      this.onChooseSuggestion = (text) => {
+        resolve(text);
+      };
+      this.open();
+    });
+  }
+};
+var FileSelectModal = class extends import_obsidian4.SuggestModal {
+  constructor(app, extensionsRegex, suggestNewFile = false) {
+    super(app);
+    this.files = this.app.vault.getFiles().map((file) => file.path).filter((path) => {
+      var _a;
+      return (_a = FilepathHelper.extension(path)) == null ? void 0 : _a.match(extensionsRegex != null ? extensionsRegex : /.*/);
+    });
+    this.suggestNewFile = suggestNewFile;
+    this.setPlaceholder("Type to search...");
+    this.setInstructions([{
+      command: "\u2191\u2193",
+      purpose: "to navigate"
+    }, {
+      command: "\u21B5",
+      purpose: "to open"
+    }, {
+      command: "shift \u21B5",
+      purpose: "to create"
+    }, {
+      command: "esc",
+      purpose: "to dismiss"
+    }]);
+    this.scope.register(["Shift"], "Enter", (e) => {
+      this.onChooseSuggestion(this.inputEl.value, e);
+      this.close();
+    });
+  }
+  getSuggestions(query) {
+    const suggestions = this.files.filter((path) => path.toLowerCase().includes(query.toLowerCase()));
+    if (suggestions.length === 0 && this.suggestNewFile) suggestions.push(query);
+    return suggestions;
+  }
+  renderSuggestion(path, el) {
+    const simplifiedPath = path.replace(/\.md$/, "");
+    el.setText(simplifiedPath);
+  }
+  onChooseSuggestion(_path, _evt) {
+  }
+  awaitInput() {
+    return new Promise((resolve, _reject) => {
+      this.onChooseSuggestion = (path, _evt) => {
+        const file = this.app.vault.getAbstractFileByPath(path);
+        if (file instanceof import_obsidian4.TFile)
+          return resolve(file);
+        if (!this.suggestNewFile) return;
+        if (FilepathHelper.extension(path) === void 0) path += ".md";
+        const newFile = this.app.vault.create(path, "");
+        resolve(newFile);
+      };
+      this.open();
+    });
+  }
+};
+
+// src/canvas-extensions/portals-canvas-extension.ts
+var import_obsidian5 = require("obsidian");
+var PORTAL_ID_DELIMITER = "||";
+var PORTAL_ID_PREFIX = `acportal${PORTAL_ID_DELIMITER}`;
+var PORTAL_PADDING = 50;
+var MIN_OPEN_PORTAL_SIZE = { width: 200, height: 200 };
+var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtension {
+  isEnabled() {
+    return "portalsFeatureEnabled";
+  }
+  init() {
+    this.plugin.registerEvent(this.plugin.app.vault.on("modify", (file) => {
+      for (const canvas of this.plugin.getCanvases())
+        this.onFileModified(canvas, file);
+    }));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:popup-menu-created",
+      (canvas) => this.onPopupMenu(canvas)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-created",
+      (canvas, node) => void this.tryAutoOpenSingleNodePortal(canvas, node)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-removed",
+      (canvas, node) => this.onNodeRemoved(canvas, node)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-moved",
+      (canvas, node, _keyboard) => this.onNodeMoved(canvas, node)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-resized",
+      (canvas, node) => this.onNodeResized(canvas, node)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:dragging-state-changed",
+      (canvas, startedDragging) => this.onDraggingStateChanged(canvas, startedDragging)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:containing-nodes-requested",
+      (canvas, bbox, nodes) => this.onContainingNodesRequested(canvas, bbox, nodes)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:edge-connection-try-dragging:before",
+      (canvas, edge, event, cancelRef) => this.onEdgeConnectionTryDraggingBefore(canvas, edge, event, cancelRef)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:edge-connection-dragging:after",
+      (canvas, edge, event, newEdge, side, previousEnds) => this.onEdgeConnectionDraggingAfter(canvas, edge, event, newEdge, side, previousEnds)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:selection-changed",
+      (canvas, oldSelection, updateSelection) => this.onSelectionChanged(canvas, oldSelection, updateSelection)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:data-requested",
+      (canvas, data) => this.onGetData(canvas, data)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:data-loaded:before",
+      (canvas, data, setData) => {
+        this.onSetData(canvas, data).then((newData) => {
+          if (newData.nodes.length === data.nodes.length && newData.edges.length === data.edges.length) return;
+          setData(newData);
+        }).catch((error) => {
+          console.error("Error loading portal data:", error);
+          new import_obsidian5.Notice("An error occurred while loading portal data. Please check console for details.");
+        });
+      }
+    ));
+  }
+  onFileModified(canvas, file) {
+    const isAffected = Object.values(canvas.nodes).filter(
+      (nodeData) => nodeData.getData().type === "file" && nodeData.currentPortalFile === file.path
+    ).length > 0;
+    if (!isAffected) return;
+    canvas.setData(canvas.getData());
+    canvas.history.current--;
+    canvas.history.data.pop();
+  }
+  onContainingNodesRequested(_canvas, _bbox, nodes) {
+    const filteredNodes = nodes.filter((node) => !_PortalsCanvasExtension.isPortalElement(node.id));
+    nodes.splice(0, nodes.length, ...filteredNodes);
+  }
+  onSelectionChanged(canvas, _oldSelection, updateSelection) {
+    updateSelection(() => {
+      const updatedSelection = Array.from(canvas.selection).filter((canvasElement) => !_PortalsCanvasExtension.isPortalElement(canvasElement.id));
+      canvas.selection = new Set(updatedSelection);
+    });
+  }
+  onDraggingStateChanged(canvas, startedDragging) {
+    if (!startedDragging) return;
+    if (!canvas.getSelectionData().nodes.some((node) => node.type === "file" && node.portal)) return;
+    const objectSnappingEnabled = canvas.options.snapToObjects;
+    if (!objectSnappingEnabled) return;
+    canvas.toggleObjectSnapping(false);
+    const dragEndEventRef = this.plugin.app.workspace.on(
+      "advanced-canvas:dragging-state-changed",
+      (canvas2, startedDragging2) => {
+        if (startedDragging2) return;
+        canvas2.toggleObjectSnapping(objectSnappingEnabled);
+        this.plugin.app.workspace.offref(dragEndEventRef);
+      }
+    );
+    this.plugin.registerEvent(dragEndEventRef);
+  }
+  onNodeMoved(canvas, portalNode) {
+    const portalNodeData = portalNode.getData();
+    if (portalNodeData.type !== "file" || !portalNodeData.isPortalLoaded) return;
+    const nestedNodes = this.getContainingNodes(canvas, portalNode);
+    const containingNodesBBox = CanvasHelper.getBBox(nestedNodes);
+    const portalOffset = {
+      x: portalNodeData.x - containingNodesBBox.minX + PORTAL_PADDING,
+      y: portalNodeData.y - containingNodesBBox.minY + PORTAL_PADDING
+    };
+    for (const nestedNode of nestedNodes) {
+      const nestedNodeData = nestedNode.getData();
+      nestedNode.setData({
+        ...nestedNodeData,
+        x: nestedNodeData.x + portalOffset.x,
+        y: nestedNodeData.y + portalOffset.y
+      });
+    }
+  }
+  onNodeResized(_canvas, portalNode) {
+    const portalNodeData = portalNode.getData();
+    if (portalNodeData.type !== "file" || !portalNodeData.isPortalLoaded) return;
+    portalNode.setData({
+      ...portalNodeData,
+      x: portalNode.prevX ? portalNode.prevX : portalNodeData.x,
+      y: portalNode.prevY ? portalNode.prevY : portalNodeData.y,
+      width: portalNode.prevWidth ? portalNode.prevWidth : portalNodeData.width,
+      height: portalNode.prevHeight ? portalNode.prevHeight : portalNodeData.height
+    });
+  }
+  onNodeRemoved(canvas, portalNode) {
+    const portalNodeData = portalNode.getData();
+    if (portalNodeData.type !== "file" || !portalNodeData.portal) return;
+    for (const node of this.getContainingNodes(canvas, portalNode, false))
+      canvas.removeNode(node);
+    for (const edge of this.getContainingEdges(canvas, portalNode, false))
+      canvas.removeEdge(edge);
+  }
+  onEdgeConnectionTryDraggingBefore(_canvas, edge, _event, cancelRef) {
+    if (!_PortalsCanvasExtension.isPortalElement(edge.id)) return;
+    cancelRef.value = true;
+    new import_obsidian5.Notice("Updating edges from portals is not supported yet.");
+  }
+  onEdgeConnectionDraggingAfter(canvas, edge, _event, _newEdge, _side, _previousEnds) {
+    if (_PortalsCanvasExtension.isPortalElement(edge.id)) return;
+    if (!_PortalsCanvasExtension.isPortalElement(edge.from.node.id) || !_PortalsCanvasExtension.isPortalElement(edge.to.node.id)) return;
+    canvas.removeEdge(edge);
+    new import_obsidian5.Notice("Creating edges with both ends in portals are not supported yet.");
+  }
+  onPopupMenu(canvas) {
+    if (canvas.readonly) return;
+    const selectedFileNodes = canvas.getSelectionData().nodes.map((nodeData) => {
+      var _a;
+      const node = canvas.nodes.get(nodeData.id);
+      if (!node) return null;
+      if (nodeData.type !== "file") return null;
+      if (((_a = node.file) == null ? void 0 : _a.extension) === "canvas") return node;
+      if (nodeData.portal) this.setPortalOpen(canvas, node, false);
+      return null;
+    }).filter((node) => node !== null);
+    if (selectedFileNodes.length !== 1) return;
+    const portalNode = selectedFileNodes.first();
+    const portalNodeData = portalNode.getData();
+    if (portalNodeData.portal && portalNodeData.file !== portalNode.currentPortalFile)
+      this.setPortalOpen(canvas, portalNode, true);
+    CanvasHelper.addPopupMenuOption(
+      canvas,
+      CanvasHelper.createPopupMenuOption({
+        id: "toggle-portal",
+        label: portalNodeData.portal ? "Close portal" : "Open portal",
+        icon: portalNodeData.portal ? "door-open" : "door-closed",
+        callback: () => {
+          this.setPortalOpen(canvas, portalNode, !portalNodeData.portal);
+          this.onPopupMenu(canvas);
+        }
+      })
+    );
+  }
+  // Added by an LLM agent
+  // Automatically opens a newly created file node as a portal if it links to a canvas
+  // file that only contains a single node - saves a manual "Open portal" click for
+  // canvases that are trivial enough to just inline.
+  async tryAutoOpenSingleNodePortal(canvas, node) {
+    var _a, _b;
+    if (!this.plugin.settings.getSetting("autoOpenSingleNodePortals")) return;
+    const nodeData = node.getData();
+    if (nodeData.type !== "file" || nodeData.portal) return;
+    const portalFilePath = typeof node.file === "string" ? node.file : (_a = node.file) == null ? void 0 : _a.path;
+    if (!portalFilePath) return;
+    const portalFile = this.plugin.app.vault.getAbstractFileByPath(portalFilePath);
+    if (!(portalFile instanceof import_obsidian5.TFile) || portalFile.extension !== "canvas") return;
+    if (portalFile.path === ((_b = canvas.view.file) == null ? void 0 : _b.path)) return;
+    const portalFileDataString = await this.plugin.app.vault.cachedRead(portalFile);
+    if (portalFileDataString === "") return;
+    let portalFileData;
+    try {
+      portalFileData = JSON.parse(portalFileDataString);
+    } catch (error) {
+      return;
+    }
+    if (!(portalFileData == null ? void 0 : portalFileData.nodes) || portalFileData.nodes.length !== 1) return;
+    const currentNode = canvas.nodes.get(node.id);
+    if (!currentNode) return;
+    const currentNodeData = currentNode.getData();
+    if (currentNodeData.portal) return;
+    if (currentNodeData.file !== portalFile.path) {
+      currentNode.setData({ ...currentNodeData, file: portalFile.path });
+    }
+    this.setPortalOpen(canvas, currentNode, true);
+  }
+  setPortalOpen(canvas, portalNode, open) {
+    const portalNodeData = portalNode.getData();
+    portalNode.setData({
+      ...portalNodeData,
+      portal: open
+    });
+    portalNode.currentPortalFile = open ? portalNodeData.file : void 0;
+    canvas.setData(canvas.getData());
+  }
+  // Remove all edges and nodes from portals
+  onGetData(_canvas, data) {
+    data.nodes = data.nodes.filter((nodeData) => !_PortalsCanvasExtension.isPortalElement(nodeData.id));
+    for (const nodeData of data.nodes) delete nodeData.isPortalLoaded;
+    const portalsIdMap = new Map(
+      data.nodes.filter((nodeData) => nodeData.portal).map((nodeData) => [nodeData.id, nodeData])
+    );
+    data.edges = data.edges.filter((edgeData) => {
+      var _a;
+      if (_PortalsCanvasExtension.isPortalElement(edgeData.id)) return false;
+      const isFromNodeFromPortal = _PortalsCanvasExtension.getNestedIds(edgeData.fromNode).length > 1;
+      const isToNodeFromPortal = _PortalsCanvasExtension.getNestedIds(edgeData.toNode).length > 1;
+      if (!isFromNodeFromPortal && !isToNodeFromPortal) return true;
+      if (isFromNodeFromPortal && isToNodeFromPortal) return false;
+      const targetPortalId = this.getParentPortalId(isFromNodeFromPortal ? edgeData.fromNode : edgeData.toNode);
+      const targetPortalData = portalsIdMap.get(targetPortalId);
+      if (!targetPortalData) return false;
+      (_a = targetPortalData.interdimensionalEdges) != null ? _a : targetPortalData.interdimensionalEdges = [];
+      targetPortalData.interdimensionalEdges.push(edgeData);
+      return false;
+    });
+  }
+  // Add all edges and nodes from portals
+  async onSetData(canvas, dataRef) {
+    if (!(dataRef == null ? void 0 : dataRef.nodes)) return dataRef;
+    const data = JSON.parse(JSON.stringify(dataRef));
+    const addedData = await Promise.all(data.nodes.map((nodeData) => this.tryOpenPortal(canvas, nodeData)));
+    for (const newData of addedData) {
+      data.nodes.push(...newData.nodes);
+      data.edges.push(...newData.edges);
+    }
+    for (const nodeData of data.nodes) {
+      if (nodeData.type !== "file" || !nodeData.isPortalLoaded) continue;
+      const interdimensionalEdges = nodeData.interdimensionalEdges;
+      if (!interdimensionalEdges) continue;
+      for (const edge of interdimensionalEdges) data.edges.push(edge);
+      delete nodeData.interdimensionalEdges;
+    }
+    return data;
+  }
+  async tryOpenPortal(canvas, portalNodeData, nestedPortalFiles = /* @__PURE__ */ new Set()) {
+    const addedData = { nodes: [], edges: [] };
+    if (portalNodeData.type !== "file" || !portalNodeData.portal) return addedData;
+    if (portalNodeData.file === canvas.view.file.path) return addedData;
+    if (nestedPortalFiles.has(portalNodeData.file)) return addedData;
+    nestedPortalFiles.add(portalNodeData.file);
+    const portalFile = this.plugin.app.vault.getAbstractFileByPath(portalNodeData.file);
+    if (!(portalFile instanceof import_obsidian5.TFile) || portalFile.extension !== "canvas") return addedData;
+    const portalFileDataString = await this.plugin.app.vault.cachedRead(portalFile);
+    if (portalFileDataString === "") return addedData;
+    const portalFileData = JSON.parse(portalFileDataString);
+    if (!portalFileData) return addedData;
+    portalNodeData.isPortalLoaded = true;
+    const sourceMinCoordinates = CanvasHelper.getBBox(portalFileData.nodes);
+    const portalOffset = {
+      x: portalNodeData.x - sourceMinCoordinates.minX + PORTAL_PADDING,
+      y: portalNodeData.y - sourceMinCoordinates.minY + PORTAL_PADDING
+    };
+    for (const nodeDataFromPortal of portalFileData.nodes) {
+      let newNodeId = `${portalNodeData.id}${PORTAL_ID_DELIMITER}${nodeDataFromPortal.id}`;
+      if (!newNodeId.startsWith(PORTAL_ID_PREFIX))
+        newNodeId = PORTAL_ID_PREFIX + newNodeId;
+      const addedNode = {
+        ...nodeDataFromPortal,
+        id: newNodeId,
+        x: nodeDataFromPortal.x + portalOffset.x,
+        y: nodeDataFromPortal.y + portalOffset.y
+      };
+      addedData.nodes.push(addedNode);
+      const nestedNodes = await this.tryOpenPortal(canvas, addedNode, nestedPortalFiles);
+      addedData.nodes.push(...nestedNodes.nodes);
+      addedData.edges.push(...nestedNodes.edges);
+    }
+    for (const edgeDataFromPortal of portalFileData.edges) {
+      let newEdgeId = `${portalNodeData.id}${PORTAL_ID_DELIMITER}${edgeDataFromPortal.id}`;
+      if (!newEdgeId.startsWith(PORTAL_ID_PREFIX))
+        newEdgeId = PORTAL_ID_PREFIX + newEdgeId;
+      let fromNodeId = `${portalNodeData.id}${PORTAL_ID_DELIMITER}${edgeDataFromPortal.fromNode}`;
+      if (!fromNodeId.startsWith(PORTAL_ID_PREFIX))
+        fromNodeId = PORTAL_ID_PREFIX + fromNodeId;
+      let toNodeId = `${portalNodeData.id}${PORTAL_ID_DELIMITER}${edgeDataFromPortal.toNode}`;
+      if (!toNodeId.startsWith(PORTAL_ID_PREFIX))
+        toNodeId = PORTAL_ID_PREFIX + toNodeId;
+      addedData.edges.push({
+        ...edgeDataFromPortal,
+        id: newEdgeId,
+        fromNode: fromNodeId,
+        toNode: toNodeId
+      });
+    }
+    const targetSize = this.getPortalSize(CanvasHelper.getBBox(addedData.nodes));
+    portalNodeData.width = targetSize.width;
+    portalNodeData.height = targetSize.height;
+    return addedData;
+  }
+  // Helper functions
+  getPortalSize(sourceBBox) {
+    const sourceSize = {
+      width: sourceBBox.maxX - sourceBBox.minX,
+      height: sourceBBox.maxY - sourceBBox.minY
+    };
+    const targetSize = {
+      width: Math.max(sourceSize.width + PORTAL_PADDING * 2, MIN_OPEN_PORTAL_SIZE.width),
+      height: Math.max(sourceSize.height + PORTAL_PADDING * 2, MIN_OPEN_PORTAL_SIZE.height)
+    };
+    if (!Number.isFinite(targetSize.width)) targetSize.width = MIN_OPEN_PORTAL_SIZE.width;
+    if (!Number.isFinite(targetSize.height)) targetSize.height = MIN_OPEN_PORTAL_SIZE.height;
+    return targetSize;
+  }
+  getContainingNodes(canvas, portalNode, directChildren = true) {
+    return Array.from(canvas.nodes.values()).filter((node) => this.isChildOfPortal(portalNode.getData(), node.getData(), directChildren));
+  }
+  getContainingEdges(canvas, portalNode, directChildren = true) {
+    return Array.from(canvas.edges.values()).filter((edge) => this.isChildOfPortal(portalNode.getData(), edge.getData(), directChildren));
+  }
+  getParentPortalId(elementId) {
+    const nestedIds = _PortalsCanvasExtension.getNestedIds(elementId);
+    if (nestedIds.length < 2) return void 0;
+    return nestedIds.slice(0, -1).join(PORTAL_ID_DELIMITER);
+  }
+  static getNestedIds(id) {
+    if (!this.isPortalElement(id)) return [id];
+    const trimmedId = id.substring(PORTAL_ID_PREFIX.length);
+    return trimmedId.split(PORTAL_ID_DELIMITER);
+  }
+  static isPortalElement(id) {
+    return id.startsWith(PORTAL_ID_PREFIX);
+  }
+  isChildOfPortal(portal, canvasElement, directChild = true) {
+    const nestedIds = _PortalsCanvasExtension.getNestedIds(canvasElement.id);
+    if (nestedIds.length < 2) return false;
+    return canvasElement.id !== portal.id && // Not the portal itself
+    nestedIds.contains(portal.id) && // Is a child of the portal
+    (!directChild || nestedIds[nestedIds.length - 2] === portal.id);
+  }
+};
+
+// src/canvas-extensions/canvas-filter-canvas-extension.ts
+var FILTERED_OUT_CLASS = "advanced-canvas-filtered-out";
+var TAG_REGEX = /#[^\s#]+/g;
+var CONNECTION_FILTERS = [
+  { id: "filter-connected-nodes", name: "Filter to selection and connected nodes", outgoing: true, incoming: true },
+  { id: "filter-immediately-connected-nodes", name: "Filter to selection and immediately connected nodes", outgoing: true, incoming: true, immediate: true },
+  // Added by an LLM agent
+  // Added by an LLM agent - one-hop directional variants without the group special cases
+  { id: "filter-immediately-connected-incoming-nodes", name: "Filter to selection and immediately connected incoming nodes", outgoing: false, incoming: true, immediate: true, includeGroups: false },
+  { id: "filter-immediately-connected-outgoing-nodes", name: "Filter to selection and immediately connected outgoing nodes", outgoing: true, incoming: false, immediate: true, includeGroups: false },
+  { id: "filter-outgoing-nodes", name: "Filter to selection and outgoing nodes", outgoing: true, incoming: false },
+  { id: "filter-incoming-nodes", name: "Filter to selection and incoming nodes", outgoing: false, incoming: true }
+];
+var NODE_BASED_FILTERS = [
+  { id: "filter-by-color", name: "Filter by color of selection" },
+  ...CONNECTION_FILTERS
+];
+var CanvasFilterCanvasExtension = class _CanvasFilterCanvasExtension extends CanvasExtension {
+  isEnabled() {
+    return "canvasFilterFeatureEnabled";
+  }
+  init() {
+    this.plugin.addCommand({
+      id: "reset-filter",
+      name: "Reset filter",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (_canvas) => true,
+        (canvas) => this.resetFilter(canvas)
+      )
+    });
+    this.plugin.addCommand({
+      id: "filter-by-color",
+      name: "Filter by color of selection",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (canvas) => canvas.selection.size > 0,
+        (canvas) => this.filterByColor(canvas)
+      )
+    });
+    this.plugin.addCommand({
+      id: "filter-by-tag",
+      name: "Filter by tag",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (_canvas) => true,
+        (canvas) => void this.filterByTag(canvas)
+      )
+    });
+    this.plugin.addCommand({
+      id: "hide-selection",
+      name: "Hide selection",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (canvas) => canvas.selection.size > 0,
+        (canvas) => this.hideSelection(canvas, false)
+      )
+    });
+    this.plugin.addCommand({
+      id: "hide-selection-with-edges",
+      name: "Hide selection and its edges",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (canvas) => canvas.selection.size > 0,
+        (canvas) => this.hideSelection(canvas, true)
+      )
+    });
+    for (const connectionFilter of CONNECTION_FILTERS) {
+      this.plugin.addCommand({
+        id: connectionFilter.id,
+        name: connectionFilter.name,
+        checkCallback: CanvasHelper.canvasCommand(
+          this.plugin,
+          (canvas) => canvas.selection.size > 0,
+          (canvas) => this.filterByConnections(canvas, connectionFilter)
+        )
+      });
+    }
+  }
+  // Added by an LLM agent
+  /** Shows all nodes and edges again (same as the "Reset filter" command). */
+  resetFilter(canvas) {
+    this.showOnlyNodes(canvas);
+    this.showOnlyEdges(canvas);
+  }
+  // Added by an LLM agent
+  /**
+   * Applies one of the NODE_BASED_FILTERS using the given nodes as the implicit selection
+   * (used by the presentation slide filter feature). Returns false for unknown filter ids.
+   */
+  applyNodeBasedFilter(canvas, filterId, nodes) {
+    if (filterId === "filter-by-color") {
+      this.filterByColor(canvas, nodes);
+      return true;
+    }
+    const connectionFilter = CONNECTION_FILTERS.find((filter) => filter.id === filterId);
+    if (!connectionFilter) return false;
+    this.filterByConnections(canvas, connectionFilter, nodes);
+    return true;
+  }
+  // Visibility helpers
+  setElementsVisibility(elements, visible) {
+    for (const element of elements) element == null ? void 0 : element.classList.toggle(FILTERED_OUT_CLASS, !visible);
+  }
+  setNodeVisibility(node, visible) {
+    this.setElementsVisibility([node.nodeEl], visible);
+  }
+  setEdgeVisibility(edge, visible) {
+    var _a;
+    this.setElementsVisibility([edge.lineGroupEl, edge.lineEndGroupEl, (_a = edge.labelElement) == null ? void 0 : _a.wrapperEl], visible);
+  }
+  /** Shows the nodes with the given ids and hides all others. Shows every node if no ids are given. */
+  showOnlyNodes(canvas, nodeIdsToShow) {
+    for (const node of canvas.nodes.values())
+      this.setNodeVisibility(node, nodeIdsToShow === void 0 || nodeIdsToShow.has(node.id));
+  }
+  /** Shows the edges with the given ids and hides all others. Shows every edge if no ids are given. */
+  showOnlyEdges(canvas, edgeIdsToShow) {
+    for (const edge of canvas.edges.values())
+      this.setEdgeVisibility(edge, edgeIdsToShow === void 0 || edgeIdsToShow.has(edge.id));
+  }
+  /** Shows the given nodes, the groups containing them and the edges between them - hides everything else */
+  showOnlyNodesAndTheirEdges(canvas, nodesToShow) {
+    const nodes = [...canvas.nodes.values()].map((node) => node.getData());
+    const edges = [...canvas.edges.values()].map((edge) => edge.getData());
+    const nodeIdsToShow = new Set(nodesToShow.map((node) => node.id));
+    const edgeIdsToShow = new Set(edges.filter((edge) => nodeIdsToShow.has(edge.fromNode) && nodeIdsToShow.has(edge.toNode)).map((edge) => edge.id));
+    for (const group of this.getGroupsContaining(nodes, nodesToShow))
+      nodeIdsToShow.add(group.id);
+    this.showOnlyNodes(canvas, nodeIdsToShow);
+    this.showOnlyEdges(canvas, edgeIdsToShow);
+  }
+  // Added by an LLM agent
+  /** All live nodes nested inside the given portal (at any depth) */
+  static getPortalNestedNodes(nodes, portalId) {
+    return nodes.filter((node) => node.id !== portalId && PortalsCanvasExtension.getNestedIds(node.id).contains(portalId));
+  }
+  // Added by an LLM agent
+  /** All live edges with both endpoints nested inside the given portal */
+  static getPortalInternalEdges(edges, portalId) {
+    return edges.filter((edge) => PortalsCanvasExtension.getNestedIds(edge.fromNode).contains(portalId) && PortalsCanvasExtension.getNestedIds(edge.toNode).contains(portalId));
+  }
+  static bboxContains(outerNode, innerNode) {
+    return outerNode.x <= innerNode.x && outerNode.x + outerNode.width >= innerNode.x + innerNode.width && outerNode.y <= innerNode.y && outerNode.y + outerNode.height >= innerNode.y + innerNode.height;
+  }
+  /** Returns all group nodes that fully contain at least one of the given nodes */
+  getGroupsContaining(allNodes, containedNodes) {
+    return allNodes.filter(
+      (node) => node.type === "group" && containedNodes.some((containedNode) => _CanvasFilterCanvasExtension.bboxContains(node, containedNode))
+    );
+  }
+  // Filters
+  // Added by an LLM agent - `elements` overrides the selection as the filter source (presentation slide filter)
+  filterByColor(canvas, elements) {
+    const colorsToShow = new Set((elements != null ? elements : [...canvas.selection]).map((element) => {
+      var _a;
+      return (_a = element.getData().color) != null ? _a : "";
+    }));
+    if (colorsToShow.has(""))
+      new import_obsidian6.Notice("One of the selected elements has no color, so colorless nodes stay visible as well");
+    const nodes = [...canvas.nodes.values()].map((node) => node.getData());
+    const nodesToShow = nodes.filter((node) => {
+      var _a;
+      return node.type !== "group" && !PortalsCanvasExtension.isPortalElement(node.id) && colorsToShow.has((_a = node.color) != null ? _a : "");
+    });
+    const shownNodeIds = new Set(nodesToShow.map((node) => node.id));
+    for (let i = 0; i < nodesToShow.length; i++) {
+      const node = nodesToShow[i];
+      if (node.type !== "file" || !node.portal) continue;
+      for (const nestedNode of _CanvasFilterCanvasExtension.getPortalNestedNodes(nodes, node.id)) {
+        if (shownNodeIds.has(nestedNode.id)) continue;
+        shownNodeIds.add(nestedNode.id);
+        nodesToShow.push(nestedNode);
+      }
+    }
+    this.showOnlyNodesAndTheirEdges(canvas, nodesToShow);
+  }
+  async filterByTag(canvas) {
+    const tags = this.getAvailableTags(canvas);
+    if (tags.length === 0) {
+      new import_obsidian6.Notice("No tags found in this vault");
+      return;
+    }
+    const selectedTag = await new AbstractSelectionModal(this.plugin.app, "Select a tag to filter by...", tags).awaitInput();
+    if (!selectedTag) return;
+    const nodesToShow = canvas.getData().nodes.filter((node) => this.getTagsOfNode(canvas, node).some((tag) => _CanvasFilterCanvasExtension.tagMatches(tag, selectedTag)));
+    this.showOnlyNodesAndTheirEdges(canvas, nodesToShow);
+  }
+  // Added by an LLM agent - `startElements` overrides the selection as the traversal start (presentation slide filter)
+  filterByConnections(canvas, connectionFilter, startElements) {
+    const nodes = [...canvas.nodes.values()].map((node) => node.getData());
+    const edges = [...canvas.edges.values()].map((edge) => edge.getData());
+    const nodeIdsToShow = new Set((startElements != null ? startElements : [...canvas.selection]).map((element) => element.id));
+    const edgeIdsToShow = /* @__PURE__ */ new Set();
+    const expandedPortalIds = /* @__PURE__ */ new Set();
+    const expandedGroupIds = /* @__PURE__ */ new Set();
+    let frontier = new Set(nodeIdsToShow);
+    while (frontier.size > 0) {
+      const nextFrontier = /* @__PURE__ */ new Set();
+      for (const edge of edges) {
+        if (connectionFilter.immediate && edge.fromEnd === "arrow") continue;
+        let reachedNodeId = null;
+        if (connectionFilter.outgoing && frontier.has(edge.fromNode)) reachedNodeId = edge.toNode;
+        else if (connectionFilter.incoming && frontier.has(edge.toNode)) reachedNodeId = edge.fromNode;
+        else continue;
+        edgeIdsToShow.add(edge.id);
+        if (nodeIdsToShow.has(reachedNodeId)) continue;
+        nodeIdsToShow.add(reachedNodeId);
+        nextFrontier.add(reachedNodeId);
+      }
+      for (const node of nodes) {
+        if (!nodeIdsToShow.has(node.id) || expandedPortalIds.has(node.id)) continue;
+        if (node.type !== "file" || !node.portal) continue;
+        expandedPortalIds.add(node.id);
+        for (const nestedNode of _CanvasFilterCanvasExtension.getPortalNestedNodes(nodes, node.id)) {
+          if (nodeIdsToShow.has(nestedNode.id)) continue;
+          nodeIdsToShow.add(nestedNode.id);
+          nextFrontier.add(nestedNode.id);
+        }
+        for (const edge of _CanvasFilterCanvasExtension.getPortalInternalEdges(edges, node.id))
+          edgeIdsToShow.add(edge.id);
+      }
+      for (const node of nodes) {
+        if (connectionFilter.includeGroups === false) break;
+        if (!nodeIdsToShow.has(node.id) || expandedGroupIds.has(node.id)) continue;
+        if (node.type !== "group") continue;
+        expandedGroupIds.add(node.id);
+        for (const containedNode of nodes) {
+          if (containedNode.id === node.id || nodeIdsToShow.has(containedNode.id)) continue;
+          if (!_CanvasFilterCanvasExtension.bboxContains(node, containedNode)) continue;
+          nodeIdsToShow.add(containedNode.id);
+          nextFrontier.add(containedNode.id);
+        }
+      }
+      if (connectionFilter.immediate) break;
+      frontier = nextFrontier;
+    }
+    if (connectionFilter.includeGroups !== false)
+      for (const group of this.getGroupsContaining(nodes, nodes.filter((node) => nodeIdsToShow.has(node.id))))
+        nodeIdsToShow.add(group.id);
+    for (const edge of edges) {
+      if (nodeIdsToShow.has(edge.fromNode) && nodeIdsToShow.has(edge.toNode))
+        edgeIdsToShow.add(edge.id);
+    }
+    this.showOnlyNodes(canvas, nodeIdsToShow);
+    this.showOnlyEdges(canvas, edgeIdsToShow);
+  }
+  hideSelection(canvas, includeConnectedEdges) {
+    const selectedIds = new Set([...canvas.selection].map((element) => element.id));
+    for (const nodeId of selectedIds) {
+      const node = canvas.nodes.get(nodeId);
+      if (node) this.setNodeVisibility(node, false);
+      const edge = canvas.edges.get(nodeId);
+      if (edge) this.setEdgeVisibility(edge, false);
+    }
+    if (includeConnectedEdges) {
+      for (const edge of canvas.edges.values()) {
+        const edgeData = edge.getData();
+        if (!selectedIds.has(edgeData.fromNode) && !selectedIds.has(edgeData.toNode)) continue;
+        this.setEdgeVisibility(edge, false);
+      }
+    }
+    canvas.deselectAll();
+  }
+  // Tag helpers
+  /** All tags of the vault, plus the ones that only exist inside text nodes of this canvas */
+  getAvailableTags(canvas) {
+    var _a;
+    const vaultTags = Object.keys((_a = this.plugin.app.metadataCache.getTags()) != null ? _a : {});
+    const canvasTags = canvas.getData().nodes.flatMap((node) => this.getTagsOfNode(canvas, node));
+    return [.../* @__PURE__ */ new Set([...vaultTags, ...canvasTags])].sort((a, b) => a.localeCompare(b));
+  }
+  getTagsOfNode(canvas, nodeData) {
+    var _a, _b, _c, _d;
+    if (nodeData.type === "file") {
+      const file = (_a = canvas.nodes.get(nodeData.id)) == null ? void 0 : _a.file;
+      if (!(file instanceof import_obsidian6.TFile)) return [];
+      const fileMetadata = this.plugin.app.metadataCache.getFileCache(file);
+      if (!fileMetadata) return [];
+      return (_b = (0, import_obsidian6.getAllTags)(fileMetadata)) != null ? _b : [];
+    }
+    if (nodeData.type === "text") {
+      const canvasFile = canvas.view.file;
+      const canvasMetadata = canvasFile ? this.plugin.app.metadataCache.getFileCache(canvasFile) : null;
+      const nodeMetadata = (_c = canvasMetadata == null ? void 0 : canvasMetadata.nodes) == null ? void 0 : _c[nodeData.id];
+      if (nodeMetadata) return (_d = (0, import_obsidian6.getAllTags)(nodeMetadata)) != null ? _d : [];
+      return [...nodeData.text.matchAll(TAG_REGEX)].map((match) => match[0]);
+    }
+    return [];
+  }
+  /** Matches nested tags as well - e.g. the filter `#project` includes `#project/canvas` */
+  static tagMatches(tag, filterTag) {
+    return tag === filterTag || tag.startsWith(`${filterTag}/`);
+  }
+};
+
 // src/canvas-extensions/variable-breakpoint-canvas-extension.ts
 var VARIABLE_BREAKPOINT_CSS_VAR = "--variable-breakpoint";
 var VariableBreakpointCanvasExtension = class extends CanvasExtension {
@@ -1820,6 +2665,8 @@ var DEFAULT_SETTINGS_VALUES = {
   // Added by an LLM agent
   hideGroupLabels: false,
   // Added by an LLM agent
+  hideNoteLabels: false,
+  // Added by an LLM agent
   boxedNodeLabels: true,
   // Added by an LLM agent
   defaultGroupLabelSize: "1",
@@ -1835,6 +2682,20 @@ var DEFAULT_SETTINGS_VALUES = {
   connectEdgesToArrowBase: false,
   // Added by an LLM agent
   defaultNodeBorder: "default",
+  // Added by an LLM agent
+  nodePreviewTextSize: "1",
+  // Added by an LLM agent
+  nodeOutlineBlack: false,
+  // Added by an LLM agent
+  nodeOutlineWhite: false,
+  // Added by an LLM agent
+  nodeOutlineWidth: 2,
+  // Added by an LLM agent
+  edgeOutlineBlack: false,
+  // Added by an LLM agent
+  edgeOutlineWhite: false,
+  // Added by an LLM agent
+  edgeOutlineWidth: 2,
   // Added by an LLM agent
   canvasMetadataCompatibilityEnabled: true,
   enableSingleNodeLinks: true,
@@ -1860,6 +2721,8 @@ var DEFAULT_SETTINGS_VALUES = {
   zOrderingControlShowOneLayerShiftOptions: false,
   aspectRatioControlFeatureEnabled: false,
   nodeRotationFeatureEnabled: false,
+  // Added by an LLM agent
+  hideNodeContentsFeatureEnabled: true,
   // Added by an LLM agent
   commandsFeatureEnabled: true,
   zoomToClonedNode: true,
@@ -1900,6 +2763,8 @@ var DEFAULT_SETTINGS_VALUES = {
   fullscreenPresentationEnabled: true,
   slideTransitionAnimationDuration: 0.5,
   slideTransitionAnimationIntensity: 1.25,
+  presentationSlideFilter: "none",
+  // Added by an LLM agent
   canvasEncapsulationEnabled: false,
   portalsFeatureEnabled: true,
   showEdgesIntoDisabledPortals: true,
@@ -1996,6 +2861,12 @@ var SETTINGS = {
         description: 'When enabled, group labels are hidden. Can be toggled with the "Toggle group label visibility" command.',
         type: "boolean"
       },
+      hideNoteLabels: {
+        // Added by an LLM agent
+        label: "Hide note labels",
+        description: 'When enabled, labels of file/text/link nodes are hidden. Can be toggled with the "Toggle note label visibility" command.',
+        type: "boolean"
+      },
       boxedNodeLabels: {
         // Added by an LLM agent
         label: "Boxed node labels",
@@ -2080,6 +2951,57 @@ var SETTINGS = {
           "dotted": "Dotted",
           "invisible": "Invisible"
         }
+      },
+      nodePreviewTextSize: {
+        // Added by an LLM agent
+        label: "Node preview text size",
+        description: "The size of the note title shown in place of a node's content when zoomed out. 1x is Obsidian's default.",
+        type: "dropdown",
+        options: {
+          "1": "Default (1x)",
+          "1.5": "Large (1.5x)",
+          "2": "Huge (2x)",
+          "3": "Giant (3x)",
+          "4": "Max (4x)"
+        }
+      },
+      nodeOutlineBlack: {
+        // Added by an LLM agent
+        label: "Black node outline",
+        description: 'When enabled, nodes get a black outline around their border. If "White node outline" is also enabled, the black outline becomes the inner ring and the white outline the outer ring.',
+        type: "boolean"
+      },
+      nodeOutlineWhite: {
+        // Added by an LLM agent
+        label: "White node outline",
+        description: 'When enabled, nodes get a white outline around their border. If "Black node outline" is also enabled, the white outline becomes the outer ring.',
+        type: "boolean"
+      },
+      nodeOutlineWidth: {
+        // Added by an LLM agent
+        label: "Node outline width",
+        description: "The width of each node outline ring, in pixels.",
+        type: "number",
+        parse: (value) => Math.max(1, parseInt(value) || 1)
+      },
+      edgeOutlineBlack: {
+        // Added by an LLM agent
+        label: "Black edge outline",
+        description: 'When enabled, edges get a black outline around their line. If "White edge outline" is also enabled, the black outline becomes the inner ring and the white outline the outer ring.',
+        type: "boolean"
+      },
+      edgeOutlineWhite: {
+        // Added by an LLM agent
+        label: "White edge outline",
+        description: 'When enabled, edges get a white outline around their line. If "Black edge outline" is also enabled, the white outline becomes the outer ring.',
+        type: "boolean"
+      },
+      edgeOutlineWidth: {
+        // Added by an LLM agent
+        label: "Edge outline width",
+        description: "The width of each edge outline ring, in pixels. Adds onto the edge's own width, including the edge width style.",
+        type: "number",
+        parse: (value) => Math.max(1, parseInt(value) || 1)
       }
     }
   },
@@ -2388,16 +3310,27 @@ var SETTINGS = {
         description: "The intensity of the slide transition animation. The higher the value, the more the canvas will zoom out before zooming in on the next slide.",
         type: "number",
         parse: (value) => Math.max(0, parseFloat(value) || 0)
+      },
+      // Added by an LLM agent
+      presentationSlideFilter: {
+        label: "Default slide filter",
+        description: `When a presentation navigates to a slide that has a "bidirectional" edge (an edge to the slide with an arrow on the incoming node's end) from exactly one node, this filter gets applied using that node as the selection. Can be overridden per node via the node context menu ("Slide filter: \u2026"), which stores the choice as the node's slideFilter property in the canvas file. Requires the canvas filter feature.`,
+        type: "dropdown",
+        options: {
+          none: "None",
+          ...Object.fromEntries(NODE_BASED_FILTERS.map((filter) => [filter.id, filter.name]))
+        }
       }
     }
   },
   zOrderingControlFeatureEnabled: {
     label: "Z ordering controls",
-    description: "Change the persistent z-index of nodes using the context menu.",
+    // Added by an LLM agent: description updated to cover edges and the group node layering
+    description: "Change the persistent z-index of nodes and edges using the context menu. Default layering: group nodes below edges, edges below other nodes.",
     children: {
       zOrderingControlShowOneLayerShiftOptions: {
         label: "Show one layer shift options",
-        description: "When enabled, you can move nodes one layer forward or backward.",
+        description: "When enabled, you can move nodes and edges one layer forward or backward.",
         type: "boolean"
       }
     }
@@ -2411,6 +3344,12 @@ var SETTINGS = {
   nodeRotationFeatureEnabled: {
     label: "Node rotation",
     description: "Rotate nodes around their own center using the context menu (90\xB0 steps or a custom angle) or commands. Rotating a group or an open portal rigidly rotates all fully contained nodes with it. Also allows rotating just the content of a node in 90\xB0 steps (cardinal content rotation, propagates from groups/portals to the nodes within).",
+    children: {}
+  },
+  hideNodeContentsFeatureEnabled: {
+    // Added by an LLM agent
+    label: "Hide node contents",
+    description: `Adds a "Hide node contents" option to the node context menu (right click) that hides everything inside the node's borders, leaving an empty node frame. Not available for group nodes.`,
     children: {}
   },
   variableBreakpointFeatureEnabled: {
@@ -2561,7 +3500,7 @@ var SettingsManager = class {
     this.plugin.addSettingTab(this.settingsTab);
   }
 };
-var AdvancedCanvasPluginSettingTab = class extends import_obsidian4.PluginSettingTab {
+var AdvancedCanvasPluginSettingTab = class extends import_obsidian7.PluginSettingTab {
   constructor(plugin, settingsManager) {
     super(plugin.app, plugin);
     this.settingsManager = settingsManager;
@@ -2611,7 +3550,7 @@ var AdvancedCanvasPluginSettingTab = class extends import_obsidian4.PluginSettin
     }
   }
   createFeatureHeading(containerEl, label, description, infoSection, settingsKey) {
-    const setting = new import_obsidian4.Setting(containerEl).setHeading().setClass("ac-settings-heading").setName(label).setDesc(description);
+    const setting = new import_obsidian7.Setting(containerEl).setHeading().setClass("ac-settings-heading").setName(label).setDesc(description);
     if (infoSection !== void 0) {
       setting.addExtraButton(
         (button) => button.setTooltip("Open GitHub documentation").setIcon("info").onClick(async () => {
@@ -2626,21 +3565,21 @@ var AdvancedCanvasPluginSettingTab = class extends import_obsidian4.PluginSettin
       setting.addToggle(
         (toggle) => toggle.setTooltip("Requires a reload to take effect.").setValue(this.settingsManager.getSetting(settingsKey)).onChange(async (value) => {
           await this.settingsManager.setSetting({ [settingsKey]: value });
-          new import_obsidian4.Notice("Reload obsidian to apply the changes.");
+          new import_obsidian7.Notice("Reload obsidian to apply the changes.");
         })
       );
     }
     return setting;
   }
   createTextSetting(containerEl, settingId, setting) {
-    new import_obsidian4.Setting(containerEl).setName(setting.label).setDesc(setting.description).addText(
+    new import_obsidian7.Setting(containerEl).setName(setting.label).setDesc(setting.description).addText(
       (text) => text.setValue(this.settingsManager.getSetting(settingId)).onChange(async (value) => {
         await this.settingsManager.setSetting({ [settingId]: setting.parse ? setting.parse(value) : value });
       })
     );
   }
   createNumberSetting(containerEl, settingId, setting) {
-    new import_obsidian4.Setting(containerEl).setName(setting.label).setDesc(setting.description).addText(
+    new import_obsidian7.Setting(containerEl).setName(setting.label).setDesc(setting.description).addText(
       (text) => text.setValue(JSON.stringify(this.settingsManager.getSetting(settingId))).onChange(async (value) => {
         await this.settingsManager.setSetting({ [settingId]: setting.parse(value) });
       })
@@ -2649,28 +3588,28 @@ var AdvancedCanvasPluginSettingTab = class extends import_obsidian4.PluginSettin
   createDimensionSetting(containerEl, settingId, setting) {
     let text1;
     let text2;
-    new import_obsidian4.Setting(containerEl).setName(setting.label).setDesc(setting.description).addText((text) => {
+    new import_obsidian7.Setting(containerEl).setName(setting.label).setDesc(setting.description).addText((text) => {
       text1 = text.setValue(this.settingsManager.getSetting(settingId)[0].toString()).onChange(async (value) => await this.settingsManager.setSetting({ [settingId]: setting.parse([value, text2.getValue()]) }));
     }).addText((text) => {
       text2 = text.setValue(this.settingsManager.getSetting(settingId)[1].toString()).onChange(async (value) => await this.settingsManager.setSetting({ [settingId]: setting.parse([text1.getValue(), value]) }));
     });
   }
   createBooleanSetting(containerEl, settingId, setting) {
-    new import_obsidian4.Setting(containerEl).setName(setting.label).setDesc(setting.description).addToggle(
+    new import_obsidian7.Setting(containerEl).setName(setting.label).setDesc(setting.description).addToggle(
       (toggle) => toggle.setValue(this.settingsManager.getSetting(settingId)).onChange(async (value) => {
         await this.settingsManager.setSetting({ [settingId]: value });
       })
     );
   }
   createDropdownSetting(containerEl, settingId, setting) {
-    new import_obsidian4.Setting(containerEl).setName(setting.label).setDesc(setting.description).addDropdown(
+    new import_obsidian7.Setting(containerEl).setName(setting.label).setDesc(setting.description).addDropdown(
       (dropdown) => dropdown.addOptions(setting.options).setValue(this.settingsManager.getSetting(settingId)).onChange(async (value) => {
         await this.settingsManager.setSetting({ [settingId]: value });
       })
     );
   }
   createButtonSetting(containerEl, settingId, setting) {
-    new import_obsidian4.Setting(containerEl).setName(setting.label).setDesc(setting.description).addButton(
+    new import_obsidian7.Setting(containerEl).setName(setting.label).setDesc(setting.description).addButton(
       (button) => button.setButtonText("Open").onClick(() => setting.onClick())
     );
   }
@@ -2680,7 +3619,7 @@ var AdvancedCanvasPluginSettingTab = class extends import_obsidian4.PluginSettin
     const summaryEl = nestedContainerEl.createEl("summary");
     summaryEl.textContent = setting.label;
     for (const styleAttribute of setting.getParameters(this.settingsManager)) {
-      new import_obsidian4.Setting(nestedContainerEl).setName(styleAttribute.label).addDropdown(
+      new import_obsidian7.Setting(nestedContainerEl).setName(styleAttribute.label).addDropdown(
         (dropdown) => {
           var _a;
           return dropdown.addOptions(Object.fromEntries(styleAttribute.options.map((option) => [option.value, option.value === null ? `${option.label} (default)` : option.label]))).setValue((_a = this.settingsManager.getSetting(settingId)[styleAttribute.key]) != null ? _a : "null").onChange(async (value) => {
@@ -2764,7 +3703,7 @@ function around1(obj, method, createWrapper) {
 }
 
 // src/patchers/canvas-patcher.ts
-var import_obsidian5 = require("obsidian");
+var import_obsidian8 = require("obsidian");
 
 // node_modules/tiny-jsonc/dist/index.js
 var stringOrCommentRe = /("(?:\\?[^])*?")|(\/\/.*)|(\/\*[^]*?\*\/)/g;
@@ -2931,9 +3870,9 @@ _MigrationHelper.MIGRATIONS = {
 var MigrationHelper = _MigrationHelper;
 
 // src/patchers/canvas-patcher.ts
-var CanvasPatcher = class extends Patcher {
+var _CanvasPatcher = class _CanvasPatcher extends Patcher {
   async patch() {
-    const loadedCanvasViewLeafs = this.plugin.app.workspace.getLeavesOfType("canvas").filter((leaf) => !(0, import_obsidian5.requireApiVersion)("1.7.2") || !leaf.isDeferred);
+    const loadedCanvasViewLeafs = this.plugin.app.workspace.getLeavesOfType("canvas").filter((leaf) => !(0, import_obsidian8.requireApiVersion)("1.7.2") || !leaf.isDeferred);
     if (loadedCanvasViewLeafs.length > 0) {
       console.debug(`Patching and reloading loaded canvas views (Count: ${loadedCanvasViewLeafs.length})`);
       this.patchCanvas(loadedCanvasViewLeafs.first().view);
@@ -3211,7 +4150,7 @@ var CanvasPatcher = class extends Patcher {
     });
     this.plugin.registerEditorExtension([import_view.EditorView.updateListener.of((update) => {
       if (!update.docChanged) return;
-      const editor = update.state.field(import_obsidian5.editorInfoField);
+      const editor = update.state.field(import_obsidian8.editorInfoField);
       const node = editor.node;
       if (!node) return;
       that.plugin.app.workspace.trigger("advanced-canvas:node-text-content-changed", node.canvas, node, update);
@@ -3274,11 +4213,16 @@ var CanvasPatcher = class extends Patcher {
       }),
       renderZIndex: Patcher.OverrideExisting((next) => function() {
         const persistentZIndex = this.getData().zIndex;
-        if (persistentZIndex === void 0) return next.call(this);
+        if (persistentZIndex === void 0) {
+          const result = next.call(this);
+          that.applyGroupZIndexOffset(this);
+          return result;
+        }
         this.zIndex = persistentZIndex;
         if (this.canvas.selection.size === 1 && this.canvas.selection.has(this))
           this.zIndex = this.canvas.zIndexCounter + 1;
         this.nodeEl.style.zIndex = this.zIndex.toString();
+        that.applyGroupZIndexOffset(this);
       }),
       setIsEditing: Patcher.OverrideExisting((next) => function(editing, ...args) {
         const result = next.call(this, editing, ...args);
@@ -3322,6 +4266,14 @@ var CanvasPatcher = class extends Patcher {
       this.plugin.app.workspace.trigger("advanced-canvas:node-added", node.canvas, node);
       this.plugin.app.workspace.trigger("advanced-canvas:node-changed", node.canvas, node);
     });
+  }
+  // Added by an LLM agent: group nodes render below edges (the edge SVGs sit at z-index auto),
+  // regular nodes stay above. Only the rendered CSS z-index is offset - the logical zIndex
+  // (used by the z-ordering commands and zIndexCounter) is left untouched.
+  applyGroupZIndexOffset(node) {
+    if (!this.plugin.settings.getSetting("zOrderingControlFeatureEnabled")) return;
+    if (node.getData().type !== "group") return;
+    node.nodeEl.style.zIndex = (node.zIndex - _CanvasPatcher.GROUP_Z_INDEX_OFFSET).toString();
   }
   patchEdge(edge) {
     const that = this;
@@ -3391,9 +4343,12 @@ var CanvasPatcher = class extends Patcher {
     that.plugin.register(uninstall);
   }
 };
+// Added by an LLM agent: rendered z-index offset that keeps group nodes below the edge SVGs
+_CanvasPatcher.GROUP_Z_INDEX_OFFSET = 1e6;
+var CanvasPatcher = _CanvasPatcher;
 
 // src/patchers/link-suggestions-patcher.ts
-var import_obsidian6 = require("obsidian");
+var import_obsidian9 = require("obsidian");
 var LinkSuggestionsPatcher = class extends Patcher {
   async patch() {
     var _a;
@@ -3407,7 +4362,7 @@ var LinkSuggestionsPatcher = class extends Patcher {
         const currentFilePath = this.getSourcePath();
         const targetFile = this.app.metadataCache.getFirstLinkpathDest(path, currentFilePath);
         if (!targetFile) return result;
-        if (!(targetFile instanceof import_obsidian6.TFile) || targetFile.extension !== "canvas")
+        if (!(targetFile instanceof import_obsidian9.TFile) || targetFile.extension !== "canvas")
           return result;
         const fileCache = this.app.metadataCache.getFileCache(targetFile);
         if (!fileCache) return result;
@@ -3434,8 +4389,8 @@ var LinkSuggestionsPatcher = class extends Patcher {
 };
 
 // src/advanced-canvas-embed.ts
-var import_obsidian7 = require("obsidian");
-var AdvancedCanvasEmbed = class extends import_obsidian7.Component {
+var import_obsidian10 = require("obsidian");
+var AdvancedCanvasEmbed = class extends import_obsidian10.Component {
   constructor(context, file, subpath) {
     super();
     this.onModifyCallback = (file) => {
@@ -3477,7 +4432,7 @@ var AdvancedCanvasEmbed = class extends import_obsidian7.Component {
     }
     const markdownContainer = this.context.containerEl.createSpan();
     markdownContainer.classList.add("markdown-content");
-    await import_obsidian7.MarkdownRenderer.render(this.context.app, nodeContent, markdownContainer, this.file.path, this);
+    await import_obsidian10.MarkdownRenderer.render(this.context.app, nodeContent, markdownContainer, this.file.path, this);
   }
 };
 
@@ -3495,15 +4450,7 @@ var EmbedPatcher = class extends Patcher {
 };
 
 // src/patchers/metadata-cache-patcher.ts
-var import_obsidian8 = require("obsidian");
-
-// src/utils/filepath-helper.ts
-var FilepathHelper = class {
-  static extension(path) {
-    var _a;
-    return (path == null ? void 0 : path.includes(".")) ? (_a = path == null ? void 0 : path.split(".")) == null ? void 0 : _a.pop() : void 0;
-  }
-};
+var import_obsidian11 = require("obsidian");
 
 // src/utils/hash-helper.ts
 var HashHelper = class _HashHelper {
@@ -3568,7 +4515,7 @@ var MetadataCachePatcher = class extends Patcher {
         return next.call(this, filepath, ...args);
       }),
       computeFileMetadataAsync: Patcher.OverrideExisting((next) => async function(file, ...args) {
-        if (file instanceof import_obsidian8.TFile && (file == null ? void 0 : file.extension) === "canvas")
+        if (file instanceof import_obsidian11.TFile && (file == null ? void 0 : file.extension) === "canvas")
           return CanvasMetadataHandler.computeCanvasFileMetadataAsync.call(this, file);
         return next.call(this, file, ...args);
       }),
@@ -3622,7 +4569,7 @@ var _CanvasMetadataHandler = class _CanvasMetadataHandler {
       metadata
     );
     const slowIndexingTimeout = window.setTimeout(() => {
-      new import_obsidian8.Notice(`Canvas indexing taking a long time for file ${file.path}`);
+      new import_obsidian11.Notice(`Canvas indexing taking a long time for file ${file.path}`);
     }, 1e4);
     try {
       metadata = await _CanvasMetadataHandler.computeCanvasMetadataAsync.call(this, data);
@@ -3716,7 +4663,7 @@ var _CanvasMetadataHandler = class _CanvasMetadataHandler {
   static async resolveCanvasLinks(filepath) {
     var _a, _b, _c, _d, _e;
     const file = this.vault.getAbstractFileByPath(filepath);
-    if (!(file instanceof import_obsidian8.TFile)) return;
+    if (!(file instanceof import_obsidian11.TFile)) return;
     const metadata = this.getFileCache(file);
     const references = [...(_a = metadata == null ? void 0 : metadata.links) != null ? _a : [], ...(_b = metadata == null ? void 0 : metadata.embeds) != null ? _b : []];
     const referenceLinks = references.map((ref) => ref.link).sort();
@@ -3744,7 +4691,7 @@ _CanvasMetadataHandler.linkResolveQueue = new TaskQueue();
 var CanvasMetadataHandler = _CanvasMetadataHandler;
 
 // src/patchers/backlinks-patcher.ts
-var import_obsidian9 = require("obsidian");
+var import_obsidian12 = require("obsidian");
 var BacklinksPatcher = class extends Patcher {
   constructor() {
     super(...arguments);
@@ -3769,7 +4716,7 @@ var BacklinksPatcher = class extends Patcher {
           const current = stack.pop();
           if (current) {
             traverse(current);
-            if (current instanceof import_obsidian9.TFolder) stack = stack.concat(current.children);
+            if (current instanceof import_obsidian12.TFolder) stack = stack.concat(current.children);
           }
         }
       },
@@ -3778,7 +4725,7 @@ var BacklinksPatcher = class extends Patcher {
         const files = [];
         const root = this.getRoot();
         this.recurseChildrenAC(root, (child) => {
-          if (child instanceof import_obsidian9.TFile && (child.extension === "md" || child.extension === "canvas")) {
+          if (child instanceof import_obsidian12.TFile && (child.extension === "md" || child.extension === "canvas")) {
             files.push(child);
           }
         });
@@ -3913,7 +4860,7 @@ var SearchPatcher = class extends Patcher {
 };
 
 // src/patchers/search-command-patcher.ts
-var import_obsidian10 = require("obsidian");
+var import_obsidian13 = require("obsidian");
 var SearchCommandPatcher = class extends Patcher {
   async patch() {
     if (!this.plugin.settings.getSetting("nativeFileSearchEnabled")) return;
@@ -3959,19 +4906,19 @@ var CanvasSearchView = class {
     previousButton.className = "clickable-icon document-search-button";
     previousButton.setAttribute("aria-label", "Previous\nShift + F3");
     previousButton.setAttribute("data-tooltip-position", "top");
-    (0, import_obsidian10.setIcon)(previousButton, "arrow-up");
+    (0, import_obsidian13.setIcon)(previousButton, "arrow-up");
     previousButton.addEventListener("click", () => this.changeMatch(this.matchIndex - 1));
     const nextButton = documentSearchButtons.createEl("button");
     nextButton.className = "clickable-icon document-search-button";
     nextButton.setAttribute("aria-label", "Next\nF3");
     nextButton.setAttribute("data-tooltip-position", "top");
-    (0, import_obsidian10.setIcon)(nextButton, "arrow-down");
+    (0, import_obsidian13.setIcon)(nextButton, "arrow-down");
     nextButton.addEventListener("click", () => this.changeMatch(this.matchIndex + 1));
     const closeButton = documentSearch.createEl("button");
     closeButton.className = "clickable-icon document-search-close-button";
     closeButton.setAttribute("aria-label", "Exit search");
     closeButton.setAttribute("data-tooltip-position", "top");
-    (0, import_obsidian10.setIcon)(closeButton, "x");
+    (0, import_obsidian13.setIcon)(closeButton, "x");
     closeButton.addEventListener("click", () => this.close());
     this.view.canvas.searchEl = this.containerEl;
     this.searchInput.focus();
@@ -4025,7 +4972,7 @@ var CanvasSearchView = class {
 };
 
 // src/patchers/dot-md-file-search-patcher.ts
-var import_obsidian11 = require("obsidian");
+var import_obsidian14 = require("obsidian");
 var DotMdFileSearchPatcher = class extends Patcher {
   constructor() {
     super(...arguments);
@@ -4034,7 +4981,7 @@ var DotMdFileSearchPatcher = class extends Patcher {
   async patch() {
     if (!this.plugin.settings.getSetting("dotMdFileSearchEnabled")) return;
     const that = this;
-    Patcher.patch(this.plugin, import_obsidian11.Modal.prototype, {
+    Patcher.patch(this.plugin, import_obsidian14.Modal.prototype, {
       open: (next) => function(...args) {
         that.onModalOpen(this);
         next.call(this, ...args);
@@ -4064,7 +5011,7 @@ var DotMdFileSearchPatcher = class extends Patcher {
         el.addClass("mod-complex");
         const contentEl = el.createDiv("suggestion-content");
         const titleEl = contentEl.createDiv("suggestion-title");
-        (0, import_obsidian11.renderMatches)(titleEl, item.acDotMdPath, (_b = (_a = item.match) == null ? void 0 : _a.matches) != null ? _b : null);
+        (0, import_obsidian14.renderMatches)(titleEl, item.acDotMdPath, (_b = (_a = item.match) == null ? void 0 : _a.matches) != null ? _b : null);
         contentEl.createDiv({ cls: "suggestion-note", text: "Hidden dotfile (not indexed by Obsidian)" });
         el.createDiv("suggestion-aux").createSpan({ cls: "suggestion-flair" });
       },
@@ -4077,7 +5024,7 @@ var DotMdFileSearchPatcher = class extends Patcher {
           this.handleChoose(item.file);
         } catch (e) {
           console.error('Advanced Canvas: Failed to add ".md" file node to the canvas.', e);
-          new import_obsidian11.Notice('Advanced Canvas: Failed to add the ".md" file to the canvas.');
+          new import_obsidian14.Notice('Advanced Canvas: Failed to add the ".md" file to the canvas.');
         }
       }
     });
@@ -4085,7 +5032,7 @@ var DotMdFileSearchPatcher = class extends Patcher {
   getDotMdSuggestions(query) {
     const trimmed = query.trim();
     if (!trimmed) return this.dotMdFiles.map((entry) => this.toSuggestion(entry, null));
-    const search = (0, import_obsidian11.prepareFuzzySearch)(trimmed);
+    const search = (0, import_obsidian14.prepareFuzzySearch)(trimmed);
     const suggestions = [];
     for (const entry of this.dotMdFiles) {
       const match = search(entry.path);
@@ -4134,7 +5081,7 @@ var DotMdFileSearchPatcher = class extends Patcher {
 };
 
 // src/canvas-extensions/metadata-canvas-extension.ts
-var import_obsidian12 = require("obsidian");
+var import_obsidian15 = require("obsidian");
 var MetadataCanvasExtension = class extends CanvasExtension {
   constructor() {
     super(...arguments);
@@ -4163,7 +5110,7 @@ var MetadataCanvasExtension = class extends CanvasExtension {
       canvas.data = MigrationHelper.migrate(canvas.data);
     const metadata = canvas.data.metadata;
     if (!metadata || metadata.version !== CURRENT_SPEC_VERSION)
-      return void new import_obsidian12.Notice("Metadata node not found or version mismatch. Should have been migrated (but wasn't).");
+      return void new import_obsidian15.Notice("Metadata node not found or version mismatch. Should have been migrated (but wasn't).");
     const that = this;
     const validator = {
       get(target, key) {
@@ -4191,125 +5138,6 @@ var MetadataCanvasExtension = class extends CanvasExtension {
   }
   onCanvasViewUnloaded(view) {
     this.canvasCssclassesCache.delete(view);
-  }
-};
-
-// src/utils/modal-helper.ts
-var import_obsidian13 = require("obsidian");
-var AbstractSelectionModal = class extends import_obsidian13.FuzzySuggestModal {
-  constructor(app, placeholder, suggestions, arbitrary = false) {
-    super(app);
-    this.suggestions = suggestions;
-    this.arbitrary = arbitrary;
-    this.setPlaceholder(placeholder);
-    this.setInstructions([{
-      command: "\u2191\u2193",
-      purpose: "to navigate"
-    }, {
-      command: "esc",
-      purpose: "to dismiss"
-    }]);
-  }
-  getItems() {
-    return this.suggestions;
-  }
-  getItemText(item) {
-    return item;
-  }
-  getSuggestions(query) {
-    const suggestions = super.getSuggestions(query);
-    if (this.arbitrary && query.length > 0 && !suggestions.some((s) => s.item === query))
-      suggestions.splice(0, 0, { item: query, match: { score: 1, matches: [[0, query.length]] } });
-    return suggestions;
-  }
-  onChooseItem(_item, _evt) {
-  }
-  awaitInput() {
-    return new Promise((resolve, _reject) => {
-      this.onChooseItem = (item) => resolve(item);
-      this.open();
-    });
-  }
-};
-var FileNameModal = class extends import_obsidian13.SuggestModal {
-  constructor(app, parentPath, fileExtension) {
-    super(app);
-    this.parentPath = parentPath.replace(/^\//, "").replace(/\/$/, "");
-    this.fileExtension = fileExtension;
-  }
-  getSuggestions(query) {
-    const queryWithoutExtension = query.replace(new RegExp(`\\.${this.fileExtension}$`), "");
-    if (queryWithoutExtension === "") return [];
-    const queryWithExtension = queryWithoutExtension + "." + this.fileExtension;
-    const suggestions = [queryWithExtension];
-    if (this.parentPath.length > 0) suggestions.splice(0, 0, `${this.parentPath}/${queryWithExtension}`);
-    return suggestions.filter((s) => this.app.vault.getAbstractFileByPath(s) === null);
-  }
-  renderSuggestion(text, el) {
-    el.setText(text);
-  }
-  onChooseSuggestion(_text, _evt) {
-  }
-  awaitInput() {
-    return new Promise((resolve, _reject) => {
-      this.onChooseSuggestion = (text) => {
-        resolve(text);
-      };
-      this.open();
-    });
-  }
-};
-var FileSelectModal = class extends import_obsidian13.SuggestModal {
-  constructor(app, extensionsRegex, suggestNewFile = false) {
-    super(app);
-    this.files = this.app.vault.getFiles().map((file) => file.path).filter((path) => {
-      var _a;
-      return (_a = FilepathHelper.extension(path)) == null ? void 0 : _a.match(extensionsRegex != null ? extensionsRegex : /.*/);
-    });
-    this.suggestNewFile = suggestNewFile;
-    this.setPlaceholder("Type to search...");
-    this.setInstructions([{
-      command: "\u2191\u2193",
-      purpose: "to navigate"
-    }, {
-      command: "\u21B5",
-      purpose: "to open"
-    }, {
-      command: "shift \u21B5",
-      purpose: "to create"
-    }, {
-      command: "esc",
-      purpose: "to dismiss"
-    }]);
-    this.scope.register(["Shift"], "Enter", (e) => {
-      this.onChooseSuggestion(this.inputEl.value, e);
-      this.close();
-    });
-  }
-  getSuggestions(query) {
-    const suggestions = this.files.filter((path) => path.toLowerCase().includes(query.toLowerCase()));
-    if (suggestions.length === 0 && this.suggestNewFile) suggestions.push(query);
-    return suggestions;
-  }
-  renderSuggestion(path, el) {
-    const simplifiedPath = path.replace(/\.md$/, "");
-    el.setText(simplifiedPath);
-  }
-  onChooseSuggestion(_path, _evt) {
-  }
-  awaitInput() {
-    return new Promise((resolve, _reject) => {
-      this.onChooseSuggestion = (path, _evt) => {
-        const file = this.app.vault.getAbstractFileByPath(path);
-        if (file instanceof import_obsidian13.TFile)
-          return resolve(file);
-        if (!this.suggestNewFile) return;
-        if (FilepathHelper.extension(path) === void 0) path += ".md";
-        const newFile = this.app.vault.create(path, "");
-        resolve(newFile);
-      };
-      this.open();
-    });
   }
 };
 
@@ -4579,7 +5407,7 @@ var GroupLabelWrapCanvasExtension = class extends CanvasExtension {
 };
 
 // src/canvas-extensions/group-label-visibility-canvas-extension.ts
-var import_obsidian14 = require("obsidian");
+var import_obsidian16 = require("obsidian");
 var GroupLabelVisibilityCanvasExtension = class extends CanvasExtension {
   isEnabled() {
     return true;
@@ -4598,7 +5426,31 @@ var GroupLabelVisibilityCanvasExtension = class extends CanvasExtension {
   toggleGroupLabelVisibility() {
     const hidden = !this.plugin.settings.getSetting("hideGroupLabels");
     void this.plugin.settings.setSetting({ hideGroupLabels: hidden });
-    new import_obsidian14.Notice(hidden ? "Group labels hidden" : "Group labels visible");
+    new import_obsidian16.Notice(hidden ? "Group labels hidden" : "Group labels visible");
+  }
+};
+
+// src/canvas-extensions/note-label-visibility-canvas-extension.ts
+var import_obsidian17 = require("obsidian");
+var NoteLabelVisibilityCanvasExtension = class extends CanvasExtension {
+  isEnabled() {
+    return true;
+  }
+  init() {
+    this.plugin.addCommand({
+      id: "toggle-note-label-visibility",
+      name: "Toggle note label visibility",
+      checkCallback: CanvasHelper.canvasCommand(
+        this.plugin,
+        (_canvas) => true,
+        (_canvas) => this.toggleNoteLabelVisibility()
+      )
+    });
+  }
+  toggleNoteLabelVisibility() {
+    const hidden = !this.plugin.settings.getSetting("hideNoteLabels");
+    void this.plugin.settings.setSetting({ hideNoteLabels: hidden });
+    new import_obsidian17.Notice(hidden ? "Note labels hidden" : "Note labels visible");
   }
 };
 
@@ -4610,7 +5462,10 @@ var DEFAULT_SIZE_SETTINGS = [
   { setting: "defaultEdgeWidth", datasetKey: "defaultEdgeWidth" },
   { setting: "defaultArrowSize", datasetKey: "defaultArrowSize" },
   // Solid is Obsidian's own border, so it needs its own "leave it alone" value
-  { setting: "defaultNodeBorder", datasetKey: "defaultNodeBorder", unchangedValue: "default" }
+  { setting: "defaultNodeBorder", datasetKey: "defaultNodeBorder", unchangedValue: "default" },
+  // Added by an LLM agent - not a per-element style default, but the same wrapper-attribute
+  // mechanism: scales the .canvas-node-placeholder title shown when zoomed out
+  { setting: "nodePreviewTextSize", datasetKey: "nodePreviewTextSize" }
 ];
 var UNCHANGED_SIZE = "1";
 var CARD_PADDING_H_PROPERTY = "--ac-card-padding-h";
@@ -4668,8 +5523,171 @@ var DefaultStyleSizesCanvasExtension = class extends CanvasExtension {
   }
 };
 
+// src/canvas-extensions/node-outline-canvas-extension.ts
+var OUTLINE_WIDTH_PROPERTY = "--ac-node-outline-width";
+var NodeOutlineCanvasExtension = class extends CanvasExtension {
+  isEnabled() {
+    return true;
+  }
+  init() {
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:settings-changed",
+      () => {
+        for (const canvas of this.plugin.getCanvases())
+          this.updateNodeOutline(canvas);
+      }
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:canvas-changed",
+      (canvas) => this.updateNodeOutline(canvas)
+    ));
+  }
+  updateNodeOutline(canvas) {
+    const wrapperEl = canvas.wrapperEl;
+    if (!wrapperEl) return;
+    const black = this.plugin.settings.getSetting("nodeOutlineBlack");
+    const white = this.plugin.settings.getSetting("nodeOutlineWhite");
+    if (!black && !white) {
+      delete wrapperEl.dataset.nodeOutline;
+      wrapperEl.style.removeProperty(OUTLINE_WIDTH_PROPERTY);
+      return;
+    }
+    wrapperEl.dataset.nodeOutline = black && white ? "both" : black ? "black" : "white";
+    const width = this.plugin.settings.getSetting("nodeOutlineWidth");
+    wrapperEl.style.setProperty(OUTLINE_WIDTH_PROPERTY, `${width}px`);
+  }
+};
+
+// src/canvas-extensions/edge-outline-canvas-extension.ts
+var OUTLINE_WIDTH_PROPERTY2 = "--ac-edge-outline-width";
+var OUTLINE_CLASS = "ac-edge-outline-path";
+var OUTER_OUTLINE_CLASS = "ac-edge-outline-outer";
+var ARROW_OUTLINE_CLASS = "ac-edge-outline-arrow";
+var ARROW_OUTER_OUTLINE_CLASS = "ac-edge-outline-arrow-outer";
+var ARROW_SOURCE_EXPANDO = "__acArrowOutlineSource";
+var ARROW_CLONES_EXPANDO = "__acArrowOutlineClones";
+var EdgeOutlineCanvasExtension = class extends CanvasExtension {
+  isEnabled() {
+    return true;
+  }
+  init() {
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:settings-changed",
+      () => {
+        for (const canvas of this.plugin.getCanvases()) {
+          this.updateWrapper(canvas);
+          for (const edge of canvas.edges.values()) this.syncEdge(edge);
+        }
+      }
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:canvas-changed",
+      (canvas) => {
+        this.updateWrapper(canvas);
+        for (const edge of canvas.edges.values()) this.syncEdge(edge);
+      }
+    ));
+    const syncEdge = (_canvas, edge) => this.syncEdge(edge);
+    this.plugin.registerEvent(this.plugin.app.workspace.on("advanced-canvas:edge-added", syncEdge));
+    this.plugin.registerEvent(this.plugin.app.workspace.on("advanced-canvas:edge-changed", syncEdge));
+    this.plugin.registerEvent(this.plugin.app.workspace.on("advanced-canvas:edge-path-updated", syncEdge));
+  }
+  outlineMode() {
+    const black = this.plugin.settings.getSetting("edgeOutlineBlack");
+    const white = this.plugin.settings.getSetting("edgeOutlineWhite");
+    if (black && white) return "both";
+    if (black) return "black";
+    if (white) return "white";
+    return "none";
+  }
+  updateWrapper(canvas) {
+    const wrapperEl = canvas.wrapperEl;
+    if (!wrapperEl) return;
+    const mode = this.outlineMode();
+    if (mode === "none") {
+      delete wrapperEl.dataset.edgeOutline;
+      wrapperEl.style.removeProperty(OUTLINE_WIDTH_PROPERTY2);
+      return;
+    }
+    wrapperEl.dataset.edgeOutline = mode;
+    const width = this.plugin.settings.getSetting("edgeOutlineWidth");
+    wrapperEl.style.setProperty(OUTLINE_WIDTH_PROPERTY2, `${width}px`);
+  }
+  syncEdge(edge) {
+    const mode = this.outlineMode();
+    const needed = mode === "both" ? 2 : mode === "none" ? 0 : 1;
+    this.syncLine(edge, needed);
+    this.syncArrowHeads(edge, needed);
+  }
+  syncLine(edge, needed) {
+    var _a;
+    const lineGroup = edge.lineGroupEl;
+    const display = (_a = edge.path) == null ? void 0 : _a.display;
+    if (!lineGroup || !display || display.parentElement !== lineGroup) return;
+    const underlays = Array.from(lineGroup.querySelectorAll(`:scope > path.${OUTLINE_CLASS}`));
+    while (underlays.length > needed) underlays.pop().remove();
+    while (underlays.length < needed) {
+      const underlay = lineGroup.ownerDocument.createElementNS("http://www.w3.org/2000/svg", "path");
+      underlay.classList.add(OUTLINE_CLASS);
+      lineGroup.insertBefore(underlay, display);
+      underlays.push(underlay);
+    }
+    underlays.forEach((underlay, index) => {
+      var _a2;
+      underlay.classList.toggle(OUTER_OUTLINE_CLASS, needed === 2 && index === 0);
+      const d = (_a2 = display.getAttribute("d")) != null ? _a2 : "";
+      if (underlay.getAttribute("d") !== d) underlay.setAttribute("d", d);
+      for (const key of Object.keys(underlay.dataset))
+        if (!(key in display.dataset)) delete underlay.dataset[key];
+      for (const [key, value] of Object.entries(display.dataset))
+        if (underlay.dataset[key] !== value) underlay.dataset[key] = value;
+    });
+  }
+  /**
+   * Maintains the underlay clones of the arrow head(s) (`polygon.canvas-path-end` inside
+   * `lineEndGroupEl`). Each clone keeps the `canvas-path-end` class, so app.css and the arrow
+   * style rules (scale transform, arrow size multiplier) apply to it unchanged - the SCSS
+   * only swaps fill/stroke/stroke-width. The clone/source link is tracked with expandos, so
+   * underlays of arrow elements that Obsidian replaced get removed again.
+   */
+  syncArrowHeads(edge, needed) {
+    var _a;
+    const group = edge.lineEndGroupEl;
+    if (!group) return;
+    for (const clone of Array.from(group.querySelectorAll(`.${ARROW_OUTLINE_CLASS}`))) {
+      const source = clone[ARROW_SOURCE_EXPANDO];
+      if (needed === 0 || !source || !source.isConnected) clone.remove();
+    }
+    if (needed === 0) return;
+    const arrowHeads = Array.from(group.querySelectorAll(`.canvas-path-end`)).filter((el) => !el.classList.contains(ARROW_OUTLINE_CLASS));
+    for (const arrowHead of arrowHeads) {
+      let clones = (_a = arrowHead[ARROW_CLONES_EXPANDO]) != null ? _a : arrowHead[ARROW_CLONES_EXPANDO] = [];
+      clones = clones.filter((clone) => clone.isConnected);
+      arrowHead[ARROW_CLONES_EXPANDO] = clones;
+      while (clones.length > needed) clones.pop().remove();
+      while (clones.length < needed) {
+        const clone = arrowHead.cloneNode(false);
+        clone.removeAttribute("id");
+        clone.classList.add(ARROW_OUTLINE_CLASS);
+        clone[ARROW_SOURCE_EXPANDO] = arrowHead;
+        arrowHead.parentElement.insertBefore(clone, arrowHead);
+        clones.push(clone);
+      }
+      clones.forEach((clone, index) => {
+        clone.classList.toggle(ARROW_OUTER_OUTLINE_CLASS, needed === 2 && index === 0);
+        for (const attr of ["points", "transform"]) {
+          const value = arrowHead.getAttribute(attr);
+          if (clone.getAttribute(attr) === value) continue;
+          if (value === null) clone.removeAttribute(attr);
+          else clone.setAttribute(attr, value);
+        }
+      });
+    }
+  }
+};
+
 // src/canvas-extensions/node-templates-canvas-extension.ts
-var import_obsidian15 = require("obsidian");
+var import_obsidian18 = require("obsidian");
 var TEMPLATE_NODE_BUTTON_ID_PREFIX = "create-template-node-";
 var NodeTemplatesCanvasExtension = class extends CanvasExtension {
   isEnabled() {
@@ -4760,7 +5778,7 @@ var NodeTemplatesCanvasExtension = class extends CanvasExtension {
       let tfile;
       if (template.path) {
         const abstractFile = this.plugin.app.vault.getAbstractFileByPath(template.path);
-        if (abstractFile instanceof import_obsidian15.TFile) tfile = abstractFile;
+        if (abstractFile instanceof import_obsidian18.TFile) tfile = abstractFile;
       }
       tfile != null ? tfile : tfile = await new FileSelectModal(this.plugin.app, void 0, true).awaitInput();
       node = canvas.createFileNode({ ...creationOptions, file: tfile });
@@ -4782,7 +5800,7 @@ var NodeTemplatesCanvasExtension = class extends CanvasExtension {
     );
   }
   createTemplateContextMenu(e) {
-    const menu = new import_obsidian15.Menu();
+    const menu = new import_obsidian18.Menu();
     menu.addItem(
       (item) => item.setTitle("Remove").setIcon("trash").onClick(async () => {
         const buttonEl = e.target;
@@ -4800,7 +5818,7 @@ var NodeTemplatesCanvasExtension = class extends CanvasExtension {
     const selectedNodeData = canvas.getSelectionData().nodes[0];
     const icon = await new IconModal(this.plugin.app).promise;
     if (!icon) {
-      new import_obsidian15.Notice("No icon selected, template creation cancelled.");
+      new import_obsidian18.Notice("No icon selected, template creation cancelled.");
       return;
     }
     const label = await new AbstractSelectionModal(this.plugin.app, "Set template label (optional)", [], true).awaitInput();
@@ -4824,13 +5842,13 @@ var NodeTemplatesCanvasExtension = class extends CanvasExtension {
     this.onCardMenuCreated(canvas);
   }
 };
-var IconModal = class extends import_obsidian15.FuzzySuggestModal {
+var IconModal = class extends import_obsidian18.FuzzySuggestModal {
   constructor(app) {
     super(app);
     this.setPlaceholder("Set template icon");
   }
   getItems() {
-    return (0, import_obsidian15.getIconIds)();
+    return (0, import_obsidian18.getIconIds)();
   }
   getItemText(item) {
     return item;
@@ -4838,7 +5856,7 @@ var IconModal = class extends import_obsidian15.FuzzySuggestModal {
   renderSuggestion(item, el) {
     el.classList.add("icon-modal-suggestion");
     el.createEl("span", { cls: "icon-modal-suggestion-icon" }, (iconEl) => {
-      (0, import_obsidian15.setIcon)(iconEl, item.item);
+      (0, import_obsidian18.setIcon)(iconEl, item.item);
     });
     el.createEl("span", {
       text: item.item.replace("lucide-", ""),
@@ -4861,7 +5879,7 @@ var IconModal = class extends import_obsidian15.FuzzySuggestModal {
 };
 
 // src/canvas-extensions/presentation-canvas-extension.ts
-var import_obsidian16 = require("obsidian");
+var import_obsidian19 = require("obsidian");
 var START_SLIDE_NAME = "Start Slide";
 var DEFAULT_SLIDE_NAME = "New Slide";
 var PresentationCanvasExtension = class extends CanvasExtension {
@@ -5057,12 +6075,13 @@ var PresentationCanvasExtension = class extends CanvasExtension {
       }
     }
     canvas.zoomToRealBbox(toNodeBBoxPadded);
+    this.plugin.app.workspace.trigger("advanced-canvas:presentation-node-changed", canvas, toNode);
   }
   async startPresentation(canvas, tryContinue = false) {
     if (!tryContinue || this.visitedNodeIds.length === 0) {
       const startNode2 = canvas.metadata["startNode"] && canvas.nodes.get(canvas.metadata["startNode"]);
       if (!startNode2) {
-        new import_obsidian16.Notice("No start node found. Please mark a node as a start node through the popup menu.");
+        new import_obsidian19.Notice("No start node found. Please mark a node as a start node through the popup menu.");
         return;
       }
       this.visitedNodeIds = [startNode2.getData().id];
@@ -5147,6 +6166,7 @@ var PresentationCanvasExtension = class extends CanvasExtension {
       canvas.setViewport(this.savedViewport.x, this.savedViewport.y, this.savedViewport.zoom);
     this.isPresentationMode = false;
     this.presentationUsesFullscreen = false;
+    this.plugin.app.workspace.trigger("advanced-canvas:presentation-ended", canvas);
   }
   // Added by an LLM agent
   /** Re-focuses the viewport on the slide the presentation is currently on. */
@@ -5211,43 +6231,63 @@ var ZOrderingCanvasExtension = class extends CanvasExtension {
       "canvas:selection-menu",
       (menu, canvas) => this.selectionContextMenu(canvas, menu)
     ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "canvas:edge-menu",
+      (menu, canvas) => this.edgeContextMenu(canvas, menu)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:edge-added",
+      (canvas) => this.reorderEdges(canvas)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:edge-changed",
+      (canvas) => this.reorderEdges(canvas)
+    ));
   }
   nodeContextMenu(node, menu) {
-    this.addZOrderingContextMenuItems(node.canvas, [node], menu);
+    this.addZOrderingContextMenuItems(node.canvas, [node], [], menu);
+  }
+  // Added by an LLM agent
+  edgeContextMenu(canvas, menu) {
+    this.addZOrderingContextMenuItems(canvas, [], this.getSelectedEdges(canvas), menu);
   }
   selectionContextMenu(canvas, menu) {
     const selectedNodes = canvas.getSelectionData().nodes.map((nodeData) => canvas.nodes.get(nodeData.id)).filter((node) => node !== void 0);
-    this.addZOrderingContextMenuItems(canvas, selectedNodes, menu);
+    this.addZOrderingContextMenuItems(canvas, selectedNodes, this.getSelectedEdges(canvas), menu);
   }
-  addZOrderingContextMenuItems(canvas, nodes, menu) {
+  // Added by an LLM agent
+  getSelectedEdges(canvas) {
+    return [...canvas.selection].filter((item) => item.path !== void 0);
+  }
+  addZOrderingContextMenuItems(canvas, nodes, edges, menu) {
     menu.addSeparator();
-    if (this.plugin.settings.getSetting("zOrderingControlShowOneLayerShiftOptions") && nodes.length === 1) {
+    if (this.plugin.settings.getSetting("zOrderingControlShowOneLayerShiftOptions") && nodes.length + edges.length === 1) {
       menu.addItem((item) => {
         item.setTitle("Move one layer forward");
         item.setIcon("arrow-up");
-        item.onClick(() => this.moveOneLayer(canvas, nodes.first(), true));
+        item.onClick(() => nodes.length === 1 ? this.moveOneLayer(canvas, nodes.first(), true) : this.moveOneEdgeLayer(canvas, edges.first(), true));
       });
       menu.addItem((item) => {
         item.setTitle("Move one layer backward");
         item.setIcon("arrow-down");
-        item.onClick(() => this.moveOneLayer(canvas, nodes.first(), false));
+        item.onClick(() => nodes.length === 1 ? this.moveOneLayer(canvas, nodes.first(), false) : this.moveOneEdgeLayer(canvas, edges.first(), false));
       });
     }
     menu.addItem((item) => {
       item.setTitle("Bring to Front");
       item.setIcon("bring-to-front");
-      item.onClick(() => this.moveMaxLayers(canvas, nodes, true));
+      item.onClick(() => this.moveMaxLayers(canvas, nodes, edges, true));
     });
     menu.addItem((item) => {
       item.setTitle("Send to Back");
       item.setIcon("send-to-back");
-      item.onClick(() => this.moveMaxLayers(canvas, nodes, false));
+      item.onClick(() => this.moveMaxLayers(canvas, nodes, edges, false));
     });
-    if (nodes.some((node) => node.getData().zIndex !== void 0)) {
+    if (nodes.some((node) => node.getData().zIndex !== void 0) || edges.some((edge) => this.getEdgeZIndexAttribute(edge) !== void 0)) {
       menu.addItem((item) => {
         item.setTitle("Remove persistent z-index");
         item.setIcon("pin-off");
-        item.onClick(() => this.removePersistentZIndexes(canvas, nodes));
+        item.onClick(() => this.removePersistentZIndexes(canvas, nodes, edges));
       });
     }
     menu.addSeparator();
@@ -5261,12 +6301,29 @@ var ZOrderingCanvasExtension = class extends CanvasExtension {
     this.setNodesZIndex([nearestZIndexNode], selectedNode.zIndex);
     this.setNodesZIndex([selectedNode], targetZIndex);
   }
-  moveMaxLayers(canvas, selectedNodes, forward) {
-    const targetZIndex = forward ? Math.max(...this.getAllZIndexes(canvas)) + 1 : Math.min(...this.getAllZIndexes(canvas)) - selectedNodes.length;
-    this.setNodesZIndex(selectedNodes, targetZIndex);
+  // Added by an LLM agent
+  moveOneEdgeLayer(canvas, selectedEdge, forward) {
+    const selectedEdgeBBox = selectedEdge.getBBox();
+    const selectedZIndex = this.getEdgeZIndex(selectedEdge);
+    const nearestZIndexEdge = [...canvas.edges.values()].filter((edge) => BBoxHelper.isColliding(selectedEdgeBBox, edge.getBBox())).filter((edge) => edge !== selectedEdge).sort((a, b) => forward ? this.getEdgeZIndex(a) - this.getEdgeZIndex(b) : this.getEdgeZIndex(b) - this.getEdgeZIndex(a)).filter((edge) => forward ? this.getEdgeZIndex(edge) > selectedZIndex : this.getEdgeZIndex(edge) < selectedZIndex).first();
+    if (nearestZIndexEdge === void 0) return;
+    const targetZIndex = this.getEdgeZIndex(nearestZIndexEdge);
+    this.setEdgesZIndex(canvas, [nearestZIndexEdge], selectedZIndex, false);
+    this.setEdgesZIndex(canvas, [selectedEdge], targetZIndex, true);
   }
-  removePersistentZIndexes(_canvas, nodes) {
+  moveMaxLayers(canvas, selectedNodes, selectedEdges, forward) {
+    if (selectedNodes.length > 0) {
+      const targetZIndex = forward ? Math.max(...this.getAllNodeZIndexes(canvas)) + 1 : Math.min(...this.getAllNodeZIndexes(canvas)) - selectedNodes.length;
+      this.setNodesZIndex(selectedNodes, targetZIndex);
+    }
+    if (selectedEdges.length > 0) {
+      const targetZIndex = forward ? Math.max(...this.getAllEdgeZIndexes(canvas)) + 1 : Math.min(...this.getAllEdgeZIndexes(canvas)) - selectedEdges.length;
+      this.setEdgesZIndex(canvas, selectedEdges, targetZIndex);
+    }
+  }
+  removePersistentZIndexes(canvas, nodes, edges) {
     for (const node of nodes) node.setZIndex(void 0);
+    if (edges.length > 0) this.setEdgesZIndex(canvas, edges, null);
   }
   setNodesZIndex(nodes, zIndex) {
     const sortedNodes = nodes.sort((a, b) => a.zIndex - b.zIndex);
@@ -5276,7 +6333,50 @@ var ZOrderingCanvasExtension = class extends CanvasExtension {
       node.setZIndex(finalZIndex);
     }
   }
-  getAllZIndexes(canvas) {
+  // Added by an LLM agent: persists the zIndex in the edge's styleAttributes (as a string, like every style attribute)
+  setEdgesZIndex(canvas, edges, zIndex, pushHistory = true) {
+    const sortedEdges = edges.sort((a, b) => this.getEdgeZIndex(a) - this.getEdgeZIndex(b));
+    for (let i = 0; i < sortedEdges.length; i++) {
+      const edge = sortedEdges[i];
+      const edgeData = edge.getData();
+      const finalZIndex = zIndex === null ? null : zIndex + i;
+      edge.setData({
+        ...edgeData,
+        styleAttributes: {
+          ...edgeData.styleAttributes,
+          zIndex: finalZIndex === null ? null : finalZIndex.toString()
+        }
+      });
+    }
+    if (pushHistory) canvas.pushHistory(canvas.getData());
+    this.reorderEdges(canvas);
+  }
+  // Added by an LLM agent: SVG <g> elements ignore CSS z-index, so edge stacking is done via DOM order inside the edge containers
+  reorderEdges(canvas) {
+    const edges = [...canvas.edges.values()];
+    if (!edges.some((edge) => this.getEdgeZIndex(edge) !== 0)) return;
+    const sortedEdges = edges.sort((a, b) => this.getEdgeZIndex(a) - this.getEdgeZIndex(b));
+    for (const edge of sortedEdges) {
+      if (!edge.isAttached) continue;
+      canvas.edgeContainerEl.appendChild(edge.lineGroupEl);
+      canvas.edgeEndContainerEl.appendChild(edge.lineEndGroupEl);
+    }
+  }
+  // Added by an LLM agent
+  getEdgeZIndexAttribute(edge) {
+    var _a, _b;
+    return (_b = (_a = edge.getData().styleAttributes) == null ? void 0 : _a.zIndex) != null ? _b : void 0;
+  }
+  // Added by an LLM agent
+  getEdgeZIndex(edge) {
+    const parsed = Number(this.getEdgeZIndexAttribute(edge));
+    return isNaN(parsed) ? 0 : parsed;
+  }
+  // Added by an LLM agent
+  getAllEdgeZIndexes(canvas) {
+    return [...canvas.edges.values()].map((edge) => this.getEdgeZIndex(edge));
+  }
+  getAllNodeZIndexes(canvas) {
     return [...canvas.nodes.values()].map((n) => n.zIndex);
   }
 };
@@ -5452,10 +6552,10 @@ var EncapsulateCanvasExtension = class extends CanvasExtension {
 };
 
 // src/canvas-extensions/commands-canvas-extension.ts
-var import_obsidian18 = require("obsidian");
+var import_obsidian21 = require("obsidian");
 
 // src/canvas-extensions/copy-node-reference-canvas-extension.ts
-var import_obsidian17 = require("obsidian");
+var import_obsidian20 = require("obsidian");
 var CopyNodeReferenceCanvasExtension = class _CopyNodeReferenceCanvasExtension extends CanvasExtension {
   isEnabled() {
     return "enableSingleNodePopupReferenceCopy";
@@ -5485,8 +6585,8 @@ var CopyNodeReferenceCanvasExtension = class _CopyNodeReferenceCanvasExtension e
     const nodeTypeString = TextHelper.toTitleCase(nodeData.type);
     const wikilink = `[[${file.path}#${nodeData.id}|${file.name} (${nodeTypeString} node)]]`;
     navigator.clipboard.writeText(wikilink).then(
-      () => new import_obsidian17.Notice("Copied wikilink to node to clipboard.", 2e3)
-    ).catch(() => new import_obsidian17.Notice("Failed to copy wikilink to node to clipboard.", 2e3));
+      () => new import_obsidian20.Notice("Copied wikilink to node to clipboard.", 2e3)
+    ).catch(() => new import_obsidian20.Notice("Failed to copy wikilink to node to clipboard.", 2e3));
   }
 };
 
@@ -5718,7 +6818,7 @@ var CommandsCanvasExtension = class extends CanvasExtension {
             if (!nodeOutgoingLinks) continue;
             for (const nodeOutgoingLink of nodeOutgoingLinks) {
               const resolvedLink = this.plugin.app.metadataCache.getFirstLinkpathDest(nodeOutgoingLink.link, relativeFile.path);
-              if (!(resolvedLink instanceof import_obsidian18.TFile)) continue;
+              if (!(resolvedLink instanceof import_obsidian21.TFile)) continue;
               outgoingLinks.add(resolvedLink);
             }
           }
@@ -5754,7 +6854,7 @@ var CommandsCanvasExtension = class extends CanvasExtension {
               if (!nodeBacklinks) continue;
               for (const nodeBacklink of nodeBacklinks.data.keys()) {
                 const resolvedLink = this.plugin.app.metadataCache.getFirstLinkpathDest(nodeBacklink, file.path);
-                if (!(resolvedLink instanceof import_obsidian18.TFile)) continue;
+                if (!(resolvedLink instanceof import_obsidian21.TFile)) continue;
                 backlinks.add(resolvedLink);
               }
             }
@@ -5763,7 +6863,7 @@ var CommandsCanvasExtension = class extends CanvasExtension {
             if (!canvasBacklinks) return;
             for (const canvasBacklink of canvasBacklinks.data.keys()) {
               const resolvedLink = this.plugin.app.metadataCache.getFirstLinkpathDest(canvasBacklink, canvasFile.path);
-              if (!(resolvedLink instanceof import_obsidian18.TFile)) continue;
+              if (!(resolvedLink instanceof import_obsidian21.TFile)) continue;
               backlinks.add(resolvedLink);
             }
           }
@@ -6093,370 +7193,8 @@ var AutoResizeNodeCanvasExtension = class extends CanvasExtension {
   }
 };
 
-// src/canvas-extensions/portals-canvas-extension.ts
-var import_obsidian19 = require("obsidian");
-var PORTAL_ID_DELIMITER = "||";
-var PORTAL_ID_PREFIX = `acportal${PORTAL_ID_DELIMITER}`;
-var PORTAL_PADDING = 50;
-var MIN_OPEN_PORTAL_SIZE = { width: 200, height: 200 };
-var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtension {
-  isEnabled() {
-    return "portalsFeatureEnabled";
-  }
-  init() {
-    this.plugin.registerEvent(this.plugin.app.vault.on("modify", (file) => {
-      for (const canvas of this.plugin.getCanvases())
-        this.onFileModified(canvas, file);
-    }));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:popup-menu-created",
-      (canvas) => this.onPopupMenu(canvas)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:node-created",
-      (canvas, node) => void this.tryAutoOpenSingleNodePortal(canvas, node)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:node-removed",
-      (canvas, node) => this.onNodeRemoved(canvas, node)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:node-moved",
-      (canvas, node, _keyboard) => this.onNodeMoved(canvas, node)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:node-resized",
-      (canvas, node) => this.onNodeResized(canvas, node)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:dragging-state-changed",
-      (canvas, startedDragging) => this.onDraggingStateChanged(canvas, startedDragging)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:containing-nodes-requested",
-      (canvas, bbox, nodes) => this.onContainingNodesRequested(canvas, bbox, nodes)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:edge-connection-try-dragging:before",
-      (canvas, edge, event, cancelRef) => this.onEdgeConnectionTryDraggingBefore(canvas, edge, event, cancelRef)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:edge-connection-dragging:after",
-      (canvas, edge, event, newEdge, side, previousEnds) => this.onEdgeConnectionDraggingAfter(canvas, edge, event, newEdge, side, previousEnds)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:selection-changed",
-      (canvas, oldSelection, updateSelection) => this.onSelectionChanged(canvas, oldSelection, updateSelection)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:data-requested",
-      (canvas, data) => this.onGetData(canvas, data)
-    ));
-    this.plugin.registerEvent(this.plugin.app.workspace.on(
-      "advanced-canvas:data-loaded:before",
-      (canvas, data, setData) => {
-        this.onSetData(canvas, data).then((newData) => {
-          if (newData.nodes.length === data.nodes.length && newData.edges.length === data.edges.length) return;
-          setData(newData);
-        }).catch((error) => {
-          console.error("Error loading portal data:", error);
-          new import_obsidian19.Notice("An error occurred while loading portal data. Please check console for details.");
-        });
-      }
-    ));
-  }
-  onFileModified(canvas, file) {
-    const isAffected = Object.values(canvas.nodes).filter(
-      (nodeData) => nodeData.getData().type === "file" && nodeData.currentPortalFile === file.path
-    ).length > 0;
-    if (!isAffected) return;
-    canvas.setData(canvas.getData());
-    canvas.history.current--;
-    canvas.history.data.pop();
-  }
-  onContainingNodesRequested(_canvas, _bbox, nodes) {
-    const filteredNodes = nodes.filter((node) => !_PortalsCanvasExtension.isPortalElement(node.id));
-    nodes.splice(0, nodes.length, ...filteredNodes);
-  }
-  onSelectionChanged(canvas, _oldSelection, updateSelection) {
-    updateSelection(() => {
-      const updatedSelection = Array.from(canvas.selection).filter((canvasElement) => !_PortalsCanvasExtension.isPortalElement(canvasElement.id));
-      canvas.selection = new Set(updatedSelection);
-    });
-  }
-  onDraggingStateChanged(canvas, startedDragging) {
-    if (!startedDragging) return;
-    if (!canvas.getSelectionData().nodes.some((node) => node.type === "file" && node.portal)) return;
-    const objectSnappingEnabled = canvas.options.snapToObjects;
-    if (!objectSnappingEnabled) return;
-    canvas.toggleObjectSnapping(false);
-    const dragEndEventRef = this.plugin.app.workspace.on(
-      "advanced-canvas:dragging-state-changed",
-      (canvas2, startedDragging2) => {
-        if (startedDragging2) return;
-        canvas2.toggleObjectSnapping(objectSnappingEnabled);
-        this.plugin.app.workspace.offref(dragEndEventRef);
-      }
-    );
-    this.plugin.registerEvent(dragEndEventRef);
-  }
-  onNodeMoved(canvas, portalNode) {
-    const portalNodeData = portalNode.getData();
-    if (portalNodeData.type !== "file" || !portalNodeData.isPortalLoaded) return;
-    const nestedNodes = this.getContainingNodes(canvas, portalNode);
-    const containingNodesBBox = CanvasHelper.getBBox(nestedNodes);
-    const portalOffset = {
-      x: portalNodeData.x - containingNodesBBox.minX + PORTAL_PADDING,
-      y: portalNodeData.y - containingNodesBBox.minY + PORTAL_PADDING
-    };
-    for (const nestedNode of nestedNodes) {
-      const nestedNodeData = nestedNode.getData();
-      nestedNode.setData({
-        ...nestedNodeData,
-        x: nestedNodeData.x + portalOffset.x,
-        y: nestedNodeData.y + portalOffset.y
-      });
-    }
-  }
-  onNodeResized(_canvas, portalNode) {
-    const portalNodeData = portalNode.getData();
-    if (portalNodeData.type !== "file" || !portalNodeData.isPortalLoaded) return;
-    portalNode.setData({
-      ...portalNodeData,
-      x: portalNode.prevX ? portalNode.prevX : portalNodeData.x,
-      y: portalNode.prevY ? portalNode.prevY : portalNodeData.y,
-      width: portalNode.prevWidth ? portalNode.prevWidth : portalNodeData.width,
-      height: portalNode.prevHeight ? portalNode.prevHeight : portalNodeData.height
-    });
-  }
-  onNodeRemoved(canvas, portalNode) {
-    const portalNodeData = portalNode.getData();
-    if (portalNodeData.type !== "file" || !portalNodeData.portal) return;
-    for (const node of this.getContainingNodes(canvas, portalNode, false))
-      canvas.removeNode(node);
-    for (const edge of this.getContainingEdges(canvas, portalNode, false))
-      canvas.removeEdge(edge);
-  }
-  onEdgeConnectionTryDraggingBefore(_canvas, edge, _event, cancelRef) {
-    if (!_PortalsCanvasExtension.isPortalElement(edge.id)) return;
-    cancelRef.value = true;
-    new import_obsidian19.Notice("Updating edges from portals is not supported yet.");
-  }
-  onEdgeConnectionDraggingAfter(canvas, edge, _event, _newEdge, _side, _previousEnds) {
-    if (_PortalsCanvasExtension.isPortalElement(edge.id)) return;
-    if (!_PortalsCanvasExtension.isPortalElement(edge.from.node.id) || !_PortalsCanvasExtension.isPortalElement(edge.to.node.id)) return;
-    canvas.removeEdge(edge);
-    new import_obsidian19.Notice("Creating edges with both ends in portals are not supported yet.");
-  }
-  onPopupMenu(canvas) {
-    if (canvas.readonly) return;
-    const selectedFileNodes = canvas.getSelectionData().nodes.map((nodeData) => {
-      var _a;
-      const node = canvas.nodes.get(nodeData.id);
-      if (!node) return null;
-      if (nodeData.type !== "file") return null;
-      if (((_a = node.file) == null ? void 0 : _a.extension) === "canvas") return node;
-      if (nodeData.portal) this.setPortalOpen(canvas, node, false);
-      return null;
-    }).filter((node) => node !== null);
-    if (selectedFileNodes.length !== 1) return;
-    const portalNode = selectedFileNodes.first();
-    const portalNodeData = portalNode.getData();
-    if (portalNodeData.portal && portalNodeData.file !== portalNode.currentPortalFile)
-      this.setPortalOpen(canvas, portalNode, true);
-    CanvasHelper.addPopupMenuOption(
-      canvas,
-      CanvasHelper.createPopupMenuOption({
-        id: "toggle-portal",
-        label: portalNodeData.portal ? "Close portal" : "Open portal",
-        icon: portalNodeData.portal ? "door-open" : "door-closed",
-        callback: () => {
-          this.setPortalOpen(canvas, portalNode, !portalNodeData.portal);
-          this.onPopupMenu(canvas);
-        }
-      })
-    );
-  }
-  // Added by an LLM agent
-  // Automatically opens a newly created file node as a portal if it links to a canvas
-  // file that only contains a single node - saves a manual "Open portal" click for
-  // canvases that are trivial enough to just inline.
-  async tryAutoOpenSingleNodePortal(canvas, node) {
-    var _a, _b;
-    if (!this.plugin.settings.getSetting("autoOpenSingleNodePortals")) return;
-    const nodeData = node.getData();
-    if (nodeData.type !== "file" || nodeData.portal) return;
-    const portalFilePath = typeof node.file === "string" ? node.file : (_a = node.file) == null ? void 0 : _a.path;
-    if (!portalFilePath) return;
-    const portalFile = this.plugin.app.vault.getAbstractFileByPath(portalFilePath);
-    if (!(portalFile instanceof import_obsidian19.TFile) || portalFile.extension !== "canvas") return;
-    if (portalFile.path === ((_b = canvas.view.file) == null ? void 0 : _b.path)) return;
-    const portalFileDataString = await this.plugin.app.vault.cachedRead(portalFile);
-    if (portalFileDataString === "") return;
-    let portalFileData;
-    try {
-      portalFileData = JSON.parse(portalFileDataString);
-    } catch (error) {
-      return;
-    }
-    if (!(portalFileData == null ? void 0 : portalFileData.nodes) || portalFileData.nodes.length !== 1) return;
-    const currentNode = canvas.nodes.get(node.id);
-    if (!currentNode) return;
-    const currentNodeData = currentNode.getData();
-    if (currentNodeData.portal) return;
-    if (currentNodeData.file !== portalFile.path) {
-      currentNode.setData({ ...currentNodeData, file: portalFile.path });
-    }
-    this.setPortalOpen(canvas, currentNode, true);
-  }
-  setPortalOpen(canvas, portalNode, open) {
-    const portalNodeData = portalNode.getData();
-    portalNode.setData({
-      ...portalNodeData,
-      portal: open
-    });
-    portalNode.currentPortalFile = open ? portalNodeData.file : void 0;
-    canvas.setData(canvas.getData());
-  }
-  // Remove all edges and nodes from portals
-  onGetData(_canvas, data) {
-    data.nodes = data.nodes.filter((nodeData) => !_PortalsCanvasExtension.isPortalElement(nodeData.id));
-    for (const nodeData of data.nodes) delete nodeData.isPortalLoaded;
-    const portalsIdMap = new Map(
-      data.nodes.filter((nodeData) => nodeData.portal).map((nodeData) => [nodeData.id, nodeData])
-    );
-    data.edges = data.edges.filter((edgeData) => {
-      var _a;
-      if (_PortalsCanvasExtension.isPortalElement(edgeData.id)) return false;
-      const isFromNodeFromPortal = _PortalsCanvasExtension.getNestedIds(edgeData.fromNode).length > 1;
-      const isToNodeFromPortal = _PortalsCanvasExtension.getNestedIds(edgeData.toNode).length > 1;
-      if (!isFromNodeFromPortal && !isToNodeFromPortal) return true;
-      if (isFromNodeFromPortal && isToNodeFromPortal) return false;
-      const targetPortalId = this.getParentPortalId(isFromNodeFromPortal ? edgeData.fromNode : edgeData.toNode);
-      const targetPortalData = portalsIdMap.get(targetPortalId);
-      if (!targetPortalData) return false;
-      (_a = targetPortalData.interdimensionalEdges) != null ? _a : targetPortalData.interdimensionalEdges = [];
-      targetPortalData.interdimensionalEdges.push(edgeData);
-      return false;
-    });
-  }
-  // Add all edges and nodes from portals
-  async onSetData(canvas, dataRef) {
-    if (!(dataRef == null ? void 0 : dataRef.nodes)) return dataRef;
-    const data = JSON.parse(JSON.stringify(dataRef));
-    const addedData = await Promise.all(data.nodes.map((nodeData) => this.tryOpenPortal(canvas, nodeData)));
-    for (const newData of addedData) {
-      data.nodes.push(...newData.nodes);
-      data.edges.push(...newData.edges);
-    }
-    for (const nodeData of data.nodes) {
-      if (nodeData.type !== "file" || !nodeData.isPortalLoaded) continue;
-      const interdimensionalEdges = nodeData.interdimensionalEdges;
-      if (!interdimensionalEdges) continue;
-      for (const edge of interdimensionalEdges) data.edges.push(edge);
-      delete nodeData.interdimensionalEdges;
-    }
-    return data;
-  }
-  async tryOpenPortal(canvas, portalNodeData, nestedPortalFiles = /* @__PURE__ */ new Set()) {
-    const addedData = { nodes: [], edges: [] };
-    if (portalNodeData.type !== "file" || !portalNodeData.portal) return addedData;
-    if (portalNodeData.file === canvas.view.file.path) return addedData;
-    if (nestedPortalFiles.has(portalNodeData.file)) return addedData;
-    nestedPortalFiles.add(portalNodeData.file);
-    const portalFile = this.plugin.app.vault.getAbstractFileByPath(portalNodeData.file);
-    if (!(portalFile instanceof import_obsidian19.TFile) || portalFile.extension !== "canvas") return addedData;
-    const portalFileDataString = await this.plugin.app.vault.cachedRead(portalFile);
-    if (portalFileDataString === "") return addedData;
-    const portalFileData = JSON.parse(portalFileDataString);
-    if (!portalFileData) return addedData;
-    portalNodeData.isPortalLoaded = true;
-    const sourceMinCoordinates = CanvasHelper.getBBox(portalFileData.nodes);
-    const portalOffset = {
-      x: portalNodeData.x - sourceMinCoordinates.minX + PORTAL_PADDING,
-      y: portalNodeData.y - sourceMinCoordinates.minY + PORTAL_PADDING
-    };
-    for (const nodeDataFromPortal of portalFileData.nodes) {
-      let newNodeId = `${portalNodeData.id}${PORTAL_ID_DELIMITER}${nodeDataFromPortal.id}`;
-      if (!newNodeId.startsWith(PORTAL_ID_PREFIX))
-        newNodeId = PORTAL_ID_PREFIX + newNodeId;
-      const addedNode = {
-        ...nodeDataFromPortal,
-        id: newNodeId,
-        x: nodeDataFromPortal.x + portalOffset.x,
-        y: nodeDataFromPortal.y + portalOffset.y
-      };
-      addedData.nodes.push(addedNode);
-      const nestedNodes = await this.tryOpenPortal(canvas, addedNode, nestedPortalFiles);
-      addedData.nodes.push(...nestedNodes.nodes);
-      addedData.edges.push(...nestedNodes.edges);
-    }
-    for (const edgeDataFromPortal of portalFileData.edges) {
-      let newEdgeId = `${portalNodeData.id}${PORTAL_ID_DELIMITER}${edgeDataFromPortal.id}`;
-      if (!newEdgeId.startsWith(PORTAL_ID_PREFIX))
-        newEdgeId = PORTAL_ID_PREFIX + newEdgeId;
-      let fromNodeId = `${portalNodeData.id}${PORTAL_ID_DELIMITER}${edgeDataFromPortal.fromNode}`;
-      if (!fromNodeId.startsWith(PORTAL_ID_PREFIX))
-        fromNodeId = PORTAL_ID_PREFIX + fromNodeId;
-      let toNodeId = `${portalNodeData.id}${PORTAL_ID_DELIMITER}${edgeDataFromPortal.toNode}`;
-      if (!toNodeId.startsWith(PORTAL_ID_PREFIX))
-        toNodeId = PORTAL_ID_PREFIX + toNodeId;
-      addedData.edges.push({
-        ...edgeDataFromPortal,
-        id: newEdgeId,
-        fromNode: fromNodeId,
-        toNode: toNodeId
-      });
-    }
-    const targetSize = this.getPortalSize(CanvasHelper.getBBox(addedData.nodes));
-    portalNodeData.width = targetSize.width;
-    portalNodeData.height = targetSize.height;
-    return addedData;
-  }
-  // Helper functions
-  getPortalSize(sourceBBox) {
-    const sourceSize = {
-      width: sourceBBox.maxX - sourceBBox.minX,
-      height: sourceBBox.maxY - sourceBBox.minY
-    };
-    const targetSize = {
-      width: Math.max(sourceSize.width + PORTAL_PADDING * 2, MIN_OPEN_PORTAL_SIZE.width),
-      height: Math.max(sourceSize.height + PORTAL_PADDING * 2, MIN_OPEN_PORTAL_SIZE.height)
-    };
-    if (!Number.isFinite(targetSize.width)) targetSize.width = MIN_OPEN_PORTAL_SIZE.width;
-    if (!Number.isFinite(targetSize.height)) targetSize.height = MIN_OPEN_PORTAL_SIZE.height;
-    return targetSize;
-  }
-  getContainingNodes(canvas, portalNode, directChildren = true) {
-    return Array.from(canvas.nodes.values()).filter((node) => this.isChildOfPortal(portalNode.getData(), node.getData(), directChildren));
-  }
-  getContainingEdges(canvas, portalNode, directChildren = true) {
-    return Array.from(canvas.edges.values()).filter((edge) => this.isChildOfPortal(portalNode.getData(), edge.getData(), directChildren));
-  }
-  getParentPortalId(elementId) {
-    const nestedIds = _PortalsCanvasExtension.getNestedIds(elementId);
-    if (nestedIds.length < 2) return void 0;
-    return nestedIds.slice(0, -1).join(PORTAL_ID_DELIMITER);
-  }
-  static getNestedIds(id) {
-    if (!this.isPortalElement(id)) return [id];
-    const trimmedId = id.substring(PORTAL_ID_PREFIX.length);
-    return trimmedId.split(PORTAL_ID_DELIMITER);
-  }
-  static isPortalElement(id) {
-    return id.startsWith(PORTAL_ID_PREFIX);
-  }
-  isChildOfPortal(portal, canvasElement, directChild = true) {
-    const nestedIds = _PortalsCanvasExtension.getNestedIds(canvasElement.id);
-    if (nestedIds.length < 2) return false;
-    return canvasElement.id !== portal.id && // Not the portal itself
-    nestedIds.contains(portal.id) && // Is a child of the portal
-    (!directChild || nestedIds[nestedIds.length - 2] === portal.id);
-  }
-};
-
 // src/canvas-extensions/frontmatter-control-button-canvas-extension.ts
-var import_obsidian20 = require("obsidian");
+var import_obsidian22 = require("obsidian");
 var FrontmatterControlButtonCanvasExtension = class extends CanvasExtension {
   isEnabled() {
     return "canvasMetadataCompatibilityEnabled";
@@ -6482,7 +7220,7 @@ var FrontmatterControlButtonCanvasExtension = class extends CanvasExtension {
           var _a2;
           const propertiesPlugin = this.plugin.app.internalPlugins.plugins["properties"];
           if (!(propertiesPlugin == null ? void 0 : propertiesPlugin._loaded)) {
-            new import_obsidian20.Notice(`Core plugin "Properties view" was not found or isn't enabled. Enable it and restart Obsidian.`);
+            new import_obsidian22.Notice(`Core plugin "Properties view" was not found or isn't enabled. Enable it and restart Obsidian.`);
             return;
           }
           let propertiesLeaf = (_a2 = this.plugin.app.workspace.getLeavesOfType("file-properties").first()) != null ? _a2 : null;
@@ -6730,7 +7468,7 @@ var ColorPaletteCanvasExtension = class extends CanvasExtension {
 };
 
 // src/canvas-extensions/collapsible-groups-canvas-extension.ts
-var import_obsidian21 = require("obsidian");
+var import_obsidian23 = require("obsidian");
 var CollapsibleGroupsCanvasExtension = class extends CanvasExtension {
   isEnabled() {
     return "collapsibleGroupsFeatureEnabled";
@@ -6778,7 +7516,7 @@ var CollapsibleGroupsCanvasExtension = class extends CanvasExtension {
     (_a = groupNode.collapseEl) == null ? void 0 : _a.remove();
     const collapseEl = activeDocument.createElement("div");
     collapseEl.className = "collapse-button";
-    (0, import_obsidian21.setIcon)(collapseEl, groupNodeData.collapsed ? "plus-circle" : "minus-circle");
+    (0, import_obsidian23.setIcon)(collapseEl, groupNodeData.collapsed ? "plus-circle" : "minus-circle");
     collapseEl.onclick = () => this.toggleCollapseGroup(canvas, groupNode);
     groupNode.collapseEl = collapseEl;
     (_b = groupNode.labelEl) == null ? void 0 : _b.insertAdjacentElement("afterend", collapseEl);
@@ -6914,273 +7652,6 @@ var FocusModeCanvasExtension = class extends CanvasExtension {
     const newValue = controlMenuFocusToggle.dataset.toggled !== "true";
     canvas.wrapperEl.dataset.focusModeEnabled = newValue.toString();
     controlMenuFocusToggle.dataset.toggled = newValue.toString();
-  }
-};
-
-// src/canvas-extensions/canvas-filter-canvas-extension.ts
-var import_obsidian22 = require("obsidian");
-var FILTERED_OUT_CLASS = "advanced-canvas-filtered-out";
-var TAG_REGEX = /#[^\s#]+/g;
-var CONNECTION_FILTERS = [
-  { id: "filter-connected-nodes", name: "Filter to selection and connected nodes", outgoing: true, incoming: true },
-  { id: "filter-immediately-connected-nodes", name: "Filter to selection and immediately connected nodes", outgoing: true, incoming: true, immediate: true },
-  // Added by an LLM agent
-  { id: "filter-outgoing-nodes", name: "Filter to selection and outgoing nodes", outgoing: true, incoming: false },
-  { id: "filter-incoming-nodes", name: "Filter to selection and incoming nodes", outgoing: false, incoming: true }
-];
-var CanvasFilterCanvasExtension = class _CanvasFilterCanvasExtension extends CanvasExtension {
-  isEnabled() {
-    return "canvasFilterFeatureEnabled";
-  }
-  init() {
-    this.plugin.addCommand({
-      id: "reset-filter",
-      name: "Reset filter",
-      checkCallback: CanvasHelper.canvasCommand(
-        this.plugin,
-        (_canvas) => true,
-        (canvas) => {
-          this.showOnlyNodes(canvas);
-          this.showOnlyEdges(canvas);
-        }
-      )
-    });
-    this.plugin.addCommand({
-      id: "filter-by-color",
-      name: "Filter by color of selection",
-      checkCallback: CanvasHelper.canvasCommand(
-        this.plugin,
-        (canvas) => canvas.selection.size > 0,
-        (canvas) => this.filterByColor(canvas)
-      )
-    });
-    this.plugin.addCommand({
-      id: "filter-by-tag",
-      name: "Filter by tag",
-      checkCallback: CanvasHelper.canvasCommand(
-        this.plugin,
-        (_canvas) => true,
-        (canvas) => void this.filterByTag(canvas)
-      )
-    });
-    this.plugin.addCommand({
-      id: "hide-selection",
-      name: "Hide selection",
-      checkCallback: CanvasHelper.canvasCommand(
-        this.plugin,
-        (canvas) => canvas.selection.size > 0,
-        (canvas) => this.hideSelection(canvas, false)
-      )
-    });
-    this.plugin.addCommand({
-      id: "hide-selection-with-edges",
-      name: "Hide selection and its edges",
-      checkCallback: CanvasHelper.canvasCommand(
-        this.plugin,
-        (canvas) => canvas.selection.size > 0,
-        (canvas) => this.hideSelection(canvas, true)
-      )
-    });
-    for (const connectionFilter of CONNECTION_FILTERS) {
-      this.plugin.addCommand({
-        id: connectionFilter.id,
-        name: connectionFilter.name,
-        checkCallback: CanvasHelper.canvasCommand(
-          this.plugin,
-          (canvas) => canvas.selection.size > 0,
-          (canvas) => this.filterByConnections(canvas, connectionFilter)
-        )
-      });
-    }
-  }
-  // Visibility helpers
-  setElementsVisibility(elements, visible) {
-    for (const element of elements) element == null ? void 0 : element.classList.toggle(FILTERED_OUT_CLASS, !visible);
-  }
-  setNodeVisibility(node, visible) {
-    this.setElementsVisibility([node.nodeEl], visible);
-  }
-  setEdgeVisibility(edge, visible) {
-    var _a;
-    this.setElementsVisibility([edge.lineGroupEl, edge.lineEndGroupEl, (_a = edge.labelElement) == null ? void 0 : _a.wrapperEl], visible);
-  }
-  /** Shows the nodes with the given ids and hides all others. Shows every node if no ids are given. */
-  showOnlyNodes(canvas, nodeIdsToShow) {
-    for (const node of canvas.nodes.values())
-      this.setNodeVisibility(node, nodeIdsToShow === void 0 || nodeIdsToShow.has(node.id));
-  }
-  /** Shows the edges with the given ids and hides all others. Shows every edge if no ids are given. */
-  showOnlyEdges(canvas, edgeIdsToShow) {
-    for (const edge of canvas.edges.values())
-      this.setEdgeVisibility(edge, edgeIdsToShow === void 0 || edgeIdsToShow.has(edge.id));
-  }
-  /** Shows the given nodes, the groups containing them and the edges between them - hides everything else */
-  showOnlyNodesAndTheirEdges(canvas, nodesToShow) {
-    const nodes = [...canvas.nodes.values()].map((node) => node.getData());
-    const edges = [...canvas.edges.values()].map((edge) => edge.getData());
-    const nodeIdsToShow = new Set(nodesToShow.map((node) => node.id));
-    const edgeIdsToShow = new Set(edges.filter((edge) => nodeIdsToShow.has(edge.fromNode) && nodeIdsToShow.has(edge.toNode)).map((edge) => edge.id));
-    for (const group of this.getGroupsContaining(nodes, nodesToShow))
-      nodeIdsToShow.add(group.id);
-    this.showOnlyNodes(canvas, nodeIdsToShow);
-    this.showOnlyEdges(canvas, edgeIdsToShow);
-  }
-  // Added by an LLM agent
-  /** All live nodes nested inside the given portal (at any depth) */
-  static getPortalNestedNodes(nodes, portalId) {
-    return nodes.filter((node) => node.id !== portalId && PortalsCanvasExtension.getNestedIds(node.id).contains(portalId));
-  }
-  // Added by an LLM agent
-  /** All live edges with both endpoints nested inside the given portal */
-  static getPortalInternalEdges(edges, portalId) {
-    return edges.filter((edge) => PortalsCanvasExtension.getNestedIds(edge.fromNode).contains(portalId) && PortalsCanvasExtension.getNestedIds(edge.toNode).contains(portalId));
-  }
-  static bboxContains(outerNode, innerNode) {
-    return outerNode.x <= innerNode.x && outerNode.x + outerNode.width >= innerNode.x + innerNode.width && outerNode.y <= innerNode.y && outerNode.y + outerNode.height >= innerNode.y + innerNode.height;
-  }
-  /** Returns all group nodes that fully contain at least one of the given nodes */
-  getGroupsContaining(allNodes, containedNodes) {
-    return allNodes.filter(
-      (node) => node.type === "group" && containedNodes.some((containedNode) => _CanvasFilterCanvasExtension.bboxContains(node, containedNode))
-    );
-  }
-  // Filters
-  filterByColor(canvas) {
-    const colorsToShow = new Set([...canvas.selection].map((element) => {
-      var _a;
-      return (_a = element.getData().color) != null ? _a : "";
-    }));
-    if (colorsToShow.has(""))
-      new import_obsidian22.Notice("One of the selected elements has no color, so colorless nodes stay visible as well");
-    const nodes = [...canvas.nodes.values()].map((node) => node.getData());
-    const nodesToShow = nodes.filter((node) => {
-      var _a;
-      return node.type !== "group" && !PortalsCanvasExtension.isPortalElement(node.id) && colorsToShow.has((_a = node.color) != null ? _a : "");
-    });
-    const shownNodeIds = new Set(nodesToShow.map((node) => node.id));
-    for (let i = 0; i < nodesToShow.length; i++) {
-      const node = nodesToShow[i];
-      if (node.type !== "file" || !node.portal) continue;
-      for (const nestedNode of _CanvasFilterCanvasExtension.getPortalNestedNodes(nodes, node.id)) {
-        if (shownNodeIds.has(nestedNode.id)) continue;
-        shownNodeIds.add(nestedNode.id);
-        nodesToShow.push(nestedNode);
-      }
-    }
-    this.showOnlyNodesAndTheirEdges(canvas, nodesToShow);
-  }
-  async filterByTag(canvas) {
-    const tags = this.getAvailableTags(canvas);
-    if (tags.length === 0) {
-      new import_obsidian22.Notice("No tags found in this vault");
-      return;
-    }
-    const selectedTag = await new AbstractSelectionModal(this.plugin.app, "Select a tag to filter by...", tags).awaitInput();
-    if (!selectedTag) return;
-    const nodesToShow = canvas.getData().nodes.filter((node) => this.getTagsOfNode(canvas, node).some((tag) => _CanvasFilterCanvasExtension.tagMatches(tag, selectedTag)));
-    this.showOnlyNodesAndTheirEdges(canvas, nodesToShow);
-  }
-  filterByConnections(canvas, connectionFilter) {
-    const nodes = [...canvas.nodes.values()].map((node) => node.getData());
-    const edges = [...canvas.edges.values()].map((edge) => edge.getData());
-    const nodeIdsToShow = new Set([...canvas.selection].map((element) => element.id));
-    const edgeIdsToShow = /* @__PURE__ */ new Set();
-    const expandedPortalIds = /* @__PURE__ */ new Set();
-    const expandedGroupIds = /* @__PURE__ */ new Set();
-    let frontier = new Set(nodeIdsToShow);
-    while (frontier.size > 0) {
-      const nextFrontier = /* @__PURE__ */ new Set();
-      for (const edge of edges) {
-        let reachedNodeId = null;
-        if (connectionFilter.outgoing && frontier.has(edge.fromNode)) reachedNodeId = edge.toNode;
-        else if (connectionFilter.incoming && frontier.has(edge.toNode)) reachedNodeId = edge.fromNode;
-        else continue;
-        edgeIdsToShow.add(edge.id);
-        if (nodeIdsToShow.has(reachedNodeId)) continue;
-        nodeIdsToShow.add(reachedNodeId);
-        nextFrontier.add(reachedNodeId);
-      }
-      for (const node of nodes) {
-        if (!nodeIdsToShow.has(node.id) || expandedPortalIds.has(node.id)) continue;
-        if (node.type !== "file" || !node.portal) continue;
-        expandedPortalIds.add(node.id);
-        for (const nestedNode of _CanvasFilterCanvasExtension.getPortalNestedNodes(nodes, node.id)) {
-          if (nodeIdsToShow.has(nestedNode.id)) continue;
-          nodeIdsToShow.add(nestedNode.id);
-          nextFrontier.add(nestedNode.id);
-        }
-        for (const edge of _CanvasFilterCanvasExtension.getPortalInternalEdges(edges, node.id))
-          edgeIdsToShow.add(edge.id);
-      }
-      for (const node of nodes) {
-        if (!nodeIdsToShow.has(node.id) || expandedGroupIds.has(node.id)) continue;
-        if (node.type !== "group") continue;
-        expandedGroupIds.add(node.id);
-        for (const containedNode of nodes) {
-          if (containedNode.id === node.id || nodeIdsToShow.has(containedNode.id)) continue;
-          if (!_CanvasFilterCanvasExtension.bboxContains(node, containedNode)) continue;
-          nodeIdsToShow.add(containedNode.id);
-          nextFrontier.add(containedNode.id);
-        }
-      }
-      if (connectionFilter.immediate) break;
-      frontier = nextFrontier;
-    }
-    for (const group of this.getGroupsContaining(nodes, nodes.filter((node) => nodeIdsToShow.has(node.id))))
-      nodeIdsToShow.add(group.id);
-    for (const edge of edges) {
-      if (nodeIdsToShow.has(edge.fromNode) && nodeIdsToShow.has(edge.toNode))
-        edgeIdsToShow.add(edge.id);
-    }
-    this.showOnlyNodes(canvas, nodeIdsToShow);
-    this.showOnlyEdges(canvas, edgeIdsToShow);
-  }
-  hideSelection(canvas, includeConnectedEdges) {
-    const selectedIds = new Set([...canvas.selection].map((element) => element.id));
-    for (const nodeId of selectedIds) {
-      const node = canvas.nodes.get(nodeId);
-      if (node) this.setNodeVisibility(node, false);
-      const edge = canvas.edges.get(nodeId);
-      if (edge) this.setEdgeVisibility(edge, false);
-    }
-    if (includeConnectedEdges) {
-      for (const edge of canvas.edges.values()) {
-        const edgeData = edge.getData();
-        if (!selectedIds.has(edgeData.fromNode) && !selectedIds.has(edgeData.toNode)) continue;
-        this.setEdgeVisibility(edge, false);
-      }
-    }
-    canvas.deselectAll();
-  }
-  // Tag helpers
-  /** All tags of the vault, plus the ones that only exist inside text nodes of this canvas */
-  getAvailableTags(canvas) {
-    var _a;
-    const vaultTags = Object.keys((_a = this.plugin.app.metadataCache.getTags()) != null ? _a : {});
-    const canvasTags = canvas.getData().nodes.flatMap((node) => this.getTagsOfNode(canvas, node));
-    return [.../* @__PURE__ */ new Set([...vaultTags, ...canvasTags])].sort((a, b) => a.localeCompare(b));
-  }
-  getTagsOfNode(canvas, nodeData) {
-    var _a, _b, _c, _d;
-    if (nodeData.type === "file") {
-      const file = (_a = canvas.nodes.get(nodeData.id)) == null ? void 0 : _a.file;
-      if (!(file instanceof import_obsidian22.TFile)) return [];
-      const fileMetadata = this.plugin.app.metadataCache.getFileCache(file);
-      if (!fileMetadata) return [];
-      return (_b = (0, import_obsidian22.getAllTags)(fileMetadata)) != null ? _b : [];
-    }
-    if (nodeData.type === "text") {
-      const canvasFile = canvas.view.file;
-      const canvasMetadata = canvasFile ? this.plugin.app.metadataCache.getFileCache(canvasFile) : null;
-      const nodeMetadata = (_c = canvasMetadata == null ? void 0 : canvasMetadata.nodes) == null ? void 0 : _c[nodeData.id];
-      if (nodeMetadata) return (_d = (0, import_obsidian22.getAllTags)(nodeMetadata)) != null ? _d : [];
-      return [...nodeData.text.matchAll(TAG_REGEX)].map((match) => match[0]);
-    }
-    return [];
-  }
-  /** Matches nested tags as well - e.g. the filter `#project` includes `#project/canvas` */
-  static tagMatches(tag, filterTag) {
-    return tag === filterTag || tag.startsWith(`${filterTag}/`);
   }
 };
 
@@ -8133,7 +8604,7 @@ async function toPng(node, options = {}) {
 }
 
 // src/canvas-extensions/export-canvas-extension.ts
-var import_obsidian23 = require("obsidian");
+var import_obsidian24 = require("obsidian");
 var MAX_ALLOWED_LOADING_TIME = 1e4;
 var ExportCanvasExtension = class extends CanvasExtension {
   isEnabled() {
@@ -8169,7 +8640,7 @@ var ExportCanvasExtension = class extends CanvasExtension {
     });
   }
   async showExportImageSettingsModal(canvas, nodesToExport) {
-    const modal = new import_obsidian23.Modal(this.plugin.app);
+    const modal = new import_obsidian24.Modal(this.plugin.app);
     modal.setTitle("Export image settings");
     let pixelRatioSetting = null;
     let noFontExportSetting = null;
@@ -8187,7 +8658,7 @@ var ExportCanvasExtension = class extends CanvasExtension {
       }
     };
     let svg = false;
-    new import_obsidian23.Setting(modal.contentEl).setName("Export file format").setDesc("Choose the file format to export the canvas as.").addDropdown(
+    new import_obsidian24.Setting(modal.contentEl).setName("Export file format").setDesc("Choose the file format to export the canvas as.").addDropdown(
       (dropdown) => dropdown.addOptions({
         png: "PNG",
         svg: "SVG"
@@ -8197,33 +8668,33 @@ var ExportCanvasExtension = class extends CanvasExtension {
       })
     );
     let pixelRatioFactor = 1;
-    pixelRatioSetting = new import_obsidian23.Setting(modal.contentEl).setName("Pixel ratio").setDesc("Higher pixel ratios result in higher resolution images but also larger file sizes.").addSlider(
+    pixelRatioSetting = new import_obsidian24.Setting(modal.contentEl).setName("Pixel ratio").setDesc("Higher pixel ratios result in higher resolution images but also larger file sizes.").addSlider(
       (slider) => slider.setDynamicTooltip().setLimits(0.2, 5, 0.1).setValue(pixelRatioFactor).onChange((value) => pixelRatioFactor = value)
     );
     let noFontExport = true;
-    noFontExportSetting = new import_obsidian23.Setting(modal.contentEl).setName("Skip font export").setDesc("This will not include the fonts in the exported SVG. This will make the SVG file smaller.").addToggle(
+    noFontExportSetting = new import_obsidian24.Setting(modal.contentEl).setName("Skip font export").setDesc("This will not include the fonts in the exported SVG. This will make the SVG file smaller.").addToggle(
       (toggle) => toggle.setValue(noFontExport).onChange((value) => noFontExport = value)
     );
     let theme = activeDocument.body.classList.contains("theme-dark") ? "dark" : "light";
-    new import_obsidian23.Setting(modal.contentEl).setName("Theme").setDesc("The theme used for the export.").addDropdown(
+    new import_obsidian24.Setting(modal.contentEl).setName("Theme").setDesc("The theme used for the export.").addDropdown(
       (dropdown) => dropdown.addOptions({
         light: "Light",
         dark: "Dark"
       }).setValue(theme).onChange((value) => theme = value)
     );
     let watermark = false;
-    new import_obsidian23.Setting(modal.contentEl).setName("Show logo").setDesc("This will add an Obsidian + Advanced Canvas logo to the bottom left.").addToggle(
+    new import_obsidian24.Setting(modal.contentEl).setName("Show logo").setDesc("This will add an Obsidian + Advanced Canvas logo to the bottom left.").addToggle(
       (toggle) => toggle.setValue(watermark).onChange((value) => watermark = value)
     );
     let garbledText = false;
-    new import_obsidian23.Setting(modal.contentEl).setName("Privacy mode").setDesc("This will obscure any text on your canvas.").addToggle(
+    new import_obsidian24.Setting(modal.contentEl).setName("Privacy mode").setDesc("This will obscure any text on your canvas.").addToggle(
       (toggle) => toggle.setValue(garbledText).onChange((value) => garbledText = value)
     );
     let transparentBackground = false;
-    transparentBackgroundSetting = new import_obsidian23.Setting(modal.contentEl).setName("Transparent background").setDesc("This will make the background of the image transparent.").addToggle(
+    transparentBackgroundSetting = new import_obsidian24.Setting(modal.contentEl).setName("Transparent background").setDesc("This will make the background of the image transparent.").addToggle(
       (toggle) => toggle.setValue(transparentBackground).onChange((value) => transparentBackground = value)
     );
-    new import_obsidian23.Setting(modal.contentEl).addButton(
+    new import_obsidian24.Setting(modal.contentEl).addButton(
       (button) => button.setButtonText("Save").setCta().onClick(async () => {
         modal.close();
         await this.exportImage(
@@ -8257,7 +8728,7 @@ var ExportCanvasExtension = class extends CanvasExtension {
       return nodesToExportIds.includes(edgeData.fromNode) && nodesToExportIds.includes(edgeData.toNode);
     });
     const backgroundColor = transparentBackground ? void 0 : window.getComputedStyle(canvas.canvasEl).getPropertyValue("--canvas-background");
-    new import_obsidian23.Notice("Exporting the canvas. Please wait...");
+    new import_obsidian24.Notice("Exporting the canvas. Please wait...");
     const interactionBlocker = this.getInteractionBlocker();
     activeDocument.body.appendChild(interactionBlocker);
     canvas.screenshotting = true;
@@ -8358,7 +8829,7 @@ var ExportCanvasExtension = class extends CanvasExtension {
         downloadEl.click();
       } else {
         const ERROR_MESSAGE = "Export cancelled: Nodes did not finish loading in time";
-        new import_obsidian23.Notice(ERROR_MESSAGE);
+        new import_obsidian24.Notice(ERROR_MESSAGE);
         console.error(ERROR_MESSAGE);
       }
     } finally {
@@ -8560,7 +9031,7 @@ var EdgeHighlightCanvasExtension = class extends CanvasExtension {
 };
 
 // src/canvas-extensions/edge-label-markdown-canvas-extension.ts
-var import_obsidian24 = require("obsidian");
+var import_obsidian25 = require("obsidian");
 
 // src/utils/edge-label-embed-helper.ts
 var EMBED_LINE_PATTERN = /^!\[\[[^[\]]+\]\]$/;
@@ -8724,7 +9195,7 @@ var EdgeLabelMarkdownCanvasExtension = class extends CanvasExtension {
     textareaEl.style.setProperty(MAX_HEIGHT_PROPERTY, `${this.plugin.settings.getSetting("edgeLabelMarkdownMaxHeight")}px`);
     const sourcePath = (_c = (_b = labelElement.edge.canvas.view.file) == null ? void 0 : _b.path) != null ? _c : "";
     try {
-      await import_obsidian24.MarkdownRenderer.render(this.plugin.app, source, textareaEl, sourcePath, component);
+      await import_obsidian25.MarkdownRenderer.render(this.plugin.app, source, textareaEl, sourcePath, component);
     } catch (error) {
       console.error("Advanced Canvas: failed to render an edge label as markdown", error);
       this.unloadRenderComponent(labelElement);
@@ -8748,7 +9219,7 @@ var EdgeLabelMarkdownCanvasExtension = class extends CanvasExtension {
   }
   resetRenderComponent(labelElement) {
     this.unloadRenderComponent(labelElement);
-    const component = new import_obsidian24.Component();
+    const component = new import_obsidian25.Component();
     this.renderComponents.set(labelElement, component);
     component.load();
     return component;
@@ -8914,6 +9385,52 @@ var EdgeArrowBaseCanvasExtension = class extends CanvasExtension {
   }
 };
 
+// src/canvas-extensions/bezier-curvature-canvas-extension.ts
+function scaledControlPoint(anchor, controlPoint, factor) {
+  return {
+    x: anchor.x + (controlPoint.x - anchor.x) * factor,
+    y: anchor.y + (controlPoint.y - anchor.y) * factor
+  };
+}
+var BezierCurvatureCanvasExtension = class extends CanvasExtension {
+  isEnabled() {
+    return true;
+  }
+  init() {
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:edge-path-updated",
+      (canvas, edge) => this.onEdgePathUpdated(canvas, edge)
+    ));
+  }
+  onEdgePathUpdated(_canvas, edge) {
+    var _a, _b;
+    if (!this.plugin.settings.getSetting("edgesStylingFeatureEnabled")) return;
+    if (!edge.bezier || !((_a = edge.path) == null ? void 0 : _a.display)) return;
+    const styleAttributes = (_b = edge.getData()) == null ? void 0 : _b.styleAttributes;
+    if (styleAttributes == null ? void 0 : styleAttributes.pathfindingMethod) return;
+    const rawCurvature = styleAttributes == null ? void 0 : styleAttributes.bezierCurvature;
+    if (rawCurvature === void 0 || rawCurvature === null) return;
+    const curvature = Number.parseFloat(rawCurvature);
+    if (!Number.isFinite(curvature) || curvature < 0 || curvature === 1) return;
+    const { from, to, cp1, cp2 } = edge.bezier;
+    const scaledCp1 = scaledControlPoint(from, cp1, curvature);
+    const scaledCp2 = scaledControlPoint(to, cp2, curvature);
+    const curve = `M${from.x},${from.y} C${scaledCp1.x},${scaledCp1.y} ${scaledCp2.x},${scaledCp2.y} ${to.x},${to.y}`;
+    Object.assign(edge.bezier, { cp1: scaledCp1, cp2: scaledCp2, path: curve });
+    let path = curve;
+    if (!edge.fromLineEnd) {
+      const fromBorder = BBoxHelper.getCenterOfBBoxSide(edge.from.node.getBBox(), edge.from.side);
+      path = `M${fromBorder.x} ${fromBorder.y} L${from.x} ${from.y} ${path}`;
+    }
+    if (!edge.toLineEnd) {
+      const toBorder = BBoxHelper.getCenterOfBBoxSide(edge.to.node.getBBox(), edge.to.side);
+      path = `${path} M${to.x} ${to.y} L${toBorder.x} ${toBorder.y}`;
+    }
+    edge.path.interaction.setAttribute("d", path);
+    edge.path.display.setAttribute("d", path);
+  }
+};
+
 // src/canvas-extensions/reading-mode-fix-canvas-extension.ts
 var ReadingModeFixCanvasExtension = class extends CanvasExtension {
   isEnabled() {
@@ -8947,7 +9464,7 @@ var ReadingModeFixCanvasExtension = class extends CanvasExtension {
 };
 
 // src/canvas-extensions/rotate-node-canvas-extension.ts
-var import_obsidian25 = require("obsidian");
+var import_obsidian26 = require("obsidian");
 var CONTENT_ROTATION_OPTIONS = [
   { label: "None", value: 0 },
   { label: "90\xB0 clockwise", value: 90 },
@@ -9134,7 +9651,7 @@ var RotateNodeCanvasExtension = class extends CanvasExtension {
         ).awaitInput();
         const angle = Number(input);
         if (isNaN(angle)) {
-          new import_obsidian25.Notice("Invalid rotation angle");
+          new import_obsidian26.Notice("Invalid rotation angle");
           return;
         }
         this.setNodesRotation(canvas, nodes, angle);
@@ -9415,6 +9932,142 @@ var RotateNodeCanvasExtension = class extends CanvasExtension {
   }
 };
 
+// src/canvas-extensions/hide-node-contents-canvas-extension.ts
+var HIDE_CONTENTS_CLASS = "ac-node-contents-hidden";
+var HideNodeContentsCanvasExtension = class extends CanvasExtension {
+  isEnabled() {
+    return "hideNodeContentsFeatureEnabled";
+  }
+  init() {
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:node-rendered",
+      (_canvas, node) => this.updateNodeEl(node)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:data-loaded:after",
+      (canvas) => {
+        for (const node of canvas.nodes.values()) this.updateNodeEl(node);
+      }
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "canvas:node-menu",
+      (menu, node) => this.addMenuItem(node.canvas, [node], menu)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "canvas:selection-menu",
+      (menu, canvas) => this.addMenuItem(canvas, this.getSelectedNodes(canvas), menu)
+    ));
+  }
+  getSelectedNodes(canvas) {
+    return canvas.getSelectionData().nodes.map((nodeData) => canvas.nodes.get(nodeData.id)).filter((node) => node !== void 0);
+  }
+  addMenuItem(canvas, nodes, menu) {
+    if (canvas.readonly) return;
+    nodes = nodes.filter((node) => node.getData().type !== "group");
+    if (nodes.length === 0) return;
+    const allHidden = nodes.every((node) => node.getData().hideContents === true);
+    menu.addItem((item) => {
+      item.setTitle(allHidden ? "Show node contents" : "Hide node contents");
+      item.setIcon(allHidden ? "eye" : "eye-off");
+      item.onClick(() => this.setContentsHidden(canvas, nodes, !allHidden));
+    });
+  }
+  setContentsHidden(canvas, nodes, hidden) {
+    for (const node of nodes) {
+      node.setData({
+        ...node.getData(),
+        hideContents: hidden ? true : void 0
+        // Keep the canvas JSON clean
+      });
+      this.updateNodeEl(node);
+    }
+    canvas.pushHistory(canvas.getData());
+  }
+  updateNodeEl(node) {
+    node.nodeEl.classList.toggle(HIDE_CONTENTS_CLASS, node.getData().hideContents === true);
+  }
+};
+
+// src/canvas-extensions/presentation-filter-canvas-extension.ts
+var import_obsidian27 = require("obsidian");
+var NO_FILTER = "none";
+var PresentationFilterCanvasExtension = class extends CanvasExtension {
+  constructor() {
+    super(...arguments);
+    // Canvases where this feature currently has a filter applied - used to only reset
+    // filters this feature applied, leaving manually applied canvas filters alone
+    this.filteredCanvases = /* @__PURE__ */ new WeakSet();
+  }
+  isEnabled() {
+    return true;
+  }
+  init() {
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "canvas:node-menu",
+      (menu, node) => this.addMenuItems(menu, node)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:presentation-node-changed",
+      (canvas, node) => this.onSlideChanged(canvas, node)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:presentation-ended",
+      (canvas) => this.onPresentationEnded(canvas)
+    ));
+  }
+  addMenuItems(menu, node) {
+    var _a;
+    if (node.canvas.readonly) return;
+    const currentFilterId = (_a = node.getData().slideFilter) != null ? _a : this.plugin.settings.getSetting("presentationSlideFilter");
+    const options = [{ id: NO_FILTER, name: "None" }, ...NODE_BASED_FILTERS];
+    for (const option of options) {
+      menu.addItem(
+        (item) => item.setTitle(`Slide filter: ${option.name}`).setIcon("filter").setChecked(currentFilterId === option.id).setSection("presentation-slide-filter").onClick(() => {
+          node.setData({ ...node.getData(), slideFilter: option.id });
+          node.canvas.pushHistory(node.canvas.getData());
+          new import_obsidian27.Notice(`Slide filter of node set to: ${option.name}`);
+        })
+      );
+    }
+  }
+  onSlideChanged(canvas, slideNode) {
+    var _a;
+    const filterExtension = this.getFilterExtension();
+    if (!filterExtension) return;
+    const slideId = slideNode.getData().id;
+    const targetNodeIds = new Set(canvas.getEdgesForNode(slideNode).map((edge) => edge.getData()).filter((edgeData) => edgeData.toNode === slideId && edgeData.fromEnd === "arrow").map((edgeData) => edgeData.fromNode));
+    if (targetNodeIds.size !== 1) return;
+    const targetNode = canvas.nodes.get([...targetNodeIds][0]);
+    if (!targetNode) return;
+    const filterId = (_a = targetNode.getData().slideFilter) != null ? _a : this.plugin.settings.getSetting("presentationSlideFilter");
+    if (filterId && filterId !== NO_FILTER) {
+      filterExtension.applyNodeBasedFilter(canvas, filterId, [targetNode]);
+      this.filteredCanvases.add(canvas);
+    } else {
+      this.resetOwnFilter(filterExtension, canvas);
+    }
+  }
+  onPresentationEnded(canvas) {
+    const filterExtension = this.getFilterExtension();
+    if (filterExtension) this.resetOwnFilter(filterExtension, canvas);
+  }
+  /** Resets the filter only if this feature applied one on the given canvas. */
+  resetOwnFilter(filterExtension, canvas) {
+    if (!this.filteredCanvases.has(canvas)) return;
+    filterExtension.resetFilter(canvas);
+    this.filteredCanvases.delete(canvas);
+  }
+  /**
+   * Finds the canvas filter extension instance. Looked up lazily because plugin.canvasExtensions
+   * is only assigned after every extension's constructor (and thus init()) has already run.
+   * Undefined when the canvas filter feature is disabled.
+   */
+  getFilterExtension() {
+    var _a;
+    return (_a = this.plugin.canvasExtensions) == null ? void 0 : _a.find((extension) => extension instanceof CanvasFilterCanvasExtension);
+  }
+};
+
 // src/canvas-extensions/dataset-exposers/canvas-metadata-exposer.ts
 var CanvasMetadataExposerExtension = class extends CanvasExtension {
   isEnabled() {
@@ -9446,6 +10099,8 @@ var EXPOSED_SETTINGS = [
   "wrapGroupLabels",
   // Added by an LLM agent
   "hideGroupLabels",
+  // Added by an LLM agent
+  "hideNoteLabels",
   // Added by an LLM agent
   "boxedNodeLabels",
   // Added by an LLM agent
@@ -9686,10 +10341,10 @@ var PATCHERS = [
   FileManagerPatcher,
   // Direct metadata dependant patchers
   PropertiesPatcher,
-  !(0, import_obsidian26.requireApiVersion)("1.12.0") && BacklinksPatcher,
+  !(0, import_obsidian28.requireApiVersion)("1.12.0") && BacklinksPatcher,
   OutgoingLinksPatcher,
   // Metadata dependant patchers
-  (0, import_obsidian26.requireApiVersion)("1.9.0") && BasesTableViewPatcher,
+  (0, import_obsidian28.requireApiVersion)("1.9.0") && BasesTableViewPatcher,
   LinkSuggestionsPatcher,
   EmbedPatcher,
   SearchPatcher
@@ -9722,7 +10377,13 @@ var CANVAS_EXTENSIONS = [
   // Added by an LLM agent
   GroupLabelVisibilityCanvasExtension,
   // Added by an LLM agent
+  NoteLabelVisibilityCanvasExtension,
+  // Added by an LLM agent
   DefaultStyleSizesCanvasExtension,
+  // Added by an LLM agent
+  NodeOutlineCanvasExtension,
+  // Added by an LLM agent
+  EdgeOutlineCanvasExtension,
   // Added by an LLM agent
   NodeTemplatesCanvasExtension,
   VariableBreakpointCanvasExtension,
@@ -9731,6 +10392,9 @@ var CANVAS_EXTENSIONS = [
   // Added by an LLM agent
   // Has to come after EdgeStylesExtension - it measures the final path of pathfinding edges
   EdgeArrowBaseCanvasExtension,
+  // Added by an LLM agent
+  // Has to come after EdgeArrowBaseCanvasExtension - it scales its final control points
+  BezierCurvatureCanvasExtension,
   // Added by an LLM agent
   AutoFileNodeEdgesCanvasExtension,
   FlipEdgeCanvasExtension,
@@ -9742,10 +10406,14 @@ var CANVAS_EXTENSIONS = [
   EncapsulateCanvasExtension,
   EdgeSelectionCanvasExtension,
   CopyNodeReferenceCanvasExtension,
-  RotateNodeCanvasExtension
+  RotateNodeCanvasExtension,
+  // Added by an LLM agent
+  HideNodeContentsCanvasExtension,
+  // Added by an LLM agent
+  PresentationFilterCanvasExtension
   // Added by an LLM agent
 ];
-var AdvancedCanvasPlugin = class extends import_obsidian26.Plugin {
+var AdvancedCanvasPlugin = class extends import_obsidian28.Plugin {
   async onload() {
     IconsHelper.addIcons();
     this.settings = new SettingsManager(this);
@@ -9777,7 +10445,7 @@ var AdvancedCanvasPlugin = class extends import_obsidian26.Plugin {
     }).filter((canvas) => canvas);
   }
   getCurrentCanvasView() {
-    const canvasView = this.app.workspace.getActiveViewOfType(import_obsidian26.ItemView);
+    const canvasView = this.app.workspace.getActiveViewOfType(import_obsidian28.ItemView);
     if ((canvasView == null ? void 0 : canvasView.getViewType()) !== "canvas") return null;
     return canvasView;
   }

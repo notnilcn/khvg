@@ -115,5 +115,42 @@
       ],
       "key": "D"
     }
+  ],
+  "advanced-canvas:filter-immediately-connected-nodes": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod"
+      ],
+      "key": "A"
+    }
+  ],
+  "advanced-canvas:filter-immediately-connected-outgoing-nodes": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod"
+      ],
+      "key": "W"
+    }
+  ],
+  "advanced-canvas:filter-immediately-connected-incoming-nodes": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod"
+      ],
+      "key": "S"
+    }
+  ],
+  "advanced-canvas:reset-filter": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "A"
+    }
   ]
 }

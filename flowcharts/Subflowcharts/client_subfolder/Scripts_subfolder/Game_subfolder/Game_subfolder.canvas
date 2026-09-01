@@ -21,11 +21,21 @@
 			"height": 400
 		},
 		{
+			"id": "0da4704d6d45e99c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/ConnectionLostComponent_codefile/ConnectionLostComponent_codefile.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "673d50952c45fcf8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay_codefile.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GameManager_codefile.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui_codefile.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400

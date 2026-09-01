@@ -34,9 +34,13 @@ grow_vertical = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="MainMenu/Panel/CenterContainer" unique_id=982118341]
 layout_mode = 2
 
-[node name="CharSlots" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=1754694892]
+[node name="TwoD" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=1754694892]
 layout_mode = 2
-text = "Character Slots"
+text = "2D"
+
+[node name="ThreeD" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=1754694893]
+layout_mode = 2
+text = "3D"
 
 [node name="ServerList" type="Button" parent="MainMenu/Panel/CenterContainer/VBoxContainer" unique_id=1146796576]
 layout_mode = 2
@@ -126,7 +130,8 @@ horizontal_scroll_mode = 0
 [node name="VBoxContainer" type="VBoxContainer" parent="Settings/ScrollContainer" unique_id=444352849]
 layout_mode = 2
 
-[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/CharSlots" to="." method="CharSlotsPressed"]
+[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/TwoD" to="." method="TwoDPressed"]
+[connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/ThreeD" to="." method="ThreeDPressed"]
 [connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/ServerList" to="." method="ServerListPressed"]
 [connection signal="pressed" from="MainMenu/Panel/CenterContainer/VBoxContainer/Settings" to="." method="SettingsPressed"]
 [connection signal="pressed" from="ServerList/Panel/CenterContainer/Button" to="." method="BackPressed"]

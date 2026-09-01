@@ -4,10 +4,6 @@ pub fn hex_area(hex_radius: i32) -> i32 {
     Hex::range_count(hex_radius as u32) as i32
 }
 
-pub fn hex_shift(hex_radius: i32) -> i32 {
-    3 * hex_radius + 2
-}
-
 pub fn world_to_hex(wx: f32, wy: f32, r_outer: f32) -> (i32, i32) {
     let layout = HexLayout { orientation: HexOrientation::Pointy, scale: Vec2::splat(r_outer), origin: Vec2::ZERO };
     let h = layout.world_pos_to_hex(Vec2::new(wx, wy));
@@ -25,12 +21,14 @@ pub fn chunk_center_hex(cq: i32, cr: i32, hex_radius: i32) -> (i32, i32) {
     (center.x, center.y)
 }
 
-pub fn inv_hexmod(m: i32, hex_radius: i32, _shift: i32) -> (i32, i32) {
+pub fn inv_hexmod(m: i32, hex_radius: i32) -> (i32, i32) {
     let rel = Hex::from_hexmod_coordinates(m as u32, hex_radius as u32);
     (rel.x, rel.y)
 }
 
-// Bijective i64 chunk index using hex spiral order. Mirrors _hex_spiral_index in hex_grid_overlay.gd.
+// Bijective i64 chunk index using hex spiral order. Lockstep sibling of HexMath.SpiralIndex
+// in client/Scripts/World/HexMath.cs (consumed by HexGridOverlayComponent.cs and
+// HexGridOverlay3DComponent.cs) — all copies must change together.
 pub fn spiral_chunk_index(cq: i32, cr: i32) -> i64 {
     let x = cq;
     let z = cr;
@@ -86,14 +84,13 @@ pub struct HexCell {
 
 pub fn enumerate_world_hexes(chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32, hex_outer_radius: f32) -> Vec<HexCell> {
     let area = hex_area(chunk_hex_radius);
-    let shift = hex_shift(chunk_hex_radius);
     let mut cells = Vec::with_capacity((chunk_cols * chunk_rows * area).max(0) as usize);
     for cr in 0..chunk_rows {
         for cq in 0..chunk_cols {
             let chunk_index = spiral_chunk_index(cq, cr);
             let (cx, cz) = chunk_center_hex(cq, cr, chunk_hex_radius);
             for m in 0..area {
-                let (rx, rz) = inv_hexmod(m, chunk_hex_radius, shift);
+                let (rx, rz) = inv_hexmod(m, chunk_hex_radius);
                 let hex_q = cx + rx;
                 let hex_r = cz + rz;
                 let (world_x, world_y) = hex_to_world(hex_q, hex_r, hex_outer_radius);

@@ -17,8 +17,10 @@ use spacetimedb::{ReducerContext, Table};
 use crate::world::def_tables::{biome_def, biome_region_def, world_def, DecorConfig, GroundTextureConfig, ManualBiomeInput, OverlayTextureConfig, RegionWeight};
 use crate::world::instance_tables::{biome_region, hex_decor, triangle_tile, BiomeRegion, TriangleTile};
 use crate::world::hex::{enumerate_world_hexes, hex_to_world, HexCell};
+use crate::world::noise::{value_noise2d, ELEVATION_NOISE_SEED_OFFSET};
 use crate::world::prng::pick_index;
-use crate::world::tables::{map_config, MapConfig};
+use crate::world::tables::{building_tile, map_config, BuildingTile, MapConfig};
+use crate::main::global::{ELEVATION_LEVELS, ELEVATION_NOISE_SCALE};
 
 mod decor;
 mod ground;
@@ -130,6 +132,19 @@ fn run_generation(ctx: &ReducerContext, cfg: &MapConfig, cells: Vec<HexCell>, se
     let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
 
     clear_world_geometry(ctx);
+
+    // Elevation pass: quantize a dedicated noise field into ELEVATION_LEVELS discrete levels
+    // and stamp them onto the per-hex BuildingTile rows (clear_world_geometry never touches
+    // building_tile). A pure function of the seed — consumes no PRNG draws, so the
+    // deterministic draw order below is untouched.
+    let elevation_seed = seed ^ ELEVATION_NOISE_SEED_OFFSET;
+    for tile in ctx.db.building_tile().iter() {
+        let (wx, wy) = hex_to_world(tile.hex_q, tile.hex_r, cfg.hex_outer_radius);
+        let elevation = ((value_noise2d(wx, wy, ELEVATION_NOISE_SCALE, elevation_seed) * ELEVATION_LEVELS as f32) as i16)
+            .clamp(0, ELEVATION_LEVELS - 1);
+        ctx.db.building_tile().tile_id().update(BuildingTile { elevation, ..tile });
+    }
+
     let mut neighbor_tags: NeighborTagMap = HashMap::new();
     let mut decided_decor: HashSet<(i32, i32)> = HashSet::new();
 

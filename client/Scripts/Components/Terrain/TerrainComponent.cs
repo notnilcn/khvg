@@ -25,6 +25,8 @@ using System.Collections.Generic;
 public partial class TerrainComponent : Node2DComponent
 {
     private const float DefaultHexOuterRadius = 96.0f;
+    /// Mirrors the server's DEFAULT_CHUNK_HEX_RADIUS; the MapConfig row overrides it on arrival.
+    private const int DefaultChunkHexRadius = 2;
     private static readonly Color FallbackColor = new(0.2f, 0.5f, 0.2f, 1f);
 
     /// AOI radius in chunk rings around the player, mirroring the server's
@@ -41,6 +43,7 @@ public partial class TerrainComponent : Node2DComponent
     private TableBinderComponent _hexDecorBinder = null!;
 
     private float _outerRadius = DefaultHexOuterRadius;
+    private int _chunkHexRadius = DefaultChunkHexRadius;
 
     private readonly Dictionary<ulong, TriangleTile> _tilesById = new();
     private readonly Dictionary<(int Q, int R), List<TriangleTile>> _tilesByHex = new();
@@ -56,6 +59,17 @@ public partial class TerrainComponent : Node2DComponent
     private readonly List<TileComponent> _tilePool = new();
     private readonly Dictionary<long, TileComponent> _activeTiles = new();
 
+    // Rebuild grouping buffers, clear-and-reused across rebuilds: chunk keys, batch keys and
+    // their lists stay allocated (bounded by the world's chunk count) and only their contents
+    // reset, so a steady-state rebuild allocates nothing.
+    private readonly Dictionary<long, Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>>> _groundByChunk = new();
+    private readonly Dictionary<long, Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>>> _overlayByChunk = new();
+    private readonly Dictionary<long, Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>> _shadowByChunk = new();
+    private readonly Dictionary<long, Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>> _decorByChunk = new();
+    private readonly HashSet<long> _presentChunks = new();
+
+    // Sentinel chunk coords force a rebuild on the first frame.
+    private Vector2I _camChunk = new(int.MinValue, int.MinValue);
     private Vector2 _camPos = Vector2.Zero;
     private Vector2 _camZoom = Vector2.One;
     private bool _dirty;
@@ -69,34 +83,71 @@ public partial class TerrainComponent : Node2DComponent
         _mapConfigBinder = GetNode<TableBinderComponent>("MapConfigBinder");
         _terrainTilesBinder = GetNode<TableBinderComponent>("TerrainTilesBinder");
         _hexDecorBinder = GetNode<TableBinderComponent>("HexDecorBinder");
+
+        // 3D mode renders no 2D terrain: stop the rebuild loop and never build the tile
+        // pool, so no res_path2d ground/decor texture is ever loaded. Row handlers still
+        // fire but only set the dirty flag, which nothing consumes.
+        if (GameVisuals.Is3D)
+        {
+            Visible = false;
+            SetProcess(false);
+        }
     }
 
     protected override void OnEntityReady()
     {
+        if (GameVisuals.Is3D) return; // no tile pool in 3D mode (see _Ready)
         // Pre-warm the pool so the first subscription burst doesn't hitch on instantiation.
         // Data-driven count, so code instantiation is deliberate; the instances' contents are
         // entirely declared in tile_component.tscn.
         for (var i = 0; i < RingChunkCount(AoiChunkRadius); i++)
             _tilePool.Add(CreateTile());
+
+        // Re-tint on any elevation row change. The dirty-flag path (one rebuild per
+        // frame) is enough — mesh geometry is elevation-independent, so InvalidateMeshes'
+        // cache wipe would be pure churn during the binder's replay burst.
+        if (GameManager.ElevationMap is { } elevationMap)
+            elevationMap.ElevationChanged += OnElevationChanged;
     }
+
+    private void OnElevationChanged() => _dirty = true;
+
+    public override void _ExitTree()
+    {
+        if (GameManager.ElevationMap is { } elevationMap)
+            elevationMap.ElevationChanged -= OnElevationChanged;
+        base._ExitTree();
+    }
+
+    // Elevation tint ramp: level 0 darkened, top level slightly brightened, multiplied
+    // with the ground/overlay textures via the MultiMesh per-instance colors.
+    private static readonly Color ElevationTintLow = new(0.5f, 0.5f, 0.5f);
+    private static readonly Color ElevationTintHigh = new(1.1f, 1.1f, 1.1f);
+
+    private static Color ElevationTint(int elevation) =>
+        ElevationTintLow.Lerp(ElevationTintHigh,
+            Mathf.Clamp(elevation / (float)(ServerConstants.ElevationLevels - 1), 0f, 1f));
 
     public override void _Process(double delta)
     {
         var cam = GetViewport().GetCamera2D();
         if (cam == null) return;
 
-        var camMoved = cam.GlobalPosition != _camPos || cam.Zoom != _camZoom;
-        if (camMoved)
-        {
-            _camPos = cam.GlobalPosition;
-            _camZoom = cam.Zoom;
-        }
+        // Rebuilding on any camera motion meant walking rebuilt every visible tile every frame.
+        // Pixel motion within a chunk can't change which chunks are visible, so the camera path
+        // only triggers on a chunk crossing (or a zoom change, which resizes the cull window).
+        var camHex = HexMath.WorldToHex(cam.GlobalPosition.X, cam.GlobalPosition.Y, _outerRadius);
+        var camChunk = HexMath.ToLowerRes(camHex.X, camHex.Y, _chunkHexRadius);
+        var camMoved = camChunk != _camChunk || cam.Zoom != _camZoom;
 
         // Tile-change callbacks only set _dirty — actually rebuilding here means a whole burst
         // of inserts/deletes from one chunk crossing collapses into a single rebuild per frame,
         // instead of one rebuild per individual tile event.
         if (camMoved || _dirty)
         {
+            _camChunk = camChunk;
+            _camPos = cam.GlobalPosition;
+            _camZoom = cam.Zoom;
             _dirty = false;
             RebuildVisibleInstances();
         }
@@ -108,7 +159,9 @@ public partial class TerrainComponent : Node2DComponent
 
     private void OnMapConfigRow()
     {
-        _outerRadius = ((MapConfig)_mapConfigBinder.LastRow!).HexOuterRadius;
+        var cfg = (MapConfig)_mapConfigBinder.LastRow!;
+        _outerRadius = cfg.HexOuterRadius;
+        _chunkHexRadius = cfg.ChunkHexRadius;
         InvalidateMeshes();
     }
 
@@ -215,6 +268,7 @@ public partial class TerrainComponent : Node2DComponent
 
     private void RebuildVisibleInstances()
     {
+        if (GameVisuals.Is3D) return; // 3D mode builds no 2D tiles (see _Ready)
         var cam = GetViewport().GetCamera2D();
         if (cam == null) return;
 
@@ -226,10 +280,12 @@ public partial class TerrainComponent : Node2DComponent
         var lapQ = GameManager.LapQ;
         var lapR = GameManager.LapR;
 
-        var groundByChunk = new Dictionary<long, Dictionary<(int TriIndex, int Rotation, string TextureId), List<Vector2>>>();
-        var overlayByChunk = new Dictionary<long, Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale)>>>();
-        var shadowByChunk = new Dictionary<long, Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>>();
-        var decorByChunk = new Dictionary<long, Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>>();
+        // Reset the pooled grouping buffers (contents only — the dictionaries and lists
+        // themselves are reused; Populate consumes them synchronously, so reuse is safe).
+        ResetGroups(_groundByChunk);
+        ResetGroups(_overlayByChunk);
+        ResetGroups(_shadowByChunk);
+        ResetGroups(_decorByChunk);
 
         // Iterate everything cached (not a camera-window hex lookup) since chunks near a torus
         // seam are stored at their canonical (raw, far-away) position — we need to pick whichever
@@ -242,20 +298,25 @@ public partial class TerrainComponent : Node2DComponent
                 center.Y < worldMin.Y - margin || center.Y > worldMax.Y + margin)
                 continue;
 
+            // One elevation lookup per hex: the minimal cosmetic cue (2D only — this
+            // whole method early-outs in 3D mode) tints ground/overlay instances from a
+            // dark shade at level 0 up to slightly-past-white at the top level.
+            var tint = ElevationTint(GameManager.ElevationMap?.GetElevation(q, r) ?? 0);
+
             foreach (var tile in tiles)
             {
-                var ground = GetChunkGroup(groundByChunk, tile.ChunkIndex);
+                var ground = GetChunkGroup(_groundByChunk, tile.ChunkIndex);
                 var key = (tile.TriIndex, tile.Rotation, tile.TextureId);
                 if (!ground.TryGetValue(key, out var positions))
-                    ground[key] = positions = new List<Vector2>();
-                positions.Add(center);
+                    ground[key] = positions = new List<(Vector2, Color)>();
+                positions.Add((center, tint));
 
                 if (string.IsNullOrEmpty(tile.OverlayTextureId)) continue;
-                var overlay = GetChunkGroup(overlayByChunk, tile.ChunkIndex);
+                var overlay = GetChunkGroup(_overlayByChunk, tile.ChunkIndex);
                 var overlayKey = (tile.TriIndex, tile.OverlayRotation, tile.OverlayTextureId);
                 if (!overlay.TryGetValue(overlayKey, out var overlayPositions))
-                    overlay[overlayKey] = overlayPositions = new List<(Vector2, float)>();
-                overlayPositions.Add((center, tile.OverlayScale));
+                    overlay[overlayKey] = overlayPositions = new List<(Vector2, float, Color)>();
+                overlayPositions.Add((center, tile.OverlayScale, tint));
             }
         }
 
@@ -268,27 +329,32 @@ public partial class TerrainComponent : Node2DComponent
                 continue;
 
             var rotationRadians = Mathf.DegToRad(decor.RotationDegrees);
-            AddDecorInstance(GetChunkGroup(decorByChunk, decor.ChunkIndex), decor.TextureId, center, rotationRadians, decor.HexR);
-            AddDecorInstance(GetChunkGroup(shadowByChunk, decor.ChunkIndex), decor.ShadowTextureId, center, rotationRadians, decor.HexR);
+            AddDecorInstance(GetChunkGroup(_decorByChunk, decor.ChunkIndex), decor.TextureId, center, rotationRadians, decor.HexR);
+            AddDecorInstance(GetChunkGroup(_shadowByChunk, decor.ChunkIndex), decor.ShadowTextureId, center, rotationRadians, decor.HexR);
         }
 
         // Hand each present chunk's batches to its TileComponent; park tiles whose chunk left
-        // the AOI (their layers are zeroed, so nothing stale keeps drawing).
-        var presentChunks = new HashSet<long>();
-        foreach (var chunk in AllPresentChunks(groundByChunk, overlayByChunk, shadowByChunk, decorByChunk))
+        // the AOI (their layers are zeroed, so nothing stale keeps drawing). The pooled buffers
+        // retain chunks/batch keys whose lists came up empty this pass, so presence is decided
+        // by content, not by key existence.
+        _presentChunks.Clear();
+        CollectPresentChunks(_groundByChunk);
+        CollectPresentChunks(_overlayByChunk);
+        CollectPresentChunks(_shadowByChunk);
+        CollectPresentChunks(_decorByChunk);
+        foreach (var chunk in _presentChunks)
         {
-            presentChunks.Add(chunk);
             AcquireTile(chunk).Populate(
                 chunk,
-                groundByChunk.GetValueOrDefault(chunk, EmptyGround),
-                overlayByChunk.GetValueOrDefault(chunk, EmptyOverlay),
-                shadowByChunk.GetValueOrDefault(chunk, EmptyDecor),
-                decorByChunk.GetValueOrDefault(chunk, EmptyDecor));
+                _groundByChunk.GetValueOrDefault(chunk, EmptyGround),
+                _overlayByChunk.GetValueOrDefault(chunk, EmptyOverlay),
+                _shadowByChunk.GetValueOrDefault(chunk, EmptyDecor),
+                _decorByChunk.GetValueOrDefault(chunk, EmptyDecor));
         }
 
         _releaseBuffer.Clear();
         foreach (var (chunk, tile) in _activeTiles)
-            if (!presentChunks.Contains(chunk))
+            if (!_presentChunks.Contains(chunk))
                 _releaseBuffer.Add(chunk);
         foreach (var chunk in _releaseBuffer)
         {
@@ -301,8 +367,8 @@ public partial class TerrainComponent : Node2DComponent
 
     private readonly List<long> _releaseBuffer = new();
 
-    private static readonly Dictionary<(int TriIndex, int Rotation, string TextureId), List<Vector2>> EmptyGround = new();
-    private static readonly Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale)>> EmptyOverlay = new();
+    private static readonly Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>> EmptyGround = new();
+    private static readonly Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>> EmptyOverlay = new();
     private static readonly Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>> EmptyDecor = new();
 
     private static Dictionary<TKey, List<TValue>> GetChunkGroup<TKey, TValue>(Dictionary<long, Dictionary<TKey, List<TValue>>> byChunk, long chunkIndex) where TKey : notnull
@@ -312,16 +378,28 @@ public partial class TerrainComponent : Node2DComponent
         return grouped;
     }
 
-    private static IEnumerable<long> AllPresentChunks(
-        Dictionary<long, Dictionary<(int TriIndex, int Rotation, string TextureId), List<Vector2>>> ground,
-        Dictionary<long, Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale)>>> overlay,
-        Dictionary<long, Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>> shadow,
-        Dictionary<long, Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>> decor)
+    // Resets a pooled grouping buffer for the next rebuild without freeing it: every list keeps
+    // its capacity and every chunk/batch key stays, so steady-state rebuilds reuse all of it.
+    private static void ResetGroups<TKey, TValue>(Dictionary<long, Dictionary<TKey, List<TValue>>> byChunk) where TKey : notnull
     {
-        foreach (var chunk in ground.Keys) yield return chunk;
-        foreach (var chunk in overlay.Keys) if (!ground.ContainsKey(chunk)) yield return chunk;
-        foreach (var chunk in shadow.Keys) if (!ground.ContainsKey(chunk) && !overlay.ContainsKey(chunk)) yield return chunk;
-        foreach (var chunk in decor.Keys) if (!ground.ContainsKey(chunk) && !overlay.ContainsKey(chunk) && !shadow.ContainsKey(chunk)) yield return chunk;
+        foreach (var grouped in byChunk.Values)
+            foreach (var list in grouped.Values)
+                list.Clear();
+    }
+
+    private void CollectPresentChunks<TKey, TValue>(Dictionary<long, Dictionary<TKey, List<TValue>>> byChunk) where TKey : notnull
+    {
+        foreach (var (chunk, grouped) in byChunk)
+            if (HasInstances(grouped))
+                _presentChunks.Add(chunk);
+    }
+
+    private static bool HasInstances<TKey, TValue>(Dictionary<TKey, List<TValue>> grouped) where TKey : notnull
+    {
+        foreach (var list in grouped.Values)
+            if (list.Count > 0)
+                return true;
+        return false;
     }
 
     private static void AddDecorInstance(Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>> grouped, string textureId, Vector2 position, float rotationRadians, int hexR)
@@ -452,7 +530,7 @@ public partial class TerrainComponent : Node2DComponent
     {
         if (string.IsNullOrEmpty(textureId)) return null;
         if (_textureCache.TryGetValue(textureId, out var cached)) return cached;
-        var resPath = GameManager.GetResPath(textureId);
+        var resPath = GameManager.GetResPath2D(textureId);
         if (resPath == null) return null;
         var tex = GD.Load<Texture2D>(resPath);
         _textureCache[textureId] = tex;

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a551ca3d0d6f226e",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/tables.rs",
+			"subpath": "#PlayerHitRate",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

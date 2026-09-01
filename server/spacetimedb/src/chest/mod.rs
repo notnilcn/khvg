@@ -1,10 +1,12 @@
-use spacetimedb::{table, Query, ReducerContext, Table, ViewContext};
+use spacetimedb::{table, Query, ReducerContext, Table, Timestamp, ViewContext};
+use crate::main::global::*;
 use crate::item::tables::item;
 use crate::player::methods::{is_admin, recompute_stats, require_in_world, store_item_in_inventory};
+use crate::player::tables::player_position;
 use crate::player::views::nearby_indices;
 use crate::world::hex::{spiral_chunk_index, world_to_chunk};
 use crate::world::tables::MapConfig;
-use crate::world::wrap::wrap_world_pos;
+use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
 
 /// The add_item_to_chest special case: passing this as item_id inserts one ChestItem row
 /// per catalog item (the `regenerating` flag applies to all of them).
@@ -32,6 +34,19 @@ pub struct ChestItem {
     pub chest_id: u64,
     pub item_id: String,
     pub regenerating: bool,
+}
+
+/// Server-only per-player take cooldown for REGENERATING chests (those rows are never
+/// consumed, so the take rate is gated instead): one row per (profile, chest), restamped
+/// on every take; takes within CHEST_TAKE_COOLDOWN_SECONDS are rejected.
+#[table(accessor = chest_take_cooldown)]
+pub struct ChestTakeCooldown {
+    #[primary_key] #[auto_inc]
+    pub id: u64,
+    #[index(btree)]
+    pub profile_id: u64,
+    pub chest_id: u64,
+    pub last_taken: Timestamp,
 }
 
 #[spacetimedb::reducer]
@@ -69,8 +84,35 @@ pub fn take_from_chest(ctx: &ReducerContext, chest_item_id: u64) -> Result<(), S
     let chest_item = ctx.db.chest_item().chest_item_id().find(&chest_item_id)
         .ok_or_else(|| format!("Chest item {} not found.", chest_item_id))?;
     let item = ctx.db.item().item_id().find(&chest_item.item_id).ok_or("Item not found.")?;
+    let chest = ctx.db.chest().chest_id().find(&chest_item.chest_id).ok_or("Chest not found.")?;
 
-    store_item_in_inventory(ctx, profile_id, &item, vec![])?;
+    // Wrap-aware range check against the caller's position row — no remote looting.
+    let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let dist_sq = wrapped_distance_sq(pos.x, pos.y, chest.x, chest.y, (cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
+    if dist_sq > INTERACT_RADIUS * INTERACT_RADIUS {
+        return Err("Chest is too far away.".to_string());
+    }
+
+    // Regenerating rows are never consumed, so gate the take rate instead: one take per
+    // player per chest per CHEST_TAKE_COOLDOWN_SECONDS.
+    if chest_item.regenerating {
+        match ctx.db.chest_take_cooldown().profile_id().filter(&profile_id).find(|c| c.chest_id == chest.chest_id) {
+            Some(cd) => {
+                if crate::enemy::methods::seconds_since(ctx, cd.last_taken) < CHEST_TAKE_COOLDOWN_SECONDS as f32 {
+                    return Err("This chest was taken too recently.".to_string());
+                }
+                ctx.db.chest_take_cooldown().id().update(ChestTakeCooldown { last_taken: ctx.timestamp, ..cd });
+            }
+            None => {
+                ctx.db.chest_take_cooldown().insert(ChestTakeCooldown {
+                    id: 0, profile_id, chest_id: chest.chest_id, last_taken: ctx.timestamp,
+                });
+            }
+        }
+    }
+
+    store_item_in_inventory(ctx, profile_id, &item, vec![], None, u32::MAX)?;
 
     // Non-regenerating items are consumed; regenerating ones keep their row, which IS the
     // next copy — the chest regenerates the item by never running out of it.

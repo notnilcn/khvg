@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "59a3f5420c54a3cc",
+			"type": "file",
+			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
+			"subpath": "#profilePanels",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

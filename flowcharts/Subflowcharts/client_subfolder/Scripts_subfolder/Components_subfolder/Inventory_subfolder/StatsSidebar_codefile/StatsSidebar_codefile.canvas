@@ -1,0 +1,80 @@
+{
+	"nodes": [
+		{
+			"id": "8e503fb4f3478ad8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebar_codefile/_ExitTree_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3cdb700da7a221c8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebar_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3a847e391ac7be0a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebar_codefile/Allocatable_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "87bc5aa6ac834130",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebar_codefile/HandleStatsChanged_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fbef283c61ae64b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebar_codefile/player_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "379fba1f54ee8828",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebar_codefile/StatsSidebar (class)_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-allocate_stat-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-rpc"
+			]
+		}
+	}
+}

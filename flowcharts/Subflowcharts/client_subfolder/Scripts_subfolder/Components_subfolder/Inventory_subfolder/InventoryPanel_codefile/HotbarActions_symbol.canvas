@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "70f62198c8233a70",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/InventoryPanel.cs",
+			"subpath": "#HotbarActions",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

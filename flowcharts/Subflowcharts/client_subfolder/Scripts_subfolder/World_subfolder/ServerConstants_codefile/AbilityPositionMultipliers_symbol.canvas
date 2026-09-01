@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "7e22f7fbc484f324",
+			"type": "file",
+			"file": "client/Scripts/World/ServerConstants.cs",
+			"subpath": "#AbilityPositionMultipliers",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "5876b6448faef480",
+			"type": "file",
+			"file": "client/Scripts/Components/Zones/ZoneRendererComponent.cs",
+			"subpath": "#ZoneRendererComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -1,0 +1,133 @@
+{
+	"nodes": [
+		{
+			"id": "ac7df86c9d1b26f8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/AbilityCharge_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c07b5a8f6ff10062",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/ActiveEnemyStatusEffect_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "09bf5da18b257508",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/ActiveStatusEffect_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9aa399661f1b89b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/EnemyStatusKind_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "338b25e11a79fdfc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/GroundZone_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c325c85627114a1c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/none_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9939c22b62de112a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/PurgeKind_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cd35aa4193436f42",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/ReleaseKind_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "74b7c715d87beec4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/StatusEffectKind_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "24f325ccbb0ad820",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/StatusParams_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c5bc2fe220a853a8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/WagerKind_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ff01bddc327ce858",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/ZoneKind_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
+	}
+}

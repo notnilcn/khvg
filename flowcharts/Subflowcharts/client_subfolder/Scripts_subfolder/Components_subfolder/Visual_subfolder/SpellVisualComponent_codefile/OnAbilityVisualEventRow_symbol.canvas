@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "fe7cf8ede675f620",
+			"type": "file",
+			"file": "client/Scripts/Components/Visual/SpellVisualComponent.cs",
+			"subpath": "#OnAbilityVisualEventRow",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

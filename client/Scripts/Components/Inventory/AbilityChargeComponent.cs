@@ -18,14 +18,9 @@ using System.Linq;
 /// </summary>
 public partial class AbilityChargeComponent : Component
 {
-    /// Mirrors of main/global.rs — CHARGE_SELF_SLOW_FACTOR / MAX_CHARGE_SECONDS /
-    /// CHARGE_MIN_RANGE_FRACTION. Both sides must change together.
-    public const float ChargeSelfSlowFactor = 0.5f;
-    public const float MaxChargeSeconds = 3.0f;
-
-    /// Charge-scaled range multiplier: 25% at a 0-charge release up to 100% at full
-    /// charge. Mirror of charge_range_multiplier in player/reducers.rs.
-    public static float ChargeRangeMultiplier(float fraction) => 0.25f + 0.75f * Mathf.Clamp(fraction, 0f, 1f);
+    // The charge constant mirrors (CHARGE_SELF_SLOW_FACTOR / MAX_CHARGE_SECONDS /
+    // CHARGE_MIN_RANGE_FRACTION + the charge-range multiplier) live in
+    // World/ServerConstants.cs — the single home for client mirrors of main/global.rs.
 
     /// True while the server-echoed charge row exists for the local player.
     public bool Charging { get; private set; }
@@ -51,7 +46,7 @@ public partial class AbilityChargeComponent : Component
         if (row.ProfileId != LocalProfileId) return;
         Charging = true;
         ChargedSlot = (int)row.SlotIndex;
-        GetSibling<PositionSyncComponent>()?.SetExternalSlow(ChargeSelfSlowFactor);
+        GetSibling<PositionSyncComponent>()?.SetExternalSlow(ServerConstants.ChargeSelfSlowFactor);
     }
 
     private void OnChargeRowDeleted()

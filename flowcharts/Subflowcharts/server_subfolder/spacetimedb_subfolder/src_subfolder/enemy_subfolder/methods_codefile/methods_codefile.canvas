@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/activate_all_attacks_symbol.canvas",
 			"color": "5",
-			"x": 3110,
+			"x": 3090,
 			"y": 2000,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/apply_movement_symbol.canvas",
 			"color": "5",
-			"x": 2870,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/begin_phase_cycle_symbol.canvas",
 			"color": "5",
-			"x": 2740,
+			"x": 2260,
 			"y": 1500,
 			"width": 400,
 			"height": 400
@@ -35,8 +35,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/build_enemy_behavior_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 690,
 			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "90652f175c6d1e7a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/BulletStepEvent_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -45,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/compute_phase_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/cycle_phase_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 2990,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -81,11 +91,31 @@
 			"height": 400
 		},
 		{
+			"id": "a76ab552fd1db73c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/effective_interval_symbol.canvas",
+			"color": "5",
+			"x": 3550,
+			"y": 2000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bc6919d734d7f474",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/enemies_near_point_symbol.canvas",
+			"color": "5",
+			"x": 1150,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "414e4fc3d7308568",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/find_nearest_player_id_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 2070,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -95,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/find_player_pos_by_id_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 3450,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -105,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/has_player_in_simulation_range_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2530,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -115,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/has_player_near_spawn_point_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 1610,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -125,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/is_attack_finished_symbol.canvas",
 			"color": "5",
-			"x": 3350,
+			"x": 4030,
 			"y": 1500,
 			"width": 400,
 			"height": 400
@@ -135,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/nearby_player_position_chunks_symbol.canvas",
 			"color": "5",
-			"x": 1950,
+			"x": 2290,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -145,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/recompute_aggro_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 2070,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/reset_repeat_counts_symbol.canvas",
 			"color": "5",
-			"x": 2990,
+			"x": 3320,
 			"y": 2500,
 			"width": 400,
 			"height": 400
@@ -165,8 +195,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/resolve_step_target_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2530,
 			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "64b49d02e01015fc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/rotate_offset_symbol.canvas",
+			"color": "5",
+			"x": 1780,
+			"y": 2000,
 			"width": 400,
 			"height": 400
 		},
@@ -175,7 +215,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/seconds_since_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 2990,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -185,7 +225,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/spawn_enemy_archetype_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 690,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -195,7 +235,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/spawn_from_biome_regions_symbol.canvas",
 			"color": "5",
-			"x": 1490,
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6407a647096c4196",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/step_damage_symbol.canvas",
+			"color": "5",
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -205,7 +255,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/tick_phase_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 3680,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -215,7 +265,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/tick_sequence_symbol.canvas",
 			"color": "5",
-			"x": 1280,
+			"x": 1800,
 			"y": 1500,
 			"width": 400,
 			"height": 400
@@ -327,6 +377,14 @@
 			"toEnd": "arrow"
 		},
 		{
+			"id": "47ec5b7543b28d5e",
+			"fromNode": "b14fb0346c8a24d0",
+			"fromSide": "bottom",
+			"toNode": "bc6919d734d7f474",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
 			"id": "1d398e7adc0f4780",
 			"fromNode": "b14fb0346c8a24d0",
 			"fromSide": "bottom",
@@ -335,10 +393,26 @@
 			"toEnd": "arrow"
 		},
 		{
+			"id": "288918d4d52a6998",
+			"fromNode": "7900b2109b2ba500",
+			"fromSide": "bottom",
+			"toNode": "a76ab552fd1db73c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
 			"id": "00a3188ebbf6a80c",
 			"fromNode": "7900b2109b2ba500",
 			"fromSide": "bottom",
 			"toNode": "978a22f592bf34dc",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "961b5e7afd0fb24c",
+			"fromNode": "7900b2109b2ba500",
+			"fromSide": "bottom",
+			"toNode": "1ca61f91440c3302",
 			"toSide": "top",
 			"toEnd": "arrow"
 		},
@@ -363,6 +437,22 @@
 			"fromNode": "7900b2109b2ba500",
 			"fromSide": "bottom",
 			"toNode": "7ac607e657791998",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "897a5f185ecb58c0",
+			"fromNode": "7ac607e657791998",
+			"fromSide": "bottom",
+			"toNode": "a76ab552fd1db73c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "52f878d19fe30386",
+			"fromNode": "7ac607e657791998",
+			"fromSide": "bottom",
+			"toNode": "64b49d02e01015fc",
 			"toSide": "top",
 			"toEnd": "arrow"
 		}
@@ -399,13 +489,16 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyBehavior",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyPhase",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-StunBehavior",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementBehavior",
 				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-hash_to_unit",
 				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-splitmix64",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementDef-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/prng_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/prng_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-activate_all_attacks",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-begin_phase_cycle",
@@ -422,10 +515,18 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-RepeatStepDef-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-RepeatStepInstance-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemySequenceStep-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-BulletPatternEvent",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-seconds_since",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyPhase-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-delete_enemy_behavior",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/world/aoi-_dot_-rs-_hashtag_-chunk_indices_covering",
+				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrapped_distance_sq",
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/aoi_codefile/aoi_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile/wrap_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedInPlayer-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
@@ -435,34 +536,30 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-AttackSequence",
-				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_chunk",
 				"edge-_colon_-server/spacetimedb/src/world/aoi-_dot_-rs-_hashtag_-surrounding_chunk_indices",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/aoi_codefile/aoi_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-find_nearest_player_id",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemySequenceStep-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-RepeatStepInstance-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-build_enemy_behavior",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-has_player_near_spawn_point",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-enemies_near_point",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-spawn_enemy_archetype",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-hex_to_world",
-				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrapped_distance_sq",
 				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-next_unit",
 				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrap_world_pos",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-spiral_chunk_index",
 				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-BiomeRegion-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTemplate-_colon_-read",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile/wrap_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-effective_interval",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-is_attack_finished",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-tick_sequence",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef-_colon_-read"
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-rotate_offset"
 			]
 		}
 	}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "220f4029dedb3126",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#BASH_STUN_MAGNITUDE",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

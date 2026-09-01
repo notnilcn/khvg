@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "b5f708b672091108",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/ZoneRendererComponent_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"subfolder"
+			]
+		}
+	}
+}

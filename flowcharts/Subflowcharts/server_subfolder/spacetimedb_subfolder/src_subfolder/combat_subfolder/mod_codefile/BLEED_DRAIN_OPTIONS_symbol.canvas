@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e14908e9243dee18",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#BLEED_DRAIN_OPTIONS",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

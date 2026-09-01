@@ -10,6 +10,8 @@ using System;
 /// </summary>
 public partial class HexGridOverlayComponent : Node2DComponent
 {
+	// [Export] public float opacity = 0.5f;
+
 	private const int DefaultChunkHexRadius = 5;
 	private const float DefaultHexOuterRadius = 32.0f;
 
@@ -20,9 +22,9 @@ public partial class HexGridOverlayComponent : Node2DComponent
 
 	// 3-coloring: (cq - cr) mod 3 guarantees no two adjacent chunks share a colour.
 	private static readonly Color[] ChunkColors = {
-		new(0f, 1f, 1f, 0.5f),  // Cyan
-		new(1f, 0f, 1f, 0.5f),  // Magenta
-		new(1f, 1f, 0f, 0.5f),  // Yellow
+		new(0f, 1f, 1f, 0.25f),  // Cyan
+		new(1f, 0f, 1f, 0.25f),  // Magenta
+		new(1f, 1f, 0f, 0.25f),  // Yellow
 	};
 
 	private float _outerRadius = DefaultHexOuterRadius;
@@ -50,6 +52,15 @@ public partial class HexGridOverlayComponent : Node2DComponent
 	{
 		ZIndex = 0;
 		_font = ThemeDB.FallbackFont;
+		if (GameManager.ElevationMap is { } elevationMap)
+			elevationMap.ElevationChanged += QueueRedraw;
+	}
+
+	public override void _ExitTree()
+	{
+		if (GameManager.ElevationMap is { } elevationMap)
+			elevationMap.ElevationChanged -= QueueRedraw;
+		base._ExitTree();
 	}
 
 	public override void _Process(double delta)
@@ -205,14 +216,17 @@ public partial class HexGridOverlayComponent : Node2DComponent
 		string hexStr = $"{q},{r}";
 		string chunkStr = $"{chunk.X},{chunk.Y}";
 		string cidxStr = cidx.ToString();
+		string elevStr = $"e{GameManager.ElevationMap?.GetElevation(q, r) ?? 0}";
 
 		float line = FontSize + 1f;
 		float hw = _font.GetStringSize(hexStr, HorizontalAlignment.Left, -1, FontSize).X;
 		float cw = _font.GetStringSize(chunkStr, HorizontalAlignment.Left, -1, FontSize).X;
 		float iw = _font.GetStringSize(cidxStr, HorizontalAlignment.Left, -1, FontSize).X;
+		float ew = _font.GetStringSize(elevStr, HorizontalAlignment.Left, -1, FontSize).X;
 
 		DrawString(_font, new Vector2(center.X - hw * 0.5f, center.Y - line), hexStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
 		DrawString(_font, new Vector2(center.X - cw * 0.5f, center.Y + 2f), chunkStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
 		DrawString(_font, new Vector2(center.X - iw * 0.5f, center.Y + line + 3f), cidxStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
+		DrawString(_font, new Vector2(center.X - ew * 0.5f, center.Y + 2f * line + 4f), elevStr, HorizontalAlignment.Left, -1, FontSize, LabelColor);
 	}
 }

@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/BiomeDef.seed_symbol.canvas",
 			"color": "5",
-			"x": 910,
+			"x": 3220,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/BiomeRegionDef.seed_symbol.canvas",
 			"color": "5",
-			"x": 1370,
+			"x": 2300,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -35,28 +35,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/EnemyTemplate.seed_symbol.canvas",
 			"color": "5",
-			"x": 4620,
-			"y": 1000,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "8e8abac4612cd600",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/make_phase_symbol.canvas",
-			"color": "5",
-			"x": 3000,
-			"y": 1000,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "5dd27f32efde62d8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/make_sequence_symbol.canvas",
-			"color": "5",
-			"x": 2310,
-			"y": 1000,
+			"x": 1840,
+			"y": 500,
 			"width": 400,
 			"height": 400
 		},
@@ -67,16 +47,6 @@
 			"color": "5",
 			"x": 460,
 			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "b34f742cdf44f958",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/multi_shot_symbol.canvas",
-			"color": "5",
-			"x": 1830,
-			"y": 1000,
 			"width": 400,
 			"height": 400
 		},
@@ -105,8 +75,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_default_enemies_symbol.canvas",
 			"color": "5",
-			"x": 3920,
-			"y": 500,
+			"x": 1840,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -115,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_default_textures_symbol.canvas",
 			"color": "5",
-			"x": 5530,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_layering_rules_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_region_def_symbol.canvas",
 			"color": "5",
-			"x": 1370,
+			"x": 2300,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -145,67 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/Seed_symbol.canvas",
 			"color": "5",
-			"x": 2760,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "2f3963595e1c39e8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_test_boss_p2_symbol.canvas",
-			"color": "5",
-			"x": 3220,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "2945e788132b1dc0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_test_boss_p3_clone_symbol.canvas",
-			"color": "5",
-			"x": 2300,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "3aa75fe6e8b0cc2c",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_test_boss_p3_symbol.canvas",
-			"color": "5",
-			"x": 2760,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "521125d77c368264",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_test_boss_p4_symbol.canvas",
-			"color": "5",
-			"x": 1840,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "8d78c64c4fa3a380",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_test_boss_p5_symbol.canvas",
-			"color": "5",
-			"x": 4150,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "0471f7bd8b75dd28",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_test_boss_p6_symbol.canvas",
-			"color": "5",
-			"x": 4840,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -215,38 +125,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seed_world_defs_symbol.canvas",
 			"color": "5",
-			"x": 3460,
+			"x": 2760,
 			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "d4ffb12d21a539c4",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seq_multi_symbol.canvas",
-			"color": "5",
-			"x": 910,
-			"y": 1000,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "ea43debda51867b2",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seq_repeat_symbol.canvas",
-			"color": "5",
-			"x": 3700,
-			"y": 1000,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "599e1cc61b01018c",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seq_single_symbol.canvas",
-			"color": "5",
-			"x": 4160,
-			"y": 1000,
 			"width": 400,
 			"height": 400
 		},
@@ -255,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/texture_symbol.canvas",
 			"color": "5",
-			"x": 4840,
+			"x": 3680,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -265,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/TextureEntry.seed_symbol.canvas",
 			"color": "5",
-			"x": 5300,
+			"x": 4140,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -275,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/WorldDef.seed_symbol.canvas",
 			"color": "5",
-			"x": 5760,
+			"x": 2760,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -287,30 +167,6 @@
 			"fromNode": "44fed396dfa0b968",
 			"fromSide": "bottom",
 			"toNode": "d7e77c6ff11ce65e",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "64f2bf6830ca3570",
-			"fromNode": "44fed396dfa0b968",
-			"fromSide": "bottom",
-			"toNode": "8e8abac4612cd600",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "95658a8fecf3e002",
-			"fromNode": "44fed396dfa0b968",
-			"fromSide": "bottom",
-			"toNode": "5dd27f32efde62d8",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "f006cfe36dcad776",
-			"fromNode": "44fed396dfa0b968",
-			"fromSide": "bottom",
-			"toNode": "599e1cc61b01018c",
 			"toSide": "top",
 			"toEnd": "arrow"
 		},
@@ -335,174 +191,6 @@
 			"fromNode": "51b3ad62eaff6b34",
 			"fromSide": "bottom",
 			"toNode": "ed2c5236e6cbf260",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "ba21d2b087b5f9e0",
-			"fromNode": "2f3963595e1c39e8",
-			"fromSide": "bottom",
-			"toNode": "d7e77c6ff11ce65e",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "1eae6653e5b285be",
-			"fromNode": "2f3963595e1c39e8",
-			"fromSide": "bottom",
-			"toNode": "8e8abac4612cd600",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "714b40600d0bcf40",
-			"fromNode": "2f3963595e1c39e8",
-			"fromSide": "bottom",
-			"toNode": "5dd27f32efde62d8",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "794498840bf9c3f0",
-			"fromNode": "2f3963595e1c39e8",
-			"fromSide": "bottom",
-			"toNode": "599e1cc61b01018c",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "3e1133cfdf24b27a",
-			"fromNode": "2f3963595e1c39e8",
-			"fromSide": "bottom",
-			"toNode": "ea43debda51867b2",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "3db93d94cc48b508",
-			"fromNode": "2f3963595e1c39e8",
-			"fromSide": "bottom",
-			"toNode": "b34f742cdf44f958",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "66dabce43cd7d190",
-			"fromNode": "2f3963595e1c39e8",
-			"fromSide": "bottom",
-			"toNode": "d4ffb12d21a539c4",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "8ed8929e3b9fb90c",
-			"fromNode": "2945e788132b1dc0",
-			"fromSide": "bottom",
-			"toNode": "d7e77c6ff11ce65e",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "996439852d5c808a",
-			"fromNode": "2945e788132b1dc0",
-			"fromSide": "bottom",
-			"toNode": "8e8abac4612cd600",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "2c5efca2092ce888",
-			"fromNode": "2945e788132b1dc0",
-			"fromSide": "bottom",
-			"toNode": "5dd27f32efde62d8",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "a12256be6c611b00",
-			"fromNode": "2945e788132b1dc0",
-			"fromSide": "bottom",
-			"toNode": "b34f742cdf44f958",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "7b80509a3912c3d4",
-			"fromNode": "2945e788132b1dc0",
-			"fromSide": "bottom",
-			"toNode": "d4ffb12d21a539c4",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "3ad07360502372c0",
-			"fromNode": "3aa75fe6e8b0cc2c",
-			"fromSide": "bottom",
-			"toNode": "d7e77c6ff11ce65e",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "973d872375d91c06",
-			"fromNode": "3aa75fe6e8b0cc2c",
-			"fromSide": "bottom",
-			"toNode": "8e8abac4612cd600",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "c36d4d502a655f40",
-			"fromNode": "3aa75fe6e8b0cc2c",
-			"fromSide": "bottom",
-			"toNode": "5dd27f32efde62d8",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "8000b4d4720cbd00",
-			"fromNode": "3aa75fe6e8b0cc2c",
-			"fromSide": "bottom",
-			"toNode": "599e1cc61b01018c",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "aa1f2dc401d500b8",
-			"fromNode": "3aa75fe6e8b0cc2c",
-			"fromSide": "bottom",
-			"toNode": "b34f742cdf44f958",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "8a936634429fed60",
-			"fromNode": "3aa75fe6e8b0cc2c",
-			"fromSide": "bottom",
-			"toNode": "d4ffb12d21a539c4",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "61e1e1352ea0041a",
-			"fromNode": "521125d77c368264",
-			"fromSide": "bottom",
-			"toNode": "2945e788132b1dc0",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "935ae0905c2a32e0",
-			"fromNode": "8d78c64c4fa3a380",
-			"fromSide": "bottom",
-			"toNode": "2945e788132b1dc0",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "8ac769c45a315648",
-			"fromNode": "0471f7bd8b75dd28",
-			"fromSide": "bottom",
-			"toNode": "2945e788132b1dc0",
 			"toSide": "top",
 			"toEnd": "arrow"
 		},
@@ -564,29 +252,24 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementBehavior",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-AttackSequence",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PhaseDef",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementDef",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementDef-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SequenceStepDef",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiShot",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-BaseAdjacencyRule-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-OverlayAdjacencyRule-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-DecorGroundRule",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-DecorGroundRule-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-3",
-				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-make_phase",
-				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-make_sequence",
-				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seq_single",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-StunBehavior",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-make_phase",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementBehavior",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-WanderParams",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-make_sequence",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-seq_single",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-RingParams",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-FleeParams",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-VolleyParams",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ShotgunParams",
@@ -594,6 +277,8 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ChaseParams",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ExplosionParams",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/mod_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/defs_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-2",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-texture",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-TextureEntry",
@@ -602,10 +287,6 @@
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-LayeringRule",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-LayeringRule-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-6",
-				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seq_repeat",
-				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-multi_shot",
-				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seq_multi",
-				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed_test_boss_p3_clone",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-5",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-4",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed_region_def",
@@ -614,12 +295,6 @@
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-RegionWeight",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-WorldDef",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-BiomeWeight",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MultiStepDef-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-RepeatStepDef",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-RepeatStepDef-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-TextureEntry-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-WorldDef-_colon_-write"
 			]

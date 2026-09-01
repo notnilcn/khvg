@@ -1,0 +1,83 @@
+{
+	"nodes": [
+		{
+			"id": "7db359d9ad13f67c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/ServerConstants_codefile/AbilityPositionMultipliers_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f6704581a8272958",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/ServerConstants_codefile/ChargeMinRangeFraction_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2b49f10a167d5cb0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/ServerConstants_codefile/ChargeRangeMultiplier_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9ece6b46bc0a9a58",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/ServerConstants_codefile/ChargeSelfSlowFactor_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "812d54521b548294",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/ServerConstants_codefile/MaxAbilityTargetRange_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e1ad6cd9791f4730",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/ServerConstants_codefile/MaxChargeSeconds_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "84e2a5b7dda5145e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/ServerConstants_codefile/ServerConstants (class)_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
+	}
+}

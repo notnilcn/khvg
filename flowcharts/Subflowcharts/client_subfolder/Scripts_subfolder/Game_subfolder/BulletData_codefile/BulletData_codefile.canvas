@@ -11,11 +11,31 @@
 			"height": 400
 		},
 		{
+			"id": "dba4a98d08f02348",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletData_codefile/Damage_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d453b807237eed4a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletData_codefile/EnemyId_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "916c83ebe341d61c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/BulletData_codefile/SourceStep_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400

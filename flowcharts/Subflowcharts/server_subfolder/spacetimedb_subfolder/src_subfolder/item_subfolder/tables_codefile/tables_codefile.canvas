@@ -31,11 +31,41 @@
 			"height": 400
 		},
 		{
+			"id": "6d0bf4cfcbcbe87c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/BashParams_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "da3254a54f69eaa8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/CircleParams_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "db92bc1e1a1b5464",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConeParams_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "0354bcd2ab35d814",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableBehavior_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableBuffEffect_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +85,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableEffect_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "910c8673e99b752a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/CurseParams_symbol.canvas",
+			"color": "5",
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/Enchantment_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/EnchantmentBehavior_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/EquipSlot_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/Item_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +145,77 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ItemBehavior_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0704f8cf9b8cdf44",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/LineParams_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "70945ed60d665330",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/MarkBleedParams_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5a2eee433f7ca896",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/MarkStoreParams_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "73a3eee72ee579dc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/RectParams_symbol.canvas",
+			"color": "5",
+			"x": 8280,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8f2f354fc1922804",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ReduceParams_symbol.canvas",
+			"color": "5",
+			"x": 8740,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "126d2bec3cc69460",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/RegenParams_symbol.canvas",
+			"color": "5",
+			"x": 9200,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0ff1c544e56d0610",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ScalingStat_symbol.canvas",
+			"color": "5",
+			"x": 9660,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +225,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/SlashParams_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 10120,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3a24b8f385e350c6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/SpellParams_symbol.canvas",
+			"color": "5",
+			"x": 10580,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fceb953cfe4f4640",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/SpellShape_symbol.canvas",
+			"color": "5",
+			"x": 11040,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +255,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatKind_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 11500,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +265,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatMode_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 11960,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +275,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatModifier_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 12420,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +285,37 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatRequirements_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 12880,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "11a96944d8b47a80",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StoreIncomingParams_symbol.canvas",
+			"color": "5",
+			"x": 13340,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0ff735ea810525d0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/TeleportParams_symbol.canvas",
+			"color": "5",
+			"x": 13800,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9d7a75cdfda2e17c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/WallParams_symbol.canvas",
+			"color": "5",
+			"x": 14260,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +325,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/WeaponBehavior_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 14720,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +335,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/WeaponPattern_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 15180,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "84feea6bbf6a6af8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ZoneParams_symbol.canvas",
+			"color": "5",
+			"x": 15640,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -186,7 +356,21 @@
 		"frontmatter": {
 			"tags": [
 				"includeInAggregateFlowchart",
-				"codefile"
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-EnemyStatusKind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-PurgeKind",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-WagerKind",
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-AbilityVisualKind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ReleaseKind",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ZoneKind"
 			]
 		}
 	}

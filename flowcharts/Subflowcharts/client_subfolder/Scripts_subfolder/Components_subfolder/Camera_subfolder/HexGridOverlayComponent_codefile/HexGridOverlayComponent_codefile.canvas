@@ -191,31 +191,11 @@
 			"height": 400
 		},
 		{
-			"id": "e5b0d82185345958",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HexSpiralIndex_symbol.canvas",
-			"color": "5",
-			"x": 8740,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "2bbd0305dd5e43b8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HexToWorld_symbol.canvas",
-			"color": "5",
-			"x": 9200,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "071c60f5b2d704a4",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HudBlack_symbol.canvas",
 			"color": "5",
-			"x": 9660,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -225,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HudFontSize_symbol.canvas",
 			"color": "5",
-			"x": 10120,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -235,7 +215,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/HudWhite_symbol.canvas",
 			"color": "5",
-			"x": 10580,
+			"x": 9660,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -245,7 +225,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/LabelColor_symbol.canvas",
 			"color": "5",
-			"x": 11040,
+			"x": 10120,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -255,7 +235,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/LineColor_symbol.canvas",
 			"color": "5",
-			"x": 11500,
+			"x": 10580,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -265,7 +245,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/LineWidth_symbol.canvas",
 			"color": "5",
-			"x": 11960,
+			"x": 11040,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -275,7 +255,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/OnMapConfigRow_symbol.canvas",
 			"color": "5",
-			"x": 12420,
+			"x": 11500,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -285,7 +265,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
-			"x": 12880,
+			"x": 11960,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -295,7 +275,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/OutOfBoundsColor_symbol.canvas",
 			"color": "5",
-			"x": 13340,
+			"x": 12420,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -305,7 +285,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/SeamLineColor_symbol.canvas",
 			"color": "5",
-			"x": 13800,
+			"x": 12880,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -315,37 +295,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/SeamLineWidth_symbol.canvas",
 			"color": "5",
-			"x": 14260,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "6d5d894efe089b58",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/Sqrt3_symbol.canvas",
-			"color": "5",
-			"x": 14720,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "2a57e35562224bf0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/ToLowerRes_symbol.canvas",
-			"color": "5",
-			"x": 15180,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "f8082eab99508000",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlayComponent_codefile/WorldToHex_symbol.canvas",
-			"color": "5",
-			"x": 15640,
+			"x": 13340,
 			"y": 0,
 			"width": 400,
 			"height": 400

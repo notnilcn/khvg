@@ -30,9 +30,14 @@ public partial class LocalPlayerProfileComponent : Component
     {
         var profile = (PlayerProfile)profileBinder.LastRow!;
         ProfileName = profile.ProfileName;
-        var resPath = GameManager.GetResPath(profile.TextureId);
-        if (resPath != null)
-            sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
+        // 3D mode renders no 2D sprite (the Sprite node is hidden by LocalPlayer) — skip the load.
+        if (!GameVisuals.Is3D)
+        {
+            var resPath = GameManager.GetResPath2D(profile.TextureId);
+            if (resPath != null)
+                sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
+        }
+        (Entity as LocalPlayer)?.SetModel3DTexture(profile.TextureId);
         (Entity as LocalPlayer)?.RaiseAimSettingsChanged();
     }
 

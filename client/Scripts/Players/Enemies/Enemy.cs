@@ -1,13 +1,9 @@
 #nullable enable
 using Godot;
-using SpacetimeDB.Types;
 using System.Linq;
 
 public partial class Enemy : CharacterBody2D, IEntity
 {
-    /// 3D model mirrored into the World3DComponent viewport (same pattern as LocalPlayer's KnightScene).
-    [Export] public PackedScene? SkeletonScene { get; set; }
-
     public ulong EnemyId { get; set; }
     public byte Phase { get; private set; }
     public bool IsElite { get; private set; }
@@ -29,9 +25,9 @@ public partial class Enemy : CharacterBody2D, IEntity
     private uint maxHp;
 
     private CharacterModel3D? _model3D;
+    private World3DComponent? world3D;
 
     private TableBinderComponent nearbyEnemiesBinder = null!;
-    private TableBinderComponent bulletPatternEventBinder = null!;
 
     public override void _Ready()
     {
@@ -39,11 +35,8 @@ public partial class Enemy : CharacterBody2D, IEntity
         interpolation = GetComponent<InterpolationComponent>();
 
         nearbyEnemiesBinder = GetNode<TableBinderComponent>("NearbyEnemiesBinder");
-        bulletPatternEventBinder = GetNode<TableBinderComponent>("BulletPatternEventBinder");
 
-        var world3D = this.GetAncestor<GameManager>()?.GetComponent<World3DComponent>();
-        if (SkeletonScene != null && world3D != null)
-            _model3D = new CharacterModel3D(SkeletonScene, GlobalPosition, world3D);
+        world3D = this.GetAncestor<GameManager>()?.GetComponent<World3DComponent>();
     }
 
     public override void _Process(double delta)
@@ -70,11 +63,24 @@ public partial class Enemy : CharacterBody2D, IEntity
         Stagger = row.Stagger;
         sprite = GetNodeOrNull<AnimatedSprite2D>("AnimatedSprite2D");
         var template = GameManager.Conn?.Db.EnemyTemplates.Iter().FirstOrDefault(t => t.TemplateId == row.TemplateId);
-        if (template != null && sprite != null)
+        // 3D mode renders only the catalog-driven model below — skip the 2D sprite entirely.
+        if (GameVisuals.Is3D)
         {
-            var resPath = GameManager.GetResPath(template.TextureId);
+            if (sprite != null) sprite.Visible = false;
+        }
+        else if (template != null && sprite != null)
+        {
+            var resPath = GameManager.GetResPath2D(template.TextureId);
             if (resPath != null)
                 sprite.SpriteFrames = GD.Load<SpriteFrames>(resPath);
+        }
+        // 3D model from the template texture's catalog res_path3d (loaded here, not
+        // scene-declared, so 2D mode never loads the FBX). No World3DComponent in 2D mode.
+        if (template != null && world3D != null)
+        {
+            var resPath3D = GameManager.GetResPath3D(template.TextureId);
+            if (resPath3D != null)
+                _model3D = new CharacterModel3D(GD.Load<PackedScene>(resPath3D), GlobalPosition, world3D);
         }
         // The server defines the component values: max_hp from the template, hp from the live row.
         maxHp = template?.MaxHp ?? row.Hp;
@@ -89,15 +95,5 @@ public partial class Enemy : CharacterBody2D, IEntity
         HealthComponent?.SetFromServer(enemy.Hp, maxHp);
         Phase = enemy.Phase;
         Stagger = enemy.Stagger;
-    }
-
-    // The BulletPatternEvent binder MUST keep ReplayExistingRows = false: there is no
-    // last-seen-id tracking, so replaying would re-spawn every bullet pattern in the
-    // table's history each time the scene is entered.
-    private void OnBulletPatternRowInserted()
-    {
-        var bulletPattern = (BulletPatternEvent)bulletPatternEventBinder.LastRow!;
-        if (bulletPattern.EnemyId != EnemyId) return;
-        BulletManager.Instance.SpawnEnemyBullet(bulletPattern);
     }
 }

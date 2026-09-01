@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4d031f3c753222f0",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#NO_HIT_WITNESS_THRESHOLD",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -95,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/nearby_indices_from_chunk_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 4830,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -105,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/nearby_indices_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 4830,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -125,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/nearby_remote_player_rotations_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/nearby_remote_players_profiles_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -171,6 +171,14 @@
 		{
 			"id": "ecd0a2a0d40aca40",
 			"fromNode": "7e34dd0088c8f600",
+			"fromSide": "bottom",
+			"toNode": "580262ff42973816",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "dcb35ed826d24f40",
+			"fromNode": "3280b01cc089b5b0",
 			"fromSide": "bottom",
 			"toNode": "580262ff42973816",
 			"toSide": "top",

@@ -181,11 +181,21 @@
 			"height": 400
 		},
 		{
+			"id": "6034e4fe4dfacc20",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/StunBehavior_symbol.canvas",
+			"color": "5",
+			"x": 8280,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "b26a09f75dce7b96",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/VolleyParams_symbol.canvas",
 			"color": "5",
-			"x": 8280,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -195,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/WanderParams_symbol.canvas",
 			"color": "5",
-			"x": 8740,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400

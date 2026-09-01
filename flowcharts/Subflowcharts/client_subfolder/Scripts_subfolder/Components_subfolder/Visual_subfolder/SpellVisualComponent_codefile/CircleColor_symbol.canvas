@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a1127ca373e31248",
+			"type": "file",
+			"file": "client/Scripts/Components/Visual/SpellVisualComponent.cs",
+			"subpath": "#CircleColor",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

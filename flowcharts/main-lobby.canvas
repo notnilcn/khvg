@@ -25,8 +25,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
 			"color": "5",
-			"x": 120,
+			"x": 580,
 			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "048460f3ecc5ac34",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -35,8 +45,28 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui_codefile.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "194079a7791dc546",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
+			"color": "5",
+			"x": 120,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4414d6e4f159cb40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
+			"color": "5",
+			"x": 120,
+			"y": 1500,
 			"width": 400,
 			"height": 400
 		},
@@ -45,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 120,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -57,6 +87,15 @@
 			"fromNode": "7a615a526756e130",
 			"fromSide": "bottom",
 			"toNode": "30e96d437fcb3e10",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "1bbbd4601e08d740",
+			"fromNode": "7a615a526756e130",
+			"fromSide": "bottom",
+			"toNode": "194079a7791dc546",
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "script"
@@ -78,6 +117,23 @@
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "rpc"
+		},
+		{
+			"id": "efc2f30642c9adb4",
+			"fromNode": "194079a7791dc546",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "75e573610247e2aa",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
 		}
 	]
 }

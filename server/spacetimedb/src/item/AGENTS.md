@@ -39,9 +39,8 @@ ground-zone effect — `CastZone(ZoneParams)` — and the P4 movement effects �
    charge-capable (hold-to-charge), decide that in `ability_is_charge_capable` — the
    client mirrors it (`LocalPlayerInventoryComponent.IsChargeCapable`).
 3. `enemy/instance_tables.rs` — new `BulletControlKind` variant if bullet-control. Prefer
-   encoding geometry into the existing event fields (DeleteRect/SplitRect use x/y = origin,
-   target_x/y = far end, radius = width; Attract's `duration` is the black-hole linger
-   time, 0 = one-shot) over new columns; document the encoding in the table's doc comment.
+   encoding geometry into the existing event fields (encodings listed in `enemy/AGENTS.md`)
+   over new columns; document the encoding in the table's doc comment.
 4. Client mirror (not this directory): query/visual in
    `Components/Bullets/BulletControllerComponent.cs`, echo arm in its binder handler,
    optimistic arm in `LocalPlayerInventoryComponent.TryActivateAbility`, display line in
@@ -61,9 +60,12 @@ The full contributor-facing tutorial is
   items span `slot_cost` contiguous cells; the head holds the item, followers get
   `occupied_by`. Backpack stores ability items loose in one cell.
 - **`ABILITY_POSITION_MULTIPLIERS` is mirrored client-side**
-  (`LocalPlayerInventoryComponent.AbilityPositionMultipliers`) — change both together.
+  (`client/Scripts/World/ServerConstants.cs` — the single home for all client mirrors of
+  `main/global.rs` constants, each naming its server counterpart) — change both together.
 - **Items are not consumed** — runtime state (cooldown/charges) lives on the
-  `PlayerInventorySlot` row, never the `Item` row. The catalog is shared/static.
+  `PlayerInventorySlot` row, never the `Item` row. The catalog is shared/static. The
+  state travels with the item: `drop_item` stamps it onto the `LootDrop` row and
+  `pickup_drop` restores it (the picker-upper inherits any residual cooldown).
 - **Content = seeds.** Every publish wipes the DB; anything not seeded does not exist.
   `Item::seed`/`Enchantment::seed` upsert by primary key, so reseeding is idempotent.
 - Pre-equip for testing via `place_span` in `player/methods.rs::try_scaffold_profile`

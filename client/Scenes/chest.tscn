@@ -3,7 +3,6 @@
 [ext_resource type="Script" path="res://Scripts/Items/Chest.cs" id="1_chest"]
 [ext_resource type="Script" path="res://Scripts/Components/Interaction/InteractComponent.cs" id="2_interact"]
 [ext_resource type="Script" path="res://sstdbsdk/TableBinderComponent.cs" id="3_binder"]
-[ext_resource type="AtlasTexture" uid="uid://caofp58qlbtgg" path="res://Textures/Items/Artifacts/Chest.tres" id="4_texture"]
 [ext_resource type="PackedScene" path="res://Scenes/UI/chest_slot.tscn" id="5_slot"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_interact"]
@@ -14,7 +13,6 @@ script = ExtResource("1_chest")
 ChestSlotScene = ExtResource("5_slot")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("4_texture")
 
 [node name="InteractComponent" type="Area2D" parent="."]
 script = ExtResource("2_interact")

@@ -69,8 +69,11 @@ func _ready() -> void:
 	# Register a custom logger to capture all print/error output.
 	OS.add_logger(_McpLogger.new(self))
 	# Boot beacon — tells the editor we're ready to receive calls.
+	# Carries [pid, cmdline_args] so the editor can tell multiple game
+	# instances apart (Debug → Run Multiple Instances) and label each
+	# debugger session with the launch args (e.g. per-instance --p1/--p2).
 	if EngineDebugger.is_active():
-		EngineDebugger.send_message("ogm:hello", [])
+		EngineDebugger.send_message("ogm:hello", [OS.get_process_id(), OS.get_cmdline_args()])
 	# Standalone mode: if OGM_GAME_PORT env is set, start a WebSocket server
 	# so the MCP server can call us directly (no editor debugger needed).
 	var game_port_str := OS.get_environment("OGM_GAME_PORT")

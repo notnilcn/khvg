@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c88d1c3356b670ec",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs",
+			"subpath": "#MarkCastPending",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

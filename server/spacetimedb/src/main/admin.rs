@@ -1,6 +1,6 @@
 use spacetimedb::{ReducerContext, Identity, Table, ScheduleAt, TimeDuration};
 use std::time::Duration;
-use crate::world::hex::{chunk_center_hex, hex_area, hex_shift, hex_to_world, inv_hexmod, spiral_chunk_index, world_to_chunk};
+use crate::world::hex::{chunk_center_hex, hex_area, hex_to_world, inv_hexmod, spiral_chunk_index, world_to_chunk};
 use crate::world::wrap::wrap_world_pos;
 use crate::world::terrain::{internal_generate_world_manual, internal_generate_world_proc};
 use crate::world::tables::{building_tile, map_config, texture_entry, BuildingTile, MapConfig, TextureEntry};
@@ -110,6 +110,9 @@ pub fn despawn_enemy(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> 
     let enemy = ctx.db.enemy().enemy_id().find(&enemy_id)
         .ok_or_else(|| format!("Enemy {} not found.", enemy_id))?;
     despawn_enemy_archetype(ctx, &enemy);
+    // Same kill consult as despawn_all_enemies / the combat path: purge statuses
+    // referencing the dead enemy and its own debuff rows.
+    crate::status::methods::on_enemy_killed(ctx, enemy.enemy_id);
     Ok(())
 }
 
@@ -204,17 +207,16 @@ pub fn internal_add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_co
     if !(chunk_rows % chunk_cols == 0) { return Err("chunk_cols must cleanly divide into chunk_rows.".to_string()); }
     if hex_outer_radius <= 0.0 { return Err("hex_outer_radius must be positive.".to_string()); }
     let area = hex_area(chunk_hex_radius);
-    let shift = hex_shift(chunk_hex_radius);
     for cr in 0..chunk_rows {
         for cq in 0..chunk_cols {
             let cidx = spiral_chunk_index(cq, cr);
             let (cx, cz) = chunk_center_hex(cq, cr, chunk_hex_radius);
             for m in 0..area {
-                let (rx, rz) = inv_hexmod(m, chunk_hex_radius, shift);
+                let (rx, rz) = inv_hexmod(m, chunk_hex_radius);
                 ctx.db.building_tile().insert(BuildingTile {
                     tile_id: 0, hex_q: cx + rx, hex_r: cz + rz,
                     chunk_q: cq, chunk_r: cr, local_index: m, chunk_index: cidx,
-                    building_type: String::new(), owner_id: None,
+                    building_type: String::new(), owner_id: None, elevation: 0,
                 });
             }
         }

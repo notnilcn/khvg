@@ -27,7 +27,34 @@ public partial class GameManager : Node2D, IEntity
 	public IComponent? GetComponent(Type type) => componentRegistry.Get(type);
 	public T? GetComponent<T>() where T : IComponent => componentRegistry.Get(typeof(T)) is T match ? match : default;
 
-	public override void _Ready() => instance = this;
+	public override void _Ready()
+	{
+		instance = this;
+
+		// Explicit visual loading: each mode loads only its own assets.
+		// 3D picked on the main menu → instantiate world_3d.tscn into the 3D layer's
+		// SubViewport and suppress the whole 2D world: the 2D bullets are hidden (their
+		// simulation stays alive — hit reporting and the EnemyBullets3D mirror read it),
+		// and TerrainComponent/entity sprites gate themselves on GameVisuals.Is3D so no
+		// res_path2d world asset is ever loaded.
+		// 2D picked → the whole 3D CanvasLayer goes away, so the SubViewport never renders,
+		// no 3D asset loads, and GetComponent<World3DComponent>() returns null everywhere
+		// (the existing null guards then skip all 3D model creation).
+		var layer3D = GetNodeOrNull<CanvasLayer>("3D");
+		if (layer3D != null)
+		{
+			if (GameVisuals.Is3D)
+			{
+				var world3DScene = GD.Load<PackedScene>("res://Scenes/world_3d.tscn");
+				layer3D.GetNode<SubViewport>("SubViewportContainer/SubViewport").AddChild(world3DScene.Instantiate());
+				GetNode<Node2D>("BulletManager").Visible = false;
+			}
+			else
+			{
+				layer3D.QueueFree();
+			}
+		}
+	}
 
 	public override void _ExitTree()
 	{
@@ -41,17 +68,19 @@ public partial class GameManager : Node2D, IEntity
 
 	public static DbConnection? Conn => DatabaseConnector.Instance?.Conn;
 	public static string Username => DatabaseConnector.Instance?.Username ?? "";
-	public static Vector2 LapQ => Get<TableSubscriber>()?.LapQ ?? Vector2.Zero;
-	public static Vector2 LapR => Get<TableSubscriber>()?.LapR ?? Vector2.Zero;
+	public static Vector2 LapQ => TableSubscriber.LapQ;
+	public static Vector2 LapR => TableSubscriber.LapR;
 	public static int EnemyCount => Get<EntitySpawnerComponent>()?.EnemyCount ?? 0;
 
 	public static bool IsLocal(Identity id) => DatabaseConnector.Instance?.IsLocal(id) ?? false;
 	public static Enemy? GetEnemy(ulong enemyId) => Get<EntitySpawnerComponent>()?.GetEnemy(enemyId);
-	public static string? GetResPath(string textureId) => Get<CatalogComponent>()?.GetResPath(textureId);
+	public static string? GetResPath2D(string textureId) => Get<CatalogComponent>()?.GetResPath2D(textureId);
+	public static string? GetResPath3D(string textureId) => Get<CatalogComponent>()?.GetResPath3D(textureId);
 	public static Item? GetItem(string itemId) => Get<CatalogComponent>()?.GetItem(itemId);
 	public static Enchantment? GetEnchantment(string enchantmentId) => Get<CatalogComponent>()?.GetEnchantment(enchantmentId);
 	public static IEnumerable<Enchantment> GetEnchantments() => Get<CatalogComponent>()?.GetEnchantments() ?? Enumerable.Empty<Enchantment>();
 	public static SpellVisualComponent? SpellVisuals => Get<SpellVisualComponent>();
+	public static ElevationMapComponent? ElevationMap => Get<ElevationMapComponent>();
 
 	/// Forwarded from the CatalogComponent; subscribe/unsubscribe are no-ops once Main is gone.
 	public static event Action? EnchantmentsChanged
@@ -60,11 +89,12 @@ public partial class GameManager : Node2D, IEntity
 		remove { if (Get<CatalogComponent>() is { } catalog) catalog.EnchantmentsChanged -= value; }
 	}
 
-	public override void _Input(InputEvent @event)
+	public static long CatalogVersion => Get<CatalogComponent>()?.CatalogVersion ?? 0;
+
+	/// Forwarded from the CatalogComponent; subscribe/unsubscribe are no-ops once Main is gone.
+	public static event Action? CatalogChanged
 	{
-		if (Input.IsActionJustPressed("toggle_3d"))
-		{
-			GetNode<CanvasLayer>("3D").Visible = !GetNode<CanvasLayer>("3D").Visible;
-		}
+		add { if (Get<CatalogComponent>() is { } catalog) catalog.CatalogChanged += value; }
+		remove { if (Get<CatalogComponent>() is { } catalog) catalog.CatalogChanged -= value; }
 	}
 }

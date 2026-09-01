@@ -26,10 +26,20 @@ public partial class Drop : Node2D, IEntity
 
     public override void _Ready()
     {
-        var item = GameManager.GetItem(ItemId);
-        var resPath = item != null ? GameManager.GetResPath(item.TextureId) : null;
-        if (resPath != null)
-            GetNode<Sprite2D>("Sprite2D").Texture = GD.Load<Texture2D>(resPath);
+        // 3D mode renders no 2D drop sprite (no 3D drop model exists yet — the drop is
+        // invisible but PickupComponent still works).
+        var sprite = GetNode<Sprite2D>("Sprite2D");
+        if (GameVisuals.Is3D)
+        {
+            sprite.Visible = false;
+        }
+        else
+        {
+            var item = GameManager.GetItem(ItemId);
+            var resPath = item != null ? GameManager.GetResPath2D(item.TextureId) : null;
+            if (resPath != null)
+                sprite.Texture = GD.Load<Texture2D>(resPath);
+        }
         GetComponent<PickupComponent>()?.SetFromServer(DropId, DroppedBy);
     }
 }

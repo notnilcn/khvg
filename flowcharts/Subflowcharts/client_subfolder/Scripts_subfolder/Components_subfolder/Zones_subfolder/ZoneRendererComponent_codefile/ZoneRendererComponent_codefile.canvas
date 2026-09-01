@@ -1,0 +1,93 @@
+{
+	"nodes": [
+		{
+			"id": "3420a9df3d181aca",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a482dfab3bbee7a0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/MakeCirclePolygon_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "15e52f2ecb6e6a60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/OnZoneRow_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "060e1cf5944e0c22",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/OnZoneRowDeleted_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fd034bcd1395ad56",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/zoneBinder_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bd0d0de2ebcd757c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/ZoneColor_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "feb83e88471e3560",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/ZoneRendererComponent (class)_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2dec5ff8d9ba33b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/zones_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
+	}
+}

@@ -6,7 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 /// <summary>
-/// The item-details sidebar in inventory_panel.tscn: shows the hovered slot's item
+/// The item-details sidebar in the inventory UI declared inline in local_player.tscn:
+/// shows the hovered slot's item
 /// name/icon/description plus full composition — base stat modifiers, stat requirements
 /// (red when unmet), behavior summary (weapon items show their toggle-pattern list with
 /// the active one marked; abilities show effect/cooldown/charges), innate enchantments
@@ -92,7 +93,7 @@ public partial class ItemSidebar : Control
         EmptyLabel.Visible = false;
         ItemNameLabel.Text = item.DisplayName;
         DescriptionLabel.Text = item.Description;
-        var resPath = GameManager.GetResPath(item.TextureId);
+        var resPath = GameManager.GetResPath2D(item.TextureId);
         ItemIcon.Texture = resPath != null ? GD.Load<Texture2D>(resPath) : null;
         ItemNameLabel.Visible = true;
         ItemIcon.Visible = true;
@@ -211,7 +212,7 @@ public partial class ItemSidebar : Control
         var row = EnchantmentRowScene.Instantiate<HBoxContainer>();
 
         var icon = row.GetNode<TextureRect>("Icon");
-        var resPath = GameManager.GetResPath(enchantment.TextureId);
+        var resPath = GameManager.GetResPath2D(enchantment.TextureId);
         if (resPath != null)
             icon.Texture = GD.Load<Texture2D>(resPath);
         else
@@ -249,8 +250,8 @@ public partial class ItemSidebar : Control
         return row;
     }
 
-    // Sizes are in the 1200x720 design space of inventory_panel.tscn; the project's
-    // canvas_items stretch mode scales them with the window.
+    // Sizes are in the 1200x720 design space of the inventory UI in local_player.tscn;
+    // the project's canvas_items stretch mode scales them with the window.
     private static Label MakeLabel(string text, int fontSize = 13)
     {
         var label = new Label

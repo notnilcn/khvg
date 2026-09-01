@@ -47,6 +47,10 @@ public partial class TableBinderComponent : Component
     /// time the scene is entered.
     [Export] public bool ReplayExistingRows { get; set; }
 
+    /// Logs bind/first-insert diagnostics to the console. Off by default; enable on one
+    /// binder when debugging why a table isn't delivering rows.
+    [Export] public bool Verbose { get; set; }
+
     /// The inserted row, or the new row after an update. Cast to the bound table's row type.
     public object? LastRow { get; private set; }
     /// The previous row after an update (update events only).
@@ -84,6 +88,9 @@ public partial class TableBinderComponent : Component
 
     private void OnConnected()
     {
+        // The Connected signal can still fire after this binder was freed (deferred free
+        // vs. FrameTick dispatch order) — binding from a freed node throws inside FrameTick.
+        if (!IsInstanceValid(this)) return;
         var conn = DatabaseConnector.Instance?.Conn;
         if (conn != null)
             Bind(conn);
@@ -112,7 +119,7 @@ public partial class TableBinderComponent : Component
         Hook("OnInsert", nameof(HandleInsert));
         Hook("OnUpdate", nameof(HandleUpdate));
         Hook("OnDelete", nameof(HandleDelete));
-        GD.Print($"[TableBinderComponent] DEBUG bound {TableName} at {GetPath()}, hooked {_bindings.Count} events");
+        if (Verbose) GD.Print($"[TableBinderComponent] bound {TableName} at {GetPath()}, hooked {_bindings.Count} events");
 
         if (ReplayExistingRows && _handle.GetType().GetMethod("Iter")?.Invoke(_handle, null) is IEnumerable rows)
             foreach (var row in rows)
@@ -144,7 +151,7 @@ public partial class TableBinderComponent : Component
     private void HandleInsert<TRow>(EventContext ctx, TRow row)
     {
         LastRow = row;
-        if (!_firstInsertLogged) { _firstInsertLogged = true; GD.Print($"[TableBinderComponent] DEBUG first insert for {TableName}"); }
+        if (Verbose && !_firstInsertLogged) { _firstInsertLogged = true; GD.Print($"[TableBinderComponent] first insert for {TableName}"); }
         EmitSignal(SignalName.RowInserted);
     }
 
@@ -165,6 +172,8 @@ public partial class TableBinderComponent : Component
 
     public override void _ExitTree()
 {
+        if (DatabaseConnector.Instance != null)
+            DatabaseConnector.Instance.Connected -= OnConnected;
         if (_handle != null)
             foreach (var (tableEvent, handler) in _bindings)
                 tableEvent.RemoveEventHandler(_handle, handler);

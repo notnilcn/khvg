@@ -5,8 +5,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/ability_behavior_symbol.canvas",
 			"color": "5",
-			"x": 4380,
+			"x": 8430,
 			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "53f97da35ccd0520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/ability_is_charge_capable_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -15,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/ability_position_multiplier_symbol.canvas",
 			"color": "5",
-			"x": 2070,
+			"x": 1160,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -25,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/apply_consumable_effect_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/buff_to_modifier_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 230,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -45,7 +55,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/check_stat_requirements_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 7390,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "54a5c473b4f84490",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/circle_contains_by_radius_symbol.canvas",
+			"color": "5",
+			"x": 11140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/clear_span_symbol.canvas",
 			"color": "5",
-			"x": 7400,
+			"x": 1840,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -65,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/compute_base_max_hp_symbol.canvas",
 			"color": "5",
-			"x": 680,
+			"x": 3460,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -75,8 +95,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/compute_level_symbol.canvas",
 			"color": "5",
-			"x": 3460,
+			"x": 690,
 			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "61fd387caff861f0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/cone_tests_angle_and_length_symbol.canvas",
+			"color": "5",
+			"x": 10680,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -85,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/consumable_behavior_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 2100,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/EffectiveWeapon_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2560,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/equipped_enchantment_behaviors_symbol.canvas",
 			"color": "5",
-			"x": 4850,
+			"x": 4380,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -115,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/equipped_head_slots_symbol.canvas",
 			"color": "5",
-			"x": 5550,
+			"x": 3470,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -125,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/find_free_span_symbol.canvas",
 			"color": "5",
-			"x": 6930,
+			"x": 7850,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -135,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/find_profile_by_name_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 3020,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,8 +175,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/get_slot_symbol.canvas",
 			"color": "5",
-			"x": 6460,
+			"x": 5300,
 			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fc89b174199c4d88",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/hit_rate_allow_symbol.canvas",
+			"color": "5",
+			"x": 3480,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -155,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/internal_gain_xp_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 1180,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/inventory_slot_symbol.canvas",
 			"color": "5",
-			"x": 6470,
+			"x": 5510,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -175,8 +215,38 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/is_admin_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 4400,
 			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "beed426ce8929a60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/line_tests_along_and_across_symbol.canvas",
+			"color": "5",
+			"x": 9300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "db11be51426e5334",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/nearest_lap_copy_picks_the_shifted_copy_symbol.canvas",
+			"color": "5",
+			"x": 5340,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6c99464e956bd9f4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/nearest_lap_copy_symbol.canvas",
+			"color": "5",
+			"x": 8330,
+			"y": 500,
 			"width": 400,
 			"height": 400
 		},
@@ -185,8 +255,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/place_span_symbol.canvas",
 			"color": "5",
-			"x": 6010,
+			"x": 6690,
 			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fbb8471e54919a20",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/players_near_point_symbol.canvas",
+			"color": "5",
+			"x": 5800,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -195,7 +275,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/recompute_stats_symbol.canvas",
 			"color": "5",
-			"x": 1370,
+			"x": 3010,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -205,7 +285,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/require_in_lobby_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 6260,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -215,7 +295,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/require_in_world_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 6720,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -225,7 +305,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/require_logged_in_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 7180,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -235,7 +315,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/resolve_effective_weapon_symbol.canvas",
 			"color": "5",
-			"x": 6690,
+			"x": 3940,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -245,7 +325,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/slot_allowed_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 8810,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "667ea3a60de0a10c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/spell_shape_contains_symbol.canvas",
+			"color": "5",
+			"x": 10450,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4a6650d3303c08fc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/spell_targets_symbol.canvas",
+			"color": "5",
+			"x": 8840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -255,8 +355,18 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/stat_index_symbol.canvas",
 			"color": "5",
-			"x": 1140,
+			"x": 3000,
 			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d135b5d6dbc73684",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/store_item_in_inventory_symbol.canvas",
+			"color": "5",
+			"x": 7770,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -265,7 +375,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/teardown_profile_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 9760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1fd91d1d092344dc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/teleport_player_symbol.canvas",
+			"color": "5",
+			"x": 10220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -275,7 +395,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/try_scaffold_profile_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 4880,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -285,7 +405,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/update_slot_symbol.canvas",
 			"color": "5",
-			"x": 7400,
+			"x": 4840,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -295,7 +415,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/weapon_toggle_options_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 1640,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -305,7 +425,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/xp_for_level_symbol.canvas",
 			"color": "5",
-			"x": 3460,
+			"x": 690,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -325,6 +445,14 @@
 			"fromNode": "49b1cb769a650acc",
 			"fromSide": "bottom",
 			"toNode": "de1ac2a69f445254",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "7a4e55c1573f8efe",
+			"fromNode": "54a5c473b4f84490",
+			"fromSide": "bottom",
+			"toNode": "667ea3a60de0a10c",
 			"toSide": "top",
 			"toEnd": "arrow"
 		},
@@ -353,6 +481,14 @@
 			"toEnd": "arrow"
 		},
 		{
+			"id": "e5d5cbb0833c5720",
+			"fromNode": "61fd387caff861f0",
+			"fromSide": "bottom",
+			"toNode": "667ea3a60de0a10c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
 			"id": "bd0482160d60b87c",
 			"fromNode": "bd061c95b969a772",
 			"fromSide": "bottom",
@@ -373,6 +509,22 @@
 			"fromNode": "0b96cb8ca02327c8",
 			"fromSide": "bottom",
 			"toNode": "de1ac2a69f445254",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "07ab778d592bc78a",
+			"fromNode": "beed426ce8929a60",
+			"fromSide": "bottom",
+			"toNode": "667ea3a60de0a10c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "2f9fe18b37401352",
+			"fromNode": "db11be51426e5334",
+			"fromSide": "bottom",
+			"toNode": "6c99464e956bd9f4",
 			"toSide": "top",
 			"toEnd": "arrow"
 		},
@@ -441,6 +593,70 @@
 			"toEnd": "arrow"
 		},
 		{
+			"id": "9b9f800d58f61a7a",
+			"fromNode": "4a6650d3303c08fc",
+			"fromSide": "bottom",
+			"toNode": "6c99464e956bd9f4",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "289c8b871fbdbc22",
+			"fromNode": "4a6650d3303c08fc",
+			"fromSide": "bottom",
+			"toNode": "667ea3a60de0a10c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "989858e110be080a",
+			"fromNode": "d135b5d6dbc73684",
+			"fromSide": "bottom",
+			"toNode": "5b60cfb17e6b8d42",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "75a7327893470700",
+			"fromNode": "d135b5d6dbc73684",
+			"fromSide": "bottom",
+			"toNode": "a3453ccf6ee8e60e",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "776095c1f8e7fe86",
+			"fromNode": "d135b5d6dbc73684",
+			"fromSide": "bottom",
+			"toNode": "62d847968c9fdc28",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5473dfb589f0b6ee",
+			"fromNode": "d135b5d6dbc73684",
+			"fromSide": "bottom",
+			"toNode": "bd061c95b969a772",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5f149a21e02e351e",
+			"fromNode": "d135b5d6dbc73684",
+			"fromSide": "bottom",
+			"toNode": "b7c3a486fbc558d8",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a7286f2fb1462c92",
+			"fromNode": "d135b5d6dbc73684",
+			"fromSide": "bottom",
+			"toNode": "5c6a8bb4bc0a6608",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
 			"id": "02d972fa93b45188",
 			"fromNode": "0c083778e8c9b0b0",
 			"fromSide": "bottom",
@@ -487,6 +703,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-AbilityEffect",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-buff_to_modifier",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-recompute_stats",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConsumableBehavior",
@@ -515,10 +732,14 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-spell_shape_contains",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-SpellShape",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-CircleParams",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-get_slot",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-update_slot",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerInventorySlot",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-xp_for_level",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConeParams",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WeaponBehavior",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EnchantmentBehavior",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-SlotRole",
@@ -530,6 +751,9 @@
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerProfile",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerProfile-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerInventorySlot-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerHitRate",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerHitRate-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerHitRate-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-compute_level",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerData",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerStatAllocation",
@@ -539,7 +763,18 @@
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerStatAllocation-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedInPlayer-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedOutPlayer-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-LineParams",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-nearest_lap_copy",
+				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrapped_distance_sq",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile/wrap_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-ability_behavior",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
+				"edge-_colon_-server/spacetimedb/src/world/aoi-_dot_-rs-_hashtag_-chunk_indices_covering",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/aoi_codefile/aoi_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-compute_base_max_hp",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-stat_index",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-ability_position_multiplier",
@@ -551,23 +786,24 @@
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-equipped_enchantment_behaviors",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-equipped_head_slots",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EquipSlot",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerChunk-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-inventory_slot",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-slot_allowed",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-find_free_span",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-place_span",
-				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-check_stat_requirements",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerRotation-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerChunk-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerMovementState-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerDisplacementAllowance-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerChunk",
+				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrap_world_pos",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_chunk",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-spiral_chunk_index",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerMovementState",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-inventory_slot",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerRotation",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerChunk",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerRotation-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerRotation-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerChunk-_colon_-read",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas"
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerRotation-_colon_-read"
 			]
 		}
 	}

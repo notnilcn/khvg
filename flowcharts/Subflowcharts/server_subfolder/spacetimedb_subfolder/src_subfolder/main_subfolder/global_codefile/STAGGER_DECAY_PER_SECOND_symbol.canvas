@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "b3115f6aea51b584",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#STAGGER_DECAY_PER_SECOND",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

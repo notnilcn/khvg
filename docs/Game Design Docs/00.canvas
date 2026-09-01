@@ -12,8 +12,18 @@
 			"label":"Executive Summary"
 		},
 		{"id":"574b8d3f759a631f","type":"file","file":"docs/Game Design Docs/01 Executive Summary.md","subpath":"#High Concept","x":-470,"y":-1590,"width":480,"height":480},
-		{"id":"5782129e4970da70","type":"file","file":"docs/Game Design Docs/01 Executive Summary.md","x":10,"y":-1110,"width":480,"height":480},
 		{"id":"9445422a9f9d0965","type":"file","file":"docs/Game Design Docs/01 Executive Summary.md","subpath":"#Demographic","x":-300,"y":-1270,"width":480,"height":480},
+		{"id":"97f45d25bc9add6d","type":"file","file":"client/Scripts/Components/Combat/FactionComponent.cs","x":-1970,"y":-1620,"width":400,"height":400},
+		{
+			"id":"e47f4cf7e00a486f",
+			"type":"file",
+			"file":"fire-flames-transparent.gif",
+			"styleAttributes":{"border":"invisible"},
+			"x":-3237,
+			"y":-520,
+			"width":274,
+			"height":480
+		},
 		{
 			"id":"2b3dd578615f7f09",
 			"type":"file",
@@ -24,24 +34,28 @@
 			"width":480,
 			"height":480
 		},
-		{
-			"id":"e47f4cf7e00a486f",
-			"type":"file",
-			"file":"fire-flames-transparent.gif",
-			"styleAttributes":{"border":"invisible"},
-			"x":-3450,
-			"y":210,
-			"width":274,
-			"height":480
-		},
-		{"id":"97f45d25bc9add6d","type":"file","file":"client/Scripts/Components/Combat/FactionComponent.cs","x":-1970,"y":-1620,"width":400,"height":400}
+		{"id":"5782129e4970da70","type":"file","file":"docs/Game Design Docs/01 Executive Summary.md","x":1080,"y":220,"width":480,"height":480}
 	],
 	"edges":[
 		{
 			"id":"81dee24461201182",
-			"styleAttributes":{},
+			"styleAttributes":{"edgeWidth":"8","zIndex":"1","bezierCurvature":"2"},
 			"toFloating":false,
+			"fromFloating":false,
 			"fromNode":"2b3dd578615f7f09",
+			"fromSide":"right",
+			"toNode":"04c499dd24c87659",
+			"toSide":"left"
+		},
+		{
+			"id":"60cad09cfdc4fa30",
+			"styleAttributes":{
+				"edgeWidth":"8",
+				"zIndex":null
+			},
+			"toFloating":false,
+			"fromFloating":false,
+			"fromNode":"e47f4cf7e00a486f",
 			"fromSide":"right",
 			"toNode":"04c499dd24c87659",
 			"toSide":"left"

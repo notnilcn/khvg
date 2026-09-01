@@ -56,8 +56,9 @@ public partial class PositionSyncComponent : Component
     public void SetExternalSlow(float? factor) => externalSlow = factor;
 
     /// Public movement-report trigger (P4 grapple tween): sends a report on the next
-    /// physics frame. The tween calls this per frame so remotes track the pull between
-    /// the 1 Hz timed reports.
+    /// physics frame. The tween calls this at its start and end only — mid-tween reports
+    /// would each read as an oversized jump and burn the server's one-shot grapple
+    /// displacement allowance before the landing report.
     public void RequestMovementReport() => reportNextFrame = true;
 
     private TableBinderComponent positionBinder = null!;
@@ -122,35 +123,48 @@ public partial class PositionSyncComponent : Component
             ReportNow(node);
         }
 
+        // While an external mover (the grapple tween) owns the position, speed-control,
+        // movement-edge and timed reports stay silent: mid-tween reports would each read
+        // as an oversized jump and burn the server's one-shot displacement allowance
+        // before the landing report. Explicit RequestMovementReport() calls (tween
+        // start/end) still go through above; rotation reporting below is unaffected.
+        bool externalMovement = (Entity as LocalPlayer)?.ExternalMovementActive == true;
+
         // Speed controls: Ctrl+scroll adjusts the persistent scale. A change (or a
         // self_slow edge) triggers an immediate report so remotes see the new velocity
         // without waiting for the 10Hz tick.
-        if (Input.IsActionJustPressed("increase_move_speed") && speedScale < 1f)
+        if (!externalMovement)
         {
-            speedScale = Mathf.Min(1f, speedScale + SpeedStep);
-            reportNextFrame = true;
-        }
-        if (Input.IsActionJustPressed("decrease_move_speed") && speedScale > MinSpeedScale)
-        {
-            speedScale = Mathf.Max(MinSpeedScale, speedScale - SpeedStep);
-            reportNextFrame = true;
-        }
-        if (Input.IsActionJustPressed("self_slow") || Input.IsActionJustReleased("self_slow"))
-            reportNextFrame = true;
+            if (Input.IsActionJustPressed("increase_move_speed") && speedScale < 1f)
+            {
+                speedScale = Mathf.Min(1f, speedScale + SpeedStep);
+                reportNextFrame = true;
+            }
+            if (Input.IsActionJustPressed("decrease_move_speed") && speedScale > MinSpeedScale)
+            {
+                speedScale = Mathf.Max(MinSpeedScale, speedScale - SpeedStep);
+                reportNextFrame = true;
+            }
+            if (Input.IsActionJustPressed("self_slow") || Input.IsActionJustReleased("self_slow"))
+                reportNextFrame = true;
 
-        // Movement-key edges. In event-driven mode (ReportInterval < 0) these are the
-        // only movement reports — holding a key sends nothing, pressing and releasing
-        // each send exactly one. In timer mode they just make starts/stops/direction
-        // changes immediate instead of waiting for the next tick.
-        if (Input.IsActionJustPressed("Left") || Input.IsActionJustPressed("Right") ||
-            Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down") ||
-            Input.IsActionJustReleased("Left") || Input.IsActionJustReleased("Right") ||
-            Input.IsActionJustReleased("Up") || Input.IsActionJustReleased("Down"))
-            reportNextFrame = true;
+            // Movement-key edges. In event-driven mode (ReportInterval < 0) these are the
+            // only movement reports — holding a key sends nothing, pressing and releasing
+            // each send exactly one. In timer mode they just make starts/stops/direction
+            // changes immediate instead of waiting for the next tick.
+            if (Input.IsActionJustPressed("Left") || Input.IsActionJustPressed("Right") ||
+                Input.IsActionJustPressed("Up") || Input.IsActionJustPressed("Down") ||
+                Input.IsActionJustReleased("Left") || Input.IsActionJustReleased("Right") ||
+                Input.IsActionJustReleased("Up") || Input.IsActionJustReleased("Down"))
+                reportNextFrame = true;
 
-        reportTimer += (float)delta;
-        if (reportTimer >= ReportInterval)
-            ReportNow(node);
+            // Timer mode only: ReportInterval <= 0 selects event-driven mode (key edges +
+            // explicit requests), so the timer must not run — an always-true comparison
+            // against a negative interval would report every frame.
+            reportTimer += (float)delta;
+            if (ReportInterval > 0f && reportTimer >= ReportInterval)
+                ReportNow(node);
+        }
 
         rotationTimer += (float)delta;
         if (rotationTimer >= RotationReportInterval)

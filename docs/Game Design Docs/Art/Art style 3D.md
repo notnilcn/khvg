@@ -8,27 +8,27 @@ Genre is an open world fantasy that is somewhat post apocalyptic. The feel is go
 
 I'm not sure what I want the apocalyptic event to be, but I definitely don't want it to make the world look uniform and barren and boring. I want it to feel lived in. Maybe the apocalyptic event is that the world was merged with another world, or that the world destroyed everything that wasn't magical or wasn't protected by something magical. I'm not sure. There is a lot of freedom in this area.
 #### Low Poly 3D passed through a pixel art shader examples:
-![Making an Animation for my 3D Pixel Art Game](<https://www.youtube.com/watch?v=1FrIBkuq0ZI&t=417s>)
+![[<https://www.youtube.com/watch?v=1FrIBkuq0ZI&t=417s>|Making an Animation for my 3D Pixel Art Game]]
 My game is definitely going to look like the above
 
-![Creating a Scene for my 3D Pixel Art Game](<https://www.youtube.com/watch?v=ERA7-I5nPAU>)
+![[<https://www.youtube.com/watch?v=ERA7-I5nPAU>|Creating a Scene for my 3D Pixel Art Game]]
 My game is definitely going to look like the above
 
-![Giving Personality to Procedural Animations using Math](<https://youtu.be/KPoeNZZ6H4s&t=70>)
+![[<https://youtu.be/KPoeNZZ6H4s&t=70>|Giving Personality to Procedural Animations using Math]]
 My game is definitely going to look like the above
 #### Size and proportions examples
-![bitcraft character editor showcase](<https://youtu.be/qVT8_b1h-kQ>)
+![[<https://youtu.be/qVT8_b1h-kQ>|bitcraft character editor showcase]]
 
 #### Hex grid examples:
-![bitcraft hex grid showcase](<https://youtu.be/A5iX9L48_a8>)
+![[<https://youtu.be/A5iX9L48_a8>|bitcraft hex grid showcase]]
 #### Genre and feel examples:
 ##### Examples that align with what I want
 ###### Titan Souls
 I really like the 3D pixel art bosses.
-![Titan Souls - Vinethesis](<https://www.youtube.com/watch?v=pL7F2T0H3hQ>)
+![[<https://www.youtube.com/watch?v=pL7F2T0H3hQ>|Titan Souls - Vinethesis]]
 My game is definitely going to have a boss like the above
 
-![Titan Souls All Bosses + Secret Final Boss](<https://youtu.be/-9-sp2OAMKY&t=741>)
+![[<https://youtu.be/-9-sp2OAMKY&t=741>|Titan Souls All Bosses + Secret Final Boss]]
 My game is definitely going to have a boss like the above
 
 ###### Hollow Knight
@@ -42,18 +42,18 @@ A human + open world version of hollow knight would be awesome. Translating Holl
 ##### Examples that aren't aligned but can still be used as inspiration
 ###### THERE IS NO LIGHT
 I like the post apocalyptic feel, but it's a little too gory and dark for me. My game isn't going to look like this game but you can use it for inspiration.
-![](<https://youtu.be/tyo-2aIa3NE&t=4846>)
+![[<https://youtu.be/tyo-2aIa3NE&t=4846>]]
 I really like the environment in the timestamp above. My game is going to be open world though.
 
-![](<https://youtu.be/tyo-2aIa3NE&t=4690>)
+![[<https://youtu.be/tyo-2aIa3NE&t=4690>]]
 I like the environment in the timestamp above. My game is going to be open world though.
 
-![](<https://youtu.be/tyo-2aIa3NE&t=7879>)
+![[<https://youtu.be/tyo-2aIa3NE&t=7879>]]
 I really like the environment in the timestamp above. My game isn't going to have small settlements like this though, so there won't be small villages like the on in the timestamp above.
 
 ###### Eldest Souls
 I like the desolate feel, but there's not enough environmental variety for me. You can use this game for inspiration.
-![](<https://youtu.be/bs-Z0U8uOVQ&t=2269>)
+![[<https://youtu.be/bs-Z0U8uOVQ&t=2269>]]
 I like the environment in the timestamp above. The purple vines are kinda nice but I want it to be more colourful. Maybe if there were more glowing plants and shit then it'd be better.
 
 ###### Diablo
@@ -63,19 +63,19 @@ I like the environment in the timestamp above. The purple vines are kinda nice b
 
 
 ###### Hyper Light Drifter
-![](<https://www.youtube.com/watch?v=yMThxt5d130>)
+![[<https://www.youtube.com/watch?v=yMThxt5d130>]]
 
 ###### Unsouled
-![](<https://www.youtube.com/watch?v=Z9qY07i64dU>)
+![[<https://www.youtube.com/watch?v=Z9qY07i64dU>]]
 
 ###### DROVA - Forsaken Kin
-![](<https://www.youtube.com/watch?v=65Bpd8DBwKY>)
+![[<https://www.youtube.com/watch?v=65Bpd8DBwKY>]]
 
 ###### Morbid: The Seven Acolytes
-![](<https://www.youtube.com/watch?v=VDsQvJJp2LE>)
+![[<https://www.youtube.com/watch?v=VDsQvJJp2LE>]]
 
 ###### Hunt The Night
-![](<https://www.youtube.com/watch?v=JKZuK22XRXU>)
+![[<https://www.youtube.com/watch?v=JKZuK22XRXU>]]
 
 # Current state of the game with regards to the art style
 I am currently using free/open assets.

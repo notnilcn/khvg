@@ -1,0 +1,37 @@
+{
+	"nodes": [
+		{
+			"id": "6cc262e4e2e46cd0",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/defs/gorgon_boss.rs",
+			"subpath": "#shotgun_simple_2b",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-none",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/gorgon_boss_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/defs_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-reach",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-Emitter",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/emitters_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-DifficultySteps"
+			]
+		}
+	}
+}

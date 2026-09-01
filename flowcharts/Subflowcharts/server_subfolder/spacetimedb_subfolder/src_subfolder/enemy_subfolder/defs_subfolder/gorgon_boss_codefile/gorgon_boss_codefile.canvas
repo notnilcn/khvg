@@ -1,0 +1,1139 @@
+{
+	"nodes": [
+		{
+			"id": "7316b962f802e358",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/AOTMK_SPEED_SCALE_symbol.canvas",
+			"color": "5",
+			"x": 5230,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f80aaf0f1cbd8c88",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/big_bullets_symbol.canvas",
+			"color": "5",
+			"x": 12420,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ee08893ff3ada054",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/build_symbol.canvas",
+			"color": "5",
+			"x": 6610,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a2a60fa7cfd23ef2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/cool_pattern_symbol.canvas",
+			"color": "5",
+			"x": 11960,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "50183e75a036fc22",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/enemy_gun_test_symbol.canvas",
+			"color": "5",
+			"x": 13340,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "60568dd9ee3c5bce",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/line_multiple_follow_split_symbol.canvas",
+			"color": "5",
+			"x": 12880,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b485db900088bce0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/line_single_follow_faster_symbol.canvas",
+			"color": "5",
+			"x": 11500,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "28e9fb12c373dc60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/line_single_follow_symbol.canvas",
+			"color": "5",
+			"x": 11040,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "be8864f123e55b82",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/none_symbol.canvas",
+			"color": "5",
+			"x": 3910,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3ed06979069bbc4e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/PHASE_REST_symbol.canvas",
+			"color": "5",
+			"x": 5690,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cf53cb08ba25e520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/reach_symbol.canvas",
+			"color": "5",
+			"x": 10120,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "845d79e6f2ea9c18",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/S_symbol.canvas",
+			"color": "5",
+			"x": 6150,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b007da76819ed33c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/seed_symbol.canvas",
+			"color": "5",
+			"x": 6610,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "84f4ea2428783aa0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/shotgun_20deg_78_symbol.canvas",
+			"color": "5",
+			"x": 10580,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c5a841decb27d9a8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/shotgun_20deg_vsmall_symbol.canvas",
+			"color": "5",
+			"x": 10120,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "baff68f685ea9fa4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/shotgun_simple_1_symbol.canvas",
+			"color": "5",
+			"x": 9660,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "355b7cd357645d22",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/shotgun_simple_2_symbol.canvas",
+			"color": "5",
+			"x": 9200,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "78e8259d1effc1b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/shotgun_simple_2b_symbol.canvas",
+			"color": "5",
+			"x": 8740,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f4e8a17858caf5e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/shotgun_simple_3_symbol.canvas",
+			"color": "5",
+			"x": 8280,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4b6bc94233d7c950",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/shotgun_simple_456_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6f92517a5e69c598",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/shotgun_simple_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d567f1775270c46c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/single_follow_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b1ed4b2c6eccf4e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/star_line_1_symbol.canvas",
+			"color": "5",
+			"x": 6440,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3a29ea34b9700548",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/star_line_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bc152de7be1d8856",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/sunburst_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "75b8a3a24b0c8640",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/tentacles_ezpz_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1800fac33990e426",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/tentacles_sway_ccw_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3f7488b88cba63c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/tentacles_sway_cw_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "af1a3bb870a72770",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/tentacles_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ca958d99da4e57e6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/twin_a_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "47b92768db7e08b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/twin_b_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "729f3e83e4005f36",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/twin_c_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9f98f344c1627128",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/whirlpool_reverse_1_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "63201975e1217134",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/whirlpool_reverse_2_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "44ae941cd9746fa0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/whirlpool_reverse_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f4b90ae19c4e5e98",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/whirlpool_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b304460e93f61390",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/gorgon_boss_codefile/wormy_loop_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "80ce254047677080",
+			"fromNode": "f80aaf0f1cbd8c88",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "6506fc6ae4b21698",
+			"fromNode": "f80aaf0f1cbd8c88",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "65d488e9b27c7246",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "75b8a3a24b0c8640",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "e34796f8447a6130",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "355b7cd357645d22",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "ff8f059b1fa9716e",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "78e8259d1effc1b0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "337427f4f5201a08",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "d567f1775270c46c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "856907433149e376",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "f4b90ae19c4e5e98",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "be0df79fcbb3adb2",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "44ae941cd9746fa0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "025ac70865791e10",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "9f98f344c1627128",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "2052dbf885fb2940",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "63201975e1217134",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5e8126c8b20f1ce0",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "f4e8a17858caf5e0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "18a5665502df650a",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "bc152de7be1d8856",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "e936e5b0d237b7c0",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "50183e75a036fc22",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5ffcee0899d72430",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "f80aaf0f1cbd8c88",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "68fdbd446a11c900",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "6f92517a5e69c598",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "342c4db6e1788fc4",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "3a29ea34b9700548",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "c288429a2c84d4e8",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "b1ed4b2c6eccf4e0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "492fa409f7886b82",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "28e9fb12c373dc60",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a26da72c842905a0",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "b304460e93f61390",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "c180105ed2b177ac",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "af1a3bb870a72770",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "30a8d9a254826590",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "a2a60fa7cfd23ef2",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "32bac0685b8037d0",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "ca958d99da4e57e6",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "366221eed7f8cc00",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "47b92768db7e08b0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "8ac0cf39c9b85a7a",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "729f3e83e4005f36",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a59d14cd10a6282e",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "3f7488b88cba63c0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "49d1958771ddaa72",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "1800fac33990e426",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "c9b63ac54dd88e3e",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "b485db900088bce0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "94f38bbb5ad2e82e",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "4b6bc94233d7c950",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5875155e3a571ea0",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "60568dd9ee3c5bce",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "560255ab332965c2",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "84f4ea2428783aa0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "90c443bdd414f476",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "baff68f685ea9fa4",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "4eccc19648e6eedc",
+			"fromNode": "ee08893ff3ada054",
+			"fromSide": "bottom",
+			"toNode": "c5a841decb27d9a8",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "e4cae1c23927a89c",
+			"fromNode": "a2a60fa7cfd23ef2",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5ce841e8158b9e10",
+			"fromNode": "a2a60fa7cfd23ef2",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "e3e4bcd63bc6a758",
+			"fromNode": "50183e75a036fc22",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "ae51a1642051fee8",
+			"fromNode": "60568dd9ee3c5bce",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "693ad5c1c513670e",
+			"fromNode": "b485db900088bce0",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "e2e54d9f98fddbce",
+			"fromNode": "b485db900088bce0",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "4b283a91482df7f2",
+			"fromNode": "28e9fb12c373dc60",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "90a241ef9335950a",
+			"fromNode": "28e9fb12c373dc60",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a313cba8ccc16bf0",
+			"fromNode": "b007da76819ed33c",
+			"fromSide": "bottom",
+			"toNode": "ee08893ff3ada054",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5db9b49f10583e2e",
+			"fromNode": "84f4ea2428783aa0",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "fe90da611fca5796",
+			"fromNode": "84f4ea2428783aa0",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "7fed5406fa6bdb80",
+			"fromNode": "c5a841decb27d9a8",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "81c983dce88244c0",
+			"fromNode": "c5a841decb27d9a8",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "1b99280107fcd0be",
+			"fromNode": "baff68f685ea9fa4",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "301a51dfb3cbba62",
+			"fromNode": "baff68f685ea9fa4",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "6330a5584a536750",
+			"fromNode": "355b7cd357645d22",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d181564213f78efc",
+			"fromNode": "355b7cd357645d22",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "ea86218f8ebc7f42",
+			"fromNode": "78e8259d1effc1b0",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "15e05891f399cece",
+			"fromNode": "78e8259d1effc1b0",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "1ab531083284f540",
+			"fromNode": "f4e8a17858caf5e0",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "0469ee7268c95e08",
+			"fromNode": "f4e8a17858caf5e0",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "bd74bdf327c27f42",
+			"fromNode": "4b6bc94233d7c950",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "96d3c1b537e38d72",
+			"fromNode": "4b6bc94233d7c950",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "28e25f7c29cf0ed0",
+			"fromNode": "6f92517a5e69c598",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "b118d8e6998960e8",
+			"fromNode": "6f92517a5e69c598",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a19463d4178b3a58",
+			"fromNode": "d567f1775270c46c",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "ea475fbee8447310",
+			"fromNode": "d567f1775270c46c",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "0a48b1fa72a278ac",
+			"fromNode": "b1ed4b2c6eccf4e0",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "524f28e04e8ce640",
+			"fromNode": "b1ed4b2c6eccf4e0",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "b6fc1a8e38b57908",
+			"fromNode": "3a29ea34b9700548",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "8d1ee424202b8e38",
+			"fromNode": "3a29ea34b9700548",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "6e359de5db43cfba",
+			"fromNode": "bc152de7be1d8856",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "921ecd33d4dd6a7a",
+			"fromNode": "bc152de7be1d8856",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "88f94e6dc6b9924e",
+			"fromNode": "75b8a3a24b0c8640",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "0b9deb5b33e9c202",
+			"fromNode": "75b8a3a24b0c8640",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d263b3df61f01f8e",
+			"fromNode": "1800fac33990e426",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "bfb38aa1ffd71bfa",
+			"fromNode": "1800fac33990e426",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "7c7316392a62396e",
+			"fromNode": "3f7488b88cba63c0",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "947625d7fec63d5a",
+			"fromNode": "3f7488b88cba63c0",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "f2249f1e4db90cb8",
+			"fromNode": "af1a3bb870a72770",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "f8cfe13443e8d658",
+			"fromNode": "af1a3bb870a72770",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "dd99458c994643d8",
+			"fromNode": "ca958d99da4e57e6",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "93ced47634483b34",
+			"fromNode": "ca958d99da4e57e6",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5e38051e12c28a6c",
+			"fromNode": "47b92768db7e08b0",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "64e34734e55443f8",
+			"fromNode": "47b92768db7e08b0",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "567415712db0816a",
+			"fromNode": "729f3e83e4005f36",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5ff5a24f772be1ca",
+			"fromNode": "729f3e83e4005f36",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "dcce6ac4f15da270",
+			"fromNode": "9f98f344c1627128",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "ab67a16ea56fa078",
+			"fromNode": "9f98f344c1627128",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "416aa95064332fe0",
+			"fromNode": "63201975e1217134",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "9ba82f3a7f300e9c",
+			"fromNode": "63201975e1217134",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "9cce2d3fccd3a66e",
+			"fromNode": "44ae941cd9746fa0",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "affdbf014c57272a",
+			"fromNode": "44ae941cd9746fa0",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "425c3413ad4c48c2",
+			"fromNode": "f4b90ae19c4e5e98",
+			"fromSide": "bottom",
+			"toNode": "be8864f123e55b82",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "1aef2f553ae7f00a",
+			"fromNode": "f4b90ae19c4e5e98",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d68f67de9bee1484",
+			"fromNode": "b304460e93f61390",
+			"fromSide": "bottom",
+			"toNode": "cf53cb08ba25e520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-none",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-reach",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-Emitter",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-DifficultySteps",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/defs_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/emitters_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-tentacles_ezpz",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_simple_2",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_simple_2b",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-single_follow",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-whirlpool",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-whirlpool_reverse",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-whirlpool_reverse_1",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-whirlpool_reverse_2",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_simple_3",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-sunburst",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-enemy_gun_test",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-big_bullets",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_simple",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-star_line",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-star_line_1",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-line_single_follow",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-wormy_loop",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-tentacles",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-cool_pattern",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-twin_a",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-twin_b",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-twin_c",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-tentacles_sway_cw",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-tentacles_sway_ccw",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-line_single_follow_faster",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_simple_456",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-line_multiple_follow_split",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_20deg_78",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_simple_1",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_20deg_vsmall",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-Difficulty",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-make_phase",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementBehavior",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-AttackSequence",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTemplate",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-StunBehavior",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/mod_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-build"
+			]
+		}
+	}
+}

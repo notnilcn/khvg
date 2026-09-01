@@ -1,0 +1,137 @@
+{
+	"nodes": [
+		{
+			"id": "3dafdbce8383b4e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f55e33efc44c6b58",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "65b0058b54a9ffd4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8466c29300c138b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3ee2ac3c9d2c01d8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/Stats_subfolder.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69d7625af2ec04d0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4414d6e4f159cb40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "23ad101c7f63b520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "2b6145c861d0e650",
+			"fromNode": "3dafdbce8383b4e0",
+			"fromSide": "bottom",
+			"toNode": "65b0058b54a9ffd4",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "8675c1bdd4e6e938",
+			"fromNode": "f55e33efc44c6b58",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "0c6e3c0006b62000",
+			"fromNode": "8466c29300c138b0",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "b4f8d63390c3ba7a",
+			"fromNode": "69d7625af2ec04d0",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "75e573610247e2aa",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "3d06ed6b20eae1c2",
+			"fromNode": "23ad101c7f63b520",
+			"fromSide": "bottom",
+			"toNode": "69d7625af2ec04d0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	]
+}

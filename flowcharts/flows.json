@@ -13,34 +13,44 @@
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas"
     ],
-    "boot": [
+    "subscriptions": [
       "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Scenes_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/main_menu_codefile/main_menu_codefile.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/game_codefile/game_codefile.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
-      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/terrain_subfolder.canvas"
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder.canvas"
     ],
     "lobby": [
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui_codefile.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/profile_panel_codefile/profile_panel_codefile.canvas",
-      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas"
-    ],
-    "join": [
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Local_subfolder/Local_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/local_player_codefile/local_player_codefile.canvas",
-      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas"
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas"
+    ],
+    "player-data": [
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/Stats_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas"
     ],
     "movement": [
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/World_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/local_player_codefile/local_player_codefile.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/non_local_player_codefile/non_local_player_codefile.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
@@ -49,6 +59,9 @@
     "terrain": [
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/Terrain_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Terrain_subfolder/Terrain_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/game_codefile/game_codefile.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/terrain_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas"
@@ -56,10 +69,8 @@
     "enemies": [
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemies_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/default_enemy_codefile/default_enemy_codefile.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas",
-      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas"
     ],
@@ -68,8 +79,9 @@
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/Weapon_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/bullet_manager_codefile/bullet_manager_codefile.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/hit_zone_codefile/hit_zone_codefile.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
@@ -79,12 +91,10 @@
     "items": [
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/Stats_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/Weapon_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/UI_subfolder.canvas",
       "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/drop_codefile/drop_codefile.canvas",
@@ -92,29 +102,29 @@
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas"
     ],
-    "camera": [
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/world_3d_codefile/world_3d_codefile.canvas",
-      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas"
+    "status": [
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/Status_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/Zones_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas"
+    ],
+    "chests": [
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/chest_codefile/chest_codefile.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/UI_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
+      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder.canvas"
     ],
     "admin": [
       "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/UI_subfolder.canvas",
+      "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/game_codefile/game_codefile.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas",
       "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas"
-    ],
-    "teardown": [
-      "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
-      "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
-      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
-      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
-      "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas"
     ]
   }
 }

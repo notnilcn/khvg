@@ -32,13 +32,41 @@ pub fn is_admin(ctx: &ReducerContext) -> bool {
         .unwrap_or(false)
 }
 
-pub fn xp_for_level(level: u32) -> u32 {
-    if level <= 1 { 0 } else { 100 * (level - 1) * level / 2 }
+/// Token-bucket rate limiter behind the server-only PlayerHitRate table (one 1-second
+/// fixed window per profile). Resets the window once a second has elapsed, then returns
+/// false once `cap` reports of the given direction were already consumed this window.
+/// `outgoing` selects the report_enemy_hit counter, false the report_hit one. The row is
+/// persisted either way so the window reset isn't lost on a rejected report.
+pub fn hit_rate_allow(ctx: &ReducerContext, profile_id: u64, outgoing: bool, cap: u32) -> bool {
+    let existing = ctx.db.player_hit_rate().profile_id().find(&profile_id);
+    let exists = existing.is_some();
+    let mut rate = existing
+        .unwrap_or(PlayerHitRate { profile_id, window_start: ctx.timestamp, outgoing: 0, incoming: 0 });
+    if crate::enemy::methods::seconds_since(ctx, rate.window_start) >= 1.0 {
+        rate.window_start = ctx.timestamp;
+        rate.outgoing = 0;
+        rate.incoming = 0;
+    }
+    let count = if outgoing { &mut rate.outgoing } else { &mut rate.incoming };
+    let allowed = *count < cap;
+    if allowed { *count += 1; }
+    if exists {
+        ctx.db.player_hit_rate().profile_id().update(rate);
+    } else {
+        ctx.db.player_hit_rate().insert(rate);
+    }
+    allowed
+}
+
+// u64 math: the old u32 formula overflowed past ~level 2930, which also made
+// compute_level's loop spin forever on large xp values.
+pub fn xp_for_level(level: u32) -> u64 {
+    if level <= 1 { 0 } else { 100 * (level as u64 - 1) * level as u64 / 2 }
 }
 
 pub fn compute_level(total_xp: u32) -> u32 {
     let mut level = 1u32;
-    while xp_for_level(level + 1) <= total_xp { level += 1; }
+    while level < MAX_LEVEL && xp_for_level(level + 1) <= total_xp as u64 { level += 1; }
     level
 }
 
@@ -219,6 +247,12 @@ pub fn teleport_player(ctx: &ReducerContext, profile_id: u64, x: f32, y: f32) ->
         if (chunk.chunk_q, chunk.chunk_r) != (cq, cr) {
             ctx.db.player_chunk().profile_id().update(PlayerChunk { chunk_q: cq, chunk_r: cr, ..chunk });
         }
+    }
+    // Teleports are exempt from report_movement's displacement clamp; restamp the report
+    // clock so the next report's budget measures from the teleport, not from before it.
+    match ctx.db.player_movement_state().profile_id().find(&profile_id) {
+        Some(state) => { ctx.db.player_movement_state().profile_id().update(PlayerMovementState { last_report: ctx.timestamp, ..state }); }
+        None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: None }); }
     }
     Ok(())
 }
@@ -447,9 +481,16 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     }
 
     if ctx.db.player_stat_allocation().profile_id().find(&profile_id).is_none() {
+        // The auto-created "Knight" profile (client_connected) starts maxed for testing;
+        // manually created profiles start at zero. Allocation is the input recompute_stats
+        // reads, so these survive every later recompute (resolved = BASE_STAT + 999).
+        let maxed = ctx.db.player_profile().profile_id().find(&profile_id)
+            .map(|p| p.profile_name == "Knight")
+            .unwrap_or(false);
+        let points = if maxed { 999 } else { 0 };
         ctx.db.player_stat_allocation().insert(PlayerStatAllocation {
-            profile_id, strength: 0, wisdom: 0, dexterity: 0,
-            damage_dealer: 0, supporter: 0, artisan: 0, unspent_points: 0,
+            profile_id, strength: points, wisdom: points, dexterity: points,
+            damage_dealer: points, supporter: points, artisan: points, unspent_points: 0,
         });
     }
 
@@ -497,6 +538,9 @@ pub fn teardown_profile(ctx: &ReducerContext, profile_id: u64) {
     ctx.db.player_position().profile_id().delete(profile_id);
     ctx.db.player_rotation().profile_id().delete(profile_id);
     ctx.db.player_chunk().profile_id().delete(profile_id);
+    ctx.db.player_movement_state().profile_id().delete(profile_id);
+    ctx.db.player_displacement_allowance().profile_id().delete(profile_id);
+    ctx.db.player_hit_rate().profile_id().delete(profile_id);
     for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
         ctx.db.active_consumable_effect().effect_id().delete(active.effect_id);
     }
@@ -525,7 +569,7 @@ pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable
 pub fn internal_gain_xp(ctx: &ReducerContext, profile_id: u64, amount: u32) {
     let data = match ctx.db.player_data().profile_id().find(&profile_id) { Some(d) => d, None => return };
     let old_level = data.level;
-    let new_xp = data.xp + amount;
+    let new_xp = data.xp.saturating_add(amount);
     let new_level = compute_level(new_xp);
     // Heal by the level-derived max_hp increase on top of current HP, so leveling up while
     // hurt doesn't fully restore (or waste) the gained health. recompute_stats folds in any
@@ -584,7 +628,8 @@ pub fn slot_allowed(role: SlotRole, equip_slot: EquipSlot) -> bool {
 }
 
 pub fn get_slot(ctx: &ReducerContext, profile_id: u64, slot_index: u32) -> Option<PlayerInventorySlot> {
-    ctx.db.player_inventory_slot().profile_id().filter(&profile_id).find(|s| s.slot_index == slot_index)
+    // One row per (profile, slot_index) — the composite by_profile_slot index is a point read.
+    ctx.db.player_inventory_slot().by_profile_slot().filter((profile_id, slot_index)).next()
 }
 
 pub fn update_slot(ctx: &ReducerContext, slot: PlayerInventorySlot) {
@@ -681,12 +726,22 @@ pub fn check_stat_requirements(ctx: &ReducerContext, profile_id: u64, item: &Ite
 /// take_from_chest. Ability items auto-equip into the first contiguous free span if stat
 /// requirements pass, else fall back to loose backpack storage; other items prefer a
 /// matching typed slot (stat requirements gate equipped roles) and fall back to general.
-/// Does not recompute stats — the caller decides.
-pub fn store_item_in_inventory(ctx: &ReducerContext, profile_id: u64, item: &Item, enchantment_ids: Vec<String>) -> Result<(), String> {
+/// `cooldown_until`/`charges` carry runtime state from the source (a dropped ability
+/// keeps its residual cooldown — a different player picking it up inherits it);
+/// None/u32::MAX means fresh (chest takes, ordinary items). Does not recompute stats —
+/// the caller decides.
+pub fn store_item_in_inventory(ctx: &ReducerContext, profile_id: u64, item: &Item, enchantment_ids: Vec<String>, cooldown_until: Option<spacetimedb::Timestamp>, charges: u32) -> Result<(), String> {
     if item.equip_slot == EquipSlot::Ability {
         if check_stat_requirements(ctx, profile_id, item).is_ok() {
             if let Some(head) = find_free_span(ctx, profile_id, item.slot_cost.max(1)) {
                 place_span(ctx, profile_id, head, item, enchantment_ids);
+                // Carried state overrides place_span's fresh initialization — restore
+                // when the source had any, never initialize over it.
+                if cooldown_until.is_some() || charges != u32::MAX {
+                    if let Some(head_slot) = get_slot(ctx, profile_id, head) {
+                        update_slot(ctx, PlayerInventorySlot { cooldown_until, charges, ..head_slot });
+                    }
+                }
                 return Ok(());
             }
         }
@@ -702,7 +757,7 @@ pub fn store_item_in_inventory(ctx: &ReducerContext, profile_id: u64, item: &Ite
         .or_else(|| slots.iter().filter(|s| s.role == SlotRole::General).find(is_free))
         .ok_or("No suitable slot available.")?;
     update_slot(ctx, PlayerInventorySlot {
-        item_id: Some(item.item_id.clone()), enchantment_ids, ..target.clone()
+        item_id: Some(item.item_id.clone()), enchantment_ids, cooldown_until, charges, ..target.clone()
     });
     Ok(())
 }

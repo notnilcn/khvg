@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "1cf7008a5cfd3768",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/AbilityChargeComponent.cs",
+			"subpath": "#_Ready",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

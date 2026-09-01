@@ -313,6 +313,9 @@
 .canvas-node[data-group-label-size] .canvas-group-label {
   font-size: calc(1.5em * var(--group-label-size-multiplier, 1));
 }
+.canvas-node[data-group-opacity][data-group-opacity="0"] {
+  --group-opacity: 0;
+}
 .canvas-node[data-group-opacity][data-group-opacity="0.25"] {
   --group-opacity: 0.25;
 }
@@ -393,6 +396,9 @@
   width: var(--wrapped-group-label-width, auto);
 }
 .canvas-wrapper[data-hide-group-labels=true] .canvas-node .canvas-group-label:not(:focus) {
+  display: none;
+}
+.canvas-wrapper[data-hide-note-labels=true] .canvas-node .canvas-node-label:not(:focus) {
   display: none;
 }
 .canvas-edges path[data-path=dotted] {
@@ -592,6 +598,21 @@
   background-color: transparent;
   box-shadow: none;
 }
+.canvas-wrapper[data-node-preview-text-size][data-node-preview-text-size="1.5"] {
+  --node-preview-text-size-multiplier: 1.5;
+}
+.canvas-wrapper[data-node-preview-text-size][data-node-preview-text-size="2"] {
+  --node-preview-text-size-multiplier: 2;
+}
+.canvas-wrapper[data-node-preview-text-size][data-node-preview-text-size="3"] {
+  --node-preview-text-size-multiplier: 3;
+}
+.canvas-wrapper[data-node-preview-text-size][data-node-preview-text-size="4"] {
+  --node-preview-text-size-multiplier: 4;
+}
+.canvas-wrapper[data-node-preview-text-size] .canvas-node-placeholder {
+  font-size: calc(32px * var(--node-preview-text-size-multiplier, 1));
+}
 .canvas-wrapper .canvas-node:not(.canvas-node-group) .canvas-node-content .markdown-preview-view {
   padding-left: var(--ac-card-padding-h, var(--size-4-4));
   padding-right: var(--ac-card-padding-h, var(--size-4-4));
@@ -608,6 +629,84 @@
 .canvas-wrapper .canvas-node:not(.canvas-node-group) .canvas-node-content.markdown-embed > .markdown-embed-content > .markdown-preview-view::after {
   min-height: var(--ac-card-padding-v, min(var(--canvas-node-height) * 0.1 - 3px, var(--size-4-4)));
   max-height: var(--ac-card-padding-v, var(--size-4-4));
+}
+.canvas-wrapper[data-node-outline] {
+  --ac-node-outline-shadow: 0 0 0 var(--ac-node-outline-width) #000;
+}
+.canvas-wrapper[data-node-outline][data-node-outline=white] {
+  --ac-node-outline-shadow: 0 0 0 var(--ac-node-outline-width) #fff;
+}
+.canvas-wrapper[data-node-outline][data-node-outline=both] {
+  --ac-node-outline-shadow: 0 0 0 var(--ac-node-outline-width) #000, 0 0 0 calc(var(--ac-node-outline-width) * 2) #fff;
+}
+.canvas-wrapper[data-node-outline] .canvas-node-container {
+  box-shadow: var(--ac-node-outline-shadow), var(--shadow-stationary);
+}
+.canvas-wrapper[data-node-outline] .canvas-node.is-dragging .canvas-node-container {
+  box-shadow: var(--ac-node-outline-shadow), var(--shadow-drag);
+}
+.canvas-wrapper[data-node-outline] .canvas-node:is(.is-selected, .is-focused) .canvas-node-container {
+  box-shadow:
+    var(--ac-node-outline-shadow),
+    var(--shadow-stationary),
+    var(--shadow-border-accent);
+}
+.canvas-wrapper[data-node-outline] .canvas-node:is(.is-selected, .is-focused).is-dragging .canvas-node-container {
+  box-shadow:
+    var(--ac-node-outline-shadow),
+    var(--shadow-drag),
+    var(--shadow-border-accent);
+}
+.canvas-wrapper[data-node-outline] .canvas-node.is-themed .canvas-node-container {
+  box-shadow:
+    var(--ac-node-outline-shadow),
+    inset 0 0 0 1px rgba(var(--canvas-color), 0.7),
+    var(--shadow-stationary);
+}
+.canvas-wrapper[data-node-outline] .canvas-node:is(.is-selected, .is-focused).is-themed .canvas-node-container,
+.canvas-wrapper[data-node-outline] .canvas-node:is(.is-selected, .is-focused).is-themed.is-dragging .canvas-node-container {
+  box-shadow:
+    var(--ac-node-outline-shadow),
+    var(--shadow-border-themed-inset),
+    var(--shadow-border-themed);
+}
+.canvas-wrapper[data-edge-outline] {
+}
+.canvas-wrapper[data-edge-outline] .canvas-edges path.ac-edge-outline-path {
+  pointer-events: none;
+  fill: none;
+  stroke: #000;
+  stroke-width: calc((2px * var(--edge-width-multiplier, var(--default-edge-width-multiplier, 1)) + 2 * var(--ac-edge-outline-width)) * var(--zoom-multiplier));
+  transition: stroke-width 100ms ease-out;
+}
+.canvas-wrapper[data-edge-outline][data-edge-outline=white] .canvas-edges path.ac-edge-outline-path {
+  stroke: #fff;
+}
+.canvas-wrapper[data-edge-outline][data-edge-outline=both] .canvas-edges path.ac-edge-outline-outer {
+  stroke: #fff;
+  stroke-width: calc((2px * var(--edge-width-multiplier, var(--default-edge-width-multiplier, 1)) + 4 * var(--ac-edge-outline-width)) * var(--zoom-multiplier));
+}
+.canvas-wrapper[data-edge-outline] .canvas-edges g:is(.is-focused, :hover) path.ac-edge-outline-path {
+  stroke-width: calc((5.5px * var(--edge-width-multiplier, var(--default-edge-width-multiplier, 1)) + 2 * var(--ac-edge-outline-width)) * var(--zoom-multiplier));
+}
+.canvas-wrapper[data-edge-outline][data-edge-outline=both] .canvas-edges g:is(.is-focused, :hover) path.ac-edge-outline-outer {
+  stroke-width: calc((5.5px * var(--edge-width-multiplier, var(--default-edge-width-multiplier, 1)) + 4 * var(--ac-edge-outline-width)) * var(--zoom-multiplier));
+}
+.canvas-wrapper[data-edge-outline] .canvas-edges path.ac-edge-outline-path[data-path=invisible] {
+  opacity: 0;
+}
+.canvas-wrapper[data-edge-outline] .canvas-edges .ac-edge-outline-arrow {
+  pointer-events: none;
+  fill: none;
+  stroke: #000;
+  stroke-width: calc(2 * var(--ac-edge-outline-width) / var(--arrow-size-multiplier, 1));
+}
+.canvas-wrapper[data-edge-outline][data-edge-outline=white] .canvas-edges .ac-edge-outline-arrow {
+  stroke: #fff;
+}
+.canvas-wrapper[data-edge-outline][data-edge-outline=both] .canvas-edges .ac-edge-outline-arrow-outer {
+  stroke: #fff;
+  stroke-width: calc(4 * var(--ac-edge-outline-width) / var(--arrow-size-multiplier, 1));
 }
 .icon-modal-suggestion {
   display: flex;
@@ -830,6 +929,11 @@
 }
 .canvas-node[data-content-rotation="270"] .canvas-node-container > .canvas-node-content {
   transform: translate(-50%, -50%) rotate(270deg);
+}
+.canvas-node.ac-node-contents-hidden .canvas-node-content,
+.canvas-node.ac-node-contents-hidden .canvas-node-placeholder,
+.canvas-node.ac-node-contents-hidden .canvas-node-label {
+  display: none;
 }
 .canvas-wrapper.presentation-mode .canvas-controls {
   visibility: hidden;

@@ -32,6 +32,9 @@ public partial class TableSubscriber : Component
 		"LocalPlayerStatAllocation",
 		"NearbyRemotePlayers", "NearbyRemotePlayersProfiles", "NearbyRemotePlayerRotations", "NearbyEnemies",
 		"NearbyLootDrops", "NearbyTerrainTiles", "NearbyHexDecor", "EnemyTemplates",
+		// AOI-filtered BuildingTile rows (one per hex, carries the elevation level) —
+		// drives ElevationMapComponent. Persistent view table: binder replay OK.
+		"NearbyBuildingTiles",
 		// AOI chest views — NearbyChests drives chest spawning, NearbyChestItems the open
 		// chest panel's contents (both persistent view tables: binder replay OK).
 		"NearbyChests", "NearbyChestItems",
@@ -59,8 +62,11 @@ public partial class TableSubscriber : Component
 		BaseTables.Concat(LobbyTables).Concat(GameTables).Distinct();
 
 	/// MapConfig torus lap vectors, mirrored from the subscribed row (zero before it arrives).
-	public Vector2 LapQ { get; private set; } = Vector2.Zero;
-	public Vector2 LapR { get; private set; } = Vector2.Zero;
+	/// Static because the MapConfig row is a world singleton and every InterpolationComponent
+	/// reads these per entity per frame — one shared copy saves a GameManager facade lookup
+	/// (registry scan) per read.
+	public static Vector2 LapQ { get; private set; } = Vector2.Zero;
+	public static Vector2 LapR { get; private set; } = Vector2.Zero;
 
 	private SubscriptionHandle? lobbySub;
 	private SubscriptionHandle? gameSub;
@@ -79,12 +85,22 @@ public partial class TableSubscriber : Component
 		var conn = DatabaseConnector.Instance?.Conn;
 		if (conn == null) return;
 
-		conn.Db.MapConfig.OnInsert += (_, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
-		conn.Db.MapConfig.OnUpdate += (_, _, cfg) => { LapQ = new Vector2(cfg.LapQX, cfg.LapQY); LapR = new Vector2(cfg.LapRX, cfg.LapRY); };
+		conn.Db.MapConfig.OnInsert += OnMapConfigInsert;
+		conn.Db.MapConfig.OnUpdate += OnMapConfigUpdate;
 
 		conn.SubscriptionBuilder().Subscribe(TablesSql(BaseTables));
 
 		SubscribeLobby();
+	}
+
+	private void OnMapConfigInsert(EventContext ctx, MapConfig cfg) => SetLap(cfg);
+
+	private void OnMapConfigUpdate(EventContext ctx, MapConfig oldCfg, MapConfig cfg) => SetLap(cfg);
+
+	private void SetLap(MapConfig cfg)
+	{
+		LapQ = new Vector2(cfg.LapQX, cfg.LapQY);
+		LapR = new Vector2(cfg.LapRX, cfg.LapRY);
 	}
 
 	public void SubscribeLobby()
@@ -104,13 +120,13 @@ public partial class TableSubscriber : Component
 
 	public void UnsubscribeLobby()
 	{
-		lobbySub?.Unsubscribe();
+		if (lobbySub?.IsEnded == false) lobbySub.Unsubscribe();
 		lobbySub = null;
 	}
 
 	public void UnsubscribeGame()
 	{
-		gameSub?.Unsubscribe();
+		if (gameSub?.IsEnded == false) gameSub.Unsubscribe();
 		gameSub = null;
 	}
 
@@ -127,6 +143,35 @@ public partial class TableSubscriber : Component
 	private void OnGameSubApplied(SubscriptionEventContext ctx)
 	{
 		GD.Print("[TableSubscriber] Game subscription ready");
+	}
+
+	public override void _ExitTree()
+	{
+		// Static state must not outlive the scene — a fresh TableSubscriber would otherwise
+		// inherit stale vectors until the next MapConfig row arrives.
+		LapQ = Vector2.Zero;
+		LapR = Vector2.Zero;
+
+		var connector = DatabaseConnector.Instance;
+		if (connector != null)
+			connector.Connected -= OnConnected;
+
+		if (connector?.Conn is { IsActive: true } conn)
+		{
+			conn.Db.MapConfig.OnInsert -= OnMapConfigInsert;
+			conn.Db.MapConfig.OnUpdate -= OnMapConfigUpdate;
+			UnsubscribeLobby();
+			UnsubscribeGame();
+		}
+		else
+		{
+			// Dead or rebuilt connection (disconnect path): the old hooks die with the old
+			// DbConnection, just drop the handles.
+			lobbySub = null;
+			gameSub = null;
+		}
+
+		base._ExitTree();
 	}
 
 	private static string[] TablesSql(string[] tables) => tables.Select(TableSql).ToArray();

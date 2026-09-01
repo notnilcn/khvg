@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d068c86cb41f5188",
+			"type": "file",
+			"file": "client/Scripts/Items/Chest.cs",
+			"subpath": "#chestPanel",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

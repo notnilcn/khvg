@@ -15,6 +15,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-6",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seeds_codefile-_dot_-canvas",
@@ -25,8 +26,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-BiomeRegionDef",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas"
 			]
 		}
 	}

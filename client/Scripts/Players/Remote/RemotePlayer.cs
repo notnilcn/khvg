@@ -31,6 +31,9 @@ public partial class RemotePlayer : Node2D, IEntity
 	private TableBinderComponent positionBinder = null!;
 	private TableBinderComponent rotationBinder = null!;
 
+	/// 3D-mode model mirrored into the World3DComponent viewport (same pattern as Enemy).
+	private CharacterModel3D? _model3D;
+
 	public override void _Ready()
 	{
 		positionBinder = GetNode<TableBinderComponent>("NearbyRemotePlayersBinder");
@@ -41,9 +44,22 @@ public partial class RemotePlayer : Node2D, IEntity
 
 		var profile = conn.Db.NearbyRemotePlayersProfiles.Iter()
 			.FirstOrDefault(p => p.ProfileId == ProfileId);
-		if (profile != null)
-			GetComponent<RemoteVisualComponent>()?.SetTexture(profile.TextureId);
+		if (profile == null) return;
+
+		GetComponent<RemoteVisualComponent>()?.SetTexture(profile.TextureId);
+
+		if (GameVisuals.Is3D)
+		{
+			var world3D = this.GetAncestor<GameManager>()?.GetComponent<World3DComponent>();
+			var resPath3D = GameManager.GetResPath3D(profile.TextureId);
+			if (world3D != null && resPath3D != null)
+				_model3D = new CharacterModel3D(GD.Load<PackedScene>(resPath3D), GlobalPosition, world3D);
+		}
 	}
+
+	public override void _Process(double delta) => _model3D?.SyncFrom2D(GlobalPosition, Rotation);
+
+	public override void _ExitTree() => _model3D?.Dispose();
 
 	// --- TableBinderComponent signal handlers (wired in non_local_player.tscn) ---
 

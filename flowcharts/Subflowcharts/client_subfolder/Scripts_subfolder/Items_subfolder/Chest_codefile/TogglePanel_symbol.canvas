@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e87a7629dffa1ed6",
+			"type": "file",
+			"file": "client/Scripts/Items/Chest.cs",
+			"subpath": "#TogglePanel",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

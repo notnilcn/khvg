@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "b3f1c46e8c2a8254",
+			"type": "file",
+			"file": "client/Scripts/Game/ConnectionLostComponent.cs",
+			"subpath": "#OnRegistered",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

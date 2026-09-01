@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "11c70f957d963a28",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/InventoryPanel.cs",
+			"subpath": "#IsOnCooldown",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

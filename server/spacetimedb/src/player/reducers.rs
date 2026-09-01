@@ -1,7 +1,8 @@
 use std::time::Duration;
 use spacetimedb::{ReducerContext, Table};
 use crate::main::global::*;
-use crate::world::hex::{spiral_chunk_index, world_to_chunk};
+use crate::world::hex::{spiral_chunk_index, world_to_chunk, world_to_hex};
+use crate::world::reducers::hex_elevation;
 use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
 use crate::world::tables::MapConfig;
 use crate::player::tables::*;
@@ -12,6 +13,7 @@ use crate::enemy::instance_tables::*;
 use crate::enemy::methods::enemies_near_point;
 use crate::status::tables::*;
 use crate::status::methods::{ally_targets, apply_status_effect};
+use crate::anticheat::tables::player_hit_flag;
 
 #[spacetimedb::reducer]
 pub fn set_username(ctx: &ReducerContext, username: String) -> Result<(), String> {
@@ -95,9 +97,58 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     let pos = ctx.db.player_position().profile_id().find(&profile_id)
         .ok_or_else(|| format!("Position not found for profile {}", profile_id))?;
     let cfg = MapConfig::load(ctx, 0, 0);
+    let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
     let (x, y) = wrap_world_pos(x, y, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
-    let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
-    let chunk_index = spiral_chunk_index(cq, cr);
+
+    // Elevation rules (per-hex levels on BuildingTile, stamped by world generation): a move
+    // within ±MAX_WALKABLE_*_DELTA levels is normal walking; rising more than
+    // MAX_WALKABLE_UP_DELTA is blocked; dropping more than MAX_WALKABLE_DOWN_DELTA is a fall
+    // with a movement lockout proportional to the drop, plus damage once the drop exceeds
+    // FALL_SAFE_DROP. A live Grapple displacement allowance exempts the report entirely
+    // (grappling across cliffs is a feature); teleport_player never goes through
+    // report_movement at all.
+    let state = ctx.db.player_movement_state().profile_id().find(&profile_id);
+    let (nx, ny) = nearest_lap_copy(x, y, pos.x, pos.y, lap_q, lap_r);
+    let (dx, dy) = (nx - pos.x, ny - pos.y);
+    let dist = (dx * dx + dy * dy).sqrt();
+    let grapple_active = matches!(
+        ctx.db.player_displacement_allowance().profile_id().find(&profile_id),
+        Some(a) if ctx.timestamp < a.expires_at && dist <= a.max_distance
+    );
+    let mut fall_delta: i16 = 0;
+    if !grapple_active {
+        if let Some(s) = &state {
+            if let Some(until) = s.falling_until {
+                if ctx.timestamp < until {
+                    // Mid-fall: the client is tweening to the landing point and movement is
+                    // locked, so position claims are ignored until the fall ends. Restamp
+                    // the report clock so the first post-fall report's displacement budget
+                    // doesn't absorb the fall duration.
+                    ctx.db.player_movement_state().profile_id().update(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: s.falling_until });
+                    return Ok(());
+                }
+            }
+        }
+        let (q0, r0) = world_to_hex(pos.x, pos.y, cfg.hex_outer_radius);
+        let (q1, r1) = world_to_hex(x, y, cfg.hex_outer_radius);
+        let e0 = hex_elevation(ctx, q0, r0);
+        let e1 = hex_elevation(ctx, q1, r1);
+        let rising = e1 - e0;
+        if rising > MAX_WALKABLE_UP_DELTA {
+            // Too steep to climb: reject the position claim. Honest clients predict the
+            // block and never send this — this is the anti-cheat belt. The report clock
+            // still restamps so the budget doesn't balloon while pushing into the cliff.
+            match &state {
+                Some(s) => { ctx.db.player_movement_state().profile_id().update(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: s.falling_until }); }
+                None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: None }); }
+            }
+            return Ok(());
+        }
+        let drop = e0 - e1;
+        if drop > MAX_WALKABLE_DOWN_DELTA {
+            fall_delta = drop;
+        }
+    }
 
     // Clamp reported speed into [0, resolved base_speed] (gear/buffs included) — clients
     // should never exceed base_speed, so anything over is a cheat or a bug. While any
@@ -113,11 +164,72 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     let speed_cap = if slow_factor < f32::MAX { base_speed * slow_factor } else { base_speed };
     let movement_speed = movement_speed.clamp(0.0, speed_cap);
 
-    ctx.db.player_position().profile_id().update(PlayerPosition { x, y, movement_direction, movement_speed, chunk_index, ..pos });
+    // Displacement clamp: a report may move at most speed_cap × dt_since_last_report ×
+    // MOVE_SLACK from the stored position row (floor MIN_REPORT_DISPLACEMENT, which is
+    // also the whole budget for the first report). Over-budget reports are CLAMPED along
+    // their own wrap-aware direction, not rejected — rejecting would rubber-band legit
+    // lag. teleport_player is exempt (it writes the row directly and restamps the clock).
+    let budget = state.as_ref()
+        .map(|s| speed_cap * crate::enemy::methods::seconds_since(ctx, s.last_report) * MOVE_SLACK)
+        .unwrap_or(0.0)
+        .max(MIN_REPORT_DISPLACEMENT);
+    let (x, y) = if dist > budget {
+        if fall_delta > 0 && dist <= MAX_FALL_DISPLACEMENT {
+            // Downhill fall: exempt from the displacement budget up to
+            // MAX_FALL_DISPLACEMENT — the client tweens the landing like a grapple.
+            // Beyond that bound the report falls through to the normal clamp.
+            (x, y)
+        } else {
+        // Grapple (P4) is client-tweened: a cast stamps a one-shot displacement
+        // allowance (see apply_ability_effect), and one oversized report up to the
+        // grapple range consumes it instead of being clamped. Expired rows are swept
+        // on contact.
+        match ctx.db.player_displacement_allowance().profile_id().find(&profile_id) {
+            Some(a) if ctx.timestamp < a.expires_at && dist <= a.max_distance => {
+                ctx.db.player_displacement_allowance().profile_id().delete(&profile_id);
+                (x, y)
+            }
+            Some(_) => {
+                ctx.db.player_displacement_allowance().profile_id().delete(&profile_id);
+                (pos.x + dx / dist * budget, pos.y + dy / dist * budget)
+            }
+            None => (pos.x + dx / dist * budget, pos.y + dy / dist * budget),
+        }
+        }
+    } else {
+        (x, y)
+    };
+    let (x, y) = wrap_world_pos(x, y, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
+    let (cq, cr) = world_to_chunk(x, y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
+    let chunk_index = spiral_chunk_index(cq, cr);
+
+    // Delta-checked write: skip the row update when nothing a subscriber sees changed —
+    // position, reported velocity, and chunk all ride on this one row.
+    if x != pos.x || y != pos.y
+        || movement_direction != pos.movement_direction
+        || movement_speed != pos.movement_speed
+        || chunk_index != pos.chunk_index
+    {
+        ctx.db.player_position().profile_id().update(PlayerPosition { x, y, movement_direction, movement_speed, chunk_index, ..pos });
+    }
+
+    // Restamp the report clock — the next report's displacement budget measures from here.
+    // A fall started by this report also stamps its movement lockout (falling_until).
+    let fall_until = if fall_delta > 0 {
+        Some(ctx.timestamp + Duration::from_secs_f64(FALL_SECONDS_PER_LEVEL * fall_delta as f64))
+    } else {
+        None
+    };
+    match state {
+        Some(s) => {
+            let falling_until = fall_until.or(s.falling_until);
+            ctx.db.player_movement_state().profile_id().update(PlayerMovementState { last_report: ctx.timestamp, falling_until, ..s });
+        }
+        None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: fall_until }); }
+    }
 
     // Radius-exit stamping for active radius wagers (stamped from movement reports, NOT
     // sampled at 1 Hz — darting out and back between ticks must not cheat "never leave r2").
-    let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
     for row in ctx.db.active_status_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
         if row.kind != StatusEffectKind::StoreDamage || row.params.wager != WagerKind::Radius { continue; }
         let Some(marked) = ctx.db.enemy().enemy_id().find(&row.marked_enemy_id) else { continue };
@@ -135,6 +247,14 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
             ctx.db.player_chunk().profile_id().update(PlayerChunk { chunk_q: cq, chunk_r: cr, ..chunk });
         }
     }
+
+    // Fall damage, proportional to the drop — only past FALL_SAFE_DROP; smaller falls still
+    // got the lockout and displacement exemption above but land unharmed. Applied last
+    // because it can kill: teardown_profile then deletes the rows written above and nothing
+    // follows it.
+    if fall_delta > FALL_SAFE_DROP {
+        deal_damage_to_player(ctx, &player, None, FALL_DAMAGE_PER_LEVEL * fall_delta as u32)?;
+    }
     Ok(())
 }
 
@@ -149,13 +269,24 @@ pub fn report_screen_rotation(ctx: &ReducerContext, screen_rotation: f32) -> Res
     let chunk_index = ctx.db.player_position().profile_id().find(&profile_id)
         .map(|p| p.chunk_index)
         .unwrap_or(rot.chunk_index);
-    ctx.db.player_rotation().profile_id().update(PlayerRotation { screen_rotation, chunk_index, ..rot });
+    // Delta-checked write: sub-epsilon rotation changes (~0.5°) don't rewrite the row, but a
+    // chunk crossing always does so the mirror above stays exact.
+    if (screen_rotation - rot.screen_rotation).abs() >= ROTATION_REPORT_EPSILON || chunk_index != rot.chunk_index {
+        ctx.db.player_rotation().profile_id().update(PlayerRotation { screen_rotation, chunk_index, ..rot });
+    }
     Ok(())
 }
 
 #[spacetimedb::reducer]
 pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef, enemy_id: u64) -> Result<(), String> {
     let player = require_in_world(ctx)?;
+
+    // Rate limit (PlayerHitRate token bucket, 1s window): self-reported damage intake is
+    // capped at INCOMING_HIT_RATE_CAP/s — generous for real bullet-hell play, but bounds
+    // the StoreIncoming farming loop's input rate.
+    if !hit_rate_allow(ctx, player.profile_id, false, INCOMING_HIT_RATE_CAP) {
+        return Err("Hit report rate exceeded.".to_string());
+    }
 
     // Hit attribution: the client stamps each spawned enemy bullet with the enemy_id of its
     // BulletPatternEvent and reports it back (a SequenceStepRef identifies the step def, not
@@ -183,10 +314,25 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
     let profile_id = player.profile_id;
 
     let drop = ctx.db.loot_drop().drop_id().find(&drop_id).ok_or("Drop not found.")?;
+    // Enforce expires_at at pickup; the 1 Hz status tick also sweeps expired rows.
+    if ctx.timestamp >= drop.expires_at {
+        ctx.db.loot_drop().drop_id().delete(&drop_id);
+        return Err("Drop has expired.".to_string());
+    }
     if drop.item_id.is_empty() { return Ok(()); }
+    // Wrap-aware range check against the caller's position row — no picking up drops
+    // across the map.
+    let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let dist_sq = wrapped_distance_sq(pos.x, pos.y, drop.x, drop.y, (cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
+    if dist_sq > INTERACT_RADIUS * INTERACT_RADIUS {
+        return Err("Drop is too far away.".to_string());
+    }
     let item = ctx.db.item().item_id().find(&drop.item_id).ok_or("Item not found.")?;
 
-    store_item_in_inventory(ctx, profile_id, &item, drop.enchantment_ids.clone())?;
+    // Runtime state travels with the item: a dropped ability's residual cooldown/charges
+    // restore onto the destination slot (a different player picking it up inherits them).
+    store_item_in_inventory(ctx, profile_id, &item, drop.enchantment_ids.clone(), drop.cooldown_until, drop.charges)?;
 
     ctx.db.loot_drop().drop_id().delete(&drop_id);
     recompute_stats(ctx, profile_id);
@@ -207,6 +353,9 @@ pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
     let enchantment_ids = slot.enchantment_ids.clone();
     let item = ctx.db.item().item_id().find(&item_id).ok_or("Item not found.")?;
     let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+    // Runtime state (cooldown/charges) travels with the item onto the LootDrop row;
+    // pickup_drop restores it. Ordinary slots carry the (None, u32::MAX) defaults.
+    let (cooldown_until, charges) = (slot.cooldown_until, slot.charges);
 
     if slot.role == SlotRole::Ability {
         clear_span(ctx, profile_id, slot.slot_index, item.slot_cost);
@@ -219,6 +368,8 @@ pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
         expires_at: ctx.timestamp + Duration::from_secs(LOOT_DROP_EXPIRY),
         dropped_by: Some(ctx.sender()),
         enchantment_ids,
+        cooldown_until,
+        charges,
     });
     recompute_stats(ctx, profile_id);
     Ok(())
@@ -299,12 +450,16 @@ pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Resul
             .or_else(|| to_item.as_ref().map(|i| (i, &to, &from)));
         if let Some((item, src, dst)) = moving {
             let cost = item.slot_cost.max(1);
-            // Carried runtime state (cooldown/charges/toggle) travels with the item — except
-            // when entering the ability region from loose backpack storage, where charges
-            // initialize from the item (the backpack cell's unlimited default is meaningless).
+            // Carried runtime state (cooldown/charges/toggle) travels with the item in
+            // BOTH directions. Entering the region from loose backpack storage
+            // initializes charges from the item ONLY when the source carried no state
+            // (a fresh backpack cell: no cooldown, unlimited charges) — a cell with
+            // residual state (unequipped mid-cooldown, or a picked-up drop) restores it.
             let (item_id, enchantment_ids, cooldown_until, charges, active_toggle) =
                 (src.item_id.clone(), src.enchantment_ids.clone(), src.cooldown_until, src.charges, src.active_toggle);
-            let (cooldown_until, charges) = if dst.role == SlotRole::Ability && src.role != SlotRole::Ability {
+            let (cooldown_until, charges) = if dst.role == SlotRole::Ability && src.role != SlotRole::Ability
+                && cooldown_until.is_none() && charges == u32::MAX
+            {
                 (None, ability_behavior(item)
                     .map(|a| if a.max_charges == 0 { u32::MAX } else { a.max_charges })
                     .unwrap_or(u32::MAX))
@@ -348,8 +503,19 @@ pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Resul
     } else {
         // Neither side is in the ability region — plain single-cell swap, even for ability
         // items stored loose in the backpack (slot_cost only applies in the ability region).
-        update_slot(ctx, PlayerInventorySlot { item_id: to.item_id.clone(), enchantment_ids: to.enchantment_ids.clone(), ..from.clone() });
-        update_slot(ctx, PlayerInventorySlot { item_id: from.item_id.clone(), enchantment_ids: from.enchantment_ids.clone(), ..to.clone() });
+        // Runtime state (cooldown/charges/toggle) travels with the ITEM here too — leaving
+        // it on the slot would let a backpack-cell shuffle launder a cooldown before
+        // re-entering the ability region.
+        update_slot(ctx, PlayerInventorySlot {
+            item_id: to.item_id.clone(), enchantment_ids: to.enchantment_ids.clone(),
+            cooldown_until: to.cooldown_until, charges: to.charges, active_toggle: to.active_toggle,
+            ..from.clone()
+        });
+        update_slot(ctx, PlayerInventorySlot {
+            item_id: from.item_id.clone(), enchantment_ids: from.enchantment_ids.clone(),
+            cooldown_until: from.cooldown_until, charges: from.charges, active_toggle: from.active_toggle,
+            ..to.clone()
+        });
     }
     recompute_stats(ctx, profile_id);
     Ok(())
@@ -373,6 +539,19 @@ pub fn tick_status_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule)
     for profile_id in affected_profiles {
         recompute_stats(ctx, profile_id);
     }
+    // Anti-cheat housekeeping: sweep witness flags older than HIT_FLAG_MAX_AGE_SECONDS —
+    // no NoHits wager window outlives that, and the table must not grow unbounded.
+    for flag in ctx.db.player_hit_flag().iter().collect::<Vec<_>>() {
+        if crate::enemy::methods::seconds_since(ctx, flag.reported_at) >= HIT_FLAG_MAX_AGE_SECONDS as f32 {
+            ctx.db.player_hit_flag().flag_id().delete(&flag.flag_id);
+        }
+    }
+    // Expired loot drops (expires_at is also enforced at pickup time).
+    for drop in ctx.db.loot_drop().iter().collect::<Vec<_>>() {
+        if ctx.timestamp >= drop.expires_at {
+            ctx.db.loot_drop().drop_id().delete(&drop.drop_id);
+        }
+    }
     crate::status::methods::tick(ctx);
 }
 
@@ -382,8 +561,16 @@ pub fn use_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
     let profile_id = player.profile_id;
 
     let slot = get_slot(ctx, profile_id, slot_index).ok_or("Invalid slot index.")?;
+    // The client only exposes UseItem on the hotbar (InventoryPanel hotbar keys → slots
+    // 1-4); match that here instead of accepting any slot.
+    if slot.role != SlotRole::Hotbar { return Err("Only hotbar items can be used.".to_string()); }
     let item_id = slot.item_id.clone().ok_or("Slot is empty.")?;
     let item = ctx.db.item().item_id().find(&item_id).ok_or("Item not found.")?;
+    // Never consume an item with an Ability behavior — using a span head would orphan
+    // its follower cells. Defense in depth: ability items have no Consumable behavior
+    // today, and the Hotbar role already rejects them, but a future dual-behavior item
+    // must not be consumable either.
+    if ability_behavior(&item).is_some() { return Err("Ability items cannot be used.".to_string()); }
     let consumable = consumable_behavior(&item)
         .ok_or("Only consumable items can be used.")?
         .clone();
@@ -812,10 +999,23 @@ pub fn apply_ability_effect(
             };
             teleport_player(ctx, profile_id, tx, ty)?;
         }
-        AbilityEffect::Grapple(_) => {
+        AbilityEffect::Grapple(range) => {
             // P4: the pull is client-tweened and client-authoritative — validation,
             // cooldown/charges and enchantment triggers all run through the shared
             // activate/spend path; the client's next movement reports carry the position.
+            // Stamp a one-shot displacement allowance so report_movement's displacement
+            // clamp accepts the tween's oversized report (up to the scaled grapple range)
+            // instead of rubber-banding it; consumed on first use, expires quickly.
+            let allowance = PlayerDisplacementAllowance {
+                profile_id,
+                max_distance: *range,
+                expires_at: ctx.timestamp + Duration::from_secs_f32(GRAPPLE_ALLOWANCE_SECONDS),
+            };
+            if ctx.db.player_displacement_allowance().profile_id().find(&profile_id).is_some() {
+                ctx.db.player_displacement_allowance().profile_id().update(allowance);
+            } else {
+                ctx.db.player_displacement_allowance().insert(allowance);
+            }
         }
     }
     Ok(())

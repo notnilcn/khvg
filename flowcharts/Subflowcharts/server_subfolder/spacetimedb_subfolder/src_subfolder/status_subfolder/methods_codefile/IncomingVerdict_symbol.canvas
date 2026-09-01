@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "89dbba587a7483c0",
+			"type": "file",
+			"file": "server/spacetimedb/src/status/methods.rs",
+			"subpath": "#IncomingVerdict",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

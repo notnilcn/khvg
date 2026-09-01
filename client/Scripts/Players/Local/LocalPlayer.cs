@@ -18,7 +18,6 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	[Signal] public delegate void InventoryChangedEventHandler();
 	[Signal] public delegate void AimSettingsChangedEventHandler();
 	[Signal] public delegate void StatsChangedEventHandler();
-	[Export] public PackedScene? KnightScene { get; set; }
 
 	public static LocalPlayer? Local { get; private set; }
 
@@ -67,14 +66,19 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	// allocatable). The 100f fallback only applies before the first data row arrives.
 	public float BaseSpeed => DataComponent?.BaseSpeed ?? 100f;
 
-	/// P4 grapple: while an external mover (the grapple tween) owns the position, input
-	/// movement is suspended and velocity pinned to zero so MoveAndSlide doesn't fight
-	/// the externally-set position.
+	/// P4 grapple / elevation falls: while an external mover (the grapple or fall tween)
+	/// owns the position, input movement is suspended and velocity pinned to zero so
+	/// MoveAndSlide doesn't fight the externally-set position.
 	public bool ExternalMovementActive { get; set; }
 
 	private CharacterModel3D? _model3D;
+	// res_path3d of the live 3D model, so repeat profile rows for the same texture don't rebuild it.
+	private string? _model3DPath;
+	// Profile texture waiting on world3D to be cached in _Ready (profile rows can land first).
+	private string? _pendingModelTextureId;
 	private AnimatedSprite2D sprite = null!;
 	private PositionSyncComponent? positionSync;
+	private ElevationMapComponent? elevationMap;
 
 	// Camera components of the Main entity, cached in _Ready (per-frame access in
 	// _PhysicsProcess makes an ancestor/registry walk per call wasteful).
@@ -111,21 +115,36 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	{
 		Local = this;
 		sprite = GetNode<AnimatedSprite2D>("Sprite");
+		sprite.Visible = !GameVisuals.Is3D; // 3D mode renders the catalog-driven model, not the 2D sprite
 		positionSync = GetComponent<PositionSyncComponent>();
 
 		var gameManager = this.GetAncestor<GameManager>();
 		world3D = gameManager?.GetComponent<World3DComponent>();
 		camera2D = gameManager?.GetComponent<Camera2DPresenterComponent>();
 		cameraRig = gameManager?.GetComponent<CameraRigComponent>();
+		elevationMap = gameManager?.GetComponent<ElevationMapComponent>();
 
-		if (KnightScene != null && world3D != null)
-		{
-			_model3D = new CharacterModel3D(KnightScene, GlobalPosition, world3D);
-			world3D.SetCameraFollowTarget(_model3D.Node);
-		}
+		if (_pendingModelTextureId != null)
+			SetModel3DTexture(_pendingModelTextureId);
 
 		var pcamNode = GetNode<Node2D>("%LocalPlayerPhantomCamera2D");
 		camera2D?.RegisterCamera(pcamNode);
+	}
+
+	/// Creates/recreates the 3D model from the profile texture's catalog res_path3d (loaded
+	/// here, not scene-declared, so 2D mode never loads the FBX). No-op in 2D mode (no
+	/// World3DComponent) or when the texture has no 3D representation. Called by
+	/// LocalPlayerProfileComponent when the active profile row arrives.
+	public void SetModel3DTexture(string textureId)
+	{
+		_pendingModelTextureId = textureId;
+		if (world3D == null) return;
+		var path = GameManager.GetResPath3D(textureId);
+		if (path == null || (_model3D != null && path == _model3DPath)) return;
+		_model3D?.Dispose();
+		_model3DPath = path;
+		_model3D = new CharacterModel3D(GD.Load<PackedScene>(path), GlobalPosition, world3D);
+		world3D.SetCameraFollowTarget(_model3D.Node);
 	}
 
 
@@ -145,12 +164,88 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 			Rotation = yaw;
 		}
 
+		ApplyElevationPrediction(delta);
 
 		MoveAndSlide();
 		_model3D?.SyncFrom2D(GlobalPosition, Rotation);
 
-		if (sprite.SpriteFrames != null)
-			sprite.Play(input != Vector2.Zero ? "Walk" : "Idle");
+		// HasAnimation: in 3D mode the placeholder frames never load (hidden sprite), and
+		// in 2D mode the profile frames arrive after the first physics frames.
+		var anim = input != Vector2.Zero ? "Walk" : "Idle";
+		if (sprite.SpriteFrames != null && sprite.SpriteFrames.HasAnimation(anim))
+			sprite.Play(anim);
+	}
+
+	// Per-hex elevation prediction (server re-validates in report_movement — uphill
+	// rejects are anti-cheat enforcement; this keeps the honest path from ever sending
+	// one). Skipped entirely while an external mover owns the position. Steps within
+	// ±MAX_WALKABLE_*_DELTA are walked normally; only steeper deltas block or fall.
+	private void ApplyElevationPrediction(double delta)
+	{
+		if (ExternalMovementActive || elevationMap == null || Velocity == Vector2.Zero) return;
+
+		var pos = GlobalPosition;
+		int e0 = elevationMap.GetElevationAt(pos);
+		var next = pos + Velocity * (float)delta;
+		int e1 = elevationMap.GetElevationAt(next);
+
+		if (e1 - e0 > ServerConstants.MaxWalkableUpDelta)
+		{
+			// Uphill cliff: blocked. Axis-separated slide — keep each velocity component
+			// whose own step stays within the walkable rise, zero the rest, so the
+			// player slides along the cliff face instead of stopping dead.
+			bool keepX = elevationMap.GetElevationAt(new Vector2(next.X, pos.Y)) - e0 <= ServerConstants.MaxWalkableUpDelta;
+			bool keepY = elevationMap.GetElevationAt(new Vector2(pos.X, next.Y)) - e0 <= ServerConstants.MaxWalkableUpDelta;
+			if (keepX && keepY)
+			{
+				// Corner case: both single-axis steps are legal but the combined diagonal
+				// lands on the too-high hex (the cliff's corner). Keeping both would walk
+				// straight up — keep only the dominant axis so the player slides around it.
+				if (Mathf.Abs(Velocity.X) >= Mathf.Abs(Velocity.Y)) keepY = false;
+				else keepX = false;
+			}
+			Velocity = new Vector2(keepX ? Velocity.X : 0f, keepY ? Velocity.Y : 0f);
+		}
+		else if (e0 - e1 > ServerConstants.MaxWalkableDownDelta)
+		{
+			StartFallTween(e0 - e1);
+		}
+	}
+
+	/// Walking off a cliff (a drop steeper than MAX_WALKABLE_DOWN_DELTA): tween ~0.75 hex
+	/// past the boundary along the current velocity over FALL_SECONDS_PER_LEVEL per level
+	/// dropped (mirrored in ServerConstants; the server applies the fall damage — only
+	/// when the drop exceeds FALL_SAFE_DROP — and enforces the same lockout via
+	/// falling_until).
+	/// Same external-mover pattern as the grapple tween in LocalPlayerInventoryComponent:
+	/// input movement is suspended and the landing position is reported only at the end
+	/// (timed reports are suppressed while ExternalMovementActive).
+	private void StartFallTween(int levels)
+	{
+		var origin = GlobalPosition;
+		var destination = origin + Velocity.Normalized() * (elevationMap!.OuterRadius * 0.75f);
+		float duration = ServerConstants.FallSecondsPerLevel * levels;
+
+		var sync = positionSync;
+		ExternalMovementActive = true;
+		var tween = CreateTween();
+		tween.TweenMethod(Callable.From<Vector2>(pos =>
+		{
+			if (!GodotObject.IsInstanceValid(this)) return;
+			GlobalPosition = pos;
+			Velocity = Vector2.Zero;
+		}), origin, destination, duration);
+		// Cosmetic dip (darken then recover) over the same duration as the fall.
+		var dip = new Color(0.55f, 0.55f, 0.55f);
+		tween.Parallel().TweenProperty(this, "modulate", dip, duration * 0.5f);
+		tween.Parallel().TweenProperty(this, "modulate", Colors.White, duration * 0.5f).SetDelay(duration * 0.5f);
+		tween.Finished += () =>
+		{
+			if (!GodotObject.IsInstanceValid(this)) return;
+			Velocity = Vector2.Zero;
+			ExternalMovementActive = false;
+			sync?.RequestMovementReport(); // landing report carries the fall displacement
+		};
 	}
 
 	public override void _ExitTree()

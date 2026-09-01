@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a2f4e2c1b51aaf98",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/emitters.rs",
+			"subpath": "#angle",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

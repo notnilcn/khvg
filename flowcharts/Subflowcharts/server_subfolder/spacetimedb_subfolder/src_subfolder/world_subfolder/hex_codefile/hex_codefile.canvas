@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/cross_hex_neighbor_symbol.canvas",
 			"color": "5",
-			"x": 690,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/enumerate_world_hexes_symbol.canvas",
 			"color": "5",
-			"x": 1150,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_area_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2070,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -45,18 +45,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/HEX_NEIGHBOR_DELTAS_symbol.canvas",
 			"color": "5",
-			"x": 1610,
+			"x": 1380,
 			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "976bbfda785cbd24",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_shift_symbol.canvas",
-			"color": "5",
-			"x": 1840,
-			"y": 500,
 			"width": 400,
 			"height": 400
 		},
@@ -65,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_to_world_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 1610,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -75,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/HexCell_symbol.canvas",
 			"color": "5",
-			"x": 2070,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/same_hex_neighbor_indices_symbol.canvas",
 			"color": "5",
-			"x": 2530,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/world_to_chunk_symbol.canvas",
 			"color": "5",
-			"x": 2990,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/world_to_hex_symbol.canvas",
 			"color": "5",
-			"x": 2990,
+			"x": 2760,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -137,14 +127,6 @@
 			"fromNode": "fcd092c73e02478e",
 			"fromSide": "bottom",
 			"toNode": "352ab45de70312e8",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "8af81e0d0c821e76",
-			"fromNode": "fcd092c73e02478e",
-			"fromSide": "bottom",
-			"toNode": "976bbfda785cbd24",
 			"toSide": "top",
 			"toEnd": "arrow"
 		},
@@ -195,7 +177,6 @@
 				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-hex_area",
-				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-hex_shift",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-hex_to_world",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-chunk_center_hex",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-inv_hexmod",

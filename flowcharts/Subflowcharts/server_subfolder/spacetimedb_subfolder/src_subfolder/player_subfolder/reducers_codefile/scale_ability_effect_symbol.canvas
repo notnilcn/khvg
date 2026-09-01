@@ -15,6 +15,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-AbilityEffect",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
@@ -24,8 +25,21 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConsumableBuffEffect",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-RectParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-MarkBleedParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-MarkStoreParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ReduceParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-RegenParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-StoreIncomingParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-CurseParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-BashParams",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-SlashParams",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WallParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ZoneParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-TeleportParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-SpellParams",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-SpellShape",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-CircleParams"
 			]
 		}
 	}

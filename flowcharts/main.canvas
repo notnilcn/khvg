@@ -1,18 +1,80 @@
 {
-	"nodes":[
-		{"id":"1ea852a0c4712480","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas","x":110,"y":0,"width":400,"height":400,"color":"5"},
-		{"id":"af32b8e8f2977040","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/server_subfolder.canvas","x":110,"y":1000,"width":400,"height":400,"color":"5"},
-		{"id":"a9724b02f55e547c","type":"file","file":"flowcharts/Subflowcharts/root_subfolder.canvas","portal":false,"x":-610,"y":460,"width":480,"height":480,"color":"5"}
+	"nodes": [
+		{
+			"id": "1ea852a0c4712480",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
+			"color": "5",
+			"x": 110,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a9724b02f55e547c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/root_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "af32b8e8f2977040",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/server_subfolder.canvas",
+			"color": "5",
+			"x": 110,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		}
 	],
-	"edges":[
-		{"id":"bce0ac7effa5ea08","fromNode":"1ea852a0c4712480","fromSide":"bottom","toNode":"af32b8e8f2977040","toSide":"top","label":"bind"},
-		{"id":"672609e912ce7d6a","fromNode":"1ea852a0c4712480","fromSide":"bottom","toNode":"a9724b02f55e547c","toSide":"top","label":"script"},
-		{"id":"eef5c3adeb0ea1c2","fromNode":"a9724b02f55e547c","fromSide":"bottom","toNode":"1ea852a0c4712480","toSide":"top","label":"script"},
-		{"id":"5ca93e4bc40584fa","fromNode":"a9724b02f55e547c","fromSide":"bottom","toNode":"af32b8e8f2977040","toSide":"top","label":"bind"},
-		{"id":"dc8496d8c3fe9700","toFloating":false,"fromNode":"af32b8e8f2977040","fromSide":"bottom","toNode":"a9724b02f55e547c","toSide":"top"}
-	],
-	"metadata":{
-		"version":"1.0-1.0",
-		"frontmatter":{}
-	}
+	"edges": [
+		{
+			"id": "2cb5b5b2aabdbff4",
+			"fromNode": "1ea852a0c4712480",
+			"fromSide": "bottom",
+			"toNode": "a9724b02f55e547c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "scene"
+		},
+		{
+			"id": "bce0ac7effa5ea08",
+			"fromNode": "1ea852a0c4712480",
+			"fromSide": "bottom",
+			"toNode": "af32b8e8f2977040",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "ab5c7d7e536ad354",
+			"fromNode": "a9724b02f55e547c",
+			"fromSide": "bottom",
+			"toNode": "1ea852a0c4712480",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "scene"
+		},
+		{
+			"id": "5ca93e4bc40584fa",
+			"fromNode": "a9724b02f55e547c",
+			"fromSide": "bottom",
+			"toNode": "af32b8e8f2977040",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "dc8496d8c3fe9700",
+			"fromNode": "af32b8e8f2977040",
+			"fromSide": "bottom",
+			"toNode": "a9724b02f55e547c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	]
 }

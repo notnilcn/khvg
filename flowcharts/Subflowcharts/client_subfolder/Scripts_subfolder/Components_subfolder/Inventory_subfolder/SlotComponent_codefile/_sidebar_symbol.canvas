@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "addcd7e3bf21bf56",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/SlotComponent.cs",
+			"subpath": "#_sidebar",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

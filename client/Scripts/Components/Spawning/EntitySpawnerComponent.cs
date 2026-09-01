@@ -25,6 +25,10 @@ public partial class EntitySpawnerComponent : Component
     private readonly Dictionary<ulong, Drop> drops = new();
     private readonly Dictionary<ulong, Chest> chests = new();
 
+    /// Nodes whose deferred AddChild hasn't fired yet — a row delete arriving first must
+    /// cancel the pending add (DespawnNode) instead of QueueFreeing a not-yet-added node.
+    private readonly HashSet<Node> pendingAdds = new();
+
     /// Child binders (declared inline in game.tscn) feeding the spawn tables.
     private TableBinderComponent localPlayerBinder = null!;
     private TableBinderComponent nearbyRemotePlayersBinder = null!;
@@ -35,6 +39,65 @@ public partial class EntitySpawnerComponent : Component
     public int EnemyCount => enemies.Count;
 
     public Enemy? GetEnemy(ulong enemyId) => enemies.TryGetValue(enemyId, out var node) ? node : null;
+
+    /// Deferred AddChild via this component: the parent scene is resolved at execution
+    /// time (not captured at insert time, when a scene change in between would leave the
+    /// deferred call pointing at a freed scene), and pendingAdds lets a row delete cancel
+    /// the add before it fires.
+    private void SpawnDeferred(Node node)
+    {
+        pendingAdds.Add(node);
+        CallDeferred(nameof(AddSpawnedChild), node);
+    }
+
+    private void AddSpawnedChild(Node node)
+    {
+        // A delete that arrived before this deferred call already cancelled (and freed) it.
+        if (!pendingAdds.Remove(node) || !IsInstanceValid(node)) return;
+        var parent = GetTree().CurrentScene;
+        if (parent == null) { node.Free(); return; }
+        parent.AddChild(node);
+    }
+
+    /// Shared by every delete handler and by DespawnAll: a node whose deferred AddChild is
+    /// still pending is freed directly (it never entered the tree); one already in the tree
+    /// is QueueFreed.
+    private void DespawnNode(Node node)
+    {
+        if (pendingAdds.Remove(node))
+            node.Free();
+        else if (IsInstanceValid(node))
+            node.QueueFree();
+    }
+
+    /// Frees every tracked entity and cancels every pending deferred add. Invoked on every
+    /// subscription-wave swap (join/leave/death), on disconnect (ConnectionLostComponent),
+    /// and on _ExitTree, so a stale id can never wedge a later respawn behind the
+    /// ContainsKey guards below.
+    public void DespawnAll()
+    {
+        if (localPlayer != null)
+        {
+            DespawnNode(localPlayer);
+            localPlayer = null;
+        }
+        foreach (var node in remotePlayers.Values) DespawnNode(node);
+        remotePlayers.Clear();
+        foreach (var node in enemies.Values) DespawnNode(node);
+        enemies.Clear();
+        foreach (var node in drops.Values) DespawnNode(node);
+        drops.Clear();
+        foreach (var node in chests.Values) DespawnNode(node);
+        chests.Clear();
+    }
+
+    public override void _ExitTree()
+    {
+        // Scene exit frees the in-tree entities by itself; this matters for the pending
+        // deferred adds, which are NOT in the tree and would otherwise leak.
+        DespawnAll();
+        base._ExitTree();
+    }
 
     public override void _Ready()
     {
@@ -53,15 +116,15 @@ public partial class EntitySpawnerComponent : Component
         if (localPlayer == null)
         {
             localPlayer = LocalPlayerScene.Instantiate<LocalPlayer>();
-            GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, localPlayer);
+            SpawnDeferred(localPlayer);
         }
+        // The LocalPlayer row is the join's success signal — only now does the lobby hide.
+        GetSibling<LobbyComponent>()?.HideLobby();
     }
 
     private void OnLocalPlayerDelete()
     {
-        if (localPlayer != null && IsInstanceValid(localPlayer))
-            localPlayer.QueueFree();
-        localPlayer = null;
+        DespawnAll();
 
         if (DatabaseConnector.Instance?.Conn?.IsActive != true) return;
 
@@ -79,7 +142,7 @@ public partial class EntitySpawnerComponent : Component
         node.PlayerId = position.PlayerId;
         node.ProfileId = position.ProfileId;
         node.GlobalPosition = new Vector2(position.X, position.Y);
-        GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
+        SpawnDeferred(node);
         remotePlayers[key] = node;
     }
 
@@ -89,8 +152,7 @@ public partial class EntitySpawnerComponent : Component
         var key = position.PlayerId.ToString();
         if (!remotePlayers.TryGetValue(key, out var node)) return;
         remotePlayers.Remove(key);
-        if (IsInstanceValid(node))
-            node.QueueFree();
+        DespawnNode(node);
     }
 
     private void OnEnemyInsert()
@@ -100,7 +162,7 @@ public partial class EntitySpawnerComponent : Component
         var node = EnemyScene.Instantiate<Enemy>();
         node.EnemyId = enemy.EnemyId;
         node.GlobalPosition = new Vector2(enemy.X, enemy.Y);
-        GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
+        SpawnDeferred(node);
         enemies[enemy.EnemyId] = node;
     }
 
@@ -109,8 +171,7 @@ public partial class EntitySpawnerComponent : Component
         var enemy = (SpacetimeDB.Types.Enemy)nearbyEnemiesBinder.LastDeletedRow!;
         if (!enemies.TryGetValue(enemy.EnemyId, out var node)) return;
         enemies.Remove(enemy.EnemyId);
-        if (IsInstanceValid(node))
-            node.QueueFree();
+        DespawnNode(node);
     }
 
     private void OnDropInsert()
@@ -122,7 +183,7 @@ public partial class EntitySpawnerComponent : Component
         node.ItemId = lootDrop.ItemId;
         node.DroppedBy = lootDrop.DroppedBy;
         node.GlobalPosition = new Vector2(lootDrop.X, lootDrop.Y);
-        GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
+        SpawnDeferred(node);
         drops[lootDrop.DropId] = node;
     }
 
@@ -131,8 +192,7 @@ public partial class EntitySpawnerComponent : Component
         var lootDrop = (LootDrop)nearbyLootDropsBinder.LastDeletedRow!;
         if (!drops.TryGetValue(lootDrop.DropId, out var node)) return;
         drops.Remove(lootDrop.DropId);
-        if (IsInstanceValid(node))
-            node.QueueFree();
+        DespawnNode(node);
     }
 
     private void OnChestInsert()
@@ -142,7 +202,7 @@ public partial class EntitySpawnerComponent : Component
         var node = ChestScene.Instantiate<Chest>();
         node.ChestId = chest.ChestId;
         node.GlobalPosition = new Vector2(chest.X, chest.Y);
-        GetTree().CurrentScene.CallDeferred(Node.MethodName.AddChild, node);
+        SpawnDeferred(node);
         chests[chest.ChestId] = node;
     }
 
@@ -151,7 +211,6 @@ public partial class EntitySpawnerComponent : Component
         var chest = (SpacetimeDB.Types.Chest)nearbyChestsBinder.LastDeletedRow!;
         if (!chests.TryGetValue(chest.ChestId, out var node)) return;
         chests.Remove(chest.ChestId);
-        if (IsInstanceValid(node))
-            node.QueueFree();
+        DespawnNode(node);
     }
 }

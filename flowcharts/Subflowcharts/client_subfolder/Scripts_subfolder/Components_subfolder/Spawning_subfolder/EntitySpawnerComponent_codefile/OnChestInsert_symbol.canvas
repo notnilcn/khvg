@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "44c87f3dc63a3bc0",
+			"type": "file",
+			"file": "client/Scripts/Components/Spawning/EntitySpawnerComponent.cs",
+			"subpath": "#OnChestInsert",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -39,7 +39,7 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 ## Running and Developing
 
 - **Engine:** `C:/Users/Clinton/g/Godot/Godot-stable_mono_win64_console.exe` — the mono build is required for C# and SpacetimeDB; the console variant keeps stdout/stderr visible.
-- **Run:** F5 in the editor. The project's main scene is `client/Scenes/main_menu.tscn` — despite the name, that is the *menu* scene (root `MainMenu`, `LobbyGui.cs`); its Character Slots button `ChangeSceneToFile`s to `Scenes/game.tscn`, the actual gameplay scene (GameManager root — named `game` in the current scene file; resolve the runtime root name rather than assuming). There is no `lobby_gui.tscn`.
+- **Run:** F5 in the editor. The project's main scene is `client/Scenes/main_menu.tscn`; its Character Slots button `ChangeSceneToFile`s to `Scenes/game.tscn`, the actual gameplay scene (GameManager root node).
 - **Client build:** no build system — Godot compiles `client/khvg.csproj` internally.
 - **Server publish:** `server/build.sh` regenerates the C# bindings into `client/Scripts/module_bindings/` and publishes the `bullethell` module to the `local` server with `--delete-data`. **Every publish wipes the database**, so schema changes are hard cuts — no migrations, no dual-write; seeds re-run from `main/seeds.rs`. Logs: `spacetime logs bullethell`.
 - **Export:** Web/HTML5 preset in `client/export_presets.cfg`.
@@ -47,4 +47,4 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 
 ## Verification
 
-Automated checks stop at compilation: `cargo check` for the server, `dotnet build client/khvg.csproj` for the client. Runtime verification (playing the game, driving UI, spawning/wiping entities) goes through the two project skills: `.kimi-code/skills/godot-playtest/` (drive the running game via the open-godot-mcp MCP tools — launch the editor with the console exe above if the bridge is down, always run from `main_menu.tscn`) and `.kimi-code/skills/spacetimedb-cli/` (call reducers / SQL / logs via the `spacetime` CLI).
+Automated checks stop at compilation: `cargo check` for the server, `dotnet build client/khvg.csproj` for the client. Runtime verification (playing the game, driving UI, spawning/wiping entities) goes through the project skill `.kimi-code/skills/playtest/` — it covers both driving the running game via the open-godot-mcp MCP tools (launch the editor with the console exe above if the bridge is down, always run from `main_menu.tscn`) and server-side setup/inspection via the `spacetime` CLI. **Driving gameplay (joining the world, moving, UI flows) always goes through the Godot MCP tools, never through CLI reducer calls.**

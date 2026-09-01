@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "ba26ca1e45114f0c",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/ItemSidebar.cs",
+			"subpath": "#QueueHoverClear",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

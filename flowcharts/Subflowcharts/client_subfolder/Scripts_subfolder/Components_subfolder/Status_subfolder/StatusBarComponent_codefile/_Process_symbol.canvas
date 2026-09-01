@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "527fb44b75dd5b76",
+			"type": "file",
+			"file": "client/Scripts/Components/Status/StatusBarComponent.cs",
+			"subpath": "#_Process",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

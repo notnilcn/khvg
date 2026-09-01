@@ -14,6 +14,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Players/Enemies/Enemy-_dot_-cs-_hashtag_-Enemy-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/Enemy_codefile-_dot_-canvas-_colon_-script",
@@ -29,16 +30,16 @@
 				"edge-_colon_-client/sstdbsdk/TableBinderComponent-_dot_-cs-_hashtag_-TableBinderComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scenes/Components/Data/stats_component-_dot_-tscn-_colon_-scene",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Data_subfolder/stats_component_codefile/stats_component_codefile-_dot_-canvas-_colon_-scene",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Data_subfolder/Data_subfolder-_dot_-canvas-_colon_-scene",
+				"edge-_colon_-client/Scripts/Components/Status/EnemyDebuffIndicatorComponent-_dot_-cs-_hashtag_-EnemyDebuffIndicatorComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/EnemyDebuffIndicatorComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/Status_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scenes/Components/Combat/health_component-_dot_-tscn-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/health_component_codefile/health_component_codefile-_dot_-canvas-_colon_-scene",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Scenes_subfolder-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-scene",
-				"edge-_colon_-client/Scenes/Components/Combat/health_component-_dot_-tscn-_colon_-scene",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/health_component_codefile/health_component_codefile-_dot_-canvas-_colon_-scene",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-client/Scenes/Components/Combat/damage_receiving_component-_dot_-tscn-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/damage_receiving_component_codefile/damage_receiving_component_codefile-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-client/Scenes/Components/Movement/interpolation_component-_dot_-tscn-_colon_-scene",
@@ -51,9 +52,9 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-bind",
-				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-BulletPatternEvent-_colon_-bind",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas-_colon_-bind",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveEnemyStatusEffect-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-bind"
 			]
 		}
 	}

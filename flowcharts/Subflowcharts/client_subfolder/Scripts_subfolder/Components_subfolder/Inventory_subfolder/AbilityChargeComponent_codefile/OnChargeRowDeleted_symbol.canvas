@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e6517d6a7f134a20",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/AbilityChargeComponent.cs",
+			"subpath": "#OnChargeRowDeleted",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

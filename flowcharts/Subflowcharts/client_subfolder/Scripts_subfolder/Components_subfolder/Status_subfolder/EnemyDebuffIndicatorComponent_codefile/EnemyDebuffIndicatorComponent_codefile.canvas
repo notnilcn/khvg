@@ -1,0 +1,153 @@
+{
+	"nodes": [
+		{
+			"id": "cecdc0a9096dcbaa",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/_Draw_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fa21e31e9a1bfe04",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/_Process_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0e4e788cd0eb9f70",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cad91b90dec53a60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/BarHeight_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d9bd13eba9d173f4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/BarWidth_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5f706073a468337a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/ChipColor_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1e44cfd820220bd0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/ChipGap_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6d435beb542bc7a0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/ChipSize_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "38b770a5564ab432",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/debuffs_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "925f6103fef9042a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/EnemyDebuffIndicatorComponent (class)_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "725a58e9c26bf44e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/lastStagger_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b560ae533c5479d6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/OnStatusRow_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "41d4065a0f40fd60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/OnStatusRowDeleted_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3ecd46528a2f4fd0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/statusBinder_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
+	}
+}

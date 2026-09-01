@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "7e944b42e6f165e4",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#BLEED_DEAL_DAMAGE_THRESHOLD",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

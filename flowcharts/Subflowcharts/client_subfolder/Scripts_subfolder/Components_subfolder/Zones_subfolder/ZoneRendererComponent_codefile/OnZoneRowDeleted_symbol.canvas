@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "327b9c36519324bc",
+			"type": "file",
+			"file": "client/Scripts/Components/Zones/ZoneRendererComponent.cs",
+			"subpath": "#OnZoneRowDeleted",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

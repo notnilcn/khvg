@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "78081cdfeec6d55e",
+			"type": "file",
+			"file": "client/Scripts/Components/Status/StatusBarComponent.cs",
+			"subpath": "#OnStatusRowDeleted",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

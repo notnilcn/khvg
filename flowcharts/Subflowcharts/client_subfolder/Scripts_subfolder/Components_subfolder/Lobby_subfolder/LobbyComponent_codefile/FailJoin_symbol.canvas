@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "063d0c28e4ac4160",
+			"type": "file",
+			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
+			"subpath": "#FailJoin",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

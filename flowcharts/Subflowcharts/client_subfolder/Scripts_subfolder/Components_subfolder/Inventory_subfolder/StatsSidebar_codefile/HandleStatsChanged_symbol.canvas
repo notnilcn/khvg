@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "2cdcea81e401ac8c",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/StatsSidebar.cs",
+			"subpath": "#HandleStatsChanged",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

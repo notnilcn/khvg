@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "957f9ef2584aace4",
+			"type": "file",
+			"file": "client/Scripts/Items/Chest.cs",
+			"subpath": "#UnregisterComponent",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

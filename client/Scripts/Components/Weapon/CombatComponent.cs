@@ -19,6 +19,10 @@ public partial class CombatComponent : Component
     private LocalPlayer player = null!;
     private TableBinderComponent nearbyEnemiesBinder = null!;
     private AbilityChargeComponent? chargeComponent;
+    // Lazily resolved (the facade's static instance isn't set until the game root's
+    // _Ready, which runs after this component's OnRegistered).
+    private ElevationMapComponent? elevationMap;
+    private ElevationMapComponent? ElevationMap => elevationMap ??= GameManager.ElevationMap;
     private const float ScanInterval = 0.5f;
     private const float AimConeHalfAngle = 0.52f;
 
@@ -33,6 +37,9 @@ public partial class CombatComponent : Component
         player = (LocalPlayer)Entity!;
         player.InventoryChanged += OnInventoryChanged;
         player.AimSettingsChanged += OnAimSettingsChanged;
+        // Catalog row edits don't raise InventoryChanged, but they change what Resolve
+        // reads — re-run the same fingerprint check (the version is part of the key).
+        GameManager.CatalogChanged += OnInventoryChanged;
         chargeComponent = GetSibling<AbilityChargeComponent>();
         _playerRadius = (player.GetNode<CollisionShape2D>("Collider").Shape as CapsuleShape2D)?.Radius ?? 0f;
         OnAimSettingsChanged();
@@ -155,9 +162,10 @@ public partial class CombatComponent : Component
     {
         var local = LocalPlayer.Local;
         if (local == null) return;
-        // The fingerprint covers the weapon item, its ActiveToggle, and every equipped
-        // slot's enchantments — anything that changes the effective weapon re-resolves it.
-        var fingerprint = EffectiveWeaponResolver.Fingerprint(local);
+        // The fingerprint covers the weapon item, its ActiveToggle, every equipped
+        // slot's enchantments, and the catalog version — anything that changes the
+        // effective weapon re-resolves it, including a catalog row edit.
+        var fingerprint = EffectiveWeaponResolver.Fingerprint(local) + '#' + GameManager.CatalogVersion;
         if (fingerprint == _weaponFingerprint) return;
         _weaponFingerprint = fingerprint;
 
@@ -251,12 +259,16 @@ public partial class CombatComponent : Component
         var zone = HitZoneScene.Instantiate<HitZone>();
         AddChild(zone);
         zone.GlobalPosition = pos;
+        // Band-stamp from the firing player's own hex: the zone only connects with
+        // receivers on the same elevation level (enforced in HitZone.ReportHits).
+        zone.Elevation = ElevationMap?.GetElevationAt(player.GlobalPosition) ?? 0;
         zone.Launch(radius, delay);
     }
 
     public override void _ExitTree()
     {
         base._ExitTree();
+        GameManager.CatalogChanged -= OnInventoryChanged;
         if (player != null)
         {
             player.InventoryChanged -= OnInventoryChanged;

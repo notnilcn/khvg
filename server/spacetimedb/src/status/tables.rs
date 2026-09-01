@@ -72,13 +72,17 @@ pub enum StatusEffectKind {
     /// Cannot drop below 1 HP. Exists only for the witch-doctor zone.
     HpFloor,
     /// Sheds/prevents enemy debuffs. Exists only for the witch-doctor zone.
+    /// TODO: no consult point exists — nothing applies debuffs TO players yet (enemy
+    /// debuffs land on enemies only). Design source: docs/Game Design Docs/Items/Items.md
+    /// ("Warding Circle — allies inside are immune to enemy debuffs"). Implement the guard
+    /// in the damage/status intercept when an enemy→player debuff path is added.
     DebuffImmune,
     /// Re-routes incoming raw hits to source_profile_id (the paladin).
     RedirectToCaster,
     Regen,
-    /// Stores incoming pre-mitigation damage during the window; releases as a smite burst.
+    /// Stores incoming post-mitigation damage during the window; releases as a smite burst.
     StoreIncomingSmite,
-    /// Stores incoming pre-mitigation damage during the window; re-arms for the next bash.
+    /// Stores incoming post-mitigation damage during the window; re-arms for the next bash.
     StoreIncomingBash,
     /// Server-enforced move-speed clamp while an ability charge is held.
     SelfSlow,
@@ -127,7 +131,8 @@ impl StatusParams {
 /// has no per-tick effect at all — it is consulted live by intercept_incoming.
 #[derive(SpacetimeType, Clone, Copy, PartialEq)]
 pub enum ZoneKind {
-    /// Applies DebuffImmune to players inside (magnitude unused — the kind has no consult point).
+    /// Applies DebuffImmune to players inside (magnitude unused — the kind has no consult
+    /// point yet; see the TODO on StatusEffectKind::DebuffImmune).
     DebuffImmunity,
     /// Applies DamageReductionPct (pct = magnitude) to players inside.
     DamageReduction,
@@ -196,6 +201,7 @@ pub struct ActiveStatusEffect {
     pub progress: f32,
     pub violated: bool,
     pub remaining: f32,
+    #[index(btree)]
     pub marked_enemy_id: u64,
     pub source_profile_id: u64,
     pub last_event_at: Timestamp,

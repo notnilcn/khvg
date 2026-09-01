@@ -1,0 +1,281 @@
+{
+	"nodes": [
+		{
+			"id": "c956448ca918da88",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/_ExitTree_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "559411859de83f46",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a5c8cc9c03a54158",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/Clear_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "86974073182c4ce6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/ClearIfMouseGone_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69951e82e33668f8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatAbility_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "08a77913488e4172",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatBuff_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "03e0efc5944358ba",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatConsumable_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "44e4dd4bb5e99f70",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatEnchantmentBehavior_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "610deda6e4408fd8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatEnemyStatus_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7297d27fa46588f6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatModifier_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b9cc1b4314cb286c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatPurge_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ffecb4a232370d60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatSpell_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bca29dcac6b676e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatWager_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "605ea833267f3bb2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatWeaponOption_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1006ad8a7e99c074",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/FormatZoneKind_symbol.canvas",
+			"color": "5",
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e95e144bd8d53a58",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/ItemSidebar (class)_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8d0b65c4241e5fe0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/MakeEnchantmentRow_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "40648b81fa9cd55c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/MakeLabel_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2af30ad4452a3430",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/player_symbol.canvas",
+			"color": "5",
+			"x": 8280,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "887ce6319548230c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/QueueHoverClear_symbol.canvas",
+			"color": "5",
+			"x": 8740,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f9300e850a5a11d6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/RefreshShownSlot_symbol.canvas",
+			"color": "5",
+			"x": 9200,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ff606f2128deac66",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/Render_symbol.canvas",
+			"color": "5",
+			"x": 9660,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a75b8e3bfc8a1b0c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/RenderDetails_symbol.canvas",
+			"color": "5",
+			"x": 10120,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a41f3329055c822a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/RenderRequirements_symbol.canvas",
+			"color": "5",
+			"x": 10580,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0310477833f12ed0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/shownSlot_symbol.canvas",
+			"color": "5",
+			"x": 11040,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2b19d66c4e1e5898",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebar_codefile/ShowSlot_symbol.canvas",
+			"color": "5",
+			"x": 11500,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-remove_enchantment-_colon_-rpc",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-apply_enchantment-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-rpc"
+			]
+		}
+	}
+}

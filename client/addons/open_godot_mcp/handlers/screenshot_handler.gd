@@ -41,7 +41,20 @@ func _game(params: Dictionary) -> Dictionary:
 	var dbg: EditorDebuggerPlugin = _get_debugger()
 	if dbg == null:
 		return _EC.fail("RUNTIME_NOT_CONNECTED", "Game not running or debugger unavailable")
-	return await dbg.call_runtime("screenshot", {"action": "game", "params": params})
+	return await dbg.call_runtime("screenshot", _game_call_params("game", params))
+
+
+## Build the runtime call params for game-side captures, hoisting the
+## multi-instance selector ("instance") to the top level where
+## call_runtime consumes it — the game must not receive it.
+func _game_call_params(action: String, params: Dictionary) -> Dictionary:
+	var inner := params.duplicate()
+	var call_params := {"action": action, "params": inner}
+	var instance := int(inner.get("instance", 0))
+	if instance > 0:
+		inner.erase("instance")
+		call_params["instance"] = instance
+	return call_params
 
 
 func _editor(params: Dictionary) -> Dictionary:
@@ -66,8 +79,7 @@ func _region(params: Dictionary) -> Dictionary:
 		var dbg: EditorDebuggerPlugin = _get_debugger()
 		if dbg == null:
 			return _EC.fail("RUNTIME_NOT_CONNECTED", "Game not running or debugger unavailable")
-		var call_params := {"action": "region", "params": params}
-		return await dbg.call_runtime("screenshot", call_params)
+		return await dbg.call_runtime("screenshot", _game_call_params("region", params))
 	else:
 		var img := _capture_editor_viewport("2d")
 		if not img:
@@ -87,7 +99,7 @@ func _burst(params: Dictionary) -> Dictionary:
 	var dbg: EditorDebuggerPlugin = _get_debugger()
 	if dbg == null:
 		return _EC.fail("RUNTIME_NOT_CONNECTED", "Game not running or debugger unavailable")
-	return await dbg.call_runtime("screenshot", {"action": "burst", "params": params})
+	return await dbg.call_runtime("screenshot", _game_call_params("burst", params))
 
 
 func _cleanup(params: Dictionary) -> Dictionary:

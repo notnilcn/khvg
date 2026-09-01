@@ -21,11 +21,31 @@
 			"height": 400
 		},
 		{
+			"id": "4f3409a72c2c3492",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/EnemyBullets3DComponent_codefile/_spawner_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "077384b3a713f11a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/EnemyBullets3DComponent_codefile/_syncTimer_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "014ead3664a7780c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/EnemyBullets3DComponent_codefile/_used_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/EnemyBullets3DComponent_codefile/EnemyBullets3DComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/EnemyBullets3DComponent_codefile/HideUnused_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/EnemyBullets3DComponent_codefile/NextNode_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/EnemyBullets3DComponent_codefile/SyncInstance_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400

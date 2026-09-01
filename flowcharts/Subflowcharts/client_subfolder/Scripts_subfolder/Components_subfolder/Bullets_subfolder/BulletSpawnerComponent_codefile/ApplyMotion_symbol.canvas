@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "03205defe78dec7e",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs",
+			"subpath": "#ApplyMotion",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

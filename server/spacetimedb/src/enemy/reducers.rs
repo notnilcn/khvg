@@ -1,9 +1,10 @@
 use spacetimedb::{ReducerContext, Table};
 use crate::main::global::*;
 use crate::world::hex::{spiral_chunk_index, world_to_chunk};
-use crate::world::wrap::wrap_world_pos;
+use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
 use crate::world::tables::MapConfig;
 use crate::player::methods::*;
+use crate::player::tables::player_position;
 use crate::combat::deal_damage_to_enemy;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
@@ -24,34 +25,53 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             Some(b) => b,
             None => continue,
         };
+        // Delta-check snapshot: the end-of-tick row update is skipped when nothing changed.
+        let behavior_snapshot = (
+            behavior.aggro_target, behavior.aggro_locked_until, behavior.was_simulating,
+            behavior.active_phase_index, behavior.velocity_x, behavior.velocity_y,
+        );
         let template = match ctx.db.enemy_template().template_id().find(&enemy.template_id) {
             Some(t) => t,
             None => continue,
         };
-        if !has_player_in_simulation_range(ctx, enemy.x, enemy.y, template.move_sim_factor * CAMERA_VIEW_RADIUS) {
+        let move_range = template.move_sim_factor * CAMERA_VIEW_RADIUS;
+        if !has_player_in_simulation_range(ctx, enemy.x, enemy.y, move_range) {
             if behavior.was_simulating {
                 ctx.db.enemy_behavior().behavior_id().update(EnemyBehavior { was_simulating: false, ..behavior });
             }
             continue;
         }
 
-        // Only retarget on the tick an enemy *enters* move range — avoids
-        // recomputing aggro every 100ms for an enemy already mid-fight.
-        if !behavior.was_simulating {
-            let (aggro_target, aggro_locked_until) = recompute_aggro(ctx, enemy.x, enemy.y, template.aggro_lock_seconds);
-            behavior.aggro_target = aggro_target;
-            behavior.aggro_locked_until = aggro_locked_until;
-        }
-        behavior.was_simulating = true;
-
         // Enemy-status consult: a Stunned row on a Pause template freezes the enemy — no
         // attacks and no movement this tick (Slowed/Enraged templates keep simulating with
-        // scaled movement/pacing instead, via apply_movement/effective_interval).
+        // scaled movement/pacing instead, via apply_movement/effective_interval). Checked
+        // before the aggro recompute so frozen enemies skip that work too.
         if template.stun_behavior == StunBehavior::Pause
             && crate::status::methods::stunned_magnitude(ctx, enemy.enemy_id).is_some()
         {
             continue;
         }
+
+        // Retarget on the tick an enemy *enters* move range — and immediately whenever the
+        // current aggro target goes stale (logged out / died / left sim range), instead of
+        // chasing a ghost until the next re-entry. Steady-state mid-fight ticks still skip
+        // the recompute.
+        if !behavior.was_simulating {
+            let (aggro_target, aggro_locked_until) = recompute_aggro(ctx, enemy.x, enemy.y, template.aggro_lock_seconds);
+            behavior.aggro_target = aggro_target;
+            behavior.aggro_locked_until = aggro_locked_until;
+        } else if let Some(target) = behavior.aggro_target {
+            let stale = match find_player_pos_by_id(ctx, target) {
+                Some((px, py)) => wrapped_distance_sq(px, py, enemy.x, enemy.y, (cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y)) > move_range * move_range,
+                None => true,
+            };
+            if stale {
+                let (aggro_target, aggro_locked_until) = recompute_aggro(ctx, enemy.x, enemy.y, template.aggro_lock_seconds);
+                behavior.aggro_target = aggro_target;
+                behavior.aggro_locked_until = aggro_locked_until;
+            }
+        }
+        behavior.was_simulating = true;
 
         let phase_idx = enemy.phase as usize;
         let phase_def = match template.phases.get(phase_idx) {
@@ -62,6 +82,8 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             Some(p) => p,
             None => continue,
         };
+        // Delta-check snapshot for the end-of-tick update.
+        let phase_snapshot = (phase.phase_waiting, phase.phase_loop_timer, phase.move_cycle_started_at);
 
         // enemy.phase is advanced by report_enemy_hit when HP crosses a threshold;
         // detect that transition here and reset the new phase's attack sequences.
@@ -100,49 +122,54 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         let (cq, cr) = world_to_chunk(new_x, new_y, chunk_hex_radius, hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);
 
-        ctx.db.enemy_phases().phase_id().update(phase);
-        ctx.db.enemy_behavior().behavior_id().update(EnemyBehavior {
-            active_phase_index, velocity_x: new_dir_x, velocity_y: new_dir_y,
-            ..behavior
-        });
-        ctx.db.enemy().enemy_id().update(Enemy { x: new_x, y: new_y, chunk_index, ..enemy });
+        // Delta-checked writes: rows are only updated when a field actually changed.
+        if (phase.phase_waiting, phase.phase_loop_timer, phase.move_cycle_started_at) != phase_snapshot {
+            ctx.db.enemy_phases().phase_id().update(phase);
+        }
+        if (
+            behavior.aggro_target, behavior.aggro_locked_until, behavior.was_simulating,
+            active_phase_index, new_dir_x, new_dir_y,
+        ) != behavior_snapshot {
+            ctx.db.enemy_behavior().behavior_id().update(EnemyBehavior {
+                active_phase_index, velocity_x: new_dir_x, velocity_y: new_dir_y,
+                ..behavior
+            });
+        }
+        if new_x != enemy.x || new_y != enemy.y || chunk_index != enemy.chunk_index {
+            ctx.db.enemy().enemy_id().update(Enemy { x: new_x, y: new_y, chunk_index, ..enemy });
+        }
     }
-}
-
-#[spacetimedb::reducer]
-pub fn control_bullets(
-    ctx: &ReducerContext,
-    kind: BulletControlKind,
-    x: f32,
-    y: f32,
-    radius: f32,
-    target_x: f32,
-    target_y: f32,
-) -> Result<(), String> {
-    require_in_world(ctx)?;
-    ctx.db.bullet_control_event().insert(BulletControlEvent {
-        event_id: 0,
-        kind,
-        x,
-        y,
-        radius,
-        target_x,
-        target_y,
-        duration: 0.0,
-        cast_by: ctx.sender(),
-    });
-    Ok(())
 }
 
 #[spacetimedb::reducer]
 pub fn report_enemy_hit(ctx: &ReducerContext, enemy_id: u64) -> Result<(), String> {
     let player = require_in_world(ctx)?;
 
+    // Sustained-rate budget (PlayerHitRate token bucket, 1s window): equipped weapon
+    // fire_rate × effective shot_count × HIT_RATE_SLACK. Over budget = spam/farming —
+    // rejected before any damage math. Damage math itself is unchanged.
+    let cap = resolve_effective_weapon(ctx, player.profile_id)
+        .map(|w| (w.behavior.fire_rate * w.behavior.shot_count.max(1) as f32 * HIT_RATE_SLACK).ceil() as u32)
+        .unwrap_or(0);
+    if !hit_rate_allow(ctx, player.profile_id, true, cap) {
+        return Err("Hit report rate exceeded.".to_string());
+    }
+
     let enemy = match ctx.db.enemy().enemy_id().find(&enemy_id) {
         Some(e) => e,
         None => return Ok(()),
     };
     if enemy.immortal { return Ok(()); }
+
+    // Wrap-aware range check, attacker position row ↔ enemy — report_enemy_hit stays
+    // self-reported (see the trust model); this only rejects nonsense attributions,
+    // same radius report_hit uses.
+    let pos = ctx.db.player_position().profile_id().find(&player.profile_id).ok_or("Position not found.")?;
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let dist_sq = wrapped_distance_sq(pos.x, pos.y, enemy.x, enemy.y, (cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
+    if dist_sq > HIT_VALIDATION_RADIUS * HIT_VALIDATION_RADIUS {
+        return Err("Enemy is not near the player.".to_string());
+    }
 
     deal_damage_to_enemy(ctx, player.profile_id, enemy);
     Ok(())

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d1f0a2411aa6e704",
+			"type": "file",
+			"file": "client/Scripts/Components/Status/EnemyDebuffIndicatorComponent.cs",
+			"subpath": "#_Ready",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "08d4b3c02a502700",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/LocalPlayerInventoryComponent.cs",
+			"subpath": "#castPendingUntilMs",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

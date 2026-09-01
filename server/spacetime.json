@@ -1,5 +1,5 @@
 {
-  "server": "local",
+  "server": "https://khvgames.com/server",
   "module-path": "./spacetimedb",
   "generate": [
     {

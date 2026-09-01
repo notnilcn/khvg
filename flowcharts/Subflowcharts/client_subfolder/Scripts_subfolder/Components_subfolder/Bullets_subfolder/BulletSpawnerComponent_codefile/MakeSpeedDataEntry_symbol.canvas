@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4c9682c877bc29f0",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs",
+			"subpath": "#MakeSpeedDataEntry",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

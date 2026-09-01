@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/decor_codefile/decor_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/ground_codefile/ground_codefile.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/mod_codefile/mod_codefile.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 0,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -45,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/rules_codefile/rules_codefile.canvas",
 			"color": "5",
-			"x": 10,
+			"x": 910,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -55,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/voronoi_codefile/voronoi_codefile.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400

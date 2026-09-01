@@ -5,33 +5,33 @@ use crate::enemy::def_tables::*;
 use crate::enemy::defs::*;
 use crate::item::tables::*;
 
-fn texture(texture_id: &str, res_path: &str, kind: TextureKind) -> TextureEntry {
-    TextureEntry { texture_id: texture_id.to_string(), res_path: res_path.to_string(), kind }
+fn texture(texture_id: &str, res_path2d: &str, res_path3d: &str, kind: TextureKind) -> TextureEntry {
+    TextureEntry { texture_id: texture_id.to_string(), res_path2d: res_path2d.to_string(), res_path3d: res_path3d.to_string(), kind }
 }
 
 pub fn seed_default_textures(ctx: &ReducerContext) {
-    TextureEntry::seed(ctx, texture("Enemy", "res://Textures/Enemies/Knight.tres", TextureKind::Enemy));
-    TextureEntry::seed(ctx, texture("Archer", "res://Textures/Enemies/Archer.tres", TextureKind::Enemy));
-    TextureEntry::seed(ctx, texture("Knight", "res://Textures/Players/Knight.tres", TextureKind::Player));
-    TextureEntry::seed(ctx, texture("Arrow", "res://Textures/Attacks/Arrow.tres", TextureKind::Projectile));
-    TextureEntry::seed(ctx, texture("Helmet", "res://Textures/Items/Armor/Helmet.tres", TextureKind::Item));
-    TextureEntry::seed(ctx, texture("Hat", "res://Textures/Items/Accesories/Hat.tres", TextureKind::Item));
-    TextureEntry::seed(ctx, texture("Skull", "res://Textures/Items/Artifacts/Skull.tres", TextureKind::Item));
-    TextureEntry::seed(ctx, texture("Orb", "res://Textures/Items/Artifacts/Orb.tres", TextureKind::Item));
-    TextureEntry::seed(ctx, texture("Bag", "res://Textures/Items/Bags/Bag.tres", TextureKind::Item));
-    TextureEntry::seed(ctx, texture("Bread", "res://Textures/Items/Consumables/Bread.tres", TextureKind::Item));
-    TextureEntry::seed(ctx, texture("Bow", "res://Textures/Items/Weapons/Bow.tres", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Enemy", "res://Textures/Enemies/Knight.tres", "res://Assets/3D/skeletons/Skeleton_Warrior.fbx", TextureKind::Enemy));
+    TextureEntry::seed(ctx, texture("Archer", "res://Textures/Enemies/Archer.tres", "res://Assets/3D/skeletons/Skeleton_Rogue.fbx", TextureKind::Enemy));
+    TextureEntry::seed(ctx, texture("Knight", "res://Textures/Players/Knight.tres", "res://Assets/3D/characters/Knight.fbx", TextureKind::Player));
+    TextureEntry::seed(ctx, texture("Arrow", "res://Textures/Attacks/Arrow.tres", "res://Assets/3D/accesiories/arrow_bow.fbx", TextureKind::Projectile));
+    TextureEntry::seed(ctx, texture("Helmet", "res://Textures/Items/Armor/Helmet.tres", "", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Hat", "res://Textures/Items/Accesories/Hat.tres", "", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Skull", "res://Textures/Items/Artifacts/Skull.tres", "", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Orb", "res://Textures/Items/Artifacts/Orb.tres", "", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Bag", "res://Textures/Items/Bags/Bag.tres", "res://Assets/3D/accesiories/quiver.fbx", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Bread", "res://Textures/Items/Consumables/Bread.tres", "res://Assets/3D/accesiories/mug_full.fbx", TextureKind::Item));
+    TextureEntry::seed(ctx, texture("Bow", "res://Textures/Items/Weapons/Bow.tres", "res://Assets/3D/accesiories/bow_withString.fbx", TextureKind::Item));
 
-    TextureEntry::seed(ctx, texture("Grass", "res://Textures/World/Ground/Grass.tres", TextureKind::Environment));
-    TextureEntry::seed(ctx, texture("Flowers", "res://Textures/World/Ground/Flowers.tres", TextureKind::Environment));
-    TextureEntry::seed(ctx, texture("HalfStones", "res://Textures/World/Ground/HalfStones.tres", TextureKind::Environment));
-    TextureEntry::seed(ctx, texture("FullStones", "res://Textures/World/Ground/FullStones.tres", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("Grass", "res://Textures/World/Ground/Grass.tres", "res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grass.fbx", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("Flowers", "res://Textures/World/Ground/Flowers.tres", "res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grass.fbx", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("HalfStones", "res://Textures/World/Ground/HalfStones.tres", "res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/roads/hex_road_A.fbx", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("FullStones", "res://Textures/World/Ground/FullStones.tres", "res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/roads/hex_road_B.fbx", TextureKind::Environment));
 
-    TextureEntry::seed(ctx, texture("Tree", "res://Textures/World/Decor/Props/Tree.tres", TextureKind::Environment));
-    TextureEntry::seed(ctx, texture("TreeShadow", "res://Textures/World/Decor/Shadows/Tree.tres", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("Tree", "res://Textures/World/Decor/Props/Tree.tres", "res://Assets/3D/KayKit_Medieval_Hexagon_Pack/decoration/nature/trees_A_medium.fbx", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("TreeShadow", "res://Textures/World/Decor/Shadows/Tree.tres", "", TextureKind::Environment));
 
-    TextureEntry::seed(ctx, texture("Rock", "res://Textures/World/Decor/Props/Rock.tres", TextureKind::Environment));
-    TextureEntry::seed(ctx, texture("RockShadow", "res://Textures/World/Decor/Shadows/Rock.tres", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("Rock", "res://Textures/World/Decor/Props/Rock.tres", "res://Assets/3D/KayKit_Medieval_Hexagon_Pack/decoration/nature/rock_single_A.fbx", TextureKind::Environment));
+    TextureEntry::seed(ctx, texture("RockShadow", "res://Textures/World/Decor/Shadows/Rock.tres", "", TextureKind::Environment));
 }   
 
 // Allow-list of overlay/base tag pairs — absence of a rule means that overlay never layers on

@@ -1,26 +1,118 @@
 {
-	"nodes":[
-		{"id":"22d497a8e830c260","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/default_enemy_codefile/default_enemy_codefile.canvas","color":"5","x":580,"y":0,"width":400,"height":400},
-		{"id":"d494bc0768d25948","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas","color":"5","x":1040,"y":0,"width":400,"height":400},
-		{"id":"916e18fd110ee05a","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas","color":"5","x":1500,"y":0,"width":400,"height":400},
-		{"id":"b28422a194e287b2","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemies_subfolder.canvas","color":"5","x":460,"y":500,"width":400,"height":400},
-		{"id":"69d7625af2ec04d0","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas","color":"5","x":590,"y":1500,"width":400,"height":400},
-		{"id":"92a8020e4de518b8","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas","color":"5","x":580,"y":1000,"width":400,"height":400},
-		{"id":"4414d6e4f159cb40","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas","color":"5","x":0,"y":500,"width":400,"height":400},
-		{"id":"02cb56c63df73908","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas","color":"5","x":0,"y":1500,"width":400,"height":400}
+	"nodes": [
+		{
+			"id": "22d497a8e830c260",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/default_enemy_codefile/default_enemy_codefile.canvas",
+			"color": "5",
+			"x": 580,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69206441fa058f50",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
+			"color": "5",
+			"x": 1040,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b28422a194e287b2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemies_subfolder.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "92a8020e4de518b8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas",
+			"color": "5",
+			"x": 570,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4414d6e4f159cb40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "02cb56c63df73908",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
+			"color": "5",
+			"x": 230,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		}
 	],
-	"edges":[
-		{"id":"f81916bf8b27ef82","fromNode":"22d497a8e830c260","fromSide":"bottom","toNode":"b28422a194e287b2","toSide":"top","toEnd":"arrow","label":"script"},
-		{"id":"83ecaf2a7b920f60","fromNode":"22d497a8e830c260","fromSide":"bottom","toNode":"92a8020e4de518b8","toSide":"top","toEnd":"arrow","label":"bind"},
-		{"id":"c7cae68200e55590","fromNode":"b28422a194e287b2","fromSide":"bottom","toNode":"92a8020e4de518b8","toSide":"top","toEnd":"arrow","label":"read"},
-		{"id":"6fbe98af8b4f0c62","fromNode":"69d7625af2ec04d0","fromSide":"bottom","toNode":"92a8020e4de518b8","toSide":"top","toEnd":"arrow"},
-		{"id":"1f947366e96bb564","fromNode":"92a8020e4de518b8","fromSide":"bottom","toNode":"02cb56c63df73908","toSide":"top","toEnd":"arrow"},
-		{"id":"da88e8b7d0814e0a","fromNode":"92a8020e4de518b8","fromSide":"bottom","toNode":"69d7625af2ec04d0","toSide":"top","toEnd":"arrow"},
-		{"id":"8142c790a761d380","fromNode":"4414d6e4f159cb40","fromSide":"bottom","toNode":"02cb56c63df73908","toSide":"top","toEnd":"arrow","label":"read"},
-		{"id":"fc46b765e61d5a42","fromNode":"4414d6e4f159cb40","fromSide":"bottom","toNode":"92a8020e4de518b8","toSide":"top","toEnd":"arrow"}
-	],
-	"metadata":{
-		"version":"1.0-1.0",
-		"frontmatter":{}
-	}
+	"edges": [
+		{
+			"id": "f81916bf8b27ef82",
+			"fromNode": "22d497a8e830c260",
+			"fromSide": "bottom",
+			"toNode": "b28422a194e287b2",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "83ecaf2a7b920f60",
+			"fromNode": "22d497a8e830c260",
+			"fromSide": "bottom",
+			"toNode": "92a8020e4de518b8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "c7cae68200e55590",
+			"fromNode": "b28422a194e287b2",
+			"fromSide": "bottom",
+			"toNode": "92a8020e4de518b8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "1f947366e96bb564",
+			"fromNode": "92a8020e4de518b8",
+			"fromSide": "bottom",
+			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "8142c790a761d380",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "fc46b765e61d5a42",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "92a8020e4de518b8",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	]
 }

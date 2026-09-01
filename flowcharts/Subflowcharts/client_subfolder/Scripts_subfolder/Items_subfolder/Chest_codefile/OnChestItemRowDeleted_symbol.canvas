@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c95f44f3e238050e",
+			"type": "file",
+			"file": "client/Scripts/Items/Chest.cs",
+			"subpath": "#OnChestItemRowDeleted",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

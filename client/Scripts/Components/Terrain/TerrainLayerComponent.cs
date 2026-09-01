@@ -20,12 +20,14 @@ public abstract partial class TerrainLayerComponent : Node2DComponent
     /// The owning terrain system (mesh/texture caches live there, shared across all chunks).
     protected TerrainComponent Terrain => ((TileComponent)Entity!).Terrain;
 
-    protected MultiMeshInstance2D GetOrCreateLeaf(string key, Mesh mesh, Texture2D? texture)
+    protected MultiMeshInstance2D GetOrCreateLeaf(string key, Mesh mesh, Texture2D? texture, bool useColors = false)
     {
         if (_leaves.TryGetValue(key, out var existing))
             return existing;
 
-        var multimesh = new MultiMesh { TransformFormat = MultiMesh.TransformFormatEnum.Transform2D, Mesh = mesh };
+        // use_colors (ground/overlay only — the elevation tint) must be set up front:
+        // the MultiMesh's buffer format is fixed when InstanceCount is first assigned.
+        var multimesh = new MultiMesh { TransformFormat = MultiMesh.TransformFormatEnum.Transform2D, UseColors = useColors, Mesh = mesh };
         var leaf = new MultiMeshInstance2D { Multimesh = multimesh };
 
         if (texture != null)

@@ -41,21 +41,11 @@
 			"height": 400
 		},
 		{
-			"id": "71b305e8b8cc3cd0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/bulletPatternEventBinder_symbol.canvas",
-			"color": "5",
-			"x": 1840,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "b7cda9e0a1221fc0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/componentRegistry_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/Enemy (class)_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/GetComponent (no params)_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/GetComponent (System.Type)_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/interpolation_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/maxHp_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,17 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/nearbyEnemiesBinder_symbol.canvas",
 			"color": "5",
-			"x": 5060,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "19d43f0db1bc6f64",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnBulletPatternRowInserted_symbol.canvas",
-			"color": "5",
-			"x": 5520,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnEnemyRowInserted_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/OnEnemyRowUpdated_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/RegisterComponent_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/sprite_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/UnregisterComponent_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400

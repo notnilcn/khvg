@@ -2,7 +2,8 @@
 using Godot;
 
 /// <summary>
-/// A single inventory slot (declared across inventory_panel.tscn for the hotbar, the
+/// A single inventory slot (declared across the inventory UI in local_player.tscn for
+/// the hotbar, the
 /// always-visible Equipment panel, and the Backpack grid; the node names stay
 /// `<Type> - <Index>` because the exported slot-section arrays reference those paths).
 /// Drag/drop reports the SwapSlots reducer (a drag from a ChestSlotComponent instead
@@ -37,15 +38,15 @@ public partial class SlotComponent : ControlComponent
 
     public override void _GuiInput(InputEvent @event)
     {
-        // Left-click on an ability slot activates it (span followers activate their head).
-        if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true }
-            && LocalPlayerInventoryComponent.IsAbilitySlot((int)SlotIndex))
-        {
-            var slot = LocalPlayer.Local?.ResolveSlotAt((int)SlotIndex).Slot;
-            if (slot != null && (slot.ItemId != null || slot.OccupiedBy != null) && LocalPlayer.Local != null)
-                LocalPlayerInventoryComponent.TryActivateAbility(LocalPlayer.Local, (int)SlotIndex);
-            return;
-        }
+        // Left-click on an ability slot activates it (span followers activate their head). Disabled for now.
+        // if (@event is InputEventMouseButton { ButtonIndex: MouseButton.Left, Pressed: true }
+        //     && LocalPlayerInventoryComponent.IsAbilitySlot((int)SlotIndex))
+        // {
+        //     var slot = LocalPlayer.Local?.ResolveSlotAt((int)SlotIndex).Slot;
+        //     if (slot != null && (slot.ItemId != null || slot.OccupiedBy != null) && LocalPlayer.Local != null)
+        //         LocalPlayerInventoryComponent.TryActivateAbility(LocalPlayer.Local, (int)SlotIndex);
+        //     return;
+        // }
 
         if (!inBackpack || Icon.Texture == null) return;
         if (@event is not InputEventMouseButton { ButtonIndex: MouseButton.Right, Pressed: true }) return;

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "ff630fe1a08a2fc6",
+			"type": "file",
+			"file": "server/spacetimedb/src/player/reducers.rs",
+			"subpath": "#charge_range_multiplier",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

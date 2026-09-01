@@ -41,11 +41,21 @@
 			"height": 400
 		},
 		{
+			"id": "436559015ff22a78",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/_shuttingDown_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "136482cc82d5c2c8",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/Connect_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/DatabaseConnector (class)_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/IsLocal_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/IsPlayerArg_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/OnConnected_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/OnConnectError_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/DatabaseConnector_codefile/OnDisconnected_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400

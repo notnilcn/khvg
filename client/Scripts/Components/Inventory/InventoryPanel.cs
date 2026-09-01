@@ -3,8 +3,8 @@ using Godot;
 using System;
 
 /// <summary>
-/// The local player's inventory UI root (the InventoryPanel node in
-/// inventory_panel.tscn, instanced under LocalPlayer): hotbar/backpack visibility
+/// The local player's inventory UI root (the InventoryPanel node declared inline in
+/// local_player.tscn under LocalPlayer): hotbar/backpack visibility
 /// toggle, hotbar key presses (UseItem reducer), ability key presses (ActivateAbility
 /// reducer; charge-capable items route key-down/up to Begin/ReleaseAbilityCharge),
 /// and slot icon refresh on InventoryChanged. Reaches the LocalPlayer
@@ -120,7 +120,7 @@ public partial class InventoryPanel : Control
 	private static void SetSlotTexture(TextureRect rect, string? itemId)
 	{
 		var textureId = itemId != null ? GameManager.GetItem(itemId)?.TextureId : null;
-		var resPath = textureId != null ? GameManager.GetResPath(textureId) : null;
+		var resPath = textureId != null ? GameManager.GetResPath2D(textureId) : null;
 		rect.Texture = resPath != null ? GD.Load<Texture2D>(resPath) : null;
 	}
 

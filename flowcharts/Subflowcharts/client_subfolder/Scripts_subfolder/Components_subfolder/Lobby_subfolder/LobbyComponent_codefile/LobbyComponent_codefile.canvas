@@ -1,11 +1,31 @@
 {
 	"nodes": [
 		{
+			"id": "84c9024295b3d6d0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/_ExitTree_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "ea1889475756f5b0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/_Ready_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ac89e357ebf3e644",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/FailJoin_symbol.canvas",
+			"color": "5",
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +35,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/HideLobby_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9d77091c01133da8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/joinPending_symbol.canvas",
+			"color": "5",
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/LobbyComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/mainMenuPCam2D_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnCreatePanelPressed_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnCreatePressed_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnDeletePressed_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +105,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnJoinPressed_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "88dd92d701d84f82",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnJoinTimeout_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a4a4737d5bb1a982",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnJoinWorldResult_symbol.canvas",
+			"color": "5",
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnProfileRowInserted_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +145,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ff24f8c967a9fdf2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/profilePanels_symbol.canvas",
+			"color": "5",
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/profilesBinder_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/ShowLobby_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400

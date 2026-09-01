@@ -1,11 +1,21 @@
 {
 	"nodes": [
 		{
+			"id": "672dea61b8f3edd8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/InteractComponent_codefile/InteractComponent_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "eeb105f57a50dcac",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/PickupComponent_codefile/PickupComponent_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c21ea08a38ed5868",
+			"type": "file",
+			"file": "client/Scripts/World/HexMath.cs",
+			"subpath": "#SpiralIndex",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

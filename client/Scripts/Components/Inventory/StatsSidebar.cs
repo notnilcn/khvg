@@ -2,13 +2,14 @@
 using Godot;
 
 /// <summary>
-/// The player-stats sidebar (level/hp/attributes) in inventory_panel.tscn. Mirrors the
+/// The player-stats sidebar (level/hp/attributes) in the inventory UI declared inline in
+/// local_player.tscn. Mirrors the
 /// owning LocalPlayer's pass-through stat properties and refreshes on StatsChanged.
 /// The six allocatable stats (str/wis/dex/dps/sup/art) each get a "+" Button, visible
 /// only while the player has unspent skill points, calling the AllocateStat reducer.
 /// Defense is modifier-only (gear/buffs) — shown, but not allocatable.
-/// Reaches the owning LocalPlayer through the ancestor walk (across the instanced
-/// inventory_panel.tscn boundary).
+/// Reaches the owning LocalPlayer through the ancestor walk (across the inline
+/// inventory UI boundary).
 /// </summary>
 public partial class StatsSidebar : Control
 {

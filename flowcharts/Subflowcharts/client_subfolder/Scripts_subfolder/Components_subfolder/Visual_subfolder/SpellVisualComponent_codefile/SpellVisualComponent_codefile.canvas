@@ -1,0 +1,193 @@
+{
+	"nodes": [
+		{
+			"id": "a9950e098356733a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c109fb524b3e94c4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/CircleColor_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9585e31abcca2a5c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/CirclePoints_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fd221c639d177cc4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/ConeColor_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "15a037051a4fbbfc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/ConvergeColor_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5b005280771fdc00",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/DefaultDuration_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1568388b6a429720",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/Flash_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b2136e60dab19200",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/LineColor_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "925c4b8494ba5580",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/MakeCone_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1891e95ef7d4ac58",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/MakeDisc_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a7d05b75841b29ae",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/MakeRect_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "55cb51cdcd450292",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/MakeRing_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "812b470e68d61020",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/MeteorColor_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7f5dffdce633d9c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/OnAbilityVisualEventRow_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e9d8a41d2accdd32",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/Render_symbol.canvas",
+			"color": "5",
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "01c6f259a9e9c9b8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/RingThickness_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "825aaffb4aca2a96",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/SpellVisualComponent (class)_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c0f5426d4add7bea",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/SpellVisualComponent_codefile/visualBinder_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
+	}
+}

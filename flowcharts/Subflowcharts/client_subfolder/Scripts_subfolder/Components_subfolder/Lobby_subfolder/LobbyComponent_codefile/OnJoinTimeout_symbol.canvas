@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "231da63cf158b5e8",
+			"type": "file",
+			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
+			"subpath": "#OnJoinTimeout",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

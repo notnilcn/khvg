@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "66280a9b29e37dca",
+			"type": "file",
+			"file": "server/spacetimedb/src/status/tables.rs",
+			"subpath": "#ActiveEnemyStatusEffect",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

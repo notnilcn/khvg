@@ -8,38 +8,59 @@
         "type": "tabs",
         "children": [
           {
-            "id": "87eca17e48d96970",
+            "id": "940a97cd19f20e2e",
+            "type": "leaf",
+            "state": {
+              "type": "vscode-editor",
+              "state": {
+                "file": "server/spacetimedb/src/player/methods.rs"
+              },
+              "icon": "lucide-ghost",
+              "title": "vscode-editor"
+            }
+          },
+          {
+            "id": "c6e276205e595925",
+            "type": "leaf",
+            "state": {
+              "type": "vscode-editor",
+              "state": {
+                "file": "client/Scripts/Components/Weapon/EffectiveWeaponResolver.cs"
+              },
+              "icon": "lucide-ghost",
+              "title": "vscode-editor"
+            }
+          },
+          {
+            "id": "8198e8d99ffa55ff",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Untitled.md",
+                "file": "docs/Technical Design Docs/Description/10 Items, Inventory & Loot Tables.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Untitled"
+              "title": "10 Items, Inventory & Loot Tables"
             }
           },
           {
-            "id": "db4991a9dd1e9d70",
+            "id": "fbd77c2ad05ae6b0",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "docs/Game Design Docs/00.canvas",
-                "viewState": {
-                  "x": -1331.332554095049,
-                  "y": -538.8840779267965,
-                  "zoom": -2.3629292694896686
-                }
+                "file": "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "00"
+              "icon": "lucide-file",
+              "title": "03 Class system, Item system, and Equipment system"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -73,7 +94,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "",
+                "query": "position_debug",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -194,8 +215,8 @@
             "state": {
               "type": "git-view",
               "state": {},
-              "icon": "git-pull-request",
-              "title": "Source Control"
+              "icon": "lucide-ghost",
+              "title": "git-view"
             }
           },
           {
@@ -204,18 +225,19 @@
             "state": {
               "type": "file-properties",
               "state": {
-                "file": "Untitled.md"
+                "file": "docs/Technical Design Docs/REGENERATION PLAN.md"
               },
               "icon": "lucide-info",
               "title": "File properties"
             }
           }
         ],
-        "currentTab": 5
+        "currentTab": 6
       }
     ],
     "direction": "horizontal",
-    "width": 432.699951171875
+    "width": 432.699951171875,
+    "collapsed": true
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -231,62 +253,63 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "db4991a9dd1e9d70",
+  "active": "fbd77c2ad05ae6b0",
   "lastOpenFiles": [
+    "client/Scenes/game.tscn25911100112.tmp",
     "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcI5ADuc/linker-arguments",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustcI5ADuc",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm.tmp6280bb0",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustc3hqH4p/linker-arguments",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustc3hqH4p",
     "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.93tc5u7s9nxq7yxoy1njgb6ui.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.05.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.06.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.00.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.04.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.07.rcgu.o",
     "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.12.rcgu.o",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hlkwsta0w0-1bbntdk-e8mqkq6n5h6s7zw6slu8y6lwj/dep-graph.bin",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.10.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.06.rcgu.o",
+    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.07.rcgu.o",
+    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hlvx1u43x9-16kkl8j-4wh7s8z7ysolg6y8dxlzoht54/query-cache.bin",
+    "docs/Technical Design Docs/Description/13 Admin & Debug Tables.md",
+    "docs/Technical Design Docs/Description/08 Enemy Tables.md",
+    "server/spacetimedb/src/enemy/new_enemy_movement_system.md",
+    "Untitled 1.md",
     "Untitled.md",
-    "Untitled.png",
+    "client/addons/3dpixelart/README.md",
+    "client/addons/3dpixelart/AGENTS.md",
+    "docs/Technical Design Docs/Description/10 Items, Inventory & Loot Tables.md",
+    "Untitled.canvas",
+    "client/addons/MarchingSquaresTerrain/AGENTS.md",
+    "client/addons/MarchingSquaresTerrain/resources/plugin_materials/grass_leaf_sprite.png",
+    "client/addons/MarchingSquaresTerrain/editor/icons/vertex_paint_tool.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/toolicon.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/terrain_settings_tool.png",
+    "client/addons/MarchingSquaresTerrain/editor/icons/smooth_tool.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/Marching_Squares_Terrain_Icon.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/Marching_Squares_Terrain_Chunk_Icon.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/level_tool.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/grass_mask_tool.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/chunk_manager_tool.svg",
+    "client/addons/MarchingSquaresTerrain/documentation/documentation+/navmesh_guide.md",
+    "client/addons/MarchingSquaresTerrain/documentation/documentation+/internal_tool_system.md",
+    "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_locations.md",
+    "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_style_guide.md",
+    "client/addons/MarchingSquaresTerrain/documentation/plugin_quick_guide.md",
+    "client/addons/MarchingSquaresTerrain/documentation/credits.md",
     "docs/Game Design Docs/00.canvas",
-    "docs/Game Design Docs/Untitled.canvas",
-    "docs/Rotating_earth_(large).gif",
-    "docs/fire-flames-transparent.gif",
-    "server/spacetimedb/src/AGENTS.md",
-    "docs/Game Design Docs/Items/Abilities/Abilities.md",
-    "docs/Game Design Docs/01 Executive Summary.md",
-    "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
-    "docs/Game Design Docs/Items/Accessories/Accessories.md",
-    "docs/Game Design Docs/Items/Weapons/Weapons.md",
-    "docs/Game Design Docs/Items/Armors/Armors.md",
-    "docs/Game Design Docs/04 Lore.md",
-    "docs/Game Design Docs/Items/Items.md",
-    "docs/Game Design Docs/02 Gameplay.md",
-    "docs/Game Design Docs/Items/Untitled.canvas",
-    "docs/Technical Design Docs/To Do.md",
-    "docs/Technical Design Docs/REGENERATION PLAN.md",
-    "docs/Technical Design Docs/Workflows/Adding an Ability (Ability Authoring Workflow).md",
-    "docs/Technical Design Docs/Workflows/Adding a Boss (Enemy Authoring Workflow).md",
-    "docs/Technical Design Docs/Workflows/AGENTS.md",
-    "server/spacetimedb/src/item/AGENTS.md",
-    "docs/Technical Design Docs/Description/09 Combat & Damage.md",
-    "flowcharts/main.canvas",
-    "server/spacetimedb/src/enemy/AGENTS.md",
+    "docs/Technical Design Docs/Description/AGENTS.md",
+    "docs/Technical Design Docs/Description/09 Combat & Event Tables.md",
+    "flowcharts/main-items.canvas",
     "docs/Technical Design Docs/Description/01 Roadmap.md",
-    "docs/Technical Design Docs/Description/02 The Component Framework.md",
-    "flowcharts/main-combat.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent_codefile.canvas",
-    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
-    "flowcharts/main-enemies.canvas",
+    "docs/Technical Design Docs/Description/00 Table Map.md",
+    "flowcharts/main-terrain.canvas",
+    "flowcharts/Subflowcharts/server_subfolder/server_subfolder.canvas",
     "flowcharts/Subflowcharts/root_subfolder.canvas",
-    "docs/Technical Design Docs/Description/03 Boot & Connection.md",
-    "docs/Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
-    "docs/Game Design Docs - Copy/05 Biomes.md",
-    "docs/Game Design Docs new/05 Biomes.md",
-    "Rotating_earth_(large).gif",
-    "fire-flames-transparent.gif",
-    "docs/attachments/A-drawing-of-a-hexagonal-lattice-on-the-torus-The-vertices-on-the-top-edge-should-be.webp",
-    "docs/attachments/Pasted image 20260530125508.png",
-    "docs/attachments/Pasted image 20260530130436.png",
-    "docs/attachments/Pasted image 20260530125651.png"
+    "flowcharts/main-subscriptions.canvas",
+    "flowcharts/main-status.canvas",
+    "flowcharts/main-player-data.canvas",
+    "flowcharts/main-movement.canvas",
+    "docs/Technical Design Docs/Description/02 The Component Framework.md",
+    "docs/Technical Design Docs/Description/07 Terrain & World Tables.md",
+    "docs/Technical Design Docs/Description/03 Connection, Subscriptions & Views.md",
+    "docs/Technical Design Docs/Description/06 Movement & AOI Tables.md",
+    "docs/Technical Design Docs/Description/05 Player Data & Progression Tables.md",
+    "docs/Technical Design Docs/Description/04 Lobby & Identity Tables.md"
   ]
 }

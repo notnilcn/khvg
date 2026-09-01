@@ -27,8 +27,8 @@ public partial class TileComponent : Node2D, IEntity
 
     public void Populate(
         long chunkIndex,
-        Dictionary<(int TriIndex, int Rotation, string TextureId), List<Vector2>> ground,
-        Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale)>> overlay,
+        Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>> ground,
+        Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>> overlay,
         Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>> decorShadow,
         Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>> decor)
     {

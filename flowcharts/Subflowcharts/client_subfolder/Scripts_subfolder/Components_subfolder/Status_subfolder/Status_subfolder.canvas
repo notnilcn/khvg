@@ -1,0 +1,33 @@
+{
+	"nodes": [
+		{
+			"id": "9d5d34e9741da3ea",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/EnemyDebuffIndicatorComponent_codefile/EnemyDebuffIndicatorComponent_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6b5a8ea70f524622",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Status_subfolder/StatusBarComponent_codefile/StatusBarComponent_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"subfolder"
+			]
+		}
+	}
+}

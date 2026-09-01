@@ -21,11 +21,21 @@
 			"height": 400
 		},
 		{
+			"id": "48469ecc180b0500",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/externalSlow_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "a889cc5aa9272c28",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/lastMovementDirection_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/lastReportedScreenRotation_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/OnPositionRowInserted_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/OnPositionRowUpdated_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/positionBinder_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/PositionSyncComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/reportNextFrame_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/ReportNow_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +115,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/reportTimer_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2b7b0d7adf6b3e48",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/RequestMovementReport_symbol.canvas",
+			"color": "5",
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +135,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/rotationTimer_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "141abc22e59508f0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/SetExternalSlow_symbol.canvas",
+			"color": "5",
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/PositionSyncComponent_codefile/speedScale_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400

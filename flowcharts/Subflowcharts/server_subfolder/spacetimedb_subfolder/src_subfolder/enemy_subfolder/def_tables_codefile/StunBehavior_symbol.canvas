@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "bbeeb00adb1a2720",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/def_tables.rs",
+			"subpath": "#StunBehavior",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

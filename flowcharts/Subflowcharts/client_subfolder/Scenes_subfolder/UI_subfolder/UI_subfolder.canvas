@@ -1,11 +1,11 @@
 {
 	"nodes": [
 		{
-			"id": "28bbde92aa3a30d8",
+			"id": "637d25348a224f10",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/debug_overlay_codefile/debug_overlay_codefile.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/chest_slot_codefile/chest_slot_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,17 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/enchantment_row_codefile/enchantment_row_codefile.canvas",
 			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "2122d47813fa5b20",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/inventory_panel_codefile/inventory_panel_codefile.canvas",
-			"color": "5",
-			"x": 920,
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -37,22 +27,13 @@
 			"tags": [
 				"includeInAggregateFlowchart",
 				"subfolder",
-				"edge-_colon_-client/Scripts/Game/DebugOverlay-_dot_-cs-_hashtag_-DebugOverlay-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Inventory/InventoryComponent-_dot_-cs-_hashtag_-InventoryComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/InventoryComponent_codefile/InventoryComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Inventory/ChestSlotComponent-_dot_-cs-_hashtag_-ChestSlotComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ChestSlotComponent_codefile/ChestSlotComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Inventory/SlotComponent-_dot_-cs-_hashtag_-SlotComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/SlotComponent_codefile/SlotComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Inventory/StatsSidebarComponent-_dot_-cs-_hashtag_-StatsSidebarComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebarComponent_codefile/StatsSidebarComponent_codefile-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Inventory/ItemSidebarComponent-_dot_-cs-_hashtag_-ItemSidebarComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ItemSidebarComponent_codefile/ItemSidebarComponent_codefile-_dot_-canvas-_colon_-script"
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script"
 			]
 		}
 	}

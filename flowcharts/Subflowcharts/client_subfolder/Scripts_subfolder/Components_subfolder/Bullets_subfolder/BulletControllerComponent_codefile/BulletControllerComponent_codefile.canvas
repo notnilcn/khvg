@@ -1,32 +1,473 @@
 {
-	"nodes":[
-		{"id":"47d31c3ec5ecf2cc","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/_Ready_symbol.canvas","color":"5","x":0,"y":0,"width":400,"height":400},
-		{"id":"fb70f887b7ca7f6c","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/AttractNear_symbol.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
-		{"id":"e09f37f1a4d265be","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/bulletControlEventBinder_symbol.canvas","color":"5","x":920,"y":0,"width":400,"height":400},
-		{"id":"5e853c48c453a090","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent (class)_symbol.canvas","color":"5","x":1380,"y":0,"width":400,"height":400},
-		{"id":"fea5161fbe05d10e","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/DeleteNear_symbol.canvas","color":"5","x":1840,"y":0,"width":400,"height":400},
-		{"id":"3111705953ddd704","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/FindBulletsInRect_symbol.canvas","color":"5","x":2300,"y":0,"width":400,"height":400},
-		{"id":"c741009e4e127708","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/FindBulletsNear_symbol.canvas","color":"5","x":2760,"y":0,"width":400,"height":400},
-		{"id":"8576d7b55e333b62","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/GetBulletSpeed_symbol.canvas","color":"5","x":3220,"y":0,"width":400,"height":400},
-		{"id":"81fdc0552dd95580","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/GetRequiredComponents_symbol.canvas","color":"5","x":3680,"y":0,"width":400,"height":400},
-		{"id":"930203ba83a1e318","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/HomingSmoothing_symbol.canvas","color":"5","x":4140,"y":0,"width":400,"height":400},
-		{"id":"e2b2f8f6118008b4","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/OnBulletControlEventRow_symbol.canvas","color":"5","x":4600,"y":0,"width":400,"height":400},
-		{"id":"8bd280654d0f02fc","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/OnEntityReady_symbol.canvas","color":"5","x":5060,"y":0,"width":400,"height":400},
-		{"id":"1a3a45b8bd666700","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/Radius_symbol.canvas","color":"5","x":5520,"y":0,"width":400,"height":400},
-		{"id":"af213f1d08b48db8","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/Slash_symbol.canvas","color":"5","x":5980,"y":0,"width":400,"height":400},
-		{"id":"1eac8998ada87030","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/spawner_symbol.canvas","color":"5","x":6440,"y":0,"width":400,"height":400},
-		{"id":"cf69c8eab3149528","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SpawnSlashVisual_symbol.canvas","color":"5","x":6900,"y":0,"width":400,"height":400},
-		{"id":"4a5cf321c432561e","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitCount_symbol.canvas","color":"5","x":7360,"y":0,"width":400,"height":400},
-		{"id":"decb5eac14562888","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitDefaultSpeed_symbol.canvas","color":"5","x":7820,"y":0,"width":400,"height":400},
-		{"id":"dcaeb87f32618784","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitLifetime_symbol.canvas","color":"5","x":8280,"y":0,"width":400,"height":400},
-		{"id":"b3503c7e19fd6354","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitNear_symbol.canvas","color":"5","x":8740,"y":0,"width":400,"height":400},
-		{"id":"7b7af8ff77bd167c","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitSpread_symbol.canvas","color":"5","x":9200,"y":0,"width":400,"height":400}
-	],
-	"edges":[],
-	"metadata":{
-		"frontmatter":{
-			"tags":["includeInAggregateFlowchart","codefile"]
+	"nodes": [
+		{
+			"id": "41a102003fc19800",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/_Process_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
 		},
-		"version":"1.0-1.0"
+		{
+			"id": "47d31c3ec5ecf2cc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/_Ready_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fb70f887b7ca7f6c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/AttractNear_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "918942891625bc5c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/AttractTickInterval_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "df8623d36123d14c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/AttractZone_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a8860a1a38fe290c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/attractZones_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e09f37f1a4d265be",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/bulletControlEventBinder_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5e853c48c453a090",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent (class)_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3a99ed68c63f2fd0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent.AttractZone.Radius_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7aaa4f4558d60520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent.AttractZone.TickAccumulator_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d21b762a355f42ec",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent.AttractZone.TimeLeft_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5f5254e2d1f6e2a0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent.AttractZone.Visual_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9a108b1f1711eb7e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent.Radius_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b823617890674470",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent.WallZone.TickAccumulator_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f51736bdd18024b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent.WallZone.TimeLeft_symbol.canvas",
+			"color": "5",
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "792286d5895d2a64",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent.WallZone.Visual_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cecfbeabc23d7efa",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/Center_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0c886ba82a776fc0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/DeleteInRect_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fea5161fbe05d10e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/DeleteNear_symbol.canvas",
+			"color": "5",
+			"x": 8280,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "52d1e40c8de7a580",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/DeleteWallBullets_symbol.canvas",
+			"color": "5",
+			"x": 8740,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c049d691be8a5d60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/End_symbol.canvas",
+			"color": "5",
+			"x": 9200,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3111705953ddd704",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/FindBulletsInRect_symbol.canvas",
+			"color": "5",
+			"x": 9660,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c741009e4e127708",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/FindBulletsNear_symbol.canvas",
+			"color": "5",
+			"x": 10120,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8576d7b55e333b62",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/GetBulletSpeed_symbol.canvas",
+			"color": "5",
+			"x": 10580,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "81fdc0552dd95580",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/GetRequiredComponents_symbol.canvas",
+			"color": "5",
+			"x": 11040,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "930203ba83a1e318",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/HomingSmoothing_symbol.canvas",
+			"color": "5",
+			"x": 11500,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "61ab5e5e534e32a4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/MakeRectPolygon_symbol.canvas",
+			"color": "5",
+			"x": 11960,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e2b2f8f6118008b4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/OnBulletControlEventRow_symbol.canvas",
+			"color": "5",
+			"x": 12420,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8bd280654d0f02fc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/OnEntityReady_symbol.canvas",
+			"color": "5",
+			"x": 12880,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3bf1fb8c42bafae0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/Origin_symbol.canvas",
+			"color": "5",
+			"x": 13340,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "80e6793c998e6140",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SlashInRect_symbol.canvas",
+			"color": "5",
+			"x": 13800,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2d2bbc08c42c2bf0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SpawnAttractZone_symbol.canvas",
+			"color": "5",
+			"x": 14260,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1eac8998ada87030",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/spawner_symbol.canvas",
+			"color": "5",
+			"x": 14720,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "005cb4692c3bc550",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SpawnRectVisual_symbol.canvas",
+			"color": "5",
+			"x": 15180,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7f8e46e9421357a4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SpawnWallZone_symbol.canvas",
+			"color": "5",
+			"x": 15640,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4a5cf321c432561e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitCount_symbol.canvas",
+			"color": "5",
+			"x": 16100,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "decb5eac14562888",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitDefaultSpeed_symbol.canvas",
+			"color": "5",
+			"x": 16560,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b007efba3631fe20",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitHits_symbol.canvas",
+			"color": "5",
+			"x": 17020,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ae0a3079daf6f65c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitInRect_symbol.canvas",
+			"color": "5",
+			"x": 17480,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "dcaeb87f32618784",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitLifetime_symbol.canvas",
+			"color": "5",
+			"x": 17940,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b3503c7e19fd6354",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitNear_symbol.canvas",
+			"color": "5",
+			"x": 18400,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7b7af8ff77bd167c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/SplitSpread_symbol.canvas",
+			"color": "5",
+			"x": 18860,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "629d26cb7fe66bee",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/Target_symbol.canvas",
+			"color": "5",
+			"x": 19320,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "22d77674912b33c8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/WallZone_symbol.canvas",
+			"color": "5",
+			"x": 19780,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "93a6ca6fd8019ad0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/wallZones_symbol.canvas",
+			"color": "5",
+			"x": 20240,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "debd95c4d613b3b8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/Width_symbol.canvas",
+			"color": "5",
+			"x": 20700,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile"
+			]
+		}
 	}
 }

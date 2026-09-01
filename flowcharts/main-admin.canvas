@@ -1,11 +1,11 @@
 {
 	"nodes": [
 		{
-			"id": "907b62b678c6b608",
+			"id": "876a7d8e0eb60d08",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/UI_subfolder.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/game_codefile/game_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 130,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 580,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -25,8 +25,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas",
 			"color": "5",
-			"x": 690,
-			"y": 0,
+			"x": 120,
+			"y": 500,
 			"width": 400,
 			"height": 400
 		},
@@ -35,8 +35,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
 			"color": "5",
-			"x": 460,
-			"y": 500,
+			"x": 0,
+			"y": 1000,
 			"width": 400,
 			"height": 400
 		},
@@ -45,21 +45,39 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 700,
-			"y": 1000,
+			"x": 110,
+			"y": 1500,
 			"width": 400,
 			"height": 400
 		}
 	],
 	"edges": [
 		{
-			"id": "3a3449707f51bb20",
-			"fromNode": "907b62b678c6b608",
+			"id": "f34f3e7fb2fcaf6a",
+			"fromNode": "876a7d8e0eb60d08",
 			"fromSide": "bottom",
 			"toNode": "916e18fd110ee05a",
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "script"
+		},
+		{
+			"id": "dcf9ded810817090",
+			"fromNode": "876a7d8e0eb60d08",
+			"fromSide": "bottom",
+			"toNode": "803eb7303a83a4c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "4d2714cbe122bd62",
+			"fromNode": "876a7d8e0eb60d08",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
 		},
 		{
 			"id": "14c76f2cbe8fa668",

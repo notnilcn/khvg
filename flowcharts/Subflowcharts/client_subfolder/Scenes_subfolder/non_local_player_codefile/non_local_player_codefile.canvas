@@ -14,6 +14,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Players/Remote/RemotePlayer-_dot_-cs-_hashtag_-RemotePlayer-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/RemotePlayer_codefile-_dot_-canvas-_colon_-script",
@@ -46,8 +47,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-bind",
-				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_remote_player_rotations-_colon_-bind",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_remote_player_rotations-_colon_-bind"
 			]
 		}
 	}

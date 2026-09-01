@@ -385,5 +385,5 @@ If you wish to support me you can do so here - https://ko-fi.com/realnikich or h
 If you find this plugin useful:
 - <b>Leave a Star on the repository</b>
 - Expect tutorials on my YouTube channel - https://www.youtube.com/@realnikich
-- [Follow me on X (Twitter)](https://x.com/realNikich)
+- [[Twitter)](https://x.com/realNikich|Follow me on X (Twitter)]]
 - [Follow me on Bluesky](https://bsky.app/profile/realnikich.bsky.social)

@@ -22,20 +22,6 @@ use crate::enemy::instance_tables::{enemy, enemy_behavior, Enemy};
 use crate::enemy::methods::{compute_phase, despawn_enemy_archetype, recompute_aggro};
 use crate::status::tables::active_status_effect;
 
-// Payloads are part of the pipeline API for upcoming callers (e.g. the slash/bullet-despawn
-// reducers in src/plan.md); today's reducers only branch on the variant.
-#[allow(dead_code)]
-pub enum PlayerDamageOutcome {
-    Alive { hp: u32 },
-    Died,
-}
-
-#[allow(dead_code)]
-pub enum EnemyDamageOutcome {
-    Alive { hp: u32, phase: u8 },
-    Died { xp_reward: u32 },
-}
-
 /// How `apply_damage_to_enemy` treats the target's flat defence and the enemy-status
 /// consults (ArmorBreak zeroes defence, Vulnerability multiplies the final damage).
 pub enum MitigationMode {
@@ -50,15 +36,20 @@ pub enum MitigationMode {
 
 /// Options for the enemy damage path. DoT ticks call with DOT_TICK_OPTIONS: the outgoing
 /// bleed conversion consult is skipped so a Bloodbath DoT can't re-convert its own tick
-/// into a fresh (decaying) DoT forever instead of ever landing.
+/// into a fresh (decaying) DoT forever instead of ever landing, and the StoreDamage
+/// withhold consult is skipped so a caster's own DoT ticks aren't withheld into their own
+/// store pool.
 pub struct EnemyDamageOptions {
     /// Skip the outgoing-bleed conversion consult (DamageToBleed with params.outgoing).
     pub skip_outgoing_bleed: bool,
+    /// Skip the StoreDamage withhold consult.
+    pub skip_outgoing_withhold: bool,
 }
 
-pub const DEFAULT_ENEMY_OPTIONS: EnemyDamageOptions = EnemyDamageOptions { skip_outgoing_bleed: false };
-/// Enemy DoT ticks: bypass the outgoing-bleed conversion, everything else applies.
-pub const DOT_TICK_OPTIONS: EnemyDamageOptions = EnemyDamageOptions { skip_outgoing_bleed: true };
+pub const DEFAULT_ENEMY_OPTIONS: EnemyDamageOptions = EnemyDamageOptions { skip_outgoing_bleed: false, skip_outgoing_withhold: false };
+/// Enemy DoT ticks: bypass the outgoing-bleed conversion and the StoreDamage withhold,
+/// everything else applies.
+pub const DOT_TICK_OPTIONS: EnemyDamageOptions = EnemyDamageOptions { skip_outgoing_bleed: true, skip_outgoing_withhold: true };
 
 /// Outgoing weapon damage split at the mitigation seam: `base` is pre-defence (defence is
 /// subtracted by `apply_damage_to_enemy` so all damage paths share one mitigation site),
@@ -112,7 +103,7 @@ pub const BLEED_DRAIN_OPTIONS: IncomingDamageOptions = IncomingDamageOptions { s
 /// Applies damage to a player: status intercept, mitigates, subtracts, and on zero performs
 /// the full death cleanup (drops the profile's rows and moves the player back to the lobby).
 /// `source_enemy_id` attributes the hit (bleed marks only convert hits from their mark).
-pub fn deal_damage_to_player(ctx: &ReducerContext, player: &LoggedInPlayer, source_enemy_id: Option<u64>, base_damage: u32) -> Result<PlayerDamageOutcome, String> {
+pub fn deal_damage_to_player(ctx: &ReducerContext, player: &LoggedInPlayer, source_enemy_id: Option<u64>, base_damage: u32) -> Result<(), String> {
     deal_damage_to_player_opts(ctx, player, source_enemy_id, base_damage, DEFAULT_INCOMING_OPTIONS)
 }
 
@@ -121,14 +112,14 @@ pub fn deal_damage_to_player(ctx: &ReducerContext, player: &LoggedInPlayer, sour
 /// DamageReductionPct → DamageToBleed) runs before mitigation unless
 /// `opts.skip_conversion`; the HpFloor clamp applies post-mitigation when
 /// `opts.respect_floor`.
-pub fn deal_damage_to_player_opts(ctx: &ReducerContext, player: &LoggedInPlayer, source_enemy_id: Option<u64>, base_damage: u32, opts: IncomingDamageOptions) -> Result<PlayerDamageOutcome, String> {
+pub fn deal_damage_to_player_opts(ctx: &ReducerContext, player: &LoggedInPlayer, source_enemy_id: Option<u64>, base_damage: u32, opts: IncomingDamageOptions) -> Result<(), String> {
     let profile_id = player.profile_id;
     let base_damage = if opts.skip_conversion {
         base_damage
     } else {
         let verdict = crate::status::methods::intercept_incoming(ctx, profile_id, source_enemy_id, base_damage, opts.skip_redirect);
         if verdict.absorbed {
-            return Ok(PlayerDamageOutcome::Alive { hp: ctx.db.player_data().profile_id().find(&profile_id).map(|d| d.hp).unwrap_or(0) });
+            return Ok(());
         }
         verdict.base_damage
     };
@@ -145,24 +136,25 @@ pub fn deal_damage_to_player_opts(ctx: &ReducerContext, player: &LoggedInPlayer,
         // player.player_id, not ctx.sender() — scheduled-reducer drains have no sender.
         ctx.db.logged_in_player().player_id().delete(&player.player_id);
         ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: player.player_id, username: player.username.clone(), is_admin: player.is_admin });
-        Ok(PlayerDamageOutcome::Died)
+        Ok(())
     } else {
         ctx.db.player_data().profile_id().update(PlayerData { hp: new_hp, ..data });
-        Ok(PlayerDamageOutcome::Alive { hp: new_hp })
+        Ok(())
     }
 }
 
 /// The weapon-path wrapper: computes the attacker's effective-weapon damage and delegates
 /// to apply_damage_to_enemy with full mitigation, xp credit for the attacker, and re-aggro
 /// onto the caller.
-pub fn deal_damage_to_enemy(ctx: &ReducerContext, profile_id: u64, enemy: Enemy) -> EnemyDamageOutcome {
+pub fn deal_damage_to_enemy(ctx: &ReducerContext, profile_id: u64, enemy: Enemy) {
     deal_damage_to_enemy_bonus(ctx, profile_id, enemy, 0)
 }
 
 /// deal_damage_to_enemy with a flat PRE-mitigation bonus riding the same hit — the armed
-/// StoreIncomingBash pool on a shield bash (stored pre-mitigation, so it merges into the
-/// weapon hit's base before defence rather than landing as a second mitigated hit).
-pub fn deal_damage_to_enemy_bonus(ctx: &ReducerContext, profile_id: u64, enemy: Enemy, bonus: u32) -> EnemyDamageOutcome {
+/// StoreIncomingBash pool on a shield bash (the pool accumulates post-mitigation, then
+/// merges into the weapon hit's base before defence rather than landing as a second
+/// mitigated hit).
+pub fn deal_damage_to_enemy_bonus(ctx: &ReducerContext, profile_id: u64, enemy: Enemy, bonus: u32) {
     let damage = compute_player_damage(ctx, profile_id);
     apply_damage_to_enemy(ctx, enemy, damage.base + bonus, damage.post_mitigation, MitigationMode::Normal, Some(profile_id), Some(ctx.sender()))
 }
@@ -182,7 +174,7 @@ pub fn apply_damage_to_enemy(
     mitigation: MitigationMode,
     xp_credit: Option<u64>,
     aggro_from: Option<Identity>,
-) -> EnemyDamageOutcome {
+) {
     apply_damage_to_enemy_opts(ctx, enemy, amount, post_mitigation_bonus, mitigation, xp_credit, aggro_from, DEFAULT_ENEMY_OPTIONS)
 }
 
@@ -196,7 +188,7 @@ pub fn apply_damage_to_enemy_opts(
     xp_credit: Option<u64>,
     aggro_from: Option<Identity>,
     opts: EnemyDamageOptions,
-) -> EnemyDamageOutcome {
+) {
     let template = ctx.db.enemy_template().template_id().find(&enemy.template_id);
     let base_defense = template.as_ref().map(|t| t.defense).unwrap_or(0);
     // Target-side enemy-status consults (Normal only — FlatRelease was already mitigated at
@@ -221,13 +213,15 @@ pub fn apply_damage_to_enemy_opts(
     // pool (released flat at settlement — already mitigated here); an outgoing bleed mark
     // converts it into an enemy DoT instead; otherwise record it for the DamageToBleed
     // DealDamage purge progress.
-    if crate::status::methods::withhold_outgoing(ctx, xp_credit, enemy.enemy_id, damage) {
-        return EnemyDamageOutcome::Alive { hp: enemy.hp, phase: enemy.phase };
+    if !opts.skip_outgoing_withhold
+        && crate::status::methods::withhold_outgoing(ctx, xp_credit, enemy.enemy_id, damage)
+    {
+        return;
     }
     if !opts.skip_outgoing_bleed
         && crate::status::methods::convert_outgoing_to_bleed(ctx, xp_credit, enemy.enemy_id, damage)
     {
-        return EnemyDamageOutcome::Alive { hp: enemy.hp, phase: enemy.phase };
+        return;
     }
     crate::status::methods::note_damage_dealt(ctx, xp_credit, enemy.enemy_id, damage);
     let new_hp = enemy.hp.saturating_sub(damage);
@@ -239,7 +233,7 @@ pub fn apply_damage_to_enemy_opts(
         if let Some(profile_id) = xp_credit {
             internal_gain_xp(ctx, profile_id, xp_reward);
         }
-        return EnemyDamageOutcome::Died { xp_reward };
+        return;
     }
 
     let new_phase = template.as_ref().map(|t| compute_phase(new_hp, t.max_hp, &t.phases)).unwrap_or(enemy.phase);
@@ -265,7 +259,6 @@ pub fn apply_damage_to_enemy_opts(
     }
 
     ctx.db.enemy().enemy_id().update(Enemy { hp: new_hp, phase: new_phase, ..enemy });
-    EnemyDamageOutcome::Alive { hp: new_hp, phase: new_phase }
 }
 
 /// Heals a player, clamped to max_hp. No-op if the player has no data row.

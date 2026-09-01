@@ -293,7 +293,8 @@ func _log_get(params: Dictionary) -> Dictionary:
 	var count: int = params.get("count", 100)
 	var offset: int = params.get("offset", 0)
 	var since_ms: int = params.get("since_ms", 0)
-	var entries := _filter_logs(source, since_ms, level)
+	var instance: int = int(params.get("instance", 0))
+	var entries := _filter_logs(source, since_ms, level, instance)
 	var sliced := entries.slice(offset, offset + count)
 	return _EC.ok({"entries": sliced})
 
@@ -319,7 +320,7 @@ func _log_clear() -> Dictionary:
 	return _EC.ok()
 
 
-func _filter_logs(source: String, since_ms: int, level: String = "") -> Array:
+func _filter_logs(source: String, since_ms: int, level: String = "", instance: int = 0) -> Array:
 	var out := []
 	var now := Time.get_ticks_msec()
 	for e in _get_log_buffer():
@@ -327,6 +328,10 @@ func _filter_logs(source: String, since_ms: int, level: String = "") -> Array:
 		if source != "all" and s != source:
 			continue
 		if not level.is_empty() and e.get("level", "") != level:
+			continue
+		# Multi-instance: game entries carry the 1-based instance index;
+		# editor entries have none and only match instance=0 (no filter).
+		if instance > 0 and int(e.get("instance", 0)) != instance:
 			continue
 		if since_ms > 0:
 			var t: int = e.get("time_ms", 0)

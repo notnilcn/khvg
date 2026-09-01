@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "062f13a80eded0f0",
+			"type": "file",
+			"file": "client/Scripts/Components/Inventory/InventoryPanel.cs",
+			"subpath": "#player",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

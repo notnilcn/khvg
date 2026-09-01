@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "713914e75ae3167c",
+			"type": "file",
+			"file": "server/spacetimedb/src/item/seeds.rs",
+			"subpath": "#REQ_WARRIOR",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

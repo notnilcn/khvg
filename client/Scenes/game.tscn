@@ -14,7 +14,6 @@
 [ext_resource type="PackedScene" uid="uid://dw7m1ev54lshc" path="res://Scenes/Components/Bullets/bullet_hit_router_component.tscn" id="12_d3cha"]
 [ext_resource type="Script" uid="uid://dyg400ij28uph" path="res://Scripts/Components/Bullets/BulletControllerComponent.cs" id="13_i26dy"]
 [ext_resource type="Script" uid="uid://4vtm5wwxgp2d" path="res://Scripts/Components/Camera/CameraRigComponent.cs" id="14_lmoi6"]
-[ext_resource type="PackedScene" uid="uid://oq20q8miyvsa" path="res://Scenes/world_3d.tscn" id="15_6uxt2"]
 [ext_resource type="PackedScene" uid="uid://dxx5w0ohddwun" path="res://Scenes/Components/Lobby/lobby_component.tscn" id="16_ym3tv"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="17_bwj6o"]
 [ext_resource type="Script" uid="uid://evnlg4cc87jl" path="res://Scripts/Components/Camera/Camera2DPresenterComponent.cs" id="18_f3c8l"]
@@ -27,6 +26,9 @@
 [ext_resource type="Script" uid="uid://v70obiup0lmw" path="res://Scripts/Components/Zones/ZoneRendererComponent.cs" id="25_zones"]
 [ext_resource type="Script" uid="uid://brkqgof8l6tam" path="res://Scripts/Components/Visual/SpellVisualComponent.cs" id="26_spells"]
 [ext_resource type="PackedScene" path="res://Scenes/chest.tscn" id="27_chest"]
+[ext_resource type="Script" uid="uid://byuxdtvfkdo74" path="res://Scripts/Game/ConnectionLostComponent.cs" id="28_connlost"]
+[ext_resource type="Script" uid="uid://u4oky62y0dyl" path="res://Scripts/Components/Terrain/ElevationMapComponent.cs" id="29_elevmap"]
+[ext_resource type="Script" uid="uid://b2ira1ntooy1k" path="res://Scripts/Components/Bullets/BulletCliffComponent.cs" id="30_bcliff"]
 
 [sub_resource type="Resource" id="Resource_jkdf5"]
 script = ExtResource("20_6a4tp")
@@ -107,12 +109,15 @@ script = ExtResource("13_i26dy")
 script = ExtResource("4_81klo")
 TableName = "BulletControlEvent"
 
+[node name="BulletCliffComponent" type="Node" parent="BulletManager" unique_id=611001340]
+script = ExtResource("30_bcliff")
+
 [node name="CameraRigComponent" type="Node" parent="." unique_id=429369880]
 script = ExtResource("14_lmoi6")
 PitchMax = 0.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
-visible = false
+layer = -1
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="3D" unique_id=1047841400]
 texture_filter = 1
@@ -128,13 +133,51 @@ stretch_shrink = 3
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(426, 240)
-render_target_update_mode = 0
-
-[node name="World3DComponent" parent="3D/SubViewportContainer/SubViewport" unique_id=1360330812 instance=ExtResource("15_6uxt2")]
+render_target_update_mode = 4
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=152855753]
 
 [node name="LobbyComponent" parent="UI" unique_id=596879783 instance=ExtResource("16_ym3tv")]
+
+[node name="ConnectionLostComponent" type="Control" parent="UI" unique_id=414423159]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("28_connlost")
+
+[node name="CenterContainer" type="CenterContainer" parent="UI/ConnectionLostComponent" unique_id=1870586170]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="Panel" parent="UI/ConnectionLostComponent/CenterContainer" unique_id=85465971]
+custom_minimum_size = Vector2(250, 90)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/ConnectionLostComponent/CenterContainer/Panel" unique_id=1622989041]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label" type="Label" parent="UI/ConnectionLostComponent/CenterContainer/Panel/VBoxContainer" unique_id=975702438]
+layout_mode = 2
+text = "Connection lost"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Reconnect" type="Button" parent="UI/ConnectionLostComponent/CenterContainer/Panel/VBoxContainer" unique_id=303981198]
+layout_mode = 2
+text = "RECONNECT"
 
 [node name="MainCamera2D" type="Camera2D" parent="." unique_id=1285666996]
 top_level = true
@@ -161,7 +204,6 @@ draw_limits = true
 metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 
 [node name="HexGridOverlayComponent" type="Node2D" parent="." unique_id=596614871]
-visible = false
 script = ExtResource("21_631el")
 
 [node name="MapConfigBinder" type="Node" parent="HexGridOverlayComponent" unique_id=866081349]
@@ -188,6 +230,19 @@ TableName = "NearbyTerrainTiles"
 script = ExtResource("4_81klo")
 ReplayExistingRows = true
 TableName = "NearbyHexDecor"
+
+[node name="ElevationMapComponent" type="Node" parent="." unique_id=611001337]
+script = ExtResource("29_elevmap")
+
+[node name="MapConfigBinder" type="Node" parent="ElevationMapComponent" unique_id=611001338]
+script = ExtResource("4_81klo")
+ReplayExistingRows = true
+TableName = "MapConfig"
+
+[node name="NearbyBuildingTilesBinder" type="Node" parent="ElevationMapComponent" unique_id=611001339]
+script = ExtResource("4_81klo")
+ReplayExistingRows = true
+TableName = "NearbyBuildingTiles"
 
 [node name="ZoneRendererComponent" type="Node" parent="." unique_id=846213590]
 script = ExtResource("25_zones")
@@ -235,6 +290,7 @@ theme_override_constants/outline_size = 4
 [connection signal="RowDeleted" from="EntitySpawnerComponent/NearbyChestsBinder" to="EntitySpawnerComponent" method="OnChestDelete"]
 [connection signal="RowInserted" from="EntitySpawnerComponent/NearbyChestsBinder" to="EntitySpawnerComponent" method="OnChestInsert"]
 [connection signal="RowInserted" from="BulletManager/BulletControllerComponent/BulletControlEventBinder" to="BulletManager/BulletControllerComponent" method="OnBulletControlEventRow"]
+[connection signal="pressed" from="UI/ConnectionLostComponent/CenterContainer/Panel/VBoxContainer/Reconnect" to="UI/ConnectionLostComponent" method="OnReconnectPressed"]
 [connection signal="RowInserted" from="HexGridOverlayComponent/MapConfigBinder" to="HexGridOverlayComponent" method="OnMapConfigRow"]
 [connection signal="RowUpdated" from="HexGridOverlayComponent/MapConfigBinder" to="HexGridOverlayComponent" method="OnMapConfigRow"]
 [connection signal="RowInserted" from="TerrainComponent/MapConfigBinder" to="TerrainComponent" method="OnMapConfigRow"]
@@ -245,6 +301,11 @@ theme_override_constants/outline_size = 4
 [connection signal="RowDeleted" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowDeleted"]
 [connection signal="RowInserted" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowInserted"]
 [connection signal="RowUpdated" from="TerrainComponent/HexDecorBinder" to="TerrainComponent" method="OnDecorRowUpdated"]
+[connection signal="RowInserted" from="ElevationMapComponent/MapConfigBinder" to="ElevationMapComponent" method="OnMapConfigRow"]
+[connection signal="RowUpdated" from="ElevationMapComponent/MapConfigBinder" to="ElevationMapComponent" method="OnMapConfigRow"]
+[connection signal="RowDeleted" from="ElevationMapComponent/NearbyBuildingTilesBinder" to="ElevationMapComponent" method="OnBuildingTileRowDeleted"]
+[connection signal="RowInserted" from="ElevationMapComponent/NearbyBuildingTilesBinder" to="ElevationMapComponent" method="OnBuildingTileRowInserted"]
+[connection signal="RowUpdated" from="ElevationMapComponent/NearbyBuildingTilesBinder" to="ElevationMapComponent" method="OnBuildingTileRowUpdated"]
 [connection signal="RowDeleted" from="ZoneRendererComponent/GroundZoneBinder" to="ZoneRendererComponent" method="OnZoneRowDeleted"]
 [connection signal="RowInserted" from="ZoneRendererComponent/GroundZoneBinder" to="ZoneRendererComponent" method="OnZoneRow"]
 [connection signal="RowInserted" from="SpellVisualComponent/AbilityVisualEventBinder" to="SpellVisualComponent" method="OnAbilityVisualEventRow"]

@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://kf13rwr5hlhp" path="res://Scripts/Players/Local/LocalPlayer.cs" id="1_h1vum"]
 [ext_resource type="Script" uid="uid://bddvxb8xqsltm" path="res://Scripts/Components/Weapon/CombatComponent.cs" id="2_h1vum"]
-[ext_resource type="PackedScene" uid="uid://c3lln0nygubmm" path="res://Assets/3D/characters/Knight.fbx" id="2_tfukw"]
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="7_g7ri8"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="8_tfukw"]
 [ext_resource type="PackedScene" uid="uid://d1kw27sttw8j1" path="res://Scenes/Components/hit_zone.tscn" id="10_hit"]
@@ -83,7 +82,6 @@ duration = 0.0
 
 [node name="LocalPlayer" type="CharacterBody2D" unique_id=1122854193]
 script = ExtResource("1_h1vum")
-KnightScene = ExtResource("2_tfukw")
 
 [node name="Sprite" type="AnimatedSprite2D" parent="." unique_id=170833701]
 scale = Vector2(0.5, 0.5)
@@ -1502,7 +1500,6 @@ metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 
 [node name="PositionSyncComponent" type="Node" parent="." unique_id=185419315]
 script = ExtResource("16_pos")
-ReportInterval = 1.0
 
 [node name="LocalPlayerPositionBinder" type="Node" parent="PositionSyncComponent" unique_id=1246579541]
 script = ExtResource("15_binder")

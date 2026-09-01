@@ -19,17 +19,16 @@ fn nearby_player_position_chunks(ctx: &ReducerContext, x: f32, y: f32, rings: i3
 
 pub fn has_player_in_simulation_range(ctx: &ReducerContext, x: f32, y: f32, range: f32) -> bool {
     let range_sq = range * range;
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
     nearby_player_position_chunks(ctx, x, y, SIMULATION_CHUNK_RINGS).iter().any(|idx| {
         ctx.db.player_position().chunk_index().filter(idx)
             // PlayerPosition outlives a logout/disconnect (only deleted on profile delete or
             // death), so without this an enemy near a logged-out player's last known position
             // would simulate/spawn forever against a ghost.
             .filter(|pos| ctx.db.logged_in_player().profile_id().find(&pos.profile_id).is_some())
-            .any(|pos| {
-                let dx = pos.x - x;
-                let dy = pos.y - y;
-                dx * dx + dy * dy <= range_sq
-            })
+            // Wrap-aware: a player just across a lap seam is near, not a map-width away.
+            .any(|pos| wrapped_distance_sq(x, y, pos.x, pos.y, lap_q, lap_r) <= range_sq)
     })
 }
 
@@ -45,11 +44,14 @@ pub fn find_player_pos_by_id(ctx: &ReducerContext, id: Identity) -> Option<(f32,
 }
 
 pub fn find_nearest_player_id(ctx: &ReducerContext, x: f32, y: f32) -> Option<Identity> {
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
     ctx.db.player_position().iter()
         .filter(|p| ctx.db.logged_in_player().profile_id().find(&p.profile_id).is_some())
+        // Wrap-aware: nearest across a lap seam, not nearest in raw coordinates.
         .min_by(|a, b| {
-            let da = (a.x - x).powi(2) + (a.y - y).powi(2);
-            let db = (b.x - x).powi(2) + (b.y - y).powi(2);
+            let da = wrapped_distance_sq(x, y, a.x, a.y, lap_q, lap_r);
+            let db = wrapped_distance_sq(x, y, b.x, b.y, lap_q, lap_r);
             da.partial_cmp(&db).unwrap_or(std::cmp::Ordering::Equal)
         })
         .map(|p| p.player_id)
@@ -273,7 +275,10 @@ fn reset_repeat_counts(ctx: &ReducerContext, attack_id: u64) {
 
 pub fn activate_all_attacks(ctx: &ReducerContext, phase_id: u64, phase_def: &PhaseDef) {
     for mut attack in ctx.db.enemy_attack().phase_id().filter(&phase_id) {
-        let attack_def = &phase_def.attacks[attack.attack_index as usize];
+        // Bounds-checked: an out-of-range attack_index (stale tree vs edited template) is
+        // treated as inactive — never index, a panic in the scheduled behavior tick
+        // destroys the WASM instance.
+        let Some(attack_def) = phase_def.attacks.get(attack.attack_index as usize) else { continue };
         attack.step_index = 0;
         attack.step_waiting = false;
         attack.step_timer = ctx.timestamp;
@@ -338,7 +343,10 @@ pub fn tick_phase(ctx: &ReducerContext, enemy_id: u64, stun_behavior: &StunBehav
     let mut events = Vec::new();
     let mut all_finished = true;
     for mut attack in ctx.db.enemy_attack().phase_id().filter(&phase.phase_id) {
-        let attack_def = &phase_def.attacks[attack.attack_index as usize];
+        // Delta-check snapshot: the updates below are skipped when the tick changed nothing.
+        let attack_snapshot = (attack.step_index, attack.step_timer, attack.step_waiting, attack.start_delaying, attack.loop_waiting);
+        // Bounds-checked like activate_all_attacks: out-of-range = inactive, never index.
+        let Some(attack_def) = phase_def.attacks.get(attack.attack_index as usize) else { continue };
         if attack_def.loop_delay >= 0.0 {
             all_finished = false;
             if is_attack_finished(&attack, attack_def) {
@@ -353,20 +361,26 @@ pub fn tick_phase(ctx: &ReducerContext, enemy_id: u64, stun_behavior: &StunBehav
                     attack.step_timer = ctx.timestamp;
                     reset_repeat_counts(ctx, attack.attack_id);
                 } else {
-                    ctx.db.enemy_attack().attack_id().update(attack);
+                    if (attack.step_index, attack.step_timer, attack.step_waiting, attack.start_delaying, attack.loop_waiting) != attack_snapshot {
+                        ctx.db.enemy_attack().attack_id().update(attack);
+                    }
                     continue;
                 }
             }
             if !is_attack_finished(&attack, attack_def) {
                 events.extend(tick_sequence(ctx, enemy_id, stun_behavior, &mut attack, attack_def));
             }
-            ctx.db.enemy_attack().attack_id().update(attack);
+            if (attack.step_index, attack.step_timer, attack.step_waiting, attack.start_delaying, attack.loop_waiting) != attack_snapshot {
+                ctx.db.enemy_attack().attack_id().update(attack);
+            }
             continue;
         }
         if is_attack_finished(&attack, attack_def) { continue; }
         events.extend(tick_sequence(ctx, enemy_id, stun_behavior, &mut attack, attack_def));
         if !is_attack_finished(&attack, attack_def) { all_finished = false; }
-        ctx.db.enemy_attack().attack_id().update(attack);
+        if (attack.step_index, attack.step_timer, attack.step_waiting, attack.start_delaying, attack.loop_waiting) != attack_snapshot {
+            ctx.db.enemy_attack().attack_id().update(attack);
+        }
     }
 
     if all_finished {
@@ -467,6 +481,16 @@ pub fn tick_sequence(ctx: &ReducerContext, enemy_id: u64, stun_behavior: &StunBe
                 // angle_step bakes the per-shot rotation (and matching origin-offset orbit)
                 // in here, so the client renders spinning emitters verbatim.
                 let interval = Duration::from_secs_f32(effective_interval(ctx, r.repeat_interval.max(0.001), enemy_id, stun_behavior));
+                // Backlog cap: an enemy that left sim range keeps a stale step_timer, and
+                // without this clamp the loop below would dump up to MAX_CATCHUP_SHOTS every
+                // tick until it burned through the whole gap — a seconds-long wall of
+                // bullets on re-entry. Clamp the backlog to BACKLOG_CAP intervals so
+                // re-entry fires at most a short burst. (Spawn/phase-activation stamping
+                // sets step_timer to now, so it never carries a backlog.)
+                let backlog = interval * BACKLOG_CAP;
+                if ctx.timestamp > attack.step_timer + backlog {
+                    attack.step_timer = ctx.timestamp - backlog;
+                }
                 let mut events = Vec::new();
                 while (r.repeat_target == 0 || r.repeat_count < r.repeat_target) && events.len() < MAX_CATCHUP_SHOTS {
                     if r.repeat_count > 0 && ctx.timestamp < attack.step_timer + interval { break; }
@@ -543,6 +567,9 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
     // a Slow of its magnitude for Slowed templates and speeds the enemy up for Enraged ones
     // (Pause templates never reach here — the behavior tick skips them wholesale).
     let move_mult = crate::status::methods::enemy_movement_mult(ctx, enemy.enemy_id, stun_behavior);
+    // Lap vectors for the Chase/Flee nearest-lap deltas (torus world).
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
     let movement = match ctx.db.movement_def().def_id().find(&phase.movement_def_id) {
         Some(m) => m.movement,
         None => return idle,
@@ -563,6 +590,9 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
             if !active { return idle; }
             match behavior.aggro_target.and_then(|id| find_player_pos_by_id(ctx, id)) {
                 Some((px, py)) => {
+                    // Nearest-lap delta: on a torus the raw (px − x) can point the long
+                    // way around; chase the nearest copy of the target instead.
+                    let (px, py) = crate::player::methods::nearest_lap_copy(px, py, enemy.x, enemy.y, lap_q, lap_r);
                     let dx = px - enemy.x;
                     let dy = py - enemy.y;
                     let len = (dx * dx + dy * dy).sqrt().max(f32::EPSILON);
@@ -577,6 +607,9 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
             if !active { return idle; }
             match behavior.aggro_target.and_then(|id| find_player_pos_by_id(ctx, id)) {
                 Some((px, py)) => {
+                    // Nearest-lap delta (see Chase) — flee directly away from the nearest
+                    // copy, and measure min_range against it.
+                    let (px, py) = crate::player::methods::nearest_lap_copy(px, py, enemy.x, enemy.y, lap_q, lap_r);
                     let dx = enemy.x - px;
                     let dy = enemy.y - py;
                     let dist = (dx * dx + dy * dy).sqrt();
@@ -597,20 +630,20 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
     let cfg = MapConfig::load(ctx, 0, 0);
     let (chunk_hex_radius, hex_outer_radius, chunk_cols, chunk_rows) =
         (cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows);
-    let lap_q = (cfg.lap_q_x, cfg.lap_q_y);
-    let lap_r = (cfg.lap_r_x, cfg.lap_r_y);
 
     for region in ctx.db.biome_region().iter() {
         let (center_x, center_y) = hex_to_world(region.center_hex_q, region.center_hex_r, hex_outer_radius);
 
         if !has_player_near_spawn_point(ctx, center_x, center_y) { continue; }
 
-        let spawn_radius_sq = region.spawn_radius * region.spawn_radius;
-        // wrapped_distance_sq, not a plain Euclidean check: a spawn offset can cross a lap seam
-        // and get wrapped to the far side of the map even when the region's own center doesn't,
-        // and a plain distance check would then never find its own children, defeating the cap.
-        let live_count = ctx.db.enemy().iter()
-            .filter(|e| region.enemy_template_ids.contains(&e.template_id) && wrapped_distance_sq(e.x, e.y, center_x, center_y, lap_q, lap_r) <= spawn_radius_sq)
+        // enemies_near_point is the chunk-index (btree) AOI circle query — no full enemy-table
+        // scan per region. It uses wrapped_distance_sq, not a plain Euclidean check: a spawn
+        // offset can cross a lap seam and get wrapped to the far side of the map even when the
+        // region's own center doesn't, and a plain distance check would then never find its own
+        // children, defeating the cap.
+        let live_count = enemies_near_point(ctx, center_x, center_y, region.spawn_radius)
+            .iter()
+            .filter(|e| region.enemy_template_ids.contains(&e.template_id))
             .count() as u32;
 
         if live_count >= region.max_enemies || region.enemy_template_ids.is_empty() { continue; }

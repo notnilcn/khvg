@@ -1,0 +1,110 @@
+{
+	"nodes": [
+		{
+			"id": "8569e2c5de6c16f4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/reducers_codefile/begin_ability_charge_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "50b118d62861706c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/reducers_codefile/internal_release_charge_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "401237854d2b23bc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/reducers_codefile/release_ability_charge_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "721dd6c12e277020",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/reducers_codefile/remove_self_slow_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "d0f4b3ec5258d860",
+			"fromNode": "50b118d62861706c",
+			"fromSide": "bottom",
+			"toNode": "721dd6c12e277020",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "7dc92cb55b3d4bd2",
+			"fromNode": "401237854d2b23bc",
+			"fromSide": "bottom",
+			"toNode": "50b118d62861706c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-resolve_ability_slot",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-ability_is_charge_capable",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-StatusParams",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-none",
+				"edge-_colon_-server/spacetimedb/src/status/methods-_dot_-rs-_hashtag_-apply_status_effect",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-StatusEffectKind",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/status/reducers-_dot_-rs-_hashtag_-remove_self_slow",
+				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-seconds_since",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-apply_ability_effect",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-spend_ability",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/status/reducers-_dot_-rs-_hashtag_-internal_release_charge",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveStatusEffect-_colon_-write"
+			]
+		}
+	}
+}

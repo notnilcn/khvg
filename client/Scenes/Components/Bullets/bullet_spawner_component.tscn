@@ -1,6 +1,13 @@
 [gd_scene format=3 uid="uid://dly5ocjb0vcx4"]
 
 [ext_resource type="Script" uid="uid://k5um1vjuigjd" path="res://Scripts/Components/Bullets/BulletSpawnerComponent.cs" id="1_spawner"]
+[ext_resource type="Script" uid="uid://45drtd2g2weu" path="res://sstdbsdk/TableBinderComponent.cs" id="2_binder"]
 
 [node name="BulletSpawnerComponent" type="Node" unique_id=1188786107]
 script = ExtResource("1_spawner")
+
+[node name="BulletPatternEventBinder" type="Node" parent="." unique_id=1848220031]
+script = ExtResource("2_binder")
+TableName = "BulletPatternEvent"
+
+[connection signal="RowInserted" from="BulletPatternEventBinder" to="." method="OnBulletPatternRowInserted"]

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "6d3c0633fa383e86",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/TerrainComponent.cs",
+			"subpath": "#ResetGroups",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

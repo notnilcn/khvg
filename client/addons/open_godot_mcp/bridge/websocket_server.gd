@@ -228,7 +228,7 @@ func get_debugger() -> EditorDebuggerPlugin:
 	return _debugger_plugin
 
 
-func add_log(level: String, source: String, message: String) -> void:
+func add_log(level: String, source: String, message: String, instance: int = 0) -> void:
 	var entry := {
 		"time": Time.get_datetime_string_from_system(true),
 		"time_ms": Time.get_ticks_msec(),
@@ -236,6 +236,10 @@ func add_log(level: String, source: String, message: String) -> void:
 		"source": source,
 		"message": message,
 	}
+	# Multi-instance: game logs carry the 1-based PIE instance index so
+	# godot_log can filter by it.
+	if instance > 0:
+		entry["instance"] = instance
 	_log_buffer.append(entry)
 	if _log_buffer.size() > _log_max:
 		_log_buffer.pop_front()

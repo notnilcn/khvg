@@ -1,0 +1,210 @@
+{
+	"nodes": [
+		{
+			"id": "4bb2198998c03ac6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/add_chest_symbol.canvas",
+			"color": "5",
+			"x": 1400,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "adc17b3314790fd2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/add_item_to_chest_symbol.canvas",
+			"color": "5",
+			"x": 2320,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1e9afaf14987026e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/Chest_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "dc7e6eb25b8b22b8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/ChestItem_symbol.canvas",
+			"color": "5",
+			"x": 2330,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "480f2bbbf164337a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/ChestTakeCooldown_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fbcf1b2e8d236a8c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/EVERY_SINGLE_ITEM_symbol.canvas",
+			"color": "5",
+			"x": 940,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4e5bb62003c21100",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/nearby_chest_items_symbol.canvas",
+			"color": "5",
+			"x": 480,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69446a3e5d89322c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/nearby_chests_symbol.canvas",
+			"color": "5",
+			"x": 1860,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0c5cc262f2b81f40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/take_from_chest_symbol.canvas",
+			"color": "5",
+			"x": 20,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "369511d3e3936aec",
+			"fromNode": "4bb2198998c03ac6",
+			"fromSide": "bottom",
+			"toNode": "1e9afaf14987026e",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "29ee658985d71d42",
+			"fromNode": "adc17b3314790fd2",
+			"fromSide": "bottom",
+			"toNode": "1e9afaf14987026e",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "cfc10de216460804",
+			"fromNode": "adc17b3314790fd2",
+			"fromSide": "bottom",
+			"toNode": "dc7e6eb25b8b22b8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "f70effd4fdb63fa0",
+			"fromNode": "4e5bb62003c21100",
+			"fromSide": "bottom",
+			"toNode": "1e9afaf14987026e",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "e16ec8096a27a932",
+			"fromNode": "0c5cc262f2b81f40",
+			"fromSide": "bottom",
+			"toNode": "dc7e6eb25b8b22b8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "9128c1637135ab3e",
+			"fromNode": "0c5cc262f2b81f40",
+			"fromSide": "bottom",
+			"toNode": "1e9afaf14987026e",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "b3f7316582076686",
+			"fromNode": "0c5cc262f2b81f40",
+			"fromSide": "bottom",
+			"toNode": "480f2bbbf164337a",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-is_admin",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
+				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrap_world_pos",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_chunk",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-spiral_chunk_index",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-Chest-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile/wrap_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-Chest-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Item-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-ChestItem-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_indices",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
+				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrapped_distance_sq",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-store_item_in_inventory",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-recompute_stats",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-ChestItem-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-ChestTakeCooldown-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-ChestTakeCooldown-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read"
+			]
+		}
+	}
+}

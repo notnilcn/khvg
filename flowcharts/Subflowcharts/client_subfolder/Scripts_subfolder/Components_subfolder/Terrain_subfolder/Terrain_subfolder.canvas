@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/DecorLayerComponent_codefile/DecorLayerComponent_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/GroundComponent_codefile/GroundComponent_codefile.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -44,6 +44,16 @@
 			"id": "a122ffda4ff52524",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/OverlayComponent_codefile/OverlayComponent_codefile.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2ea4c2fa59359864",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainLayerComponent_codefile/TerrainLayerComponent_codefile.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -56,16 +66,6 @@
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/TerrainComponent_codefile.canvas",
 			"color": "5",
 			"x": 1840,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "2ea4c2fa59359864",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainLayerComponent_codefile/TerrainLayerComponent_codefile.canvas",
-			"color": "5",
-			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400

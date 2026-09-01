@@ -1,0 +1,357 @@
+{
+	"nodes": [
+		{
+			"id": "763c5a6cc27ee388",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/accel_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "221214275b82bed4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/active_duration_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4cb9898ba95e4108",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/ALL_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ae4552bf17854c74",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/angle_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2af635de17138398",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/apply_difficulty_symbol.canvas",
+			"color": "5",
+			"x": 2070,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cbe696fabc0a2d98",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/burst_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e53210d1d6b198e4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/compile_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a11d20cf58f630e8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/curve_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "be9dcc0f7cd70a06",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/damage_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8cdec15fd23fce4e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/Difficulty_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bbfdea109f0235e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/DifficultySteps_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0317fcce06224558",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/Emitter_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d74a53ab2b53a13a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/Emitter.difficulty_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "be2e5fa98570e5f6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/lifetime_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f5c0aa70d93fd520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/line_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f5eb95dea76285b4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/new_symbol.canvas",
+			"color": "5",
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "106e31c11288babe",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/offset_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "dc773694bfabcf90",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/ring_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6e2df49efa891614",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/scale_count_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d1794f9af454779c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/scale_speed_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c28422d21d0e16ac",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/shotgun_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "165a3902c16cf4c8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/spin_symbol.canvas",
+			"color": "5",
+			"x": 8280,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e5b2e91cdb565788",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/start_delay_symbol.canvas",
+			"color": "5",
+			"x": 8740,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1763b89832425e30",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/step_symbol.canvas",
+			"color": "5",
+			"x": 2530,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4ee2708b3c9afe42",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/suffix_symbol.canvas",
+			"color": "5",
+			"x": 9200,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5de22d9be3aedcd6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/target_symbol.canvas",
+			"color": "5",
+			"x": 9660,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0348f80f690f3d78",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/texture_symbol.canvas",
+			"color": "5",
+			"x": 10120,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b7ce3367921f66fe",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/volley_symbol.canvas",
+			"color": "5",
+			"x": 10580,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8be05016b7eaea08",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/window_symbol.canvas",
+			"color": "5",
+			"x": 11040,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "3aebde9470a7ebf0",
+			"fromNode": "2af635de17138398",
+			"fromSide": "bottom",
+			"toNode": "6e2df49efa891614",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "27ac972b5b369b16",
+			"fromNode": "2af635de17138398",
+			"fromSide": "bottom",
+			"toNode": "d1794f9af454779c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "7b4c089b9b23819a",
+			"fromNode": "e53210d1d6b198e4",
+			"fromSide": "bottom",
+			"toNode": "1763b89832425e30",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d836026789cd47e2",
+			"fromNode": "e53210d1d6b198e4",
+			"fromSide": "bottom",
+			"toNode": "2af635de17138398",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-scale_count",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-scale_speed",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-step",
+				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-apply_difficulty",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-AttackSequence",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-seq_repeat",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-make_looping_sequence",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-make_sequence",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/mod_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/defs_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTarget",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-RingParams",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ShotgunParams",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-VolleyParams"
+			]
+		}
+	}
+}

@@ -111,7 +111,7 @@ public partial class BulletControllerComponent : Component
 	private IEnumerable<(GodotObject Instance, int Index)> FindBulletsNear(Vector2 point, float radius)
 	{
 		float radiusSq = radius * radius;
-		foreach (var inst in spawner.LiveEnemyBullets)
+		foreach (var inst in spawner.LiveEnemyBullets.Keys)
 		{
 			if (!GodotObject.IsInstanceValid(inst)) continue;
 			int count = inst.Call("get_amount_bullets").AsInt32();
@@ -136,7 +136,7 @@ public partial class BulletControllerComponent : Component
 		if (length < 0.001f) yield break;
 		var dir = axis / length;
 		float halfWidth = width * 0.5f;
-		foreach (var inst in spawner.LiveEnemyBullets)
+		foreach (var inst in spawner.LiveEnemyBullets.Keys)
 		{
 			if (!GodotObject.IsInstanceValid(inst)) continue;
 			int count = inst.Call("get_amount_bullets").AsInt32();

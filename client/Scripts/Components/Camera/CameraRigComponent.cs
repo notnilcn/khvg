@@ -5,11 +5,6 @@ using Godot;
 // presenter (Camera2DPresenterComponent) and the 3D presenter (World3DComponent) read this every
 // frame and write their own PhantomCamera — neither owns state and neither writes back. All
 // camera input is handled here.
-//
-// This lives in the MAIN scene tree (a component of Main, next to DebugOverlay) — deliberately
-// NOT inside the 3D SubViewport. A node inside the SubViewport only receives input the
-// SubViewportContainer forwards to it, so mouse-motion events never arrive there; that is why the
-// old arcball, wired inside World3DComponent, silently did nothing.
 public partial class CameraRigComponent : Component
 {
     // ── Tuning ──────────────────────────────────────────────────────────────

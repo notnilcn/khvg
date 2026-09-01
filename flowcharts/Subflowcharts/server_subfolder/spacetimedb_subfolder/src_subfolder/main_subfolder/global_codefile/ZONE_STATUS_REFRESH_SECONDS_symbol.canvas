@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "ed4b47ecc5a29d20",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#ZONE_STATUS_REFRESH_SECONDS",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

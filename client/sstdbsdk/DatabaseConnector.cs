@@ -17,6 +17,10 @@ public partial class DatabaseConnector : Node
 	/// Fired once the connection is established; consumers then wire their table callbacks.
 	[Signal] public delegate void ConnectedEventHandler();
 
+	/// Fired when the connection drops (not on deliberate shutdown). The game scene's
+	/// ConnectionLostComponent shows its reconnect panel off this.
+	[Signal] public delegate void DisconnectedEventHandler();
+
 	/// The autoload singleton. Null only before the autoload's _Ready or after shutdown.
 	public static DatabaseConnector? Instance { get; private set; }
 
@@ -50,9 +54,30 @@ public partial class DatabaseConnector : Node
 		Connect();
 	}
 
-	private static bool IsPlayerArg(string arg) => arg.StartsWith("--p") && arg.Length > 3;
+	// REGRESSION GUARD: must match the whole arg ("--p1", "--p2", ...) — a plain
+	// StartsWith("--p") also matches Godot's own --path, which made every editor-run
+	// instance share "_path" as its auth token key.
+	private static bool IsPlayerArg(string arg)
+	{
+		if (arg.Length <= 3 || !arg.StartsWith("--p")) return false;
+		for (int i = 3; i < arg.Length; i++)
+			if (!char.IsDigit(arg[i])) return false;
+		return true;
+	}
 
-	public override void _Process(double delta) => Conn?.FrameTick();
+	public override void _Process(double delta)
+	{
+		// FrameTick dispatches every queued table/reducer callback — one throwing handler
+		// must not kill the pump, or all network processing stops for the session.
+		try
+		{
+			Conn?.FrameTick();
+		}
+		catch (Exception e)
+		{
+			GD.PrintErr($"[DatabaseConnector] FrameTick exception (kept pumping): {e}");
+		}
+	}
 
 	public void Connect()
 	{
@@ -94,12 +119,18 @@ public partial class DatabaseConnector : Node
 	{
 		if (e != null)
 			GD.PrintErr($"[DatabaseConnector] Disconnected: {e.Message}");
+		// _ExitTree disconnects deliberately — no Disconnected signal (no panel) for that.
+		if (_shuttingDown) return;
+		EmitSignal(SignalName.Disconnected);
 	}
 
 	public bool IsLocal(Identity id) => LocalIdentity.HasValue && id == LocalIdentity.Value;
 
+	private bool _shuttingDown;
+
 	public override void _ExitTree()
 	{
+		_shuttingDown = true;
 		if (Conn?.IsActive == true)
 			Conn.Disconnect();
 		if (Instance == this) Instance = null;

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "226dd0c5712180ac",
+			"type": "file",
+			"file": "client/Scripts/World/HexMath.cs",
+			"subpath": "#WorldToHex",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

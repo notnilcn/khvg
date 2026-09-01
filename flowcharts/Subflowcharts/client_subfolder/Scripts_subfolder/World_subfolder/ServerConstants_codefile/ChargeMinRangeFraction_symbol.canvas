@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "edbc244bff366af4",
+			"type": "file",
+			"file": "client/Scripts/World/ServerConstants.cs",
+			"subpath": "#ChargeMinRangeFraction",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"symbol"
+			]
+		}
+	}
+}

@@ -11,11 +11,21 @@
 			"height": 400
 		},
 		{
+			"id": "889aa4ca687ccda4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/_Input_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "85b8d6694fc72136",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/_Ready_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/componentRegistry_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GameManager (class)_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/Get_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetComponent (no params)_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetComponent (Type)_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnchantment_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnchantments_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetEnemy_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetItem_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GetResPath_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/instance_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/IsLocal_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/RegisterComponent_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/UnregisterComponent_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400

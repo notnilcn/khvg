@@ -55,8 +55,9 @@ public static class HexMath
 			Mathf.FloorToInt((1f + b - c) / 3f));
 	}
 
-	// Bijection Z² → ℕ using hex spiral order. Direct port of the server's
-	// spiral_chunk_index in methods.rs — analytical arm detection, no ring walk.
+	// Bijection Z² → ℕ using hex spiral order. Lockstep sibling of the server's
+	// spiral_chunk_index in server/spacetimedb/src/world/hex.rs — analytical arm detection,
+	// no ring walk; both copies must change together.
 	public static long SpiralIndex(int cq, int cr)
 	{
 		int x = cq, z = cr, y = -cq - cr;

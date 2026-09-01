@@ -89,6 +89,10 @@ fn local_player_position(ctx: &ViewContext) -> impl Query<PlayerPosition> {
 #[spacetimedb::view(accessor = nearby_remote_players, public)]
 fn nearby_remote_players(ctx: &ViewContext) -> impl Query<PlayerPosition> {
     let empty = ctx.from.player_position().r#where(|p| p.profile_id.eq(u64::MAX)).build();
+    // The caller's own row is excluded — own position streams via local_player_position.
+    let own_profile_id = ctx.db.logged_in_player().player_id().find(ctx.sender())
+        .map(|p| p.profile_id)
+        .unwrap_or(u64::MAX);
     let indices = match nearby_indices(ctx) {
         Some(i) if !i.is_empty() => i,
         _ => return empty,
@@ -97,7 +101,7 @@ fn nearby_remote_players(ctx: &ViewContext) -> impl Query<PlayerPosition> {
         .r#where(move |p| {
             let mut cond = p.chunk_index.eq(indices[0]);
             for &idx in &indices[1..] { cond = cond.or(p.chunk_index.eq(idx)); }
-            cond
+            cond.and(p.profile_id.ne(own_profile_id))
         })
         .left_semijoin(ctx.from.logged_in_player(), |pos, player| pos.profile_id.eq(player.profile_id))
         .build()
@@ -122,10 +126,23 @@ fn nearby_remote_player_rotations(ctx: &ViewContext) -> impl Query<PlayerRotatio
         .build()
 }
 
+// Profiles of the players in nearby_remote_players' AOI chunk set: a right semijoin over
+// the same chunk-filtered player_position scan (the query builder can't filter the right
+// side of a left_semijoin, so the filtered side drives and PlayerProfile rows come out).
 #[spacetimedb::view(accessor = nearby_remote_players_profiles, public)]
 fn nearby_remote_players_profiles(ctx: &ViewContext) -> impl Query<PlayerProfile> {
-    ctx.from.player_profile()
-        .left_semijoin(ctx.from.logged_in_player(), |profile, player| profile.profile_id.eq(player.profile_id))
+    let empty = ctx.from.player_profile().r#where(|p| p.profile_id.eq(u64::MAX)).build();
+    let indices = match nearby_indices(ctx) {
+        Some(i) if !i.is_empty() => i,
+        _ => return empty,
+    };
+    ctx.from.player_position()
+        .r#where(move |p| {
+            let mut cond = p.chunk_index.eq(indices[0]);
+            for &idx in &indices[1..] { cond = cond.or(p.chunk_index.eq(idx)); }
+            cond
+        })
+        .right_semijoin(ctx.from.player_profile(), |pos, profile| pos.profile_id.eq(profile.profile_id))
         .build()
 }
 

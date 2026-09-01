@@ -25,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_pink_codefile/hex_pink_codefile.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Assets_subfolder/3D_subfolder/KayKit_Medieval_Hexagon_Pack_subfolder/tiles_subfolder/base_subfolder/hex_purple_codefile/hex_purple_codefile.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400

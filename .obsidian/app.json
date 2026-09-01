@@ -4,5 +4,6 @@
   "showUnsupportedFiles": false,
   "readableLineLength": false,
   "promptDelete": false,
-  "showLineNumber": false
+  "showLineNumber": false,
+  "newLinkFormat": "absolute"
 }

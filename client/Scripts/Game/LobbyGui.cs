@@ -7,8 +7,15 @@ public partial class LobbyGui : Control
 	{
 	}
 
-	public void CharSlotsPressed()
+	public void TwoDPressed()
 	{
+		GameVisuals.Mode = VisualMode.TwoD;
+		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
+	}
+
+	public void ThreeDPressed()
+	{
+		GameVisuals.Mode = VisualMode.ThreeD;
 		GetTree().ChangeSceneToFile("res://Scenes/game.tscn");
 	}
 

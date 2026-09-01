@@ -72,20 +72,21 @@ Bullet master has access to all 3 bullet interaction abilities: delete, split, a
 
 Trickster has access to all 3 dodge abilities: telegraphed short range teleport, ground grapple, instant medium range teleport. Trickster also has access to a bunch of other abilities: invisibility, poisons, decoys.
 ### DPS
-#### Bullet master (dex > 0) & (dps > 0)
+#### Bullet Monk (dex > 0) & (dps > 0)
+I kinda dont like the class name but it makes the most sense.
 
-
-Maybe make it so that the bullet master can store and delay their dps to blast counter phases or wait out invulnerability phases. In the long run, they should do less dps than other classes but when you take into account invulnerability and whatnot then these guys should out-damage other classes because of their ability to store and delay the damage they deal.
-
-
-##### Bullet master Weapons
-- Guns?
-- what if they just used their hands to summon bullets
-##### Bullet master Abilities
-Weapons toggles I guess.
-- (innate?) toggle between charge/shotgun/piercing/etc. shot patterns
-- Big charge shot: self-slows, fires a single shot that gets stronger the longer it's charged
-- Big volley shot: self-slows, fires a large spread that gets stronger the longer it's charged — especially strong against low-defense enemies
+Make it so that the bullet master can store and delay their dps to blast counter phases or wait out invulnerability phases. In the long run, they should do less dps than other classes but when you take into account invulnerability and whatnot then these guys should out-damage other classes because of their ability to store and delay the damage they deal.
+##### Bullet Monk Weapons
+- idk they just use their hands to summon bullets
+	- Summon floating orbs that shoot continuous bullets. The actual physical animation for how they shoot in a particular direction with this is that they point with their fingers.
+	- Conjure orbs that are periodically thrown at enemies. The actual physical animation for how they shoot in a particular direction with this is that they throw shit.
+- Bullet Monk weapons can innately toggle between charge/shotgun/piercing/radial/etc. shot patterns
+	- Floating orbs that shoot continuous bullets have an animation that shoot at the ground and split into radial bullets. Other patterns are just different hand signs i guess (open palm, pointed finger, etc).
+	- Confjured orbs that are periodically thrown at enemies are simply just thrown differently. Back hand scattering/throw = shotgun. Front hand throwing = charge. Overhand pegging = pierce. Throwing at ground = radial.
+##### Bullet Monk Abilities
+- Big charge shot: self-slows, disables weapon, fires a single shot that gets stronger the longer it's charged
+- Big volley shot: self-slows, disables weapon, fires a large spread that gets stronger the longer it's charged — especially strong against low-defense enemies
+- Big radial shot: self-slows, disables weapon, fires a fuck ton of bullets in a radius around the player position that gets stronger the longer it's charged — strong against staggered enemies
 - Spawn a dummy on self that allies can shoot; the archer absorbs the damage that the dummy takes and releases it as a big charge/volley shot
 - Mark an enemy to take increased damage
 - Quick slash that destroys enemy bullets, if the slash is stronger than the bullet
@@ -115,18 +116,18 @@ To make warriors special you could probably make these items a consumable or som
 ##### Wizard Weapons
 - staffs/staves (similar to RotMG)
 	- S.T.A.F.F. ripoff (don't copy the bullet pattern exactly 1 for 1)
-	- [S.T.A.F.F. Showcase - This Weapon SHREDS Everything | RotMG](<https://youtu.be/m0COVnAtCxA&t=107>)
+	- [[<https://youtu.be/m0COVnAtCxA&t=107>|S.T.A.F.F. Showcase - This Weapon SHREDS Everything | RotMG]]
 	- Tiered staffs (don't copy the bullet pattern exactly 1 for 1)
-	- [(Rotmg) Godly Wizard PPE](<https://youtu.be/MKtTq4U3hMU?si=ReRPrelHkF1btWOA&t=468>)
+	- [[<https://youtu.be/MKtTq4U3hMU?si=ReRPrelHkF1btWOA&t=468>|(Rotmg|[Rotmg) Godly Wizard PPE]] Godly Wizard PPE]]
 - Wands (similar to RotMG)
 	- Lumiaire
 	- Tiered wands
 ##### Wizard Ability
 - Spell that spawns a delayed beam of light that deals damage
-	- [Chaotic Scripture only Cult (Rotmg)](<https://www.youtube.com/watch?v=dU0andwLZmk>)
+	- [[<https://www.youtube.com/watch?v=dU0andwLZmk>|Chaotic Scripture only Cult (Rotmg|[Rotmg)]]]]
 - Spell that summons bullets that converge on or from or around the player's cursor
-	- [Rotmg Penetrating Blast Spell, shot pattern](<https://www.youtube.com/watch?v=-aCETL8lteA>)
-	- [WHY TABLET IS BETTER THEN PARA SPELL ( in o3)](<https://www.youtube.com/watch?v=4W4metbXxsc>)
+	- [[<https://www.youtube.com/watch?v=-aCETL8lteA>|Rotmg Penetrating Blast Spell, shot pattern]]
+	- [[<https://www.youtube.com/watch?v=4W4metbXxsc>|WHY TABLET IS BETTER THEN PARA SPELL ( in o3|[ in o3)]]]]
 - Spell that forces the player to stop shooting to enter a wind up animation that sends a fireball or some shit
 - Spell that summons a spire that damages surrounding enemies (mirror image of the healer's mushroom tome spire idea below, but offensive instead of healing)
 - Spell that calls down a meteor that breaks into shrapnel after it lands

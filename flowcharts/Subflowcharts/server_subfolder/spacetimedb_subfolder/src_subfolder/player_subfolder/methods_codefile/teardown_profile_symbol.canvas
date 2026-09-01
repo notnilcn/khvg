@@ -15,6 +15,7 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
+				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerStats",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
@@ -36,9 +37,12 @@
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerStatAllocation-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerInventorySlot-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerRotation-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerChunk-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-ActiveConsumableEffect-_colon_-write",
-				"includeInAggregateFlowchart"
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerMovementState-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerDisplacementAllowance-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerHitRate-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-ActiveConsumableEffect-_colon_-write"
 			]
 		}
 	}

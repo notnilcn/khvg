@@ -61,46 +61,46 @@ There will be territory PvP but there won't be direct PvP.
 New players are going to follow a story line so they aren't going to be directionless like in Realm of the Mad God.
 # Example videos
 # Non-RotMG videos
-[out](<https://youtu.be/Psh3f2np4Ok?si=zOuCcC2gKdqe38fy&t=660>)
+[[<https://youtu.be/Psh3f2np4Ok?si=zOuCcC2gKdqe38fy&t=660>|out]]
 
 ## RotMG videos
 ### Group videos
-[RotMG: RedMagePOW Clip Compilation 2](<https://youtu.be/-sCk434v3zg&t=41>)
+[[<https://youtu.be/-sCk434v3zg&t=41>|RotMG: RedMagePOW Clip Compilation 2]]
 
-[RotMG: RedMagePOW Clip Complilation](<https://www.youtube.com/watch?v=FqACs109eIE>)
+[[<https://www.youtube.com/watch?v=FqACs109eIE>|RotMG: RedMagePOW Clip Complilation]]
 
-[RotMG - omo Full Skip Voids](<https://youtu.be/UuDYmAeUrDw&t=14>)
+[[<https://youtu.be/UuDYmAeUrDw&t=14>|RotMG - omo Full Skip Voids]]
 
-[RotMG : Full Skip Lost Hall#1](<https://www.youtube.com/watch?v=w0_A4fmIwJ8>)
+[[<https://www.youtube.com/watch?v=w0_A4fmIwJ8>|RotMG : Full Skip Lost Hall#1]]
 
-[RotMG Lost Halls Void Speedrun ft. Marble Seal drop (08:52:01)](<https://www.youtube.com/watch?v=RHZxqIjksfc>)
+[[<https://www.youtube.com/watch?v=RHZxqIjksfc>|RotMG Lost Halls Void Speedrun ft. Marble Seal drop (08:52:01|[08:52:01)]]]]
 
-[(rotmg o3) Fastest Sorc 2 million top damage (5:48)](<https://www.youtube.com/watch?v=885sidnkIps>)
+[[5:48)](<https://www.youtube.com/watch?v=885sidnkIps>|(rotmg o3|[rotmg o3) Fastest Sorc 2 million top damage (5:48)]] Fastest Sorc 2 million top damage (5:48)]]
 
-[Completing My First Marble Colossus Ever! - Rotmg Lost Halls Progression!](<https://www.youtube.com/watch?v=audTKsu6qTA>)
+[[<https://www.youtube.com/watch?v=audTKsu6qTA>|Completing My First Marble Colossus Ever! - Rotmg Lost Halls Progression!]]
 
-[RotMG Lost Halls 3 man full skip run](<https://www.youtube.com/watch?v=ZRKva2qU9kE>)
+[[<https://www.youtube.com/watch?v=ZRKva2qU9kE>|RotMG Lost Halls 3 man full skip run]]
 
-[Rotmg - WR Void led by BigDort (5:42)](<https://www.youtube.com/watch?v=uvYRJ30DF5c>)
+[[<https://www.youtube.com/watch?v=uvYRJ30DF5c>|Rotmg - WR Void led by BigDort (5:42|[5:42)]]]]
 
-[Rotmg - Bad players get world record Oryx 3 (2:29.39)](<https://www.youtube.com/watch?v=rgSjmhpQGM8>)
+[[<https://www.youtube.com/watch?v=rgSjmhpQGM8>|Rotmg - Bad players get world record Oryx 3 (2:29.39|[2:29.39)]]]]
 
-[Oryx 3 - Gemsbok mini RotMG](<https://www.youtube.com/watch?v=fNIsiBib2jc>)
+[[<https://www.youtube.com/watch?v=fNIsiBib2jc>|Oryx 3 - Gemsbok mini RotMG]]
 
-[Oryx 3 - Beisa mini RotMG](<https://www.youtube.com/watch?v=eHdOlBJWA8Q>)
+[[<https://www.youtube.com/watch?v=eHdOlBJWA8Q>|Oryx 3 - Beisa mini RotMG]]
 
-[Oryx 3 - Leucoryx mini (with 3rd counter) RotMG](<https://www.youtube.com/watch?v=QiUTa-oDBxo>)
+[[<https://www.youtube.com/watch?v=QiUTa-oDBxo>|Oryx 3 - Leucoryx mini (with 3rd counter|[with 3rd counter) RotMG]] RotMG]]
 
-[Oryx 3 - Dammah mini RotMG](<https://www.youtube.com/watch?v=-mdb-6HktkQ>)
+[[<https://www.youtube.com/watch?v=-mdb-6HktkQ>|Oryx 3 - Dammah mini RotMG]]
 
 ### Solo videos
 
-[RotMG - lvl 1 Kitsune Umi gearless consumableless solo](<https://www.youtube.com/watch?v=IGowzviaTUA>)
+[[<https://www.youtube.com/watch?v=IGowzviaTUA>|RotMG - lvl 1 Kitsune Umi gearless consumableless solo]]
 
-[RotMG Solo Plagued Nest WR (3:21)](<https://www.youtube.com/watch?v=mau4t3P7Hpw>)
+[[<https://www.youtube.com/watch?v=mau4t3P7Hpw>|RotMG Solo Plagued Nest WR (3:21|[3:21)]]]]
 
-[RotMG - Secluded Thicket no-hit Solo](<https://www.youtube.com/watch?v=9CWy2cQJn34>)
+[[<https://www.youtube.com/watch?v=9CWy2cQJn34>|RotMG - Secluded Thicket no-hit Solo]]
 
-[RotMG - Murcian No Hit](<https://www.youtube.com/watch?v=-eOg3N7OKLY>)
+[[<https://www.youtube.com/watch?v=-eOg3N7OKLY>|RotMG - Murcian No Hit]]
 
-[my best t8 petless solo void run](<https://youtu.be/mJUmuELLeYc&t=485>)
+[[<https://youtu.be/mJUmuELLeYc&t=485>|my best t8 petless solo void run]]
