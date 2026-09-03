@@ -18,14 +18,16 @@ enum SettingType {
 	TERRAIN,
 	PRESET,
 	QUICK_PAINT,
+	BUTTON,
 	ERROR,
 }
 
 var terrain_settings_data : Dictionary = {
-	"dimensions": "Vector3i",
-	"cell_size": "Vector2",
+	"hex_size": "EditorSpinSlider",
+	"level_height": "EditorSpinSlider",
+	"chunk_radius": "SpinBox",
+	"default_transition": "OptionButton",
 	"blend_mode": "OptionButton",
-	"noise_hmap": "EditorResourcePicker",
 	"default_wall_texture": "OptionButton",
 	"extra_collision_layer": "OptionButton",
 	# Grass settings
@@ -84,6 +86,7 @@ func show_tool_attributes(tool_index: int) -> void:
 		"terrain": SettingType.TERRAIN,
 		"preset": SettingType.PRESET,
 		"quick_paint": SettingType.QUICK_PAINT,
+		"button": SettingType.BUTTON,
 	}
 	
 	var new_attributes := []
@@ -113,10 +116,22 @@ func show_tool_attributes(tool_index: int) -> void:
 		new_attributes.append(attribute_list.quick_paint_selection)
 	if tool_attributes.paint_walls:
 		new_attributes.append(attribute_list.paint_walls)
+	if tool_attributes.paint_mode:
+		new_attributes.append(attribute_list.paint_mode)
+	if tool_attributes.transition_kind:
+		new_attributes.append(attribute_list.transition_kind)
 	if tool_attributes.chunk_management:
 		new_attributes.append(attribute_list.chunk_management)
 	if tool_attributes.terrain_settings:
 		new_attributes.append(attribute_list.terrain_settings)
+	if tool_attributes.export_path:
+		new_attributes.append(attribute_list.export_path)
+	if tool_attributes.import_path:
+		new_attributes.append(attribute_list.import_path)
+	if tool_attributes.export_button:
+		new_attributes.append(attribute_list.export_button)
+	if tool_attributes.import_button:
+		new_attributes.append(attribute_list.import_button)
 	
 	for attribute in new_attributes:
 		var setting_dict : Dictionary = attribute
@@ -173,9 +188,7 @@ func add_setting(p_params: Dictionary) -> void:
 			hbox_container.add_child(cont, true)
 		SettingType.SLIDER:
 			var range_data := p_params.get("range", Vector3(1.0, 50.0, 0.5))
-			var cell_scale_factor := clamp(((plugin.current_terrain_node.cell_size.x + plugin.current_terrain_node.cell_size.y) / 4.0), 0.3, 1.0)
-			var dimensions_scale_factor := clamp((((plugin.current_terrain_node.dimensions.x / 33) + (plugin.current_terrain_node.dimensions.z / 33)) / 2.0), 0.5, 2.0)
-			var scale_factor : float = dimensions_scale_factor * cell_scale_factor
+			var scale_factor : float = clamp(plugin.current_terrain_node.hex_size / 2.0, 0.3, 1.0)
 			var default_value := p_params.get("default", 10.0) # Fallback base value
 			if setting_name == "size":
 				range_data *= scale_factor
@@ -238,13 +251,25 @@ func add_setting(p_params: Dictionary) -> void:
 			line_edit.set_flat(true)
 			line_edit.expand_to_text_length = true
 			line_edit.placeholder_text = p_params.get("default", "New text here...")
+			if saved_setting_value is String and saved_setting_value != "ERROR":
+				line_edit.text = saved_setting_value
 			line_edit.text_submitted.connect(func(new_text): _on_setting_changed(setting_name, new_text))
-			line_edit.text_submitted.connect(func(_text): line_edit.clear())
 			line_edit.set_custom_minimum_size(Vector2(25, 25))
 			
 			cont = CenterContainer.new()
 			cont.set_custom_minimum_size(Vector2(35, 35))
 			cont.add_child(line_edit, true)
+			hbox_container.add_child(cont, true)
+		SettingType.BUTTON:
+			var button := Button.new()
+			button.set_flat(true)
+			button.text = label_text
+			button.pressed.connect(func(): _on_setting_changed(setting_name, true))
+			button.set_custom_minimum_size(Vector2(65, 30))
+			
+			cont = CenterContainer.new()
+			cont.set_custom_minimum_size(Vector2(65, 35))
+			cont.add_child(button, true)
 			hbox_container.add_child(cont, true)
 		SettingType.PRESET:
 			var preset_button := OptionButton.new()
@@ -359,43 +384,13 @@ func add_setting(p_params: Dictionary) -> void:
 			if not current_available_chunks.is_empty() and plugin.selected_chunk:
 				selected_chunk = plugin.selected_chunk
 			
-			var option_button := OptionButton.new()
-			option_button.set_flat(true)
-			option_button.set_custom_minimum_size(Vector2(65, 35))
-			for mode in MarchingSquaresTerrainChunk.Mode:
-				option_button.add_item(_format_constant_string(mode))
-			option_button.selected = plugin.selected_chunk.merge_mode if not current_available_chunks.is_empty() and plugin.selected_chunk else -1
-			option_button.item_selected.connect(_on_chunk_mode_changed)
-			
 			chunk_button.set_flat(true)
-			chunk_button.item_selected.connect(func(chunk): _on_chunk_selected(option_button, chunk_button.get_item_text(chunk)))
+			chunk_button.item_selected.connect(func(chunk): _on_chunk_selected(chunk_button.get_item_text(chunk)))
 			chunk_button.set_custom_minimum_size(Vector2(65, 35))
-			
-			var mult_apply_button := Button.new()
-			mult_apply_button.set_custom_minimum_size(Vector2(65, 30))
-			mult_apply_button.pressed.connect(_apply_mode_to_all_chunks)
-			mult_apply_button.text = "Apply mode to all chunks"
 			
 			cont = CenterContainer.new()
 			cont.set_custom_minimum_size(Vector2(65, 35))
 			cont.add_child(chunk_button, true)
-			hbox_container.add_child(cont, true)
-			
-			var v_sep := VSeparator.new()
-			hbox_container.add_child(v_sep, true)
-			
-			cont = CenterContainer.new()
-			cont.set_custom_minimum_size(Vector2(65, 35))
-			cont.add_child(option_button, true)
-			hbox_container.add_child(cont, true)
-			
-			v_sep = VSeparator.new()
-			hbox_container.add_child(v_sep, true)
-			
-			cont = MarginContainer.new()
-			cont.set_custom_minimum_size(Vector2(65, 35))
-			cont.add_theme_constant_override("margin_bottom", 3)
-			cont.add_child(mult_apply_button, true)
 			hbox_container.add_child(cont, true)
 		SettingType.TERRAIN:
 			var vbox := VBoxContainer.new()
@@ -453,6 +448,10 @@ func add_setting(p_params: Dictionary) -> void:
 						spin_slider.set_min(0.0)
 						if setting == "wall_threshold":
 							spin_slider.set_max(0.5)
+						elif setting == "hex_size" or setting == "level_height":
+							spin_slider.set_min(0.1)
+							spin_slider.set_max(10.0)
+							spin_slider.allow_greater = true
 						else:
 							spin_slider.set_max(1.0)
 						spin_slider.set_step(0.01)
@@ -512,6 +511,9 @@ func add_setting(p_params: Dictionary) -> void:
 							# Populate with texture names from the shared texture names resource
 							for tex_name in attribute_list.vp_tex_names.texture_names:
 								option_button.add_item(tex_name)
+						elif setting == "default_transition":
+							option_button.add_item("Cliff")
+							option_button.add_item("Terrace")
 						elif setting == "blend_mode":
 							option_button.add_item("Smoothed Triangles")
 							option_button.add_item("Hard Squares")
@@ -609,9 +611,21 @@ func _get_setting_value(p_setting_name: String) -> Variant:
 			return plugin.current_quick_paint
 		"paint_walls":
 			return plugin.paint_walls_mode
+		"paint_mode":
+			return plugin.paint_mode
+		"transition_kind":
+			return plugin.transition_kind
 		"chunk_management":
 			pass
 		"terrain_settings":
+			pass
+		"export_path":
+			return plugin.export_path
+		"import_path":
+			return plugin.import_path
+		"export_button":
+			pass
+		"import_button":
 			pass
 		_:
 			push_error("Couldn't find tool attributes setting name")
@@ -652,39 +666,13 @@ func _on_terrain_setting_changed(p_setting_name: String, p_value: Variant) -> vo
 	emit_signal("terrain_setting_changed", p_setting_name, p_value)
 
 
-func _on_chunk_selected(option_button: OptionButton, p_chunk: String) -> void:
+func _on_chunk_selected(p_chunk: String) -> void:
 	var terrain := plugin.current_terrain_node
-	var chunk : MarchingSquaresTerrainChunk = terrain.find_child(p_chunk)
 	
-	option_button.selected = chunk.merge_mode
 	selected_chunk = plugin.current_terrain_node.find_child(p_chunk)
 	plugin.selected_chunk = selected_chunk
 	
 	plugin.gizmo_plugin.trigger_redraw(terrain)
-
-
-func _apply_mode_to_all_chunks() -> void:
-	for child in plugin.current_terrain_node.get_children():
-		if child is MarchingSquaresTerrainChunk:
-			_change_chunk_mode(child, selected_chunk.merge_mode)
-
-
-func _on_chunk_mode_changed(m_mode: int) -> void:
-	_change_chunk_mode(selected_chunk, m_mode)
-
-
-func _change_chunk_mode(_chunk: MarchingSquaresTerrainChunk, m_mode: int) -> void:
-	match MarchingSquaresTerrainChunk.Mode.find_key(m_mode):
-		"CUBIC":
-			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.CUBIC
-		"POLYHEDRON":
-			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.POLYHEDRON
-		"ROUNDED_POLYHEDRON":
-			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.ROUNDED_POLYHEDRON
-		"SEMI_ROUND":
-			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.SEMI_ROUND
-		"SPHERICAL":
-			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.SPHERICAL
 
 #endregion
 

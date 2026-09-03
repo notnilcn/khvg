@@ -81,7 +81,7 @@ A phase = hp threshold + movement + a vec of compiled emitters:
 ```rust
 use crate::enemy::defs::make_phase;
 
-make_phase(ctx, 1, 0.8, MovementBehavior::Stationary, 2.0, vec![
+make_phase(ctx, 1, 0.8, SteeringMovement::idle(), 2.0, vec![
     tentacles().compile(ctx, difficulty),
     aimed_fan().window(0.0, 5.0).compile(ctx, difficulty),
 ])
@@ -93,8 +93,11 @@ make_phase(ctx, 1, 0.8, MovementBehavior::Stationary, 2.0, vec![
   finishes, before the phase restarts. This is the boss "rest between attack patterns"
   beat. Every sequence in a phase should be *finite* (windowed emitters) so the phase can
   end and loop — one infinite emitter would pin the phase open forever.
-- Movement: `Stationary`, `Wander`, `Chase`, `Flee` — see `MovementBehavior` in
-  `def_tables.rs` for the params.
+- Movement: a `SteeringMovement` = Goal × Pattern × Avoidance — `SteeringMovement::idle()`
+  to stand still, or `steering(speed, goal, pattern)` (a terse constructor in
+  `defs/mod.rs` that turns separation and cliff avoidance on) with a `MoveGoal`
+  (`AggroTarget`, `SpawnPoint`, …) and a `MovePattern` (`Direct`, `Flee`, `Orbit`,
+  `Meander`, `Zigzag`, `Lunge`). See `def_tables.rs` for the params.
 
 ### The template
 
@@ -149,7 +152,7 @@ Translate the phase table directly — one `make_phase` per row, one `.window()`
 activation window, generating repetitive windows with loops instead of copy-paste:
 
 ```rust
-make_phase(ctx, 7, 0.3, MovementBehavior::Stationary, 2.0, {
+make_phase(ctx, 7, 0.3, SteeringMovement::idle(), 2.0, {
     let mut attacks: Vec<AttackSequence> = (0..10)   // ten interleaved 0.5s pulses
         .flat_map(|i| [
             sway_cw().window(1.5 + i as f32, 0.5).compile(ctx, difficulty),

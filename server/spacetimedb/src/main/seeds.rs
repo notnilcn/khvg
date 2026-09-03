@@ -91,7 +91,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         aggro_lock_seconds: 15.0,
         stun_behavior: StunBehavior::Pause,
         phases: vec![
-            make_phase(ctx, 0, 0.0, MovementBehavior::Wander(WanderParams { speed: 30.0, active_duration: 2.5, pause_duration: 1.5 }), 0.0, vec![
+            make_phase(ctx, 0, 0.0, steering(30.0, MoveGoal::SpawnPoint, MovePattern::Meander(MeanderParams { sway_radians: 0.8, leash_radius: 180.0 })).with_cycle(2.5, 1.5), 0.0, vec![
                 make_sequence(vec![
                     seq_single(ctx, PatternType::Ring(RingParams { speed: 70.0, count: 8, line: 1, line_speed_step: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.0, 0.0, 0.9),
                 ], 0.0),
@@ -109,7 +109,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         aggro_lock_seconds: 25.0,
         stun_behavior: StunBehavior::Pause,
         phases: vec![
-            make_phase(ctx, 0, 0.0, MovementBehavior::Flee(FleeParams { speed: 40.0, min_range: 180.0, active_duration: 2.0, pause_duration: 1.5 }), 0.0, vec![
+            make_phase(ctx, 0, 0.0, steering(40.0, MoveGoal::AggroTarget, MovePattern::Flee(FleeParams { min_range: 180.0 })).with_cycle(2.0, 1.5), 0.0, vec![
                 make_sequence(vec![
                     seq_single(ctx, PatternType::Volley(VolleyParams { speed: 200.0, count: 3, line: 1, line_speed_step: 0.0, speed_variance: 20.0, angle_jitter: 0.05 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.0, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
@@ -120,7 +120,7 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         ],
     });
 
-    // Reference example, not content: one phase per movement behavior × pattern family, so
+    // Reference example, not content: one phase per steering pattern × pattern family, so
     // contributors (and manual testing) can see every primitive in a single template. For
     // emitter-style authoring with spin/burst/difficulty composition, see enemy/emitters.rs
     // and the boss in enemy/defs/gorgon_boss.rs.
@@ -135,32 +135,32 @@ pub fn seed_default_enemies(ctx: &ReducerContext) {
         aggro_lock_seconds: 30.0,
         stun_behavior: StunBehavior::Pause,
         phases: vec![
-            // Phase 0 (100% HP): turret — Ring read cleanly with no movement noise
-            make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
+            // Phase 0 (100% HP): meanders around its spawn point — Ring read cleanly against the wandering gait
+            make_phase(ctx, 0, 0.0, steering(40.0, MoveGoal::SpawnPoint, MovePattern::Meander(MeanderParams { sway_radians: 0.8, leash_radius: 220.0 })).with_cycle(2.5, 1.5), 0.0, vec![
                 make_sequence(vec![
                     seq_single(ctx, PatternType::Ring(RingParams { speed: 130.0, count: 24, line: 1, line_speed_step: 0.0 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 2.5, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
-            // Phase 1 (<=80% HP): patrols while sweeping an aimed fan — repositioning shifts where the gap lands
-            make_phase(ctx, 1, 0.8, MovementBehavior::Wander(WanderParams { speed: 40.0, active_duration: 2.5, pause_duration: 1.5 }), 0.0, vec![
+            // Phase 1 (<=80% HP): orbits the aggro target at range (per-enemy range/sign, no concentric stacking) while sweeping an aimed fan
+            make_phase(ctx, 1, 0.8, steering(55.0, MoveGoal::AggroTarget, MovePattern::Orbit(OrbitParams { range: 200.0 })).with_cycle(2.5, 1.5), 0.0, vec![
                 make_sequence(vec![
                     seq_single(ctx, PatternType::Curtain(CurtainParams { speed: 120.0, count: 11, angle_span: 1.6, gap_index: 5 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 3.0, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
-            // Phase 2 (<=60% HP): rusher — closes the gap while spraying jittered aimed shots
-            make_phase(ctx, 2, 0.6, MovementBehavior::Chase(ChaseParams { speed: 55.0, active_duration: 3.0, pause_duration: 1.0 }), 0.0, vec![
+            // Phase 2 (<=60% HP): zigzag approach — closes the gap on a sine while spraying jittered aimed shots
+            make_phase(ctx, 2, 0.6, steering(55.0, MoveGoal::AggroTarget, MovePattern::Zigzag(ZigzagParams { amplitude_radians: 0.6, period_seconds: 1.2 })).with_cycle(3.0, 1.0), 0.0, vec![
                 make_sequence(vec![
                     seq_single(ctx, PatternType::Volley(VolleyParams { speed: 180.0, count: 5, line: 1, line_speed_step: 0.0, speed_variance: 25.0, angle_jitter: 0.07 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.2, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
-            // Phase 3 (<=40% HP): kiter — keeps its distance while peppering with randomized pellets
-            make_phase(ctx, 3, 0.4, MovementBehavior::Flee(FleeParams { speed: 45.0, min_range: 200.0, active_duration: 2.0, pause_duration: 1.0 }), 0.0, vec![
+            // Phase 3 (<=40% HP): lunges — short 3.5x bursts at the target with the pause window reading as the telegraph
+            make_phase(ctx, 3, 0.4, steering(45.0, MoveGoal::AggroTarget, MovePattern::Lunge(LungeParams { speed_mult: 3.5 })).with_cycle(0.6, 1.4), 0.0, vec![
                 make_sequence(vec![
                     seq_single(ctx, PatternType::Shotgun(ShotgunParams { speed: 120.0, count: 7, line: 1, line_speed_step: 0.0, spread: 0.8, speed_variance: 25.0, lifetime_variance: 0.5 }), EnemyTarget::AggroTarget, 0.0, 0.0, 0.0, "Arrow", 2.2, 10, 0.0, 0.0, 0.0),
                 ], 0.0),
             ]),
-            // Phase 4 (<=20% HP): plants itself and erupts in a randomized 360° nova — desperation finale
-            make_phase(ctx, 4, 0.2, MovementBehavior::Stationary, 0.0, vec![
+            // Phase 4 (<=20% HP): flees — keeps its distance while erupting in a randomized 360° nova
+            make_phase(ctx, 4, 0.2, steering(45.0, MoveGoal::AggroTarget, MovePattern::Flee(FleeParams { min_range: 200.0 })).with_cycle(2.0, 1.0), 0.0, vec![
                 make_sequence(vec![
                     seq_single(ctx, PatternType::Explosion(ExplosionParams { speed: 100.0, count: 20, speed_variance: 35.0, lifetime_variance: 0.9 }), EnemyTarget::Idle, 0.0, 0.0, 0.0, "Arrow", 3.0, 10, 0.0, 0.0, 0.0),
                 ], 0.0),

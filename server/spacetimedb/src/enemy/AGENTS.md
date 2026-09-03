@@ -7,7 +7,7 @@ Everything an agent needs to work in this module without re-deriving the model. 
 
 | File | Role | Edit it when |
 |---|---|---|
-| `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`/`StunBehavior`), the four step-def tables, `PatternType` + param structs, `MovementBehavior`, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
+| `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`/`StunBehavior`), the four step-def tables, `PatternType` + param structs, the `SteeringMovement`/`MoveGoal`/`MovePattern` steering model, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
 | `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, schedules, and the event tables: `BulletPatternEvent` (`damage` resolved at insert), `BulletControlEvent` (rect kinds encode origin (x, y) + far end (target_x, target_y) + width (radius); Attract `duration` = linger, 0 = one-shot; SlashRect `duration` = damage threshold as f32 bits; WallRect `duration` = linger seconds), `AbilityVisualEvent` (P5 spell flashes; per-kind encoding documented on the table) | Rarely — schema changes |
 | `methods.rs` | Pure logic: archetype helpers, behavior-tree build/teardown, `tick_phase`/`tick_sequence`, movement, biome spawning | Changing *how* enemies simulate |
 | `reducers.rs` | `tick_enemy_spawn`/`tick_enemy_behavior` (scheduled), `report_enemy_hit` (rate-limited + range-checked, see below) | Wiring, not content |
@@ -24,6 +24,26 @@ baked server-side at fire time). HP thresholds advance phases via `compute_phase
 combat path. Spawn/despawn always goes through `spawn_enemy_archetype` /
 `despawn_enemy_archetype` — the behavior tree (EnemyBehavior → EnemyPhase → EnemyAttack →
 EnemySequenceStep → RepeatStepInstance) must not have orphan rows.
+
+## Movement (context steering)
+
+Movement is **context-based steering** (design doc: `enemy/new_enemy_movement_system.md`),
+authored per phase as a `SteeringMovement` = **Goal × Pattern × Avoidance** (`MoveGoal` —
+Idle/AggroTarget/SpawnPoint/FixedPoint; `MovePattern` — Direct/Flee/Orbit/Meander/Zigzag/
+Lunge; plus `separation_weight` and `avoid_cliffs`). Per tick `apply_movement` scores a
+fixed set of `STEERING_DIRECTIONS` (12) candidate directions in an *interest map* —
+`max(0, dot(candidate, desired))` per pattern, plus shaped separation (per-pair angle
+offset, anti-jitter) and cliff probing (`world_to_hex` + `hex_elevation` vs the
+`MAX_WALKABLE_*_DELTA` constants; steep down is blocked too — enemies have no fall
+mechanic) — and moves along the argmax. Blocked directions fall to the next best instead
+of cancelling out, so enemies slide along cliffs and don't clump; it is local steering,
+not pathfinding. `EnemyBehavior.velocity_x/y` is the **unit heading memory** (Meander's
+persistent noise-swayed heading; other patterns' last chosen direction), server-only as
+before. The `Enemy` row additionally carries `spawn_x`/`spawn_y` (Meander's leash anchor)
+and `movement_direction`/`movement_speed` — movement as an **angle + scalar** (speed 0
+when standing, same convention as `PlayerPosition`); clients reconstruct the velocity for
+dead reckoning (`Enemy.cs` → `InterpolationComponent.SetTarget`). All angles in the
+movement layer are **radians**; bullet angles stay degrees.
 
 ## Semantics that will bite you
 
@@ -50,7 +70,8 @@ EnemySequenceStep → RepeatStepInstance) must not have orphan rows.
   origin **offset** by the same accumulated spin (orbiting-arm model); `base_angle_offset`
   itself tilts only the firing direction.
 - **Angles are degrees**, except `spread` (and `CurtainParams.angle_span`) which are
-  radians in the raw structs. `Emitter::shotgun` takes degrees.
+  radians in the raw structs, and the whole movement layer (SteeringMovement fields,
+  `apply_movement` internals), which is radians throughout. `Emitter::shotgun` takes degrees.
 - **`line`/`line_speed_step`** (Ring/Volley/Shotgun): bullet j of a stack flies at
   `speed + step × (j+1)` — a speed ladder, not spatial copies.
 - **`angular_speed`/`speed_acceleration`** (every step + `BulletPatternEvent`): mid-flight
@@ -69,7 +90,10 @@ EnemySequenceStep → RepeatStepInstance) must not have orphan rows.
 ## How to add an enemy (the recipe)
 
 1. New file `defs/my_enemy.rs`: one `fn` per emitter returning a base `Emitter`; phases via
-   `make_phase(ctx, index, hp_threshold, movement, loop_delay, vec![emitter.compile(ctx, difficulty), …])`;
+   `make_phase(ctx, index, hp_threshold, movement, loop_delay, vec![emitter.compile(ctx, difficulty), …])`
+   where `movement` is a `SteeringMovement` — `SteeringMovement::idle()` to stand still or
+   `steering(speed, goal, pattern)` (separation + cliff avoidance on; `.with_cycle(a, p)`
+   for a move/pause cycle);
    `pub fn seed(ctx)` building the template(s) (`EnemyTemplate::seed` upserts by `template_id`).
 2. `pub mod my_enemy;` in `defs/mod.rs`; seed call in `main/lifecycle.rs::init`.
 3. `cargo check` → `server/build.sh` → `dotnet build client/khvg.csproj`.

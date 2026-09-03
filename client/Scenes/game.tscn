@@ -115,6 +115,7 @@ script = ExtResource("30_bcliff")
 [node name="CameraRigComponent" type="Node" parent="." unique_id=429369880]
 script = ExtResource("14_lmoi6")
 PitchMax = 0.0
+DefaultPitch = -45.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
 layer = -1
@@ -127,12 +128,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 stretch = true
-stretch_shrink = 3
 
 [node name="SubViewport" type="SubViewport" parent="3D/SubViewportContainer" unique_id=803652251]
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(426, 240)
+size = Vector2i(1280, 720)
 render_target_update_mode = 4
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=152855753]
@@ -204,6 +204,7 @@ draw_limits = true
 metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 
 [node name="HexGridOverlayComponent" type="Node2D" parent="." unique_id=596614871]
+visible = false
 script = ExtResource("21_631el")
 
 [node name="MapConfigBinder" type="Node" parent="HexGridOverlayComponent" unique_id=866081349]

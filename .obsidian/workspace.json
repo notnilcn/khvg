@@ -11,56 +11,17 @@
             "id": "940a97cd19f20e2e",
             "type": "leaf",
             "state": {
-              "type": "vscode-editor",
-              "state": {
-                "file": "server/spacetimedb/src/player/methods.rs"
-              },
-              "icon": "lucide-ghost",
-              "title": "vscode-editor"
-            }
-          },
-          {
-            "id": "c6e276205e595925",
-            "type": "leaf",
-            "state": {
-              "type": "vscode-editor",
-              "state": {
-                "file": "client/Scripts/Components/Weapon/EffectiveWeaponResolver.cs"
-              },
-              "icon": "lucide-ghost",
-              "title": "vscode-editor"
-            }
-          },
-          {
-            "id": "8198e8d99ffa55ff",
-            "type": "leaf",
-            "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Technical Design Docs/Description/10 Items, Inventory & Loot Tables.md",
+                "file": "client/addons/MarchingSquaresTerrain/README.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "10 Items, Inventory & Loot Tables"
-            }
-          },
-          {
-            "id": "fbd77c2ad05ae6b0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
-                "mode": "source",
-                "source": false
-              },
-              "icon": "lucide-file",
-              "title": "03 Class system, Item system, and Equipment system"
+              "title": "README"
             }
           }
-        ],
-        "currentTab": 3
+        ]
       }
     ],
     "direction": "vertical"
@@ -94,7 +55,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "position_debug",
+                "query": "collision_layer",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -253,19 +214,41 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "fbd77c2ad05ae6b0",
+  "active": "940a97cd19f20e2e",
   "lastOpenFiles": [
-    "client/Scenes/game.tscn25911100112.tmp",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.wasm.tmp6280bb0",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustc3hqH4p/linker-arguments",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/rustc3hqH4p",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.93tc5u7s9nxq7yxoy1njgb6ui.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.12.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.10.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.06.rcgu.o",
-    "server/spacetimedb/target/wasm32-unknown-unknown/release/deps/BulletHell.BulletHell.8aba5a2d43ec9bbf-cgu.07.rcgu.o",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hlvx1u43x9-16kkl8j-4wh7s8z7ysolg6y8dxlzoht54/query-cache.bin",
+    "docs/Game Design Docs/01 Executive Summary.md",
+    "client/addons/MarchingSquaresTerrain/README.md",
+    "docs/Game Design Docs/02 Gameplay.md",
+    "server/spacetimedb/src/player/methods.rs",
+    "client/addons/blastbullets2d/README.md",
+    "client/addons/MarchingSquaresTerrain/plugin.cfg",
+    "client/addons/MarchingSquaresTerrain/utils/marching_squares_thread_pool.gd",
+    "client/addons/MarchingSquaresTerrain/utils/marching_squares_thread_pool.gd.uid",
+    "client/addons/MarchingSquaresTerrain/utils",
+    "client/addons/MarchingSquaresTerrain/mc.tct",
+    "client/addons/MarchingSquaresTerrain/resources/quick_paints/global/example_global_no_grass_paint.tres",
+    "client/addons/MarchingSquaresTerrain/resources/quick_paints/global/example_global_full_void.tres",
+    "client/addons/MarchingSquaresTerrain/resources/texture_presets/example_flat_toon.tres",
+    "client/addons/MarchingSquaresTerrain/resources/texture_presets/example_biomes_icey.tres",
+    "client/addons/MarchingSquaresTerrain/resources/plugin_materials/grass_leaf_sprite.png",
+    "client/addons/MarchingSquaresTerrain/editor/icons/vertex_paint_tool.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/toolicon.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/terrain_settings_tool.png",
+    "client/addons/MarchingSquaresTerrain/editor/icons/smooth_tool.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/Marching_Squares_Terrain_Icon.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/Marching_Squares_Terrain_Chunk_Icon.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/level_tool.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/import_export_tool.svg",
+    "client/addons/MarchingSquaresTerrain/editor/icons/grass_mask_tool.svg",
+    "client/addons/MarchingSquaresTerrain/documentation/documentation+/navmesh_guide.md",
+    "client/addons/MarchingSquaresTerrain/documentation/documentation+/internal_tool_system.md",
+    "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_style_guide.md",
+    "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_locations.md",
+    "client/addons/MarchingSquaresTerrain/documentation/credits.md",
+    "client/addons/MarchingSquaresTerrain/documentation/hex_terrain_guide.md",
+    "client/addons/MarchingSquaresTerrain/documentation/plugin_quick_guide.md",
+    "client/addons/MarchingSquaresTerrain/AGENTS.md",
+    "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
     "docs/Technical Design Docs/Description/13 Admin & Debug Tables.md",
     "docs/Technical Design Docs/Description/08 Enemy Tables.md",
     "server/spacetimedb/src/enemy/new_enemy_movement_system.md",
@@ -275,23 +258,6 @@
     "client/addons/3dpixelart/AGENTS.md",
     "docs/Technical Design Docs/Description/10 Items, Inventory & Loot Tables.md",
     "Untitled.canvas",
-    "client/addons/MarchingSquaresTerrain/AGENTS.md",
-    "client/addons/MarchingSquaresTerrain/resources/plugin_materials/grass_leaf_sprite.png",
-    "client/addons/MarchingSquaresTerrain/editor/icons/vertex_paint_tool.svg",
-    "client/addons/MarchingSquaresTerrain/editor/icons/toolicon.svg",
-    "client/addons/MarchingSquaresTerrain/editor/icons/terrain_settings_tool.png",
-    "client/addons/MarchingSquaresTerrain/editor/icons/smooth_tool.svg",
-    "client/addons/MarchingSquaresTerrain/editor/icons/Marching_Squares_Terrain_Icon.svg",
-    "client/addons/MarchingSquaresTerrain/editor/icons/Marching_Squares_Terrain_Chunk_Icon.svg",
-    "client/addons/MarchingSquaresTerrain/editor/icons/level_tool.svg",
-    "client/addons/MarchingSquaresTerrain/editor/icons/grass_mask_tool.svg",
-    "client/addons/MarchingSquaresTerrain/editor/icons/chunk_manager_tool.svg",
-    "client/addons/MarchingSquaresTerrain/documentation/documentation+/navmesh_guide.md",
-    "client/addons/MarchingSquaresTerrain/documentation/documentation+/internal_tool_system.md",
-    "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_locations.md",
-    "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_style_guide.md",
-    "client/addons/MarchingSquaresTerrain/documentation/plugin_quick_guide.md",
-    "client/addons/MarchingSquaresTerrain/documentation/credits.md",
     "docs/Game Design Docs/00.canvas",
     "docs/Technical Design Docs/Description/AGENTS.md",
     "docs/Technical Design Docs/Description/09 Combat & Event Tables.md",
@@ -305,11 +271,6 @@
     "flowcharts/main-status.canvas",
     "flowcharts/main-player-data.canvas",
     "flowcharts/main-movement.canvas",
-    "docs/Technical Design Docs/Description/02 The Component Framework.md",
-    "docs/Technical Design Docs/Description/07 Terrain & World Tables.md",
-    "docs/Technical Design Docs/Description/03 Connection, Subscriptions & Views.md",
-    "docs/Technical Design Docs/Description/06 Movement & AOI Tables.md",
-    "docs/Technical Design Docs/Description/05 Player Data & Progression Tables.md",
-    "docs/Technical Design Docs/Description/04 Lobby & Identity Tables.md"
+    "docs/Technical Design Docs/Description/02 The Component Framework.md"
   ]
 }

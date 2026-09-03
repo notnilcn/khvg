@@ -91,7 +91,8 @@ public partial class Enemy : CharacterBody2D, IEntity
     {
         var enemy = (SpacetimeDB.Types.Enemy)nearbyEnemiesBinder.LastRow!;
         if (enemy.EnemyId != EnemyId) return;
-        interpolation?.SetTarget(new Vector2(enemy.X, enemy.Y));
+        var velocity = Vector2.FromAngle(enemy.MovementDirection) * enemy.MovementSpeed;
+        interpolation?.SetTarget(new Vector2(enemy.X, enemy.Y), velocity);
         HealthComponent?.SetFromServer(enemy.Hp, maxHp);
         Phase = enemy.Phase;
         Stagger = enemy.Stagger;

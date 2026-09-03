@@ -30,7 +30,7 @@ var height : Dictionary = {
 	"name": "height",
 	"type": "slider",
 	"label": "Height",
-	"range": Vector3(-50.0, 50.0, 0.1),
+	"range": Vector3(0.0, 16.0, 1.0),
 	"default": 0.0,
 }
 
@@ -101,6 +101,22 @@ var paint_walls : Dictionary = {
 	"default": false,
 }
 
+var paint_mode : Dictionary = {
+	"name": "paint_mode",
+	"type": "option",
+	"label": "Paint Mode",
+	"options": ["Ground", "Walls", "Transitions"],
+	"default": 0,
+}
+
+var transition_kind : Dictionary = {
+	"name": "transition_kind",
+	"type": "option",
+	"label": "Transition",
+	"options": ["Default", "Cliff", "Terrace", "Slope"],
+	"default": 0,
+}
+
 var chunk_management : Dictionary = {
 	"name": "chunk_management",
 	"type": "chunk",
@@ -111,6 +127,32 @@ var terrain_settings : Dictionary = {
 	"name": "terrain_settings",
 	"type": "terrain",
 	"label": "Terrain Settings",
+}
+
+var export_path : Dictionary = {
+	"name": "export_path",
+	"type": "text",
+	"label": "Export Path",
+	"default": "res://terrain_export.json",
+}
+
+var import_path : Dictionary = {
+	"name": "import_path",
+	"type": "text",
+	"label": "Import Path",
+	"default": "res://terrain_export.json",
+}
+
+var export_button : Dictionary = {
+	"name": "export_button",
+	"type": "button",
+	"label": "Export",
+}
+
+var import_button : Dictionary = {
+	"name": "import_button",
+	"type": "button",
+	"label": "Import",
 }
 
 """

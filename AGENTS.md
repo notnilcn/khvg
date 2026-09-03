@@ -30,7 +30,7 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 ## Folders to skip
 
 - `client/Scripts/module_bindings/` — generated bindings. **Never read or hand-edit**; regenerate with `server/build.sh`.
-- `client/addons/` — third-party plugins (`blastbullets2d`, `phantom_camera`, `open_godot_mcp`), gitignored; only relevant when debugging plugin internals. **`client/sstdbsdk/` is not in here** — it is first-party code every component depends on, and reads like any other client script.
+- `client/addons/` — third-party plugins (`blastbullets2d`, `phantom_camera`, `open_godot_mcp`), gitignored; only relevant when debugging plugin internals. **Exception:** `client/addons/MarchingSquaresTerrain/` is a tracked, actively developed fork (hex stepped-terrain editor tooling — see its own `AGENTS.md`), not a skippable third-party plugin. **`client/sstdbsdk/` is not in here** — it is first-party code every component depends on, and reads like any other client script.
 - `client/.godot/`, `client/.vscode/` — editor cache/config. `client/Assets/`, `client/Textures/` — art.
 - `server/spacetimedb/target/` — Rust build output.
 - `docs/` — an Obsidian vault of design and ideation notes, **not a spec**; nothing in it is guaranteed to be implemented (see `docs/edualc.md`). Consult `docs/Technical Design Docs/` only once a design decision has been finalized.
@@ -41,7 +41,7 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 - **Engine:** `C:/Users/Clinton/g/Godot/Godot-stable_mono_win64_console.exe` — the mono build is required for C# and SpacetimeDB; the console variant keeps stdout/stderr visible.
 - **Run:** F5 in the editor. The project's main scene is `client/Scenes/main_menu.tscn`; its Character Slots button `ChangeSceneToFile`s to `Scenes/game.tscn`, the actual gameplay scene (GameManager root node).
 - **Client build:** no build system — Godot compiles `client/khvg.csproj` internally.
-- **Server publish:** `server/build.sh` regenerates the C# bindings into `client/Scripts/module_bindings/` and publishes the `bullethell` module to the `local` server with `--delete-data`. **Every publish wipes the database**, so schema changes are hard cuts — no migrations, no dual-write; seeds re-run from `main/seeds.rs`. Logs: `spacetime logs bullethell`.
+- **Server publish:** `server/build.sh` regenerates the C# bindings into `client/Scripts/module_bindings/` and publishes the `bullethell` module to the project server `https://khvgames.com/server` (the default from `server/spacetime.json`) with `--delete-data`. **Every publish wipes the database**, so schema changes are hard cuts — no migrations, no dual-write; seeds re-run from `main/seeds.rs`. Logs: `spacetime logs bullethell`.
 - **Export:** Web/HTML5 preset in `client/export_presets.cfg`.
 - **⚠️ Never use Project → Tools → C# → Create C# solution** — it regenerates `khvg.csproj` from scratch and wipes the `SpacetimeDB.ClientSDK.Godot` package reference. The solution already exists. If the reference is ever lost, restore it with Godot closed: `dotnet add package SpacetimeDB.ClientSDK.Godot --version 2.7.1`.
 

@@ -4,30 +4,29 @@ class_name MSTChunkData
 extends Resource
 
 
-## Chunk coordinates in the terrain grid
+## Chunk coordinates in the chunk grid
 @export var chunk_coords : Vector2i
 
-## Merge mode setting 
-@export var merge_mode : int
+## Hexes from the chunk center to its edge at save time
+@export var chunk_radius : int
 
-## Height values as 2D array 
-@export var height_map : Array
+## Local axial offsets of each stored hex, interleaved q, r
+@export var local_offsets : PackedInt32Array
 
-## Ground texture indices 
-@export var ground_texture_idx : PackedByteArray
+## Elevation level per hex
+@export var elevations : PackedInt32Array
 
-## Wall texture indices 
-@export var wall_texture_idx : PackedByteArray
+## Ground texture slot (0-15) per hex
+@export var ground_idx : PackedByteArray
 
-## Grass mask 
-@export var grass_mask : PackedByteArray
+## Wall texture slot (0-15) per hex
+@export var wall_idx : PackedByteArray
 
-# Legacy format (V1.1) for backward compatibility during migration
-@export var color_map_0 : PackedColorArray
-@export var color_map_1 : PackedColorArray
-@export var wall_color_map_0 : PackedColorArray
-@export var wall_color_map_1 : PackedColorArray
-@export var grass_mask_map : PackedColorArray
+## Grass flag per hex
+@export var grass : PackedByteArray
+
+## Packed 6x2-bit edge transitions per hex
+@export var edges : PackedByteArray
 
 # Ephemeral data saved for caching but regenerated on load if missing
 @export var mesh : Mesh
@@ -50,6 +49,6 @@ func get_collision_shape() -> ConcavePolygonShape3D:
 	return shape
 
 
-## Check if this is V2 compact format (has byte arrays) vs V1 legacy (has color arrays)
-func is_v2_format() -> bool:
-	return not ground_texture_idx.is_empty()
+## Check if this is V3 hex format. V2 square-grid data is not migrated (hard format break).
+func is_v3_format() -> bool:
+	return local_offsets.size() == elevations.size() * 2

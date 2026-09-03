@@ -118,6 +118,28 @@ pub const BEHAVIOR_TICK_DT: f32 = 0.1;
 // after a stall, e.g. when an enemy re-enters simulation range.
 pub const MAX_CATCHUP_SHOTS: usize = 8;
 
+// Context-steering movement (see enemy/new_enemy_movement_system.md). Angles here are
+// radians — the movement layer's unit.
+// Fixed candidate directions in the per-tick interest map (360°/12 = 30° steps).
+pub const STEERING_DIRECTIONS: usize = 12;
+// How far ahead (world units) each candidate direction is probed for elevation cliffs.
+// ~1.5 hexes: far enough to steer along a cliff edge instead of bumping into it.
+pub const STEERING_PROBE_DISTANCE: f32 = DEFAULT_HEX_OUTER_RADIUS * 1.5;
+// Radius (world units) within which enemies steer away from each other (~2 hexes).
+pub const SEPARATION_RADIUS: f32 = DEFAULT_HEX_OUTER_RADIUS * 2.0;
+// Max per-pair rotation (radians, ~20°) applied to separation away-directions — the
+// doc's anti-jitter fix: push away at a slight angle so neighbors don't tug-of-war.
+pub const SEPARATION_ANGLE_OFFSET: f32 = 0.35;
+// Per-enemy Orbit range offset magnitude (world units) — the doc's anti-clumping fix:
+// offset follow distances so orbits don't coincide.
+pub const ORBIT_RANGE_JITTER: f32 = 32.0;
+// Cap (radians/second) on a Meander heading's turn rate — bounds the sway even for
+// content-authored sway_radians above it (~70°/s: curves read, spins don't).
+pub const MEANDER_MAX_TURN_RATE: f32 = 1.2;
+// Seed offset decorrelating the meander sway noise field from the other value_noise2d
+// users (worldgen fields in world/noise.rs).
+pub const MEANDER_NOISE_SEED_OFFSET: u64 = 0xA24BAED4963EE407;
+
 // ===== World Timers =====
 
 // Seconds before an unclaimed loot drop expires.

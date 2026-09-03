@@ -7,7 +7,8 @@ using System.Collections.Generic;
 /// <summary>
 /// Hex grid debug overlay (3D), child in world_3d.tscn. Registers with the GameManager
 /// entity through the SubViewport ancestor walk. The per-hex Label3Ds stay code-created
-/// (debug-only, data-driven count).
+/// (debug-only, data-driven count). Tile columns are Y-stretched by their hex's elevation
+/// level (ElevationMapComponent via the GameManager facade, re-applied on ElevationChanged).
 /// </summary>
 public partial class HexGridOverlay3DComponent : Node3DComponent
 {
@@ -26,6 +27,10 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 
 	// Hex-ring radius around the player that gets populated with tiles.
 	[Export] public int ViewRadiusHexes { get; set; } = 12;
+
+	// Extra Y-scale multiplier per elevation level (from ElevationMapComponent):
+	// a hex at level N stands (1 + N * HeightScalePerLevel)× its native height.
+	[Export] public float HeightScalePerLevel { get; set; } = 0.5f;
 
 	// When true, each tile gets a Label3D showing its hex/chunk coords.
 	[Export] public bool ShowTileLabels { get; set; } = true;
@@ -52,6 +57,7 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 	{
 		base._Ready();
 		_mapConfigBinder = GetNode<TableBinderComponent>("MapConfigBinder");
+		if (GameManager.ElevationMap is { } map) map.ElevationChanged += OnElevationChanged;
 	}
 
 	public override void _Process(double _delta)
@@ -70,8 +76,16 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 
 	public override void _ExitTree()
 	{
+		if (GameManager.ElevationMap is { } map) map.ElevationChanged -= OnElevationChanged;
 		ClearAll();
 		base._ExitTree();
+	}
+
+	// Elevation rows stream in/out with the AOI — re-raise the surviving tiles' columns.
+	private void OnElevationChanged()
+	{
+		foreach (var (hex, tile) in _tiles)
+			ApplyElevation(hex.X, hex.Y, tile, _labels.GetValueOrDefault(hex));
 	}
 
 	// --- TableBinderComponent signal handlers (wired in world_3d.tscn) ---
@@ -124,27 +138,53 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 		if (scene == null) return;
 
 		var tile = scene.Instantiate<Node3D>();
-		float s = _outerRadius * TileScaleMultiplier;
 		tile.Position = HexMath.HexToWorld3D(q, r, _outerRadius);
-		tile.Scale = new Vector3(s, 1f, s);
 		AddChild(tile);
 		_tiles[new Vector2I(q, r)] = tile;
 
-		if (!ShowTileLabels) return;
+		Label3D? label = null;
+		if (ShowTileLabels)
+		{
+			label = new Label3D();
+			label.HorizontalAlignment = HorizontalAlignment.Center;
+			label.PixelSize = 0.3f;
+			label.FontSize = 14;
+			label.Modulate = Colors.White;
+			label.OutlineSize = 2;
+			label.OutlineModulate = Colors.Black;
+			label.RotationDegrees = new Vector3(-90f, 0f, 0f);
+			AddChild(label);
+			_labels[new Vector2I(q, r)] = label;
+		}
 
-		long spiralIdx = HexMath.SpiralIndex(chunk.X, chunk.Y);
-		var label = new Label3D();
-		label.Text = $"({q},{r})\nc({chunk.X},{chunk.Y}) i={spiralIdx}";
-		label.HorizontalAlignment = HorizontalAlignment.Center;
-		label.PixelSize = 0.3f;
-		label.FontSize = 14;
-		label.Modulate = Colors.White;
-		label.OutlineSize = 2;
-		label.OutlineModulate = Colors.Black;
-		label.Position = HexMath.HexToWorld3D(q, r, _outerRadius) + new Vector3(0f, 0.15f, 0f);
-		label.RotationDegrees = new Vector3(-90f, 0f, 0f);
-		AddChild(label);
-		_labels[new Vector2I(q, r)] = label;
+		ApplyElevation(q, r, tile, label);
+	}
+
+	// Stretches the tile column to its elevation level and floats the label above the
+	// column top. The KayKit hex meshes hang BELOW their origin (top face at local y=0),
+	// so a bare Y scale grows the column downward into the ground — the tile is lifted
+	// by the extra height instead, keeping the base fixed and raising the top face.
+	private void ApplyElevation(int q, int r, Node3D tile, Label3D? label)
+	{
+		int level = GameManager.ElevationMap?.GetElevation(q, r) ?? 0;
+		float s = _outerRadius * TileScaleMultiplier;
+		float yScale = 1f + level * HeightScalePerLevel;
+
+		// Tile-space mesh bounds at scale 1 (native height is derived, not hardcoded).
+		Aabb localBox = new();
+		foreach (var child in tile.GetChildren())
+			if (child is MeshInstance3D mi) { localBox = mi.Transform * mi.GetAabb(); break; }
+
+		tile.Scale = new Vector3(s, yScale, s);
+		float lift = localBox.Position.Y * (1f - yScale);
+		var basePos = HexMath.HexToWorld3D(q, r, _outerRadius);
+		tile.Position = basePos + new Vector3(0f, lift, 0f);
+
+		if (label == null) return;
+		var chunk = HexMath.ToLowerRes(q, r, _chunkRadius);
+		label.Text = $"({q},{r})\nc({chunk.X},{chunk.Y}) i={HexMath.SpiralIndex(chunk.X, chunk.Y)} e={level}";
+		float topY = lift + localBox.End.Y * yScale;
+		label.Position = basePos + new Vector3(0f, topY + 0.15f, 0f);
 	}
 
 	private void ClearAll()

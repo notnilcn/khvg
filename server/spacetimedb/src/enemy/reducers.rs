@@ -117,7 +117,7 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             }
         }
 
-        let (new_x, new_y, new_dir_x, new_dir_y) = apply_movement(ctx, &enemy, &behavior, &phase, &template.stun_behavior);
+        let (new_x, new_y, new_dir_x, new_dir_y, new_move_dir, new_move_speed) = apply_movement(ctx, &enemy, &behavior, &phase, &template.stun_behavior);
         let (new_x, new_y) = wrap_world_pos(new_x, new_y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
         let (cq, cr) = world_to_chunk(new_x, new_y, chunk_hex_radius, hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);
@@ -135,8 +135,10 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
                 ..behavior
             });
         }
-        if new_x != enemy.x || new_y != enemy.y || chunk_index != enemy.chunk_index {
-            ctx.db.enemy().enemy_id().update(Enemy { x: new_x, y: new_y, chunk_index, ..enemy });
+        if new_x != enemy.x || new_y != enemy.y || chunk_index != enemy.chunk_index
+            || new_move_dir != enemy.movement_direction || new_move_speed != enemy.movement_speed
+        {
+            ctx.db.enemy().enemy_id().update(Enemy { x: new_x, y: new_y, movement_direction: new_move_dir, movement_speed: new_move_speed, chunk_index, ..enemy });
         }
     }
 }

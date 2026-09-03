@@ -111,7 +111,7 @@ public partial class CombatComponent : Component
         if (conn == null || LocalPlayer.Local == null) { _nearestEnemy = null; return; }
 
         var playerPos = LocalPlayer.Local.GlobalPosition;
-        var aimDir = Vector2.Right.Rotated(LocalPlayer.Local.Rotation);
+        var aimDir = GetCursorDir(LocalPlayer.Local);
 
         Enemy? best = null;
         float bestDist = float.MaxValue;
@@ -151,9 +151,19 @@ public partial class CombatComponent : Component
         }
     }
 
+    /// Direction from the player to the cursor's world position; falls back to the facing
+    /// direction when the cursor sits exactly on the player.
+    private Vector2 GetCursorDir(LocalPlayer player)
+    {
+        var toCursor = player.GetCursorWorldPosition() - player.GlobalPosition;
+        return toCursor.LengthSquared() < 0.0001f
+            ? Vector2.Right.Rotated(player.Rotation)
+            : toCursor.Normalized();
+    }
+
     private Vector2 GetAimDir(LocalPlayer player)
     {
-        var defaultDir = Vector2.Right.Rotated(player.Rotation);
+        var defaultDir = GetCursorDir(player);
         if (_nearestEnemy == null || !IsInstanceValid(_nearestEnemy)) return defaultDir;
         return player.GlobalPosition.DirectionTo(_nearestEnemy.GlobalPosition);
     }

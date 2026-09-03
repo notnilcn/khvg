@@ -138,11 +138,11 @@ Run recipe 1 (Character Slots) then recipe 3 (Join) twice: once plain (instance 
 
 Check in order: (1) is the target `visible` and is the parent chain visible (menu open/closed state); (2) did the click land — `gui_get_hovered_control()` after a motion to the same point; (3) `godot_log errors` for reducer or script errors; (4) only then `godot_screenshot game` and read the PNG to see what's actually on screen.
 
-**"Connection lost" state:** if the SpacetimeDB connection drops, the game shows `/root/<root>/UI/ConnectionLostComponent` with a `CenterContainer/Panel/VBoxContainer/Reconnect` button and all player nodes despawn — a joined instance can look like it "went back to the menu". Reconnect = CLICK that button, but it returns through `main_menu.tscn` with **no auto-rejoin** — redo recipes 1 and 3. If the frame loop has also stalled (sequence timeouts; see the standing rule), skip the button and just `godot_game stop` + `play`. First confirm the server is actually up (`spacetime server ping local`) or reconnect will fail again.
+**"Connection lost" state:** if the SpacetimeDB connection drops, the game shows `/root/<root>/UI/ConnectionLostComponent` with a `CenterContainer/Panel/VBoxContainer/Reconnect` button and all player nodes despawn — a joined instance can look like it "went back to the menu". Reconnect = CLICK that button, but it returns through `main_menu.tscn` with **no auto-rejoin** — redo recipes 1 and 3. If the frame loop has also stalled (sequence timeouts; see the standing rule), skip the button and just `godot_game stop` + `play`. First confirm the server is actually up (`spacetime server ping https://khvgames.com/server`) or reconnect will fail again.
 
 # Part 2 — SpacetimeDB CLI (`bullethell` module)
 
-Server-side setup and inspection. Module name: `bullethell`, server: `local` (the CLI default after `spacetime start`). Remember the routing rule at the top: **don't drive gameplay from here** — use the Godot recipes for anything a player does.
+Server-side setup and inspection. Module name: `bullethell`, server: `https://khvgames.com/server` — the project default from `server/spacetime.json`, so `spacetime` commands run from `server/` hit it automatically (no local server involved). Remember the routing rule at the top: **don't drive gameplay from here** — use the Godot recipes for anything a player does.
 
 ## Core commands
 

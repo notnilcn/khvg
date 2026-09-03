@@ -2,28 +2,27 @@
 
 This small guide explains where you can find the code for several (smaller) features inside the plugin.
 
-### Grass and Texture Mixing
+### Texture Slots and Texture Mixing
 
-* **MarchingSquaresTerrainVertexColorHelper** (The whole script)
-* **MarchingSquaresChunk** script → `add_point(x: float, y: float, z: float, uv_x: float = 0, uv_y: float = 0, diag_midpoint: bool = false)` function.
-* **mst_terrain** gdshader → fragment function.
+* **MSTHexMath** script → `slot_to_color_pair(slot: int)` / `color_pair_to_slot(c0: Color, c1: Color)` static functions.
+* **MarchingSquaresTerrainChunk** script → `_slot_to_mat_blend(slot: int)` and the `_build_*` mesh builder functions.
+* **mst_terrain** gdshaderinc → fragment function.
 
-Here you can change the logic for how the color_0 and color_1 variables are calculated to change how the grass appears and floor textures get mixed.
+The 16 texture slots are encoded as a pair of vertex colors (slot = c0_channel × 4 + c1_channel): although the variables are called _color_, the shader checks whether any of the channels are 1 or 0 and picks the texture from which channels are "turned on". The chunk writes these pairs per hex (ground slot on top fans, wall slot on risers/cliff walls) along with a CUSTOM2 material-blend value that pins the whole hex to its single slot.
 
-Although the variables are called _color_, the shader logic uses these two vec4 variables and checks wether any of the channels are a 1 or 0. It then calculates which texture it should use based on which channels in both variables are "turned on".
+### Grass Placement and Animations
 
-### Grass Animations
-
+* **MarchingSquaresGrassPlanter** script → `regenerate_grass()` function.
 * **mst_grass** gdshader → at the top of the vertex function.
 
-Right now having the fps at 0 means that the shader will use a noise texture to apply a global smooth wind effect. Turning the fps up in the terrain_settings tool mode in the editor makes the individual grass sprites move from left to right giving it a pixel art look.
+Grass instances are scattered inside each hex's top polygon (seeded, deterministic) wherever the hex's grass flag is set and the ground texture allows it. Right now having the fps at 0 means that the shader will use a noise texture to apply a global smooth wind effect. Turning the fps up in the terrain_settings tool mode in the editor makes the individual grass sprites move from left to right giving it a pixel art look.
 
 Feel free to change these animations to what looks best for your project! The two animation types present right now are only a base to get people started.
 
-### Cell Normal Calculations
+### Transition Edges (Cliffs, Terraces, Slopes)
 
-* **MarchingSquaresTerrainPlugin** script → `get_cell_normal(chunk: MarchingSquaresTerrainChunk, cell: Vector2i) -> Vector3:` function.
-  
+* **MarchingSquaresTerrainChunk** script → `_resolve_edge_kind(...)` for the derived-vs-authored kind decision, `_build_cliff_wall` / `_build_terrace` / `_build_slope` for the geometry.
+
 ### Chunk UI Lines
 
 * **MarchingSquaresTerrainGizmo** script → `try_add_chunk(terrain_system: MarchingSquaresTerrain, coords: Vector2i):` function.
@@ -36,4 +35,4 @@ Feel free to change these animations to what looks best for your project! The tw
 ### Ridge & Ledge Texture Calculations
 
 * **mst_terrain** gdshaderinc → end of the fragment function.
-* **MarchingSquaresTerrainVertexColorHelper** script → at the start of the `blend_colors(vertex: Vector3, uv: Vector2, diag_midpoint: bool = false) -> Dictionary[String, Color]:` function
+* **MarchingSquaresTerrainChunk** script → `_build_top_fan(...)` writes the ridge/ledge flags and nearest wall slot into CUSTOM1 per corner (ridge = corner next to a cliff going down, ledge = corner next to a cliff going up).

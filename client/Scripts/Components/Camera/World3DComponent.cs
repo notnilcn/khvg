@@ -14,12 +14,14 @@ public partial class World3DComponent : Node3DComponent
     [Export] public float DefaultModelScale = 50f;
 
     private PhantomCamera3D? _pcam3D;
+    private Camera3D? _camera3D;
     private CameraRigComponent? _rig;
 
     protected override void OnRegistered()
     {
         var pcam3Dnode = GetNode<Node3D>("PhantomCamera3D");
         _pcam3D = pcam3Dnode.AsPhantomCamera3D();
+        _camera3D = GetNode<Camera3D>("Camera3D");
     }
 
     protected override void OnEntityReady()
@@ -41,4 +43,29 @@ public partial class World3DComponent : Node3DComponent
         if (_pcam3D != null) _pcam3D.FollowTarget = model;
     }
     public void ClearCameraFollowTarget() => _pcam3D?.Node3D.Call("erase_follow_target");
+
+    /// Intersects the cursor ray with the ground plane at height groundY, returned in
+    /// world 2D coordinates ((x, z) → (x, y) — the inverse of CharacterModel3D's mapping).
+    /// Null when the ray can't hit the plane (camera looking at/above the horizon). The
+    /// root window's canvas-space mouse position is mapped into this SubViewport through
+    /// the stretched full-rect container (input never reaches the SubViewport itself).
+    public Vector2? CursorGroundIntersection(float groundY)
+    {
+        if (_camera3D == null) return null;
+        if (GetViewport() is not SubViewport viewport) return null;
+        if (viewport.GetParent() is not SubViewportContainer container) return null;
+        var rect = container.GetRect();
+        if (rect.Size.X <= 0f || rect.Size.Y <= 0f) return null;
+
+        var mouseRoot = GetTree().Root.GetMousePosition();
+        var mouseSub = (mouseRoot - rect.Position) * ((Vector2)viewport.Size / rect.Size);
+
+        var from = _camera3D.ProjectRayOrigin(mouseSub);
+        var dir = _camera3D.ProjectRayNormal(mouseSub);
+        if (dir.Y >= -0.0001f) return null; // parallel to the ground or looking up
+        float t = (groundY - from.Y) / dir.Y;
+        if (t < 0f) return null; // plane behind the camera
+        var hit = from + dir * t;
+        return new Vector2(hit.X, hit.Z);
+    }
 }

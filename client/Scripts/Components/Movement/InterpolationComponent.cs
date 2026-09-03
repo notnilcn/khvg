@@ -5,14 +5,14 @@ using Godot;
 /// Lerps the owning entity's GlobalPosition/Rotation toward server-supplied targets —
 /// the shared home of the lerp logic RemotePlayer and Enemy used to carry inline.
 /// The torus wrap is handled by picking the nearest wrapped candidate of the target
-/// each frame, so routine wraps lerp smoothly without ever snapping. RemotePlayer
-/// additionally passes the server's reported velocity (reconstructed from
-/// movement_direction + movement_speed; zero when idle), and each frame the target is
-/// advanced by velocity * time-since-last-update — dead reckoning (velocity
-/// extrapolation between snapshots) blended with the lerp. Screen rotation arrives
-/// separately via SetScreenRotationTarget (it lives in its own server table on a faster
-/// cadence). RemotePlayer also sets WrapSnapThreshold (hard correction on real
-/// desync); Enemy uses position targets only.
+/// each frame, so routine wraps lerp smoothly without ever snapping. Both RemotePlayer
+/// and Enemy pass the server's reported velocity (RemotePlayer reconstructs it from
+/// movement_direction + movement_speed; Enemy reads the speed-scaled vel_x/vel_y
+/// straight off its row; zero when idle), and each frame the target is advanced by
+/// velocity * time-since-last-update — dead reckoning (velocity extrapolation between
+/// snapshots) blended with the lerp. Screen rotation arrives separately via
+/// SetScreenRotationTarget (it lives in its own server table on a faster cadence).
+/// RemotePlayer also sets WrapSnapThreshold (hard correction on real desync).
 /// </summary>
 public partial class InterpolationComponent : Component
 {

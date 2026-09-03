@@ -22,6 +22,11 @@ public partial class ElevationMapComponent : Component
     /// Same fallback as TerrainComponent before the first MapConfig row arrives.
     private const float DefaultHexOuterRadius = 96.0f;
 
+    /// 3D world height (Y units) per elevation level. Client-only visual mapping — the 3D
+    /// terrain must use this same step height once it renders elevation (today only the
+    /// debug overlay stretches columns, by its own factor). Used by cursor ground raycasts.
+    public const float WorldHeightPerLevel = 16f;
+
     private readonly Dictionary<(int Q, int R), int> _elevationByHex = new();
     private float _outerRadius = DefaultHexOuterRadius;
 
@@ -48,6 +53,9 @@ public partial class ElevationMapComponent : Component
         var hex = HexMath.WorldToHex(worldPos.X, worldPos.Y, _outerRadius);
         return GetElevation(hex.X, hex.Y);
     }
+
+    /// 3D world height of the terrain surface at a world position (its hex's level).
+    public float GetWorldHeightAt(Vector2 worldPos) => GetElevationAt(worldPos) * WorldHeightPerLevel;
 
     // --- TableBinderComponent signal handlers (wired in game.tscn) ---
 

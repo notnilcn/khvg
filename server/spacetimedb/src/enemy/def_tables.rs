@@ -11,16 +11,57 @@ use spacetimedb::{table, SpacetimeType};
 #[derive(SpacetimeType, Clone)] pub struct ShotgunParams { pub speed: f32, pub count: u32, pub line: u32, pub line_speed_step: f32, pub spread: f32, pub speed_variance: f32, pub lifetime_variance: f32 }
 #[derive(SpacetimeType, Clone)] pub struct ExplosionParams { pub speed: f32, pub count: u32, pub speed_variance: f32, pub lifetime_variance: f32 }
 
-#[derive(SpacetimeType, Clone)] pub struct WanderParams { pub speed: f32, pub active_duration: f32, pub pause_duration: f32 }
-#[derive(SpacetimeType, Clone)] pub struct ChaseParams { pub speed: f32, pub active_duration: f32, pub pause_duration: f32 }
-#[derive(SpacetimeType, Clone)] pub struct FleeParams { pub speed: f32, pub min_range: f32, pub active_duration: f32, pub pause_duration: f32 }
+// Context-steering movement, authored on three axes — Goal × Pattern × Avoidance
+// (see enemy/new_enemy_movement_system.md). All angles in the movement layer are RADIANS
+// (bullet angles stay degrees). What the enemy moves toward:
+#[derive(SpacetimeType, Clone, Copy, PartialEq)] pub struct FixedPoint { pub x: f32, pub y: f32 }
+
+#[derive(SpacetimeType, Clone, Copy, PartialEq)]
+pub enum MoveGoal {
+    Idle,
+    AggroTarget,
+    SpawnPoint,
+    FixedPoint(FixedPoint),
+}
+
+// How it moves toward the goal: the shape of the per-direction interest map.
+#[derive(SpacetimeType, Clone)] pub struct FleeParams { pub min_range: f32 }
+#[derive(SpacetimeType, Clone)] pub struct OrbitParams { pub range: f32 }
+#[derive(SpacetimeType, Clone)] pub struct MeanderParams { pub sway_radians: f32, pub leash_radius: f32 }
+#[derive(SpacetimeType, Clone)] pub struct ZigzagParams { pub amplitude_radians: f32, pub period_seconds: f32 }
+#[derive(SpacetimeType, Clone)] pub struct LungeParams { pub speed_mult: f32 }
 
 #[derive(SpacetimeType, Clone)]
-pub enum MovementBehavior {
-    Stationary,
-    Wander(WanderParams),
-    Chase(ChaseParams),
+pub enum MovePattern {
+    /// Straight at the goal.
+    Direct,
+    /// Straight away from the goal, only while closer than min_range (else stands).
     Flee(FleeParams),
+    /// Circle the goal at `range`; per-enemy range offset and orbit sign from the id
+    /// hash, so orbiting enemies don't stack into concentric circles.
+    Orbit(OrbitParams),
+    /// Noise-swayed persistent heading (mostly straight, occasional curves), softly
+    /// leashed to the spawn point. sway_radians caps the sway's turn rate.
+    Meander(MeanderParams),
+    /// To-goal direction oscillating ±amplitude_radians over period_seconds.
+    Zigzag(ZigzagParams),
+    /// Direct at the goal at speed × speed_mult — pair with an active/pause cycle so
+    /// the pause window reads as the telegraph.
+    Lunge(LungeParams),
+}
+
+// One phase's movement: a goal, a pattern, and the two avoidance toggles. `speed` is
+// world units/second. `active_duration` > 0 runs a move/pause cycle measured from the
+// phase's move_cycle_started_at (0 = always active).
+#[derive(SpacetimeType, Clone)]
+pub struct SteeringMovement {
+    pub speed: f32,
+    pub goal: MoveGoal,
+    pub pattern: MovePattern,
+    pub separation_weight: f32,   // 0 = no separation
+    pub avoid_cliffs: bool,
+    pub active_duration: f32,     // 0 = no cycle (always active)
+    pub pause_duration: f32,
 }
 
 #[derive(SpacetimeType, Clone)]
@@ -53,7 +94,7 @@ pub enum StunBehavior {
 #[table(accessor = movement_def, public)]
 pub struct MovementDef {
     #[primary_key] #[auto_inc] pub def_id: u64,
-    pub movement: MovementBehavior,
+    pub movement: SteeringMovement,
 }
 
 // `angular_speed` (degrees/second) curves bullets mid-flight; 0 = straight.

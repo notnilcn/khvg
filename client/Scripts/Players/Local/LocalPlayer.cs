@@ -148,6 +148,22 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	}
 
 
+	/// Cursor position in world 2D space. 2D mode: the camera-transformed mouse position.
+	/// 3D mode: a ray from the SubViewport's Camera3D through the cursor, intersected with
+	/// the ground plane at the terrain elevation — refined once against the elevation of the
+	/// hex the ray first hits, so aiming onto raised ground lands on it. Falls back to the
+	/// 2D mouse position when the ray can't hit the ground (camera at the horizon).
+	public Vector2 GetCursorWorldPosition()
+	{
+		if (world3D == null || elevationMap == null)
+			return GetGlobalMousePosition();
+
+		var hit = world3D.CursorGroundIntersection(elevationMap.GetWorldHeightAt(GlobalPosition));
+		if (hit == null) return GetGlobalMousePosition();
+		// Re-intersect at the elevation of the hex actually under the cursor.
+		return world3D.CursorGroundIntersection(elevationMap.GetWorldHeightAt(hit.Value)) ?? hit.Value;
+	}
+
 	public override void _PhysicsProcess(double delta)
 	{
 		var raw = Input.GetVector("Left", "Right", "Up", "Down").Normalized();
@@ -155,14 +171,11 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		var rot2d = new Vector2(raw.X, raw.Y).Rotated(yaw);
 		var input = new Vector2(rot2d.X, rot2d.Y);
 
-		// Rotation = GlobalPosition.AngleToPoint(GetGlobalMousePosition());
+		// Twin-stick facing: the character always turns toward the cursor. Rotation drives
+		// the sprite/3D-model facing, CombatComponent's aim, and the screen-rotation report.
+		Rotation = GlobalPosition.AngleToPoint(GetCursorWorldPosition());
 
 		Velocity = ExternalMovementActive ? Vector2.Zero : input * (positionSync?.CurrentSpeed ?? BaseSpeed);
-
-		if (Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down"))
-		{
-			Rotation = yaw;
-		}
 
 		ApplyElevationPrediction(delta);
 

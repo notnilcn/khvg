@@ -80,6 +80,9 @@ pub struct EnemyBehavior {
     pub aggro_locked_until: Timestamp,
     pub was_simulating: bool,
     pub active_phase_index: u8,
+    // Unit heading memory: the last chosen movement direction (Meander's persistent sway
+    // heading). Server-only — no view exposes enemy_behavior. The client-facing movement
+    // (angle + speed scalar) lives on the Enemy row (movement_direction/movement_speed).
     pub velocity_x: f32,
     pub velocity_y: f32,
 }
@@ -92,6 +95,14 @@ pub struct Enemy {
     pub behavior_id: u64,
     pub x: f32,
     pub y: f32,
+    // Leash anchor (Meander's soft pull-back point) — the position the enemy spawned at.
+    pub spawn_x: f32,
+    pub spawn_y: f32,
+    // Movement as an angle + scalar (radians + world units/second, speed 0 when standing),
+    // same convention as PlayerPosition — Enemy.cs reconstructs the velocity and feeds it
+    // to InterpolationComponent.SetTarget for dead reckoning.
+    pub movement_direction: f32,
+    pub movement_speed: f32,
     pub spawn_time: Timestamp,
     pub hp: u32,
     pub phase: u8,

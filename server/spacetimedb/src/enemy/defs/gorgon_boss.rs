@@ -223,34 +223,34 @@ pub fn seed(ctx: &ReducerContext) {
 fn build(ctx: &ReducerContext, difficulty: Difficulty) {
     let phases = vec![
         // Phase 0 — Intro (100–90% HP). Source clip: 8.8s.
-        make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 0, 0.0, SteeringMovement::idle(), PHASE_REST, vec![
             shotgun_simple_1().window(0.55, 6.52).compile(ctx, difficulty),
             shotgun_20deg_vsmall().window(3.92, 3.15).compile(ctx, difficulty),
             shotgun_simple_3().window(8.4, 0.4).compile(ctx, difficulty),
         ]),
         // Phase 1 — P_01 (≤90%). Source clip: 8.55s.
-        make_phase(ctx, 1, 0.9, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 1, 0.9, SteeringMovement::idle(), PHASE_REST, vec![
             tentacles_ezpz().window(0.0, 8.55).compile(ctx, difficulty),
             shotgun_simple_2().window(0.0, 6.2).compile(ctx, difficulty),
             shotgun_simple_2b().window(0.0, 7.5).compile(ctx, difficulty),
             single_follow().window(6.2, 2.35).compile(ctx, difficulty),
         ]),
         // Phase 2 — P_02 (≤80%). Source clip: 8.65s. (Root bob not ported.)
-        make_phase(ctx, 2, 0.8, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 2, 0.8, SteeringMovement::idle(), PHASE_REST, vec![
             whirlpool().window(0.0, 6.45).compile(ctx, difficulty),
             whirlpool_reverse().window(0.0, 6.47).compile(ctx, difficulty),
             whirlpool_reverse_1().window(0.0, 6.47).compile(ctx, difficulty),
             whirlpool_reverse_2().window(7.18, 1.17).compile(ctx, difficulty),
         ]),
         // Phase 3 — P_03 (≤70%). Source clip: 7.02s. (Root hops not ported.)
-        make_phase(ctx, 3, 0.7, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 3, 0.7, SteeringMovement::idle(), PHASE_REST, vec![
             enemy_gun_test().window(0.0, 1.7).compile(ctx, difficulty),
             shotgun_simple_3().window(1.77, 5.25).compile(ctx, difficulty),
             sunburst().window(2.47, 4.55).compile(ctx, difficulty),
             whirlpool().window(4.6, 2.42).compile(ctx, difficulty),
         ]),
         // Phase 4 — P_04 (≤60%). Source clip: 10.33s. (Root orbit not ported.)
-        make_phase(ctx, 4, 0.6, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 4, 0.6, SteeringMovement::idle(), PHASE_REST, vec![
             big_bullets().window(0.0, 10.33).compile(ctx, difficulty),
             shotgun_simple().window(0.0, 1.7).compile(ctx, difficulty),
             shotgun_simple().window(4.37, 2.21).compile(ctx, difficulty),
@@ -262,7 +262,7 @@ fn build(ctx: &ReducerContext, difficulty: Difficulty) {
             line_single_follow().window(4.33, 2.0).compile(ctx, difficulty),
         ]),
         // Phase 5 — P_05 (≤50%). Source clip: 10.5s. Sway ≈ two constant-spin half-windows.
-        make_phase(ctx, 5, 0.5, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 5, 0.5, SteeringMovement::idle(), PHASE_REST, vec![
             wormy_loop().window(0.0, 5.0).compile(ctx, difficulty),
             tentacles(-30.0).window(3.0, 3.75).compile(ctx, difficulty),
             tentacles(30.0).window(6.75, 3.75).compile(ctx, difficulty),
@@ -273,7 +273,7 @@ fn build(ctx: &ReducerContext, difficulty: Difficulty) {
             cool_pattern().window(9.02, 0.43).compile(ctx, difficulty),
         ]),
         // Phase 6 — P_06 (≤40%). Source clip: 1s. (Root lunge not ported.)
-        make_phase(ctx, 6, 0.4, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 6, 0.4, SteeringMovement::idle(), PHASE_REST, vec![
             twin_a().window(0.0, 1.0).compile(ctx, difficulty),
             twin_b().window(0.0, 1.0).compile(ctx, difficulty),
             twin_c().window(0.0, 0.38).compile(ctx, difficulty),
@@ -281,7 +281,7 @@ fn build(ctx: &ReducerContext, difficulty: Difficulty) {
         ]),
         // Phase 7 — P_07 (≤30%). Source clip: 11.5s. CW pulses at 1.5,2.5,…,10.5; CCW at
         // 2.0,3.0,…,11.0 (interleaved 0.5s on/off) — generated, not unrolled.
-        make_phase(ctx, 7, 0.3, MovementBehavior::Stationary, PHASE_REST, {
+        make_phase(ctx, 7, 0.3, SteeringMovement::idle(), PHASE_REST, {
             let mut attacks: Vec<AttackSequence> = (0..10)
                 .flat_map(|i| [
                     tentacles_sway_cw().window(1.5 + i as f32, 0.5).compile(ctx, difficulty),
@@ -297,7 +297,7 @@ fn build(ctx: &ReducerContext, difficulty: Difficulty) {
             attacks
         }),
         // Phase 8 — P_08 (≤20%). Source clip: 1s. (Root dash not ported.)
-        make_phase(ctx, 8, 0.2, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 8, 0.2, SteeringMovement::idle(), PHASE_REST, vec![
             shotgun_simple_456(-1.81 * S, -1.47 * S).window(0.08, 0.25).compile(ctx, difficulty),
             shotgun_simple_456(-1.81 * S, -1.47 * S).window(0.58, 0.25).compile(ctx, difficulty),
             shotgun_simple_456(0.0, 1.53 * S).window(0.17, 0.25).compile(ctx, difficulty),
@@ -308,7 +308,7 @@ fn build(ctx: &ReducerContext, difficulty: Difficulty) {
         ]),
         // Phase 9 — P_09 (≤10%): the signature crossed 25/s spiral streams. Source clip: 1s.
         // (Root dash and the 0.03s aim-snap not ported.)
-        make_phase(ctx, 9, 0.1, MovementBehavior::Stationary, PHASE_REST, vec![
+        make_phase(ctx, 9, 0.1, SteeringMovement::idle(), PHASE_REST, vec![
             shotgun_20deg_78(180.0, 0.0).window(0.167, 0.716).compile(ctx, difficulty),
             shotgun_20deg_78(-180.0, 180.0).window(0.167, 0.716).compile(ctx, difficulty),
             big_bullets().window(0.367, 0.633).compile(ctx, difficulty),

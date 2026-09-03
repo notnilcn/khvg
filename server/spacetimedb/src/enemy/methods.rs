@@ -2,7 +2,7 @@ use spacetimedb::{ReducerContext, Identity, Table, Timestamp};
 use std::time::Duration;
 use crate::main::global::*;
 use crate::world::prng::{hash_to_unit, next_unit, splitmix64};
-use crate::world::hex::{hex_to_world, spiral_chunk_index, world_to_chunk};
+use crate::world::hex::{hex_to_world, spiral_chunk_index, world_to_chunk, world_to_hex};
 use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
 use crate::world::aoi::{surrounding_chunk_indices, chunk_indices_covering};
 use crate::world::tables::MapConfig;
@@ -239,7 +239,7 @@ pub fn spawn_enemy_archetype(ctx: &ReducerContext, template: &EnemyTemplate, x: 
     let behavior = build_enemy_behavior(ctx, template);
     ctx.db.enemy().insert(Enemy {
         enemy_id: 0, template_id: template.template_id.clone(), behavior_id: behavior.behavior_id,
-        x, y, spawn_time: ctx.timestamp,
+        x, y, spawn_x: x, spawn_y: y, movement_direction: 0.0, movement_speed: 0.0, spawn_time: ctx.timestamp,
         hp: template.max_hp, phase: 0, is_elite, immortal, stagger: 0.0, chunk_index,
     })
 }
@@ -560,70 +560,203 @@ pub fn compute_phase(hp: u32, max_hp: u32, phases: &[PhaseDef]) -> u8 {
     phase
 }
 
-pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, phase: &EnemyPhase, stun_behavior: &StunBehavior) -> (f32, f32, f32, f32) {
+// ===== Context steering (see enemy/new_enemy_movement_system.md) =====
+// Instead of summing behavior vectors into one resultant (opposing vectors cancel and the
+// enemy freezes), each pattern scores a fixed set of candidate directions (an "interest
+// map") and the best *available* one wins — blocked directions just fall to the next best.
+// All angles in this layer are RADIANS; bullet angles stay degrees.
+
+// Rotates (x, y) by `angle` radians.
+fn rotate_radians(x: f32, y: f32, angle: f32) -> (f32, f32) {
+    (x * angle.cos() - y * angle.sin(), x * angle.sin() + y * angle.cos())
+}
+
+// Adds `weight × max(0, cos θ)` to every candidate direction — cos θ from the dot product
+// of the (normalized) candidate and desired directions. Dead-on = weight, perpendicular
+// and behind = 0.
+fn add_interest(interest: &mut [f32; STEERING_DIRECTIONS], desired_x: f32, desired_y: f32, weight: f32) {
+    for (i, slot) in interest.iter_mut().enumerate() {
+        let a = i as f32 * std::f32::consts::TAU / STEERING_DIRECTIONS as f32;
+        *slot += (a.cos() * desired_x + a.sin() * desired_y).max(0.0) * weight;
+    }
+}
+
+fn normalize_or_zero(x: f32, y: f32) -> (f32, f32) {
+    let len = (x * x + y * y).sqrt();
+    if len < f32::EPSILON { return (0.0, 0.0); }
+    (x / len, y / len)
+}
+
+/// Per-tick movement for one enemy. Returns (new_x, new_y, heading_x, heading_y,
+/// movement_direction, movement_speed): the new position, the unit heading memory
+/// persisted on the behavior row (Meander's swaying heading; every other pattern's last
+/// chosen direction), and the movement angle + speed scalar written to the Enemy row for
+/// client dead reckoning (speed 0 when standing — same convention as PlayerPosition).
+/// Movement is local steering, not pathfinding — enemies slide along blocked
+/// directions but won't route around a wall.
+pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, phase: &EnemyPhase, stun_behavior: &StunBehavior) -> (f32, f32, f32, f32, f32, f32) {
     let dt = BEHAVIOR_TICK_DT;
-    let idle = (enemy.x, enemy.y, behavior.velocity_x, behavior.velocity_y);
+    let idle = (enemy.x, enemy.y, behavior.velocity_x, behavior.velocity_y, enemy.movement_direction, 0.0);
     // Enemy-status consult: Slow scales displacement ×(1−magnitude); a Stunned row counts as
     // a Slow of its magnitude for Slowed templates and speeds the enemy up for Enraged ones
     // (Pause templates never reach here — the behavior tick skips them wholesale).
     let move_mult = crate::status::methods::enemy_movement_mult(ctx, enemy.enemy_id, stun_behavior);
-    // Lap vectors for the Chase/Flee nearest-lap deltas (torus world).
+    // Lap vectors for nearest-lap goal/separation deltas (torus world).
     let cfg = MapConfig::load(ctx, 0, 0);
     let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
     let movement = match ctx.db.movement_def().def_id().find(&phase.movement_def_id) {
         Some(m) => m.movement,
         None => return idle,
     };
-    match movement {
-        MovementBehavior::Stationary => idle,
-        MovementBehavior::Wander(p) => {
-            let (active, cycle_index) = cycle_phase(ctx, phase.move_cycle_started_at, p.active_duration, p.pause_duration);
-            if !active { return idle; }
-            // New deterministic direction each active cycle, derived from enemy_id + cycle_index
-            // so the path is reproducible (for audits) without storing any extra state.
-            let angle = hash_to_unit(splitmix64(enemy.enemy_id.wrapping_add(cycle_index))) * std::f32::consts::TAU;
-            let (dir_x, dir_y) = (angle.cos(), angle.sin());
-            (enemy.x + dir_x * p.speed * move_mult * dt, enemy.y + dir_y * p.speed * move_mult * dt, dir_x, dir_y)
+    if movement.goal == MoveGoal::Idle { return idle; }
+    // Move/pause cycle gate (Lunge's pause window is its telegraph). 0 = always active.
+    if movement.active_duration > 0.0 {
+        let (active, _) = cycle_phase(ctx, phase.move_cycle_started_at, movement.active_duration, movement.pause_duration);
+        if !active { return idle; }
+    }
+
+    // Step 1: resolve the goal position (nearest lap copy, so deltas on a torus never
+    // point the long way around). Patterns that need a goal stand when it can't resolve
+    // (e.g. AggroTarget with no live target); Meander never does.
+    let goal_pos: Option<(f32, f32)> = match movement.goal {
+        MoveGoal::Idle => None,
+        MoveGoal::AggroTarget => behavior.aggro_target
+            .and_then(|id| find_player_pos_by_id(ctx, id))
+            .map(|(px, py)| crate::player::methods::nearest_lap_copy(px, py, enemy.x, enemy.y, lap_q, lap_r)),
+        MoveGoal::SpawnPoint => Some(crate::player::methods::nearest_lap_copy(enemy.spawn_x, enemy.spawn_y, enemy.x, enemy.y, lap_q, lap_r)),
+        MoveGoal::FixedPoint(p) => Some(crate::player::methods::nearest_lap_copy(p.x, p.y, enemy.x, enemy.y, lap_q, lap_r)),
+    };
+
+    // Step 2: score the interest map per pattern.
+    let mut interest = [0.0f32; STEERING_DIRECTIONS];
+    // Meander persists its noise-rotated heading instead of the quantized pick.
+    let mut meander_heading: Option<(f32, f32)> = None;
+    let speed_mult = match &movement.pattern {
+        MovePattern::Direct | MovePattern::Lunge(..) => {
+            let Some((gx, gy)) = goal_pos else { return idle; };
+            let (dx, dy) = normalize_or_zero(gx - enemy.x, gy - enemy.y);
+            add_interest(&mut interest, dx, dy, 1.0);
+            if let MovePattern::Lunge(p) = &movement.pattern { p.speed_mult } else { 1.0 }
         }
-        MovementBehavior::Chase(p) => {
-            let (active, _) = cycle_phase(ctx, phase.move_cycle_started_at, p.active_duration, p.pause_duration);
-            if !active { return idle; }
-            match behavior.aggro_target.and_then(|id| find_player_pos_by_id(ctx, id)) {
-                Some((px, py)) => {
-                    // Nearest-lap delta: on a torus the raw (px − x) can point the long
-                    // way around; chase the nearest copy of the target instead.
-                    let (px, py) = crate::player::methods::nearest_lap_copy(px, py, enemy.x, enemy.y, lap_q, lap_r);
-                    let dx = px - enemy.x;
-                    let dy = py - enemy.y;
-                    let len = (dx * dx + dy * dy).sqrt().max(f32::EPSILON);
-                    let (nx, ny) = (dx / len, dy / len);
-                    (enemy.x + nx * p.speed * move_mult * dt, enemy.y + ny * p.speed * move_mult * dt, nx, ny)
-                }
-                None => idle,
+        MovePattern::Flee(p) => {
+            let Some((gx, gy)) = goal_pos else { return idle; };
+            let (dx, dy) = (enemy.x - gx, enemy.y - gy);
+            let dist = (dx * dx + dy * dy).sqrt();
+            // Only flees inside min_range; outside it there's no interest → stands.
+            if dist < p.min_range {
+                let (nx, ny) = normalize_or_zero(dx, dy);
+                add_interest(&mut interest, nx, ny, 1.0);
             }
+            1.0
         }
-        MovementBehavior::Flee(p) => {
-            let (active, _) = cycle_phase(ctx, phase.move_cycle_started_at, p.active_duration, p.pause_duration);
-            if !active { return idle; }
-            match behavior.aggro_target.and_then(|id| find_player_pos_by_id(ctx, id)) {
-                Some((px, py)) => {
-                    // Nearest-lap delta (see Chase) — flee directly away from the nearest
-                    // copy, and measure min_range against it.
-                    let (px, py) = crate::player::methods::nearest_lap_copy(px, py, enemy.x, enemy.y, lap_q, lap_r);
-                    let dx = enemy.x - px;
-                    let dy = enemy.y - py;
-                    let dist = (dx * dx + dy * dy).sqrt();
-                    if dist < p.min_range {
-                        let (nx, ny) = (dx / dist.max(f32::EPSILON), dy / dist.max(f32::EPSILON));
-                        (enemy.x + nx * p.speed * move_mult * dt, enemy.y + ny * p.speed * move_mult * dt, nx, ny)
-                    } else {
-                        idle
-                    }
-                }
-                None => idle,
+        MovePattern::Orbit(p) => {
+            let Some((gx, gy)) = goal_pos else { return idle; };
+            // Anti-clumping (the doc's fix for concentric-circle orbits): per-enemy range
+            // offset and orbit sign, both derived from the enemy id so they're stable.
+            let h = splitmix64(enemy.enemy_id);
+            let range_off = (hash_to_unit(h) * 2.0 - 1.0) * ORBIT_RANGE_JITTER;
+            let sign = if hash_to_unit(splitmix64(h)) < 0.5 { 1.0f32 } else { -1.0f32 };
+            let r = (p.range + range_off).max(1.0);
+            let (rx, ry) = normalize_or_zero(gx - enemy.x, gy - enemy.y);
+            let dist = ((gx - enemy.x).powi(2) + (gy - enemy.y).powi(2)).sqrt();
+            // Tangential dominates; the radial component fades as the enemy closes to its
+            // orbit range and pushes back out when it's too close.
+            let (tx, ty) = (-ry * sign, rx * sign);
+            let inward = ((dist - r) / r).clamp(-1.0, 1.0);
+            let (dx, dy) = normalize_or_zero(tx + rx * inward, ty + ry * inward);
+            add_interest(&mut interest, dx, dy, 1.0);
+            1.0
+        }
+        MovePattern::Meander(p) => {
+            // Persistent heading from the behavior row, seeded from the id hash when unset.
+            let (mut hx, mut hy) = (behavior.velocity_x, behavior.velocity_y);
+            if hx * hx + hy * hy < 0.25 {
+                let a = hash_to_unit(splitmix64(enemy.enemy_id)) * std::f32::consts::TAU;
+                hx = a.cos();
+                hy = a.sin();
             }
+            // Shaped noise over (elapsed, enemy_id), mapped to −1..1 and CUBED so values
+            // weight toward 0: mostly straight stretches with occasional curves (the doc's
+            // wandering gait). The 0.35 scale crosses a noise lattice every ~3 s.
+            let elapsed = seconds_since(ctx, enemy.spawn_time);
+            let n0 = crate::world::noise::value_noise2d(elapsed, enemy.enemy_id as f32, 0.35, MEANDER_NOISE_SEED_OFFSET);
+            let n = (n0 * 2.0 - 1.0).powi(3);
+            let turn = (n * p.sway_radians).clamp(-MEANDER_MAX_TURN_RATE, MEANDER_MAX_TURN_RATE) * dt;
+            let (hx, hy) = rotate_radians(hx, hy, turn);
+            meander_heading = Some((hx, hy));
+            add_interest(&mut interest, hx, hy, 1.0);
+            // Soft leash: homeward interest scaled by overshoot beyond leash_radius —
+            // a gradual turn-around, not a hard boundary.
+            let (sx, sy) = crate::player::methods::nearest_lap_copy(enemy.spawn_x, enemy.spawn_y, enemy.x, enemy.y, lap_q, lap_r);
+            let (dx, dy) = (sx - enemy.x, sy - enemy.y);
+            let dist = (dx * dx + dy * dy).sqrt();
+            if dist > p.leash_radius {
+                let overshoot = ((dist - p.leash_radius) / p.leash_radius).clamp(0.0, 1.0);
+                let (nx, ny) = normalize_or_zero(dx, dy);
+                add_interest(&mut interest, nx, ny, overshoot);
+            }
+            1.0
+        }
+        MovePattern::Zigzag(p) => {
+            let Some((gx, gy)) = goal_pos else { return idle; };
+            let (dx, dy) = normalize_or_zero(gx - enemy.x, gy - enemy.y);
+            // To-goal rotated by a sine of elapsed time; per-enemy phase from the id hash.
+            let phase_off = hash_to_unit(splitmix64(enemy.enemy_id)) * std::f32::consts::TAU;
+            let elapsed = seconds_since(ctx, enemy.spawn_time);
+            let sway = (std::f32::consts::TAU * elapsed / p.period_seconds.max(0.05) + phase_off).sin() * p.amplitude_radians;
+            let (dx, dy) = rotate_radians(dx, dy, sway);
+            add_interest(&mut interest, dx, dy, 1.0);
+            1.0
+        }
+    };
+
+    // Step 3: separation — steer away from nearby enemies, each away-direction rotated by
+    // a small stable per-pair angle (the doc's anti-jitter fix: no direct-away tug-of-war).
+    if movement.separation_weight > 0.0 {
+        for other in enemies_near_point(ctx, enemy.x, enemy.y, SEPARATION_RADIUS) {
+            if other.enemy_id == enemy.enemy_id { continue; }
+            let (ox, oy) = crate::player::methods::nearest_lap_copy(other.x, other.y, enemy.x, enemy.y, lap_q, lap_r);
+            let (dx, dy) = (enemy.x - ox, enemy.y - oy);
+            let dist = (dx * dx + dy * dy).sqrt();
+            if dist < f32::EPSILON { continue; }
+            let pair_hash = splitmix64(enemy.enemy_id.wrapping_mul(0x9E3779B97F4A7C15) ^ other.enemy_id);
+            let off = (hash_to_unit(pair_hash) * 2.0 - 1.0) * SEPARATION_ANGLE_OFFSET;
+            let (ax, ay) = rotate_radians(dx / dist, dy / dist, off);
+            let w = (1.0 - dist / SEPARATION_RADIUS).max(0.0) * movement.separation_weight;
+            add_interest(&mut interest, ax, ay, w);
         }
     }
+
+    // Step 4: cliffs — probe each candidate direction one step ahead and zero out any that
+    // cross an unwalkable elevation delta (same constants as player movement). Enemies get
+    // no fall mechanic, so steep DOWN is blocked like steep up.
+    if movement.avoid_cliffs {
+        let (hq, hr) = world_to_hex(enemy.x, enemy.y, cfg.hex_outer_radius);
+        let current = crate::world::reducers::hex_elevation(ctx, hq, hr);
+        for (i, slot) in interest.iter_mut().enumerate() {
+            if *slot <= 0.0 { continue; }
+            let a = i as f32 * std::f32::consts::TAU / STEERING_DIRECTIONS as f32;
+            let (pq, pr) = world_to_hex(
+                enemy.x + a.cos() * STEERING_PROBE_DISTANCE,
+                enemy.y + a.sin() * STEERING_PROBE_DISTANCE,
+                cfg.hex_outer_radius,
+            );
+            let delta = crate::world::reducers::hex_elevation(ctx, pq, pr) - current;
+            if delta > MAX_WALKABLE_UP_DELTA || delta < -MAX_WALKABLE_DOWN_DELTA { *slot = 0.0; }
+        }
+    }
+
+    // Step 5: pick the best direction; nothing desirable → stand (heading preserved).
+    let mut best = 0usize;
+    for i in 1..STEERING_DIRECTIONS {
+        if interest[i] > interest[best] { best = i; }
+    }
+    if interest[best] <= 0.001 { return idle; }
+    let a = best as f32 * std::f32::consts::TAU / STEERING_DIRECTIONS as f32;
+    let (dir_x, dir_y) = (a.cos(), a.sin());
+    let speed = movement.speed * speed_mult * move_mult;
+    let (heading_x, heading_y) = meander_heading.unwrap_or((dir_x, dir_y));
+    (enemy.x + dir_x * speed * dt, enemy.y + dir_y * speed * dt, heading_x, heading_y, a, speed)
 }
 
 pub fn spawn_from_biome_regions(ctx: &ReducerContext) {

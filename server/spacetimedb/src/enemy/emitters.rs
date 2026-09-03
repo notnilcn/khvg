@@ -16,11 +16,11 @@
 //!
 //! let phases = vec![
 //!     // 100–50% HP: a slow 8-way ring spinning at 30°/s.
-//!     make_phase(ctx, 0, 0.0, MovementBehavior::Stationary, 0.0, vec![
+//!     make_phase(ctx, 0, 0.0, SteeringMovement::idle(), 0.0, vec![
 //!         Emitter::ring(8, 80.0, 1.5).spin(30.0).compile(ctx, difficulty),
 //!     ]),
 //!     // ≤50% HP: adds an aimed 3-round burst every 2s, +1 pellet per difficulty step.
-//!     make_phase(ctx, 1, 0.5, MovementBehavior::Stationary, 0.0, vec![
+//!     make_phase(ctx, 1, 0.5, SteeringMovement::idle(), 0.0, vec![
 //!         Emitter::ring(8, 80.0, 1.5).spin(30.0).compile(ctx, difficulty),
 //!         Emitter::volley(3, 160.0, 1.0)
 //!             .target(EnemyTarget::AggroTarget)

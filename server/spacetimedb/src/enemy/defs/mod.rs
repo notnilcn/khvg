@@ -15,9 +15,44 @@ use crate::enemy::def_tables::*;
 pub mod gorgon_boss;
 
 /// Inserts the phase's MovementDef row and returns the PhaseDef pointing at it.
-pub fn make_phase(ctx: &ReducerContext, phase_index: u8, hp_threshold: f32, movement: MovementBehavior, phase_loop_delay: f32, attacks: Vec<AttackSequence>) -> PhaseDef {
+pub fn make_phase(ctx: &ReducerContext, phase_index: u8, hp_threshold: f32, movement: SteeringMovement, phase_loop_delay: f32, attacks: Vec<AttackSequence>) -> PhaseDef {
     let def = ctx.db.movement_def().insert(MovementDef { def_id: 0, movement });
     PhaseDef { phase_index, hp_threshold, movement_def_id: def.def_id, phase_loop_delay, attacks }
+}
+
+impl SteeringMovement {
+    /// Stand still — the old `MovementBehavior::Stationary` in the steering vocabulary.
+    pub fn idle() -> SteeringMovement {
+        SteeringMovement {
+            speed: 0.0,
+            goal: MoveGoal::Idle,
+            pattern: MovePattern::Direct,
+            separation_weight: 0.0,
+            avoid_cliffs: false,
+            active_duration: 0.0,
+            pause_duration: 0.0,
+        }
+    }
+
+    /// Adds a move/pause cycle (seconds) — Lunge's pause window is its telegraph.
+    pub fn with_cycle(mut self, active_duration: f32, pause_duration: f32) -> SteeringMovement {
+        self.active_duration = active_duration;
+        self.pause_duration = pause_duration;
+        self
+    }
+}
+
+/// Terse SteeringMovement constructor: separation on (weight 1), cliffs on, no cycle.
+pub fn steering(speed: f32, goal: MoveGoal, pattern: MovePattern) -> SteeringMovement {
+    SteeringMovement {
+        speed,
+        goal,
+        pattern,
+        separation_weight: 1.0,
+        avoid_cliffs: true,
+        active_duration: 0.0,
+        pause_duration: 0.0,
+    }
 }
 
 /// A run-once sequence: the phase restarts it (after phase_loop_delay) only when every

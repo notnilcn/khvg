@@ -1,43 +1,25 @@
 @tool
 class_name BrushPatternCalculator
 
-## Calculates which cells fall within a brush and their falloff samples.
+## Calculates which hexes fall within a brush and their falloff samples.
 ## Used by both plugin (for editing) and gizmo (for visualization).
-class BrushBounds:
-	var chunk_tl : Vector2i
-	var chunk_br : Vector2i
-	var cell_tl : Vector2i
-	var cell_br : Vector2i
 
 
-static func calculate_bounds(pos: Vector3, brush_size: float, terrain: MarchingSquaresTerrain) -> BrushBounds:
-	var bounds := BrushBounds.new()
-	
-	var pos_tl := Vector2(
-		pos.x + terrain.cell_size.x - brush_size / 2,
-		pos.z + terrain.cell_size.y - brush_size / 2
-		)
-	var pos_br := Vector2(
-		pos.x + terrain.cell_size.x + brush_size / 2,
-		pos.z + terrain.cell_size.y + brush_size / 2
-		)
-	
-	var chunk_size_x : float = (terrain.dimensions.x - 1) * terrain.cell_size.x
-	var chunk_size_z : float = (terrain.dimensions.z - 1) * terrain.cell_size.y
-	
-	bounds.chunk_tl = Vector2i(floori(pos_tl.x / chunk_size_x), floori(pos_tl.y / chunk_size_z))
-	bounds.chunk_br = Vector2i(floori(pos_br.x / chunk_size_x), floori(pos_br.y / chunk_size_z))
-	
-	bounds.cell_tl = Vector2i(
-		floori(pos_tl.x / terrain.cell_size.x - bounds.chunk_tl.x * (terrain.dimensions.x - 1)),
-		floori(pos_tl.y / terrain.cell_size.y - bounds.chunk_tl.y * (terrain.dimensions.z - 1))
-	)
-	bounds.cell_br = Vector2i(
-		floori(pos_br.x / terrain.cell_size.x - bounds.chunk_br.x * (terrain.dimensions.x - 1)),
-		floori(pos_br.y / terrain.cell_size.y - bounds.chunk_br.y * (terrain.dimensions.z - 1))
-	)
-	
-	return bounds
+## Axial bounding box of the brush circle in global hex coords, padded by one hex.
+static func calculate_bounds(pos: Vector3, brush_size: float, terrain: MarchingSquaresTerrain) -> Dictionary:
+	var reach : float = brush_size * 0.5 + terrain.hex_size
+	var brush_pos := Vector2(pos.x, pos.z)
+	var q_min := 0
+	var q_max := 0
+	var r_min := 0
+	var r_max := 0
+	for corner in [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 1), Vector2(1, 1)]:
+		var hex := MSTHexMath.world_to_hex(brush_pos.x + corner.x * reach, brush_pos.y + corner.y * reach, terrain.hex_size)
+		q_min = mini(q_min, hex.x)
+		q_max = maxi(q_max, hex.x)
+		r_min = mini(r_min, hex.y)
+		r_max = maxi(r_max, hex.y)
+	return {"q_min": q_min - 1, "q_max": q_max + 1, "r_min": r_min - 1, "r_max": r_max + 1}
 
 
 static func calculate_max_distance(brush_size: float, brush_index: int) -> float:
@@ -81,17 +63,32 @@ static func calculate_falloff_sample(
 	return falloff_curve.sample(clamp(t, 0.001, 0.999))
 
 
-## Calculate world position for a cell in a chunk
-static func cell_to_world_pos(chunk_coords: Vector2i, cell_coords: Vector2i, terrain: MarchingSquaresTerrain) -> Vector2:
-	var world_x : float = (chunk_coords.x * (terrain.dimensions.x - 1) + cell_coords.x) * terrain.cell_size.x
-	var world_z : float = (chunk_coords.y * (terrain.dimensions.z - 1) + cell_coords.y) * terrain.cell_size.y
-	return Vector2(world_x, world_z)
+## World XZ position of a hex's center in global axial coords.
+static func hex_to_world_pos(hex: Vector2i, terrain: MarchingSquaresTerrain) -> Vector2:
+	return MSTHexMath.hex_to_world(hex.x, hex.y, terrain.hex_size)
 
 
-## Get cell range for a specific chunk within the brush bounds
-static func get_cell_range_for_chunk(chunk_coords: Vector2i, bounds: BrushBounds, terrain: MarchingSquaresTerrain) -> Dictionary:
-	var x_min : int = bounds.cell_tl.x if chunk_coords.x == bounds.chunk_tl.x else 0
-	var x_max : int = bounds.cell_br.x if chunk_coords.x == bounds.chunk_br.x else terrain.dimensions.x
-	var z_min : int = bounds.cell_tl.y if chunk_coords.y == bounds.chunk_tl.y else 0
-	var z_max : int = bounds.cell_br.y if chunk_coords.y == bounds.chunk_br.y else terrain.dimensions.z
-	return {"x_min": x_min, "x_max": x_max, "z_min": z_min, "z_max": z_max}
+## All hexes covered by the brush on existing chunks, sampled at hex centers.
+## Returns chunk_coords → Dictionary of local axial offset → falloff sample.
+static func hexes_in_brush(terrain: MarchingSquaresTerrain, center: Vector3, brush_size: float, brush_index: int, use_falloff: bool, falloff_curve: Curve) -> Dictionary:
+	var brush_pos := Vector2(center.x, center.z)
+	var max_distance := calculate_max_distance(brush_size, brush_index)
+	var bounds := calculate_bounds(center, brush_size, terrain)
+	var hexes : Dictionary = {}
+	
+	for q in range(bounds.q_min, bounds.q_max + 1):
+		for r in range(bounds.r_min, bounds.r_max + 1):
+			var sample := calculate_falloff_sample(
+				MSTHexMath.hex_to_world(q, r, terrain.hex_size), brush_pos,
+				brush_size, brush_index, max_distance, use_falloff, falloff_curve
+			)
+			if sample < 0:
+				continue  # Outside brush
+			var chunk_coords := MSTHexMath.world_to_chunk(q, r, terrain.chunk_radius)
+			if not terrain.chunks.has(chunk_coords):
+				continue
+			if not hexes.has(chunk_coords):
+				hexes[chunk_coords] = {}
+			hexes[chunk_coords][MSTHexMath.hex_to_local(q, r, terrain.chunk_radius)] = sample
+	
+	return hexes
