@@ -1,0 +1,483 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.080 --> 00:00:02.880
+Oh no. I accidentally created&nbsp;
+a Newton’s Cradle of Skellies.&nbsp;
+
+00:00:03.680 --> 00:00:06.640
+Howdy! And welcome to Game Endeavor.&nbsp;
+Where I make devlogs with an emphasis&nbsp;&nbsp;
+
+00:00:06.640 --> 00:00:09.920
+on game design and technique.
+I’m developing an open world RPG&nbsp;&nbsp;
+
+00:00:09.920 --> 00:00:13.600
+where you’ll meet lovable characters, explore&nbsp;
+dark and treacherous dungeons, and build a base&nbsp;&nbsp;
+
+00:00:13.600 --> 00:00:17.360
+to stash your precious cheese. One of the more&nbsp;
+difficult tasks that I’ve ever come across as&nbsp;&nbsp;
+
+00:00:17.360 --> 00:00:21.520
+a developer is how to handle enemy movement in a&nbsp;
+way that’s convincing and engaging for the player.&nbsp;
+
+00:00:22.320 --> 00:00:26.000
+This is especially difficult because there are a&nbsp;
+lot of factors to consider such as what direction&nbsp;&nbsp;
+
+00:00:26.000 --> 00:00:29.680
+they should move towards to reach their goal.&nbsp;
+What entities are nearby so they don’t clump&nbsp;&nbsp;
+
+00:00:29.680 --> 00:00:33.760
+up together into a hyperdense singuskellety.&nbsp;
+The nearby environment and everything else&nbsp;&nbsp;
+
+00:00:33.760 --> 00:00:37.280
+around them, and even once they have figured&nbsp;
+out how they should move, they need to do so&nbsp;&nbsp;
+
+00:00:37.280 --> 00:00:41.040
+smoothly so that they don’t jitter around like&nbsp;
+me after a long night of binge coding and coffee.&nbsp;
+
+00:00:41.840 --> 00:00:46.080
+Even though combat isn’t the primary focus&nbsp;
+of my game, not nearly as much as exploration&nbsp;&nbsp;
+
+00:00:46.080 --> 00:00:49.040
+and the roleplaying. I still want it to&nbsp;
+be enjoyable, because it is what builds&nbsp;&nbsp;
+
+00:00:49.040 --> 00:00:52.880
+tension and keeps the player engaged as they&nbsp;
+explore the world and uncovers its secrets.&nbsp;
+
+00:00:53.680 --> 00:00:56.880
+If you look into AI movement, then one of&nbsp;
+the first things you may encounter is what’s&nbsp;&nbsp;
+
+00:00:56.880 --> 00:01:00.800
+known as boids and steering behaviors.&nbsp;
+This is not what I’m using to be clear,&nbsp;&nbsp;
+
+00:01:00.800 --> 00:01:04.400
+but it is where I started and is what helped me to&nbsp;
+develop the technique that I am currently using.&nbsp;
+
+00:01:05.760 --> 00:01:09.440
+Steering behaviors are where you combine&nbsp;
+simple actions such as move to this point,&nbsp;&nbsp;
+
+00:01:09.440 --> 00:01:13.200
+keep away from these points, and move in&nbsp;
+the same direction as these other points.&nbsp;&nbsp;
+
+00:01:13.200 --> 00:01:17.280
+On their own these behaviors are very simple and&nbsp;
+unimpressive. But when combined and tweaked in&nbsp;&nbsp;
+
+00:01:17.280 --> 00:01:21.280
+specific ways, they create something that I was&nbsp;
+quite stunned by when I first encountered them.&nbsp;
+
+00:01:21.920 --> 00:01:25.840
+But after implementing this some time ago in a&nbsp;
+prototype for another game, I quickly noticed&nbsp;&nbsp;
+
+00:01:25.840 --> 00:01:30.320
+some major flaws with the system. The biggest&nbsp;
+glaring one being how opposing vectors can cancel&nbsp;&nbsp;
+
+00:01:30.320 --> 00:01:34.240
+each other out to cause pretty silly situations&nbsp;
+where the AI needs to run away from the player,&nbsp;&nbsp;
+
+00:01:34.240 --> 00:01:37.680
+but there’s a wall immediately opposite to&nbsp;
+them. So they just stand there completely&nbsp;&nbsp;
+
+00:01:37.680 --> 00:01:41.360
+dumbfounded by the existence of this wall as&nbsp;
+they wait for their slowly impending doom.&nbsp;
+
+00:01:41.920 --> 00:01:45.280
+Ideally you would want them to realize that&nbsp;
+they have other options available to them,&nbsp;&nbsp;
+
+00:01:45.280 --> 00:01:49.280
+such as stepping ever so slightly to the side&nbsp;
+and continuing along that path for a bit.&nbsp;&nbsp;
+
+00:01:49.280 --> 00:01:52.560
+But since there’s only one vector that&nbsp;
+has complete control over how they move,&nbsp;&nbsp;
+
+00:01:52.560 --> 00:01:54.560
+they just sit there barely moving if at all.&nbsp;
+
+00:01:55.120 --> 00:01:58.560
+I searched for a while about how I could&nbsp;
+improve this, or alternatives to AI movement&nbsp;&nbsp;
+
+00:01:58.560 --> 00:02:02.000
+and found a context based steering behavior&nbsp;
+that inspired what I am currently using.&nbsp;&nbsp;
+
+00:02:02.560 --> 00:02:06.080
+This is very similar to the behavior that I&nbsp;
+mentioned before, except it keeps a record of how&nbsp;&nbsp;
+
+00:02:06.080 --> 00:02:10.000
+desirable different directions are and chooses the&nbsp;
+preferred direction that it can actually perform.&nbsp;
+
+00:02:10.880 --> 00:02:15.600
+For example, say I set down a carrot for&nbsp;
+Truffles to snack upon, odds are he’s going to&nbsp;&nbsp;
+
+00:02:15.600 --> 00:02:19.840
+move directly towards the carrot. That would be&nbsp;
+the obvious choice. But hold on there Truffles,&nbsp;&nbsp;
+
+00:02:19.840 --> 00:02:25.360
+not so fast. He could, in theory, step off to the&nbsp;
+side for a bit, make a big half circle around the&nbsp;&nbsp;
+
+00:02:25.360 --> 00:02:30.400
+carrot, and then go in for the snack. It would&nbsp;
+be rather silly, yes. But it’s still an option.&nbsp;
+
+00:02:30.400 --> 00:02:33.840
+So to help truffles evaluate the different&nbsp;
+directions that he could take, I’m storing&nbsp;&nbsp;
+
+00:02:33.840 --> 00:02:37.680
+his options as weights that he can check and&nbsp;
+pick the most desirable path in the event that&nbsp;&nbsp;
+
+00:02:37.680 --> 00:02:42.160
+some of his options may be limited. To help me&nbsp;
+visualize these weights as I’m developing the&nbsp;&nbsp;
+
+00:02:42.160 --> 00:02:46.080
+movement systems, and help you visualize them&nbsp;
+while binging these devlogs and subliminally&nbsp;&nbsp;
+
+00:02:46.080 --> 00:02:49.840
+clicking little blue thumbs, I have created a&nbsp;
+gizmo that can draw what the AI is thinking.&nbsp;
+
+00:02:50.640 --> 00:02:54.000
+Each line represents a direction that&nbsp;
+they are considering. Green lines showing&nbsp;&nbsp;
+
+00:02:54.000 --> 00:02:57.520
+a desire to move towards that direction&nbsp;
+with longer lines being most desirable,&nbsp;&nbsp;
+
+00:02:57.520 --> 00:03:01.120
+and red lines meaning that they have&nbsp;
+absolutely no desire to move in that direction.&nbsp;
+
+00:03:01.840 --> 00:03:05.280
+So as you can see, when one direction&nbsp;
+becomes obstructed then the AI will pick&nbsp;&nbsp;
+
+00:03:05.280 --> 00:03:10.640
+the next best option and move in that direction&nbsp;
+instead. In order for the AI to determine this,&nbsp;&nbsp;
+
+00:03:10.640 --> 00:03:15.520
+I need to tell it how likely a direction is to&nbsp;
+produce a desired result. I’m using a dot product&nbsp;&nbsp;
+
+00:03:15.520 --> 00:03:19.360
+here between the direction being considered and a&nbsp;
+vector that the entity would like to move towards.&nbsp;
+
+00:03:20.000 --> 00:03:23.840
+For those unaware, dot product is a very useful&nbsp;
+thing that will return the cosine value of&nbsp;&nbsp;
+
+00:03:23.840 --> 00:03:28.720
+the angle between two normalized vectors. This&nbsp;
+value will be 1 in the direction of the normal,&nbsp;&nbsp;
+
+00:03:28.720 --> 00:03:31.840
+-1 in the opposite direction,&nbsp;
+and 0 perpendicular to it.&nbsp;&nbsp;
+
+00:03:32.800 --> 00:03:37.040
+When normalized between 0 and 1, you get a&nbsp;
+scale of how desirable that direction is.&nbsp;&nbsp;
+
+00:03:37.040 --> 00:03:40.000
+The AI is using this to decide&nbsp;
+which direction it should move.&nbsp;
+
+00:03:40.720 --> 00:03:44.320
+This is great for moving towards a specific&nbsp;
+location. I can simply take the highest&nbsp;&nbsp;
+
+00:03:44.320 --> 00:03:48.480
+unobstructed weight and move in that direction.&nbsp;
+But the true power of this system comes when you&nbsp;&nbsp;
+
+00:03:48.480 --> 00:03:52.560
+start shaping the weights and combining them&nbsp;
+to perform even more interesting behaviors.&nbsp;
+
+00:03:52.560 --> 00:03:56.720
+Skellies making a beeline for you is one way to&nbsp;
+prototype a simple combat system. It is what I&nbsp;&nbsp;
+
+00:03:56.720 --> 00:04:01.280
+have used so far and it served its purpose as a&nbsp;
+placeholder, but it’s not nearly as engaging as it&nbsp;&nbsp;
+
+00:04:01.280 --> 00:04:06.480
+could be. A much more interesting behavior would&nbsp;
+be for the skellies to move in and out of combat,&nbsp;&nbsp;
+
+00:04:06.480 --> 00:04:09.360
+strafe around their target, all&nbsp;
+while keeping a safe distance.&nbsp;
+
+00:04:09.920 --> 00:04:13.440
+I have one set of weights that will move&nbsp;
+towards their target as normal, but as they&nbsp;&nbsp;
+
+00:04:13.440 --> 00:04:17.840
+get closer to their target, the value of these&nbsp;
+weights are lessened so that other behaviors&nbsp;&nbsp;
+
+00:04:17.840 --> 00:04:22.560
+can take over. So I’m weighting the weights.
+Once they are within range to start strafing&nbsp;&nbsp;
+
+00:04:22.560 --> 00:04:27.200
+around the character, I apply a shaping function&nbsp;
+to the dot product that favors sideways movement&nbsp;&nbsp;
+
+00:04:27.200 --> 00:04:32.080
+instead of forward and backwards. This causes them&nbsp;
+to start circling around their target. Except,&nbsp;&nbsp;
+
+00:04:32.080 --> 00:04:36.480
+oh no… I accidentally created a Newton’s&nbsp;
+cradle of skellies. I had to offset their&nbsp;&nbsp;
+
+00:04:36.480 --> 00:04:39.600
+following distance a bit otherwise they&nbsp;
+start making perfect circles around their&nbsp;&nbsp;
+
+00:04:39.600 --> 00:04:43.760
+target and bouncing off of each other.
+A big issue that I’ve had with this system&nbsp;&nbsp;
+
+00:04:43.760 --> 00:04:47.120
+though is tweaking the movement to eliminate a&nbsp;
+lot of jitteriness that I’ve been noticing due&nbsp;&nbsp;
+
+00:04:47.120 --> 00:04:51.040
+to entities rapidly changing their direction&nbsp;
+back and forth. This is because I was having&nbsp;&nbsp;
+
+00:04:51.040 --> 00:04:54.160
+them move directly away from any nearby&nbsp;
+entities and so they would get caught up&nbsp;&nbsp;
+
+00:04:54.160 --> 00:04:57.840
+in this tug-o-war of pushing each other in&nbsp;
+an attempt to get to their desired target.&nbsp;
+
+00:04:58.880 --> 00:05:02.480
+I fixed this by also applying a shaping&nbsp;
+function to their separation logic&nbsp;&nbsp;
+
+00:05:02.480 --> 00:05:05.440
+so that instead of trying to move&nbsp;
+directly away from the nearest enemy,&nbsp;&nbsp;
+
+00:05:05.440 --> 00:05:10.160
+they would prefer to do so at a bit of an angle.
+When you combine this smarter form of movement&nbsp;&nbsp;
+
+00:05:10.160 --> 00:05:14.240
+with the overall tweaks to the skelly’s combat&nbsp;
+state machine, you get a very fun enemy to fight&nbsp;&nbsp;
+
+00:05:14.240 --> 00:05:18.640
+that even I spend my free time spawning a few&nbsp;
+in for a quick session. And when I had a tester&nbsp;&nbsp;
+
+00:05:18.640 --> 00:05:22.720
+play this, they spent over an hour just fighting&nbsp;
+a handful of skellies and sprouts over and over.&nbsp;
+
+00:05:23.440 --> 00:05:27.840
+Combat wasn’t the only enemy behavior to receive a&nbsp;
+massive improvement though. One of the main design&nbsp;&nbsp;
+
+00:05:27.840 --> 00:05:32.240
+pillars for my game is immersion, having things&nbsp;
+feel natural and convincing. And something I’ve&nbsp;&nbsp;
+
+00:05:32.240 --> 00:05:36.080
+been wanting to improve for a while now is&nbsp;
+the wandering logic for my enemies. Before&nbsp;&nbsp;
+
+00:05:36.080 --> 00:05:40.720
+now it has been a placeholder just so they’re not&nbsp;
+standing in one place when I record these devlogs.&nbsp;
+
+00:05:40.720 --> 00:05:44.560
+The logic was that they would pick a random point&nbsp;
+somewhere around their spawnpoint and move towards&nbsp;&nbsp;
+
+00:05:44.560 --> 00:05:48.560
+it. If they were near the point or it became&nbsp;
+obstructed within a short distance then they would&nbsp;&nbsp;
+
+00:05:48.560 --> 00:05:53.040
+pick another point and start moving towards it.
+This is decent enough but it feels very erratic&nbsp;&nbsp;
+
+00:05:53.040 --> 00:05:56.800
+and unnatural. The AI changes direction&nbsp;
+sporadically and to me it feels a little off.&nbsp;&nbsp;
+
+00:05:58.160 --> 00:06:01.040
+Rather than picking a random point to&nbsp;
+move towards, I would rather have them&nbsp;&nbsp;
+
+00:06:01.040 --> 00:06:04.640
+meander about. Gradually changing their&nbsp;
+direction, but remaining near their spawn&nbsp;&nbsp;
+
+00:06:04.640 --> 00:06:08.960
+point so that they don’t wander off too far.
+To have them wander about, I’m having them&nbsp;&nbsp;
+
+00:06:08.960 --> 00:06:13.520
+move in a direction, but over time this direction&nbsp;
+will gradually sway left and right which causes&nbsp;&nbsp;
+
+00:06:13.520 --> 00:06:18.640
+the entity to start changing direction. I’m using&nbsp;
+OpenSimplex noise here to adjust the direction.&nbsp;
+
+00:06:18.640 --> 00:06:23.600
+There are a few benefits to using it here. Namely&nbsp;
+that the randomization it produces is smooth which&nbsp;&nbsp;
+
+00:06:23.600 --> 00:06:28.160
+gives the wandering a more natural feel to it.&nbsp;
+But more importantly the values of OpenSimplex&nbsp;&nbsp;
+
+00:06:28.160 --> 00:06:32.800
+noise tend to be more heavily weighted towards 0,&nbsp;
+which means that if done right the entity isn’t&nbsp;&nbsp;
+
+00:06:32.800 --> 00:06:37.040
+going to spend too much time changing direction.&nbsp;
+Instead it will move straight for periods of time,&nbsp;&nbsp;
+
+00:06:37.040 --> 00:06:41.520
+and then every so often it’ll start changing its&nbsp;
+direction but then start pulling back towards 0,&nbsp;&nbsp;
+
+00:06:41.520 --> 00:06:45.680
+which causes it to again move mostly straight.
+To keep them near their spawn point,&nbsp;&nbsp;
+
+00:06:45.680 --> 00:06:48.880
+I’m weighing their wandering direction back&nbsp;
+towards their spawn point whenever they start&nbsp;&nbsp;
+
+00:06:48.880 --> 00:06:53.120
+getting too far away from it. This causes them&nbsp;
+to gradually start turning around until they’re&nbsp;&nbsp;
+
+00:06:53.120 --> 00:06:57.040
+no longer moving away from the spawn point.
+To keep this looking smooth and natural,&nbsp;&nbsp;
+
+00:06:57.040 --> 00:07:01.120
+this isn’t a hard transition though. The weighting&nbsp;
+starts to take effect at a pretty short distance&nbsp;&nbsp;
+
+00:07:01.120 --> 00:07:05.600
+from their spawn point, currently at about&nbsp;
+a 2 tile radius. But it’s weighted based on&nbsp;&nbsp;
+
+00:07:05.600 --> 00:07:08.960
+how far they are from the spawn point, so&nbsp;
+it’s much less effective until they start&nbsp;&nbsp;
+
+00:07:08.960 --> 00:07:13.040
+getting further and further away. But since&nbsp;
+it’s smoothed out over that distance, it can&nbsp;&nbsp;
+
+00:07:13.040 --> 00:07:16.960
+be difficult to tell where that point is, so to&nbsp;
+me it feels much more natural and convincing.&nbsp;
+
+00:07:17.840 --> 00:07:21.200
+After I added these movement tweaks and ai&nbsp;
+improvements, I started experimenting with&nbsp;&nbsp;
+
+00:07:21.200 --> 00:07:25.760
+a faction system for NPC targeting, I ended up&nbsp;
+making it so that enemies could target each other,&nbsp;&nbsp;
+
+00:07:25.760 --> 00:07:30.320
+which surprisingly enough led to this interesting&nbsp;
+battle royale behavior with the enemies. I didn’t&nbsp;&nbsp;
+
+00:07:30.320 --> 00:07:33.840
+expect this to look nearly as amazing&nbsp;
+as it did with no additional tweaking,&nbsp;&nbsp;
+
+00:07:33.840 --> 00:07:38.720
+but this was an aha moment for me. If I can&nbsp;
+flip a switch and make NPCs fight each other,&nbsp;&nbsp;
+
+00:07:38.720 --> 00:07:43.520
+and have it look this amazing. Then I think I’m&nbsp;
+going to lean a whole lot more into the pet taming&nbsp;&nbsp;
+
+00:07:43.520 --> 00:07:47.600
+and raising system that I have planned next.
+If you want to join me as I work on this,&nbsp;&nbsp;
+
+00:07:47.600 --> 00:07:51.200
+then I’ve been streaming development nearly&nbsp;
+every day on my Discord, there’s a link in the&nbsp;&nbsp;
+
+00:07:51.200 --> 00:07:55.120
+description to join our community. It has been&nbsp;
+a fantastic way to interact with everyone as&nbsp;&nbsp;
+
+00:07:55.120 --> 00:07:58.880
+we do everything from adding in new mechanics,&nbsp;
+drawing art, or just playing games together.&nbsp;&nbsp;
+
+00:07:59.440 --> 00:08:03.360
+We also got our first fanart of the spirit&nbsp;
+skelly which is absolutely adorable, as well&nbsp;&nbsp;
+
+00:08:03.360 --> 00:08:07.040
+as the two new NPCs that we designed during&nbsp;
+the Tuesday streams. It’s always a treat when&nbsp;&nbsp;
+
+00:08:07.040 --> 00:08:11.360
+sco_otr draws along with me during these. Thanks&nbsp;
+for watching, and I’ll see you in the next one!
+

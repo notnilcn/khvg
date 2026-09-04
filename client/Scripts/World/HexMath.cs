@@ -55,6 +55,23 @@ public static class HexMath
 			Mathf.FloorToInt((1f + b - c) / 3f));
 	}
 
+	// Center hex of a chunk in global axial coords. Lockstep sibling of server
+	// world/hex.rs::chunk_center_hex (hexx to_higher_res) and MSTHexMath.chunk_center.
+	public static Vector2I ChunkCenterHex(int cq, int cr, int radius)
+	{
+		int s = -cq - cr;
+		return new Vector2I(cq * (radius + 1) - radius * s, cr * (radius + 1) - radius * cq);
+	}
+
+	// Local axial offset of a hex within its owning chunk. Port of hexx Hex::to_local
+	// (MSTHexMath.hex_to_local).
+	public static Vector2I HexToLocal(int q, int r, int radius)
+	{
+		var chunk = ToLowerRes(q, r, radius);
+		var center = ChunkCenterHex(chunk.X, chunk.Y, radius);
+		return new Vector2I(q - center.X, r - center.Y);
+	}
+
 	// Bijection Z² → ℕ using hex spiral order. Lockstep sibling of the server's
 	// spiral_chunk_index in server/spacetimedb/src/world/hex.rs — analytical arm detection,
 	// no ring walk; both copies must change together.

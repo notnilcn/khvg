@@ -143,7 +143,8 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		if (path == null || (_model3D != null && path == _model3DPath)) return;
 		_model3D?.Dispose();
 		_model3DPath = path;
-		_model3D = new CharacterModel3D(GD.Load<PackedScene>(path), GlobalPosition, world3D);
+		_model3D = new CharacterModel3D(GD.Load<PackedScene>(path), GlobalPosition, world3D,
+			groundY: elevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
 		world3D.SetCameraFollowTarget(_model3D.Node);
 	}
 
@@ -180,7 +181,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		ApplyElevationPrediction(delta);
 
 		MoveAndSlide();
-		_model3D?.SyncFrom2D(GlobalPosition, Rotation);
+		_model3D?.SyncFrom2D(GlobalPosition, Rotation, elevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
 
 		// HasAnimation: in 3D mode the placeholder frames never load (hidden sprite), and
 		// in 2D mode the profile frames arrive after the first physics frames.

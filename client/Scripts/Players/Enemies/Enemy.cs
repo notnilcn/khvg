@@ -44,7 +44,7 @@ public partial class Enemy : CharacterBody2D, IEntity
         var moving = interpolation?.Moving ?? false;
         if (sprite?.SpriteFrames != null)
             sprite.Play(moving ? "Walk" : "Idle");
-        _model3D?.SyncFrom2D(GlobalPosition, Rotation);
+        _model3D?.SyncFrom2D(GlobalPosition, Rotation, GameManager.ElevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
     }
 
     public override void _ExitTree() => _model3D?.Dispose();

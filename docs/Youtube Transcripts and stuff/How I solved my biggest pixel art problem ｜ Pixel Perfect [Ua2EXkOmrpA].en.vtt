@@ -1,0 +1,2456 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:04.880 --> 00:00:07.550 align:start position:0%
+ 
+This<00:00:05.720><c> is</c><00:00:05.960><c> Callous.</c>
+
+00:00:07.550 --> 00:00:07.560 align:start position:0%
+This is Callous.
+ 
+
+00:00:07.560 --> 00:00:10.870 align:start position:0%
+This is Callous.
+And<00:00:07.800><c> now</c><00:00:08.160><c> Callous</c><00:00:08.840><c> has</c><00:00:09.080><c> a</c><00:00:09.160><c> big</c><00:00:09.560><c> issue.</c>
+
+00:00:10.870 --> 00:00:10.880 align:start position:0%
+And now Callous has a big issue.
+ 
+
+00:00:10.880 --> 00:00:13.510 align:start position:0%
+And now Callous has a big issue.
+They're<00:00:11.080><c> trapped</c><00:00:11.600><c> in</c><00:00:11.720><c> a</c><00:00:11.800><c> static</c><00:00:12.320><c> world.</c><00:00:13.240><c> One</c>
+
+00:00:13.510 --> 00:00:13.520 align:start position:0%
+They're trapped in a static world. One
+ 
+
+00:00:13.520 --> 00:00:15.390 align:start position:0%
+They're trapped in a static world. One
+where<00:00:13.680><c> the</c><00:00:13.800><c> bounds</c><00:00:14.200><c> of</c><00:00:14.320><c> their</c><00:00:14.480><c> existence</c><00:00:15.200><c> is</c>
+
+00:00:15.390 --> 00:00:15.400 align:start position:0%
+where the bounds of their existence is
+ 
+
+00:00:15.400 --> 00:00:20.430 align:start position:0%
+where the bounds of their existence is
+limited<00:00:15.840><c> by</c><00:00:16.000><c> what</c><00:00:16.240><c> we</c><00:00:16.360><c> can</c><00:00:16.560><c> see.</c>
+
+00:00:20.430 --> 00:00:20.440 align:start position:0%
+ 
+ 
+
+00:00:20.440 --> 00:00:22.470 align:start position:0%
+ 
+In<00:00:20.560><c> the</c><00:00:20.640><c> series</c><00:00:21.040><c> so</c><00:00:21.240><c> far,</c><00:00:22.040><c> all</c><00:00:22.240><c> of</c><00:00:22.320><c> the</c>
+
+00:00:22.470 --> 00:00:22.480 align:start position:0%
+In the series so far, all of the
+ 
+
+00:00:22.480 --> 00:00:24.630 align:start position:0%
+In the series so far, all of the
+examples<00:00:23.040><c> we've</c><00:00:23.240><c> looked</c><00:00:23.520><c> at</c><00:00:23.760><c> involved</c><00:00:24.240><c> scenes</c>
+
+00:00:24.630 --> 00:00:24.640 align:start position:0%
+examples we've looked at involved scenes
+ 
+
+00:00:24.640 --> 00:00:26.845 align:start position:0%
+examples we've looked at involved scenes
+with<00:00:24.800><c> a</c><00:00:24.840><c> motionless</c><00:00:25.480><c> camera.</c>
+
+00:00:26.845 --> 00:00:26.855 align:start position:0%
+with a motionless camera.
+ 
+
+00:00:26.855 --> 00:00:27.950 align:start position:0%
+with a motionless camera.
+&gt;&gt; [music]
+
+00:00:27.950 --> 00:00:27.960 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:00:27.960 --> 00:00:29.750 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; If<00:00:28.120><c> we</c><00:00:28.240><c> want</c><00:00:28.480><c> to</c><00:00:28.560><c> build</c><00:00:28.880><c> worlds</c><00:00:29.320><c> that</c><00:00:29.440><c> people</c>
+
+00:00:29.750 --> 00:00:29.760 align:start position:0%
+&gt;&gt; If we want to build worlds that people
+ 
+
+00:00:29.760 --> 00:00:32.230 align:start position:0%
+&gt;&gt; If we want to build worlds that people
+can<00:00:29.880><c> explore,</c><00:00:30.920><c> we</c><00:00:31.040><c> need</c><00:00:31.280><c> some</c><00:00:31.560><c> way</c><00:00:31.720><c> of</c><00:00:31.880><c> moving</c>
+
+00:00:32.230 --> 00:00:32.240 align:start position:0%
+can explore, we need some way of moving
+ 
+
+00:00:32.240 --> 00:00:34.705 align:start position:0%
+can explore, we need some way of moving
+our<00:00:32.360><c> viewport</c><00:00:33.000><c> in</c><00:00:33.120><c> a</c><00:00:33.200><c> pixel-conscious</c><00:00:34.160><c> way.</c>
+
+00:00:34.705 --> 00:00:34.715 align:start position:0%
+our viewport in a pixel-conscious way.
+ 
+
+00:00:34.715 --> 00:00:36.790 align:start position:0%
+our viewport in a pixel-conscious way.
+&gt;&gt; [music]
+
+00:00:36.790 --> 00:00:36.800 align:start position:0%
+ 
+ 
+
+00:00:36.800 --> 00:00:39.230 align:start position:0%
+ 
+&gt;&gt; Simply<00:00:37.200><c> moving</c><00:00:37.560><c> the</c><00:00:37.640><c> camera</c><00:00:38.560><c> as</c><00:00:38.760><c> you</c><00:00:38.880><c> would</c><00:00:39.120><c> in</c>
+
+00:00:39.230 --> 00:00:39.240 align:start position:0%
+&gt;&gt; Simply moving the camera as you would in
+ 
+
+00:00:39.240 --> 00:00:41.950 align:start position:0%
+&gt;&gt; Simply moving the camera as you would in
+a<00:00:39.280><c> traditional</c><00:00:39.840><c> game</c><00:00:40.440><c> has</c><00:00:40.720><c> issues.</c><00:00:41.840><c> The</c>
+
+00:00:41.950 --> 00:00:41.960 align:start position:0%
+a traditional game has issues. The
+ 
+
+00:00:41.960 --> 00:00:44.230 align:start position:0%
+a traditional game has issues. The
+low-resolution<00:00:42.880><c> grid</c><00:00:43.240><c> that</c><00:00:43.400><c> our</c><00:00:43.560><c> engine</c><00:00:43.920><c> runs</c>
+
+00:00:44.230 --> 00:00:44.240 align:start position:0%
+low-resolution grid that our engine runs
+ 
+
+00:00:44.240 --> 00:00:46.510 align:start position:0%
+low-resolution grid that our engine runs
+off<00:00:44.680><c> cannot</c><00:00:45.120><c> handle</c><00:00:45.520><c> the</c><00:00:45.640><c> high-resolution</c>
+
+00:00:46.510 --> 00:00:46.520 align:start position:0%
+off cannot handle the high-resolution
+ 
+
+00:00:46.520 --> 00:00:50.030 align:start position:0%
+off cannot handle the high-resolution
+movement<00:00:47.080><c> of</c><00:00:47.240><c> our</c><00:00:47.360><c> camera.</c>
+
+00:00:50.030 --> 00:00:50.040 align:start position:0%
+ 
+ 
+
+00:00:50.040 --> 00:00:52.550 align:start position:0%
+ 
+In<00:00:50.200><c> today's</c><00:00:50.600><c> episode</c><00:00:51.040><c> of</c><00:00:51.160><c> Pixel</c><00:00:51.520><c> Perfect,</c><00:00:52.440><c> I</c>
+
+00:00:52.550 --> 00:00:52.560 align:start position:0%
+In today's episode of Pixel Perfect, I
+ 
+
+00:00:52.560 --> 00:00:54.430 align:start position:0%
+In today's episode of Pixel Perfect, I
+want<00:00:52.800><c> to</c><00:00:52.920><c> build</c><00:00:53.160><c> a</c><00:00:53.200><c> camera</c><00:00:53.640><c> system</c><00:00:54.120><c> that</c><00:00:54.280><c> can</c>
+
+00:00:54.430 --> 00:00:54.440 align:start position:0%
+want to build a camera system that can
+ 
+
+00:00:54.440 --> 00:00:56.510 align:start position:0%
+want to build a camera system that can
+handle<00:00:54.800><c> the</c><00:00:54.880><c> responsibilities</c><00:00:55.920><c> of</c><00:00:56.120><c> moving</c>
+
+00:00:56.510 --> 00:00:56.520 align:start position:0%
+handle the responsibilities of moving
+ 
+
+00:00:56.520 --> 00:00:58.550 align:start position:0%
+handle the responsibilities of moving
+through<00:00:56.800><c> our</c><00:00:56.960><c> worlds,</c><00:00:58.000><c> dealing</c><00:00:58.360><c> with</c>
+
+00:00:58.550 --> 00:00:58.560 align:start position:0%
+through our worlds, dealing with
+ 
+
+00:00:58.560 --> 00:01:01.670 align:start position:0%
+through our worlds, dealing with
+sub-pixel<00:00:59.200><c> movement,</c><00:01:00.040><c> camera</c><00:01:00.480><c> rotation,</c><00:01:01.520><c> and</c>
+
+00:01:01.670 --> 00:01:01.680 align:start position:0%
+sub-pixel movement, camera rotation, and
+ 
+
+00:01:01.680 --> 00:01:05.990 align:start position:0%
+sub-pixel movement, camera rotation, and
+interactive<00:01:02.240><c> gameplay</c><00:01:02.680><c> systems.</c>
+
+00:01:05.990 --> 00:01:06.000 align:start position:0%
+ 
+ 
+
+00:01:06.000 --> 00:01:08.230 align:start position:0%
+ 
+If<00:01:06.160><c> you</c><00:01:06.280><c> enjoy</c><00:01:06.640><c> the</c><00:01:06.800><c> episode,</c><00:01:07.560><c> a</c><00:01:07.640><c> like</c><00:01:08.080><c> and</c>
+
+00:01:08.230 --> 00:01:08.240 align:start position:0%
+If you enjoy the episode, a like and
+ 
+
+00:01:08.240 --> 00:01:10.430 align:start position:0%
+If you enjoy the episode, a like and
+subscribe<00:01:09.000><c> always</c><00:01:09.400><c> goes</c><00:01:09.640><c> a</c><00:01:09.680><c> long</c><00:01:10.000><c> way</c><00:01:10.280><c> in</c>
+
+00:01:10.430 --> 00:01:10.440 align:start position:0%
+subscribe always goes a long way in
+ 
+
+00:01:10.440 --> 00:01:12.695 align:start position:0%
+subscribe always goes a long way in
+helping<00:01:10.800><c> the</c><00:01:10.880><c> channel.</c><00:01:11.720><c> It's</c><00:01:12.000><c> free,</c><00:01:12.560><c> and</c><00:01:12.680><c> you</c>
+
+00:01:12.695 --> 00:01:12.705 align:start position:0%
+helping the channel. It's free, and you
+ 
+
+00:01:12.705 --> 00:01:14.350 align:start position:0%
+helping the channel. It's free, and you
+[music]<00:01:12.760><c> can</c><00:01:12.920><c> always</c><00:01:13.320><c> change</c><00:01:13.600><c> your</c><00:01:13.720><c> mind</c><00:01:14.160><c> at</c>
+
+00:01:14.350 --> 00:01:14.360 align:start position:0%
+[music] can always change your mind at
+ 
+
+00:01:14.360 --> 00:01:17.070 align:start position:0%
+[music] can always change your mind at
+any<00:01:14.560><c> time.</c><00:01:15.560><c> Thank</c><00:01:15.880><c> you,</c><00:01:16.240><c> and</c><00:01:16.400><c> let's</c><00:01:16.640><c> get</c><00:01:16.800><c> into</c>
+
+00:01:17.070 --> 00:01:17.080 align:start position:0%
+any time. Thank you, and let's get into
+ 
+
+00:01:17.080 --> 00:01:28.670 align:start position:0%
+any time. Thank you, and let's get into
+it.
+
+00:01:28.670 --> 00:01:28.680 align:start position:0%
+ 
+ 
+
+00:01:28.680 --> 00:01:30.070 align:start position:0%
+ 
+To<00:01:28.840><c> understand</c><00:01:29.400><c> what</c><00:01:29.560><c> we're</c><00:01:29.680><c> trying</c><00:01:30.000><c> to</c>
+
+00:01:30.070 --> 00:01:30.080 align:start position:0%
+To understand what we're trying to
+ 
+
+00:01:30.080 --> 00:01:32.345 align:start position:0%
+To understand what we're trying to
+solve,<00:01:30.600><c> let's</c><00:01:30.840><c> make</c><00:01:31.040><c> the</c><00:01:31.120><c> problem</c><00:01:31.560><c> clear.</c>
+
+00:01:32.345 --> 00:01:32.355 align:start position:0%
+solve, let's make the problem clear.
+ 
+
+00:01:32.355 --> 00:01:32.470 align:start position:0%
+solve, let's make the problem clear.
+&gt;&gt; [music]
+
+00:01:32.470 --> 00:01:32.480 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:01:32.480 --> 00:01:34.470 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; We<00:01:32.640><c> have</c><00:01:32.840><c> a</c><00:01:32.920><c> high-resolution</c><00:01:33.800><c> output</c><00:01:34.320><c> that</c>
+
+00:01:34.470 --> 00:01:34.480 align:start position:0%
+&gt;&gt; We have a high-resolution output that
+ 
+
+00:01:34.480 --> 00:01:36.790 align:start position:0%
+&gt;&gt; We have a high-resolution output that
+the<00:01:34.600><c> user</c><00:01:34.920><c> sees,</c><00:01:35.640><c> and</c><00:01:35.840><c> a</c><00:01:35.880><c> low-resolution</c>
+
+00:01:36.790 --> 00:01:36.800 align:start position:0%
+the user sees, and a low-resolution
+ 
+
+00:01:36.800 --> 00:01:38.310 align:start position:0%
+the user sees, and a low-resolution
+pixel<00:01:37.240><c> scene</c><00:01:37.596><c> [music]</c><00:01:37.720><c> that</c><00:01:37.880><c> needs</c><00:01:38.120><c> to</c><00:01:38.200><c> be</c>
+
+00:01:38.310 --> 00:01:38.320 align:start position:0%
+pixel scene [music] that needs to be
+ 
+
+00:01:38.320 --> 00:01:40.830 align:start position:0%
+pixel scene [music] that needs to be
+rendered.<00:01:39.280><c> The</c><00:01:39.400><c> camera</c><00:01:39.880><c> and</c><00:01:40.040><c> pipeline</c><00:01:40.680><c> is</c>
+
+00:01:40.830 --> 00:01:40.840 align:start position:0%
+rendered. The camera and pipeline is
+ 
+
+00:01:40.840 --> 00:01:42.710 align:start position:0%
+rendered. The camera and pipeline is
+sort<00:01:41.040><c> of</c><00:01:41.160><c> the</c><00:01:41.320><c> arbiter</c><00:01:41.760><c> between</c><00:01:42.160><c> these</c><00:01:42.440><c> two</c>
+
+00:01:42.710 --> 00:01:42.720 align:start position:0%
+sort of the arbiter between these two
+ 
+
+00:01:42.720 --> 00:01:43.481 align:start position:0%
+sort of the arbiter between these two
+endpoints,
+
+00:01:43.481 --> 00:01:43.491 align:start position:0%
+endpoints,
+ 
+
+00:01:43.491 --> 00:01:43.670 align:start position:0%
+endpoints,
+&gt;&gt; [music]
+
+00:01:43.670 --> 00:01:43.680 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:01:43.680 --> 00:01:45.630 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; and<00:01:43.800><c> needs</c><00:01:44.120><c> to</c><00:01:44.200><c> decide</c><00:01:44.720><c> how</c><00:01:44.840><c> to</c><00:01:44.960><c> translate</c><00:01:45.520><c> the</c>
+
+00:01:45.630 --> 00:01:45.640 align:start position:0%
+&gt;&gt; and needs to decide how to translate the
+ 
+
+00:01:45.640 --> 00:01:47.470 align:start position:0%
+&gt;&gt; and needs to decide how to translate the
+source<00:01:45.960><c> image.</c>
+
+00:01:47.470 --> 00:01:47.480 align:start position:0%
+source image.
+ 
+
+00:01:47.480 --> 00:01:49.230 align:start position:0%
+source image.
+Now,<00:01:47.680><c> we</c><00:01:47.800><c> covered</c><00:01:48.160><c> this</c><00:01:48.360><c> partially</c><00:01:49.040><c> in</c><00:01:49.160><c> the</c>
+
+00:01:49.230 --> 00:01:49.240 align:start position:0%
+Now, we covered this partially in the
+ 
+
+00:01:49.240 --> 00:01:51.341 align:start position:0%
+Now, we covered this partially in the
+very<00:01:49.520><c> first</c><00:01:49.840><c> episode</c><00:01:50.280><c> of</c><00:01:50.360><c> the</c><00:01:50.480><c> series</c><00:01:51.320><c> when</c>
+
+00:01:51.341 --> 00:01:51.351 align:start position:0%
+very first episode of the series when
+ 
+
+00:01:51.351 --> 00:01:53.390 align:start position:0%
+very first episode of the series when
+[music]<00:01:51.520><c> looking</c><00:01:51.840><c> at</c><00:01:51.960><c> point</c><00:01:52.280><c> samplers,</c><00:01:53.280><c> but</c>
+
+00:01:53.390 --> 00:01:53.400 align:start position:0%
+[music] looking at point samplers, but
+ 
+
+00:01:53.400 --> 00:01:55.350 align:start position:0%
+[music] looking at point samplers, but
+in<00:01:53.520><c> those</c><00:01:53.760><c> examples,</c><00:01:54.440><c> it</c><00:01:54.520><c> was</c><00:01:54.680><c> clear</c><00:01:55.080><c> how</c><00:01:55.240><c> the</c>
+
+00:01:55.350 --> 00:01:55.360 align:start position:0%
+in those examples, it was clear how the
+ 
+
+00:01:55.360 --> 00:01:56.990 align:start position:0%
+in those examples, it was clear how the
+source<00:01:55.760><c> can</c><00:01:55.920><c> be</c><00:01:56.040><c> scaled</c><00:01:56.480><c> up</c><00:01:56.640><c> to</c><00:01:56.760><c> full</c>
+
+00:01:56.990 --> 00:01:57.000 align:start position:0%
+source can be scaled up to full
+ 
+
+00:01:57.000 --> 00:01:58.910 align:start position:0%
+source can be scaled up to full
+resolution.
+
+00:01:58.910 --> 00:01:58.920 align:start position:0%
+resolution.
+ 
+
+00:01:58.920 --> 00:02:00.030 align:start position:0%
+resolution.
+But<00:01:59.040><c> now</c><00:01:59.211><c> [music]</c><00:01:59.280><c> we</c><00:01:59.400><c> want</c><00:01:59.600><c> to</c><00:01:59.720><c> look</c><00:01:59.920><c> at</c>
+
+00:02:00.030 --> 00:02:00.040 align:start position:0%
+But now [music] we want to look at
+ 
+
+00:02:00.040 --> 00:02:01.550 align:start position:0%
+But now [music] we want to look at
+moving<00:02:00.400><c> the</c><00:02:00.480><c> camera.</c>
+
+00:02:01.550 --> 00:02:01.560 align:start position:0%
+moving the camera.
+ 
+
+00:02:01.560 --> 00:02:03.750 align:start position:0%
+moving the camera.
+And<00:02:01.680><c> this</c><00:02:01.880><c> causes</c><00:02:02.320><c> pixels</c><00:02:02.840><c> to</c><00:02:02.960><c> travel</c><00:02:03.360><c> across</c>
+
+00:02:03.750 --> 00:02:03.760 align:start position:0%
+And this causes pixels to travel across
+ 
+
+00:02:03.760 --> 00:02:04.670 align:start position:0%
+And this causes pixels to travel across
+boundaries,<00:02:03.796><c> [music]</c>
+
+00:02:04.670 --> 00:02:04.680 align:start position:0%
+boundaries, [music]
+ 
+
+00:02:04.680 --> 00:02:09.469 align:start position:0%
+boundaries, [music]
+which<00:02:04.880><c> introduces</c><00:02:05.560><c> new</c><00:02:05.800><c> issues.</c>
+
+00:02:09.469 --> 00:02:09.479 align:start position:0%
+ 
+ 
+
+00:02:09.479 --> 00:02:11.070 align:start position:0%
+ 
+To<00:02:09.600><c> take</c><00:02:09.800><c> a</c><00:02:09.880><c> quick</c><00:02:10.240><c> detour</c><00:02:10.759><c> to</c><00:02:10.920><c> look</c><00:02:11.001><c> [music]</c>
+
+00:02:11.070 --> 00:02:11.080 align:start position:0%
+To take a quick detour to look [music]
+ 
+
+00:02:11.080 --> 00:02:13.550 align:start position:0%
+To take a quick detour to look [music]
+at<00:02:11.200><c> some</c><00:02:11.400><c> existing</c><00:02:11.920><c> examples,</c><00:02:13.040><c> we</c><00:02:13.160><c> can</c><00:02:13.320><c> sort</c>
+
+00:02:13.550 --> 00:02:13.560 align:start position:0%
+at some existing examples, we can sort
+ 
+
+00:02:13.560 --> 00:02:15.910 align:start position:0%
+at some existing examples, we can sort
+of<00:02:13.680><c> categorize</c><00:02:14.480><c> pixel</c><00:02:14.800><c> art</c><00:02:15.000><c> games</c><00:02:15.400><c> into</c><00:02:15.640><c> two</c>
+
+00:02:15.910 --> 00:02:15.920 align:start position:0%
+of categorize pixel art games into two
+ 
+
+00:02:15.920 --> 00:02:18.851 align:start position:0%
+of categorize pixel art games into two
+distinct<00:02:16.520><c> buckets.</c><00:02:17.600><c> That</c><00:02:17.840><c> is</c><00:02:18.280><c> pixel</c><00:02:18.720><c> perfect</c>
+
+00:02:18.851 --> 00:02:18.861 align:start position:0%
+distinct buckets. That is pixel perfect
+ 
+
+00:02:18.861 --> 00:02:21.070 align:start position:0%
+distinct buckets. That is pixel perfect
+[music]<00:02:19.320><c> games.</c><00:02:20.240><c> These</c><00:02:20.480><c> are</c><00:02:20.640><c> which</c><00:02:20.920><c> the</c>
+
+00:02:21.070 --> 00:02:21.080 align:start position:0%
+[music] games. These are which the
+ 
+
+00:02:21.080 --> 00:02:23.230 align:start position:0%
+[music] games. These are which the
+underlying<00:02:21.640><c> source</c><00:02:22.040><c> image</c><00:02:22.400><c> is</c><00:02:22.600><c> rendered</c><00:02:22.959><c> to</c><00:02:23.120><c> a</c>
+
+00:02:23.230 --> 00:02:23.240 align:start position:0%
+underlying source image is rendered to a
+ 
+
+00:02:23.240 --> 00:02:26.190 align:start position:0%
+underlying source image is rendered to a
+low<00:02:23.600><c> resolution</c><00:02:24.280><c> grid,</c><00:02:25.120><c> and</c><00:02:25.280><c> pixels</c><00:02:25.720><c> can</c><00:02:25.920><c> only</c>
+
+00:02:26.190 --> 00:02:26.200 align:start position:0%
+low resolution grid, and pixels can only
+ 
+
+00:02:26.200 --> 00:02:28.676 align:start position:0%
+low resolution grid, and pixels can only
+move<00:02:26.480><c> between</c><00:02:26.840><c> cells</c><00:02:27.480><c> on</c><00:02:27.680><c> that</c><00:02:27.880><c> grid.</c>
+
+00:02:28.676 --> 00:02:28.686 align:start position:0%
+move between cells on that grid.
+ 
+
+00:02:28.686 --> 00:02:28.830 align:start position:0%
+move between cells on that grid.
+&gt;&gt; [music]
+
+00:02:28.830 --> 00:02:28.840 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:02:28.840 --> 00:02:31.510 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; And<00:02:28.920><c> the</c><00:02:29.000><c> second</c><00:02:29.360><c> bucket</c><00:02:29.880><c> is</c><00:02:30.160><c> sub-texel.</c>
+
+00:02:31.510 --> 00:02:31.520 align:start position:0%
+&gt;&gt; And the second bucket is sub-texel.
+ 
+
+00:02:31.520 --> 00:02:33.270 align:start position:0%
+&gt;&gt; And the second bucket is sub-texel.
+These<00:02:31.760><c> are</c><00:02:31.880><c> games</c><00:02:32.280><c> which</c><00:02:32.480><c> the</c><00:02:32.640><c> assets</c><00:02:33.160><c> are</c>
+
+00:02:33.270 --> 00:02:33.280 align:start position:0%
+These are games which the assets are
+ 
+
+00:02:33.280 --> 00:02:35.226 align:start position:0%
+These are games which the assets are
+drawn<00:02:33.720><c> as</c><00:02:33.880><c> pixel</c><00:02:34.320><c> art,</c><00:02:34.880><c> but</c><00:02:35.040><c> they</c><00:02:35.160><c> exist</c>
+
+00:02:35.226 --> 00:02:35.236 align:start position:0%
+drawn as pixel art, but they exist
+ 
+
+00:02:35.236 --> 00:02:37.110 align:start position:0%
+drawn as pixel art, but they exist
+[music]<00:02:35.680><c> in</c><00:02:35.760><c> the</c><00:02:35.880><c> world</c><00:02:36.280><c> using</c><00:02:36.600><c> typical</c>
+
+00:02:37.110 --> 00:02:37.120 align:start position:0%
+[music] in the world using typical
+ 
+
+00:02:37.120 --> 00:02:39.750 align:start position:0%
+[music] in the world using typical
+floating<00:02:37.640><c> point</c><00:02:37.959><c> transforms</c><00:02:39.160><c> and</c><00:02:39.280><c> can</c><00:02:39.480><c> move</c>
+
+00:02:39.750 --> 00:02:39.760 align:start position:0%
+floating point transforms and can move
+ 
+
+00:02:39.760 --> 00:02:42.310 align:start position:0%
+floating point transforms and can move
+smoothly<00:02:40.480><c> anywhere</c><00:02:41.000><c> on</c><00:02:41.160><c> the</c><00:02:41.240><c> screen.</c><00:02:41.786><c> [music]</c>
+
+00:02:42.310 --> 00:02:42.320 align:start position:0%
+smoothly anywhere on the screen. [music]
+ 
+
+00:02:42.320 --> 00:02:44.870 align:start position:0%
+smoothly anywhere on the screen. [music]
+In<00:02:42.440><c> our</c><00:02:42.600><c> project,</c><00:02:43.560><c> we're</c><00:02:43.720><c> firmly</c><00:02:44.240><c> in</c><00:02:44.440><c> bucket</c>
+
+00:02:44.870 --> 00:02:44.880 align:start position:0%
+In our project, we're firmly in bucket
+ 
+
+00:02:44.880 --> 00:02:47.671 align:start position:0%
+In our project, we're firmly in bucket
+one.<00:02:45.720><c> We</c><00:02:45.840><c> have</c><00:02:46.000><c> a</c><00:02:46.120><c> low</c><00:02:46.400><c> resolution</c><00:02:47.040><c> grid,</c>
+
+00:02:47.671 --> 00:02:47.681 align:start position:0%
+one. We have a low resolution grid,
+ 
+
+00:02:47.681 --> 00:02:47.710 align:start position:0%
+one. We have a low resolution grid,
+&gt;&gt; [music]
+
+00:02:47.710 --> 00:02:47.720 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:02:47.720 --> 00:02:49.670 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; and<00:02:47.920><c> objects</c><00:02:48.440><c> can</c><00:02:48.640><c> only</c><00:02:48.920><c> communicate</c><00:02:49.520><c> their</c>
+
+00:02:49.670 --> 00:02:49.680 align:start position:0%
+&gt;&gt; and objects can only communicate their
+ 
+
+00:02:49.680 --> 00:02:51.990 align:start position:0%
+&gt;&gt; and objects can only communicate their
+pixels<00:02:50.320><c> by</c><00:02:50.480><c> writing</c><00:02:50.840><c> their</c><00:02:51.000><c> colors</c><00:02:51.560><c> to</c><00:02:51.680><c> these</c>
+
+00:02:51.990 --> 00:02:52.000 align:start position:0%
+pixels by writing their colors to these
+ 
+
+00:02:52.000 --> 00:02:54.230 align:start position:0%
+pixels by writing their colors to these
+limited<00:02:52.440><c> cells.</c>
+
+00:02:54.230 --> 00:02:54.240 align:start position:0%
+limited cells.
+ 
+
+00:02:54.240 --> 00:02:56.230 align:start position:0%
+limited cells.
+This<00:02:54.400><c> is</c><00:02:54.520><c> an</c><00:02:54.640><c> important</c><00:02:55.200><c> distinction</c><00:02:55.800><c> because</c>
+
+00:02:56.230 --> 00:02:56.240 align:start position:0%
+This is an important distinction because
+ 
+
+00:02:56.240 --> 00:02:57.496 align:start position:0%
+This is an important distinction because
+sub-texel<00:02:56.959><c> games</c>
+
+00:02:57.496 --> 00:02:57.506 align:start position:0%
+sub-texel games
+ 
+
+00:02:57.506 --> 00:02:57.670 align:start position:0%
+sub-texel games
+&gt;&gt; [music]
+
+00:02:57.670 --> 00:02:57.680 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:02:57.680 --> 00:02:59.630 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; do<00:02:57.840><c> not</c><00:02:58.200><c> have</c><00:02:58.360><c> to</c><00:02:58.480><c> worry</c><00:02:58.760><c> about</c><00:02:59.000><c> the</c><00:02:59.160><c> issues</c>
+
+00:02:59.630 --> 00:02:59.640 align:start position:0%
+&gt;&gt; do not have to worry about the issues
+ 
+
+00:02:59.640 --> 00:03:01.350 align:start position:0%
+&gt;&gt; do not have to worry about the issues
+mentioned<00:03:00.040><c> previously.</c>
+
+00:03:01.350 --> 00:03:01.360 align:start position:0%
+mentioned previously.
+ 
+
+00:03:01.360 --> 00:03:02.737 align:start position:0%
+mentioned previously.
+Let's<00:03:01.560><c> have</c><00:03:01.680><c> a</c><00:03:01.760><c> look</c><00:03:02.000><c> at</c><00:03:02.120><c> the</c><00:03:02.239><c> magnitude</c>
+
+00:03:02.737 --> 00:03:02.747 align:start position:0%
+Let's have a look at the magnitude
+ 
+
+00:03:02.747 --> 00:03:04.509 align:start position:0%
+Let's have a look at the magnitude
+[music]<00:03:02.840><c> of</c><00:03:02.920><c> the</c><00:03:03.040><c> problem</c><00:03:03.640><c> actually</c><00:03:04.200><c> in</c><00:03:04.360><c> our</c>
+
+00:03:04.509 --> 00:03:04.519 align:start position:0%
+[music] of the problem actually in our
+ 
+
+00:03:04.519 --> 00:03:06.870 align:start position:0%
+[music] of the problem actually in our
+engine.
+
+00:03:06.870 --> 00:03:06.880 align:start position:0%
+engine.
+ 
+
+00:03:06.880 --> 00:03:08.910 align:start position:0%
+engine.
+We<00:03:07.000><c> can</c><00:03:07.160><c> see</c><00:03:07.400><c> here</c><00:03:07.680><c> a</c><00:03:07.760><c> typical</c><00:03:08.239><c> example</c><00:03:08.720><c> of</c><00:03:08.800><c> the</c>
+
+00:03:08.910 --> 00:03:08.920 align:start position:0%
+We can see here a typical example of the
+ 
+
+00:03:08.920 --> 00:03:10.790 align:start position:0%
+We can see here a typical example of the
+type<00:03:09.160><c> of</c><00:03:09.320><c> sprite</c><00:03:09.680><c> we</c><00:03:09.800><c> might</c><00:03:10.080><c> see</c><00:03:10.239><c> in</c><00:03:10.360><c> a</c><00:03:10.400><c> pixel</c>
+
+00:03:10.790 --> 00:03:10.800 align:start position:0%
+type of sprite we might see in a pixel
+ 
+
+00:03:10.800 --> 00:03:12.562 align:start position:0%
+type of sprite we might see in a pixel
+art<00:03:10.959><c> game.</c>
+
+00:03:12.562 --> 00:03:12.572 align:start position:0%
+art game.
+ 
+
+00:03:12.572 --> 00:03:12.670 align:start position:0%
+art game.
+&gt;&gt; [music]
+
+00:03:12.670 --> 00:03:12.680 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:03:12.680 --> 00:03:14.350 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; When<00:03:12.800><c> we</c><00:03:12.880><c> start</c><00:03:13.200><c> to</c><00:03:13.280><c> move</c><00:03:13.519><c> this</c><00:03:13.680><c> sprite</c><00:03:13.959><c> across</c>
+
+00:03:14.350 --> 00:03:14.360 align:start position:0%
+&gt;&gt; When we start to move this sprite across
+ 
+
+00:03:14.360 --> 00:03:16.550 align:start position:0%
+&gt;&gt; When we start to move this sprite across
+our<00:03:14.480><c> screen,</c><00:03:15.360><c> the</c><00:03:15.480><c> issue</c><00:03:15.800><c> is</c><00:03:15.959><c> immediately</c>
+
+00:03:16.550 --> 00:03:16.560 align:start position:0%
+our screen, the issue is immediately
+ 
+
+00:03:16.560 --> 00:03:19.190 align:start position:0%
+our screen, the issue is immediately
+obvious.<00:03:17.519><c> We've</c><00:03:17.720><c> lost</c><00:03:18.080><c> the</c><00:03:18.160><c> coherency</c><00:03:18.959><c> of</c><00:03:19.080><c> the</c>
+
+00:03:19.190 --> 00:03:19.200 align:start position:0%
+obvious. We've lost the coherency of the
+ 
+
+00:03:19.200 --> 00:03:21.509 align:start position:0%
+obvious. We've lost the coherency of the
+original<00:03:19.640><c> sprite,</c><00:03:20.400><c> and</c><00:03:20.519><c> we</c><00:03:20.640><c> see</c><00:03:20.840><c> this</c><00:03:21.120><c> shimmer</c>
+
+00:03:21.509 --> 00:03:21.519 align:start position:0%
+original sprite, and we see this shimmer
+ 
+
+00:03:21.519 --> 00:03:24.430 align:start position:0%
+original sprite, and we see this shimmer
+that<00:03:21.720><c> leads</c><00:03:22.040><c> to</c><00:03:22.160><c> an</c><00:03:22.239><c> unstable</c><00:03:22.840><c> image.</c>
+
+00:03:24.430 --> 00:03:24.440 align:start position:0%
+that leads to an unstable image.
+ 
+
+00:03:24.440 --> 00:03:26.030 align:start position:0%
+that leads to an unstable image.
+And<00:03:24.560><c> this</c><00:03:24.760><c> is</c><00:03:24.920><c> due</c><00:03:25.120><c> to</c><00:03:25.200><c> pixels</c><00:03:25.672><c> [music]</c><00:03:25.760><c> not</c>
+
+00:03:26.030 --> 00:03:26.040 align:start position:0%
+And this is due to pixels [music] not
+ 
+
+00:03:26.040 --> 00:03:28.590 align:start position:0%
+And this is due to pixels [music] not
+uniformly<00:03:26.680><c> crossing</c><00:03:27.239><c> the</c><00:03:27.320><c> grid</c><00:03:27.600><c> boundaries,</c>
+
+00:03:28.590 --> 00:03:28.600 align:start position:0%
+uniformly crossing the grid boundaries,
+ 
+
+00:03:28.600 --> 00:03:30.247 align:start position:0%
+uniformly crossing the grid boundaries,
+which<00:03:28.800><c> results</c><00:03:29.280><c> in</c><00:03:29.360><c> the</c><00:03:29.440><c> squash</c><00:03:30.040><c> and</c><00:03:30.200><c> stretch</c>
+
+00:03:30.247 --> 00:03:30.257 align:start position:0%
+which results in the squash and stretch
+ 
+
+00:03:30.257 --> 00:03:32.710 align:start position:0%
+which results in the squash and stretch
+[music]<00:03:30.560><c> effect</c><00:03:30.959><c> we</c><00:03:31.080><c> see</c><00:03:31.280><c> in</c><00:03:31.400><c> this</c><00:03:31.600><c> demo.</c><00:03:32.600><c> To</c>
+
+00:03:32.710 --> 00:03:32.720 align:start position:0%
+[music] effect we see in this demo. To
+ 
+
+00:03:32.720 --> 00:03:34.832 align:start position:0%
+[music] effect we see in this demo. To
+mitigate<00:03:33.200><c> these</c><00:03:33.440><c> floating</c><00:03:33.800><c> point</c><00:03:34.120><c> issues,</c>
+
+00:03:34.832 --> 00:03:34.842 align:start position:0%
+mitigate these floating point issues,
+ 
+
+00:03:34.842 --> 00:03:34.990 align:start position:0%
+mitigate these floating point issues,
+&gt;&gt; [music]
+
+00:03:34.990 --> 00:03:35.000 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:03:35.000 --> 00:03:36.870 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; we<00:03:35.120><c> can</c><00:03:35.320><c> look</c><00:03:35.480><c> at</c><00:03:35.640><c> locking</c><00:03:36.080><c> the</c><00:03:36.160><c> camera</c><00:03:36.640><c> to</c><00:03:36.760><c> the</c>
+
+00:03:36.870 --> 00:03:36.880 align:start position:0%
+&gt;&gt; we can look at locking the camera to the
+ 
+
+00:03:36.880 --> 00:03:42.430 align:start position:0%
+&gt;&gt; we can look at locking the camera to the
+pixel<00:03:37.280><c> grid.</c>
+
+00:03:42.430 --> 00:03:42.440 align:start position:0%
+ 
+ 
+
+00:03:42.440 --> 00:03:44.070 align:start position:0%
+ 
+Implementing<00:03:43.040><c> this</c><00:03:43.280><c> is</c><00:03:43.440><c> a</c><00:03:43.519><c> relatively</c>
+
+00:03:44.070 --> 00:03:44.080 align:start position:0%
+Implementing this is a relatively
+ 
+
+00:03:44.080 --> 00:03:46.150 align:start position:0%
+Implementing this is a relatively
+straightforward<00:03:44.800><c> task.</c><00:03:45.322><c> [music]</c><00:03:45.760><c> If</c><00:03:45.880><c> we</c><00:03:46.000><c> can</c>
+
+00:03:46.150 --> 00:03:46.160 align:start position:0%
+straightforward task. [music] If we can
+ 
+
+00:03:46.160 --> 00:03:48.509 align:start position:0%
+straightforward task. [music] If we can
+calculate<00:03:46.720><c> the</c><00:03:46.840><c> size</c><00:03:47.280><c> of</c><00:03:47.400><c> a</c><00:03:47.440><c> single</c><00:03:47.880><c> pixel</c><00:03:48.360><c> in</c>
+
+00:03:48.509 --> 00:03:48.519 align:start position:0%
+calculate the size of a single pixel in
+ 
+
+00:03:48.519 --> 00:03:51.030 align:start position:0%
+calculate the size of a single pixel in
+the<00:03:48.640><c> high</c><00:03:48.840><c> resolution</c><00:03:49.519><c> output,</c><00:03:50.519><c> we</c><00:03:50.560><c> can</c><00:03:50.760><c> then</c>
+
+00:03:51.030 --> 00:03:51.040 align:start position:0%
+the high resolution output, we can then
+ 
+
+00:03:51.040 --> 00:03:53.110 align:start position:0%
+the high resolution output, we can then
+use<00:03:51.320><c> that</c><00:03:51.560><c> information</c><00:03:52.360><c> to</c><00:03:52.560><c> ensure</c><00:03:52.960><c> the</c>
+
+00:03:53.110 --> 00:03:53.120 align:start position:0%
+use that information to ensure the
+ 
+
+00:03:53.120 --> 00:03:55.190 align:start position:0%
+use that information to ensure the
+camera<00:03:53.640><c> is</c><00:03:53.920><c> always</c><00:03:54.360><c> positioned</c><00:03:55.000><c> at</c><00:03:55.120><c> a</c>
+
+00:03:55.190 --> 00:03:55.200 align:start position:0%
+camera is always positioned at a
+ 
+
+00:03:55.200 --> 00:03:57.990 align:start position:0%
+camera is always positioned at a
+multiple<00:03:55.800><c> of</c><00:03:55.920><c> that</c><00:03:56.200><c> value</c><00:03:57.040><c> using</c><00:03:57.400><c> a</c><00:03:57.480><c> rounding</c>
+
+00:03:57.990 --> 00:03:58.000 align:start position:0%
+multiple of that value using a rounding
+ 
+
+00:03:58.000 --> 00:04:01.470 align:start position:0%
+multiple of that value using a rounding
+function.<00:03:58.422><c> [music]</c>
+
+00:04:01.470 --> 00:04:01.480 align:start position:0%
+ 
+ 
+
+00:04:01.480 --> 00:04:03.230 align:start position:0%
+ 
+Now,<00:04:01.680><c> this</c><00:04:01.880><c> is</c><00:04:02.040><c> good</c><00:04:02.240><c> news</c><00:04:02.640><c> for</c><00:04:02.800><c> our</c><00:04:02.920><c> horse</c>
+
+00:04:03.230 --> 00:04:03.240 align:start position:0%
+Now, this is good news for our horse
+ 
+
+00:04:03.240 --> 00:04:05.270 align:start position:0%
+Now, this is good news for our horse
+callus.<00:04:03.662><c> [music]</c><00:04:04.160><c> With</c><00:04:04.360><c> the</c><00:04:04.480><c> grid</c><00:04:04.800><c> snapping</c>
+
+00:04:05.270 --> 00:04:05.280 align:start position:0%
+callus. [music] With the grid snapping
+ 
+
+00:04:05.280 --> 00:04:07.310 align:start position:0%
+callus. [music] With the grid snapping
+implemented,<00:04:06.200><c> we're</c><00:04:06.360><c> able</c><00:04:06.600><c> to</c><00:04:06.720><c> move</c><00:04:07.000><c> around</c>
+
+00:04:07.310 --> 00:04:07.320 align:start position:0%
+implemented, we're able to move around
+ 
+
+00:04:07.320 --> 00:04:09.070 align:start position:0%
+implemented, we're able to move around
+the<00:04:07.400><c> world</c><00:04:07.880><c> and</c><00:04:08.000><c> explore</c><00:04:08.247><c> [music]</c><00:04:08.480><c> the</c><00:04:08.600><c> space</c>
+
+00:04:09.070 --> 00:04:09.080 align:start position:0%
+the world and explore [music] the space
+ 
+
+00:04:09.080 --> 00:04:10.910 align:start position:0%
+the world and explore [music] the space
+without<00:04:09.400><c> the</c><00:04:09.480><c> extreme</c><00:04:10.000><c> shimmer</c><00:04:10.400><c> we</c><00:04:10.560><c> saw</c><00:04:10.800><c> in</c>
+
+00:04:10.910 --> 00:04:10.920 align:start position:0%
+without the extreme shimmer we saw in
+ 
+
+00:04:10.920 --> 00:04:13.477 align:start position:0%
+without the extreme shimmer we saw in
+the<00:04:11.000><c> demo.</c>
+
+00:04:13.477 --> 00:04:13.487 align:start position:0%
+the demo.
+ 
+
+00:04:13.487 --> 00:04:14.430 align:start position:0%
+the demo.
+&gt;&gt; [music]
+
+00:04:14.430 --> 00:04:14.440 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:04:14.440 --> 00:04:16.509 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; When<00:04:14.600><c> we</c><00:04:14.720><c> enable</c><00:04:15.080><c> the</c><00:04:15.200><c> same</c><00:04:15.600><c> grid</c><00:04:15.880><c> snapping</c><00:04:16.400><c> as</c>
+
+00:04:16.509 --> 00:04:16.519 align:start position:0%
+&gt;&gt; When we enable the same grid snapping as
+ 
+
+00:04:16.519 --> 00:04:18.750 align:start position:0%
+&gt;&gt; When we enable the same grid snapping as
+we<00:04:16.640><c> saw</c><00:04:16.840><c> in</c><00:04:16.959><c> our</c><00:04:17.079><c> main</c><00:04:17.359><c> scene,</c><00:04:18.079><c> we</c><00:04:18.200><c> can</c><00:04:18.400><c> witness</c>
+
+00:04:18.750 --> 00:04:18.760 align:start position:0%
+we saw in our main scene, we can witness
+ 
+
+00:04:18.760 --> 00:04:21.069 align:start position:0%
+we saw in our main scene, we can witness
+the<00:04:18.880><c> issue</c><00:04:19.200><c> more</c><00:04:19.440><c> clearly.</c><00:04:20.519><c> We</c><00:04:20.640><c> see</c><00:04:20.799><c> that</c><00:04:20.959><c> the</c>
+
+00:04:21.069 --> 00:04:21.079 align:start position:0%
+the issue more clearly. We see that the
+ 
+
+00:04:21.079 --> 00:04:23.110 align:start position:0%
+the issue more clearly. We see that the
+shimmer<00:04:21.440><c> no</c><00:04:21.640><c> longer</c><00:04:22.000><c> exists,</c><00:04:22.657><c> [music]</c><00:04:22.960><c> but</c>
+
+00:04:23.110 --> 00:04:23.120 align:start position:0%
+shimmer no longer exists, [music] but
+ 
+
+00:04:23.120 --> 00:04:25.350 align:start position:0%
+shimmer no longer exists, [music] but
+now<00:04:23.360><c> the</c><00:04:23.480><c> camera</c><00:04:23.960><c> is</c><00:04:24.120><c> restricted</c><00:04:24.760><c> to</c><00:04:24.880><c> move</c><00:04:25.200><c> in</c>
+
+00:04:25.350 --> 00:04:25.360 align:start position:0%
+now the camera is restricted to move in
+ 
+
+00:04:25.360 --> 00:04:28.270 align:start position:0%
+now the camera is restricted to move in
+discrete<00:04:26.040><c> blocky</c><00:04:26.520><c> steps.</c><00:04:27.560><c> And</c><00:04:27.760><c> the</c><00:04:27.840><c> lower</c><00:04:28.160><c> the</c>
+
+00:04:28.270 --> 00:04:28.280 align:start position:0%
+discrete blocky steps. And the lower the
+ 
+
+00:04:28.280 --> 00:04:32.590 align:start position:0%
+discrete blocky steps. And the lower the
+resolution,<00:04:29.200><c> the</c><00:04:29.360><c> worse</c><00:04:29.720><c> this</c><00:04:29.919><c> becomes.</c>
+
+00:04:32.590 --> 00:04:32.600 align:start position:0%
+resolution, the worse this becomes.
+ 
+
+00:04:32.600 --> 00:04:34.670 align:start position:0%
+resolution, the worse this becomes.
+Our<00:04:32.720><c> camera</c><00:04:33.080><c> no</c><00:04:33.320><c> longer</c><00:04:33.720><c> has</c><00:04:33.960><c> the</c><00:04:34.080><c> ability</c><00:04:34.520><c> to</c>
+
+00:04:34.670 --> 00:04:34.680 align:start position:0%
+Our camera no longer has the ability to
+ 
+
+00:04:34.680 --> 00:04:35.950 align:start position:0%
+Our camera no longer has the ability to
+move<00:04:34.919><c> smoothly.</c><00:04:35.103><c> [music]</c>
+
+00:04:35.950 --> 00:04:35.960 align:start position:0%
+move smoothly. [music]
+ 
+
+00:04:35.960 --> 00:04:37.950 align:start position:0%
+move smoothly. [music]
+This<00:04:36.160><c> blocky</c><00:04:36.600><c> motion</c><00:04:37.120><c> really</c><00:04:37.360><c> doesn't</c><00:04:37.680><c> feel</c>
+
+00:04:37.950 --> 00:04:37.960 align:start position:0%
+This blocky motion really doesn't feel
+ 
+
+00:04:37.960 --> 00:04:39.990 align:start position:0%
+This blocky motion really doesn't feel
+great<00:04:38.240><c> to</c><00:04:38.360><c> play,</c><00:04:39.160><c> and</c><00:04:39.280><c> we'll</c><00:04:39.400><c> need</c><00:04:39.560><c> to</c><00:04:39.640><c> come</c><00:04:39.840><c> up</c>
+
+00:04:39.990 --> 00:04:40.000 align:start position:0%
+great to play, and we'll need to come up
+ 
+
+00:04:40.000 --> 00:04:42.430 align:start position:0%
+great to play, and we'll need to come up
+with<00:04:40.120><c> a</c><00:04:40.200><c> way</c><00:04:40.440><c> to</c><00:04:40.600><c> have</c><00:04:40.760><c> a</c><00:04:40.800><c> grid</c><00:04:41.160><c> aligned</c><00:04:41.600><c> camera</c>
+
+00:04:42.430 --> 00:04:42.440 align:start position:0%
+with a way to have a grid aligned camera
+ 
+
+00:04:42.440 --> 00:04:44.070 align:start position:0%
+with a way to have a grid aligned camera
+whilst<00:04:42.800><c> maintaining</c><00:04:42.963><c> [music]</c><00:04:43.400><c> sub-texel</c>
+
+00:04:44.070 --> 00:04:44.080 align:start position:0%
+whilst maintaining [music] sub-texel
+ 
+
+00:04:44.080 --> 00:04:47.830 align:start position:0%
+whilst maintaining [music] sub-texel
+motion.
+
+00:04:47.830 --> 00:04:47.840 align:start position:0%
+ 
+ 
+
+00:04:47.840 --> 00:04:49.990 align:start position:0%
+ 
+The<00:04:47.919><c> first</c><00:04:48.240><c> part</c><00:04:48.440><c> of</c><00:04:48.520><c> solving</c><00:04:49.000><c> any</c><00:04:49.200><c> problem</c><00:04:49.760><c> is</c>
+
+00:04:49.990 --> 00:04:50.000 align:start position:0%
+The first part of solving any problem is
+ 
+
+00:04:50.000 --> 00:04:52.123 align:start position:0%
+The first part of solving any problem is
+identifying<00:04:50.640><c> the</c><00:04:50.760><c> source</c><00:04:51.040><c> of</c><00:04:51.160><c> the</c><00:04:51.280><c> issue.</c>
+
+00:04:52.123 --> 00:04:52.133 align:start position:0%
+identifying the source of the issue.
+ 
+
+00:04:52.133 --> 00:04:52.350 align:start position:0%
+identifying the source of the issue.
+&gt;&gt; [music]
+
+00:04:52.350 --> 00:04:52.360 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:04:52.360 --> 00:04:54.030 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; When<00:04:52.480><c> we</c><00:04:52.600><c> rounded</c><00:04:53.000><c> the</c><00:04:53.080><c> camera</c><00:04:53.440><c> position</c><00:04:53.919><c> to</c>
+
+00:04:54.030 --> 00:04:54.040 align:start position:0%
+&gt;&gt; When we rounded the camera position to
+ 
+
+00:04:54.040 --> 00:04:56.390 align:start position:0%
+&gt;&gt; When we rounded the camera position to
+the<00:04:54.160><c> grid,</c><00:04:54.919><c> we</c><00:04:55.040><c> introduced</c><00:04:55.640><c> a</c><00:04:55.680><c> discrepancy</c>
+
+00:04:56.390 --> 00:04:56.400 align:start position:0%
+the grid, we introduced a discrepancy
+ 
+
+00:04:56.400 --> 00:04:58.310 align:start position:0%
+the grid, we introduced a discrepancy
+between<00:04:56.840><c> where</c><00:04:56.960><c> the</c><00:04:57.080><c> camera</c><00:04:57.480><c> is</c><00:04:57.960><c> and</c><00:04:58.120><c> where</c>
+
+00:04:58.310 --> 00:04:58.320 align:start position:0%
+between where the camera is and where
+ 
+
+00:04:58.320 --> 00:05:00.950 align:start position:0%
+between where the camera is and where
+the<00:04:58.440><c> camera</c><00:04:58.840><c> renders.</c><00:05:00.040><c> We</c><00:05:00.160><c> can</c><00:05:00.320><c> capture</c><00:05:00.720><c> this</c>
+
+00:05:00.950 --> 00:05:00.960 align:start position:0%
+the camera renders. We can capture this
+ 
+
+00:05:00.960 --> 00:05:02.750 align:start position:0%
+the camera renders. We can capture this
+loss<00:05:01.320><c> by</c><00:05:01.480><c> storing</c><00:05:01.919><c> the</c><00:05:02.000><c> difference</c><00:05:02.440><c> between</c>
+
+00:05:02.750 --> 00:05:02.760 align:start position:0%
+loss by storing the difference between
+ 
+
+00:05:02.760 --> 00:05:05.190 align:start position:0%
+loss by storing the difference between
+the<00:05:02.840><c> position</c><00:05:03.480><c> and</c><00:05:03.640><c> its</c><00:05:03.840><c> rounded</c><00:05:04.200><c> location</c>
+
+00:05:05.190 --> 00:05:05.200 align:start position:0%
+the position and its rounded location
+ 
+
+00:05:05.200 --> 00:05:11.110 align:start position:0%
+the position and its rounded location
+into<00:05:05.520><c> a</c><00:05:05.560><c> new</c><00:05:05.880><c> variable.</c>
+
+00:05:11.110 --> 00:05:11.120 align:start position:0%
+ 
+ 
+
+00:05:11.120 --> 00:05:12.830 align:start position:0%
+ 
+Originally,<00:05:11.760><c> we</c><00:05:11.919><c> identified</c><00:05:12.600><c> that</c><00:05:12.720><c> we</c>
+
+00:05:12.830 --> 00:05:12.840 align:start position:0%
+Originally, we identified that we
+ 
+
+00:05:12.840 --> 00:05:14.470 align:start position:0%
+Originally, we identified that we
+couldn't<00:05:13.160><c> move</c><00:05:13.360><c> the</c><00:05:13.480><c> camera</c><00:05:13.840><c> smoothly</c>
+
+00:05:14.470 --> 00:05:14.480 align:start position:0%
+couldn't move the camera smoothly
+ 
+
+00:05:14.480 --> 00:05:16.670 align:start position:0%
+couldn't move the camera smoothly
+because<00:05:14.840><c> of</c><00:05:14.919><c> this</c><00:05:15.160><c> high-to-low</c><00:05:16.000><c> resolution</c>
+
+00:05:16.670 --> 00:05:16.680 align:start position:0%
+because of this high-to-low resolution
+ 
+
+00:05:16.680 --> 00:05:17.668 align:start position:0%
+because of this high-to-low resolution
+mismatch.
+
+00:05:17.668 --> 00:05:17.678 align:start position:0%
+mismatch.
+ 
+
+00:05:17.678 --> 00:05:18.630 align:start position:0%
+mismatch.
+&gt;&gt; [music]
+
+00:05:18.630 --> 00:05:18.640 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:05:18.640 --> 00:05:20.590 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; But<00:05:18.800><c> surely,</c><00:05:19.160><c> if</c><00:05:19.280><c> the</c><00:05:19.400><c> movement</c><00:05:19.800><c> was</c><00:05:19.960><c> computed</c>
+
+00:05:20.590 --> 00:05:20.600 align:start position:0%
+&gt;&gt; But surely, if the movement was computed
+ 
+
+00:05:20.600 --> 00:05:23.310 align:start position:0%
+&gt;&gt; But surely, if the movement was computed
+after<00:05:21.000><c> upscaling,</c><00:05:22.040><c> high-to-high</c><00:05:22.600><c> resolution</c>
+
+00:05:23.310 --> 00:05:23.320 align:start position:0%
+after upscaling, high-to-high resolution
+ 
+
+00:05:23.320 --> 00:05:26.838 align:start position:0%
+after upscaling, high-to-high resolution
+should<00:05:23.560><c> not</c><00:05:23.800><c> display</c><00:05:24.320><c> any</c><00:05:24.560><c> of</c><00:05:24.640><c> these</c><00:05:24.880><c> issues.</c>
+
+00:05:26.838 --> 00:05:26.848 align:start position:0%
+should not display any of these issues.
+ 
+
+00:05:26.848 --> 00:05:29.190 align:start position:0%
+should not display any of these issues.
+&gt;&gt; [music]
+
+00:05:29.190 --> 00:05:29.200 align:start position:0%
+ 
+ 
+
+00:05:29.200 --> 00:05:30.950 align:start position:0%
+ 
+&gt;&gt; So,<00:05:29.320><c> let's</c><00:05:29.560><c> create</c><00:05:29.840><c> a</c><00:05:29.880><c> new</c><00:05:30.120><c> render</c><00:05:30.440><c> texture</c>
+
+00:05:30.950 --> 00:05:30.960 align:start position:0%
+&gt;&gt; So, let's create a new render texture
+ 
+
+00:05:30.960 --> 00:05:33.030 align:start position:0%
+&gt;&gt; So, let's create a new render texture
+and<00:05:31.160><c> copy</c><00:05:31.560><c> over</c><00:05:31.800><c> the</c><00:05:31.919><c> result</c><00:05:32.400><c> of</c><00:05:32.560><c> our</c><00:05:32.680><c> scene</c>
+
+00:05:33.030 --> 00:05:33.040 align:start position:0%
+and copy over the result of our scene
+ 
+
+00:05:33.040 --> 00:05:37.790 align:start position:0%
+and copy over the result of our scene
+camera<00:05:33.840><c> into</c><00:05:34.200><c> this</c><00:05:34.440><c> dedicated</c><00:05:35.120><c> RT.</c>
+
+00:05:37.790 --> 00:05:37.800 align:start position:0%
+camera into this dedicated RT.
+ 
+
+00:05:37.800 --> 00:05:39.750 align:start position:0%
+camera into this dedicated RT.
+We'll<00:05:37.919><c> establish</c><00:05:38.480><c> now</c><00:05:38.720><c> a</c><00:05:38.760><c> secondary</c><00:05:39.440><c> game</c>
+
+00:05:39.750 --> 00:05:39.760 align:start position:0%
+We'll establish now a secondary game
+ 
+
+00:05:39.760 --> 00:05:41.830 align:start position:0%
+We'll establish now a secondary game
+camera<00:05:40.240><c> alongside</c><00:05:40.960><c> the</c><00:05:41.040><c> one</c><00:05:41.360><c> currently</c>
+
+00:05:41.830 --> 00:05:41.840 align:start position:0%
+camera alongside the one currently
+ 
+
+00:05:41.840 --> 00:05:44.390 align:start position:0%
+camera alongside the one currently
+rendering<00:05:42.360><c> our</c><00:05:42.480><c> scene.</c><00:05:43.440><c> And</c><00:05:43.600><c> this</c><00:05:43.760><c> new</c><00:05:43.960><c> camera</c>
+
+00:05:44.390 --> 00:05:44.400 align:start position:0%
+rendering our scene. And this new camera
+ 
+
+00:05:44.400 --> 00:05:46.430 align:start position:0%
+rendering our scene. And this new camera
+has<00:05:44.640><c> one</c><00:05:44.919><c> job,</c><00:05:45.440><c> and</c><00:05:45.560><c> that's</c><00:05:45.800><c> to</c><00:05:45.919><c> render</c><00:05:46.240><c> out</c>
+
+00:05:46.430 --> 00:05:46.440 align:start position:0%
+has one job, and that's to render out
+ 
+
+00:05:46.440 --> 00:05:48.550 align:start position:0%
+has one job, and that's to render out
+this<00:05:46.720><c> new</c><00:05:46.920><c> texture</c><00:05:47.440><c> created</c><00:05:47.920><c> from</c><00:05:48.080><c> our</c><00:05:48.200><c> first</c>
+
+00:05:48.550 --> 00:05:48.560 align:start position:0%
+this new texture created from our first
+ 
+
+00:05:48.560 --> 00:05:50.550 align:start position:0%
+this new texture created from our first
+pipeline.
+
+00:05:50.550 --> 00:05:50.560 align:start position:0%
+pipeline.
+ 
+
+00:05:50.560 --> 00:05:52.430 align:start position:0%
+pipeline.
+The<00:05:50.640><c> scope</c><00:05:51.000><c> of</c><00:05:51.080><c> this</c><00:05:51.280><c> new</c><00:05:51.480><c> camera</c><00:05:51.920><c> is</c><00:05:52.120><c> just</c><00:05:52.360><c> a</c>
+
+00:05:52.430 --> 00:05:52.440 align:start position:0%
+The scope of this new camera is just a
+ 
+
+00:05:52.440 --> 00:05:54.830 align:start position:0%
+The scope of this new camera is just a
+raw<00:05:52.840><c> image,</c><00:05:53.360><c> which</c><00:05:53.600><c> sits</c><00:05:53.880><c> perpendicular</c><00:05:54.720><c> to</c>
+
+00:05:54.830 --> 00:05:54.840 align:start position:0%
+raw image, which sits perpendicular to
+ 
+
+00:05:54.840 --> 00:05:56.350 align:start position:0%
+raw image, which sits perpendicular to
+the<00:05:54.960><c> view</c><00:05:55.160><c> direction.</c><00:05:55.669><c> [music]</c>
+
+00:05:56.350 --> 00:05:56.360 align:start position:0%
+the view direction. [music]
+ 
+
+00:05:56.360 --> 00:05:58.750 align:start position:0%
+the view direction. [music]
+We<00:05:56.440><c> disable</c><00:05:57.000><c> any</c><00:05:57.200><c> additional</c><00:05:57.760><c> render</c><00:05:58.120><c> passes</c>
+
+00:05:58.750 --> 00:05:58.760 align:start position:0%
+We disable any additional render passes
+ 
+
+00:05:58.760 --> 00:06:01.470 align:start position:0%
+We disable any additional render passes
+or<00:05:58.960><c> post-processing,</c><00:06:00.440><c> as</c><00:06:00.640><c> this</c><00:06:00.880><c> is</c><00:06:01.000><c> handled</c>
+
+00:06:01.470 --> 00:06:01.480 align:start position:0%
+or post-processing, as this is handled
+ 
+
+00:06:01.480 --> 00:06:03.110 align:start position:0%
+or post-processing, as this is handled
+when<00:06:01.600><c> the</c><00:06:01.680><c> scene</c><00:06:02.040><c> is</c><00:06:02.200><c> rendered</c><00:06:02.600><c> by</c><00:06:02.720><c> the</c><00:06:02.840><c> main</c>
+
+00:06:03.110 --> 00:06:03.120 align:start position:0%
+when the scene is rendered by the main
+ 
+
+00:06:03.120 --> 00:06:05.830 align:start position:0%
+when the scene is rendered by the main
+camera.
+
+00:06:05.830 --> 00:06:05.840 align:start position:0%
+ 
+ 
+
+00:06:05.840 --> 00:06:07.870 align:start position:0%
+ 
+Now,<00:06:06.120><c> reintroducing</c><00:06:06.960><c> the</c><00:06:07.040><c> stored</c><00:06:07.480><c> loss</c>
+
+00:06:07.870 --> 00:06:07.880 align:start position:0%
+Now, reintroducing the stored loss
+ 
+
+00:06:07.880 --> 00:06:09.414 align:start position:0%
+Now, reintroducing the stored loss
+variable<00:06:08.360><c> from</c><00:06:08.600><c> before,</c>
+
+00:06:09.414 --> 00:06:09.424 align:start position:0%
+variable from before,
+ 
+
+00:06:09.424 --> 00:06:09.510 align:start position:0%
+variable from before,
+&gt;&gt; [music]
+
+00:06:09.510 --> 00:06:09.520 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:06:09.520 --> 00:06:11.990 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; we<00:06:09.640><c> can</c><00:06:09.840><c> offset</c><00:06:10.320><c> the</c><00:06:10.400><c> transform</c><00:06:11.080><c> of</c><00:06:11.200><c> this</c><00:06:11.440><c> RT</c>
+
+00:06:11.990 --> 00:06:12.000 align:start position:0%
+&gt;&gt; we can offset the transform of this RT
+ 
+
+00:06:12.000 --> 00:06:14.110 align:start position:0%
+&gt;&gt; we can offset the transform of this RT
+plane<00:06:12.400><c> by</c><00:06:12.520><c> the</c><00:06:12.640><c> vector</c><00:06:13.120><c> calculated</c><00:06:13.880><c> in</c><00:06:14.000><c> the</c>
+
+00:06:14.110 --> 00:06:14.120 align:start position:0%
+plane by the vector calculated in the
+ 
+
+00:06:14.120 --> 00:06:16.990 align:start position:0%
+plane by the vector calculated in the
+rounding<00:06:14.560><c> step.</c><00:06:15.480><c> And</c><00:06:15.640><c> so,</c><00:06:15.840><c> every</c><00:06:16.200><c> frame</c><00:06:16.840><c> our</c>
+
+00:06:16.990 --> 00:06:17.000 align:start position:0%
+rounding step. And so, every frame our
+ 
+
+00:06:17.000 --> 00:06:18.630 align:start position:0%
+rounding step. And so, every frame our
+texture<00:06:17.480><c> represents</c><00:06:17.939><c> [music]</c><00:06:18.080><c> the</c><00:06:18.160><c> position</c>
+
+00:06:18.630 --> 00:06:18.640 align:start position:0%
+texture represents [music] the position
+ 
+
+00:06:18.640 --> 00:06:20.630 align:start position:0%
+texture represents [music] the position
+of<00:06:18.760><c> our</c><00:06:18.880><c> render</c><00:06:19.240><c> camera</c><00:06:20.040><c> minus</c><00:06:20.520><c> the</c>
+
+00:06:20.630 --> 00:06:20.640 align:start position:0%
+of our render camera minus the
+ 
+
+00:06:20.640 --> 00:06:23.670 align:start position:0%
+of our render camera minus the
+discrepancy<00:06:21.280><c> lost</c><00:06:21.720><c> when</c><00:06:21.880><c> rounding.</c>
+
+00:06:23.670 --> 00:06:23.680 align:start position:0%
+discrepancy lost when rounding.
+ 
+
+00:06:23.680 --> 00:06:25.070 align:start position:0%
+discrepancy lost when rounding.
+And<00:06:23.800><c> this</c><00:06:23.960><c> might</c><00:06:24.120><c> be</c><00:06:24.240><c> a</c><00:06:24.280><c> little</c><00:06:24.520><c> difficult</c><00:06:25.000><c> to</c>
+
+00:06:25.070 --> 00:06:25.080 align:start position:0%
+And this might be a little difficult to
+ 
+
+00:06:25.080 --> 00:06:27.230 align:start position:0%
+And this might be a little difficult to
+conceptualize,<00:06:25.960><c> but</c><00:06:26.120><c> essentially</c><00:06:26.760><c> our</c><00:06:26.960><c> view</c>
+
+00:06:27.230 --> 00:06:27.240 align:start position:0%
+conceptualize, but essentially our view
+ 
+
+00:06:27.240 --> 00:06:29.590 align:start position:0%
+conceptualize, but essentially our view
+of<00:06:27.320><c> the</c><00:06:27.440><c> scene</c><00:06:28.280><c> is</c><00:06:28.440><c> now</c><00:06:28.760><c> able</c><00:06:29.040><c> to</c><00:06:29.200><c> move</c>
+
+00:06:29.590 --> 00:06:29.600 align:start position:0%
+of the scene is now able to move
+ 
+
+00:06:29.600 --> 00:06:31.684 align:start position:0%
+of the scene is now able to move
+smoothly<00:06:30.320><c> anywhere</c><00:06:30.800><c> in</c><00:06:30.919><c> the</c><00:06:31.000><c> world,</c>
+
+00:06:31.684 --> 00:06:31.694 align:start position:0%
+smoothly anywhere in the world,
+ 
+
+00:06:31.694 --> 00:06:31.870 align:start position:0%
+smoothly anywhere in the world,
+&gt;&gt; [music]
+
+00:06:31.870 --> 00:06:31.880 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:06:31.880 --> 00:06:33.830 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; and<00:06:32.000><c> at</c><00:06:32.120><c> the</c><00:06:32.200><c> same</c><00:06:32.520><c> time</c><00:06:32.960><c> the</c><00:06:33.080><c> render</c><00:06:33.400><c> camera</c>
+
+00:06:33.830 --> 00:06:33.840 align:start position:0%
+&gt;&gt; and at the same time the render camera
+ 
+
+00:06:33.840 --> 00:06:36.310 align:start position:0%
+&gt;&gt; and at the same time the render camera
+can<00:06:34.080><c> only</c><00:06:34.400><c> be</c><00:06:34.560><c> positioned</c><00:06:35.240><c> on</c><00:06:35.440><c> discrete</c><00:06:36.000><c> grid</c>
+
+00:06:36.310 --> 00:06:36.320 align:start position:0%
+can only be positioned on discrete grid
+ 
+
+00:06:36.320 --> 00:06:42.630 align:start position:0%
+can only be positioned on discrete grid
+boundaries.
+
+00:06:42.630 --> 00:06:42.640 align:start position:0%
+ 
+ 
+
+00:06:42.640 --> 00:06:45.310 align:start position:0%
+ 
+Now,<00:06:42.919><c> Callus</c><00:06:43.400><c> is</c><00:06:43.560><c> completely</c><00:06:44.240><c> free.</c><00:06:45.040><c> We</c><00:06:45.160><c> can</c>
+
+00:06:45.310 --> 00:06:45.320 align:start position:0%
+Now, Callus is completely free. We can
+ 
+
+00:06:45.320 --> 00:06:47.150 align:start position:0%
+Now, Callus is completely free. We can
+move<00:06:45.520><c> around</c><00:06:45.800><c> the</c><00:06:45.880><c> world</c><00:06:46.280><c> unimpeded</c><00:06:47.000><c> by</c>
+
+00:06:47.150 --> 00:06:47.160 align:start position:0%
+move around the world unimpeded by
+ 
+
+00:06:47.160 --> 00:06:48.714 align:start position:0%
+move around the world unimpeded by
+jitter<00:06:47.640><c> or</c><00:06:47.800><c> snapping.</c>
+
+00:06:48.714 --> 00:06:48.724 align:start position:0%
+jitter or snapping.
+ 
+
+00:06:48.724 --> 00:06:49.990 align:start position:0%
+jitter or snapping.
+&gt;&gt; [music]
+
+00:06:49.990 --> 00:06:50.000 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:06:50.000 --> 00:06:51.750 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; Whilst<00:06:50.240><c> the</c><00:06:50.400><c> image</c><00:06:50.800><c> isn't</c><00:06:51.160><c> entirely</c>
+
+00:06:51.750 --> 00:06:51.760 align:start position:0%
+&gt;&gt; Whilst the image isn't entirely
+ 
+
+00:06:51.760 --> 00:06:53.950 align:start position:0%
+&gt;&gt; Whilst the image isn't entirely
+shimmer-free,<00:06:52.640><c> as</c><00:06:52.880><c> not</c><00:06:53.120><c> all</c><00:06:53.280><c> surfaces</c><00:06:53.840><c> are</c>
+
+00:06:53.950 --> 00:06:53.960 align:start position:0%
+shimmer-free, as not all surfaces are
+ 
+
+00:06:53.960 --> 00:06:55.929 align:start position:0%
+shimmer-free, as not all surfaces are
+perpendicular<00:06:54.720><c> with</c><00:06:54.880><c> the</c><00:06:55.000><c> camera,</c><00:06:55.919><c> compared</c>
+
+00:06:55.929 --> 00:06:55.939 align:start position:0%
+perpendicular with the camera, compared
+ 
+
+00:06:55.939 --> 00:06:58.390 align:start position:0%
+perpendicular with the camera, compared
+[music]<00:06:56.280><c> to</c><00:06:56.400><c> the</c><00:06:56.560><c> old</c><00:06:56.760><c> method,</c><00:06:57.560><c> the</c><00:06:57.680><c> game</c><00:06:57.960><c> feel</c>
+
+00:06:58.390 --> 00:06:58.400 align:start position:0%
+[music] to the old method, the game feel
+ 
+
+00:06:58.400 --> 00:07:00.504 align:start position:0%
+[music] to the old method, the game feel
+is<00:06:58.560><c> dramatically</c><00:06:59.320><c> improved.</c>
+
+00:07:00.504 --> 00:07:00.514 align:start position:0%
+is dramatically improved.
+ 
+
+00:07:00.514 --> 00:07:02.110 align:start position:0%
+is dramatically improved.
+&gt;&gt; [music]
+
+00:07:02.110 --> 00:07:02.120 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:07:02.120 --> 00:07:03.990 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; Our<00:07:02.240><c> camera</c><00:07:02.600><c> system</c><00:07:03.080><c> is</c><00:07:03.280><c> now</c><00:07:03.600><c> able</c><00:07:03.840><c> to</c>
+
+00:07:03.990 --> 00:07:04.000 align:start position:0%
+&gt;&gt; Our camera system is now able to
+ 
+
+00:07:04.000 --> 00:07:06.150 align:start position:0%
+&gt;&gt; Our camera system is now able to
+smoothly<00:07:04.640><c> handle</c><00:07:05.000><c> translations</c><00:07:05.919><c> and</c>
+
+00:07:06.150 --> 00:07:06.160 align:start position:0%
+smoothly handle translations and
+ 
+
+00:07:06.160 --> 00:07:08.670 align:start position:0%
+smoothly handle translations and
+movement.<00:07:07.160><c> But</c><00:07:07.320><c> potentially,</c><00:07:08.000><c> we</c><00:07:08.200><c> don't</c><00:07:08.480><c> want</c>
+
+00:07:08.670 --> 00:07:08.680 align:start position:0%
+movement. But potentially, we don't want
+ 
+
+00:07:08.680 --> 00:07:10.670 align:start position:0%
+movement. But potentially, we don't want
+to<00:07:08.760><c> be</c><00:07:08.880><c> limited</c><00:07:09.400><c> to</c><00:07:09.480><c> just</c><00:07:09.760><c> a</c><00:07:09.800><c> single</c><00:07:10.280><c> camera</c>
+
+00:07:10.670 --> 00:07:10.680 align:start position:0%
+to be limited to just a single camera
+ 
+
+00:07:10.680 --> 00:07:13.150 align:start position:0%
+to be limited to just a single camera
+angle<00:07:11.000><c> when</c><00:07:11.160><c> making</c><00:07:11.520><c> a</c><00:07:11.560><c> game.</c><00:07:12.600><c> So,</c><00:07:12.720><c> the</c><00:07:12.840><c> last</c>
+
+00:07:13.150 --> 00:07:13.160 align:start position:0%
+angle when making a game. So, the last
+ 
+
+00:07:13.160 --> 00:07:14.750 align:start position:0%
+angle when making a game. So, the last
+thing<00:07:13.360><c> I</c><00:07:13.400><c> want</c><00:07:13.640><c> to</c><00:07:13.720><c> look</c><00:07:13.919><c> at</c><00:07:14.120><c> today</c><00:07:14.560><c> is</c>
+
+00:07:14.750 --> 00:07:14.760 align:start position:0%
+thing I want to look at today is
+ 
+
+00:07:14.760 --> 00:07:16.224 align:start position:0%
+thing I want to look at today is
+handling<00:07:15.240><c> rotation</c>
+
+00:07:16.224 --> 00:07:16.234 align:start position:0%
+handling rotation
+ 
+
+00:07:16.234 --> 00:07:16.350 align:start position:0%
+handling rotation
+&gt;&gt; [music]
+
+00:07:16.350 --> 00:07:16.360 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:07:16.360 --> 00:07:18.310 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; and<00:07:16.520><c> how</c><00:07:16.680><c> we</c><00:07:16.800><c> might</c><00:07:17.080><c> orbit</c><00:07:17.400><c> the</c><00:07:17.480><c> camera</c><00:07:17.960><c> around</c>
+
+00:07:18.310 --> 00:07:18.320 align:start position:0%
+&gt;&gt; and how we might orbit the camera around
+ 
+
+00:07:18.320 --> 00:07:23.270 align:start position:0%
+&gt;&gt; and how we might orbit the camera around
+a<00:07:18.360><c> central</c><00:07:18.840><c> object.</c>
+
+00:07:23.270 --> 00:07:23.280 align:start position:0%
+ 
+ 
+
+00:07:23.280 --> 00:07:25.310 align:start position:0%
+ 
+From<00:07:23.400><c> my</c><00:07:23.520><c> current</c><00:07:23.880><c> understanding,</c><00:07:24.720><c> rotation</c>
+
+00:07:25.310 --> 00:07:25.320 align:start position:0%
+From my current understanding, rotation
+ 
+
+00:07:25.320 --> 00:07:27.909 align:start position:0%
+From my current understanding, rotation
+is<00:07:25.480><c> somewhat</c><00:07:25.880><c> of</c><00:07:26.000><c> an</c><00:07:26.120><c> unsolvable</c><00:07:26.919><c> problem.</c>
+
+00:07:27.909 --> 00:07:27.919 align:start position:0%
+is somewhat of an unsolvable problem.
+ 
+
+00:07:27.919 --> 00:07:30.110 align:start position:0%
+is somewhat of an unsolvable problem.
+The<00:07:28.040><c> issues</c><00:07:28.440><c> we</c><00:07:28.560><c> mentioned</c><00:07:29.000><c> earlier</c><00:07:29.520><c> of</c><00:07:29.720><c> pixel</c>
+
+00:07:30.110 --> 00:07:30.120 align:start position:0%
+The issues we mentioned earlier of pixel
+ 
+
+00:07:30.120 --> 00:07:32.590 align:start position:0%
+The issues we mentioned earlier of pixel
+crawl<00:07:30.520><c> across</c><00:07:30.919><c> grid</c><00:07:31.240><c> boundaries</c><00:07:32.120><c> cannot</c><00:07:32.480><c> be</c>
+
+00:07:32.590 --> 00:07:32.600 align:start position:0%
+crawl across grid boundaries cannot be
+ 
+
+00:07:32.600 --> 00:07:37.310 align:start position:0%
+crawl across grid boundaries cannot be
+avoided<00:07:33.120><c> when</c><00:07:33.280><c> dealing</c><00:07:33.600><c> with</c><00:07:33.760><c> rotation.</c>
+
+00:07:37.310 --> 00:07:37.320 align:start position:0%
+ 
+ 
+
+00:07:37.320 --> 00:07:39.590 align:start position:0%
+ 
+A<00:07:37.360><c> fairly</c><00:07:37.760><c> intuitive</c><00:07:38.360><c> way</c><00:07:38.520><c> to</c><00:07:38.680><c> see</c><00:07:38.919><c> this</c><00:07:39.280><c> is</c><00:07:39.480><c> to</c>
+
+00:07:39.590 --> 00:07:39.600 align:start position:0%
+A fairly intuitive way to see this is to
+ 
+
+00:07:39.600 --> 00:07:41.390 align:start position:0%
+A fairly intuitive way to see this is to
+imagine<00:07:40.040><c> the</c><00:07:40.160><c> camera</c><00:07:40.560><c> from</c><00:07:40.760><c> the</c><00:07:40.840><c> pixel's</c>
+
+00:07:41.390 --> 00:07:41.400 align:start position:0%
+imagine the camera from the pixel's
+ 
+
+00:07:41.400 --> 00:07:42.425 align:start position:0%
+imagine the camera from the pixel's
+point<00:07:41.640><c> of</c><00:07:41.720><c> view.</c>
+
+00:07:42.425 --> 00:07:42.435 align:start position:0%
+point of view.
+ 
+
+00:07:42.435 --> 00:07:43.750 align:start position:0%
+point of view.
+&gt;&gt; [music]
+
+00:07:43.750 --> 00:07:43.760 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:07:43.760 --> 00:07:45.750 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; When<00:07:43.880><c> the</c><00:07:43.960><c> camera</c><00:07:44.320><c> rotates,</c><00:07:45.080><c> we</c><00:07:45.200><c> can</c><00:07:45.360><c> imagine</c>
+
+00:07:45.750 --> 00:07:45.760 align:start position:0%
+&gt;&gt; When the camera rotates, we can imagine
+ 
+
+00:07:45.760 --> 00:07:47.870 align:start position:0%
+&gt;&gt; When the camera rotates, we can imagine
+the<00:07:45.880><c> pixel</c><00:07:46.440><c> as</c><00:07:46.600><c> a</c><00:07:46.640><c> projection</c><00:07:47.480><c> onto</c><00:07:47.800><c> the</c>
+
+00:07:47.870 --> 00:07:47.880 align:start position:0%
+the pixel as a projection onto the
+ 
+
+00:07:47.880 --> 00:07:52.910 align:start position:0%
+the pixel as a projection onto the
+surface<00:07:48.360><c> of</c><00:07:48.480><c> a</c><00:07:48.520><c> sphere.</c>
+
+00:07:52.910 --> 00:07:52.920 align:start position:0%
+ 
+ 
+
+00:07:52.920 --> 00:07:55.070 align:start position:0%
+ 
+The<00:07:53.000><c> position</c><00:07:53.480><c> of</c><00:07:53.600><c> that</c><00:07:53.840><c> pixel</c><00:07:54.320><c> on</c><00:07:54.480><c> the</c><00:07:54.560><c> sphere</c>
+
+00:07:55.070 --> 00:07:55.080 align:start position:0%
+The position of that pixel on the sphere
+ 
+
+00:07:55.080 --> 00:07:58.830 align:start position:0%
+The position of that pixel on the sphere
+is<00:07:55.280><c> some</c><00:07:55.560><c> cosine</c><00:07:56.320><c> of</c><00:07:56.440><c> the</c><00:07:56.560><c> view</c><00:07:56.800><c> vector.</c>
+
+00:07:58.830 --> 00:07:58.840 align:start position:0%
+is some cosine of the view vector.
+ 
+
+00:07:58.840 --> 00:08:00.390 align:start position:0%
+is some cosine of the view vector.
+And<00:07:58.960><c> from</c><00:07:59.120><c> there,</c><00:07:59.480><c> you</c><00:07:59.600><c> can</c><00:07:59.760><c> see</c><00:07:59.960><c> that</c><00:08:00.160><c> for</c><00:08:00.320><c> a</c>
+
+00:08:00.390 --> 00:08:00.400 align:start position:0%
+And from there, you can see that for a
+ 
+
+00:08:00.400 --> 00:08:02.430 align:start position:0%
+And from there, you can see that for a
+screen<00:08:00.760><c> of</c><00:08:00.880><c> pixels,</c><00:08:01.430><c> [music]</c><00:08:01.880><c> not</c><00:08:02.160><c> all</c><00:08:02.360><c> of</c>
+
+00:08:02.430 --> 00:08:02.440 align:start position:0%
+screen of pixels, [music] not all of
+ 
+
+00:08:02.440 --> 00:08:04.550 align:start position:0%
+screen of pixels, [music] not all of
+these<00:08:02.680><c> values</c><00:08:03.160><c> can</c><00:08:03.360><c> live</c><00:08:03.600><c> at</c><00:08:03.760><c> fixed</c><00:08:04.160><c> grid</c>
+
+00:08:04.550 --> 00:08:04.560 align:start position:0%
+these values can live at fixed grid
+ 
+
+00:08:04.560 --> 00:08:07.350 align:start position:0%
+these values can live at fixed grid
+intervals.
+
+00:08:07.350 --> 00:08:07.360 align:start position:0%
+ 
+ 
+
+00:08:07.360 --> 00:08:09.310 align:start position:0%
+ 
+If<00:08:07.480><c> we</c><00:08:07.600><c> try</c><00:08:07.840><c> to</c><00:08:07.960><c> deploy</c><00:08:08.360><c> our</c><00:08:08.480><c> same</c><00:08:08.800><c> tricks</c><00:08:09.120><c> from</c>
+
+00:08:09.310 --> 00:08:09.320 align:start position:0%
+If we try to deploy our same tricks from
+ 
+
+00:08:09.320 --> 00:08:11.390 align:start position:0%
+If we try to deploy our same tricks from
+earlier,<00:08:10.160><c> translating</c><00:08:10.800><c> high</c><00:08:11.040><c> to</c><00:08:11.200><c> high</c>
+
+00:08:11.390 --> 00:08:11.400 align:start position:0%
+earlier, translating high to high
+ 
+
+00:08:11.400 --> 00:08:13.630 align:start position:0%
+earlier, translating high to high
+resolution,<00:08:12.680><c> we</c><00:08:12.800><c> would</c><00:08:13.000><c> first</c><00:08:13.360><c> need</c><00:08:13.560><c> a</c>
+
+00:08:13.630 --> 00:08:13.640 align:start position:0%
+resolution, we would first need a
+ 
+
+00:08:13.640 --> 00:08:16.350 align:start position:0%
+resolution, we would first need a
+spherical<00:08:14.480><c> or</c><00:08:14.680><c> cube-based</c><00:08:15.440><c> map</c><00:08:15.760><c> of</c><00:08:15.880><c> the</c><00:08:16.000><c> scene</c>
+
+00:08:16.350 --> 00:08:16.360 align:start position:0%
+spherical or cube-based map of the scene
+ 
+
+00:08:16.360 --> 00:08:17.795 align:start position:0%
+spherical or cube-based map of the scene
+from<00:08:16.600><c> multiple</c><00:08:17.080><c> angles.</c>
+
+00:08:17.795 --> 00:08:17.805 align:start position:0%
+from multiple angles.
+ 
+
+00:08:17.805 --> 00:08:18.070 align:start position:0%
+from multiple angles.
+&gt;&gt; [music]
+
+00:08:18.070 --> 00:08:18.080 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:08:18.080 --> 00:08:19.950 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; And<00:08:18.200><c> my</c><00:08:18.360><c> intuition</c><00:08:19.000><c> feels</c><00:08:19.400><c> we</c><00:08:19.520><c> couldn't</c><00:08:19.800><c> get</c>
+
+00:08:19.950 --> 00:08:19.960 align:start position:0%
+&gt;&gt; And my intuition feels we couldn't get
+ 
+
+00:08:19.960 --> 00:08:22.270 align:start position:0%
+&gt;&gt; And my intuition feels we couldn't get
+away<00:08:20.280><c> with</c><00:08:20.560><c> potentially</c><00:08:21.240><c> six</c><00:08:21.760><c> additional</c>
+
+00:08:22.270 --> 00:08:22.280 align:start position:0%
+away with potentially six additional
+ 
+
+00:08:22.280 --> 00:08:24.630 align:start position:0%
+away with potentially six additional
+cameras<00:08:23.200><c> without</c><00:08:23.560><c> compromising</c><00:08:24.400><c> on</c><00:08:24.520><c> the</c>
+
+00:08:24.630 --> 00:08:24.640 align:start position:0%
+cameras without compromising on the
+ 
+
+00:08:24.640 --> 00:08:27.070 align:start position:0%
+cameras without compromising on the
+vision<00:08:25.000><c> of</c><00:08:25.120><c> a</c><00:08:25.160><c> game.</c>
+
+00:08:27.070 --> 00:08:27.080 align:start position:0%
+vision of a game.
+ 
+
+00:08:27.080 --> 00:08:29.270 align:start position:0%
+vision of a game.
+So,<00:08:27.480><c> there's</c><00:08:27.720><c> no</c><00:08:27.919><c> way</c><00:08:28.040><c> around</c><00:08:28.480><c> it.</c><00:08:28.720><c> We</c><00:08:28.919><c> have</c><00:08:29.160><c> to</c>
+
+00:08:29.270 --> 00:08:29.280 align:start position:0%
+So, there's no way around it. We have to
+ 
+
+00:08:29.280 --> 00:08:31.390 align:start position:0%
+So, there's no way around it. We have to
+bite<00:08:29.560><c> the</c><00:08:29.640><c> bullet</c><00:08:30.120><c> and</c><00:08:30.280><c> implement</c><00:08:30.840><c> a</c><00:08:30.919><c> standard</c>
+
+00:08:31.390 --> 00:08:31.400 align:start position:0%
+bite the bullet and implement a standard
+ 
+
+00:08:31.400 --> 00:08:33.870 align:start position:0%
+bite the bullet and implement a standard
+camera<00:08:31.720><c> rotation,</c><00:08:32.800><c> knowing</c><00:08:33.280><c> that</c><00:08:33.520><c> jitter</c>
+
+00:08:33.870 --> 00:08:33.880 align:start position:0%
+camera rotation, knowing that jitter
+ 
+
+00:08:33.880 --> 00:08:34.825 align:start position:0%
+camera rotation, knowing that jitter
+will<00:08:34.159><c> occur.</c>
+
+00:08:34.825 --> 00:08:34.835 align:start position:0%
+will occur.
+ 
+
+00:08:34.835 --> 00:08:35.350 align:start position:0%
+will occur.
+&gt;&gt; [music]
+
+00:08:35.350 --> 00:08:35.360 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:08:35.360 --> 00:08:37.550 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; As<00:08:35.520><c> we've</c><00:08:35.719><c> seen</c><00:08:35.960><c> previously,</c><00:08:36.880><c> a</c><00:08:37.000><c> rotation</c>
+
+00:08:37.550 --> 00:08:37.560 align:start position:0%
+&gt;&gt; As we've seen previously, a rotation
+ 
+
+00:08:37.560 --> 00:08:40.065 align:start position:0%
+&gt;&gt; As we've seen previously, a rotation
+matrix<00:08:38.240><c> or</c><00:08:38.560><c> comparatively</c><00:08:39.479><c> an</c><00:08:39.719><c> inbuilt</c>
+
+00:08:40.065 --> 00:08:40.075 align:start position:0%
+matrix or comparatively an inbuilt
+ 
+
+00:08:40.075 --> 00:08:42.350 align:start position:0%
+matrix or comparatively an inbuilt
+[music]<00:08:40.200><c> function</c><00:08:40.680><c> call</c><00:08:41.479><c> can</c><00:08:41.680><c> implement</c><00:08:42.159><c> this</c>
+
+00:08:42.350 --> 00:08:42.360 align:start position:0%
+[music] function call can implement this
+ 
+
+00:08:42.360 --> 00:08:44.910 align:start position:0%
+[music] function call can implement this
+trivially.
+
+00:08:44.910 --> 00:08:44.920 align:start position:0%
+trivially.
+ 
+
+00:08:44.920 --> 00:08:46.390 align:start position:0%
+trivially.
+Depending<00:08:45.320><c> on</c><00:08:45.440><c> the</c><00:08:45.520><c> compression</c><00:08:46.080><c> of</c><00:08:46.200><c> this</c>
+
+00:08:46.390 --> 00:08:46.400 align:start position:0%
+Depending on the compression of this
+ 
+
+00:08:46.400 --> 00:08:48.390 align:start position:0%
+Depending on the compression of this
+video,<00:08:47.240><c> you'll</c><00:08:47.440><c> see</c><00:08:47.680><c> the</c><00:08:47.800><c> results</c><00:08:48.280><c> are</c>
+
+00:08:48.390 --> 00:08:48.400 align:start position:0%
+video, you'll see the results are
+ 
+
+00:08:48.400 --> 00:08:50.390 align:start position:0%
+video, you'll see the results are
+somewhat<00:08:48.800><c> polarizing.</c>
+
+00:08:50.390 --> 00:08:50.400 align:start position:0%
+somewhat polarizing.
+ 
+
+00:08:50.400 --> 00:08:52.230 align:start position:0%
+somewhat polarizing.
+I'm<00:08:50.560><c> keen</c><00:08:50.800><c> to</c><00:08:50.920><c> hear</c><00:08:51.160><c> what</c><00:08:51.320><c> people</c><00:08:51.680><c> think</c><00:08:51.960><c> about</c>
+
+00:08:52.230 --> 00:08:52.240 align:start position:0%
+I'm keen to hear what people think about
+ 
+
+00:08:52.240 --> 00:08:53.950 align:start position:0%
+I'm keen to hear what people think about
+rotation<00:08:52.760><c> in</c><00:08:52.920><c> general.</c>
+
+00:08:53.950 --> 00:08:53.960 align:start position:0%
+rotation in general.
+ 
+
+00:08:53.960 --> 00:08:55.750 align:start position:0%
+rotation in general.
+On<00:08:54.120><c> one</c><00:08:54.320><c> side,</c><00:08:54.760><c> you</c><00:08:54.839><c> might</c><00:08:55.120><c> feel</c><00:08:55.320><c> it's</c><00:08:55.480><c> part</c><00:08:55.680><c> of</c>
+
+00:08:55.750 --> 00:08:55.760 align:start position:0%
+On one side, you might feel it's part of
+ 
+
+00:08:55.760 --> 00:08:57.390 align:start position:0%
+On one side, you might feel it's part of
+the<00:08:55.796><c> [music]</c><00:08:55.839><c> charm,</c><00:08:56.440><c> and</c><00:08:56.600><c> once</c><00:08:56.839><c> you</c><00:08:56.960><c> play</c><00:08:57.200><c> for</c>
+
+00:08:57.390 --> 00:08:57.400 align:start position:0%
+the [music] charm, and once you play for
+ 
+
+00:08:57.400 --> 00:08:59.350 align:start position:0%
+the [music] charm, and once you play for
+a<00:08:57.440><c> while,</c><00:08:57.800><c> you</c><00:08:57.920><c> don't</c><00:08:58.160><c> notice</c><00:08:58.520><c> it.</c>
+
+00:08:59.350 --> 00:08:59.360 align:start position:0%
+a while, you don't notice it.
+ 
+
+00:08:59.360 --> 00:09:01.270 align:start position:0%
+a while, you don't notice it.
+And<00:08:59.520><c> others</c><00:08:59.839><c> may</c><00:09:00.040><c> feel</c><00:09:00.360><c> that</c><00:09:00.520><c> the</c><00:09:00.640><c> jitter</c><00:09:01.040><c> is</c>
+
+00:09:01.270 --> 00:09:01.280 align:start position:0%
+And others may feel that the jitter is
+ 
+
+00:09:01.280 --> 00:09:03.710 align:start position:0%
+And others may feel that the jitter is
+too<00:09:01.440><c> distracting</c><00:09:02.040><c> to</c><00:09:02.160><c> the</c><00:09:02.240><c> presentation.</c>
+
+00:09:03.710 --> 00:09:03.720 align:start position:0%
+too distracting to the presentation.
+ 
+
+00:09:03.720 --> 00:09:05.230 align:start position:0%
+too distracting to the presentation.
+And<00:09:03.880><c> this</c><00:09:04.080><c> potentially</c><00:09:04.640><c> throws</c><00:09:05.040><c> into</c>
+
+00:09:05.230 --> 00:09:05.240 align:start position:0%
+And this potentially throws into
+ 
+
+00:09:05.240 --> 00:09:07.150 align:start position:0%
+And this potentially throws into
+question<00:09:05.800><c> the</c><00:09:05.920><c> type</c><00:09:06.200><c> of</c><00:09:06.320><c> game</c><00:09:06.680><c> you</c><00:09:06.760><c> might</c><00:09:07.000><c> want</c>
+
+00:09:07.150 --> 00:09:07.160 align:start position:0%
+question the type of game you might want
+ 
+
+00:09:07.160 --> 00:09:10.750 align:start position:0%
+question the type of game you might want
+to<00:09:07.200><c> make</c><00:09:07.480><c> with</c><00:09:07.600><c> this</c><00:09:07.839><c> tech.</c>
+
+00:09:10.750 --> 00:09:10.760 align:start position:0%
+ 
+ 
+
+00:09:10.760 --> 00:09:12.670 align:start position:0%
+ 
+Similar<00:09:11.160><c> to</c><00:09:11.320><c> our</c><00:09:11.440><c> approach</c><00:09:11.880><c> in</c><00:09:12.040><c> the</c><00:09:12.160><c> God</c><00:09:12.480><c> Ray</c>
+
+00:09:12.670 --> 00:09:12.680 align:start position:0%
+Similar to our approach in the God Ray
+ 
+
+00:09:12.680 --> 00:09:15.190 align:start position:0%
+Similar to our approach in the God Ray
+episode,<00:09:13.400><c> we</c><00:09:13.600><c> have</c><00:09:13.800><c> a</c><00:09:13.880><c> few</c><00:09:14.280><c> non-pixel</c>
+
+00:09:15.190 --> 00:09:15.200 align:start position:0%
+episode, we have a few non-pixel
+ 
+
+00:09:15.200 --> 00:09:17.390 align:start position:0%
+episode, we have a few non-pixel
+techniques<00:09:15.839><c> that</c><00:09:16.000><c> we</c><00:09:16.120><c> can</c><00:09:16.320><c> look</c><00:09:16.560><c> at</c><00:09:16.839><c> to</c><00:09:17.000><c> remedy</c>
+
+00:09:17.390 --> 00:09:17.400 align:start position:0%
+techniques that we can look at to remedy
+ 
+
+00:09:17.400 --> 00:09:19.790 align:start position:0%
+techniques that we can look at to remedy
+this,<00:09:18.080><c> but</c><00:09:18.320><c> at</c><00:09:18.440><c> the</c><00:09:18.560><c> expense</c><00:09:19.080><c> of</c><00:09:19.240><c> breaking</c><00:09:19.680><c> the</c>
+
+00:09:19.790 --> 00:09:19.800 align:start position:0%
+this, but at the expense of breaking the
+ 
+
+00:09:19.800 --> 00:09:22.590 align:start position:0%
+this, but at the expense of breaking the
+faithfulness<00:09:20.520><c> of</c><00:09:20.640><c> the</c><00:09:20.760><c> aesthetic.</c>
+
+00:09:22.590 --> 00:09:22.600 align:start position:0%
+faithfulness of the aesthetic.
+ 
+
+00:09:22.600 --> 00:09:25.150 align:start position:0%
+faithfulness of the aesthetic.
+Blur<00:09:23.080><c> is</c><00:09:23.280><c> perhaps</c><00:09:23.760><c> a</c><00:09:23.800><c> controversial</c><00:09:24.520><c> topic,</c>
+
+00:09:25.150 --> 00:09:25.160 align:start position:0%
+Blur is perhaps a controversial topic,
+ 
+
+00:09:25.160 --> 00:09:27.070 align:start position:0%
+Blur is perhaps a controversial topic,
+but<00:09:25.480><c> by</c><00:09:25.640><c> applying</c><00:09:26.080><c> a</c><00:09:26.160><c> small</c><00:09:26.520><c> amount</c><00:09:26.960><c> to</c>
+
+00:09:27.070 --> 00:09:27.080 align:start position:0%
+but by applying a small amount to
+ 
+
+00:09:27.080 --> 00:09:29.510 align:start position:0%
+but by applying a small amount to
+average<00:09:27.520><c> out</c><00:09:27.680><c> neighboring</c><00:09:28.160><c> pixels,</c><00:09:29.160><c> we</c><00:09:29.320><c> can</c>
+
+00:09:29.510 --> 00:09:29.520 align:start position:0%
+average out neighboring pixels, we can
+ 
+
+00:09:29.520 --> 00:09:31.829 align:start position:0%
+average out neighboring pixels, we can
+mask<00:09:30.000><c> some</c><00:09:30.200><c> of</c><00:09:30.320><c> the</c><00:09:30.440><c> artifacts.</c><00:09:31.600><c> But</c><00:09:31.760><c> the</c>
+
+00:09:31.829 --> 00:09:31.839 align:start position:0%
+mask some of the artifacts. But the
+ 
+
+00:09:31.839 --> 00:09:34.110 align:start position:0%
+mask some of the artifacts. But the
+smudgy<00:09:32.400><c> look</c><00:09:32.720><c> that</c><00:09:32.880><c> this</c><00:09:33.120><c> adds</c><00:09:33.520><c> is</c><00:09:33.720><c> quite</c><00:09:34.040><c> the</c>
+
+00:09:34.110 --> 00:09:34.120 align:start position:0%
+smudgy look that this adds is quite the
+ 
+
+00:09:34.120 --> 00:09:37.790 align:start position:0%
+smudgy look that this adds is quite the
+departure<00:09:34.680><c> from</c><00:09:34.920><c> our</c><00:09:35.080><c> original</c><00:09:35.680><c> crisp</c><00:09:36.120><c> image.</c>
+
+00:09:37.790 --> 00:09:37.800 align:start position:0%
+departure from our original crisp image.
+ 
+
+00:09:37.800 --> 00:09:39.590 align:start position:0%
+departure from our original crisp image.
+A<00:09:37.880><c> different</c><00:09:38.240><c> attempt</c><00:09:38.600><c> at</c><00:09:38.720><c> solving</c><00:09:39.080><c> this</c><00:09:39.400><c> is</c>
+
+00:09:39.590 --> 00:09:39.600 align:start position:0%
+A different attempt at solving this is
+ 
+
+00:09:39.600 --> 00:09:41.630 align:start position:0%
+A different attempt at solving this is
+to<00:09:39.720><c> apply</c><00:09:40.160><c> a</c><00:09:40.280><c> global</c><00:09:40.760><c> dither</c><00:09:41.120><c> across</c><00:09:41.520><c> the</c>
+
+00:09:41.630 --> 00:09:41.640 align:start position:0%
+to apply a global dither across the
+ 
+
+00:09:41.640 --> 00:09:44.110 align:start position:0%
+to apply a global dither across the
+entire<00:09:42.040><c> screen.</c><00:09:43.040><c> The</c><00:09:43.200><c> idea</c><00:09:43.520><c> being</c><00:09:43.840><c> that</c><00:09:44.000><c> our</c>
+
+00:09:44.110 --> 00:09:44.120 align:start position:0%
+entire screen. The idea being that our
+ 
+
+00:09:44.120 --> 00:09:46.270 align:start position:0%
+entire screen. The idea being that our
+brains<00:09:44.560><c> have</c><00:09:44.720><c> a</c><00:09:44.800><c> harder</c><00:09:45.120><c> time</c><00:09:45.480><c> noticing</c><00:09:45.920><c> pixel</c>
+
+00:09:46.270 --> 00:09:46.280 align:start position:0%
+brains have a harder time noticing pixel
+ 
+
+00:09:46.280 --> 00:09:49.230 align:start position:0%
+brains have a harder time noticing pixel
+crawl<00:09:47.040><c> in</c><00:09:47.160><c> a</c><00:09:47.240><c> sea</c><00:09:47.520><c> of</c><00:09:47.640><c> different</c><00:09:48.000><c> values.</c>
+
+00:09:49.230 --> 00:09:49.240 align:start position:0%
+crawl in a sea of different values.
+ 
+
+00:09:49.240 --> 00:09:51.230 align:start position:0%
+crawl in a sea of different values.
+This<00:09:49.440><c> is</c><00:09:49.560><c> a</c><00:09:49.600><c> bit</c><00:09:49.800><c> more</c><00:09:50.040><c> radical,</c><00:09:50.640><c> but</c><00:09:50.840><c> it</c><00:09:50.960><c> seems</c>
+
+00:09:51.230 --> 00:09:51.240 align:start position:0%
+This is a bit more radical, but it seems
+ 
+
+00:09:51.240 --> 00:09:52.470 align:start position:0%
+This is a bit more radical, but it seems
+to<00:09:51.320><c> be</c><00:09:51.440><c> effective</c><00:09:52.040><c> if</c><00:09:52.126><c> [music]</c><00:09:52.200><c> we</c><00:09:52.320><c> can</c>
+
+00:09:52.470 --> 00:09:52.480 align:start position:0%
+to be effective if [music] we can
+ 
+
+00:09:52.480 --> 00:09:54.630 align:start position:0%
+to be effective if [music] we can
+tolerate<00:09:53.000><c> the</c><00:09:53.120><c> slight</c><00:09:53.640><c> washed</c><00:09:54.080><c> out</c><00:09:54.320><c> look</c><00:09:54.520><c> it</c>
+
+00:09:54.630 --> 00:09:54.640 align:start position:0%
+tolerate the slight washed out look it
+ 
+
+00:09:54.640 --> 00:09:57.830 align:start position:0%
+tolerate the slight washed out look it
+gives<00:09:55.040><c> when</c><00:09:55.240><c> rotating.</c>
+
+00:09:57.830 --> 00:09:57.840 align:start position:0%
+gives when rotating.
+ 
+
+00:09:57.840 --> 00:10:00.110 align:start position:0%
+gives when rotating.
+And<00:09:58.000><c> the</c><00:09:58.080><c> last</c><00:09:58.480><c> technique</c><00:09:58.920><c> is</c><00:09:59.080><c> to</c><00:09:59.240><c> steer</c><00:09:59.720><c> into</c>
+
+00:10:00.110 --> 00:10:00.120 align:start position:0%
+And the last technique is to steer into
+ 
+
+00:10:00.120 --> 00:10:01.670 align:start position:0%
+And the last technique is to steer into
+the<00:10:00.240><c> jitter</c><00:10:00.680><c> and</c><00:10:00.840><c> make</c><00:10:01.040><c> it</c><00:10:01.120><c> a</c><00:10:01.200><c> part</c><00:10:01.480><c> of</c><00:10:01.560><c> the</c>
+
+00:10:01.670 --> 00:10:01.680 align:start position:0%
+the jitter and make it a part of the
+ 
+
+00:10:01.680 --> 00:10:04.390 align:start position:0%
+the jitter and make it a part of the
+style.<00:10:02.800><c> Since</c><00:10:03.080><c> the</c><00:10:03.200><c> resolution</c><00:10:03.880><c> in</c><00:10:04.000><c> our</c><00:10:04.160><c> new</c>
+
+00:10:04.390 --> 00:10:04.400 align:start position:0%
+style. Since the resolution in our new
+ 
+
+00:10:04.400 --> 00:10:06.870 align:start position:0%
+style. Since the resolution in our new
+camera<00:10:04.760><c> system</c><00:10:05.200><c> is</c><00:10:05.360><c> just</c><00:10:05.600><c> a</c><00:10:05.680><c> parameter,</c><00:10:06.720><c> we</c>
+
+00:10:06.870 --> 00:10:06.880 align:start position:0%
+camera system is just a parameter, we
+ 
+
+00:10:06.880 --> 00:10:08.910 align:start position:0%
+camera system is just a parameter, we
+can<00:10:07.040><c> increase</c><00:10:07.520><c> the</c><00:10:07.640><c> pixelation</c><00:10:08.320><c> amount</c><00:10:08.680><c> when</c>
+
+00:10:08.910 --> 00:10:08.920 align:start position:0%
+can increase the pixelation amount when
+ 
+
+00:10:08.920 --> 00:10:11.310 align:start position:0%
+can increase the pixelation amount when
+rotating<00:10:09.480><c> the</c><00:10:09.560><c> screen</c><00:10:10.000><c> to</c><00:10:10.200><c> alias</c><00:10:10.720><c> areas</c><00:10:11.200><c> of</c>
+
+00:10:11.310 --> 00:10:11.320 align:start position:0%
+rotating the screen to alias areas of
+ 
+
+00:10:11.320 --> 00:10:12.350 align:start position:0%
+rotating the screen to alias areas of
+jitter.
+
+00:10:12.350 --> 00:10:12.360 align:start position:0%
+jitter.
+ 
+
+00:10:12.360 --> 00:10:14.630 align:start position:0%
+jitter.
+This,<00:10:12.840><c> in</c><00:10:13.000><c> addition</c><00:10:13.400><c> to</c><00:10:13.560><c> other</c><00:10:13.840><c> effects,</c><00:10:14.320><c> can</c>
+
+00:10:14.630 --> 00:10:14.640 align:start position:0%
+This, in addition to other effects, can
+ 
+
+00:10:14.640 --> 00:10:16.990 align:start position:0%
+This, in addition to other effects, can
+really<00:10:15.000><c> create</c><00:10:15.400><c> a</c><00:10:15.480><c> stylized</c><00:10:16.320><c> look</c><00:10:16.720><c> where</c><00:10:16.880><c> it</c>
+
+00:10:16.990 --> 00:10:17.000 align:start position:0%
+really create a stylized look where it
+ 
+
+00:10:17.000 --> 00:10:18.630 align:start position:0%
+really create a stylized look where it
+may<00:10:17.160><c> be</c><00:10:17.440><c> easier</c><00:10:17.880><c> to</c><00:10:18.000><c> get</c><00:10:18.160><c> away</c><00:10:18.440><c> with</c>
+
+00:10:18.630 --> 00:10:18.640 align:start position:0%
+may be easier to get away with
+ 
+
+00:10:18.640 --> 00:10:20.990 align:start position:0%
+may be easier to get away with
+instability<00:10:19.840><c> if</c><00:10:20.040><c> the</c><00:10:20.160><c> tone</c><00:10:20.480><c> of</c><00:10:20.600><c> the</c><00:10:20.680><c> game</c>
+
+00:10:20.990 --> 00:10:21.000 align:start position:0%
+instability if the tone of the game
+ 
+
+00:10:21.000 --> 00:10:24.190 align:start position:0%
+instability if the tone of the game
+matches<00:10:21.520><c> the</c><00:10:21.640><c> virtual</c><00:10:22.160><c> look.</c>
+
+00:10:24.190 --> 00:10:24.200 align:start position:0%
+matches the virtual look.
+ 
+
+00:10:24.200 --> 00:10:25.990 align:start position:0%
+matches the virtual look.
+These<00:10:24.440><c> three</c><00:10:24.680><c> techniques</c><00:10:25.240><c> don't</c><00:10:25.480><c> at</c><00:10:25.600><c> all</c><00:10:25.760><c> feel</c>
+
+00:10:25.990 --> 00:10:26.000 align:start position:0%
+These three techniques don't at all feel
+ 
+
+00:10:26.000 --> 00:10:27.950 align:start position:0%
+These three techniques don't at all feel
+like<00:10:26.200><c> solutions</c><00:10:26.800><c> to</c><00:10:26.920><c> our</c><00:10:27.080><c> issue,</c><00:10:27.680><c> but</c><00:10:27.840><c> in</c>
+
+00:10:27.950 --> 00:10:27.960 align:start position:0%
+like solutions to our issue, but in
+ 
+
+00:10:27.960 --> 00:10:29.790 align:start position:0%
+like solutions to our issue, but in
+general,<00:10:28.480><c> it</c><00:10:28.640><c> does</c><00:10:28.920><c> highlight</c><00:10:29.360><c> that</c><00:10:29.480><c> we</c><00:10:29.600><c> can</c>
+
+00:10:29.790 --> 00:10:29.800 align:start position:0%
+general, it does highlight that we can
+ 
+
+00:10:29.800 --> 00:10:31.430 align:start position:0%
+general, it does highlight that we can
+sometimes<00:10:30.360><c> improve</c><00:10:30.760><c> the</c><00:10:30.880><c> results</c><00:10:31.280><c> of</c><00:10:31.400><c> a</c>
+
+00:10:31.430 --> 00:10:31.440 align:start position:0%
+sometimes improve the results of a
+ 
+
+00:10:31.440 --> 00:10:33.750 align:start position:0%
+sometimes improve the results of a
+technique<00:10:32.360><c> by</c><00:10:32.520><c> finding</c><00:10:32.960><c> ways</c><00:10:33.240><c> to</c><00:10:33.360><c> remedy</c>
+
+00:10:33.750 --> 00:10:33.760 align:start position:0%
+technique by finding ways to remedy
+ 
+
+00:10:33.760 --> 00:10:38.950 align:start position:0%
+technique by finding ways to remedy
+their<00:10:33.960><c> weaknesses.</c>
+
+00:10:38.950 --> 00:10:38.960 align:start position:0%
+ 
+ 
+
+00:10:38.960 --> 00:10:40.790 align:start position:0%
+ 
+And<00:10:39.120><c> that</c><00:10:39.320><c> concludes</c><00:10:39.839><c> the</c><00:10:39.920><c> content</c><00:10:40.480><c> for</c><00:10:40.600><c> this</c>
+
+00:10:40.790 --> 00:10:40.800 align:start position:0%
+And that concludes the content for this
+ 
+
+00:10:40.800 --> 00:10:43.150 align:start position:0%
+And that concludes the content for this
+episode.<00:10:41.960><c> We've</c><00:10:42.120><c> looked</c><00:10:42.400><c> at</c><00:10:42.560><c> dealing</c><00:10:42.960><c> with</c>
+
+00:10:43.150 --> 00:10:43.160 align:start position:0%
+episode. We've looked at dealing with
+ 
+
+00:10:43.160 --> 00:10:45.390 align:start position:0%
+episode. We've looked at dealing with
+our<00:10:43.360><c> original</c><00:10:44.000><c> low-to-high</c><00:10:44.720><c> resolution</c>
+
+00:10:45.390 --> 00:10:45.400 align:start position:0%
+our original low-to-high resolution
+ 
+
+00:10:45.400 --> 00:10:47.630 align:start position:0%
+our original low-to-high resolution
+problem,<00:10:46.360><c> how</c><00:10:46.480><c> we</c><00:10:46.640><c> can</c><00:10:46.800><c> move</c><00:10:47.080><c> the</c><00:10:47.200><c> camera</c>
+
+00:10:47.630 --> 00:10:47.640 align:start position:0%
+problem, how we can move the camera
+ 
+
+00:10:47.640 --> 00:10:50.350 align:start position:0%
+problem, how we can move the camera
+smoothly<00:10:48.320><c> aligned</c><00:10:48.839><c> with</c><00:10:49.000><c> a</c><00:10:49.080><c> grid,</c><00:10:49.839><c> and</c><00:10:50.040><c> ways</c>
+
+00:10:50.350 --> 00:10:50.360 align:start position:0%
+smoothly aligned with a grid, and ways
+ 
+
+00:10:50.360 --> 00:10:51.722 align:start position:0%
+smoothly aligned with a grid, and ways
+we<00:10:50.480><c> might</c><00:10:50.720><c> try</c><00:10:50.880><c> to</c><00:10:51.040><c> deal</c><00:10:51.320><c> with</c><00:10:51.520><c> rotational</c>
+
+00:10:51.722 --> 00:10:51.732 align:start position:0%
+we might try to deal with rotational
+ 
+
+00:10:51.732 --> 00:10:54.350 align:start position:0%
+we might try to deal with rotational
+[music]<00:10:52.120><c> artifacts.</c>
+
+00:10:54.350 --> 00:10:54.360 align:start position:0%
+[music] artifacts.
+ 
+
+00:10:54.360 --> 00:10:55.590 align:start position:0%
+[music] artifacts.
+Let<00:10:54.440><c> me</c><00:10:54.560><c> know</c><00:10:54.720><c> what</c><00:10:54.880><c> you</c><00:10:55.000><c> think</c><00:10:55.240><c> about</c><00:10:55.520><c> the</c>
+
+00:10:55.590 --> 00:10:55.600 align:start position:0%
+Let me know what you think about the
+ 
+
+00:10:55.600 --> 00:10:57.617 align:start position:0%
+Let me know what you think about the
+results<00:10:56.080><c> in</c><00:10:56.160><c> the</c><00:10:56.240><c> comments,</c><00:10:57.240><c> and</c><00:10:57.360><c> I'm</c><00:10:57.480><c> curious</c>
+
+00:10:57.617 --> 00:10:57.627 align:start position:0%
+results in the comments, and I'm curious
+ 
+
+00:10:57.627 --> 00:10:59.470 align:start position:0%
+results in the comments, and I'm curious
+[music]<00:10:57.920><c> to</c><00:10:58.040><c> hear</c><00:10:58.320><c> ideas</c><00:10:58.800><c> on</c><00:10:58.960><c> how</c><00:10:59.120><c> we</c><00:10:59.240><c> might</c>
+
+00:10:59.470 --> 00:10:59.480 align:start position:0%
+[music] to hear ideas on how we might
+ 
+
+00:10:59.480 --> 00:11:01.310 align:start position:0%
+[music] to hear ideas on how we might
+improve<00:11:00.000><c> the</c><00:11:00.120><c> result.</c>
+
+00:11:01.310 --> 00:11:01.320 align:start position:0%
+improve the result.
+ 
+
+00:11:01.320 --> 00:11:02.990 align:start position:0%
+improve the result.
+Thank<00:11:01.520><c> you</c><00:11:01.640><c> so</c><00:11:01.839><c> much</c><00:11:02.120><c> for</c><00:11:02.280><c> all</c><00:11:02.440><c> the</c><00:11:02.560><c> support</c>
+
+00:11:02.990 --> 00:11:03.000 align:start position:0%
+Thank you so much for all the support
+ 
+
+00:11:03.000 --> 00:11:04.510 align:start position:0%
+Thank you so much for all the support
+over<00:11:03.240><c> on</c><00:11:03.360><c> Patreon.</c><00:11:03.522><c> [music]</c>
+
+00:11:04.510 --> 00:11:04.520 align:start position:0%
+over on Patreon. [music]
+ 
+
+00:11:04.520 --> 00:11:05.670 align:start position:0%
+over on Patreon. [music]
+And<00:11:04.640><c> if</c><00:11:04.760><c> you</c><00:11:04.839><c> made</c><00:11:05.080><c> it</c><00:11:05.160><c> this</c><00:11:05.320><c> far</c><00:11:05.520><c> in</c><00:11:05.600><c> the</c>
+
+00:11:05.670 --> 00:11:05.680 align:start position:0%
+And if you made it this far in the
+ 
+
+00:11:05.680 --> 00:11:08.430 align:start position:0%
+And if you made it this far in the
+video,<00:11:06.520><c> a</c><00:11:06.600><c> like</c><00:11:06.960><c> and</c><00:11:07.120><c> subscribe</c><00:11:07.720><c> goes</c><00:11:07.960><c> a</c><00:11:08.000><c> long</c>
+
+00:11:08.430 --> 00:11:08.440 align:start position:0%
+video, a like and subscribe goes a long
+ 
+
+00:11:08.440 --> 00:11:10.062 align:start position:0%
+video, a like and subscribe goes a long
+way<00:11:08.680><c> to</c><00:11:08.839><c> help</c><00:11:09.080><c> out</c><00:11:09.200><c> the</c><00:11:09.320><c> channel.</c>
+
+00:11:10.062 --> 00:11:10.072 align:start position:0%
+way to help out the channel.
+ 
+
+00:11:10.072 --> 00:11:12.310 align:start position:0%
+way to help out the channel.
+&gt;&gt; [music]
+
+00:11:12.310 --> 00:11:12.320 align:start position:0%
+ 
+ 
+
+00:11:12.320 --> 00:11:39.430 align:start position:0%
+ 
+&gt;&gt; As<00:11:12.480><c> always,</c><00:11:13.320><c> thanks</c><00:11:13.600><c> for</c><00:11:13.720><c> watching.</c>
+
+00:11:39.430 --> 00:11:39.440 align:start position:0%
+ 
+ 
+
+00:11:39.440 --> 00:11:41.520 align:start position:0%
+ 
+&gt;&gt; Mhm.
+

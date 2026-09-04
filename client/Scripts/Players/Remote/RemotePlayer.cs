@@ -57,7 +57,7 @@ public partial class RemotePlayer : Node2D, IEntity
 		}
 	}
 
-	public override void _Process(double delta) => _model3D?.SyncFrom2D(GlobalPosition, Rotation);
+	public override void _Process(double delta) => _model3D?.SyncFrom2D(GlobalPosition, Rotation, GameManager.ElevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
 
 	public override void _ExitTree() => _model3D?.Dispose();
 

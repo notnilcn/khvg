@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://r8xdalncce6g" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grey.tscn" id="5_oqa53"]
 [ext_resource type="PackedScene" uid="uid://bvgcsih5ik5ny" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_bullet.tscn" id="6_bullet"]
 [ext_resource type="Script" uid="uid://cn5lkrknhfvqp" path="res://Scripts/Components/Bullets/EnemyBullets3DComponent.cs" id="7_bullets3d"]
+[ext_resource type="Script" uid="uid://tj5jvmbahdrh" path="res://Scripts/Components/Terrain/TerrainComponent3D.cs" id="8_terrain3d"]
+[ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="9_mst"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kqqpj"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -53,6 +55,21 @@ TableName = "MapConfig"
 script = ExtResource("7_bullets3d")
 BulletScene = ExtResource("6_bullet")
 
+[node name="TerrainComponent3D" type="Node3D" parent="." unique_id=1697761499]
+script = ExtResource("8_terrain3d")
+
+[node name="MarchingSquaresTerrain" type="Node3D" parent="TerrainComponent3D" unique_id=1461797051]
+script = ExtResource("9_mst")
+storage_mode = 1
+data_directory = "res://Scenes/world_3d_TerrainData/MarchingSquaresTerrain_bb6778ab"
+enable_runtime_texture_baking = false
+_storage_initialized = true
+
+[node name="MapConfigBinder" type="Node" parent="TerrainComponent3D" unique_id=353003388]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "MapConfig"
+
 [node name="PhantomCamera3D" type="Node3D" parent="." unique_id=526330480]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
@@ -65,7 +82,7 @@ spring_length = 200.0
 metadata/_custom_type_script = "uid://csjccrhj5wnx7"
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1778573569]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 200, 0)
 top_level = true
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D" unique_id=390949796]
@@ -77,3 +94,5 @@ metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
 [connection signal="RowInserted" from="HexGridOverlay3DComponent/MapConfigBinder" to="HexGridOverlay3DComponent" method="OnMapConfigRow"]
 [connection signal="RowUpdated" from="HexGridOverlay3DComponent/MapConfigBinder" to="HexGridOverlay3DComponent" method="OnMapConfigRow"]
+[connection signal="RowInserted" from="TerrainComponent3D/MapConfigBinder" to="TerrainComponent3D" method="OnMapConfigRow"]
+[connection signal="RowUpdated" from="TerrainComponent3D/MapConfigBinder" to="TerrainComponent3D" method="OnMapConfigRow"]

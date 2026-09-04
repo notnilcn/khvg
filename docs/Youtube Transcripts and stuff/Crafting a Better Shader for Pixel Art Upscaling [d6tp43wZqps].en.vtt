@@ -1,0 +1,637 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:02.919 --> 00:00:07.800
+Whether for artistic or pragmatic reasons,
+pixel&nbsp;art is often authored for resolutions
+
+00:00:07.800 --> 00:00:11.148
+smaller than the screen they are ultimately displayed on.
+
+00:00:12.000 --> 00:00:16.591
+Upscaling to the display resolution is usually done
+using nearest-neighbor point sampling,
+
+00:00:16.591 --> 00:00:23.238
+which keeps the pixels sharp, but can cause distracting
+aliasing artifacts when the&nbsp;scaling ratio is not a whole number,
+
+00:00:23.238 --> 00:00:28.163
+or if there’s stretching or rotating effects,&nbsp;
+which are especially noticeable in motion.
+
+00:00:29.280 --> 00:00:34.800
+For conventional 3D assets, texture aliasing&nbsp;
+is usually mitigated by some combination of
+
+00:00:34.800 --> 00:00:38.460
+bilinear sampling, mipmapping,&nbsp;
+and anisotropic filtering,
+
+00:00:38.460 --> 00:00:42.000
+all of which are implemented&nbsp;
+directly on GPU hardware.
+
+00:00:42.780 --> 00:00:47.640
+While these filters do eliminate the aliasing,
+they also smear out the result in a way that’s
+
+00:00:47.640 --> 00:00:50.506
+usually undesirable for pixel art assets.
+
+00:00:50.780 --> 00:00:54.945
+Ideally, what we want is to produce just
+enough filtering to eliminate aliasing
+
+00:00:54.945 --> 00:00:57.457
+while maintaining the original sharpness.
+
+00:00:58.020 --> 00:01:01.320
+In this video, we’ll be developing&nbsp;
+a method which is able to display
+
+00:01:01.320 --> 00:01:07.615
+arbitrarily scaled, rotated, offset, and distorted
+pixel art textures without aliasing artifacts.
+
+00:01:07.950 --> 00:01:11.760
+I should also mention that this is&nbsp;
+all possible without any additional draw calls,
+
+00:01:11.760 --> 00:01:16.745
+VRAM usage, texture samples, or indeed&nbsp;
+any changes to the render pipeline.
+
+00:01:17.520 --> 00:01:22.740
+Initial research into this subject led&nbsp;
+me to this 2017 blog post by Cole Cecil,
+
+00:01:22.740 --> 00:01:27.739
+describing a method for drawing pixel&nbsp;
+art at non integer texel-to-pixel ratios.
+
+00:01:28.140 --> 00:01:30.960
+In this context, a “texel”, or “texture element”
+
+00:01:30.960 --> 00:01:37.020
+refers to each square element in the texture,
+and a “pixel”, or “picture element” refers to
+
+00:01:37.020 --> 00:01:41.197
+each square element in the render target,
+which we’ll assume to be the screen.
+
+00:01:42.000 --> 00:01:45.720
+Broadly explained, when drawing a&nbsp;
+texture to screen, the texture’s
+
+00:01:45.720 --> 00:01:51.000
+coordinate system, typically called its UVs,
+is transformed to the screen’s coordinate system.
+
+00:01:51.600 --> 00:01:55.560
+This transformation is carried out through
+the polygons the texture is attached to:
+
+00:01:56.220 --> 00:02:02.460
+Each vertex of each polygon is associated with a
+UV coordinate, and when the GPU draws the polygon,
+
+00:02:02.460 --> 00:02:07.912
+the UVs at its vertices are interpolated to
+each pixel the polygon appears on in the screen.
+
+00:02:08.580 --> 00:02:12.960
+Then inside a pixel shader, the UVs at&nbsp;
+each pixel are given to the sampler,&nbsp;
+
+00:02:12.960 --> 00:02:18.438
+which returns the texture color at that location,
+and the result is drawn to that pixel on screen.
+
+00:02:19.560 --> 00:02:24.480
+In general, the interpolated UVs at a pixel
+don’t fall exactly on the middle of a texel,
+
+00:02:24.480 --> 00:02:27.396
+but typically fall somewhere between texels.
+
+00:02:27.396 --> 00:02:33.300
+Nearest-neighbor sampling is so-named because it returns
+the texel nearest&nbsp;to the sampled UV coordinate.
+
+00:02:33.896 --> 00:02:38.580
+Bilinear sampling is so-named because it
+interpolates linearly between nearby texels,
+
+00:02:38.580 --> 00:02:41.030
+along one axis, then the other.
+
+00:02:41.502 --> 00:02:45.176
+If a pixel’s UVs line up exactly with the center of a texel,
+
+00:02:45.176 --> 00:02:49.697
+bilinear sampling will&nbsp;result in returning
+the exact color of that texel.
+
+00:02:50.595 --> 00:02:54.780
+The method described in Cole’s blog takes
+advantage of this fact by manipulating
+
+00:02:54.780 --> 00:02:57.772
+the UVs in the pixel shader before sampling.
+
+00:02:57.772 --> 00:03:04.800
+The UVs, which are normalized between 0 and 1,
+are first scaled to the texture&nbsp;size to get the texel coordinates.
+
+00:03:04.800 --> 00:03:09.600
+Then, the texel coordinates are snapped to the
+nearest texel center to produce a sharp sample,
+
+00:03:09.600 --> 00:03:13.279
+with an extra term to interpolate from
+the center of one texel to the next
+
+00:03:13.279 --> 00:03:18.560
+over a narrow band based on the ratio
+between pixel size and texel size.
+
+00:03:18.940 --> 00:03:21.942
+Finally, the texel coordinates are converted back to UVs,
+
+00:03:21.942 --> 00:03:25.734
+and passed to the bilinear
+sampler to produce the final color.
+
+00:03:26.160 --> 00:03:30.979
+When the upscale ratio is a whole number, and
+the image is placed pixel-perfect on screen,
+
+00:03:30.979 --> 00:03:36.300
+the points evaluated by the pixel shader will just
+happen to dodge all of the interpolation regions,
+
+00:03:36.300 --> 00:03:41.224
+meaning no interpolation will be visible, and
+the result will be a perfectly sharp upscale.
+
+00:03:42.120 --> 00:03:46.080
+This method works great for uniform
+scaling, and we can even extend
+
+00:03:46.080 --> 00:03:50.340
+it to support non-uniform stretching,
+which is done by making the upscale ratio
+
+00:03:50.340 --> 00:03:55.443
+a 2-dimensional variable to separately handle
+the horizontal and vertical texture dimensions.
+
+00:03:55.740 --> 00:04:00.254
+However, it’s not capable of handling&nbsp;
+more complex distortions, such as the
+
+00:04:00.254 --> 00:04:04.454
+perspective distortion from 3D rotations,
+which complicate what it means to calculate
+
+00:04:04.454 --> 00:04:08.930
+the upscaling ratio when texel shape
+and size varies across the image.
+
+00:04:09.815 --> 00:04:12.900
+In order to extend this method to
+cover these types of distortions,
+
+00:04:12.900 --> 00:04:16.388
+we’ll first need a slightly deeper
+understanding of the problem.
+
+00:04:18.300 --> 00:04:23.453
+Bilinear sampling is often thought of as
+interpolation between the nearest 4 texels,
+
+00:04:23.453 --> 00:04:25.900
+but there’s another way of explaining what it does.
+
+00:04:26.311 --> 00:04:30.903
+If we think of the texels as individual
+cells each with its own solid color,
+
+00:04:30.903 --> 00:04:37.112
+the bilinear sample at a point is equal to the average
+color inside a&nbsp;single-texel-sized box at that point.
+
+00:04:37.766 --> 00:04:43.320
+We can say that the bilinear filter is type of
+box filter, with a box size of a single texel,
+
+00:04:43.320 --> 00:04:47.557
+and we can use it to sample a box&nbsp;
+average at any texture location.
+
+00:04:49.140 --> 00:04:52.717
+Conceptually, to render with the ideal&nbsp;
+amount of anti-aliasing,
+
+00:04:52.717 --> 00:04:56.557
+we need to find the average texture color inside every pixel,
+
+00:04:56.557 --> 00:04:59.315
+and for that we need a pixel-sized box filter.
+
+00:05:00.060 --> 00:05:05.059
+For example, to color this pixel, we need to
+find the average texture color in this box,
+
+00:05:05.400 --> 00:05:10.688
+but there’s a way to stretch the box such that the
+average color contained within it doesn’t change.
+
+00:05:11.221 --> 00:05:14.553
+If we stretch the box this way&nbsp;
+until it’s the size of a texel,
+
+00:05:14.553 --> 00:05:20.502
+then we know from earlier that&nbsp;we can use the bilinear
+sampler to compute the average color in this box.
+
+00:05:20.867 --> 00:05:26.164
+And since we arrived at this box from our original pixel
+while carefully&nbsp;preserving the average color,
+
+00:05:26.164 --> 00:05:28.235
+that means the pixel color here
+
+00:05:28.235 --> 00:05:30.785
+is&nbsp;equal to the bilinear sample here.
+
+00:05:31.320 --> 00:05:34.320
+To render a pixel art texture
+with correct anti-aliasing,
+
+00:05:34.320 --> 00:05:38.278
+we just have to repeat this
+process on every other pixel.
+
+00:05:40.380 --> 00:05:43.680
+The shader code we had before
+was secretly already doing this.
+
+00:05:43.680 --> 00:05:48.158
+Or rather, this is just another way of
+thinking about what the code was doing.
+
+00:05:48.660 --> 00:05:52.007
+Instead of thinking about moving
+around the interpolation regions,
+
+00:05:52.007 --> 00:05:56.460
+we can think of this code as performing the
+calculations needed to compute some box average
+
+00:05:56.460 --> 00:05:58.879
+by converting it into a bilinear sample,
+
+00:05:58.879 --> 00:06:03.134
+and our shader works by passing in
+the ratio between the pixel and texel size,
+
+00:06:03.134 --> 00:06:06.131
+to make the box into the size of a pixel.
+
+00:06:07.920 --> 00:06:11.593
+Now let’s look at the problem from before again
+with this new perspective.
+
+00:06:11.867 --> 00:06:15.196
+When the texture is rotated, or distorted from perspective,
+
+00:06:15.196 --> 00:06:19.043
+we can’t compute the box size
+directly from a pixel per texel ratio,
+
+00:06:19.043 --> 00:06:22.730
+because pixels&nbsp;and texels are no longer uniformly aligned.
+
+00:06:23.280 --> 00:06:26.123
+If we tried to compute the average color in a pixel now,
+
+00:06:26.123 --> 00:06:30.132
+the region of the texture contained
+within the pixel is no longer a rectangle,
+
+00:06:30.132 --> 00:06:33.961
+and the trick we used before of stretching
+the box into the size of a texel
+
+00:06:33.961 --> 00:06:36.847
+while&nbsp;preserving average color no longer works.
+
+00:06:37.440 --> 00:06:41.100
+Given that our stretching trick only
+works for axis-aligned rectangles,
+
+00:06:41.100 --> 00:06:45.480
+we can compromise by using the axis-aligned
+bounding box of our distorted pixel,
+
+00:06:45.480 --> 00:06:49.200
+which will be the smallest box filter
+that we can use to sample the texture
+
+00:06:49.200 --> 00:06:54.986
+using the bilinear sampler while still providing
+enough anti-aliasing to cover the entire pixel.
+
+00:06:55.442 --> 00:07:00.595
+To compute this bounding box, we first need to
+compute the shape of the pixel in texture space.
+
+00:07:00.595 --> 00:07:05.515
+We know the shape of the pixel in pixel
+space is, by definition, a unit square.
+
+00:07:05.515 --> 00:07:12.446
+To transform it into texture space, we need to characterize the deformation&nbsp;of the texture space at the given pixel.
+
+00:07:13.500 --> 00:07:16.480
+Given that there are 2 pixel dimensions XY
+
+00:07:16.480 --> 00:07:22.352
+and 2 texture dimensions UV, the deformation&nbsp;
+can be determined from 4 measurements:&nbsp;
+
+00:07:22.800 --> 00:07:24.352
+The change in U per X,
+
+00:07:24.352 --> 00:07:26.238
+the change in U per Y,
+
+00:07:26.238 --> 00:07:28.064
+the change in V per X,
+
+00:07:28.064 --> 00:07:30.216
+and the change in V per Y.
+
+00:07:31.020 --> 00:07:34.147
+These 4 rates of change define a 2x2&nbsp;matrix,
+
+00:07:34.147 --> 00:07:38.630
+which I’ll call the deformation gradient from pixel space to texture space.
+
+00:07:38.630 --> 00:07:42.540
+We can multiply the deformation
+gradient by any vector in pixel space
+
+00:07:42.540 --> 00:07:45.641
+to get&nbsp;the same vector in texture space.
+
+00:07:46.620 --> 00:07:50.100
+Expanding the matrix multiplication&nbsp;
+gives us a formula for solving
+
+00:07:50.100 --> 00:07:53.134
+UV vector components given XY vectors.
+
+00:07:53.453 --> 00:07:56.928
+If we evaluate this formula at the corners of a unit square,
+
+00:07:56.928 --> 00:08:03.429
+with XY components&nbsp;(0, 0), (1, 0), (1, 1), and (0, 1),
+
+00:08:03.429 --> 00:08:07.044
+we get the texture space&nbsp;
+coordinates of the distorted pixel.
+
+00:08:07.500 --> 00:08:10.500
+To compute the width and height
+of the axis-aligned bounding box,
+
+00:08:10.500 --> 00:08:16.186
+we just need the difference between the
+maximum and minimum values of U and V.
+
+00:08:16.860 --> 00:08:20.340
+When we simplify this expression,
+we end up with the absolute value
+
+00:08:20.340 --> 00:08:25.680
+of du/dx plus the absolute value of
+du/dy for the texture-space width,
+
+00:08:25.680 --> 00:08:31.722
+and the same expression with dv/dx and
+dv/dy for the texture-space height.
+
+00:08:32.499 --> 00:08:38.040
+On the GPU, we can compute the 4 deformation
+terms using the ddx and ddy functions,
+
+00:08:38.040 --> 00:08:44.277
+and compute both the u and v box size in parallel.
+In fact, this operation is common enough that
+
+00:08:44.277 --> 00:08:48.892
+the shader language has a built-in function
+called fwidth() that does the whole thing.
+
+00:08:49.500 --> 00:08:53.760
+Now that we’re computing box size directly
+instead of the pixel per texel ratio,
+
+00:08:53.760 --> 00:08:57.238
+we can also simplify the sample offset code a bit.
+
+00:08:58.683 --> 00:09:02.043
+At this point, there are a few loose&nbsp;
+ends that remain to be tied up.
+
+00:09:02.460 --> 00:09:06.660
+First, the box size we calculate needs
+to be clamped to at most a single texel,
+
+00:09:06.660 --> 00:09:11.160
+because our box stretching trick assumes
+we don’t cross any texel boundaries.
+
+00:09:11.160 --> 00:09:16.496
+The box size also needs to be larger than&nbsp;
+zero, because we don’t want to divide by zero.
+
+00:09:16.680 --> 00:09:19.572
+Since the box size has to be smaller than 1 texel,
+
+00:09:19.572 --> 00:09:24.870
+there will be aliasing in situations where the
+desired filter amount is larger than 1 texel.
+
+00:09:24.870 --> 00:09:28.456
+To address this, we’ll take advantage of the other two filtering methods:
+
+00:09:28.456 --> 00:09:32.572
+mipmapping and anisotropic filtering.
+
+00:09:33.989 --> 00:09:38.520
+Because of the way we’ve manipulated the
+UVs, the GPU’s usual way of calculating
+
+00:09:38.520 --> 00:09:41.950
+how to apply these filters doesn’t work reliably.
+
+00:09:41.950 --> 00:09:44.835
+To fix this, we just need to switch the sampling function
+
+00:09:44.835 --> 00:09:50.283
+to one that explicitly passes in&nbsp;the original UV’s deformation gradient.
+
+00:09:54.846 --> 00:09:58.571
+Next, since our axis-aligned bounding box
+will tend to overestimate
+
+00:09:58.571 --> 00:10:01.651
+the amount of blurring required to perform anti-aliasing,
+
+00:10:01.651 --> 00:10:06.286
+we can purposefully compensate for this by using a slightly undersized box.
+
+00:10:06.286 --> 00:10:09.481
+Alternatively, what I prefer is to weigh the center of the box
+
+00:10:09.481 --> 00:10:12.598
+higher than&nbsp;the edges when computing the average color.
+
+00:10:12.598 --> 00:10:14.580
+If we choose a quadratic averaging window,&nbsp;&nbsp;
+
+00:10:14.580 --> 00:10:17.580
+the implementation turns out
+to be quite cheap to compute
+
+00:10:17.580 --> 00:10:22.160
+because integrating this window over a texel
+boundary results in a cubic transition,
+
+00:10:22.160 --> 00:10:26.220
+which can be directly computed
+using the smoothstep function.
+
+00:10:27.900 --> 00:10:30.631
+Lastly, I want to address an issue that&nbsp;may show up
+
+00:10:30.631 --> 00:10:34.739
+when using bilinear sampling of color sprites with transparency.
+
+00:10:35.408 --> 00:10:38.099
+When a texture is encoded with straight alpha blending,
+
+00:10:38.099 --> 00:10:41.580
+where the image opacity&nbsp;is encoded
+independent of the image color,
+
+00:10:41.580 --> 00:10:44.827
+transparent texels have no well-defined color&nbsp;data,
+
+00:10:44.827 --> 00:10:50.645
+meaning that any box average that includes
+a fully-transparent texel is not well-defined.
+
+00:10:50.645 --> 00:10:53.054
+engines like Unity usually hide this problem
+
+00:10:53.054 --> 00:10:57.805
+by guessing the color of the transparent texels
+based on their surrounding opaque texels,
+
+00:10:57.805 --> 00:11:01.571
+but pixel art textures often contain
+regions&nbsp;where a transparent texel
+
+00:11:01.571 --> 00:11:07.669
+borders multiple different colored opaque texels,
+resulting in incorrect blending at these locations.
+
+00:11:07.669 --> 00:11:11.089
+The correct solution is to use
+pre-multiplied alpha blending,
+
+00:11:11.089 --> 00:11:15.900
+which is an alternative way of encoding
+transparency that bypasses this issue entirely
+
+00:11:15.900 --> 00:11:18.709
+by&nbsp;having well-defined color
+for transparent texels,
+
+00:11:18.709 --> 00:11:22.506
+while otherwise producing
+exactly equivalent results.
+
+00:11:24.560 --> 00:11:28.500
+In my own game, which is primarily
+polygon- rather than sprite-based,
+
+00:11:28.500 --> 00:11:33.060
+I use the pixel art anti-aliasing method
+described in this video for upscaling the
+
+00:11:33.060 --> 00:11:36.950
+game’s internal render resolution
+to the game’s display resolution,
+
+00:11:36.950 --> 00:11:41.640
+as well as for UI and text elements
+that are drawn directly to the display.
+
+00:11:41.640 --> 00:11:44.400
+While this works optimally for integer upscaling,
+
+00:11:44.400 --> 00:11:47.627
+it also allows for less conventional upscaling ratios,
+
+00:11:47.627 --> 00:11:50.737
+such as when running in windowed mode.
+
+00:11:53.627 --> 00:11:57.540
+Ironically, none of my current use
+cases involve any of the rotating or
+
+00:11:57.540 --> 00:12:00.000
+3D distortions discussed in this video,
+
+00:12:00.000 --> 00:12:03.308
+but I thought it was an interesting
+enough idea to fully develop,
+
+00:12:03.308 --> 00:12:06.778
+and I think it could potentially be a
+useful reference for others whose own
+
+00:12:06.778 --> 00:12:10.260
+design&nbsp;goals and use cases
+may differ from my own.
+
+00:12:10.260 --> 00:12:14.037
+To that end, for those who have
+expressed interest in supporting my work,
+
+00:12:14.037 --> 00:12:15.945
+I’ve opened an account on Patreon,
+
+00:12:15.945 --> 00:12:19.992
+where I plan on posting a bit more candidly
+about the upcoming content pipeline,
+
+00:12:19.992 --> 00:12:23.627
+as well as sharing&nbsp;some supplementary
+material to published videos,
+
+00:12:23.627 --> 00:12:28.440
+such as source code examples or blog&nbsp;
+posts expanding on relevant ideas.
+
+00:12:28.440 --> 00:12:32.333
+To everyone else, thanks for watching.
+

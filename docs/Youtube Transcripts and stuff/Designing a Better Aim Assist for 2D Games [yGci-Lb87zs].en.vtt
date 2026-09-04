@@ -1,0 +1,525 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:01.200 --> 00:00:06.400
+Something that’s been on my mind recently is the&nbsp;
+implementation of aim assist in fixed-perspective&nbsp;&nbsp;
+
+00:00:06.400 --> 00:00:10.160
+games like Hades and Death’s Door,&nbsp;
+when aiming with an analog stick.&nbsp;
+
+00:00:12.080 --> 00:00:15.840
+When playing these games, I’ve had&nbsp;
+experiences where I felt a disconnect&nbsp;&nbsp;
+
+00:00:15.840 --> 00:00:19.760
+between what I wanted to do, and what the&nbsp;
+game’s aim assist thought I wanted to do.&nbsp;
+
+00:00:21.440 --> 00:00:25.360
+Fundamentally, I felt like my issue was&nbsp;
+that many of these games implement more&nbsp;&nbsp;
+
+00:00:25.360 --> 00:00:32.800
+of an aim automation system than aim assist.
+The effect is much more pronounced in Hades,&nbsp;&nbsp;
+
+00:00:32.800 --> 00:00:37.760
+where the weapon can snap by as much as 90&nbsp;
+degrees, wrestling control away from the player.&nbsp;
+
+00:00:39.280 --> 00:00:43.440
+In Death’s Door, the effect is much more&nbsp;
+subtle, as the game never visualizes the&nbsp;&nbsp;
+
+00:00:43.440 --> 00:00:47.920
+correction it applies to the user input,&nbsp;
+and doesn’t correct by more than 15 degrees.&nbsp;
+
+00:00:49.920 --> 00:00:54.480
+For the sake of this video, I reverse engineered&nbsp;
+the aim assist code in both of these games,&nbsp;&nbsp;
+
+00:00:54.480 --> 00:00:57.440
+because I think it highlights the&nbsp;
+types of gameplay design problems&nbsp;&nbsp;
+
+00:00:57.440 --> 00:01:02.160
+that aim assist attempts to address.
+I’ll then present my own thoughts on&nbsp;&nbsp;
+
+00:01:02.160 --> 00:01:05.840
+how to better formulate the problem of&nbsp;
+aim-assist in a way that makes it easier&nbsp;&nbsp;
+
+00:01:05.840 --> 00:01:11.840
+to think about how to balance things like&nbsp;
+player intention, skill, and gameplay feel.&nbsp;
+
+00:01:12.720 --> 00:01:17.920
+Hades is a fast-paced game where players often&nbsp;
+find themselves surrounded by fast moving enemies&nbsp;
+
+00:01:18.720 --> 00:01:23.120
+In general, every enemy must be dealt with&nbsp;
+before the player can progress to the next room&nbsp;
+
+00:01:24.000 --> 00:01:28.880
+In this context, aiming is often secondary&nbsp;
+to hitting, and so the aim assist in Hades&nbsp;&nbsp;
+
+00:01:28.880 --> 00:01:33.360
+appears to have been designed to ask the question&nbsp;
+“What are the targets that the player might want&nbsp;&nbsp;
+
+00:01:33.360 --> 00:01:37.520
+to hit in this context”, and, “Which one is&nbsp;
+the closest to the player’s aim direction?”&nbsp;
+
+00:01:38.720 --> 00:01:42.320
+In theory, this ensures that any target&nbsp;
+the game selects will always make&nbsp;&nbsp;
+
+00:01:42.320 --> 00:01:46.960
+incremental progress to clearing the room.
+Weapons which require line of sight will&nbsp;&nbsp;
+
+00:01:46.960 --> 00:01:52.400
+only snap to targets that have line of sight.
+Weapons won’t snap to enemies that are off screen,&nbsp;&nbsp;
+
+00:01:52.400 --> 00:01:56.320
+that are currently invulnerable, or that are&nbsp;
+outside of the range of the player’s attack.&nbsp;
+
+00:01:57.360 --> 00:02:02.240
+For each potential target, the game uses the&nbsp;
+current gameplay context to make its best estimate&nbsp;&nbsp;
+
+00:02:02.240 --> 00:02:07.600
+of whether that target is valid for aiming or not.
+For the targets which pass, the game selects&nbsp;&nbsp;
+
+00:02:07.600 --> 00:02:12.000
+the target whose direction is closest to the&nbsp;
+player’s input direction, and whose distance&nbsp;&nbsp;
+
+00:02:12.000 --> 00:02:16.320
+to the player and arc distance to the player’s&nbsp;
+input direction falls below some threshold.&nbsp;
+
+00:02:19.520 --> 00:02:23.360
+In Death’s Door, the aim assist is&nbsp;
+formulated in the exact opposite order.&nbsp;
+
+00:02:24.400 --> 00:02:28.560
+It first asks, “What are the hittable objects&nbsp;
+closest to the player’s aim direction”,&nbsp;&nbsp;
+
+00:02:29.120 --> 00:02:31.920
+then, “Which one is the player&nbsp;
+most likely to want to hit?”&nbsp;
+
+00:02:33.040 --> 00:02:37.520
+This reversal is interesting because it allows&nbsp;
+for multiple layers of context sensitivity.&nbsp;
+
+00:02:38.400 --> 00:02:42.240
+For example, puzzle elements have&nbsp;
+higher priority than nearby enemies,&nbsp;&nbsp;
+
+00:02:42.240 --> 00:02:45.120
+which in turn have higher&nbsp;
+priority than faraway enemies.&nbsp;
+
+00:02:48.480 --> 00:02:52.320
+Because both of these games snap the&nbsp;
+player input directly onto a target,&nbsp;&nbsp;
+
+00:02:52.320 --> 00:02:56.240
+any mis-snap can lead to an instantly&nbsp;
+frustrating experience for the player.&nbsp;
+
+00:02:57.360 --> 00:03:02.240
+This is mainly an issue when the player has a very&nbsp;
+specific target in mind, because the incongruity&nbsp;&nbsp;
+
+00:03:02.240 --> 00:03:07.200
+between player intention and avatar action&nbsp;
+leads to a very noticeably jarring experience.&nbsp;
+
+00:03:08.320 --> 00:03:11.840
+A common failure mode is when the player&nbsp;
+intends to shoot at a target which is&nbsp;&nbsp;
+
+00:03:11.840 --> 00:03:15.600
+slightly out of range, but the aim assist&nbsp;
+erroneously corrects the player aim to a&nbsp;&nbsp;
+
+00:03:15.600 --> 00:03:20.880
+completely different in-range target.
+This incongruity between intention and&nbsp;&nbsp;
+
+00:03:20.880 --> 00:03:26.000
+action can be especially frustrating if aiming at&nbsp;
+the wrong target doesn’t make any tactical sense,&nbsp;&nbsp;
+
+00:03:26.000 --> 00:03:29.360
+such as prioritizing a low-threat&nbsp;
+enemy instead of a high-threat enemy,&nbsp;&nbsp;
+
+00:03:29.920 --> 00:03:34.400
+using a high-power attack on a weak enemy,&nbsp;
+or using an AOE attack on a lone enemy.&nbsp;
+
+00:03:36.000 --> 00:03:39.120
+Aim assist is something that I&nbsp;
+want to incorporate in my own game,&nbsp;&nbsp;
+
+00:03:39.120 --> 00:03:43.120
+and through some early prototyping,&nbsp;
+testing, and subsequent reflection,&nbsp;&nbsp;
+
+00:03:43.120 --> 00:03:47.040
+I’ve come up with a few ideas that I’ve&nbsp;
+consolidated into what I think is a pretty&nbsp;&nbsp;
+
+00:03:47.040 --> 00:03:51.600
+flexible framework for thinking about the problem&nbsp;
+and potentially addressing some of these issues.&nbsp;
+
+00:03:53.760 --> 00:03:57.200
+Let’s represent player input&nbsp;
+direction and avatar orientation&nbsp;&nbsp;
+
+00:03:57.200 --> 00:04:02.319
+as the x and y axes on a 2D phase graph.
+The map between player input and avatar&nbsp;&nbsp;
+
+00:04:02.320 --> 00:04:05.197
+orientation is a function, f(x)
+
+00:04:05.197 --> 00:04:08.461
+When f is the identity function&nbsp;f(x)=x
+
+00:04:08.461 --> 00:04:12.240
+player input is mapped to avatar&nbsp;
+orientation directly without modification.&nbsp;
+
+00:04:13.120 --> 00:04:17.760
+The avatar points in exactly the direction of&nbsp;
+input, as is the case when there’s no aim assist.&nbsp;
+
+00:04:19.760 --> 00:04:23.040
+When f(x) is not equal to x,&nbsp;
+it describes the transformation&nbsp;&nbsp;
+
+00:04:23.040 --> 00:04:27.840
+from the player input space to&nbsp;
+the avatar orientation space.&nbsp;
+
+00:04:30.240 --> 00:04:33.280
+Now let’s consider a potential&nbsp;
+target near the player.&nbsp;
+
+00:04:33.280 --> 00:04:37.760
+The target has a particular angular position&nbsp;
+and size from the player avatar’s perspective&nbsp;
+
+00:04:38.560 --> 00:04:42.320
+The angular position changes as the&nbsp;
+target moves around the player avatar.&nbsp;
+
+00:04:45.280 --> 00:04:50.320
+The angular size changes with distance, and is&nbsp;
+also correlated with the target’s physical size.&nbsp;
+
+00:04:51.920 --> 00:04:56.320
+When f(x)=x, the range of avatar&nbsp;
+orientations that are on target&nbsp;&nbsp;
+
+00:04:56.320 --> 00:04:59.120
+is equal to the range of controller&nbsp;
+inputs that are on target.&nbsp;
+
+00:05:00.480 --> 00:05:05.920
+However, if we select f(x) to widen the target&nbsp;
+region, a greater range of controller inputs&nbsp;&nbsp;
+
+00:05:05.920 --> 00:05:08.820
+get mapped to on-target avatar orientations.
+
+00:05:10.289 --> 00:05:13.296
+In more mathematical language, we can call&nbsp;this the preimage
+
+00:05:13.296 --> 00:05:17.440
+of the target region B under&nbsp;the function f,
+and we can think of it as being&nbsp;&nbsp;
+
+00:05:17.440 --> 00:05:21.280
+the virtual size of the target from the&nbsp;
+perspective of the player’s controller.&nbsp;
+
+00:05:22.880 --> 00:05:27.840
+Even for a physically small target, we can&nbsp;
+choose to maintain a large virtual target,&nbsp;&nbsp;
+
+00:05:27.840 --> 00:05:32.320
+making it easier for the player to input an&nbsp;
+angle that points to somewhere on the target.&nbsp;
+
+00:05:33.520 --> 00:05:38.240
+In this way, we can imagine constructing&nbsp;
+f(x) to always maintain a minimum preimage&nbsp;&nbsp;
+
+00:05:38.240 --> 00:05:41.680
+size of each target, no matter&nbsp;
+their actual size or distance.&nbsp;
+
+00:05:42.640 --> 00:05:46.800
+This allows us to set a skill floor for how&nbsp;
+hard we want it to be to aim at targets.&nbsp;
+
+00:05:49.280 --> 00:05:52.320
+Another way of analyzing this&nbsp;
+function is by looking at its slope.&nbsp;
+
+00:05:53.040 --> 00:05:56.160
+Regions of low slope represent&nbsp;
+regions where the function makes&nbsp;&nbsp;
+
+00:05:56.160 --> 00:05:58.964
+it easier to aim by decreasing sensitivity.
+
+00:06:00.264 --> 00:06:02.778
+They must be balanced by regions of high slope,
+
+00:06:02.778 --> 00:06:06.080
+to ensure the total domain and&nbsp;range fill up the full 360 degrees.
+
+00:06:07.200 --> 00:06:11.520
+Beyond this constraint, we can make many&nbsp;
+different decisions for the design of f(x)&nbsp;&nbsp;
+
+00:06:11.520 --> 00:06:17.520
+depending on our goal as a gameplay designer.
+For example, we may like to smooth the curve to&nbsp;&nbsp;
+
+00:06:17.520 --> 00:06:21.920
+reduce the jarring effect of a sudden change&nbsp;
+of sensitivity as we aim toward a target.&nbsp;
+
+00:06:26.560 --> 00:06:29.920
+Perhaps for a precision weapon, we&nbsp;
+want the player to feel a change in&nbsp;&nbsp;
+
+00:06:29.920 --> 00:06:33.040
+sensitivity at the center of the&nbsp;
+target no matter how large it is,&nbsp;&nbsp;
+
+00:06:33.040 --> 00:06:36.400
+so we design f to always flatten&nbsp;
+the slope at the center of targets.&nbsp;
+
+00:06:37.840 --> 00:06:41.200
+Perhaps we want to limit the extent&nbsp;
+to which we enlarge the virtual size&nbsp;&nbsp;
+
+00:06:41.200 --> 00:06:45.680
+of targets on higher difficulty settings.
+Or to only provide the feeling of locking&nbsp;&nbsp;
+
+00:06:45.680 --> 00:06:49.280
+on target without actually affecting the&nbsp;
+difficulty of hitting targets at all.&nbsp;
+
+00:06:51.200 --> 00:06:56.080
+Maybe we decide that for predictability, we want&nbsp;
+to apply the same correction to all targets no&nbsp;&nbsp;
+
+00:06:56.080 --> 00:07:00.480
+matter how big or small they are.
+And in each case, we can globally&nbsp;&nbsp;
+
+00:07:00.480 --> 00:07:04.240
+decide how much assistance to provide by&nbsp;
+blending it with the identity function.&nbsp;
+
+00:07:07.120 --> 00:07:12.160
+As a point of comparison, the sort of direct&nbsp;
+snapping aim assist approach we’ve previously seen&nbsp;&nbsp;
+
+00:07:12.160 --> 00:07:18.160
+looks something like this in our visualization.
+We see that this indeed produces large virtual&nbsp;&nbsp;
+
+00:07:18.160 --> 00:07:21.120
+targets, which any useful aim&nbsp;
+assist function should do.&nbsp;
+
+00:07:22.480 --> 00:07:27.200
+However, the direct snapping approach also&nbsp;
+produces large output discontinuities,&nbsp;&nbsp;
+
+00:07:27.200 --> 00:07:31.760
+and sets of avatar orientations whose&nbsp;
+preimage is completely empty, representing&nbsp;&nbsp;
+
+00:07:31.760 --> 00:07:36.800
+directions that are impossible to aim at.
+Consequently, any aim assist system using&nbsp;&nbsp;
+
+00:07:36.800 --> 00:07:40.960
+the snapping method must be highly&nbsp;
+robust in its target identification,&nbsp;&nbsp;
+
+00:07:40.960 --> 00:07:44.960
+as any failure of the system results&nbsp;
+in catastrophic gameplay consequences.&nbsp;
+
+00:07:46.000 --> 00:07:50.640
+The generalization of aim assist to include&nbsp;
+these smoother functions thus represents a&nbsp;&nbsp;
+
+00:07:50.640 --> 00:07:54.160
+relaxing of the responsibility&nbsp;
+of the aim assist algorithm,&nbsp;&nbsp;
+
+00:07:54.160 --> 00:07:58.400
+while still addressing the fundamental problem&nbsp;
+of compensating for imperfect player inputs.&nbsp;
+
+00:08:02.800 --> 00:08:06.480
+In our search for the perfect function&nbsp;
+that satisfies our game design goals,&nbsp;&nbsp;
+
+00:08:06.480 --> 00:08:12.400
+we may like to enforce a couple more restrictions.
+As previously mentioned we would like the domain&nbsp;&nbsp;
+
+00:08:12.400 --> 00:08:16.480
+and range of the function to be all&nbsp;
+the angles between 0 and 360 degrees,&nbsp;&nbsp;
+
+00:08:16.480 --> 00:08:20.240
+with a circular topology.
+We might like to enforce&nbsp;&nbsp;
+
+00:08:20.240 --> 00:08:24.160
+that the slope of the function is never&nbsp;
+negative, or larger than some maximum.&nbsp;
+
+00:08:25.280 --> 00:08:29.520
+We might also like to limit the magnitude&nbsp;
+of the correction to some reasonable value.&nbsp;
+
+00:08:30.880 --> 00:08:34.480
+Beyond these simple constraints, we may&nbsp;
+have other constraints we’d like to enforce.&nbsp;
+
+00:08:35.600 --> 00:08:40.480
+It might make sense to specify that perfect aim&nbsp;
+on target should never result in any correction.&nbsp;
+
+00:08:41.440 --> 00:08:47.078
+And maybe we’d like to explicitly&nbsp;specify the sensitivity of f
+at each&nbsp;target depending on the target.
+
+00:08:48.677 --> 00:08:54.320
+It may seem like a pointless complication to define all
+of these things&nbsp;mathematically, but there is some advantage&nbsp;&nbsp;
+
+00:08:54.320 --> 00:08:59.440
+in at least thinking a little bit about it.
+In my opinion, mathematics is the universal&nbsp;&nbsp;
+
+00:08:59.440 --> 00:09:03.600
+language of abstraction, and so if we&nbsp;
+understand the mathematics of our problem,&nbsp;&nbsp;
+
+00:09:03.600 --> 00:09:08.240
+we can often find a wealth of solutions beyond&nbsp;
+our immediate application that we can make use of.&nbsp;
+
+00:09:09.120 --> 00:09:13.360
+For example, these last two constraints&nbsp;
+look a lot like specifying function values&nbsp;&nbsp;
+
+00:09:13.360 --> 00:09:18.400
+and derivatives at a set of points, which is a&nbsp;
+problem solvable by cubic spline interpolation.&nbsp;
+
+00:09:19.280 --> 00:09:23.440
+However, we’d quickly realize that cubic&nbsp;
+splines don’t guarantee monotonicity,&nbsp;&nbsp;
+
+00:09:23.440 --> 00:09:25.280
+which violates our second constraint.&nbsp;
+
+00:09:26.240 --> 00:09:30.960
+A quick search leads us to monotone cubic&nbsp;
+interpolation, which handily solves our problem.&nbsp;
+
+00:09:33.200 --> 00:09:36.400
+There are still many open problems&nbsp;
+that I haven’t addressed by this point,&nbsp;&nbsp;
+
+00:09:36.400 --> 00:09:39.680
+but that deserve some thought when&nbsp;
+implementing such a system in a game.&nbsp;
+
+00:09:41.040 --> 00:09:45.600
+How do we handle it when targets occlude one&nbsp;
+another, if the projectile requires line of sight?&nbsp;
+
+00:09:46.320 --> 00:09:49.840
+How do we handle moving targets if the&nbsp;
+projectile has a finite travel speed?&nbsp;
+
+00:09:50.880 --> 00:09:55.280
+How should we handle targets moving in and&nbsp;
+out of range or line of sight during aiming?&nbsp;
+
+00:09:56.160 --> 00:09:58.080
+Should the aim assist correction magnitude&nbsp;&nbsp;
+
+00:09:58.080 --> 00:10:01.440
+change depending on how fast the&nbsp;
+player’s analog input changes?&nbsp;
+
+00:10:02.400 --> 00:10:06.560
+Does there need to be any sort of balancing&nbsp;
+between mouse and controller input?&nbsp;
+
+00:10:07.360 --> 00:10:10.960
+I personally think these types of&nbsp;
+questions map very naturally to the&nbsp;&nbsp;
+
+00:10:10.960 --> 00:10:15.760
+paradigm of thinking about aim assist as a&nbsp;
+function from player input to avatar output.&nbsp;
+
+00:10:16.720 --> 00:10:21.360
+The production burden of this video has&nbsp;
+already greatly exceeded my expectation though,&nbsp;&nbsp;
+
+00:10:21.360 --> 00:10:24.320
+so I’ll have to leave further&nbsp;
+exploration of the subject to you.&nbsp;
+
+00:10:25.360 --> 00:10:28.560
+If you’re a game designer who’s worked&nbsp;
+on the aim assist problem before,&nbsp;&nbsp;
+
+00:10:28.560 --> 00:10:32.400
+I’d be interested to hear your thoughts&nbsp;
+and experiences, things I’ve missed,&nbsp;&nbsp;
+
+00:10:32.400 --> 00:10:34.478
+things that did or didn’t work out.
+
+00:10:35.250 --> 00:10:43.920
+In any case, as always, thanks for watching.
+

@@ -1,0 +1,724 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:00.240 --> 00:00:04.880
+In traditional vector animation, there
+is a concept called interpolation curves,
+
+00:00:04.880 --> 00:00:09.828
+which describes the way we move between
+one animation keyframe and the next
+
+00:00:10.560 --> 00:00:14.880
+Depending on the shape of this curve,
+we can control motion to slowly ease in,
+
+00:00:14.880 --> 00:00:19.823
+to slowly ease out, or even to
+anticipate and overshoot the keyframe
+
+00:00:20.720 --> 00:00:26.257
+The choice of animation curves can greatly affect
+the feeling of inertia and energy in the motion
+
+00:00:26.640 --> 00:00:31.040
+This grants the animator a good deal of
+artistic expression in describing motion
+
+00:00:31.040 --> 00:00:34.219
+while keeping the number of keyframes economical
+
+00:00:35.200 --> 00:00:39.920
+In procedural animation, however, it can be
+very powerful to do away with the concept of
+
+00:00:39.920 --> 00:00:45.600
+keyframes entirely, freeing the system
+to move however the situation demands
+
+00:00:45.600 --> 00:00:51.000
+This adaptability is one of the main reasons
+to incorporate procedural animation in games
+
+00:00:51.600 --> 00:00:56.960
+For example, in the game I’m working on, I have
+this little robot character which moves its body
+
+00:00:56.960 --> 00:01:03.845
+and legs using inverse kinematics in response to
+realtime requests to move and change orientation
+
+00:01:04.320 --> 00:01:06.226
+I’m controlling it with my mouse here,
+and you can find tutorials for how to
+
+00:01:06.226 --> 00:01:10.530
+and you can find tutorials for how to
+implement this sort of thing online
+
+00:01:11.158 --> 00:01:15.306
+In game, this same flexibility allows
+the character to immediately respond
+
+00:01:15.306 --> 00:01:18.198
+to changing gameplay situations
+
+00:01:20.240 --> 00:01:24.555
+This is pretty nice, but because we
+don’t have&nbsp;keyframes for these inputs,
+
+00:01:24.555 --> 00:01:28.929
+we can't really use interpolation curves
+to add that sense of inertia
+
+00:01:28.929 --> 00:01:33.263
+What we’d really like is the ability to
+achieve something like this,
+
+00:01:33.263 --> 00:01:36.870
+using an intuitive&nbsp;abstraction
+similar to interpolation curves,
+
+00:01:36.870 --> 00:01:42.720
+but without losing out on the dynamic
+responsiveness of a keyframe-free system
+
+00:01:43.520 --> 00:01:48.304
+Let’s start off by describing the problem
+we want to solve a bit more precisely
+
+00:01:49.840 --> 00:01:53.120
+Given some dynamically changing
+input x from our game world,
+
+00:01:53.120 --> 00:01:58.400
+we want to produce some dynamic output y
+which tracks the input x, but is imbued with
+
+00:01:58.400 --> 00:02:03.651
+some sort of characteristic that conveys
+the way that we want the motion to feel
+
+00:02:04.960 --> 00:02:11.009
+In the simplest case, y=x, and our system
+rigidly conforms to whatever input we give it
+
+00:02:11.409 --> 00:02:15.619
+This isn’t very useful on its own,
+but it is a good starting point
+
+00:02:16.105 --> 00:02:20.581
+Whatever changes we make to this equation, we’ll
+want to ensure that in the long term,
+
+00:02:20.581 --> 00:02:24.820
+when x isn’t changing,
+y should eventually settle at x
+
+00:02:25.526 --> 00:02:28.438
+To introduce the possibility for interesting dynamics,
+
+00:02:28.438 --> 00:02:32.480
+let’s add some velocity and
+acceleration terms, represented here as
+
+00:02:32.480 --> 00:02:39.631
+first and second order derivatives with respect
+to time, scaled by some values k1, k2, and k3
+
+00:02:40.320 --> 00:02:44.640
+The dot notation here is just a shorthand
+way of writing time derivatives, which
+
+00:02:44.640 --> 00:02:49.117
+you may have also seen written like this, or this
+
+00:02:50.061 --> 00:02:53.816
+This type of relationship involving
+up to a second order time derivative
+
+00:02:53.816 --> 00:02:56.480
+is known as a second order system
+
+00:02:56.480 --> 00:03:01.040
+Mechanical motions in the real world tend to
+be second order, which you can think of as
+
+00:03:01.040 --> 00:03:05.520
+being related to the fact that forces act
+on acceleration, the second derivative of
+
+00:03:05.520 --> 00:03:12.000
+position, as described by Newton’s second law
+These forces usually arise out of stiffness,
+
+00:03:12.000 --> 00:03:16.320
+where they are a function of displacement, or
+out of friction, where they are a function of
+
+00:03:16.320 --> 00:03:19.205
+velocity, hence our choice of terms
+
+00:03:20.105 --> 00:03:23.436
+For example, this is the equation of motion of a rigid body
+
+00:03:23.436 --> 00:03:27.124
+being dragged along&nbsp;one axis through a linear damped spring
+
+00:03:28.309 --> 00:03:32.960
+And this is the equation of motion
+for the SmoothDamp function in Unity
+
+00:03:33.760 --> 00:03:39.280
+By playing around with these values k1, k2, and
+k3, we can generate a whole host of different
+
+00:03:39.280 --> 00:03:43.521
+interesting behaviors, but as an artist,
+it might not be very intuitive
+
+00:03:43.521 --> 00:03:46.865
+how these values map to those different behaviors
+
+00:03:47.750 --> 00:03:53.435
+First, let’s simplify the visualization to look at
+the response to a single sudden change in the input
+
+00:03:54.160 --> 00:03:58.240
+The resulting output is known as the
+step response, which is a standard way
+
+00:03:58.240 --> 00:04:04.430
+of visualizing the dynamics of a system, and
+captures the essence of the system’s behavior
+
+00:04:05.200 --> 00:04:11.803
+Next, using k1 k2 and k3, we’ll
+define 3 new variables: f, zeta, and r
+
+00:04:12.800 --> 00:04:16.223
+We’ll use f, zeta, and r
+(which I’ll&nbsp;explain in a moment)
+
+00:04:16.223 --> 00:04:20.423
+as the design parameters for the system’s motion
+
+00:04:20.423 --> 00:04:24.850
+Under the hood, we can use them
+to compute k1, k2, and k3
+
+00:04:26.292 --> 00:04:31.056
+In this new parameterization of f, zeta, and r,
+each term controls something
+
+00:04:31.056 --> 00:04:34.409
+that&nbsp;we can develop some reasonable intuition about
+
+00:04:35.360 --> 00:04:39.520
+f is the natural frequency of the system
+measured in Hz, or cycles per second
+
+00:04:40.160 --> 00:04:45.120
+It describes the speed at which the system will
+respond to changes in the input, as well as the
+
+00:04:45.120 --> 00:04:50.327
+frequency the system will tend to vibrate at, but
+does not affect the shape of the resulting motion
+
+00:04:52.240 --> 00:04:54.720
+zeta is known as the damping coefficient
+
+00:04:54.720 --> 00:04:58.640
+It describes how the system
+comes to settle at the target
+
+00:04:58.640 --> 00:05:03.641
+When zeta is 0, vibration never dies
+down, and the system is undamped
+
+00:05:04.369 --> 00:05:08.880
+Between values of 0 and 1, the system
+is underdamped, and will vibrate more,
+
+00:05:08.880 --> 00:05:11.819
+or less, depending on the magnitude of zeta
+
+00:05:12.533 --> 00:05:15.549
+When zeta is greater than 1, the system will not vibrate,
+
+00:05:15.549 --> 00:05:20.524
+and instead slowly settle toward&nbsp;the target x,
+depending on the magnitude of zeta
+
+00:05:21.120 --> 00:05:27.499
+The SmoothDamp function in Unity uses a zeta equal
+to exactly 1 which is known as critical damping
+
+00:05:28.560 --> 00:05:32.249
+r is a value which controls the
+initial response of the system
+
+00:05:32.749 --> 00:05:37.759
+When r is 0, the system takes time
+to begin accelerating from rest
+
+00:05:37.759 --> 00:05:42.688
+When r is positive, the system
+reacts immediately to movement in x
+
+00:05:42.688 --> 00:05:47.025
+When r is greater than 1, the
+system will overshoot the target
+
+00:05:47.025 --> 00:05:51.126
+When r is negative, the system
+will anticipate the motion
+
+00:05:51.840 --> 00:05:56.573
+When modeling a mechanical connection,
+a value of 2 for r is typical
+
+00:05:57.200 --> 00:06:00.320
+Now, as artists, we have all we
+need to start playing with the
+
+00:06:00.320 --> 00:06:04.261
+characteristics of the motion of
+our procedurally animated object
+
+00:06:04.640 --> 00:06:09.040
+If we want to control the settling behavior
+of the system, we can play with zeta
+
+00:06:09.040 --> 00:06:14.000
+If we want to control the initial
+response of the system, we can play with r
+
+00:06:14.000 --> 00:06:19.840
+If we want to control how fast or slowly
+the system behaves, we can play with f
+
+00:06:22.000 --> 00:06:26.080
+Coming back to this robot character, you can
+see I used an underdamped movement for the
+
+00:06:26.080 --> 00:06:33.234
+body with zeta of 0.5, and r of -2 to give
+it some anticipation before fast movements
+
+00:06:33.600 --> 00:06:37.600
+For a bit of extra flavor, I tilt
+the body towards the target position,
+
+00:06:37.600 --> 00:06:43.280
+to further hint at the intent behind the motion
+I want the turning to be smooth, so for the body
+
+00:06:43.280 --> 00:06:49.520
+orientation I use a zeta of 1 and r of 0
+I do the same for the head orientation,
+
+00:06:49.520 --> 00:06:54.531
+but with a smaller f, to make it lag behind
+the body as a sort of secondary motion
+
+00:06:54.960 --> 00:07:01.840
+The cables are animated with a little trick
+that I explained over on twitter a while ago
+
+00:07:03.520 --> 00:07:06.880
+Let’s now look at an approach for
+solving this equation in real-time,
+
+00:07:06.880 --> 00:07:10.097
+so that we can begin using it in practice
+
+00:07:10.480 --> 00:07:13.600
+There are many ways of numerically
+solving differential equations
+
+00:07:13.600 --> 00:07:18.480
+such as our second order one, but a particularly
+straightforward one is called Euler’s method
+
+00:07:19.840 --> 00:07:24.640
+Today, I will present a slight variation
+known as the semi-implicit Euler method,
+
+00:07:24.640 --> 00:07:31.677
+which, for our system, happens to have the same
+accuracy as the more complex Verlet integration
+
+00:07:32.400 --> 00:07:36.720
+First, we need to allocate some state
+variables: position and velocity
+
+00:07:36.720 --> 00:07:40.400
+These are our estimates of
+y and its first derivative
+
+00:07:40.400 --> 00:07:44.354
+At timestep 0, they need to be
+initialized to some initial values
+
+00:07:45.360 --> 00:07:50.640
+Now, when the game is running, we’ll want to
+iteratively update these variables each frame
+
+00:07:50.640 --> 00:07:54.257
+Let’s call the amount of time
+that passes between frames T
+
+00:07:55.920 --> 00:08:00.480
+First, we update the position estimate by
+taking the previous iteration’s position&nbsp;&nbsp;
+
+00:08:00.480 --> 00:08:04.089
+and adding T times the velocity
+
+00:08:04.089 --> 00:08:08.649
+Next, we update the velocity by
+taking the previous iteration’s velocity
+
+00:08:08.649 --> 00:08:11.188
+and adding T times the acceleration
+
+00:08:11.600 --> 00:08:15.920
+To compute this acceleration,
+recall our equation of motion
+
+00:08:15.920 --> 00:08:18.809
+We can solve for acceleration here
+
+00:08:19.680 --> 00:08:24.451
+And substitute in our most recent
+estimates of position and velocity
+
+00:08:24.960 --> 00:08:29.920
+Note that in semi-implicit Euler, we are using
+the updated position to compute velocity,
+
+00:08:29.920 --> 00:08:35.794
+which is slightly different from the regular Euler
+method where we use the previous frame’s position
+
+00:08:36.560 --> 00:08:42.320
+In the case that the input velocity, x dot, is
+unknown, we can also estimate it using historical
+
+00:08:42.320 --> 00:08:48.333
+measurements, for example, by approximating it
+as the average velocity since the previous sample
+
+00:08:48.960 --> 00:08:53.840
+This algorithm naturally translates
+almost line by line into code
+
+00:08:55.440 --> 00:08:59.988
+If we were to implement this in-game, we
+would see that it does work as designed
+
+00:09:00.240 --> 00:09:04.800
+I hooked up the code to allow for f,
+zeta, and r to be changed in real time,
+
+00:09:04.800 --> 00:09:08.801
+and the system responds appropriately
+
+00:09:13.040 --> 00:09:17.685
+There is one big issue that we’ll run
+into after a bit of experimentation though
+
+00:09:17.920 --> 00:09:22.640
+Set the resonant frequency f too high relative
+to the frame rate, and the system becomes
+
+00:09:22.640 --> 00:09:27.401
+completely unstable, launching itself to infinity
+
+00:09:27.401 --> 00:09:32.121
+While it’s possible to simply keep f low
+enough such that this type of glitch is unlikely,
+
+00:09:32.121 --> 00:09:35.832
+in a game engine, we would really like to
+have a stronger guarantee that something&nbsp;like
+
+00:09:35.832 --> 00:09:39.141
+this doesn’t happen in corner cases, such as a lag spike
+
+00:09:39.141 --> 00:09:42.088
+causing the time step to be much larger than anticipated
+
+00:09:42.720 --> 00:09:46.640
+This is a problem that can be solved, but
+to understand it properly, we’ll have to
+
+00:09:46.640 --> 00:09:50.006
+get a bit more technical with our analysis
+
+00:09:50.006 --> 00:09:55.231
+The reason why physics solvers like Euler’s method
+can become unstable is that fundamentally,
+
+00:09:55.231 --> 00:10:00.114
+they are feedback systems whose outputs
+from one iteration, here y and its derivative,
+
+00:10:00.114 --> 00:10:04.345
+are fed&nbsp;back into later iterations of the computation
+
+00:10:04.345 --> 00:10:07.920
+When the time step between frames is
+too large compared to the parameters,
+
+00:10:07.920 --> 00:10:10.915
+it will start accumulating errors over time
+
+00:10:10.915 --> 00:10:15.000
+Beyond a critical threshold, these errors
+will start to compound on themselves,
+
+00:10:15.000 --> 00:10:17.040
+quickly leading to catastrophic failure
+
+00:10:17.840 --> 00:10:22.720
+To compute this threshold, we’ll need to
+organize the problem into a more standard form
+
+00:10:22.720 --> 00:10:26.960
+What we want to do is write the values
+of our state variables at frame n+1
+
+00:10:26.960 --> 00:10:30.454
+in terms of our state variables at frame n
+
+00:10:30.454 --> 00:10:34.938
+We can do this by substituting the first equation
+into the second, so now&nbsp;both our equations
+
+00:10:34.938 --> 00:10:38.845
+have y and its&nbsp;derivative at frame n on the right-hand side
+
+00:10:38.845 --> 00:10:41.929
+Now let’s expand this and collect like terms
+
+00:10:42.240 --> 00:10:47.070
+This is a system of linear equations,
+which we can write in matrix notation
+
+00:10:47.920 --> 00:10:52.127
+The system, written this way, is known
+as the state-space representation
+
+00:10:52.560 --> 00:10:55.760
+This matrix A, known as the
+state transition matrix,
+
+00:10:55.760 --> 00:11:00.767
+describes how each iteration of the state
+variables influence the next iteration
+
+00:11:01.280 --> 00:11:04.560
+Intuitively, you can imagine
+that the feedback will be stable
+
+00:11:04.560 --> 00:11:07.453
+If A doesn’t cause the state variables to grow
+
+00:11:08.224 --> 00:11:10.728
+if A was a number instead of a matrix,
+
+00:11:10.728 --> 00:11:14.480
+it would be easier to reason about
+the effect that it has on the system
+
+00:11:14.480 --> 00:11:20.000
+For example, in this simpler system with only
+a single state variable and no external forces,
+
+00:11:20.000 --> 00:11:24.236
+each iteration is equal to the
+previous iteration scaled by A
+
+00:11:25.120 --> 00:11:29.520
+When the magnitude of A is less than
+1, the magnitude of y at each iteration
+
+00:11:29.520 --> 00:11:35.000
+will be smaller than the previous iteration,
+causing the system to stabilize over time
+
+00:11:36.000 --> 00:11:40.240
+When the magnitude of A is greater than 1,
+the magnitude of y at each iteration will
+
+00:11:40.240 --> 00:11:45.520
+be larger than the previous iteration, so
+the system will quickly grow beyond control
+
+00:11:45.520 --> 00:11:48.436
+This is what we’d like to avoid
+
+00:11:49.211 --> 00:11:52.855
+In our system, A is a 2x2 matrix, which doesn’t have
+
+00:11:52.855 --> 00:11:55.712
+a magnitude&nbsp;that can directly be compared to 1
+
+00:11:56.240 --> 00:12:01.410
+Instead, it has what we can think of as
+two separate magnitudes, called eigenvalues
+
+00:12:02.160 --> 00:12:07.760
+We won’t get into it here, but suffice to
+say that both of these eigenvalues z1 and z2,
+
+00:12:07.760 --> 00:12:13.200
+which are computed by finding the two solutions to
+this equation, must have a magnitude less than 1
+
+00:12:13.200 --> 00:12:16.086
+for the system to settle over time
+
+00:12:16.979 --> 00:12:19.074
+This is computed like this
+
+00:12:19.520 --> 00:12:22.872
+Which expands to this quadratic polynomial of z
+
+00:12:24.216 --> 00:12:27.058
+Which we can solve using the quadratic formula
+
+00:12:29.200 --> 00:12:34.093
+Our system will be stable when the
+magnitude of this expression is less than 1
+
+00:12:34.560 --> 00:12:37.600
+Solving this inequality gives
+us the following constraint,
+
+00:12:37.600 --> 00:12:44.341
+that the time step T must be less than the square
+root of 4 times k2 plus k1 squared, subtract k1
+
+00:12:44.880 --> 00:12:48.732
+In our code, we can compute this
+maximum stable&nbsp;time step, T critical,
+
+00:12:48.732 --> 00:12:52.358
+and when running in-game, compare the time step against it
+
+00:12:52.358 --> 00:12:54.000
+If the time step is too large,
+
+00:12:54.000 --> 00:12:58.044
+we can divide it up into smaller steps
+that are below the stability threshold
+
+00:12:58.880 --> 00:13:02.768
+Taking smaller steps requires
+performing more computations per frame
+
+00:13:03.520 --> 00:13:07.992
+To avoid this, we might be able to get
+away with slowing down the dynamics instead
+
+00:13:08.640 --> 00:13:14.847
+In this case, rather than constraining
+T, we can solve for k2 and constrain that
+
+00:13:17.520 --> 00:13:22.000
+Clamping k2 to be above this value is not
+physically correct, but recall that our goal
+
+00:13:22.000 --> 00:13:28.877
+here was just to prevent catastrophic failure,
+not to produce an accurate physics simulation
+
+00:13:30.960 --> 00:13:34.960
+There are, of course, much more esoteric
+places you can take this analysis,
+
+00:13:34.960 --> 00:13:39.040
+and in a previous draft of this
+video, I did go a bit further
+
+00:13:39.040 --> 00:13:43.200
+For example, this frame-to-frame jittering
+behavior that sneaks in when the frequency
+
+00:13:43.200 --> 00:13:48.880
+is sufficiently high, is caused by negative
+eigenvalues, so if we also take that into account
+
+00:13:48.880 --> 00:13:54.000
+during our analysis, we can impose additional
+restrictions to ensure it doesn’t happen
+
+00:13:56.240 --> 00:14:01.040
+In my own implementation, in case accuracy
+is needed, I opt to use a method known as
+
+00:14:01.040 --> 00:14:06.910
+pole-zero matching to compute values for
+k1 and k2 per-frame based on the time step
+
+00:14:07.440 --> 00:14:11.360
+This produces generally more accurate
+results for very fast movement,
+
+00:14:11.360 --> 00:14:17.357
+but comes with this additional computation
+cost that might not suit every application
+
+00:14:19.360 --> 00:14:22.287
+The idea behind using simple
+parametric&nbsp;motion models
+
+00:14:22.287 --> 00:14:27.330
+like our f zeta r one extends
+some interesting possibilities
+
+00:14:27.330 --> 00:14:30.759
+Just as an example, we could modulate
+the values of these parameters
+
+00:14:30.759 --> 00:14:34.920
+to convey gameplay&nbsp;information, so
+characters could move with different parameters
+
+00:14:34.920 --> 00:14:38.815
+depending on their state&nbsp;of awareness,
+health, status effects, and so on
+
+00:14:39.600 --> 00:14:42.640
+This would help communicate the
+situation to players through motion
+
+00:14:42.640 --> 00:14:45.578
+in a way that’s cheap and easy to iterate on
+
+00:14:46.421 --> 00:14:50.075
+In any case, I’ve spent long enough
+working on this video instead of my game,
+
+00:14:50.075 --> 00:14:50.575
+so
+
+00:14:50.589 --> 00:14:53.859
+hopefully&nbsp;this has been an approachable
+but substantial introduction to
+
+00:14:53.859 --> 00:14:57.966
+some interesting concepts, or&nbsp;maybe
+a presentation of some applications of
+
+00:14:57.966 --> 00:15:01.811
+mathematics in an unusual but interesting context
+
+00:15:03.121 --> 00:15:06.150
+As always, thanks for watching
+
