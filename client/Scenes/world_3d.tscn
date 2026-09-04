@@ -10,7 +10,7 @@
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="5_30yqp"]
 [ext_resource type="PackedScene" uid="uid://r8xdalncce6g" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grey.tscn" id="5_oqa53"]
 [ext_resource type="PackedScene" uid="uid://bvgcsih5ik5ny" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_bullet.tscn" id="6_bullet"]
-[ext_resource type="Script" uid="uid://cn5lkrknhfvqp" path="res://Scripts/Components/Bullets/EnemyBullets3DComponent.cs" id="7_bullets3d"]
+[ext_resource type="Script" uid="uid://cn5lkrknhfvqp" path="res://Scripts/Components/Bullets/Bullets3DComponent.cs" id="7_bullets3d"]
 [ext_resource type="Script" uid="uid://tj5jvmbahdrh" path="res://Scripts/Components/Terrain/TerrainComponent3D.cs" id="8_terrain3d"]
 [ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="9_mst"]
 
@@ -51,7 +51,7 @@ script = ExtResource("4_binder")
 ReplayExistingRows = true
 TableName = "MapConfig"
 
-[node name="EnemyBullets3DComponent" type="Node3D" parent="." unique_id=1581820701]
+[node name="Bullets3DComponent" type="Node3D" parent="." unique_id=1581820701]
 script = ExtResource("7_bullets3d")
 BulletScene = ExtResource("6_bullet")
 
@@ -79,6 +79,7 @@ tween_resource = SubResource("Resource_30yqp")
 host_layers = 2
 follow_distance = 200.0
 spring_length = 200.0
+collision_mask = 0
 metadata/_custom_type_script = "uid://csjccrhj5wnx7"
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1778573569]

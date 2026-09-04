@@ -563,6 +563,9 @@ func _deferred_enter_tree() -> void:
 			chunks[chunk.chunk_coords] = chunk
 			chunk.terrain_system = self
 			chunk.grass_planter = null
+			# Snap to the derived position - scene files may carry stale positions
+			# from older grid layouts or changed hex_size/chunk_radius settings
+			chunk.position = _chunk_position(chunk.chunk_coords)
 	
 	# Load external data if storage was previously initialized
 	if _storage_initialized:

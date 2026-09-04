@@ -63,7 +63,10 @@ func initialize_terrain(should_regenerate_mesh: bool = true):
 		EngineWrapper.instance.set_owner_recursive(grass_planter)
 	grass_planter._chunk = self
 	grass_planter.terrain_system = terrain_system
-	if _temp_grass_multimesh:
+	# Baked mesh/grass are a runtime optimization - the editor always rebuilds
+	# from the source hex records so stale bakes can never shadow data edits
+	var in_editor := EngineWrapper.instance.is_editor()
+	if _temp_grass_multimesh and not in_editor:
 		grass_planter.multimesh = _temp_grass_multimesh
 	if not grass_planter.multimesh:
 		grass_planter.setup(self)
@@ -73,7 +76,7 @@ func initialize_terrain(should_regenerate_mesh: bool = true):
 	
 	_apply_terrain_material_settings()
 	
-	if not mesh and should_regenerate_mesh:
+	if should_regenerate_mesh and (in_editor or not mesh):
 		regenerate_mesh()
 	elif mesh:
 		if terrain_system:
@@ -453,12 +456,13 @@ func _build_cliff_wall(hex_center: Vector3, top_y: float, dir: int, delta: int, 
 # final riser meets the fan along a single line, so there is no z-fighting.
 func _build_terrace(hex_center: Vector3, top_y: float, dir: int, delta: int, level_height: float, hex_size: float, ground_slot: int, wall_slot: int) -> void:
 	var ends := _edge_endpoints(hex_center, dir, hex_size)
+	var strip_ends := _edge_endpoints(hex_center, dir, hex_size, true)
 	var out_dir := _outward_direction(dir)
 	if delta == 1:
 		var mid_y := top_y - level_height * 0.5
 		var inset := out_dir * (TERRACE_TREAD_DEPTH * hex_size)
 		_build_riser(ends, Vector2.ZERO, top_y, mid_y, dir, wall_slot)
-		_build_strip(ends, Vector2.ZERO, inset, mid_y, mid_y, ground_slot)
+		_build_strip(strip_ends, Vector2.ZERO, inset, mid_y, mid_y, ground_slot)
 		_build_riser(ends, inset, mid_y, top_y - level_height, dir, wall_slot)
 	else:
 		var tread_depth : float = minf(TERRACE_TREAD_DEPTH * hex_size, MAX_TERRACE_INSET * hex_size / delta)
@@ -466,13 +470,13 @@ func _build_terrace(hex_center: Vector3, top_y: float, dir: int, delta: int, lev
 			_build_riser(ends, out_dir * (i * tread_depth), top_y - i * level_height, top_y - (i + 1) * level_height, dir, wall_slot)
 			if i < delta - 1:
 				var tread_y := top_y - (i + 1) * level_height
-				_build_strip(ends, out_dir * (i * tread_depth), out_dir * ((i + 1) * tread_depth), tread_y, tread_y, ground_slot)
+				_build_strip(strip_ends, out_dir * (i * tread_depth), out_dir * ((i + 1) * tread_depth), tread_y, tread_y, ground_slot)
 
 
 # Slanted quad from the high top edge down to an inset line inside the low hex.
 # The inset line floats a hair above the low fan plane so the two never coincide.
 func _build_slope(hex_center: Vector3, top_y: float, dir: int, delta: int, level_height: float, hex_size: float, ground_slot: int) -> void:
-	var ends := _edge_endpoints(hex_center, dir, hex_size)
+	var ends := _edge_endpoints(hex_center, dir, hex_size, true)
 	var inset := _outward_direction(dir) * (SLOPE_INSET * hex_size)
 	var bottom_y := top_y - delta * level_height + level_height * SLOPE_TOP_EPSILON
 	_build_strip(ends, Vector2.ZERO, inset, top_y, bottom_y, ground_slot)
@@ -532,15 +536,18 @@ func _build_strip(ends: Array, inner_offset: Vector2, outer_offset: Vector2, inn
 	_add_vertex(outer_b, normal, Vector2.ZERO, _world_xz(outer_b), ground_colors[0], ground_colors[1], custom_1, mat_blend)
 
 
-# Endpoints of the edge facing direction dir (corner dir to corner dir+1, y = 0),
-# extended slightly past the corners so adjacent strips overlap at triple junctions
+# Endpoints of the edge facing direction dir (corner dir to corner dir+1, y = 0).
+# Risers use the exact corners: adjacent risers already meet along the shared corner
+# line, so extending them just juts fins past convex corners. Strips (terrace treads,
+# slopes) pass extend = true so their ends overlap slightly at triple junctions
 # instead of leaving seams (per-edge strips stay independent, no corner triangulation).
-func _edge_endpoints(hex_center: Vector3, dir: int, hex_size: float) -> Array:
+func _edge_endpoints(hex_center: Vector3, dir: int, hex_size: float, extend: bool = false) -> Array:
 	var a_xz := MSTHexMath.hex_corner_offset(dir, hex_size)
 	var b_xz := MSTHexMath.hex_corner_offset(dir + 1, hex_size)
-	var edge_dir := (b_xz - a_xz).normalized()
-	a_xz -= edge_dir * (EDGE_END_OVERLAP * hex_size)
-	b_xz += edge_dir * (EDGE_END_OVERLAP * hex_size)
+	if extend:
+		var edge_dir := (b_xz - a_xz).normalized()
+		a_xz -= edge_dir * (EDGE_END_OVERLAP * hex_size)
+		b_xz += edge_dir * (EDGE_END_OVERLAP * hex_size)
 	return [
 		Vector3(hex_center.x + a_xz.x, 0.0, hex_center.z + a_xz.y),
 		Vector3(hex_center.x + b_xz.x, 0.0, hex_center.z + b_xz.y),

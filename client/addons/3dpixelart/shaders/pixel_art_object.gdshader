@@ -21,15 +21,16 @@ render_mode ambient_light_disabled, specular_disabled;
 // ---------------------------------------------------------------------------
 // Appearance
 // ---------------------------------------------------------------------------
-uniform sampler2D albedo_texture : source_color, filter_nearest, repeat_enable;
+uniform sampler2D albedo_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform vec4 albedo_st = vec4(1.0, 1.0, 0.0, 0.0); // tiling xy, offset zw
 uniform vec4 base_color : source_color = vec4(1.0);
+uniform bool use_sharp_bilinear = false; // crisp + anti-aliased texel sampling
 uniform sampler2D lighting_ramp : filter_linear, repeat_disable;
 uniform vec4 ambient_light : source_color = vec4(0.2, 0.2, 0.2, 1.0);
-uniform sampler2D normal_map : hint_normal, filter_nearest, repeat_enable;
+uniform sampler2D normal_map : hint_normal, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform float normal_map_depth : hint_range(0.0, 2.0) = 1.0;
 uniform bool use_normal_map = false;
-uniform sampler2D emission_texture : source_color, filter_nearest, repeat_enable;
+uniform sampler2D emission_texture : source_color, filter_linear_mipmap_anisotropic, repeat_enable;
 uniform vec4 emission_color : source_color = vec4(1.0);
 uniform bool use_emission = false;
 uniform bool receive_shadows = true;
@@ -62,6 +63,19 @@ uniform bool use_color_grading = false;
 uniform sampler2D palette_lut : filter_nearest, repeat_disable;
 
 // ---------------------------------------------------------------------------
+// Cloud shadows (pushed by PixelArtPipeline3D; attenuates the toon ramp only)
+// ---------------------------------------------------------------------------
+uniform bool clouds_enabled = false;
+uniform sampler2D cloud_noise : filter_nearest, repeat_enable;
+uniform vec3 cloud_sun_dir = vec3(0.0, -1.0, 0.0); // world, direction light travels
+uniform float cloud_height = 10.0;
+uniform float cloud_noise_scale = 0.05;
+uniform float cloud_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform float cloud_bands = 3.0;
+uniform vec2 cloud_wind = vec2(0.02, 0.0); // dir * speed
+uniform float cloud_shadow_strength : hint_range(0.0, 1.0) = 0.6;
+
+// ---------------------------------------------------------------------------
 // Metadata pass
 // ---------------------------------------------------------------------------
 uniform float metadata_cull_mask = 524288.0; // bit 19 = render layer 20
@@ -74,6 +88,7 @@ varying float in_shadow_pass;
 varying float in_metadata_pass;
 varying float id_outline;
 varying float edge_outline;
+varying float cloud_coverage;
 
 // Classic Bayer 4x4, values (n+1)/17, x-major: TRANSPARENCY_DITHER[x][y].
 const mat4 TRANSPARENCY_DITHER = mat4(
@@ -92,6 +107,24 @@ float decode_float_rg(vec2 enc) {
 	float ex = floor(enc.x * 15.0);
 	float ey = floor(enc.y * 15.0);
 	return (ex * 16.0 + ey) / 256.0;
+}
+
+// Sharp-bilinear texel sampling. With use_sharp_bilinear off this is an
+// exact texel-center sample at mip 0 (identical to the old filter_nearest
+// behavior); on, it generalizes bilinear filtering by the fragment's texel
+// footprint so textures stay crisp but anti-aliased at rotated/minified
+// footprints. Minification stability requires mipmaps on the texture.
+vec4 sample_pixel_texture(sampler2D tex, vec2 uv) {
+	vec2 sz = vec2(textureSize(tex, 0));
+	if (!use_sharp_bilinear) {
+		vec2 c = (floor(uv * sz) + 0.5) / sz;
+		return textureGrad(tex, c, vec2(0.0), vec2(0.0));
+	}
+	vec2 box = clamp(fwidth(uv) * sz, 1e-5, 1.0);
+	vec2 tx = uv * sz - 0.5 * box;
+	vec2 offs = smoothstep(vec2(1.0) - box, vec2(1.0), fract(tx));
+	vec2 snapped = (floor(tx) + 0.5 + offs) / sz;
+	return textureGrad(tex, snapped, dFdx(uv), dFdy(uv));
 }
 
 // ColorGrading.hlsl: grade a gamma-space color through the 256x256 palette
@@ -121,8 +154,9 @@ void vertex() {
 
 void fragment() {
 	vec2 uv = UV * albedo_st.xy + albedo_st.zw;
-	vec4 tex = texture(albedo_texture, uv);
+	vec4 tex = sample_pixel_texture(albedo_texture, uv);
 	float alpha = use_alpha ? tex.a * base_color.a : 1.0;
+	cloud_coverage = 1.0;
 
 	if (in_shadow_pass > 0.5) {
 		// Shadow/depth-only passes (port of PixelUtils.hlsl SHADOWTEST):
@@ -194,6 +228,20 @@ void fragment() {
 			edge_outline = 0.0;
 		} else {
 			// --- Lit appearance ---------------------------------------------
+			// Cloud shadows: project the fragment's world position onto the
+			// cloud plane along the sun direction; banded coverage attenuates
+			// the toon ramp in light(). cloud_sun_dir is the direction the
+			// light travels (downward), so t comes out negative.
+			if (clouds_enabled && cloud_sun_dir.y < -0.02) {
+				vec3 world_pos = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
+				float cloud_t = (cloud_height - world_pos.y) / cloud_sun_dir.y;
+				vec2 cloud_uv = (world_pos + cloud_sun_dir * cloud_t).xz * cloud_noise_scale
+					+ cloud_wind * TIME;
+				float cloud_n = textureLod(cloud_noise, cloud_uv, 0.0).r;
+				float banded = floor(cloud_n * cloud_bands) / max(cloud_bands - 1.0, 1.0);
+				cloud_coverage = step(cloud_threshold, banded);
+			}
+
 			vec3 albedo = tex.rgb * base_color.rgb;
 			albedo *= mix(vec3(1.0), COLOR.rgb, diffuse_vertex_color_weight);
 			if (use_color_grading) {
@@ -201,7 +249,7 @@ void fragment() {
 			}
 
 			if (use_normal_map) {
-				NORMAL_MAP = texture(normal_map, uv).rgb;
+				NORMAL_MAP = sample_pixel_texture(normal_map, uv).rgb;
 				NORMAL_MAP_DEPTH = normal_map_depth;
 			}
 
@@ -216,7 +264,7 @@ void fragment() {
 
 			vec3 emissive = vec3(0.0);
 			if (use_emission) {
-				emissive = texture(emission_texture, uv).rgb * emission_color.rgb
+				emissive = sample_pixel_texture(emission_texture, uv).rgb * emission_color.rgb
 					* mix(vec3(1.0), COLOR.rgb, emissive_vertex_color_weight);
 			}
 			vec3 ambient = albedo * ambient_light.rgb;
@@ -236,6 +284,7 @@ void light() {
 		float ndl = clamp(dot(NORMAL, LIGHT), 0.0, 1.0);
 		vec3 ramp = textureLod(lighting_ramp, vec2(ndl, 0.5), 0.0).rgb;
 		float att = receive_shadows ? ATTENUATION : 1.0;
+		att *= mix(1.0, cloud_coverage, cloud_shadow_strength);
 		DIFFUSE_LIGHT += ramp * LIGHT_COLOR * att * (1.0 - id_outline);
 		SPECULAR_LIGHT = vec3(0.0);
 	}

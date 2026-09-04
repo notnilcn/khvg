@@ -114,9 +114,7 @@ script = ExtResource("30_bcliff")
 
 [node name="CameraRigComponent" type="Node" parent="." unique_id=429369880]
 script = ExtResource("14_lmoi6")
-PitchMin = 0.0
 PitchMax = 0.0
-DefaultPitch = -70.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
 layer = -1

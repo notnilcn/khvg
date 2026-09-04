@@ -8,7 +8,10 @@ using PhantomCamera;
 // that lives in the rig, which is in the main scene tree rather than this SubViewport (input
 // events, especially mouse motion, never reach a node inside the SubViewport). Also owns the
 // follow-target wiring. Registers with the GameManager entity through the SubViewport
-// ancestor walk, so the rig is a sibling component.
+// ancestor walk, so the rig is a sibling component. The PhantomCamera3D's collision_mask is
+// pinned to 0 in the scene — its third-person SpringArm3D defaults to mask 1, and the MST
+// terrain chunks put their trimesh collision on layer 1 (among others), so with collision on
+// the arm would shorten itself against the hexes and fight the arcball pitch/zoom.
 public partial class World3DComponent : Node3DComponent
 {
     [Export] public float DefaultModelScale = 50f;

@@ -9,6 +9,7 @@ public partial class CameraRigComponent : Component
 {
     // ── Tuning ──────────────────────────────────────────────────────────────
     [Export] public float YawSpeed = 90f;    // deg/s for Camera_Left/Right
+    [Export] public float PitchSpeed = 60f;   // deg/s for Arcball_Up/Down
     [Export] public float MouseSens = 0.3f;   // deg per pixel, arcball drag
     [Export] public float MouseRotateSensitivity = 0.005f;// rad per pixel, snap drag
     [Export] public float PitchMin = -90f;
@@ -47,6 +48,16 @@ public partial class CameraRigComponent : Component
             Yaw -= Mathf.DegToRad(YawSpeed * (float)delta);
         if (Input.IsActionPressed("Camera_Right"))
             Yaw += Mathf.DegToRad(YawSpeed * (float)delta);
+
+        // ── Arcball keys: yaw + pitch without mouse drag ─────────────────────
+        if (Input.IsActionPressed("Arcball_Left"))
+            Yaw -= Mathf.DegToRad(YawSpeed * (float)delta);
+        if (Input.IsActionPressed("Arcball_Right"))
+            Yaw += Mathf.DegToRad(YawSpeed * (float)delta);
+        if (Input.IsActionPressed("Arcball_Up"))
+            PitchDegrees = Mathf.Clamp(PitchDegrees - PitchSpeed * (float)delta, PitchMin, PitchMax);
+        if (Input.IsActionPressed("Arcball_Down"))
+            PitchDegrees = Mathf.Clamp(PitchDegrees + PitchSpeed * (float)delta, PitchMin, PitchMax);
     }
 
     public override void _Input(InputEvent e)

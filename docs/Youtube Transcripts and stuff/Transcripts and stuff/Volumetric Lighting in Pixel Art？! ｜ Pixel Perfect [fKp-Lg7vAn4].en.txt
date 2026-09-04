@@ -1,0 +1,2334 @@
+WEBVTT
+Kind: captions
+Language: en
+
+00:00:03.560 --> 00:00:05.550 align:start position:0%
+ 
+Lighting<00:00:03.960><c> is</c><00:00:04.120><c> fundamental</c><00:00:04.800><c> when</c><00:00:05.000><c> rendering</c>
+
+00:00:05.550 --> 00:00:05.560 align:start position:0%
+Lighting is fundamental when rendering
+ 
+
+00:00:05.560 --> 00:00:08.270 align:start position:0%
+Lighting is fundamental when rendering
+any<00:00:05.840><c> 3D</c><00:00:06.320><c> scene.</c><00:00:07.200><c> Without</c><00:00:07.600><c> it,</c><00:00:07.840><c> the</c><00:00:07.960><c> world</c>
+
+00:00:08.270 --> 00:00:08.280 align:start position:0%
+any 3D scene. Without it, the world
+ 
+
+00:00:08.280 --> 00:00:10.390 align:start position:0%
+any 3D scene. Without it, the world
+simply<00:00:08.680><c> doesn't</c><00:00:09.040><c> exist.</c><00:00:09.170><c> [music]</c>
+
+00:00:10.390 --> 00:00:10.400 align:start position:0%
+simply doesn't exist. [music]
+ 
+
+00:00:10.400 --> 00:00:12.190 align:start position:0%
+simply doesn't exist. [music]
+The<00:00:10.520><c> scene</c><00:00:10.800><c> data</c><00:00:11.160><c> is</c><00:00:11.320><c> nothing</c><00:00:11.680><c> more</c><00:00:11.960><c> than</c><00:00:12.160><c> a</c>
+
+00:00:12.190 --> 00:00:12.200 align:start position:0%
+The scene data is nothing more than a
+ 
+
+00:00:12.200 --> 00:00:14.400 align:start position:0%
+The scene data is nothing more than a
+description<00:00:12.960><c> of</c><00:00:13.120><c> triangles</c><00:00:13.840><c> and</c><00:00:14.000><c> vertices.</c>
+
+00:00:14.400 --> 00:00:14.410 align:start position:0%
+description of triangles and vertices.
+ 
+
+00:00:14.410 --> 00:00:15.110 align:start position:0%
+description of triangles and vertices.
+[music]
+
+00:00:15.110 --> 00:00:15.120 align:start position:0%
+[music]
+ 
+
+00:00:15.120 --> 00:00:17.270 align:start position:0%
+[music]
+And<00:00:15.280><c> so,</c><00:00:15.840><c> lighting</c><00:00:16.200><c> is</c><00:00:16.360><c> the</c><00:00:16.480><c> bridge</c><00:00:17.000><c> from</c><00:00:17.200><c> the</c>
+
+00:00:17.270 --> 00:00:17.280 align:start position:0%
+And so, lighting is the bridge from the
+ 
+
+00:00:17.280 --> 00:00:20.830 align:start position:0%
+And so, lighting is the bridge from the
+virtual<00:00:17.960><c> to</c><00:00:18.160><c> the</c><00:00:18.280><c> visual.</c>
+
+00:00:20.830 --> 00:00:20.840 align:start position:0%
+virtual to the visual.
+ 
+
+00:00:20.840 --> 00:00:22.870 align:start position:0%
+virtual to the visual.
+Currently<00:00:21.240><c> in</c><00:00:21.360><c> the</c><00:00:21.440><c> series</c><00:00:21.920><c> so</c><00:00:22.080><c> far,</c><00:00:22.520><c> we've</c>
+
+00:00:22.870 --> 00:00:22.880 align:start position:0%
+Currently in the series so far, we've
+ 
+
+00:00:22.880 --> 00:00:24.030 align:start position:0%
+Currently in the series so far, we've
+offloaded<00:00:23.480><c> these</c><00:00:23.720><c> lighting</c>
+
+00:00:24.030 --> 00:00:24.040 align:start position:0%
+offloaded these lighting
+ 
+
+00:00:24.040 --> 00:00:26.030 align:start position:0%
+offloaded these lighting
+responsibilities<00:00:25.040><c> onto</c><00:00:25.400><c> our</c><00:00:25.520><c> material</c>
+
+00:00:26.030 --> 00:00:26.040 align:start position:0%
+responsibilities onto our material
+ 
+
+00:00:26.040 --> 00:00:26.845 align:start position:0%
+responsibilities onto our material
+shaders.
+
+00:00:26.845 --> 00:00:26.855 align:start position:0%
+shaders.
+ 
+
+00:00:26.855 --> 00:00:27.070 align:start position:0%
+shaders.
+&gt;&gt; [music]
+
+00:00:27.070 --> 00:00:27.080 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:00:27.080 --> 00:00:29.150 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; With<00:00:27.280><c> stylized</c><00:00:27.960><c> rendering,</c><00:00:28.600><c> we</c><00:00:28.720><c> can</c><00:00:28.880><c> take</c>
+
+00:00:29.150 --> 00:00:29.160 align:start position:0%
+&gt;&gt; With stylized rendering, we can take
+ 
+
+00:00:29.160 --> 00:00:31.150 align:start position:0%
+&gt;&gt; With stylized rendering, we can take
+more<00:00:29.360><c> liberties</c><00:00:29.920><c> in</c><00:00:30.080><c> how</c><00:00:30.240><c> we</c><00:00:30.400><c> manipulate</c><00:00:31.040><c> the</c>
+
+00:00:31.150 --> 00:00:31.160 align:start position:0%
+more liberties in how we manipulate the
+ 
+
+00:00:31.160 --> 00:00:34.705 align:start position:0%
+more liberties in how we manipulate the
+interaction<00:00:31.800><c> of</c><00:00:31.960><c> light</c><00:00:32.320><c> hitting</c><00:00:32.599><c> a</c><00:00:32.680><c> surface.</c>
+
+00:00:34.705 --> 00:00:34.715 align:start position:0%
+interaction of light hitting a surface.
+ 
+
+00:00:34.715 --> 00:00:34.790 align:start position:0%
+interaction of light hitting a surface.
+&gt;&gt; [music]
+
+00:00:34.790 --> 00:00:34.800 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:00:34.800 --> 00:00:36.710 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; Toon<00:00:35.080><c> shading</c><00:00:35.480><c> is</c><00:00:35.600><c> a</c><00:00:35.680><c> good</c><00:00:35.920><c> candidate</c><00:00:36.440><c> for</c><00:00:36.600><c> our</c>
+
+00:00:36.710 --> 00:00:36.720 align:start position:0%
+&gt;&gt; Toon shading is a good candidate for our
+ 
+
+00:00:36.720 --> 00:00:39.030 align:start position:0%
+&gt;&gt; Toon shading is a good candidate for our
+project<00:00:37.400><c> because</c><00:00:37.680><c> it</c><00:00:37.800><c> creates</c><00:00:38.280><c> clear</c><00:00:38.680><c> bands</c>
+
+00:00:39.030 --> 00:00:39.040 align:start position:0%
+project because it creates clear bands
+ 
+
+00:00:39.040 --> 00:00:39.950 align:start position:0%
+project because it creates clear bands
+of<00:00:39.160><c> color,</c><00:00:39.300><c> [music]</c>
+
+00:00:39.950 --> 00:00:39.960 align:start position:0%
+of color, [music]
+ 
+
+00:00:39.960 --> 00:00:42.950 align:start position:0%
+of color, [music]
+which<00:00:40.200><c> transpose</c><00:00:40.920><c> well</c><00:00:41.200><c> when</c><00:00:41.360><c> quantized.</c>
+
+00:00:42.950 --> 00:00:42.960 align:start position:0%
+which transpose well when quantized.
+ 
+
+00:00:42.960 --> 00:00:44.670 align:start position:0%
+which transpose well when quantized.
+In<00:00:43.080><c> this</c><00:00:43.280><c> episode,</c><00:00:43.920><c> I</c><00:00:44.000><c> want</c><00:00:44.240><c> to</c><00:00:44.320><c> cover</c>
+
+00:00:44.670 --> 00:00:44.680 align:start position:0%
+In this episode, I want to cover
+ 
+
+00:00:44.680 --> 00:00:46.470 align:start position:0%
+In this episode, I want to cover
+additional<00:00:45.240><c> lighting</c><00:00:45.520><c> effects.</c><00:00:45.850><c> [music]</c>
+
+00:00:46.470 --> 00:00:46.480 align:start position:0%
+additional lighting effects. [music]
+ 
+
+00:00:46.480 --> 00:00:48.390 align:start position:0%
+additional lighting effects. [music]
+These<00:00:46.720><c> are</c><00:00:46.800><c> processes</c><00:00:47.520><c> that</c><00:00:47.720><c> contribute</c><00:00:48.280><c> to</c>
+
+00:00:48.390 --> 00:00:48.400 align:start position:0%
+These are processes that contribute to
+ 
+
+00:00:48.400 --> 00:00:50.910 align:start position:0%
+These are processes that contribute to
+the<00:00:48.520><c> feeling</c><00:00:49.080><c> of</c><00:00:49.200><c> the</c><00:00:49.320><c> environment</c><00:00:50.480><c> outside</c>
+
+00:00:50.910 --> 00:00:50.920 align:start position:0%
+the feeling of the environment outside
+ 
+
+00:00:50.920 --> 00:00:53.750 align:start position:0%
+the feeling of the environment outside
+of<00:00:51.000><c> the</c><00:00:51.120><c> values</c><00:00:51.720><c> our</c><00:00:51.840><c> materials</c><00:00:52.520><c> return.</c><00:00:53.640><c> And</c>
+
+00:00:53.750 --> 00:00:53.760 align:start position:0%
+of the values our materials return. And
+ 
+
+00:00:53.760 --> 00:00:55.230 align:start position:0%
+of the values our materials return. And
+the<00:00:53.840><c> goal</c><00:00:54.120><c> of</c><00:00:54.240><c> this</c><00:00:54.365><c> [music]</c><00:00:54.520><c> is</c><00:00:54.720><c> to</c><00:00:54.840><c> create</c><00:00:55.200><c> a</c>
+
+00:00:55.230 --> 00:00:55.240 align:start position:0%
+the goal of this [music] is to create a
+ 
+
+00:00:55.240 --> 00:00:57.470 align:start position:0%
+the goal of this [music] is to create a
+scene<00:00:55.680><c> which</c><00:00:55.920><c> feels</c><00:00:56.320><c> more</c><00:00:56.640><c> lived</c><00:00:57.000><c> in</c><00:00:57.280><c> and</c>
+
+00:00:57.470 --> 00:00:57.480 align:start position:0%
+scene which feels more lived in and
+ 
+
+00:00:57.480 --> 00:01:00.550 align:start position:0%
+scene which feels more lived in and
+three-dimensional.
+
+00:01:00.550 --> 00:01:00.560 align:start position:0%
+ 
+ 
+
+00:01:00.560 --> 00:01:02.110 align:start position:0%
+ 
+If<00:01:00.760><c> you've</c><00:01:00.880><c> been</c><00:01:01.040><c> enjoying</c><00:01:01.480><c> the</c><00:01:01.560><c> series</c><00:01:01.960><c> so</c>
+
+00:01:02.110 --> 00:01:02.120 align:start position:0%
+If you've been enjoying the series so
+ 
+
+00:01:02.120 --> 00:01:04.310 align:start position:0%
+If you've been enjoying the series so
+far<00:01:02.480><c> and</c><00:01:02.680><c> want</c><00:01:02.920><c> to</c><00:01:03.000><c> support</c><00:01:03.440><c> my</c><00:01:03.600><c> work,</c>
+
+00:01:04.310 --> 00:01:04.320 align:start position:0%
+far and want to support my work,
+ 
+
+00:01:04.320 --> 00:01:06.310 align:start position:0%
+far and want to support my work,
+subscribing<00:01:05.040><c> is</c><00:01:05.199><c> the</c><00:01:05.320><c> best</c><00:01:05.680><c> way</c><00:01:05.840><c> to</c><00:01:05.960><c> help</c><00:01:06.200><c> the</c>
+
+00:01:06.310 --> 00:01:06.320 align:start position:0%
+subscribing is the best way to help the
+ 
+
+00:01:06.320 --> 00:01:08.710 align:start position:0%
+subscribing is the best way to help the
+channel.<00:01:07.280><c> Thank</c><00:01:07.600><c> you,</c><00:01:07.880><c> and</c><00:01:08.000><c> without</c><00:01:08.400><c> further</c>
+
+00:01:08.710 --> 00:01:08.720 align:start position:0%
+channel. Thank you, and without further
+ 
+
+00:01:08.720 --> 00:01:10.730 align:start position:0%
+channel. Thank you, and without further
+ado,<00:01:09.400><c> let's</c><00:01:09.640><c> get</c><00:01:09.840><c> started.</c>
+
+00:01:10.730 --> 00:01:10.740 align:start position:0%
+ado, let's get started.
+ 
+
+00:01:10.740 --> 00:01:18.590 align:start position:0%
+ado, let's get started.
+&gt;&gt; [music]
+
+00:01:18.590 --> 00:01:18.600 align:start position:0%
+ 
+ 
+
+00:01:18.600 --> 00:01:20.190 align:start position:0%
+ 
+[music]
+
+00:01:20.190 --> 00:01:20.200 align:start position:0%
+[music]
+ 
+
+00:01:20.200 --> 00:01:22.150 align:start position:0%
+[music]
+&gt;&gt; Art<00:01:20.440><c> is</c><00:01:20.600><c> difficult,</c><00:01:21.320><c> especially</c><00:01:21.880><c> for</c><00:01:22.040><c> an</c>
+
+00:01:22.150 --> 00:01:22.160 align:start position:0%
+&gt;&gt; Art is difficult, especially for an
+ 
+
+00:01:22.160 --> 00:01:24.910 align:start position:0%
+&gt;&gt; Art is difficult, especially for an
+engineer<00:01:22.680><c> such</c><00:01:22.920><c> as</c><00:01:23.040><c> myself.</c><00:01:24.120><c> For</c><00:01:24.240><c> me,</c><00:01:24.640><c> I</c><00:01:24.720><c> need</c>
+
+00:01:24.910 --> 00:01:24.920 align:start position:0%
+engineer such as myself. For me, I need
+ 
+
+00:01:24.920 --> 00:01:26.450 align:start position:0%
+engineer such as myself. For me, I need
+a<00:01:24.960><c> slightly</c><00:01:25.400><c> more</c><00:01:25.680><c> mechanical</c><00:01:26.360><c> process</c>
+
+00:01:26.450 --> 00:01:26.460 align:start position:0%
+a slightly more mechanical process
+ 
+
+00:01:26.460 --> 00:01:27.030 align:start position:0%
+a slightly more mechanical process
+[music]
+
+00:01:27.030 --> 00:01:27.040 align:start position:0%
+[music]
+ 
+
+00:01:27.040 --> 00:01:29.430 align:start position:0%
+[music]
+to<00:01:27.160><c> try</c><00:01:27.400><c> and</c><00:01:27.560><c> bring</c><00:01:27.800><c> these</c><00:01:28.040><c> ideas</c><00:01:28.480><c> to</c><00:01:28.600><c> life.</c>
+
+00:01:29.430 --> 00:01:29.440 align:start position:0%
+to try and bring these ideas to life.
+ 
+
+00:01:29.440 --> 00:01:31.630 align:start position:0%
+to try and bring these ideas to life.
+And<00:01:29.560><c> typically,</c><00:01:30.040><c> those</c><00:01:30.320><c> manifest</c><00:01:31.000><c> in</c><00:01:31.160><c> three</c>
+
+00:01:31.630 --> 00:01:31.640 align:start position:0%
+And typically, those manifest in three
+ 
+
+00:01:31.640 --> 00:01:35.190 align:start position:0%
+And typically, those manifest in three
+clear<00:01:32.000><c> stages.</c><00:01:33.200><c> Reference,</c><00:01:34.080><c> interpret,</c><00:01:35.000><c> and</c>
+
+00:01:35.190 --> 00:01:35.200 align:start position:0%
+clear stages. Reference, interpret, and
+ 
+
+00:01:35.200 --> 00:01:37.830 align:start position:0%
+clear stages. Reference, interpret, and
+action.<00:01:36.280><c> It's</c><00:01:36.400><c> about</c><00:01:36.680><c> finding</c><00:01:37.080><c> inspiration</c>
+
+00:01:37.830 --> 00:01:37.840 align:start position:0%
+action. It's about finding inspiration
+ 
+
+00:01:37.840 --> 00:01:39.569 align:start position:0%
+action. It's about finding inspiration
+from<00:01:38.080><c> life</c><00:01:38.480><c> or</c><00:01:38.720><c> other</c><00:01:38.960><c> existing</c><00:01:39.560><c> works.</c>
+
+00:01:39.569 --> 00:01:39.579 align:start position:0%
+from life or other existing works.
+ 
+
+00:01:39.579 --> 00:01:40.470 align:start position:0%
+from life or other existing works.
+[music]
+
+00:01:40.470 --> 00:01:40.480 align:start position:0%
+[music]
+ 
+
+00:01:40.480 --> 00:01:42.150 align:start position:0%
+[music]
+Looking<00:01:40.800><c> at</c><00:01:40.920><c> how</c><00:01:41.080><c> you</c><00:01:41.200><c> might</c><00:01:41.440><c> filter</c><00:01:41.840><c> that</c>
+
+00:01:42.150 --> 00:01:42.160 align:start position:0%
+Looking at how you might filter that
+ 
+
+00:01:42.160 --> 00:01:44.136 align:start position:0%
+Looking at how you might filter that
+through<00:01:42.360><c> your</c><00:01:42.560><c> own</c><00:01:42.800><c> perception,</c><00:01:43.800><c> and</c><00:01:43.960><c> finally</c>
+
+00:01:44.136 --> 00:01:44.146 align:start position:0%
+through your own perception, and finally
+ 
+
+00:01:44.146 --> 00:01:46.030 align:start position:0%
+through your own perception, and finally
+[music]<00:01:44.400><c> turning</c><00:01:44.760><c> it</c><00:01:44.920><c> into</c><00:01:45.200><c> concrete</c>
+
+00:01:46.030 --> 00:01:46.040 align:start position:0%
+[music] turning it into concrete
+ 
+
+00:01:46.040 --> 00:01:48.910 align:start position:0%
+[music] turning it into concrete
+actionable<00:01:46.640><c> steps.</c>
+
+00:01:48.910 --> 00:01:48.920 align:start position:0%
+actionable steps.
+ 
+
+00:01:48.920 --> 00:01:51.030 align:start position:0%
+actionable steps.
+How<00:01:49.080><c> that</c><00:01:49.240><c> applies</c><00:01:49.720><c> to</c><00:01:49.800><c> this</c><00:01:50.000><c> set</c><00:01:50.160><c> of</c><00:01:50.280><c> features</c>
+
+00:01:51.030 --> 00:01:51.040 align:start position:0%
+How that applies to this set of features
+ 
+
+00:01:51.040 --> 00:01:52.910 align:start position:0%
+How that applies to this set of features
+is<00:01:51.200><c> that</c><00:01:51.320><c> we</c><00:01:51.440><c> want</c><00:01:51.720><c> to</c><00:01:51.800><c> create</c><00:01:52.160><c> spaces</c><00:01:52.760><c> that</c>
+
+00:01:52.910 --> 00:01:52.920 align:start position:0%
+is that we want to create spaces that
+ 
+
+00:01:52.920 --> 00:01:54.990 align:start position:0%
+is that we want to create spaces that
+more<00:01:53.160><c> closely</c><00:01:53.640><c> resemble</c><00:01:54.120><c> nature</c><00:01:54.680><c> and</c><00:01:54.840><c> how</c>
+
+00:01:54.990 --> 00:01:55.000 align:start position:0%
+more closely resemble nature and how
+ 
+
+00:01:55.000 --> 00:01:55.926 align:start position:0%
+more closely resemble nature and how
+that<00:01:55.240><c> feels.</c>
+
+00:01:55.926 --> 00:01:55.936 align:start position:0%
+that feels.
+ 
+
+00:01:55.936 --> 00:01:56.230 align:start position:0%
+that feels.
+&gt;&gt; [music]
+
+00:01:56.230 --> 00:01:56.240 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:01:56.240 --> 00:01:57.990 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; And<00:01:56.400><c> so,</c><00:01:56.520><c> we</c><00:01:56.640><c> can</c><00:01:56.800><c> look</c><00:01:57.040><c> at</c><00:01:57.160><c> environments</c><00:01:57.880><c> and</c>
+
+00:01:57.990 --> 00:01:58.000 align:start position:0%
+&gt;&gt; And so, we can look at environments and
+ 
+
+00:01:58.000 --> 00:02:00.511 align:start position:0%
+&gt;&gt; And so, we can look at environments and
+try<00:01:58.240><c> to</c><00:01:58.400><c> distill</c><00:01:59.000><c> what</c><00:01:59.200><c> we</c><00:01:59.360><c> think</c><00:01:59.680><c> is</c><00:01:59.880><c> missing.</c>
+
+00:02:00.511 --> 00:02:00.521 align:start position:0%
+try to distill what we think is missing.
+ 
+
+00:02:00.521 --> 00:02:01.030 align:start position:0%
+try to distill what we think is missing.
+&gt;&gt; [music]
+
+00:02:01.030 --> 00:02:01.040 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:02:01.040 --> 00:02:03.190 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; To<00:02:01.160><c> me,</c><00:02:01.440><c> the</c><00:02:01.560><c> contrast</c><00:02:02.160><c> between</c><00:02:02.560><c> areas</c><00:02:03.040><c> of</c>
+
+00:02:03.190 --> 00:02:03.200 align:start position:0%
+&gt;&gt; To me, the contrast between areas of
+ 
+
+00:02:03.200 --> 00:02:05.110 align:start position:0%
+&gt;&gt; To me, the contrast between areas of
+light<00:02:03.640><c> and</c><00:02:03.840><c> shade</c><00:02:04.320><c> that</c><00:02:04.560><c> roll</c><00:02:04.800><c> through</c><00:02:05.000><c> the</c>
+
+00:02:05.110 --> 00:02:05.120 align:start position:0%
+light and shade that roll through the
+ 
+
+00:02:05.120 --> 00:02:07.430 align:start position:0%
+light and shade that roll through the
+scene<00:02:05.960><c> give</c><00:02:06.160><c> a</c><00:02:06.200><c> sense</c><00:02:06.560><c> of</c><00:02:06.640><c> the</c><00:02:06.760><c> world</c><00:02:07.200><c> being</c>
+
+00:02:07.430 --> 00:02:07.440 align:start position:0%
+scene give a sense of the world being
+ 
+
+00:02:07.440 --> 00:02:08.371 align:start position:0%
+scene give a sense of the world being
+alive.
+
+00:02:08.371 --> 00:02:08.381 align:start position:0%
+alive.
+ 
+
+00:02:08.381 --> 00:02:08.710 align:start position:0%
+alive.
+&gt;&gt; [music]
+
+00:02:08.710 --> 00:02:08.720 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:02:08.720 --> 00:02:10.790 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; To<00:02:08.840><c> replicate</c><00:02:09.360><c> this,</c><00:02:09.920><c> we'll</c><00:02:10.039><c> want</c><00:02:10.280><c> to</c><00:02:10.399><c> look</c><00:02:10.640><c> at</c>
+
+00:02:10.790 --> 00:02:10.800 align:start position:0%
+&gt;&gt; To replicate this, we'll want to look at
+ 
+
+00:02:10.800 --> 00:02:15.790 align:start position:0%
+&gt;&gt; To replicate this, we'll want to look at
+adding<00:02:11.080><c> cloud</c><00:02:11.480><c> coverage</c><00:02:12.000><c> into</c><00:02:12.280><c> our</c><00:02:12.400><c> pipeline.</c>
+
+00:02:15.790 --> 00:02:15.800 align:start position:0%
+ 
+ 
+
+00:02:15.800 --> 00:02:17.270 align:start position:0%
+ 
+As<00:02:16.040><c> is</c><00:02:16.200><c> typical</c><00:02:16.241><c> [music]</c><00:02:16.640><c> with</c><00:02:16.800><c> natural</c>
+
+00:02:17.270 --> 00:02:17.280 align:start position:0%
+As is typical [music] with natural
+ 
+
+00:02:17.280 --> 00:02:19.430 align:start position:0%
+As is typical [music] with natural
+patterns,<00:02:18.000><c> Perlin</c><00:02:18.400><c> noise</c><00:02:18.760><c> is</c><00:02:18.880><c> a</c><00:02:18.960><c> good</c><00:02:19.160><c> place</c>
+
+00:02:19.430 --> 00:02:19.440 align:start position:0%
+patterns, Perlin noise is a good place
+ 
+
+00:02:19.440 --> 00:02:22.030 align:start position:0%
+patterns, Perlin noise is a good place
+to<00:02:19.560><c> start.</c><00:02:20.520><c> Just</c><00:02:20.800><c> with</c><00:02:20.960><c> two</c><00:02:21.120><c> parameters,</c>
+
+00:02:22.030 --> 00:02:22.040 align:start position:0%
+to start. Just with two parameters,
+ 
+
+00:02:22.040 --> 00:02:24.030 align:start position:0%
+to start. Just with two parameters,
+scale<00:02:22.136><c> [music]</c><00:02:22.640><c> and</c><00:02:22.800><c> threshold,</c><00:02:23.840><c> we're</c>
+
+00:02:24.030 --> 00:02:24.040 align:start position:0%
+scale [music] and threshold, we're
+ 
+
+00:02:24.040 --> 00:02:25.750 align:start position:0%
+scale [music] and threshold, we're
+already<00:02:24.480><c> able</c><00:02:24.720><c> to</c><00:02:24.840><c> form</c><00:02:25.160><c> something</c><00:02:25.600><c> that</c>
+
+00:02:25.750 --> 00:02:25.760 align:start position:0%
+already able to form something that
+ 
+
+00:02:25.760 --> 00:02:27.366 align:start position:0%
+already able to form something that
+could<00:02:25.920><c> resemble</c><00:02:26.480><c> clouds.</c>
+
+00:02:27.366 --> 00:02:27.376 align:start position:0%
+could resemble clouds.
+ 
+
+00:02:27.376 --> 00:02:27.750 align:start position:0%
+could resemble clouds.
+&gt;&gt; [music]
+
+00:02:27.750 --> 00:02:27.760 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:02:27.760 --> 00:02:29.830 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; If<00:02:27.880><c> we</c><00:02:28.000><c> remember</c><00:02:28.360><c> that</c><00:02:28.600><c> Perlin</c><00:02:28.960><c> noise</c><00:02:29.400><c> is</c><00:02:29.560><c> just</c>
+
+00:02:29.830 --> 00:02:29.840 align:start position:0%
+&gt;&gt; If we remember that Perlin noise is just
+ 
+
+00:02:29.840 --> 00:02:32.390 align:start position:0%
+&gt;&gt; If we remember that Perlin noise is just
+a<00:02:29.920><c> texture</c><00:02:30.480><c> of</c><00:02:30.600><c> values</c><00:02:31.120><c> ranging</c><00:02:31.520><c> between</c><00:02:31.920><c> 0</c>
+
+00:02:32.390 --> 00:02:32.400 align:start position:0%
+a texture of values ranging between 0
+ 
+
+00:02:32.400 --> 00:02:33.261 align:start position:0%
+a texture of values ranging between 0
+and<00:02:32.640><c> 1,</c>
+
+00:02:33.261 --> 00:02:33.271 align:start position:0%
+and 1,
+ 
+
+00:02:33.271 --> 00:02:33.430 align:start position:0%
+and 1,
+&gt;&gt; [music]
+
+00:02:33.430 --> 00:02:33.440 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:02:33.440 --> 00:02:35.550 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; the<00:02:33.520><c> threshold</c><00:02:34.080><c> allows</c><00:02:34.440><c> us</c><00:02:34.560><c> to</c><00:02:34.680><c> pick</c><00:02:34.920><c> a</c><00:02:34.960><c> value</c>
+
+00:02:35.550 --> 00:02:35.560 align:start position:0%
+&gt;&gt; the threshold allows us to pick a value
+ 
+
+00:02:35.560 --> 00:02:37.790 align:start position:0%
+&gt;&gt; the threshold allows us to pick a value
+and<00:02:35.760><c> clamp</c><00:02:36.120><c> any</c><00:02:36.400><c> float</c><00:02:36.840><c> either</c><00:02:37.080><c> side</c><00:02:37.360><c> of</c><00:02:37.440><c> that</c>
+
+00:02:37.790 --> 00:02:37.800 align:start position:0%
+and clamp any float either side of that
+ 
+
+00:02:37.800 --> 00:02:41.030 align:start position:0%
+and clamp any float either side of that
+to<00:02:37.920><c> their</c><00:02:38.080><c> nearest</c><00:02:38.520><c> extreme.</c><00:02:39.166><c> [music]</c>
+
+00:02:41.030 --> 00:02:41.040 align:start position:0%
+to their nearest extreme. [music]
+ 
+
+00:02:41.040 --> 00:02:43.670 align:start position:0%
+to their nearest extreme. [music]
+Traditional<00:02:41.840><c> light</c><00:02:42.160><c> cookies</c><00:02:42.800><c> or</c><00:02:43.080><c> projective</c>
+
+00:02:43.670 --> 00:02:43.680 align:start position:0%
+Traditional light cookies or projective
+ 
+
+00:02:43.680 --> 00:02:45.310 align:start position:0%
+Traditional light cookies or projective
+textures<00:02:44.400><c> are</c><00:02:44.420><c> [music]</c><00:02:44.560><c> a</c><00:02:44.600><c> common</c><00:02:45.040><c> way</c><00:02:45.160><c> to</c>
+
+00:02:45.310 --> 00:02:45.320 align:start position:0%
+textures are [music] a common way to
+ 
+
+00:02:45.320 --> 00:02:47.950 align:start position:0%
+textures are [music] a common way to
+handle<00:02:45.640><c> this</c><00:02:45.840><c> type</c><00:02:46.040><c> of</c><00:02:46.200><c> task.</c><00:02:47.320><c> More</c><00:02:47.520><c> generally</c>
+
+00:02:47.950 --> 00:02:47.960 align:start position:0%
+handle this type of task. More generally
+ 
+
+00:02:47.960 --> 00:02:50.291 align:start position:0%
+handle this type of task. More generally
+put,<00:02:48.440><c> light</c><00:02:48.720><c> cookies</c><00:02:49.200><c> are</c><00:02:49.360><c> masks</c><00:02:50.040><c> which</c><00:02:50.240><c> can</c>
+
+00:02:50.291 --> 00:02:50.301 align:start position:0%
+put, light cookies are masks which can
+ 
+
+00:02:50.301 --> 00:02:51.790 align:start position:0%
+put, light cookies are masks which can
+[music]<00:02:50.400><c> filter</c><00:02:50.880><c> the</c><00:02:51.040><c> output</c><00:02:51.360><c> of</c><00:02:51.480><c> a</c><00:02:51.520><c> light</c>
+
+00:02:51.790 --> 00:02:51.800 align:start position:0%
+[music] filter the output of a light
+ 
+
+00:02:51.800 --> 00:02:52.950 align:start position:0%
+[music] filter the output of a light
+source.
+
+00:02:52.950 --> 00:02:52.960 align:start position:0%
+source.
+ 
+
+00:02:52.960 --> 00:02:54.550 align:start position:0%
+source.
+An<00:02:53.120><c> issue</c><00:02:53.440><c> in</c><00:02:53.520><c> our</c><00:02:53.680><c> case</c><00:02:54.080><c> is</c><00:02:54.240><c> that</c><00:02:54.360><c> they're</c>
+
+00:02:54.550 --> 00:02:54.560 align:start position:0%
+An issue in our case is that they're
+ 
+
+00:02:54.560 --> 00:02:56.186 align:start position:0%
+An issue in our case is that they're
+often<00:02:54.920><c> tied</c><00:02:55.280><c> to</c><00:02:55.360><c> the</c><00:02:55.480><c> light's</c><00:02:55.800><c> transform.</c>
+
+00:02:56.186 --> 00:02:56.196 align:start position:0%
+often tied to the light's transform.
+ 
+
+00:02:56.196 --> 00:02:57.030 align:start position:0%
+often tied to the light's transform.
+[music]
+
+00:02:57.030 --> 00:02:57.040 align:start position:0%
+[music]
+ 
+
+00:02:57.040 --> 00:02:58.910 align:start position:0%
+[music]
+If<00:02:57.160><c> the</c><00:02:57.280><c> light</c><00:02:57.600><c> moves</c><00:02:58.200><c> or</c><00:02:58.320><c> if</c><00:02:58.440><c> the</c><00:02:58.520><c> camera</c>
+
+00:02:58.910 --> 00:02:58.920 align:start position:0%
+If the light moves or if the camera
+ 
+
+00:02:58.920 --> 00:03:01.030 align:start position:0%
+If the light moves or if the camera
+rotates,<00:02:59.800><c> the</c><00:02:59.920><c> illusion</c><00:03:00.400><c> that</c><00:03:00.560><c> our</c><00:03:00.680><c> clouds</c>
+
+00:03:01.030 --> 00:03:01.040 align:start position:0%
+rotates, the illusion that our clouds
+ 
+
+00:03:01.040 --> 00:03:02.737 align:start position:0%
+rotates, the illusion that our clouds
+exist<00:03:01.560><c> physically</c><00:03:02.040><c> above</c><00:03:02.320><c> the</c><00:03:02.400><c> ground</c>
+
+00:03:02.737 --> 00:03:02.747 align:start position:0%
+exist physically above the ground
+ 
+
+00:03:02.747 --> 00:03:04.630 align:start position:0%
+exist physically above the ground
+[music]<00:03:02.840><c> will</c><00:03:02.960><c> break.</c>
+
+00:03:04.630 --> 00:03:04.640 align:start position:0%
+[music] will break.
+ 
+
+00:03:04.640 --> 00:03:06.350 align:start position:0%
+[music] will break.
+To<00:03:04.760><c> make</c><00:03:04.960><c> clouds</c><00:03:05.400><c> feel</c><00:03:05.600><c> like</c><00:03:05.800><c> a</c><00:03:05.840><c> physical</c>
+
+00:03:06.350 --> 00:03:06.360 align:start position:0%
+To make clouds feel like a physical
+ 
+
+00:03:06.360 --> 00:03:08.190 align:start position:0%
+To make clouds feel like a physical
+layer<00:03:06.640><c> that</c><00:03:06.920><c> actually</c><00:03:07.320><c> exists</c><00:03:07.800><c> above</c><00:03:08.080><c> the</c>
+
+00:03:08.190 --> 00:03:08.200 align:start position:0%
+layer that actually exists above the
+ 
+
+00:03:08.200 --> 00:03:10.710 align:start position:0%
+layer that actually exists above the
+world,<00:03:09.080><c> we</c><00:03:09.160><c> need</c><00:03:09.360><c> a</c><00:03:09.400><c> spatial</c><00:03:09.960><c> reference</c><00:03:10.520><c> in</c>
+
+00:03:10.710 --> 00:03:10.720 align:start position:0%
+world, we need a spatial reference in
+ 
+
+00:03:10.720 --> 00:03:14.910 align:start position:0%
+world, we need a spatial reference in
+world<00:03:11.040><c> space.</c>
+
+00:03:14.910 --> 00:03:14.920 align:start position:0%
+ 
+ 
+
+00:03:14.920 --> 00:03:17.190 align:start position:0%
+ 
+We<00:03:15.040><c> can</c><00:03:15.160><c> start</c><00:03:15.520><c> this</c><00:03:15.720><c> by</c><00:03:15.840><c> defining</c><00:03:16.480><c> a</c><00:03:16.600><c> virtual</c>
+
+00:03:17.190 --> 00:03:17.200 align:start position:0%
+We can start this by defining a virtual
+ 
+
+00:03:17.200 --> 00:03:19.950 align:start position:0%
+We can start this by defining a virtual
+ceiling,<00:03:18.040><c> a</c><00:03:18.120><c> mathematical</c><00:03:18.920><c> plane</c><00:03:19.360><c> at</c><00:03:19.480><c> a</c><00:03:19.560><c> fixed</c>
+
+00:03:19.950 --> 00:03:19.960 align:start position:0%
+ceiling, a mathematical plane at a fixed
+ 
+
+00:03:19.960 --> 00:03:22.230 align:start position:0%
+ceiling, a mathematical plane at a fixed
+height.<00:03:20.880><c> But</c><00:03:20.960><c> to</c><00:03:21.080><c> figure</c><00:03:21.400><c> out</c><00:03:21.560><c> where</c><00:03:21.720><c> a</c><00:03:21.800><c> pixel</c>
+
+00:03:22.230 --> 00:03:22.240 align:start position:0%
+height. But to figure out where a pixel
+ 
+
+00:03:22.240 --> 00:03:24.470 align:start position:0%
+height. But to figure out where a pixel
+sits<00:03:22.600><c> in</c><00:03:22.720><c> relation</c><00:03:23.240><c> to</c><00:03:23.360><c> this</c><00:03:23.560><c> ceiling,</c><00:03:24.360><c> we</c>
+
+00:03:24.470 --> 00:03:24.480 align:start position:0%
+sits in relation to this ceiling, we
+ 
+
+00:03:24.480 --> 00:03:26.972 align:start position:0%
+sits in relation to this ceiling, we
+have<00:03:24.640><c> to</c><00:03:24.800><c> reconstruct</c><00:03:25.520><c> its</c><00:03:25.760><c> world</c><00:03:26.080><c> position.</c>
+
+00:03:26.972 --> 00:03:26.982 align:start position:0%
+have to reconstruct its world position.
+ 
+
+00:03:26.982 --> 00:03:29.030 align:start position:0%
+have to reconstruct its world position.
+&gt;&gt; [music]
+
+00:03:29.030 --> 00:03:29.040 align:start position:0%
+ 
+ 
+
+00:03:29.040 --> 00:03:30.870 align:start position:0%
+ 
+&gt;&gt; By<00:03:29.200><c> sampling</c><00:03:29.680><c> the</c><00:03:29.800><c> depth</c><00:03:30.160><c> texture</c><00:03:30.720><c> and</c>
+
+00:03:30.870 --> 00:03:30.880 align:start position:0%
+&gt;&gt; By sampling the depth texture and
+ 
+
+00:03:30.880 --> 00:03:32.390 align:start position:0%
+&gt;&gt; By sampling the depth texture and
+running<00:03:31.120><c> it</c><00:03:31.240><c> through</c><00:03:31.440><c> the</c><00:03:31.600><c> inverse</c><00:03:32.120><c> view</c>
+
+00:03:32.390 --> 00:03:32.400 align:start position:0%
+running it through the inverse view
+ 
+
+00:03:32.400 --> 00:03:34.830 align:start position:0%
+running it through the inverse view
+projection<00:03:32.960><c> matrix,</c><00:03:33.920><c> we</c><00:03:34.000><c> can</c><00:03:34.120><c> essentially</c>
+
+00:03:34.830 --> 00:03:34.840 align:start position:0%
+projection matrix, we can essentially
+ 
+
+00:03:34.840 --> 00:03:37.590 align:start position:0%
+projection matrix, we can essentially
+unproject<00:03:35.640><c> that</c><00:03:35.880><c> 2D</c><00:03:36.280><c> screen</c><00:03:36.680><c> coordinate</c><00:03:37.280><c> back</c>
+
+00:03:37.590 --> 00:03:37.600 align:start position:0%
+unproject that 2D screen coordinate back
+ 
+
+00:03:37.600 --> 00:03:40.470 align:start position:0%
+unproject that 2D screen coordinate back
+into<00:03:37.840><c> the</c><00:03:37.960><c> 3D</c><00:03:38.440><c> space</c><00:03:38.800><c> it</c><00:03:38.920><c> came</c><00:03:39.160><c> from.</c>
+
+00:03:40.470 --> 00:03:40.480 align:start position:0%
+into the 3D space it came from.
+ 
+
+00:03:40.480 --> 00:03:42.670 align:start position:0%
+into the 3D space it came from.
+This<00:03:40.720><c> gives</c><00:03:40.960><c> us</c><00:03:41.120><c> an</c><00:03:41.360><c> in-engine</c><00:03:42.040><c> reference</c><00:03:42.520><c> for</c>
+
+00:03:42.670 --> 00:03:42.680 align:start position:0%
+This gives us an in-engine reference for
+ 
+
+00:03:42.680 --> 00:03:45.070 align:start position:0%
+This gives us an in-engine reference for
+where<00:03:43.040><c> every</c><00:03:43.320><c> pixel</c><00:03:43.720><c> on</c><00:03:43.840><c> our</c><00:03:43.920><c> monitor</c><00:03:44.480><c> exists</c>
+
+00:03:45.070 --> 00:03:45.080 align:start position:0%
+where every pixel on our monitor exists
+ 
+
+00:03:45.080 --> 00:03:46.622 align:start position:0%
+where every pixel on our monitor exists
+in<00:03:45.280><c> world</c><00:03:45.600><c> space.</c>
+
+00:03:46.622 --> 00:03:46.632 align:start position:0%
+in world space.
+ 
+
+00:03:46.632 --> 00:03:48.590 align:start position:0%
+in world space.
+&gt;&gt; [music]
+
+00:03:48.590 --> 00:03:48.600 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:03:48.600 --> 00:03:51.030 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; Now<00:03:48.840><c> that</c><00:03:49.000><c> we</c><00:03:49.120><c> have</c><00:03:49.360><c> that</c><00:03:49.560><c> 3D</c><00:03:50.000><c> coordinate,</c><00:03:50.920><c> we</c>
+
+00:03:51.030 --> 00:03:51.040 align:start position:0%
+&gt;&gt; Now that we have that 3D coordinate, we
+ 
+
+00:03:51.040 --> 00:03:52.950 align:start position:0%
+&gt;&gt; Now that we have that 3D coordinate, we
+can<00:03:51.200><c> treat</c><00:03:51.560><c> the</c><00:03:51.640><c> sun's</c><00:03:52.040><c> direction</c><00:03:52.720><c> as</c><00:03:52.920><c> a</c>
+
+00:03:52.950 --> 00:03:52.960 align:start position:0%
+can treat the sun's direction as a
+ 
+
+00:03:52.960 --> 00:03:54.150 align:start position:0%
+can treat the sun's direction as a
+vector.
+
+00:03:54.150 --> 00:03:54.160 align:start position:0%
+vector.
+ 
+
+00:03:54.160 --> 00:03:56.070 align:start position:0%
+vector.
+We're<00:03:54.280><c> looking</c><00:03:54.600><c> for</c><00:03:54.720><c> the</c><00:03:54.880><c> intersection</c><00:03:55.600><c> point</c>
+
+00:03:56.070 --> 00:03:56.080 align:start position:0%
+We're looking for the intersection point
+ 
+
+00:03:56.080 --> 00:03:57.830 align:start position:0%
+We're looking for the intersection point
+where<00:03:56.280><c> a</c><00:03:56.360><c> ray,</c><00:03:57.160><c> starting</c><00:03:57.640><c> at</c><00:03:57.720><c> our</c><00:03:57.767><c> [music]</c>
+
+00:03:57.830 --> 00:03:57.840 align:start position:0%
+where a ray, starting at our [music]
+ 
+
+00:03:57.840 --> 00:03:59.790 align:start position:0%
+where a ray, starting at our [music]
+ground<00:03:58.160><c> position</c><00:03:58.720><c> and</c><00:03:58.920><c> pointing</c><00:03:59.400><c> toward</c><00:03:59.720><c> the</c>
+
+00:03:59.790 --> 00:03:59.800 align:start position:0%
+ground position and pointing toward the
+ 
+
+00:03:59.800 --> 00:04:02.790 align:start position:0%
+ground position and pointing toward the
+sun,<00:04:00.720><c> hits</c><00:04:01.040><c> our</c><00:04:01.280><c> cloud</c><00:04:01.680><c> plane.</c>
+
+00:04:02.790 --> 00:04:02.800 align:start position:0%
+sun, hits our cloud plane.
+ 
+
+00:04:02.800 --> 00:04:05.470 align:start position:0%
+sun, hits our cloud plane.
+The<00:04:02.880><c> math</c><00:04:03.280><c> here</c><00:04:03.640><c> is</c><00:04:03.840><c> a</c><00:04:03.880><c> linear</c><00:04:04.360><c> equation</c><00:04:05.320><c> where</c>
+
+00:04:05.470 --> 00:04:05.480 align:start position:0%
+The math here is a linear equation where
+ 
+
+00:04:05.480 --> 00:04:08.230 align:start position:0%
+The math here is a linear equation where
+we<00:04:05.600><c> solve</c><00:04:06.040><c> for</c><00:04:06.160><c> the</c><00:04:06.280><c> distance</c><00:04:06.880><c> T</c><00:04:07.560><c> along</c><00:04:07.960><c> that</c>
+
+00:04:08.230 --> 00:04:08.240 align:start position:0%
+we solve for the distance T along that
+ 
+
+00:04:08.240 --> 00:04:09.670 align:start position:0%
+we solve for the distance T along that
+light<00:04:08.480><c> vector.</c>
+
+00:04:09.670 --> 00:04:09.680 align:start position:0%
+light vector.
+ 
+
+00:04:09.680 --> 00:04:11.630 align:start position:0%
+light vector.
+Once<00:04:09.960><c> we</c><00:04:10.080><c> have</c><00:04:10.240><c> that</c><00:04:10.480><c> hit</c><00:04:10.680><c> point,</c><00:04:11.360><c> we</c><00:04:11.480><c> can</c>
+
+00:04:11.630 --> 00:04:11.640 align:start position:0%
+Once we have that hit point, we can
+ 
+
+00:04:11.640 --> 00:04:13.790 align:start position:0%
+Once we have that hit point, we can
+ignore<00:04:12.040><c> the</c><00:04:12.160><c> vertical</c><00:04:12.600><c> height</c><00:04:13.040><c> and</c><00:04:13.200><c> just</c><00:04:13.520><c> use</c>
+
+00:04:13.790 --> 00:04:13.800 align:start position:0%
+ignore the vertical height and just use
+ 
+
+00:04:13.800 --> 00:04:16.990 align:start position:0%
+ignore the vertical height and just use
+the<00:04:14.000><c> X</c><00:04:14.240><c> and</c><00:04:14.440><c> Z</c><00:04:14.680><c> coordinates</c><00:04:15.640><c> as</c><00:04:15.840><c> our</c><00:04:16.000><c> UVs</c><00:04:16.840><c> to</c>
+
+00:04:16.990 --> 00:04:17.000 align:start position:0%
+the X and Z coordinates as our UVs to
+ 
+
+00:04:17.000 --> 00:04:18.717 align:start position:0%
+the X and Z coordinates as our UVs to
+read<00:04:17.280><c> from</c><00:04:17.480><c> the</c><00:04:17.560><c> Perlin</c><00:04:18.000><c> generated</c><00:04:18.560><c> cloud</c>
+
+00:04:18.717 --> 00:04:18.727 align:start position:0%
+read from the Perlin generated cloud
+ 
+
+00:04:18.727 --> 00:04:23.990 align:start position:0%
+read from the Perlin generated cloud
+[music]<00:04:18.920><c> texture.</c>
+
+00:04:23.990 --> 00:04:24.000 align:start position:0%
+ 
+ 
+
+00:04:24.000 --> 00:04:26.110 align:start position:0%
+ 
+By<00:04:24.160><c> adding</c><00:04:24.440><c> a</c><00:04:24.520><c> time-based</c><00:04:25.240><c> offset</c><00:04:25.800><c> to</c><00:04:25.880><c> these</c>
+
+00:04:26.110 --> 00:04:26.120 align:start position:0%
+By adding a time-based offset to these
+ 
+
+00:04:26.120 --> 00:04:29.853 align:start position:0%
+By adding a time-based offset to these
+UVs,<00:04:27.200><c> we</c><00:04:27.320><c> get</c><00:04:27.480><c> a</c><00:04:27.560><c> rolling</c><00:04:28.080><c> cloud</c><00:04:28.440><c> effect.</c>
+
+00:04:29.853 --> 00:04:29.863 align:start position:0%
+UVs, we get a rolling cloud effect.
+ 
+
+00:04:29.863 --> 00:04:31.710 align:start position:0%
+UVs, we get a rolling cloud effect.
+&gt;&gt; [music]
+
+00:04:31.710 --> 00:04:31.720 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:04:31.720 --> 00:04:34.310 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; The<00:04:31.800><c> result</c><00:04:32.320><c> is</c><00:04:32.480><c> a</c><00:04:32.560><c> global</c><00:04:33.040><c> shadow</c><00:04:33.440><c> mask</c><00:04:34.200><c> that</c>
+
+00:04:34.310 --> 00:04:34.320 align:start position:0%
+&gt;&gt; The result is a global shadow mask that
+ 
+
+00:04:34.320 --> 00:04:36.350 align:start position:0%
+&gt;&gt; The result is a global shadow mask that
+we<00:04:34.440><c> pass</c><00:04:34.800><c> directly</c><00:04:35.320><c> into</c><00:04:35.600><c> our</c><00:04:35.720><c> pipeline's</c>
+
+00:04:36.350 --> 00:04:36.360 align:start position:0%
+we pass directly into our pipeline's
+ 
+
+00:04:36.360 --> 00:04:37.910 align:start position:0%
+we pass directly into our pipeline's
+shadow<00:04:36.720><c> caster.</c>
+
+00:04:37.910 --> 00:04:37.920 align:start position:0%
+shadow caster.
+ 
+
+00:04:37.920 --> 00:04:39.950 align:start position:0%
+shadow caster.
+This<00:04:38.040><c> allows</c><00:04:38.480><c> every</c><00:04:38.800><c> object</c><00:04:39.240><c> in</c><00:04:39.320><c> the</c><00:04:39.440><c> scene</c><00:04:39.840><c> to</c>
+
+00:04:39.950 --> 00:04:39.960 align:start position:0%
+This allows every object in the scene to
+ 
+
+00:04:39.960 --> 00:04:41.990 align:start position:0%
+This allows every object in the scene to
+sample<00:04:40.343><c> [music]</c><00:04:40.400><c> from</c><00:04:40.560><c> the</c><00:04:40.640><c> mask</c><00:04:41.200><c> via</c><00:04:41.480><c> default</c>
+
+00:04:41.990 --> 00:04:42.000 align:start position:0%
+sample [music] from the mask via default
+ 
+
+00:04:42.000 --> 00:04:44.310 align:start position:0%
+sample [music] from the mask via default
+shadow<00:04:42.360><c> calculations</c><00:04:43.600><c> and</c><00:04:43.760><c> receive</c><00:04:44.200><c> the</c>
+
+00:04:44.310 --> 00:04:44.320 align:start position:0%
+shadow calculations and receive the
+ 
+
+00:04:44.320 --> 00:04:49.030 align:start position:0%
+shadow calculations and receive the
+global<00:04:44.760><c> cloud</c><00:04:45.160><c> coverage.</c>
+
+00:04:49.030 --> 00:04:49.040 align:start position:0%
+ 
+ 
+
+00:04:49.040 --> 00:04:50.870 align:start position:0%
+ 
+It's<00:04:49.240><c> worth</c><00:04:49.480><c> doing</c><00:04:49.800><c> a</c><00:04:49.840><c> quick</c><00:04:50.200><c> refresher</c><00:04:50.760><c> on</c>
+
+00:04:50.870 --> 00:04:50.880 align:start position:0%
+It's worth doing a quick refresher on
+ 
+
+00:04:50.880 --> 00:04:53.150 align:start position:0%
+It's worth doing a quick refresher on
+how<00:04:51.080><c> Unity</c><00:04:51.680><c> and</c><00:04:51.880><c> most</c><00:04:52.200><c> modern</c><00:04:52.520><c> engines</c>
+
+00:04:53.150 --> 00:04:53.160 align:start position:0%
+how Unity and most modern engines
+ 
+
+00:04:53.160 --> 00:04:56.390 align:start position:0%
+how Unity and most modern engines
+actually<00:04:53.680><c> handle</c><00:04:54.040><c> shadows.</c>
+
+00:04:56.390 --> 00:04:56.400 align:start position:0%
+actually handle shadows.
+ 
+
+00:04:56.400 --> 00:04:58.270 align:start position:0%
+actually handle shadows.
+During<00:04:56.680><c> the</c><00:04:56.760><c> shadow</c><00:04:57.120><c> pass,</c><00:04:57.680><c> the</c><00:04:57.800><c> scene</c><00:04:58.120><c> is</c>
+
+00:04:58.270 --> 00:04:58.280 align:start position:0%
+During the shadow pass, the scene is
+ 
+
+00:04:58.280 --> 00:04:59.983 align:start position:0%
+During the shadow pass, the scene is
+rendered<00:04:58.680><c> from</c><00:04:58.840><c> the</c><00:04:58.920><c> light's</c><00:04:59.280><c> point</c><00:04:59.560><c> of</c><00:04:59.640><c> view,</c>
+
+00:04:59.983 --> 00:04:59.993 align:start position:0%
+rendered from the light's point of view,
+ 
+
+00:04:59.993 --> 00:05:02.230 align:start position:0%
+rendered from the light's point of view,
+[music]<00:05:00.360><c> writing</c><00:05:00.720><c> depth</c><00:05:01.040><c> values</c><00:05:01.600><c> to</c><00:05:01.760><c> a</c><00:05:01.840><c> shadow</c>
+
+00:05:02.230 --> 00:05:02.240 align:start position:0%
+[music] writing depth values to a shadow
+ 
+
+00:05:02.240 --> 00:05:03.790 align:start position:0%
+[music] writing depth values to a shadow
+map<00:05:02.560><c> texture.</c>
+
+00:05:03.790 --> 00:05:03.800 align:start position:0%
+map texture.
+ 
+
+00:05:03.800 --> 00:05:05.630 align:start position:0%
+map texture.
+When<00:05:03.960><c> rendering</c><00:05:04.360><c> the</c><00:05:04.480><c> main</c><00:05:04.760><c> camera</c><00:05:05.160><c> view,</c>
+
+00:05:05.630 --> 00:05:05.640 align:start position:0%
+When rendering the main camera view,
+ 
+
+00:05:05.640 --> 00:05:07.750 align:start position:0%
+When rendering the main camera view,
+each<00:05:05.920><c> fragment</c><00:05:06.440><c> transforms</c><00:05:07.280><c> its</c><00:05:07.480><c> world</c>
+
+00:05:07.750 --> 00:05:07.760 align:start position:0%
+each fragment transforms its world
+ 
+
+00:05:07.760 --> 00:05:08.390 align:start position:0%
+each fragment transforms its world
+position<00:05:07.853><c> [music]</c>
+
+00:05:08.390 --> 00:05:08.400 align:start position:0%
+position [music]
+ 
+
+00:05:08.400 --> 00:05:11.110 align:start position:0%
+position [music]
+into<00:05:08.760><c> light</c><00:05:09.040><c> space</c><00:05:09.920><c> and</c><00:05:10.040><c> compares</c><00:05:10.520><c> its</c><00:05:10.680><c> depth</c>
+
+00:05:11.110 --> 00:05:11.120 align:start position:0%
+into light space and compares its depth
+ 
+
+00:05:11.120 --> 00:05:13.950 align:start position:0%
+into light space and compares its depth
+against<00:05:11.480><c> the</c><00:05:11.560><c> stored</c><00:05:12.080><c> shadow</c><00:05:12.440><c> map</c><00:05:12.760><c> value.</c>
+
+00:05:13.950 --> 00:05:13.960 align:start position:0%
+against the stored shadow map value.
+ 
+
+00:05:13.960 --> 00:05:15.870 align:start position:0%
+against the stored shadow map value.
+If<00:05:14.120><c> the</c><00:05:14.240><c> fragment's</c><00:05:14.760><c> depth</c><00:05:15.160><c> is</c><00:05:15.360><c> greater</c><00:05:15.760><c> than</c>
+
+00:05:15.870 --> 00:05:15.880 align:start position:0%
+If the fragment's depth is greater than
+ 
+
+00:05:15.880 --> 00:05:18.390 align:start position:0%
+If the fragment's depth is greater than
+the<00:05:15.960><c> shadow</c><00:05:16.320><c> map</c><00:05:16.600><c> depth,</c><00:05:17.320><c> it's</c><00:05:17.520><c> occluded</c><00:05:18.240><c> and</c>
+
+00:05:18.390 --> 00:05:18.400 align:start position:0%
+the shadow map depth, it's occluded and
+ 
+
+00:05:18.400 --> 00:05:19.633 align:start position:0%
+the shadow map depth, it's occluded and
+receives<00:05:18.960><c> shadow.</c>
+
+00:05:19.633 --> 00:05:19.643 align:start position:0%
+receives shadow.
+ 
+
+00:05:19.643 --> 00:05:25.230 align:start position:0%
+receives shadow.
+&gt;&gt; [music]
+
+00:05:25.230 --> 00:05:25.240 align:start position:0%
+ 
+ 
+
+00:05:25.240 --> 00:05:27.310 align:start position:0%
+ 
+&gt;&gt; Looking<00:05:25.600><c> at</c><00:05:25.720><c> this</c><00:05:25.960><c> in</c><00:05:26.080><c> Unity,</c><00:05:26.680><c> the</c><00:05:26.800><c> main</c><00:05:27.120><c> thing</c>
+
+00:05:27.310 --> 00:05:27.320 align:start position:0%
+&gt;&gt; Looking at this in Unity, the main thing
+ 
+
+00:05:27.320 --> 00:05:29.470 align:start position:0%
+&gt;&gt; Looking at this in Unity, the main thing
+you<00:05:27.440><c> notice</c><00:05:27.840><c> is</c><00:05:28.000><c> how</c><00:05:28.160><c> it</c><00:05:28.280><c> breaks</c><00:05:28.720><c> up</c><00:05:28.920><c> areas</c><00:05:29.320><c> of</c>
+
+00:05:29.470 --> 00:05:29.480 align:start position:0%
+you notice is how it breaks up areas of
+ 
+
+00:05:29.480 --> 00:05:31.670 align:start position:0%
+you notice is how it breaks up areas of
+flat<00:05:29.840><c> lighting.</c><00:05:30.800><c> It</c><00:05:30.920><c> creates</c><00:05:31.280><c> a</c><00:05:31.360><c> more</c>
+
+00:05:31.670 --> 00:05:31.680 align:start position:0%
+flat lighting. It creates a more
+ 
+
+00:05:31.680 --> 00:05:33.670 align:start position:0%
+flat lighting. It creates a more
+interesting<00:05:32.160><c> composition</c><00:05:32.840><c> of</c><00:05:32.960><c> contrasting</c>
+
+00:05:33.670 --> 00:05:33.680 align:start position:0%
+interesting composition of contrasting
+ 
+
+00:05:33.680 --> 00:05:36.630 align:start position:0%
+interesting composition of contrasting
+areas.<00:05:34.680><c> And</c><00:05:34.800><c> overall,</c><00:05:35.480><c> it</c><00:05:35.600><c> grounds</c><00:05:36.080><c> the</c><00:05:36.200><c> scene</c>
+
+00:05:36.630 --> 00:05:36.640 align:start position:0%
+areas. And overall, it grounds the scene
+ 
+
+00:05:36.640 --> 00:05:39.283 align:start position:0%
+areas. And overall, it grounds the scene
+and<00:05:36.800><c> makes</c><00:05:37.080><c> the</c><00:05:37.160><c> space</c><00:05:37.640><c> feel</c><00:05:37.920><c> more</c><00:05:38.960><c> livable</c>
+
+00:05:39.283 --> 00:05:39.293 align:start position:0%
+and makes the space feel more livable
+ 
+
+00:05:39.293 --> 00:05:47.143 align:start position:0%
+and makes the space feel more livable
+[music]<00:05:39.600><c> for</c><00:05:39.840><c> lack</c><00:05:40.080><c> of</c><00:05:40.200><c> a</c><00:05:40.240><c> better</c><00:05:40.520><c> word.</c>
+
+00:05:47.143 --> 00:05:47.153 align:start position:0%
+ 
+ 
+
+00:05:47.153 --> 00:05:48.590 align:start position:0%
+ 
+&gt;&gt; [music]
+
+00:05:48.590 --> 00:05:48.600 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:05:48.600 --> 00:05:50.190 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; And<00:05:48.800><c> because</c><00:05:49.240><c> we've</c><00:05:49.480><c> integrated</c><00:05:49.960><c> this</c>
+
+00:05:50.190 --> 00:05:50.200 align:start position:0%
+&gt;&gt; And because we've integrated this
+ 
+
+00:05:50.200 --> 00:05:53.190 align:start position:0%
+&gt;&gt; And because we've integrated this
+alongside<00:05:51.000><c> our</c><00:05:51.120><c> built-in</c><00:05:51.680><c> shadow</c><00:05:52.000><c> maps,</c><00:05:52.880><c> any</c>
+
+00:05:53.190 --> 00:05:53.200 align:start position:0%
+alongside our built-in shadow maps, any
+ 
+
+00:05:53.200 --> 00:05:55.390 align:start position:0%
+alongside our built-in shadow maps, any
+object<00:05:53.640><c> in</c><00:05:53.720><c> the</c><00:05:53.800><c> scene,</c><00:05:54.400><c> whether</c><00:05:54.640><c> it's</c><00:05:54.840><c> static</c>
+
+00:05:55.390 --> 00:05:55.400 align:start position:0%
+object in the scene, whether it's static
+ 
+
+00:05:55.400 --> 00:05:57.910 align:start position:0%
+object in the scene, whether it's static
+or<00:05:55.560><c> dynamic,</c><00:05:56.480><c> is</c><00:05:56.680><c> able</c><00:05:56.920><c> to</c><00:05:57.040><c> sample</c><00:05:57.560><c> from</c><00:05:57.720><c> this</c>
+
+00:05:57.910 --> 00:05:57.920 align:start position:0%
+or dynamic, is able to sample from this
+ 
+
+00:05:57.920 --> 00:06:00.899 align:start position:0%
+or dynamic, is able to sample from this
+global<00:05:58.360><c> mask.</c>
+
+00:06:00.899 --> 00:06:00.909 align:start position:0%
+global mask.
+ 
+
+00:06:00.909 --> 00:06:14.654 align:start position:0%
+global mask.
+&gt;&gt; [music]
+
+00:06:14.654 --> 00:06:14.664 align:start position:0%
+ 
+ 
+
+00:06:14.664 --> 00:06:14.910 align:start position:0%
+ 
+[music]
+
+00:06:14.910 --> 00:06:14.920 align:start position:0%
+[music]
+ 
+
+00:06:14.920 --> 00:06:17.110 align:start position:0%
+[music]
+&gt;&gt; An<00:06:15.040><c> interesting</c><00:06:15.560><c> stylization</c><00:06:16.400><c> tweak</c><00:06:16.840><c> is</c><00:06:17.000><c> to</c>
+
+00:06:17.110 --> 00:06:17.120 align:start position:0%
+&gt;&gt; An interesting stylization tweak is to
+ 
+
+00:06:17.120 --> 00:06:19.350 align:start position:0%
+&gt;&gt; An interesting stylization tweak is to
+deviate<00:06:17.680><c> from</c><00:06:17.880><c> noise</c><00:06:18.320><c> that</c><00:06:18.480><c> outputs</c><00:06:19.040><c> either</c>
+
+00:06:19.350 --> 00:06:19.360 align:start position:0%
+deviate from noise that outputs either
+ 
+
+00:06:19.360 --> 00:06:22.190 align:start position:0%
+deviate from noise that outputs either
+cloud<00:06:20.200><c> or</c><00:06:20.440><c> not</c><00:06:20.840><c> cloud</c><00:06:21.560><c> and</c><00:06:21.720><c> look</c><00:06:21.869><c> [music]</c><00:06:21.920><c> at</c>
+
+00:06:22.190 --> 00:06:22.200 align:start position:0%
+cloud or not cloud and look [music] at
+ 
+
+00:06:22.200 --> 00:06:24.830 align:start position:0%
+cloud or not cloud and look [music] at
+partial<00:06:22.760><c> coverage.</c><00:06:23.840><c> Instead</c><00:06:24.200><c> of</c><00:06:24.360><c> blurring</c>
+
+00:06:24.830 --> 00:06:24.840 align:start position:0%
+partial coverage. Instead of blurring
+ 
+
+00:06:24.840 --> 00:06:26.710 align:start position:0%
+partial coverage. Instead of blurring
+the<00:06:25.000><c> edges</c><00:06:25.280><c> of</c><00:06:25.400><c> our</c><00:06:25.520><c> noise,</c><00:06:26.200><c> as</c><00:06:26.320><c> that</c><00:06:26.480><c> might</c>
+
+00:06:26.710 --> 00:06:26.720 align:start position:0%
+the edges of our noise, as that might
+ 
+
+00:06:26.720 --> 00:06:29.110 align:start position:0%
+the edges of our noise, as that might
+break<00:06:27.000><c> the</c><00:06:27.120><c> pixel</c><00:06:27.520><c> art</c><00:06:27.720><c> look,</c><00:06:28.360><c> we</c><00:06:28.440><c> can</c><00:06:28.560><c> apply</c><00:06:29.000><c> a</c>
+
+00:06:29.110 --> 00:06:29.120 align:start position:0%
+break the pixel art look, we can apply a
+ 
+
+00:06:29.120 --> 00:06:31.230 align:start position:0%
+break the pixel art look, we can apply a
+stepped<00:06:29.600><c> banding</c><00:06:30.040><c> effect</c><00:06:30.600><c> to</c><00:06:30.720><c> values</c><00:06:31.039><c> [music]</c>
+
+00:06:31.230 --> 00:06:31.240 align:start position:0%
+stepped banding effect to values [music]
+ 
+
+00:06:31.240 --> 00:06:36.470 align:start position:0%
+stepped banding effect to values [music]
+within<00:06:31.520><c> the</c><00:06:31.600><c> threshold.</c>
+
+00:06:36.470 --> 00:06:36.480 align:start position:0%
+ 
+ 
+
+00:06:36.480 --> 00:06:38.550 align:start position:0%
+ 
+This<00:06:36.720><c> consists</c><00:06:37.320><c> of</c><00:06:37.480><c> simply</c><00:06:37.960><c> rounding</c><00:06:38.480><c> the</c>
+
+00:06:38.550 --> 00:06:38.560 align:start position:0%
+This consists of simply rounding the
+ 
+
+00:06:38.560 --> 00:06:40.950 align:start position:0%
+This consists of simply rounding the
+noise<00:06:38.960><c> to</c><00:06:39.120><c> fixed</c><00:06:39.520><c> intervals</c><00:06:40.320><c> when</c><00:06:40.480><c> the</c><00:06:40.560><c> Perlin</c>
+
+00:06:40.950 --> 00:06:40.960 align:start position:0%
+noise to fixed intervals when the Perlin
+ 
+
+00:06:40.960 --> 00:06:42.164 align:start position:0%
+noise to fixed intervals when the Perlin
+values<00:06:41.440><c> are</c><00:06:41.560><c> read.</c>
+
+00:06:42.164 --> 00:06:42.174 align:start position:0%
+values are read.
+ 
+
+00:06:42.174 --> 00:06:42.710 align:start position:0%
+values are read.
+&gt;&gt; [music]
+
+00:06:42.710 --> 00:06:42.720 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:06:42.720 --> 00:06:44.230 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; And<00:06:43.080><c> we</c><00:06:43.160><c> can</c><00:06:43.360><c> add</c><00:06:43.600><c> some</c><00:06:43.760><c> additional</c>
+
+00:06:44.230 --> 00:06:44.240 align:start position:0%
+&gt;&gt; And we can add some additional
+ 
+
+00:06:44.240 --> 00:06:46.190 align:start position:0%
+&gt;&gt; And we can add some additional
+parameters<00:06:44.840><c> in</c><00:06:44.960><c> our</c><00:06:45.080><c> pixel</c><00:06:45.520><c> art</c><00:06:45.800><c> settings</c>
+
+00:06:46.190 --> 00:06:46.200 align:start position:0%
+parameters in our pixel art settings
+ 
+
+00:06:46.200 --> 00:06:48.030 align:start position:0%
+parameters in our pixel art settings
+class<00:06:46.840><c> to</c><00:06:47.040><c> really</c><00:06:47.400><c> round</c><00:06:47.800><c> out</c><00:06:47.920><c> the</c>
+
+00:06:48.030 --> 00:06:48.040 align:start position:0%
+class to really round out the
+ 
+
+00:06:48.040 --> 00:06:50.270 align:start position:0%
+class to really round out the
+flexibility<00:06:48.800><c> of</c><00:06:48.880><c> this</c><00:06:49.080><c> system.</c>
+
+00:06:50.270 --> 00:06:50.280 align:start position:0%
+flexibility of this system.
+ 
+
+00:06:50.280 --> 00:06:52.870 align:start position:0%
+flexibility of this system.
+Back<00:06:50.560><c> over</c><00:06:50.800><c> in</c><00:06:50.920><c> Unity,</c><00:06:51.840><c> clouds</c><00:06:52.240><c> now</c><00:06:52.440><c> cover</c><00:06:52.760><c> the</c>
+
+00:06:52.870 --> 00:06:52.880 align:start position:0%
+Back over in Unity, clouds now cover the
+ 
+
+00:06:52.880 --> 00:06:55.350 align:start position:0%
+Back over in Unity, clouds now cover the
+scene<00:06:53.280><c> with</c><00:06:53.480><c> different</c><00:06:53.880><c> levels</c><00:06:54.240><c> of</c><00:06:54.360><c> coverage.</c>
+
+00:06:55.350 --> 00:06:55.360 align:start position:0%
+scene with different levels of coverage.
+ 
+
+00:06:55.360 --> 00:06:57.150 align:start position:0%
+scene with different levels of coverage.
+And<00:06:55.480><c> as</c><00:06:55.600><c> we</c><00:06:55.720><c> adjust</c><00:06:56.120><c> the</c><00:06:56.200><c> threshold,</c>
+
+00:06:57.150 --> 00:06:57.160 align:start position:0%
+And as we adjust the threshold,
+ 
+
+00:06:57.160 --> 00:06:59.070 align:start position:0%
+And as we adjust the threshold,
+different<00:06:57.560><c> regions</c><00:06:57.920><c> of</c><00:06:58.040><c> banding</c><00:06:58.560><c> are</c><00:06:58.720><c> able</c><00:06:58.960><c> to</c>
+
+00:06:59.070 --> 00:06:59.080 align:start position:0%
+different regions of banding are able to
+ 
+
+00:06:59.080 --> 00:06:59.849 align:start position:0%
+different regions of banding are able to
+coalesce.
+
+00:06:59.849 --> 00:06:59.859 align:start position:0%
+coalesce.
+ 
+
+00:06:59.859 --> 00:07:04.510 align:start position:0%
+coalesce.
+&gt;&gt; [music]
+
+00:07:04.510 --> 00:07:04.520 align:start position:0%
+ 
+ 
+
+00:07:04.520 --> 00:07:06.190 align:start position:0%
+ 
+&gt;&gt; Now<00:07:04.760><c> that</c><00:07:04.960><c> we</c><00:07:05.080><c> know</c><00:07:05.320><c> the</c><00:07:05.480><c> regions</c><00:07:05.960><c> that</c><00:07:06.120><c> are</c>
+
+00:07:06.190 --> 00:07:06.200 align:start position:0%
+&gt;&gt; Now that we know the regions that are
+ 
+
+00:07:06.200 --> 00:07:08.830 align:start position:0%
+&gt;&gt; Now that we know the regions that are
+directly<00:07:06.760><c> cast</c><00:07:07.120><c> upon</c><00:07:07.480><c> by</c><00:07:07.640><c> the</c><00:07:07.760><c> sun,</c><00:07:08.600><c> we</c><00:07:08.680><c> can</c>
+
+00:07:08.830 --> 00:07:08.840 align:start position:0%
+directly cast upon by the sun, we can
+ 
+
+00:07:08.840 --> 00:07:10.710 align:start position:0%
+directly cast upon by the sun, we can
+start<00:07:09.120><c> to</c><00:07:09.240><c> look</c><00:07:09.400><c> at</c><00:07:09.520><c> simulating</c><00:07:10.160><c> the</c><00:07:10.280><c> light</c><00:07:10.600><c> to</c>
+
+00:07:10.710 --> 00:07:10.720 align:start position:0%
+start to look at simulating the light to
+ 
+
+00:07:10.720 --> 00:07:12.990 align:start position:0%
+start to look at simulating the light to
+pour<00:07:11.040><c> down</c><00:07:11.400><c> into</c><00:07:11.600><c> the</c><00:07:11.720><c> scene</c><00:07:12.400><c> by</c><00:07:12.520><c> looking</c><00:07:12.880><c> at</c>
+
+00:07:12.990 --> 00:07:13.000 align:start position:0%
+pour down into the scene by looking at
+ 
+
+00:07:13.000 --> 00:07:22.110 align:start position:0%
+pour down into the scene by looking at
+volumetric<00:07:13.680><c> lighting.</c>
+
+00:07:22.110 --> 00:07:22.120 align:start position:0%
+ 
+ 
+
+00:07:22.120 --> 00:07:25.350 align:start position:0%
+ 
+Shadows<00:07:22.680><c> are</c><00:07:23.240><c> half</c><00:07:23.680><c> the</c><00:07:23.800><c> story.</c><00:07:24.840><c> They</c><00:07:24.960><c> tell</c><00:07:25.200><c> us</c>
+
+00:07:25.350 --> 00:07:25.360 align:start position:0%
+Shadows are half the story. They tell us
+ 
+
+00:07:25.360 --> 00:07:27.710 align:start position:0%
+Shadows are half the story. They tell us
+where<00:07:25.520><c> the</c><00:07:25.680><c> light</c><00:07:26.000><c> doesn't</c><00:07:26.360><c> reach</c><00:07:26.600><c> the</c><00:07:26.720><c> floor.</c>
+
+00:07:27.710 --> 00:07:27.720 align:start position:0%
+where the light doesn't reach the floor.
+ 
+
+00:07:27.720 --> 00:07:29.670 align:start position:0%
+where the light doesn't reach the floor.
+But<00:07:27.840><c> god</c><00:07:28.120><c> rays</c><00:07:28.400><c> are</c><00:07:28.480><c> about</c><00:07:28.800><c> conveying</c><00:07:29.280><c> a</c><00:07:29.360><c> sense</c>
+
+00:07:29.670 --> 00:07:29.680 align:start position:0%
+But god rays are about conveying a sense
+ 
+
+00:07:29.680 --> 00:07:31.350 align:start position:0%
+But god rays are about conveying a sense
+of<00:07:29.800><c> the</c><00:07:29.920><c> light</c><00:07:30.360><c> interacting</c><00:07:31.080><c> with</c><00:07:31.200><c> the</c>
+
+00:07:31.350 --> 00:07:31.360 align:start position:0%
+of the light interacting with the
+ 
+
+00:07:31.360 --> 00:07:34.310 align:start position:0%
+of the light interacting with the
+atmosphere.<00:07:32.600><c> To</c><00:07:32.720><c> simulate</c><00:07:33.320><c> this,</c><00:07:33.840><c> we</c><00:07:33.960><c> need</c><00:07:34.200><c> to</c>
+
+00:07:34.310 --> 00:07:34.320 align:start position:0%
+atmosphere. To simulate this, we need to
+ 
+
+00:07:34.320 --> 00:07:35.990 align:start position:0%
+atmosphere. To simulate this, we need to
+look<00:07:34.480><c> at</c><00:07:34.560><c> the</c><00:07:34.680><c> path</c><00:07:35.040><c> the</c><00:07:35.120><c> light</c><00:07:35.440><c> takes</c><00:07:35.760><c> through</c>
+
+00:07:35.990 --> 00:07:36.000 align:start position:0%
+look at the path the light takes through
+ 
+
+00:07:36.000 --> 00:07:37.790 align:start position:0%
+look at the path the light takes through
+the<00:07:36.200><c> air</c><00:07:36.440><c> between</c><00:07:36.840><c> the</c><00:07:36.920><c> camera</c><00:07:37.480><c> and</c><00:07:37.640><c> the</c>
+
+00:07:37.790 --> 00:07:37.800 align:start position:0%
+the air between the camera and the
+ 
+
+00:07:37.800 --> 00:07:39.790 align:start position:0%
+the air between the camera and the
+object.
+
+00:07:39.790 --> 00:07:39.800 align:start position:0%
+object.
+ 
+
+00:07:39.800 --> 00:07:41.390 align:start position:0%
+object.
+Some<00:07:40.040><c> of</c><00:07:40.160><c> you</c><00:07:40.320><c> may</c><00:07:40.480><c> be</c><00:07:40.640><c> familiar</c><00:07:41.160><c> with</c><00:07:41.320><c> the</c>
+
+00:07:41.390 --> 00:07:41.400 align:start position:0%
+Some of you may be familiar with the
+ 
+
+00:07:41.400 --> 00:07:43.630 align:start position:0%
+Some of you may be familiar with the
+concept<00:07:42.040><c> of</c><00:07:42.360><c> ray</c><00:07:42.560><c> marching.</c><00:07:43.090><c> [music]</c>
+
+00:07:43.630 --> 00:07:43.640 align:start position:0%
+concept of ray marching. [music]
+ 
+
+00:07:43.640 --> 00:07:45.390 align:start position:0%
+concept of ray marching. [music]
+We<00:07:43.760><c> take</c><00:07:44.000><c> the</c><00:07:44.080><c> vector</c><00:07:44.520><c> from</c><00:07:44.720><c> our</c><00:07:44.840><c> camera</c><00:07:45.240><c> to</c>
+
+00:07:45.390 --> 00:07:45.400 align:start position:0%
+We take the vector from our camera to
+ 
+
+00:07:45.400 --> 00:07:47.550 align:start position:0%
+We take the vector from our camera to
+the<00:07:45.480><c> world</c><00:07:45.760><c> position</c><00:07:46.600><c> and</c><00:07:46.720><c> divide</c><00:07:47.120><c> it</c><00:07:47.240><c> into</c><00:07:47.480><c> a</c>
+
+00:07:47.550 --> 00:07:47.560 align:start position:0%
+the world position and divide it into a
+ 
+
+00:07:47.560 --> 00:07:50.470 align:start position:0%
+the world position and divide it into a
+fixed<00:07:48.160><c> number</c><00:07:48.480><c> of</c><00:07:48.600><c> steps.</c><00:07:49.560><c> At</c><00:07:49.720><c> each</c><00:07:49.920><c> step,</c><00:07:50.360><c> we</c>
+
+00:07:50.470 --> 00:07:50.480 align:start position:0%
+fixed number of steps. At each step, we
+ 
+
+00:07:50.480 --> 00:07:52.830 align:start position:0%
+fixed number of steps. At each step, we
+can<00:07:50.640><c> query</c><00:07:51.000><c> the</c><00:07:51.160><c> information</c><00:07:51.720><c> at</c><00:07:51.840><c> that</c><00:07:52.040><c> point.</c>
+
+00:07:52.830 --> 00:07:52.840 align:start position:0%
+can query the information at that point.
+ 
+
+00:07:52.840 --> 00:07:54.990 align:start position:0%
+can query the information at that point.
+And<00:07:52.880><c> if</c><00:07:53.000><c> we</c><00:07:53.120><c> do</c><00:07:53.280><c> this</c><00:07:53.480><c> for</c><00:07:53.760><c> every</c><00:07:54.000><c> pixel,</c><00:07:54.880><c> we're</c>
+
+00:07:54.990 --> 00:07:55.000 align:start position:0%
+And if we do this for every pixel, we're
+ 
+
+00:07:55.000 --> 00:07:56.670 align:start position:0%
+And if we do this for every pixel, we're
+able<00:07:55.240><c> to</c><00:07:55.360><c> form</c><00:07:55.720><c> an</c><00:07:55.840><c> understanding</c><00:07:56.480><c> of</c><00:07:56.600><c> the</c>
+
+00:07:56.670 --> 00:07:56.680 align:start position:0%
+able to form an understanding of the
+ 
+
+00:07:56.680 --> 00:07:59.830 align:start position:0%
+able to form an understanding of the
+volume<00:07:57.280><c> in</c><00:07:57.480><c> front</c><00:07:57.760><c> of</c><00:07:57.840><c> the</c><00:07:57.960><c> camera.</c>
+
+00:07:59.830 --> 00:07:59.840 align:start position:0%
+volume in front of the camera.
+ 
+
+00:07:59.840 --> 00:08:01.910 align:start position:0%
+volume in front of the camera.
+Now<00:08:00.080><c> for</c><00:08:00.240><c> our</c><00:08:00.360><c> process,</c><00:08:01.000><c> we</c><00:08:01.120><c> deploy</c><00:08:01.520><c> this</c><00:08:01.760><c> ray</c>
+
+00:08:01.910 --> 00:08:01.920 align:start position:0%
+Now for our process, we deploy this ray
+ 
+
+00:08:01.920 --> 00:08:04.150 align:start position:0%
+Now for our process, we deploy this ray
+marching<00:08:02.280><c> approach,</c><00:08:03.240><c> but</c><00:08:03.360><c> at</c><00:08:03.560><c> each</c><00:08:03.800><c> fixed</c>
+
+00:08:04.150 --> 00:08:04.160 align:start position:0%
+marching approach, but at each fixed
+ 
+
+00:08:04.160 --> 00:08:06.030 align:start position:0%
+marching approach, but at each fixed
+interval,<00:08:04.800><c> we</c><00:08:04.920><c> do</c><00:08:05.080><c> the</c><00:08:05.200><c> same</c><00:08:05.680><c> upward</c>
+
+00:08:06.030 --> 00:08:06.040 align:start position:0%
+interval, we do the same upward
+ 
+
+00:08:06.040 --> 00:08:07.990 align:start position:0%
+interval, we do the same upward
+projection<00:08:07.000><c> we</c><00:08:07.120><c> did</c><00:08:07.360><c> for</c><00:08:07.520><c> our</c><00:08:07.640><c> cloud</c>
+
+00:08:07.990 --> 00:08:08.000 align:start position:0%
+projection we did for our cloud
+ 
+
+00:08:08.000 --> 00:08:10.190 align:start position:0%
+projection we did for our cloud
+coverage.<00:08:09.040><c> And</c><00:08:09.120><c> so,</c><00:08:09.280><c> with</c><00:08:09.520><c> each</c><00:08:09.760><c> step</c><00:08:10.040><c> through</c>
+
+00:08:10.190 --> 00:08:10.200 align:start position:0%
+coverage. And so, with each step through
+ 
+
+00:08:10.200 --> 00:08:12.430 align:start position:0%
+coverage. And so, with each step through
+the<00:08:10.360><c> air,</c><00:08:10.960><c> we</c><00:08:11.120><c> build</c><00:08:11.400><c> a</c><00:08:11.440><c> representation</c><00:08:12.360><c> of</c>
+
+00:08:12.430 --> 00:08:12.440 align:start position:0%
+the air, we build a representation of
+ 
+
+00:08:12.440 --> 00:08:14.430 align:start position:0%
+the air, we build a representation of
+the<00:08:12.520><c> space</c><00:08:13.000><c> that</c><00:08:13.160><c> has</c><00:08:13.320><c> a</c><00:08:13.360><c> clear</c><00:08:13.800><c> view</c><00:08:14.200><c> of</c><00:08:14.360><c> the</c>
+
+00:08:14.430 --> 00:08:14.440 align:start position:0%
+the space that has a clear view of the
+ 
+
+00:08:14.440 --> 00:08:17.140 align:start position:0%
+the space that has a clear view of the
+sun.
+
+00:08:17.140 --> 00:08:17.150 align:start position:0%
+ 
+ 
+
+00:08:17.150 --> 00:08:17.710 align:start position:0%
+ 
+&gt;&gt; [music]
+
+00:08:17.710 --> 00:08:17.720 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:08:17.720 --> 00:08:19.830 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; Now<00:08:17.960><c> typically,</c><00:08:18.720><c> to</c><00:08:18.880><c> avoid</c><00:08:19.280><c> the</c><00:08:19.360><c> cost</c><00:08:19.760><c> of</c>
+
+00:08:19.830 --> 00:08:19.840 align:start position:0%
+&gt;&gt; Now typically, to avoid the cost of
+ 
+
+00:08:19.840 --> 00:08:22.390 align:start position:0%
+&gt;&gt; Now typically, to avoid the cost of
+these<00:08:20.080><c> such</c><00:08:20.320><c> calculations,</c><00:08:21.720><c> a</c><00:08:21.800><c> card-based</c>
+
+00:08:22.390 --> 00:08:22.400 align:start position:0%
+these such calculations, a card-based
+ 
+
+00:08:22.400 --> 00:08:23.830 align:start position:0%
+these such calculations, a card-based
+approach<00:08:22.800><c> can</c><00:08:22.960><c> be</c><00:08:23.040><c> taken</c><00:08:23.480><c> to</c><00:08:23.600><c> give</c><00:08:23.800><c> a</c>
+
+00:08:23.830 --> 00:08:23.840 align:start position:0%
+approach can be taken to give a
+ 
+
+00:08:23.840 --> 00:08:26.350 align:start position:0%
+approach can be taken to give a
+convincing<00:08:24.400><c> approximation.</c><00:08:25.840><c> But</c><00:08:25.960><c> I</c><00:08:26.040><c> wanted</c>
+
+00:08:26.350 --> 00:08:26.360 align:start position:0%
+convincing approximation. But I wanted
+ 
+
+00:08:26.360 --> 00:08:28.350 align:start position:0%
+convincing approximation. But I wanted
+to<00:08:26.440><c> go</c><00:08:26.600><c> with</c><00:08:26.720><c> a</c><00:08:26.800><c> physically</c><00:08:27.360><c> grounded</c><00:08:27.840><c> method</c>
+
+00:08:28.350 --> 00:08:28.360 align:start position:0%
+to go with a physically grounded method
+ 
+
+00:08:28.360 --> 00:08:38.029 align:start position:0%
+to go with a physically grounded method
+which<00:08:28.600><c> utilizes</c><00:08:29.280><c> our</c><00:08:29.480><c> low-resolution</c><00:08:30.360><c> grid.</c>
+
+00:08:38.029 --> 00:08:38.039 align:start position:0%
+ 
+ 
+
+00:08:38.039 --> 00:08:39.790 align:start position:0%
+ 
+Now<00:08:38.159><c> you'll</c><00:08:38.320><c> see</c><00:08:38.520><c> in</c><00:08:38.640><c> the</c><00:08:38.760><c> engine</c><00:08:39.479><c> that</c><00:08:39.640><c> this</c>
+
+00:08:39.790 --> 00:08:39.800 align:start position:0%
+Now you'll see in the engine that this
+ 
+
+00:08:39.800 --> 00:08:42.149 align:start position:0%
+Now you'll see in the engine that this
+generates<00:08:40.400><c> beams</c><00:08:40.760><c> of</c><00:08:40.919><c> light.</c><00:08:41.800><c> These</c><00:08:42.000><c> are</c>
+
+00:08:42.149 --> 00:08:42.159 align:start position:0%
+generates beams of light. These are
+ 
+
+00:08:42.159 --> 00:08:44.230 align:start position:0%
+generates beams of light. These are
+areas<00:08:42.520><c> of</c><00:08:42.599><c> the</c><00:08:42.719><c> screen</c><00:08:43.320><c> that</c><00:08:43.560><c> when</c><00:08:43.719><c> projected</c>
+
+00:08:44.230 --> 00:08:44.240 align:start position:0%
+areas of the screen that when projected
+ 
+
+00:08:44.240 --> 00:08:46.110 align:start position:0%
+areas of the screen that when projected
+back<00:08:44.520><c> up</c><00:08:44.640><c> through</c><00:08:44.840><c> the</c><00:08:44.960><c> sky,</c><00:08:45.760><c> are</c><00:08:45.880><c> not</c>
+
+00:08:46.110 --> 00:08:46.120 align:start position:0%
+back up through the sky, are not
+ 
+
+00:08:46.120 --> 00:08:48.430 align:start position:0%
+back up through the sky, are not
+occluded<00:08:46.640><c> by</c><00:08:46.800><c> our</c><00:08:46.920><c> cloud</c><00:08:47.280><c> texture.</c><00:08:48.280><c> And</c>
+
+00:08:48.430 --> 00:08:48.440 align:start position:0%
+occluded by our cloud texture. And
+ 
+
+00:08:48.440 --> 00:08:50.910 align:start position:0%
+occluded by our cloud texture. And
+unlike<00:08:48.880><c> our</c><00:08:49.000><c> cloud</c><00:08:49.360><c> coverage</c><00:08:49.800><c> shadows,</c><00:08:50.760><c> which</c>
+
+00:08:50.910 --> 00:08:50.920 align:start position:0%
+unlike our cloud coverage shadows, which
+ 
+
+00:08:50.920 --> 00:08:52.710 align:start position:0%
+unlike our cloud coverage shadows, which
+is<00:08:51.040><c> only</c><00:08:51.280><c> a</c><00:08:51.320><c> projection</c><00:08:51.880><c> of</c><00:08:51.960><c> the</c><00:08:52.080><c> ground</c><00:08:52.520><c> via</c>
+
+00:08:52.710 --> 00:08:52.720 align:start position:0%
+is only a projection of the ground via
+ 
+
+00:08:52.720 --> 00:08:54.630 align:start position:0%
+is only a projection of the ground via
+the<00:08:52.840><c> depth</c><00:08:53.160><c> map,</c><00:08:53.920><c> this</c><00:08:54.120><c> data</c><00:08:54.480><c> is</c>
+
+00:08:54.630 --> 00:08:54.640 align:start position:0%
+the depth map, this data is
+ 
+
+00:08:54.640 --> 00:08:56.830 align:start position:0%
+the depth map, this data is
+representational<00:08:55.760><c> of</c><00:08:55.880><c> the</c><00:08:55.960><c> cloud</c><00:08:56.360><c> coverage</c>
+
+00:08:56.830 --> 00:08:56.840 align:start position:0%
+representational of the cloud coverage
+ 
+
+00:08:56.840 --> 00:08:58.670 align:start position:0%
+representational of the cloud coverage
+for<00:08:56.960><c> the</c><00:08:57.040><c> space</c><00:08:57.440><c> between</c><00:08:57.800><c> the</c><00:08:57.880><c> ground</c><00:08:58.480><c> and</c><00:08:58.600><c> the</c>
+
+00:08:58.670 --> 00:08:58.680 align:start position:0%
+for the space between the ground and the
+ 
+
+00:08:58.680 --> 00:09:10.196 align:start position:0%
+for the space between the ground and the
+sky.
+
+00:09:10.196 --> 00:09:10.206 align:start position:0%
+ 
+ 
+
+00:09:10.206 --> 00:09:10.710 align:start position:0%
+ 
+&gt;&gt; [music]
+
+00:09:10.710 --> 00:09:10.720 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:09:10.720 --> 00:09:12.870 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; A<00:09:10.800><c> clear</c><00:09:11.200><c> issue</c><00:09:11.560><c> with</c><00:09:11.680><c> this</c><00:09:11.880><c> type</c><00:09:12.120><c> of</c><00:09:12.240><c> method</c>
+
+00:09:12.870 --> 00:09:12.880 align:start position:0%
+&gt;&gt; A clear issue with this type of method
+ 
+
+00:09:12.880 --> 00:09:15.150 align:start position:0%
+&gt;&gt; A clear issue with this type of method
+is<00:09:13.040><c> noise.</c>
+
+00:09:15.150 --> 00:09:15.160 align:start position:0%
+is noise.
+ 
+
+00:09:15.160 --> 00:09:16.830 align:start position:0%
+is noise.
+When<00:09:15.320><c> we</c><00:09:15.440><c> step</c><00:09:15.760><c> through</c><00:09:15.960><c> the</c><00:09:16.080><c> scene,</c><00:09:16.520><c> we</c><00:09:16.640><c> need</c>
+
+00:09:16.830 --> 00:09:16.840 align:start position:0%
+When we step through the scene, we need
+ 
+
+00:09:16.840 --> 00:09:19.270 align:start position:0%
+When we step through the scene, we need
+to<00:09:16.920><c> define</c><00:09:17.480><c> how</c><00:09:17.680><c> many</c><00:09:17.920><c> samples</c><00:09:18.520><c> our</c><00:09:18.720><c> ray</c><00:09:18.920><c> march</c>
+
+00:09:19.270 --> 00:09:19.280 align:start position:0%
+to define how many samples our ray march
+ 
+
+00:09:19.280 --> 00:09:21.950 align:start position:0%
+to define how many samples our ray march
+will<00:09:19.440><c> process.</c><00:09:20.760><c> If</c><00:09:20.880><c> we</c><00:09:21.000><c> set</c><00:09:21.280><c> this</c><00:09:21.520><c> to</c><00:09:21.680><c> a</c><00:09:21.760><c> high</c>
+
+00:09:21.950 --> 00:09:21.960 align:start position:0%
+will process. If we set this to a high
+ 
+
+00:09:21.960 --> 00:09:24.110 align:start position:0%
+will process. If we set this to a high
+number,<00:09:22.800><c> we'll</c><00:09:22.880><c> take</c><00:09:23.120><c> a</c><00:09:23.200><c> hefty</c><00:09:23.560><c> performance</c>
+
+00:09:24.110 --> 00:09:24.120 align:start position:0%
+number, we'll take a hefty performance
+ 
+
+00:09:24.120 --> 00:09:26.870 align:start position:0%
+number, we'll take a hefty performance
+hit.<00:09:24.960><c> If</c><00:09:25.080><c> this</c><00:09:25.280><c> number</c><00:09:25.600><c> is</c><00:09:25.760><c> too</c><00:09:26.000><c> low,</c><00:09:26.520><c> we</c><00:09:26.640><c> won't</c>
+
+00:09:26.870 --> 00:09:26.880 align:start position:0%
+hit. If this number is too low, we won't
+ 
+
+00:09:26.880 --> 00:09:28.750 align:start position:0%
+hit. If this number is too low, we won't
+have<00:09:27.040><c> enough</c><00:09:27.280><c> samples</c><00:09:27.800><c> to</c><00:09:27.880><c> capture</c><00:09:28.280><c> the</c><00:09:28.400><c> scene</c>
+
+00:09:28.750 --> 00:09:28.760 align:start position:0%
+have enough samples to capture the scene
+ 
+
+00:09:28.760 --> 00:09:31.390 align:start position:0%
+have enough samples to capture the scene
+coherently.<00:09:30.040><c> A</c><00:09:30.120><c> common</c><00:09:30.480><c> approach</c><00:09:30.920><c> to</c><00:09:31.040><c> hiding</c>
+
+00:09:31.390 --> 00:09:31.400 align:start position:0%
+coherently. A common approach to hiding
+ 
+
+00:09:31.400 --> 00:09:33.670 align:start position:0%
+coherently. A common approach to hiding
+these<00:09:31.600><c> types</c><00:09:31.880><c> of</c><00:09:32.000><c> flaws</c><00:09:32.600><c> is</c><00:09:32.800><c> smoothing</c><00:09:33.480><c> or</c>
+
+00:09:33.670 --> 00:09:33.680 align:start position:0%
+these types of flaws is smoothing or
+ 
+
+00:09:33.680 --> 00:09:34.870 align:start position:0%
+these types of flaws is smoothing or
+blurring.<00:09:33.786><c> [music]</c>
+
+00:09:34.870 --> 00:09:34.880 align:start position:0%
+blurring. [music]
+ 
+
+00:09:34.880 --> 00:09:36.670 align:start position:0%
+blurring. [music]
+If<00:09:35.000><c> we</c><00:09:35.120><c> sort</c><00:09:35.360><c> of</c><00:09:35.520><c> mix</c><00:09:35.800><c> together</c><00:09:36.200><c> neighboring</c>
+
+00:09:36.670 --> 00:09:36.680 align:start position:0%
+If we sort of mix together neighboring
+ 
+
+00:09:36.680 --> 00:09:38.910 align:start position:0%
+If we sort of mix together neighboring
+pixels,<00:09:37.400><c> we</c><00:09:37.520><c> can</c><00:09:37.720><c> hide</c><00:09:38.080><c> some</c><00:09:38.280><c> of</c><00:09:38.360><c> the</c><00:09:38.440><c> sampling</c>
+
+00:09:38.910 --> 00:09:38.920 align:start position:0%
+pixels, we can hide some of the sampling
+ 
+
+00:09:38.920 --> 00:09:48.110 align:start position:0%
+pixels, we can hide some of the sampling
+issues.
+
+00:09:48.110 --> 00:09:48.120 align:start position:0%
+ 
+ 
+
+00:09:48.120 --> 00:09:50.230 align:start position:0%
+ 
+It<00:09:48.240><c> results</c><00:09:48.680><c> in</c><00:09:48.760><c> a</c><00:09:48.800><c> more</c><00:09:49.120><c> homogeneous</c><00:09:49.880><c> light</c>
+
+00:09:50.230 --> 00:09:50.240 align:start position:0%
+It results in a more homogeneous light
+ 
+
+00:09:50.240 --> 00:09:51.470 align:start position:0%
+It results in a more homogeneous light
+flooding<00:09:50.600><c> result,</c><00:09:50.816><c> [music]</c>
+
+00:09:51.470 --> 00:09:51.480 align:start position:0%
+flooding result, [music]
+ 
+
+00:09:51.480 --> 00:09:53.550 align:start position:0%
+flooding result, [music]
+but<00:09:51.600><c> it</c><00:09:51.720><c> does</c><00:09:52.040><c> deviate</c><00:09:52.600><c> significantly</c><00:09:53.360><c> from</c>
+
+00:09:53.550 --> 00:09:53.560 align:start position:0%
+but it does deviate significantly from
+ 
+
+00:09:53.560 --> 00:09:55.750 align:start position:0%
+but it does deviate significantly from
+the<00:09:53.640><c> pixel</c><00:09:54.080><c> art</c><00:09:54.320><c> aesthetic.</c><00:09:55.360><c> I'm</c><00:09:55.520><c> still</c>
+
+00:09:55.750 --> 00:09:55.760 align:start position:0%
+the pixel art aesthetic. I'm still
+ 
+
+00:09:55.760 --> 00:09:57.470 align:start position:0%
+the pixel art aesthetic. I'm still
+uncertain<00:09:56.280><c> on</c><00:09:56.400><c> the</c><00:09:56.480><c> best</c><00:09:56.760><c> way</c><00:09:56.880><c> to</c><00:09:57.000><c> go</c><00:09:57.120><c> ahead</c>
+
+00:09:57.470 --> 00:09:57.480 align:start position:0%
+uncertain on the best way to go ahead
+ 
+
+00:09:57.480 --> 00:09:59.430 align:start position:0%
+uncertain on the best way to go ahead
+here.<00:09:58.080><c> I</c><00:09:58.200><c> personally</c><00:09:58.800><c> have</c><00:09:59.080><c> more</c><00:09:59.280><c> of</c><00:09:59.360><c> an</c>
+
+00:09:59.430 --> 00:09:59.440 align:start position:0%
+here. I personally have more of an
+ 
+
+00:09:59.440 --> 00:10:01.470 align:start position:0%
+here. I personally have more of an
+affinity<00:10:00.000><c> to</c><00:10:00.160><c> combining</c><00:10:00.720><c> pixel</c><00:10:01.120><c> art</c><00:10:01.296><c> [music]</c>
+
+00:10:01.470 --> 00:10:01.480 align:start position:0%
+affinity to combining pixel art [music]
+ 
+
+00:10:01.480 --> 00:10:03.630 align:start position:0%
+affinity to combining pixel art [music]
+with<00:10:01.640><c> modern</c><00:10:02.080><c> rendering</c><00:10:02.480><c> techniques,</c><00:10:03.480><c> but</c>
+
+00:10:03.630 --> 00:10:03.640 align:start position:0%
+with modern rendering techniques, but
+ 
+
+00:10:03.640 --> 00:10:05.510 align:start position:0%
+with modern rendering techniques, but
+I'm<00:10:03.760><c> keen</c><00:10:04.000><c> to</c><00:10:04.080><c> hear</c><00:10:04.320><c> what</c><00:10:04.480><c> you</c><00:10:04.600><c> think.</c><00:10:05.160><c> So,</c><00:10:05.360><c> let</c>
+
+00:10:05.510 --> 00:10:05.520 align:start position:0%
+I'm keen to hear what you think. So, let
+ 
+
+00:10:05.520 --> 00:10:08.491 align:start position:0%
+I'm keen to hear what you think. So, let
+me<00:10:05.600><c> know</c><00:10:05.760><c> in</c><00:10:05.880><c> the</c><00:10:05.960><c> comments.</c>
+
+00:10:08.491 --> 00:10:08.501 align:start position:0%
+me know in the comments.
+ 
+
+00:10:08.501 --> 00:10:09.110 align:start position:0%
+me know in the comments.
+&gt;&gt; [music]
+
+00:10:09.110 --> 00:10:09.120 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:10:09.120 --> 00:10:11.790 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; And<00:10:09.440><c> as</c><00:10:09.600><c> always,</c><00:10:10.440><c> we've</c><00:10:10.640><c> implemented</c><00:10:11.320><c> way</c><00:10:11.600><c> too</c>
+
+00:10:11.790 --> 00:10:11.800 align:start position:0%
+&gt;&gt; And as always, we've implemented way too
+ 
+
+00:10:11.800 --> 00:10:13.670 align:start position:0%
+&gt;&gt; And as always, we've implemented way too
+many<00:10:12.040><c> parameters</c><00:10:12.720><c> in</c><00:10:12.800><c> this</c><00:10:13.000><c> episode,</c><00:10:13.087><c> [music]</c>
+
+00:10:13.670 --> 00:10:13.680 align:start position:0%
+many parameters in this episode, [music]
+ 
+
+00:10:13.680 --> 00:10:15.710 align:start position:0%
+many parameters in this episode, [music]
+but<00:10:13.800><c> it</c><00:10:13.920><c> does</c><00:10:14.200><c> give</c><00:10:14.400><c> us</c><00:10:14.560><c> a</c><00:10:14.640><c> lot</c><00:10:14.920><c> of</c><00:10:15.040><c> control</c>
+
+00:10:15.710 --> 00:10:15.720 align:start position:0%
+but it does give us a lot of control
+ 
+
+00:10:15.720 --> 00:10:17.990 align:start position:0%
+but it does give us a lot of control
+over<00:10:16.000><c> how</c><00:10:16.320><c> each</c><00:10:16.600><c> element</c><00:10:17.000><c> renders.</c><00:10:17.840><c> From</c>
+
+00:10:17.990 --> 00:10:18.000 align:start position:0%
+over how each element renders. From
+ 
+
+00:10:18.000 --> 00:10:19.750 align:start position:0%
+over how each element renders. From
+changing<00:10:18.400><c> how</c><00:10:18.560><c> the</c><00:10:18.680><c> clouds</c><00:10:19.120><c> form,</c><00:10:19.637><c> [music]</c>
+
+00:10:19.750 --> 00:10:19.760 align:start position:0%
+changing how the clouds form, [music]
+ 
+
+00:10:19.760 --> 00:10:22.230 align:start position:0%
+changing how the clouds form, [music]
+how<00:10:19.920><c> dense</c><00:10:20.280><c> they</c><00:10:20.520><c> are,</c><00:10:20.800><c> and</c><00:10:20.960><c> how</c><00:10:21.080><c> they</c><00:10:21.240><c> move</c><00:10:22.080><c> to</c>
+
+00:10:22.230 --> 00:10:22.240 align:start position:0%
+how dense they are, and how they move to
+ 
+
+00:10:22.240 --> 00:10:24.150 align:start position:0%
+how dense they are, and how they move to
+aspects<00:10:22.720><c> of</c><00:10:22.840><c> the</c><00:10:22.960><c> light</c><00:10:23.240><c> transport</c><00:10:23.920><c> through</c>
+
+00:10:24.150 --> 00:10:24.160 align:start position:0%
+aspects of the light transport through
+ 
+
+00:10:24.160 --> 00:10:26.350 align:start position:0%
+aspects of the light transport through
+the<00:10:24.360><c> air.</c><00:10:24.960><c> We</c><00:10:25.040><c> get</c><00:10:25.160><c> a</c><00:10:25.240><c> lot</c><00:10:25.400><c> of</c><00:10:25.520><c> flexibility</c><00:10:26.240><c> in</c>
+
+00:10:26.350 --> 00:10:26.360 align:start position:0%
+the air. We get a lot of flexibility in
+ 
+
+00:10:26.360 --> 00:10:27.950 align:start position:0%
+the air. We get a lot of flexibility in
+what<00:10:26.520><c> we</c><00:10:26.640><c> want</c><00:10:26.800><c> to</c><00:10:26.880><c> create,</c><00:10:27.440><c> and</c><00:10:27.560><c> I</c><00:10:27.640><c> think</c><00:10:27.840><c> it</c>
+
+00:10:27.950 --> 00:10:27.960 align:start position:0%
+what we want to create, and I think it
+ 
+
+00:10:27.960 --> 00:10:29.950 align:start position:0%
+what we want to create, and I think it
+succeeds<00:10:28.520><c> in</c><00:10:28.640><c> our</c><00:10:28.760><c> goal</c><00:10:29.280><c> to</c><00:10:29.440><c> add</c><00:10:29.680><c> more</c>
+
+00:10:29.950 --> 00:10:29.960 align:start position:0%
+succeeds in our goal to add more
+ 
+
+00:10:29.960 --> 00:10:32.072 align:start position:0%
+succeeds in our goal to add more
+atmosphere.
+
+00:10:32.072 --> 00:10:32.082 align:start position:0%
+atmosphere.
+ 
+
+00:10:32.082 --> 00:10:33.990 align:start position:0%
+atmosphere.
+&gt;&gt; [music]
+
+00:10:33.990 --> 00:10:34.000 align:start position:0%
+&gt;&gt; [music]
+ 
+
+00:10:34.000 --> 00:10:35.870 align:start position:0%
+&gt;&gt; [music]
+&gt;&gt; I<00:10:34.120><c> hope</c><00:10:34.360><c> you</c><00:10:34.480><c> enjoyed</c><00:10:34.920><c> this</c><00:10:35.080><c> installment</c><00:10:35.760><c> of</c>
+
+00:10:35.870 --> 00:10:35.880 align:start position:0%
+&gt;&gt; I hope you enjoyed this installment of
+ 
+
+00:10:35.880 --> 00:10:38.110 align:start position:0%
+&gt;&gt; I hope you enjoyed this installment of
+Pixel<00:10:36.280><c> Perfect.</c><00:10:37.120><c> If</c><00:10:37.280><c> you</c><00:10:37.360><c> made</c><00:10:37.600><c> it</c><00:10:37.680><c> this</c><00:10:37.920><c> far</c>
+
+00:10:38.110 --> 00:10:38.120 align:start position:0%
+Pixel Perfect. If you made it this far
+ 
+
+00:10:38.120 --> 00:10:39.590 align:start position:0%
+Pixel Perfect. If you made it this far
+in<00:10:38.240><c> the</c><00:10:38.320><c> video,</c><00:10:38.632><c> [music]</c><00:10:38.960><c> a</c><00:10:39.080><c> like</c><00:10:39.440><c> and</c>
+
+00:10:39.590 --> 00:10:39.600 align:start position:0%
+in the video, [music] a like and
+ 
+
+00:10:39.600 --> 00:10:41.870 align:start position:0%
+in the video, [music] a like and
+subscribe<00:10:40.360><c> goes</c><00:10:40.600><c> a</c><00:10:40.680><c> long</c><00:10:41.080><c> way</c><00:10:41.320><c> to</c><00:10:41.480><c> help</c><00:10:41.720><c> out</c>
+
+00:10:41.870 --> 00:10:41.880 align:start position:0%
+subscribe goes a long way to help out
+ 
+
+00:10:41.880 --> 00:10:43.790 align:start position:0%
+subscribe goes a long way to help out
+the<00:10:42.000><c> channel.</c><00:10:42.880><c> Let</c><00:10:43.040><c> me</c><00:10:43.120><c> know</c><00:10:43.320><c> what</c><00:10:43.440><c> you'd</c><00:10:43.600><c> like</c>
+
+00:10:43.790 --> 00:10:43.800 align:start position:0%
+the channel. Let me know what you'd like
+ 
+
+00:10:43.800 --> 00:10:46.110 align:start position:0%
+the channel. Let me know what you'd like
+to<00:10:43.920><c> see</c><00:10:44.080><c> me</c><00:10:44.240><c> cover</c><00:10:44.640><c> in</c><00:10:44.760><c> the</c><00:10:44.840><c> next</c><00:10:45.160><c> episodes,</c>
+
+00:10:46.110 --> 00:10:46.120 align:start position:0%
+to see me cover in the next episodes,
+ 
+
+00:10:46.120 --> 00:10:48.190 align:start position:0%
+to see me cover in the next episodes,
+and<00:10:46.240><c> I</c><00:10:46.320><c> greatly</c><00:10:46.720><c> appreciate</c><00:10:47.360><c> all</c><00:10:47.560><c> the</c><00:10:47.680><c> support</c>
+
+00:10:48.190 --> 00:10:48.200 align:start position:0%
+and I greatly appreciate all the support
+ 
+
+00:10:48.200 --> 00:10:50.150 align:start position:0%
+and I greatly appreciate all the support
+over<00:10:48.457><c> [music]</c><00:10:48.480><c> on</c><00:10:48.640><c> Patreon.</c>
+
+00:10:50.150 --> 00:10:50.160 align:start position:0%
+over [music] on Patreon.
+ 
+
+00:10:50.160 --> 00:10:51.910 align:start position:0%
+over [music] on Patreon.
+I'll<00:10:50.360><c> catch</c><00:10:50.640><c> you</c><00:10:50.720><c> in</c><00:10:50.800><c> the</c><00:10:50.880><c> next</c><00:10:51.200><c> one.</c><00:10:51.680><c> Thanks</c>
+
+00:10:51.910 --> 00:10:51.920 align:start position:0%
+I'll catch you in the next one. Thanks
+ 
+
+00:10:51.920 --> 00:10:54.342 align:start position:0%
+I'll catch you in the next one. Thanks
+for<00:10:52.040><c> watching.</c>
+
+00:10:54.342 --> 00:10:54.352 align:start position:0%
+for watching.
+ 
+
+00:10:54.352 --> 00:10:59.582 align:start position:0%
+for watching.
+&gt;&gt; [music]
+
+00:10:59.582 --> 00:10:59.592 align:start position:0%
+ 
+ 
+
+00:10:59.592 --> 00:11:01.612 align:start position:0%
+ 
+[music]
+
+Relevant Youtube comments:
+
+After Smoothing the God Rays, Quantize them.
+
+Nice stuff. Idea for improvement: add another layer of very-slow, high threshold noise that represents "dustyness" of the air at a point. Sample that for how intense the god rays are.
+
+I’d recommend looking into Fractal Noise. Basically, stack a few different scales and thresholds of Perlin Noise together for more detailed blobs
+
+I like the clean look of the blur, but I think there is a lot more to be explored with the noisy pixelated look. Maybe some quantization on a gradient like the shadows, or having it be sharper/tighter threshold. Both are very pretty and fit the overall esthetic, nice work!
+
+9:40 I suggest that instead of omnidirectional blur like Gaussian you try to go with the very low sample size and smear along the light ray with directional blur a.k.a. fake motion blur. It should leave light filaments separated with sharp edges but at the same time they will be smeared along the ray and should look smooth and realistic. I also imagine that this should be "cheap". I'm artist not a programmer so I hope it makes sense.
+
+If we're talking modern techniques, AFAIK the leading technique is frustum-shaped volume with XY resolution that is even smaller than your low-res render target, calculate lighting in each 'voxel', storing that in a 3d texture, then in screen space march towards the camera through this volume, accumulating results with trilinear sampling. Refer to: "VOLUMETRIC FOG: UNIFIED COMPUTE SHADER-BASED SOLUTION TO ATMOSPHERIC SCATTERING" by Bartlomiej Wronski from Siggraph 2014. This is what Unreal also does.
+
+I like the god rays to be blurred and not be pixellated. Makes the world feel more pixillated, for the light to not be.
+
+Add steps (like cloud mask) to the Godray fade calculation after the smoothing step? I am hoping you can utilize the performance of smoothing while having the ability to keep and control those crisp edges on the light shafts. I also think it might be more in line with your art direction. Your steps do not need to be equally spaced, either. If you can add a step weighting system, you can control the spacing between your steps via some function, like a log transform. This will also give you the distinct opportunity to add many more parameters which give control over the appearance of the Godray edges on screen. I am unfamiliar with Unity, but it might be possible to control what I am describing via a float curve
+
+Could you add another parameter to the volumetric blur to add stepping/banding? Allow the blur to soften the noise, and then filter the blur to create crisper edges. I find the crispness of billboarded lightrays appealing, so finding a way to achieve that through simulation rather than hand crafting is intriguing.
+
+A way to go ahead: After bluring the beams of light, apply the same stepped banding effect and align the steps with the cloud steps.
+
+Suggestion: Shadow and lighting aren't technically any different, in more realistic styles it's less of an issue because of how blurred shadows and smooth shading interact, but here it looks a bit weird when the clouds pour over the balls and the diffuse shader bands of the balls intersect with the shadows. I'm not doing a pixel art style, but just a cel style, and I've found that rather than having the diffuse banding and shadows work separately, having the shadows be a subtraction factor to the toon/diffuse shader gives a smoother look, with shadows basically just warping/intensifying the toon banding which makes the gradient cleaner. Though it also makes the exact shapes of the shadows less defined (because you only see them secondarily via their effect on the diffuse banding), so maybe this is better for a pixel style that wants those defined edges.
+
+Great video, really well explained. Instead of ray marching -> unproject -> reproject from light -> sample perlin would it be possible to get 2 uv points from:
+- camera position -> project from light
+- screen position -> unproject -> reproject from light
+And to then sample the perlin noise by interpolating between those 2 points?
+Yes! I like this. There's a lot of work done for recalculating every single march. Since all points along the march fall on a line a lerp(cameraPoint, worldPoint, marchIndex) would work beautifully. This is a great optimisation. Thanks for the comment and glad you enjoyed the video.
+
+I'd probably add some banding to the smoothed light-shafts. Or maybe some stripes texture overlay aligned to sun direction → this could probably be done after smoothing or during ray marching. In my experience pixel art techniques should "look" pixel art, not necessarily "be" pixel art. As in, adding small scale smoothing or low range gradients between bands help to de-noise output without compromising the pixel art look.
+Thanks for the input - I agree, that balance between using modern techniques and presenting a style reminiscent of hand drawn is where I feel I'm trying to land. The banding is a good idea that I'll investigate - Thanks for watching.
+
+Maybe adaptive and vision-cone-aware ray marching could help? (I.e. your ray marching step size isn't in world space but rather in frustum space, and you can use that to do basically one sample per actual screen pixel, and maybe there is a heuristic that can cut out a lot of those samples somehow)
+
+Definitely quantize the godrays post-blur, as with the shadows. With each layer of detail added, and each potential colour in that layer, you expand beyond the limited pallete you want to retain by adding more and more permutations. The 4 levels of shadows (or 3 + full light) is perfect. But a full smooth gradient of light? Not great. Drop that to the 3/4 as well, IMO.
+Thanks for the feedback. An interesting thing with quantising the rays is the issue of what to do with the alpha. I have a decay parameter which makes rays get fainter the more they travel, so I'm uncertain if quantising will have the unifying effect which it typically has. But I will continue to do further experimentation. Thanks for watching.
+

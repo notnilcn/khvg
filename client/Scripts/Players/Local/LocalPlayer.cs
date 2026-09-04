@@ -172,9 +172,17 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		var rot2d = new Vector2(raw.X, raw.Y).Rotated(yaw);
 		var input = new Vector2(rot2d.X, rot2d.Y);
 
+		if ((Input.IsActionPressed("Left") || Input.IsActionPressed("Right") || Input.IsActionPressed("Up") || Input.IsActionPressed("Down")) && !Input.IsActionPressed("fire"))
+		{
+			Rotation = yaw;
+		}
+
 		// Twin-stick facing: the character always turns toward the cursor. Rotation drives
 		// the sprite/3D-model facing, CombatComponent's aim, and the screen-rotation report.
-		Rotation = GlobalPosition.AngleToPoint(GetCursorWorldPosition());
+		if (Input.IsActionPressed("fire"))
+		{
+			Rotation = GlobalPosition.AngleToPoint(GetCursorWorldPosition());
+		}
 
 		Velocity = ExternalMovementActive ? Vector2.Zero : input * (positionSync?.CurrentSpeed ?? BaseSpeed);
 

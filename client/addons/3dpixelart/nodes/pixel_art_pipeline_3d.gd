@@ -64,6 +64,59 @@ extends Node
 		if _macro_pixel_pass != null:
 			_macro_pixel_pass.global_palette_lut = value
 
+@export_group("Clouds")
+## Banded cloud shadows on pixelized materials (pushed as shader uniforms).
+## Only materials using the pixel-art shader receive them.
+@export var clouds_enabled := false:
+	set(value):
+		clouds_enabled = value
+		_push_cloud_params()
+## Coverage noise, sampled with filter_nearest on a scrolling grid.
+@export var cloud_noise: Texture2D:
+	set(value):
+		cloud_noise = value
+		_push_cloud_params()
+## Sun that casts the cloud shadows (and the god rays). Its forward
+## direction is pushed to materials every frame.
+@export var cloud_sun: DirectionalLight3D
+## Height of the imaginary cloud plane the shadows/rays are projected from.
+@export var cloud_height := 10.0:
+	set(value):
+		cloud_height = value
+		_push_cloud_params()
+@export var cloud_noise_scale := 0.05:
+	set(value):
+		cloud_noise_scale = value
+		_push_cloud_params()
+## Noise value above which a cloud blocks the sun.
+@export_range(0.0, 1.0) var cloud_threshold := 0.5:
+	set(value):
+		cloud_threshold = value
+		_push_cloud_params()
+## Stepped banding of the noise before thresholding (matches the toon ramp).
+@export var cloud_bands := 3.0:
+	set(value):
+		cloud_bands = value
+		_push_cloud_params()
+## Wind direction * speed; scrolls the noise over time.
+@export var cloud_wind := Vector2(0.02, 0.0):
+	set(value):
+		cloud_wind = value
+		_push_cloud_params()
+## How dark the toon ramp gets under a cloud (ambient is untouched).
+@export_range(0.0, 1.0) var cloud_shadow_strength := 0.6:
+	set(value):
+		cloud_shadow_strength = value
+		_push_cloud_params()
+## God rays through the cloud gaps, added to the scene color *before*
+## pixelization so the rays get macro-pixels too. Tuning lives on the
+## PixelArtGodRayPass (see [method get_god_ray_pass]).
+@export var god_rays_enabled := false:
+	set(value):
+		god_rays_enabled = value
+		if _god_ray_pass != null:
+			_god_ray_pass.rays_enabled = value
+
 @export_group("Debug")
 ## Debug view: 0 = off, 1 = anchor map, 2 = metadata buffer,
 ## 3 = metadata depth.
@@ -81,6 +134,7 @@ var _metadata_camera: Camera3D
 var _compositor: Compositor
 var _owned_compositor := false
 var _outline_pass: PixelArtOutlinePass
+var _god_ray_pass: PixelArtGodRayPass
 var _macro_pixel_pass: PixelArtMacroPixelPass
 var _metadata_compositor: Compositor
 
@@ -127,6 +181,8 @@ func _process(_delta: float) -> void:
 	# per-frame sync only covers the unsnapped case.
 	sync_metadata_camera()
 	_check_depth_export()
+	if clouds_enabled and cloud_sun != null:
+		_push_cloud_sun_dir(-cloud_sun.global_transform.basis.z)
 
 
 # If the metadata viewport's compositor never runs (e.g. unsupported in
@@ -185,6 +241,7 @@ func _teardown() -> void:
 	if _compositor != null:
 		var fx := _compositor.compositor_effects.duplicate()
 		fx.erase(_outline_pass)
+		fx.erase(_god_ray_pass)
 		fx.erase(_macro_pixel_pass)
 		_compositor.compositor_effects = fx
 		_compositor = null
@@ -192,6 +249,7 @@ func _teardown() -> void:
 		camera.compositor = null
 	_owned_compositor = false
 	_outline_pass = null
+	_god_ray_pass = null
 	_macro_pixel_pass = null
 	_metadata_compositor = null
 
@@ -384,14 +442,27 @@ func _setup_compositors() -> void:
 	_outline_pass.use_normal_edge_detection = use_normal_edge_detection
 	_outline_pass.normal_edge_detection_sensitivity = normal_edge_detection_sensitivity
 
+	_god_ray_pass = PixelArtGodRayPass.new()
+	_god_ray_pass.rays_enabled = god_rays_enabled
+
 	_macro_pixel_pass = PixelArtMacroPixelPass.new()
 	_macro_pixel_pass.global_palette_lut = global_palette_lut
 	_macro_pixel_pass.debug_view = debug_view
 
+	# The god-ray pass must precede the macro-pixel pass in the array: both
+	# are POST_SKY effects and run in array order, and the rays must be in
+	# the color layer before copy_color so they get pixelated too.
 	var fx := _compositor.compositor_effects.duplicate()
 	fx.append(_outline_pass)
+	fx.append(_god_ray_pass)
 	fx.append(_macro_pixel_pass)
 	_compositor.compositor_effects = fx
+	_push_cloud_params()
+
+
+## The god-ray compositor pass (for ray tuning: steps, intensity, decay...).
+func get_god_ray_pass() -> PixelArtGodRayPass:
+	return _god_ray_pass
 
 
 # -----------------------------------------------------------------------------
@@ -406,6 +477,7 @@ func register_material(material: Material) -> void:
 	_materials.append(material)
 	material.set_shader_parameter("pixel_art_outlines", _outlines_texture_rd)
 	material.set_shader_parameter("metadata_cull_mask", _metadata_mask)
+	_push_cloud_params_to(material)
 
 
 func unregister_material(material: Material) -> void:
@@ -420,3 +492,47 @@ func _update_material_metadata() -> void:
 			continue
 		material.set_shader_parameter("pixel_art_outlines", _outlines_texture_rd)
 		material.set_shader_parameter("metadata_cull_mask", _metadata_mask)
+
+
+# -----------------------------------------------------------------------------
+# Clouds
+# -----------------------------------------------------------------------------
+
+func _push_cloud_params() -> void:
+	for i in range(_materials.size() - 1, -1, -1):
+		var material: Material = _materials[i]
+		if material == null:
+			_materials.remove_at(i)
+			continue
+		_push_cloud_params_to(material)
+	if _god_ray_pass != null:
+		_god_ray_pass.cloud_noise = cloud_noise
+		_god_ray_pass.cloud_height = cloud_height
+		_god_ray_pass.cloud_noise_scale = cloud_noise_scale
+		_god_ray_pass.cloud_threshold = cloud_threshold
+		_god_ray_pass.cloud_bands = cloud_bands
+		_god_ray_pass.cloud_wind = cloud_wind
+	if clouds_enabled and cloud_sun != null:
+		_push_cloud_sun_dir(-cloud_sun.global_transform.basis.z)
+
+
+func _push_cloud_params_to(material: Material) -> void:
+	material.set_shader_parameter("clouds_enabled", clouds_enabled)
+	material.set_shader_parameter("cloud_noise", cloud_noise)
+	material.set_shader_parameter("cloud_height", cloud_height)
+	material.set_shader_parameter("cloud_noise_scale", cloud_noise_scale)
+	material.set_shader_parameter("cloud_threshold", cloud_threshold)
+	material.set_shader_parameter("cloud_bands", cloud_bands)
+	material.set_shader_parameter("cloud_wind", cloud_wind)
+	material.set_shader_parameter("cloud_shadow_strength", cloud_shadow_strength)
+
+
+func _push_cloud_sun_dir(dir: Vector3) -> void:
+	for i in range(_materials.size() - 1, -1, -1):
+		var material: Material = _materials[i]
+		if material == null:
+			_materials.remove_at(i)
+			continue
+		material.set_shader_parameter("cloud_sun_dir", dir)
+	if _god_ray_pass != null:
+		_god_ray_pass.cloud_sun_dir = dir

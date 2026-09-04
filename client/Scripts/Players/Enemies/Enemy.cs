@@ -42,7 +42,9 @@ public partial class Enemy : CharacterBody2D, IEntity
     public override void _Process(double delta)
     {
         var moving = interpolation?.Moving ?? false;
-        if (sprite?.SpriteFrames != null)
+        // 3D mode hides the sprite and never loads the template SpriteFrames — the
+        // scene's placeholder frames have no Walk/Idle animations to play.
+        if (!GameVisuals.Is3D && sprite?.SpriteFrames != null)
             sprite.Play(moving ? "Walk" : "Idle");
         _model3D?.SyncFrom2D(GlobalPosition, Rotation, GameManager.ElevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
     }

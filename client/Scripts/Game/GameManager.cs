@@ -34,7 +34,7 @@ public partial class GameManager : Node2D, IEntity
 		// Explicit visual loading: each mode loads only its own assets.
 		// 3D picked on the main menu → instantiate world_3d.tscn into the 3D layer's
 		// SubViewport and suppress the whole 2D world: the 2D bullets are hidden (their
-		// simulation stays alive — hit reporting and the EnemyBullets3D mirror read it),
+		// simulation stays alive — hit reporting and the Bullets3D mirror read it),
 		// and TerrainComponent/entity sprites gate themselves on GameVisuals.Is3D so no
 		// res_path2d world asset is ever loaded.
 		// 2D picked → the whole 3D CanvasLayer goes away, so the SubViewport never renders,

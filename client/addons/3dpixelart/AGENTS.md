@@ -2,7 +2,7 @@
 
 ## What this is
 
-Godot 4.7 addon: a port of the Unity asset **ProPixelizer** (Elliot Bentine)
+Godot 4.7 addon: an addon that takes inspiration from bunch of public shit
 that renders 3D objects in a pixel-art style — per-object macro-pixels,
 outlines, no pixel creep, full-res lights/shadows, palette-LUT grading.
 Pipeline is implemented and **working**; user docs are in `README.md`.
@@ -25,17 +25,23 @@ read them before touching the render pipeline. The demo scene is
 - `nodes/pixel_art_camera_snap.gd` (`PixelArtCameraSnap`) — ortho texel snap
   via camera `h_offset`/`v_offset` (denovodavid port). No transform mutation.
 - `core/pixel_palette.gd` (`PixelPalette`, `@tool`) — bakes 256×256 palette
-  LUT PNGs via an inspector button.
+  LUT PNGs via an inspector button. `ColorMethod.NEAREST_LAB` matches in CIE
+  Lab (CIE76); bake-time only, LUT format unchanged.
 - `core/pixel_dither_pattern.gd` (`PixelDitherPattern`) — 4×4 ordered dither
   matrix (Bayer default).
 - `compositor/` — `PixelArtOutlinePass` (PRE_OPAQUE, main),
-  `PixelArtMacroPixelPass` (POST_SKY, main), and the
+  `PixelArtGodRayPass` (POST_SKY, main, additive god rays through the cloud
+  layer), `PixelArtMacroPixelPass` (POST_SKY, main), and the
   metadata export effect (POST_SKY, SubViewport), plus `PixelArtSharedBuffers`
   (shared RIDs between viewports).
 - `shaders/pixel_art_object.gdshader` — one spatial shader serving both
   cameras; branches on `float(CAMERA_VISIBLE_LAYERS) == metadata_cull_mask`.
+  Also hosts sharp-bilinear texture sampling (`use_sharp_bilinear`) and the
+  per-material cloud-shadow code (uniforms pushed by the pipeline).
 - `shaders/*.glsl` — compute passes: `copy_color`, `outline_pass`,
-  `anchor_map`, `apply_anchor_map`, `export_metadata`.
+  `anchor_map`, `apply_anchor_map`, `export_metadata`, `god_rays`.
+- `demo/water.gdshader` — Pixel Art Oceans layers 1–5 example (transparent;
+  renders after the pixelization passes, so not itself pixelated).
 
 ## Architecture invariants (do not redesign)
 
@@ -64,6 +70,17 @@ read them before touching the render pipeline. The demo scene is
 - RenderingDevice is not main-thread-safe: create/free RD textures via
   `RenderingServer.call_on_render_thread(...)` (see
   `PixelArtPipeline3D._create_textures_rt`).
+- **The god-ray pass must precede the macro-pixel pass in the compositor
+  effects array** — same-callback-type (POST_SKY) effects run in array order,
+  and the rays must be in the color layer before `copy_color` so they get
+  pixelated. If that ordering ever breaks (rays visible un-pixelated in a
+  capture), dispatch the ray compute inside
+  `PixelArtMacroPixelPass._render_callback` between the copy and apply
+  dispatches instead.
+- **The pipeline pushes cloud uniforms to registered materials** (on export
+  change and on `register_material`) and pushes `cloud_sun_dir` to materials
+  + the god-ray pass every frame in `_process` when clouds are enabled. Keep
+  these pushes in sync when adding cloud uniforms.
 - **Editing a `.glsl` compute shader requires a reimport** or stale SPIR-V is
   used. `.gdshader` changes are picked up on game start.
 - Requires Forward+ or Mobile; MSAA off; `scaling_3d_scale` 1.0.
@@ -79,7 +96,9 @@ Use the `godot-compositor-testing` skill. Binary:
 - Run demo + auto-screenshot: `cd code_examples/3dpixelart && godot --path . -- --capture`
   (writes `demo/screenshot.png` + metadata debug dumps, quits at frame 120);
   `--debug-view=N` selects the pixelization debug view (1=map, 2=metadata,
-  3=metadata depth).
+  3=metadata depth). `--plain` skips the showcase content (LUT grading,
+  clouds/god rays, textured box, pond) and renders the original baseline
+  scene — use it as the pixel-creep/outline regression capture.
 
 Verify pixelization visually via the screenshot; `debug_view = 2` shows the
 packed metadata buffer.
@@ -87,7 +106,6 @@ packed metadata buffer.
 ## Known loose ends
 
 - Benign "Texture (binding: 5) not a valid texture" errors on quit.
-- `PixelPalette` LUT baker is untested.
 - Transparent pixelized objects composite against un-pixelated depth
   (pixelated depth write-back not ported).
 - `save_shared_textures_debug` depth row-length guard is approximate.

@@ -45,8 +45,9 @@ public partial class BulletHitRouterComponent : Component
         _elevationMap ??= GameManager.ElevationMap;
         if (_elevationMap != null &&
             _spawner != null &&
-            _spawner.LiveEnemyBullets.TryGetValue(bulletsInstance, out int band))
+            _spawner.LiveEnemyBullets.TryGetValue(bulletsInstance, out var info))
         {
+            int band = info.Band;
             int victimElevation = _elevationMap.GetElevationAt(victim.GlobalPosition);
             if (victimElevation < band - ServerConstants.BulletElevationDrop ||
                 victimElevation > band + ServerConstants.BulletElevationClimb)

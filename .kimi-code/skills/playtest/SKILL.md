@@ -1,5 +1,5 @@
 ---
-name: mmo playtest
+name: playtest
 description: Playtest and verify the game end-to-end — drive the running Godot client via open-godot-mcp (click/hover/drag/keys with node-path-resolved coordinates) and use the `spacetime` CLI for server-side setup/inspection (seed, spawn, give, SQL, logs)
 type: prompt
 whenToUse: When playtesting, verifying, or driving the running game — navigating menus, joining the world, toggling inventory, dragging items, opening chests, spawning enemies, giving items, reading tables, or checking module logs. Covers both the Godot MCP tools and the `spacetime` CLI.

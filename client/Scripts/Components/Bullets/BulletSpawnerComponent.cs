@@ -17,8 +17,10 @@ using SpacetimeDB.Types;
 /// the returned DirectionalBullets2D instances are tracked in LiveEnemyBullets so
 /// BulletControllerComponent can find and manipulate live bullets (the factory cannot enumerate
 /// them). Player bullet instances are tracked the same way in LivePlayerBullets; both
-/// dictionaries stamp each instance's elevation band (its origin hex's level) for the
-/// bullet band rule (BulletHitRouterComponent/BulletCliffComponent). The deterministic SplitMix64 jitter mirrors the server's hash technique in
+/// dictionaries stamp each instance with a TrackedBulletInfo — its elevation band (the
+/// origin hex's level, for the bullet band rule in BulletHitRouterComponent/
+/// BulletCliffComponent) plus the projectile texture id (the 3D mirror picks the catalog
+/// model from it). The deterministic SplitMix64 jitter mirrors the server's hash technique in
 /// enemy/methods.rs, seeded by event_id so every client (and the future audit script)
 /// derives identical pellet trajectories (logic moved out of BulletManager.cs).
 /// </summary>
@@ -39,14 +41,22 @@ public partial class BulletSpawnerComponent : Component
     // are pruned on the PruneInterval timer and whenever the set grows past
     // PruneThreshold — never per spawn event, or a volley-heavy fight would run an
     // O(live bullets) sweep for every incoming pattern row.
-    private readonly System.Collections.Generic.Dictionary<GodotObject, int> liveEnemyBullets = [];
-    private readonly System.Collections.Generic.Dictionary<GodotObject, int> livePlayerBullets = [];
+    private readonly System.Collections.Generic.Dictionary<GodotObject, TrackedBulletInfo> liveEnemyBullets = [];
+    private readonly System.Collections.Generic.Dictionary<GodotObject, TrackedBulletInfo> livePlayerBullets = [];
     private float pruneTimer;
     private const float PruneInterval = 1f;
     private const int PruneThreshold = 256;
 
-    public System.Collections.Generic.IReadOnlyDictionary<GodotObject, int> LiveEnemyBullets => liveEnemyBullets;
-    public System.Collections.Generic.IReadOnlyDictionary<GodotObject, int> LivePlayerBullets => livePlayerBullets;
+    /// Band + projectile texture stamped onto a live bullet instance; the texture id lets
+    /// the 3D mirror pick the catalog model (res_path3d) for the volley.
+    public readonly struct TrackedBulletInfo(int band, string textureId)
+    {
+        public readonly int Band = band;
+        public readonly string TextureId = textureId;
+    }
+
+    public System.Collections.Generic.IReadOnlyDictionary<GodotObject, TrackedBulletInfo> LiveEnemyBullets => liveEnemyBullets;
+    public System.Collections.Generic.IReadOnlyDictionary<GodotObject, TrackedBulletInfo> LivePlayerBullets => livePlayerBullets;
 
     // Lazily resolved (the facade's static instance isn't set until the game root's
     // _Ready, which runs after this component's OnRegistered).
@@ -97,7 +107,7 @@ public partial class BulletSpawnerComponent : Component
     // array is unreliable for multi-bullet instances (a plugin bug — its index is never
     // incremented, so only slot 0 is ever written), so liveness goes through the per-index
     // is_bullet_status_enabled. Shared by the enemy and player tracking dictionaries.
-    private static void PruneLiveBullets(System.Collections.Generic.Dictionary<GodotObject, int> live)
+    private static void PruneLiveBullets<T>(System.Collections.Generic.Dictionary<GodotObject, T> live)
     {
         _pruneBuffer.Clear();
         foreach (var inst in live.Keys)
@@ -115,16 +125,32 @@ public partial class BulletSpawnerComponent : Component
 
     private static readonly System.Collections.Generic.List<GodotObject> _pruneBuffer = [];
 
-    // Elevation band stamped onto every instance the current spawn produces (set by
-    // SpawnEnemyBullet/SpawnEnemyBulletFan/SpawnPlayerBullets before the spawn calls,
-    // like currentSpeedAcceleration — the spawner resource and this state are shared
-    // across spawns).
+    // Elevation band + projectile texture stamped onto every instance the current spawn
+    // produces (set by SpawnEnemyBullet/SpawnEnemyBulletFan/SpawnPlayerBullets before the
+    // spawn calls, like currentSpeedAcceleration — the spawner resource and this state
+    // are shared across spawns). The fan keeps whatever texture the last pattern event
+    // applied to the shared enemy spawner, so it leaves currentTextureId untouched.
     private int currentBandElevation;
+    private string currentTextureId = "";
 
     private void SpawnControllable()
     {
         var instance = BlastBullets.Call("spawn_controllable_directional_bullets", EnemyBulletSpawner).AsGodotObject();
-        if (instance != null) liveEnemyBullets[instance] = currentBandElevation;
+        if (instance != null)
+        {
+            Hide2DIn3DMode(instance);
+            liveEnemyBullets[instance] = new TrackedBulletInfo(currentBandElevation, currentTextureId);
+        }
+    }
+
+    // Hiding the BulletManager node does NOT reach the plugin's pooled bullet renderers
+    // (they stay visible as untextured white squares in 3D mode), so each spawned
+    // instance is hidden directly; the 3D mirror components take over rendering while
+    // the 2D simulation (collision/hit reporting) keeps running.
+    private static void Hide2DIn3DMode(GodotObject instance)
+    {
+        if (GameVisuals.Is3D)
+            instance.Set("visible", false);
     }
 
     private void SetupEnemyBullets()
@@ -165,7 +191,11 @@ public partial class BulletSpawnerComponent : Component
         // controllable variant returns the instance) so player bullets are band-tracked
         // exactly like enemy bullets for the cliff cull in BulletCliffComponent.
         var instance = BlastBullets.Call("spawn_controllable_directional_bullets", PlayerBulletSpawner).AsGodotObject();
-        if (instance != null) livePlayerBullets[instance] = ElevationMap?.GetElevationAt(origin) ?? 0;
+        if (instance != null)
+        {
+            Hide2DIn3DMode(instance);
+            livePlayerBullets[instance] = new TrackedBulletInfo(ElevationMap?.GetElevationAt(origin) ?? 0, textureId);
+        }
     }
 
     private void ApplyBulletTexture(GodotObject data, string textureId)
@@ -201,6 +231,7 @@ public partial class BulletSpawnerComponent : Component
         // The volley's elevation band: the origin hex's level, stamped onto every tracked
         // instance this event spawns (shared spawn state, like currentSpeedAcceleration).
         currentBandElevation = ElevationMap?.GetElevationAt(origin) ?? 0;
+        currentTextureId = bulletPattern.TextureId;
         EnemyBulletSpawner.Set("bullets_custom_data", new BulletData { SourceStep = bulletPattern.SourceStep, EnemyId = bulletPattern.EnemyId, Damage = bulletPattern.Damage });
         EnemyBulletSpawner.Set("max_life_time", bulletPattern.Lifetime);
         ApplyBulletTexture(EnemyBulletSpawner, bulletPattern.TextureId);

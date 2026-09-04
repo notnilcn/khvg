@@ -76,6 +76,46 @@ Separate from combat movement, idle wandering was reworked for natural feel:
 - Bonus outcome: combining this movement with a faction/targeting system (enemies able to
   target each other) produced emergent battle-royale behavior with no extra tuning.
 
+## Godot 4.7 / C# mapping
+
+- **Candidate directions:** a fixed array of N unit vectors evenly spaced around the enemy
+  (the video never states N — see open questions). Generate once:
+  ```csharp
+  var dirs = new Vector2[DirectionCount];
+  for (int i = 0; i < DirectionCount; i++)
+      dirs[i] = Vector2.Right.Rotated(Mathf.Tau * i / DirectionCount);
+  ```
+- **Weight per direction toward a goal:**
+  ```csharp
+  float dot = dirs[i].Dot((goalPos - enemyPos).Normalized()); // -1..1
+  float weight = (dot + 1f) * 0.5f;                           // 0..1
+  ```
+  Then apply the behavior's shaping function to `weight` (approach falloff by distance,
+  sideways-favoring curve for strafe, angled preference for separation) and combine the
+  weight sets before picking the best unobstructed index.
+- **Obstruction test per direction:** raycast with
+  `GetWorld2D().DirectSpaceState.IntersectRay(...)` (C#:
+  `PhysicsRayQueryParameters2D.Create(origin, origin + dirs[i] * probeLength, mask)`).
+  Blocked directions get weight ~0 so the next-best open direction wins.
+- **Wander noise:** "OpenSimplex" in the video = `FastNoiseLite` in Godot 4.x:
+  ```csharp
+  var noise = new FastNoiseLite {
+      NoiseType = FastNoiseLite.NoiseTypeEnum.SimplexSmooth,
+      Frequency = 0.05f, // tune — low frequency = slow sway
+  };
+  // in _PhysicsProcess: sway heading over time, noise output is ~-1..1 weighted toward 0
+  float turn = noise.GetNoise1D((float)Time.GetTicksMsec() / 1000f + noiseOffset);
+  heading = heading.Rotated(turn * maxTurnRate * (float)delta);
+  ```
+  Give each enemy a random `noiseOffset` (and/or its own `FastNoiseLite.Seed`) so they
+  don't sway in sync.
+- **Spawn leash:** blend the wander heading toward `spawnPos - enemyPos` with a strength
+  that is 0 inside the inner radius (~2 tiles in the video) and ramps up with distance
+  beyond it (e.g. `Mathf.Clamp((dist - innerRadius) / outerRadius, 0, 1)`).
+- **Debug gizmo:** a `Node2D` child overriding `_Draw()` that calls `DrawLine` per
+  direction — length ∝ weight, color lerped red→green — with `QueueRedraw()` each
+  physics frame while debugging.
+
 ## Creator's addendum (scope)
 
 > NOTE: I'm not using this as a replacement for path finding. The purpose of this is to
@@ -96,3 +136,34 @@ Implications for our implementation:
   pathfinder exists.
 - Expected behaviors to implement: approach, strafe/circle at range, flee without wall-lock,
   separation (anti-clumping), and smooth noise-driven wandering with a soft spawn leash.
+
+## From the comments
+
+The transcript file contains no comments section, so there is nothing to include.
+
+## Open questions
+
+- **Number of candidate directions (N):** never stated. The gizmo in the video shows a
+  radial fan of lines; 8–16 is the typical range for context steering. Fewer = cheaper but
+  coarser wall-sliding; verify in-engine.
+- **Shaping function curves:** the video says *what* each shaper does (falloff with
+  distance, favor sideways, separate at an angle) but never gives the actual functions.
+  Candidates to try: `Curve` resources sampled by dot product / distance so they can be
+  tuned visually in the editor.
+- **Strafe range and follow-distance offset:** the desired orbit radius, the radius at
+  which approach weights start fading, and the per-enemy distance offset magnitude are all
+  unspecified — tune with the gizmo.
+- **How weight sets are combined:** sum, max, or weighted blend is never stated when
+  merging approach + strafe + separation + obstacle sets. Sum is the common choice, but
+  the combination operator changes behavior significantly.
+- **Heading smoothing:** does the enemy snap to the winning direction each tick or rotate
+  toward it at a limited turn rate? Not covered; likely needed to fully kill jitter.
+- **Obstruction probe details:** ray length, collision mask, and whether a blocked ray
+  zeroes the weight or just dampens it are unspecified.
+- **Wander noise parameters:** frequency, max turn rate, and whether the 0-weighted
+  distribution of Simplex noise alone is enough or needs an additional bias — tune per
+  enemy type.
+- **Leash radii:** inner radius is given (~2 tiles) but the outer falloff distance is not.
+- **2D vs 3D:** the video's game is 2D; the note's C# mapping above assumes `Vector2` /
+  `PhysicsDirectSpaceState2D`. If our game is 3D, use `Vector3` directions on the XZ plane
+  and `GetWorld3D().DirectSpaceState`.

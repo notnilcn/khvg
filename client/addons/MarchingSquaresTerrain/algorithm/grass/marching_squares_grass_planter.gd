@@ -62,6 +62,13 @@ func regenerate_grass() -> void:
 	var chunk_origin : Vector3 = _chunk.global_position if _chunk.is_inside_tree() else _chunk.position
 	var index := 0
 	
+	# The multimesh may pre-exist with a stale instance count (loaded bake, changed
+	# settings) - resize through 0 so leftover instances are cleared, not just hidden
+	var needed_count : int = (3 * _chunk.get_chunk_radius() * (_chunk.get_chunk_radius() + 1) + 1) * per_hex
+	if multimesh.instance_count != needed_count:
+		multimesh.instance_count = 0
+		multimesh.instance_count = needed_count
+	
 	for local_hex in MSTHexMath.hex_range(_chunk.get_chunk_radius()):
 		var record : Dictionary = _chunk.hex_data.get(local_hex, {})
 		var center_xz := MSTHexMath.hex_to_world(local_hex.x, local_hex.y, hex_size)
@@ -202,11 +209,14 @@ func _format_needs_conversion(fmt: Image.Format) -> bool:
 #region grass placement helpers
 
 ## Creates a grass instance at the given position with proper transform and color.
-## Hex tops are flat, so the instance normal is always up (same basis as the old flat-cell path).
+## Hex tops are flat, so the instance normal is always up. The shader rebuilds the
+## blade position from the camera (spherical billboarding) and only reads the
+## instance origin, but it discards blades whose world normal points away from up -
+## so the basis z axis must be UP, not DOWN.
 func _create_grass_instance(index: int, local_pos: Vector3, world_pos: Vector3, texture_id: int) -> void:
 	var right := Vector3.FORWARD.cross(Vector3.UP).normalized()
 	var forward := Vector3.UP.cross(Vector3.RIGHT).normalized()
-	var instance_basis := Basis(right, forward, Vector3.DOWN)
+	var instance_basis := Basis(right, forward, Vector3.UP)
 	
 	multimesh.set_instance_transform(index, Transform3D(instance_basis, local_pos))
 	

@@ -12,7 +12,7 @@ using System.Collections.Generic;
 /// bullets from crossing cliff faces.
 /// Throttled to 0.15 s because each tick costs a full transform-array alloc per instance
 /// (the plugin's all_bullets_get_transforms offers no caller-buffer overload — same
-/// throttling rationale as EnemyBullets3DComponent's 30 Hz sync). disable_bullet goes
+/// throttling rationale as Bullets3DComponent's 30 Hz sync). disable_bullet goes
 /// through call_deferred per the plugin README's runtime-call rule.
 /// </summary>
 public partial class BulletCliffComponent : Component
@@ -36,15 +36,16 @@ public partial class BulletCliffComponent : Component
         _elevationMap ??= GameManager.ElevationMap;
         if (_spawner == null || _elevationMap == null) return;
 
-        CullAboveBand(_spawner.LiveEnemyBullets);
-        CullAboveBand(_spawner.LivePlayerBullets);
+        CullAboveBand(_spawner.LiveEnemyBullets, info => info.Band);
+        CullAboveBand(_spawner.LivePlayerBullets, info => info.Band);
     }
 
-    private void CullAboveBand(IReadOnlyDictionary<GodotObject, int> live)
+    private void CullAboveBand<T>(IReadOnlyDictionary<GodotObject, T> live, System.Func<T, int> getBand)
     {
-        foreach (var (inst, band) in live)
+        foreach (var (inst, info) in live)
         {
             if (!GodotObject.IsInstanceValid(inst)) continue;
+            int band = getBand(info);
             int count = inst.Call("get_amount_bullets").AsInt32();
             if (count == 0) continue;
             var transforms = inst.Call("all_bullets_get_transforms").AsGodotArray<Transform2D>();

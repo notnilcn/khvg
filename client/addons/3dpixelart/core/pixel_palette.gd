@@ -14,6 +14,7 @@ enum ColorMethod {
 	WEIGHTED_HSV, ## HSV, weighted by [member weights].
 	WEIGHTED_HSV_SQUARED, ## HSV squared distance, weighted.
 	NEAREST_VALUE, ## Nearest by Value after mapping input through [member v_conversion_curve].
+	NEAREST_LAB, ## Nearest in CIE Lab space (CIE76, perceptually uniform).
 }
 
 const RESOLUTION := 16
@@ -44,6 +45,8 @@ const DITHER_PATTERN_SIZE := 16
 class ColorSwatches:
 	## The distinct colors of the source palette image.
 	var colors: Array[Color] = []
+	## [member colors] pre-converted to CIE Lab (used by NEAREST_LAB).
+	var colors_lab: Array[Vector3] = []
 
 	func _init(palette_image: Image) -> void:
 		var seen := {}
@@ -57,9 +60,28 @@ class ColorSwatches:
 		if colors.is_empty():
 			push_error("PixelPalette: source texture has no pixels.")
 			colors.append(Color.MAGENTA)
+		for c in colors:
+			colors_lab.append(_srgb_to_lab(c))
 
 	static func _brightness(c: Color) -> float:
 		return c.r * 0.3 + c.g * 0.59 + c.b * 0.11
+
+	# sRGB -> linear -> XYZ (sRGB D65) -> CIE Lab (CIE76, white point D65).
+	static func _srgb_to_lab(c: Color) -> Vector3:
+		var lin := Vector3(
+			c.r / 12.92 if c.r <= 0.04045 else pow((c.r + 0.055) / 1.055, 2.4),
+			c.g / 12.92 if c.g <= 0.04045 else pow((c.g + 0.055) / 1.055, 2.4),
+			c.b / 12.92 if c.b <= 0.04045 else pow((c.b + 0.055) / 1.055, 2.4))
+		var xyz := Vector3(
+			0.4124564 * lin.x + 0.3575761 * lin.y + 0.1804375 * lin.z,
+			0.2126729 * lin.x + 0.7151522 * lin.y + 0.0721750 * lin.z,
+			0.0193339 * lin.x + 0.1191920 * lin.y + 0.9503041 * lin.z)
+		xyz /= Vector3(0.95047, 1.0, 1.08883)
+		var f := Vector3(
+			pow(xyz.x, 1.0 / 3.0) if xyz.x > 0.008856 else (xyz.x / 0.128418) + 0.137931,
+			pow(xyz.y, 1.0 / 3.0) if xyz.y > 0.008856 else (xyz.y / 0.128418) + 0.137931,
+			pow(xyz.z, 1.0 / 3.0) if xyz.z > 0.008856 else (xyz.z / 0.128418) + 0.137931)
+		return Vector3(116.0 * f.y - 16.0, 500.0 * (f.x - f.y), 200.0 * (f.y - f.z))
 
 	func color_distance(a: Color, b: Color, p_method: ColorMethod, p_weights: Vector3, curve: Curve) -> float:
 		# Compare in gamma space (source should be an sRGB texture).
@@ -80,6 +102,8 @@ class ColorSwatches:
 				if curve != null:
 					bright_a = curve.sample(clampf(bright_a, 0.0, 1.0))
 				return absf(bright_a - bright_b)
+			ColorMethod.NEAREST_LAB:
+				return (_srgb_to_lab(a) - _srgb_to_lab(b)).length_squared()
 		return 0.0
 
 	func _two_closest(input: Color, p_method: ColorMethod, p_weights: Vector3, curve: Curve) -> Array:
@@ -87,6 +111,21 @@ class ColorSwatches:
 		var second := -1.0
 		var best_c := colors[0]
 		var second_c := colors[0]
+		if p_method == ColorMethod.NEAREST_LAB:
+			# Fast path: convert the input once and walk the pre-converted
+			# swatches (bake calls this 65k times).
+			var input_lab := _srgb_to_lab(input)
+			for i in colors.size():
+				var d: float = (input_lab - colors_lab[i]).length_squared()
+				if best < 0.0 or d < best:
+					second = best
+					second_c = best_c
+					best = d
+					best_c = colors[i]
+				elif second < 0.0 or d < second:
+					second = d
+					second_c = colors[i]
+			return [best_c, second_c]
 		for c in colors:
 			var d := color_distance(input, c, p_method, p_weights, curve)
 			if best < 0.0 or d < best:
