@@ -13,6 +13,8 @@
 [ext_resource type="Script" uid="uid://cn5lkrknhfvqp" path="res://Scripts/Components/Bullets/Bullets3DComponent.cs" id="7_bullets3d"]
 [ext_resource type="Script" uid="uid://tj5jvmbahdrh" path="res://Scripts/Components/Terrain/TerrainComponent3D.cs" id="8_terrain3d"]
 [ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="9_mst"]
+[ext_resource type="Script" uid="uid://b28hx71s228ed" path="res://Scripts/Components/PixelArt/PixelArtPipelineComponent.cs" id="10_pipeline"]
+[ext_resource type="Script" uid="uid://bab41r0vux14a" path="res://Scripts/Components/PixelArt/WaterComponent3D.cs" id="11_water"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kqqpj"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -33,6 +35,28 @@ script = ExtResource("3_1j568")
 script = ExtResource("1_1j568")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1996365010]
+transform = Transform3D(0.86602527, 0.38302252, -0.32139382, 0, 0.64278734, 0.7660447, 0.50000024, -0.66341406, 0.55667007, 0, 0, 0)
+shadow_enabled = true
+
+[node name="PixelArtPipelineComponent" type="Node" parent="." unique_id=1279853097 node_paths=PackedStringArray("Camera", "Sun")]
+script = ExtResource("10_pipeline")
+Camera = NodePath("../Camera3D")
+Sun = NodePath("../DirectionalLight3D")
+GodRaysEnabled = false
+
+[node name="WaterComponent3D" type="Node3D" parent="." unique_id=1707236026]
+script = ExtResource("11_water")
+WaterLevel = 0.9
+
+[node name="NearbyTerrainTilesBinder" type="Node" parent="WaterComponent3D" unique_id=1972557982]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "NearbyTerrainTiles"
+
+[node name="MapConfigBinder" type="Node" parent="WaterComponent3D" unique_id=233999253]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "MapConfig"
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=746145806]
 environment = SubResource("Environment_e0ebs")
@@ -54,6 +78,8 @@ TableName = "MapConfig"
 [node name="Bullets3DComponent" type="Node3D" parent="." unique_id=1581820701]
 script = ExtResource("7_bullets3d")
 BulletScene = ExtResource("6_bullet")
+ModelYawOffset = 1.5699999999999998
+ModelRollOffset = 0.0
 
 [node name="TerrainComponent3D" type="Node3D" parent="." unique_id=1697761499]
 script = ExtResource("8_terrain3d")
@@ -83,7 +109,7 @@ collision_mask = 0
 metadata/_custom_type_script = "uid://csjccrhj5wnx7"
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1778573569]
-transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 200, 0)
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
 top_level = true
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D" unique_id=390949796]
@@ -93,6 +119,11 @@ script = ExtResource("5_30yqp")
 host_layers = 2
 metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
+[connection signal="RowDeleted" from="WaterComponent3D/NearbyTerrainTilesBinder" to="WaterComponent3D" method="OnTerrainTileRowDeleted"]
+[connection signal="RowInserted" from="WaterComponent3D/NearbyTerrainTilesBinder" to="WaterComponent3D" method="OnTerrainTileRowInserted"]
+[connection signal="RowUpdated" from="WaterComponent3D/NearbyTerrainTilesBinder" to="WaterComponent3D" method="OnTerrainTileRowUpdated"]
+[connection signal="RowInserted" from="WaterComponent3D/MapConfigBinder" to="WaterComponent3D" method="OnMapConfigRow"]
+[connection signal="RowUpdated" from="WaterComponent3D/MapConfigBinder" to="WaterComponent3D" method="OnMapConfigRow"]
 [connection signal="RowInserted" from="HexGridOverlay3DComponent/MapConfigBinder" to="HexGridOverlay3DComponent" method="OnMapConfigRow"]
 [connection signal="RowUpdated" from="HexGridOverlay3DComponent/MapConfigBinder" to="HexGridOverlay3DComponent" method="OnMapConfigRow"]
 [connection signal="RowInserted" from="TerrainComponent3D/MapConfigBinder" to="TerrainComponent3D" method="OnMapConfigRow"]

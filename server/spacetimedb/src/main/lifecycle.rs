@@ -4,7 +4,7 @@ use crate::main::global::*;
 use crate::world::terrain::internal_generate_world_proc;
 use crate::player::tables::*;
 use crate::enemy::instance_tables::*;
-use super::seeds::{seed_default_textures, seed_layering_rules, seed_adjacency_rules, seed_decor_ground_rules, seed_default_enemies, seed_world_defs};
+use super::seeds::{seed_default_textures, seed_default_animations, seed_layering_rules, seed_adjacency_rules, seed_decor_ground_rules, seed_default_enemies, seed_world_defs};
 use super::admin::internal_add_chunks;
 use crate::item::seeds::{seed_world_items, seed_world_enchantments};
 
@@ -21,6 +21,7 @@ pub fn init(ctx: &ReducerContext) {
         scheduled_at: ScheduleAt::Interval(TimeDuration::from(Duration::from_secs_f32(CONSUMABLE_EFFECT_TICK_SECONDS))),
     });
     seed_default_textures(ctx);
+    seed_default_animations(ctx);
     seed_layering_rules(ctx);
     seed_adjacency_rules(ctx);
     seed_decor_ground_rules(ctx);

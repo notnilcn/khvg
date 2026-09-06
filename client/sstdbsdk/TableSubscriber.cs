@@ -19,7 +19,7 @@ using System.Linq;
 public partial class TableSubscriber : Component
 {
 	/// Base wave: static catalog tables every screen needs.
-	public static readonly string[] BaseTables = { "AllTextures", "AllItems", "AllEnchantments" };
+	public static readonly string[] BaseTables = { "AllTextures", "AllItems", "AllEnchantments", "AllAnimations" };
 
 	/// Lobby wave: profile selection before joining the world.
 	public static readonly string[] LobbyTables = { "LocalLobbyPlayer", "LocalPlayerProfiles" };
@@ -70,6 +70,13 @@ public partial class TableSubscriber : Component
 
 	private SubscriptionHandle? lobbySub;
 	private SubscriptionHandle? gameSub;
+
+	/// Raised when the lobby subscription wave is applied (all profile rows cached) —
+	/// LobbyComponent's --charN auto-join waits for this before counting profiles.
+	public event Action? LobbyApplied;
+
+	/// True once the lobby wave has been applied (a re-shown lobby's rows are already cached).
+	public bool LobbySubActive => lobbySub?.IsActive ?? false;
 
 	protected override void OnRegistered()
 	{
@@ -138,6 +145,7 @@ public partial class TableSubscriber : Component
 	private void OnLobbySubApplied(SubscriptionEventContext ctx)
 	{
 		GD.Print("[TableSubscriber] Lobby subscription ready");
+		LobbyApplied?.Invoke();
 	}
 
 	private void OnGameSubApplied(SubscriptionEventContext ctx)

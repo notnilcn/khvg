@@ -79,6 +79,8 @@ public partial class GameManager : Node2D, IEntity
 	public static Item? GetItem(string itemId) => Get<CatalogComponent>()?.GetItem(itemId);
 	public static Enchantment? GetEnchantment(string enchantmentId) => Get<CatalogComponent>()?.GetEnchantment(enchantmentId);
 	public static IEnumerable<Enchantment> GetEnchantments() => Get<CatalogComponent>()?.GetEnchantments() ?? Enumerable.Empty<Enchantment>();
+	public static AnimationEntry? GetAnimation(string animationId) => Get<CatalogComponent>()?.GetAnimation(animationId);
+	public static IEnumerable<AnimationEntry> GetAnimations() => Get<CatalogComponent>()?.GetAnimations() ?? Enumerable.Empty<AnimationEntry>();
 	public static SpellVisualComponent? SpellVisuals => Get<SpellVisualComponent>();
 	public static ElevationMapComponent? ElevationMap => Get<ElevationMapComponent>();
 

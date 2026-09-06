@@ -35,8 +35,15 @@ public partial class Bullets3DComponent : Node3DComponent
     /// Uniform scale applied to catalog model instances (KayKit FBX imports are near-unit-sized).
     [Export] public float ModelScale { get; set; } = 30f;
 
-    /// Extra yaw (radians) aligning a catalog model's long axis with the travel direction.
+    /// Extra yaw (radians) applied after the lay-flat roll — tweak in 90° (PI/2 ≈ 1.5708)
+    /// steps if catalog models fly flat but sideways.
     [Export] public float ModelYawOffset { get; set; }
+
+    /// Lay-flat roll (radians) for catalog models: arrow_bow.fbx is modeled upright
+    /// (shaft along ±Y, tip at -Y), so a +90° roll about Z lays the shaft onto +X
+    /// before the yaw below aims +X along the travel direction. Tweak in 90° steps:
+    /// PI/2 = tip-forward flat, -PI/2 = fletching-forward flat, 0 = upright (broken).
+    [Export] public float ModelRollOffset { get; set; } = Mathf.Pi / 2f;
 
     /// Height above the firing entity's elevation band the bullets hover at.
     [Export] public float BulletHeight { get; set; } = 20f;
@@ -139,6 +146,7 @@ public partial class Bullets3DComponent : Node3DComponent
             _pools[scene] = pool;
         }
         float yawOffset = model != null ? ModelYawOffset : 0f;
+        float rollOffset = model != null ? ModelRollOffset : 0f;
         float y = info.Band * ElevationMapComponent.WorldHeightPerLevel + BulletHeight;
 
         // NOTE: the bulk get_all_bullets_status array is unreliable for multi-bullet
@@ -153,7 +161,9 @@ public partial class Bullets3DComponent : Node3DComponent
             var t = transforms[i];
             node.GlobalPosition = new Vector3(t.Origin.X, y, t.Origin.Y);
             // 2D rotation is clockwise in a y-down space; 3D yaw about +Y is counter-clockwise.
-            node.Rotation = new Vector3(0f, -t.Rotation + yawOffset, 0f);
+            // Euler order is YXZ, so the Z roll applies first (lays the upright catalog
+            // model flat: tip -Y onto +X) and the yaw aims +X along travel afterwards.
+            node.Rotation = new Vector3(0f, -t.Rotation + yawOffset, rollOffset);
         }
     }
 }

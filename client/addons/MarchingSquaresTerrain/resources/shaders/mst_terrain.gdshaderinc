@@ -81,6 +81,26 @@ uniform int bands : hint_range(1, 10) = 5;
 uniform float shadow_intensity : hint_range(-1.0, 0.5, 0.05) = 0.00;
 group_uniforms;
 
+group_uniforms Effects.Cloud_Shadows;
+// Banded cloud shadows, pushed at runtime by the 3dpixelart PixelArtPipeline3D
+// (register_cloud_material on the shared terrain_material): same uniform names
+// and coverage shaping as pixel_art_object.gdshader. Off by default.
+uniform bool clouds_enabled = false;
+uniform sampler2D cloud_noise : filter_nearest, repeat_enable;
+uniform vec3 cloud_sun_dir = vec3(0.0, -1.0, 0.0); // world, direction light travels
+uniform float cloud_height = 10.0;
+uniform float cloud_noise_scale = 0.05;
+uniform float cloud_threshold : hint_range(0.0, 1.0) = 0.5;
+uniform vec2 cloud_wind = vec2(0.02, 0.0);
+uniform float cloud_shadow_strength : hint_range(0.0, 1.0) = 0.6;
+uniform bool cloud_shadow_banding_enabled = true;
+uniform float cloud_shadow_levels = 3.0;
+uniform float cloud_shadow_softness : hint_range(0.0, 1.0) = 0.4;
+group_uniforms;
+
+// Fraction of sun blocked by clouds (0 = clear), written in fragment().
+varying float cloud_coverage;
+
 // Shared varyings
 varying vec3 vertex_normal;
 varying vec3 custom1;
@@ -307,6 +327,19 @@ float get_world_noise(vec3 world_position, float tile_size) {
 	return texture(rl_noise_texture, noise_uv).r;
 }
 
+// Cloud shadow shaping (mirror of pixel_art_object.gdshader): coverage ramps
+// from 0 to 1 across [threshold - softness, threshold], optionally quantized
+// into discrete darkness levels (hard contour rings).
+float cloud_coverage_from_noise(float n) {
+	float edge0 = clamp(cloud_threshold - max(cloud_shadow_softness, 0.001), 0.0, 1.0);
+	float cov = smoothstep(edge0, cloud_threshold, n);
+	if (cloud_shadow_banding_enabled) {
+		float levels = max(cloud_shadow_levels, 1.0);
+		cov = floor(cov * levels + 0.5) / levels;
+	}
+	return cov;
+}
+
 void vertex() {
 	vertex_normal = NORMAL;
 	custom1 = CUSTOM1.rgb;
@@ -515,6 +548,21 @@ void fragment() {
 		mixed_triplanar_color = mix(floor_color.rgb, rl_wall_color_x + rl_wall_color_z, mixed_blend_factor);
 		ALBEDO = mixed_triplanar_color;
 	}
+
+	// Cloud shadows: project the fragment's world position onto the cloud plane
+	// along the sun direction (cloud_sun_dir points down, so t is negative) and
+	// shape the sampled noise into a blocked-sun fraction. Darkening the albedo
+	// scales the whole lighting response (ambient + toon sun) — attenuating only
+	// the toon light() is barely visible because it caps out at 0.3 against the
+	// sky ambient.
+	cloud_coverage = 0.0;
+	if (clouds_enabled && cloud_sun_dir.y < -0.02) {
+		float cloud_t = (cloud_height - world_pos.y) / cloud_sun_dir.y;
+		vec2 cloud_uv = (world_pos + cloud_sun_dir * cloud_t).xz * cloud_noise_scale
+			+ cloud_wind * TIME;
+		cloud_coverage = cloud_coverage_from_noise(textureLod(cloud_noise, cloud_uv, 0.0).r);
+	}
+	ALBEDO *= 1.0 - cloud_coverage * cloud_shadow_strength;
 }
 
 void light() {

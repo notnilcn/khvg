@@ -12,7 +12,7 @@ fn texture(texture_id: &str, res_path2d: &str, res_path3d: &str, kind: TextureKi
 pub fn seed_default_textures(ctx: &ReducerContext) {
     TextureEntry::seed(ctx, texture("Enemy", "res://Textures/Enemies/Knight.tres", "res://Assets/3D/skeletons/Skeleton_Warrior.fbx", TextureKind::Enemy));
     TextureEntry::seed(ctx, texture("Archer", "res://Textures/Enemies/Archer.tres", "res://Assets/3D/skeletons/Skeleton_Rogue.fbx", TextureKind::Enemy));
-    TextureEntry::seed(ctx, texture("Knight", "res://Textures/Players/Knight.tres", "res://Assets/3D/characters/Knight.fbx", TextureKind::Player));
+    TextureEntry::seed(ctx, texture("Knight", "res://Textures/Players/Knight.tres", "res://Assets/3D/Universal Base Characters[Standard]/Base Characters/Godot - UE/Superhero_Female_FullBody.gltf", TextureKind::Player));
     TextureEntry::seed(ctx, texture("Arrow", "res://Textures/Attacks/Arrow.tres", "res://Assets/3D/accesiories/arrow_bow.fbx", TextureKind::Projectile));
     TextureEntry::seed(ctx, texture("Helmet", "res://Textures/Items/Armor/Helmet.tres", "", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Hat", "res://Textures/Items/Accesories/Hat.tres", "", TextureKind::Item));
@@ -32,7 +32,64 @@ pub fn seed_default_textures(ctx: &ReducerContext) {
 
     TextureEntry::seed(ctx, texture("Rock", "res://Textures/World/Decor/Props/Rock.tres", "res://Assets/3D/KayKit_Medieval_Hexagon_Pack/decoration/nature/rock_single_A.fbx", TextureKind::Environment));
     TextureEntry::seed(ctx, texture("RockShadow", "res://Textures/World/Decor/Shadows/Rock.tres", "", TextureKind::Environment));
-}   
+}
+
+fn animation(animation_id: &str, res_path: &str, clip_name: &str, kind: AnimationKind) -> AnimationEntry {
+    AnimationEntry { animation_id: animation_id.to_string(), res_path: res_path.to_string(), clip_name: clip_name.to_string(), kind }
+}
+
+// Universal Animation Library 1+2 clips (Quaternius "Universal" rig — shared by the Universal
+// Base Characters and the Modular Fantasy outfits). animation_id is "<lib>/<clip>" so identically
+// named clips across libraries (A_TPose) never collide; the client merges clips under this id.
+// clip_name is the IMPORTED clip name: Godot's glTF importer strips the "_Loop" suffix (and
+// bakes loop_mode into the clip instead), so e.g. "Walk_Loop" in the glb is "Walk" here.
+pub fn seed_default_animations(ctx: &ReducerContext) {
+    const UAL1: &str = "res://Assets/3D/Universal Animation Library[Standard]/Unreal-Godot/UAL1_Standard.glb";
+    const UAL2: &str = "res://Assets/3D/Universal Animation Library 2[Standard]/Unreal-Godot/UAL2_Standard.glb";
+    use AnimationKind::*;
+    let ual1: [(&str, AnimationKind); 43] = [
+        ("A_TPose", Emote), ("Crouch_Fwd", Locomotion), ("Crouch_Idle", Locomotion),
+        ("Dance", Emote), ("Death01", Emote), ("Driving", Locomotion),
+        ("Fixing_Kneeling", Interaction), ("Hit_Chest", Combat), ("Hit_Head", Combat),
+        ("Idle", Emote), ("Idle_Talking", Emote), ("Idle_Torch", Emote),
+        ("Interact", Interaction), ("Jog_Fwd", Locomotion), ("Jump_Land", Locomotion),
+        ("Jump", Locomotion), ("Jump_Start", Locomotion), ("PickUp_Table", Interaction),
+        ("Pistol_Aim_Down", Combat), ("Pistol_Aim_Neutral", Combat), ("Pistol_Aim_Up", Combat),
+        ("Pistol_Idle", Combat), ("Pistol_Reload", Combat), ("Pistol_Shoot", Combat),
+        ("Punch_Cross", Combat), ("Punch_Jab", Combat), ("Push", Locomotion),
+        ("Roll", Locomotion), ("Sitting_Enter", Emote), ("Sitting_Exit", Emote),
+        ("Sitting_Idle", Emote), ("Sitting_Talking", Emote),
+        ("Spell_Simple_Enter", Combat), ("Spell_Simple_Exit", Combat),
+        ("Spell_Simple_Idle", Combat), ("Spell_Simple_Shoot", Combat),
+        ("Sprint", Locomotion), ("Swim_Fwd", Locomotion), ("Swim_Idle", Locomotion),
+        ("Sword_Attack", Combat), ("Sword_Idle", Combat), ("Walk_Formal", Locomotion),
+        ("Walk", Locomotion),
+    ];
+    let ual2: [(&str, AnimationKind); 43] = [
+        ("A_TPose", Emote), ("Chest_Open", Interaction), ("ClimbUp_1m", Locomotion),
+        ("Consume", Interaction), ("Farm_Harvest", Interaction), ("Farm_PlantSeed", Interaction),
+        ("Farm_Watering", Interaction), ("Hit_Knockback", Combat), ("Idle_FoldArms", Emote),
+        ("Idle_Lantern", Emote), ("Idle_No", Emote), ("Idle_Rail_Call", Interaction),
+        ("Idle_Rail", Emote), ("Idle_Shield_Break", Emote), ("Idle_Shield", Emote),
+        ("Idle_TalkingPhone", Emote), ("LayToIdle", Emote), ("Melee_Hook", Combat),
+        ("Melee_Hook_Rec", Combat), ("NinjaJump_Idle", Locomotion),
+        ("NinjaJump_Land", Locomotion), ("NinjaJump_Start", Locomotion),
+        ("OverhandThrow", Combat), ("Shield_Dash", Locomotion), ("Shield_OneShot", Combat),
+        ("Slide_Exit", Locomotion), ("Slide", Locomotion), ("Slide_Start", Locomotion),
+        ("Sword_Block", Combat), ("Sword_Dash", Locomotion), ("Sword_Heavy_Combo", Combat),
+        ("Sword_Regular_A", Combat), ("Sword_Regular_A_Rec", Combat),
+        ("Sword_Regular_B", Combat), ("Sword_Regular_B_Rec", Combat),
+        ("Sword_Regular_C", Combat), ("Sword_Regular_Combo", Combat),
+        ("TreeChopping", Interaction), ("Walk_Carry", Locomotion), ("Yes", Emote),
+        ("Zombie_Idle", Emote), ("Zombie_Scratch", Combat), ("Zombie_Walk_Fwd", Locomotion),
+    ];
+    for (clip, kind) in ual1 {
+        AnimationEntry::seed(ctx, animation(&format!("ual1/{clip}"), UAL1, clip, kind));
+    }
+    for (clip, kind) in ual2 {
+        AnimationEntry::seed(ctx, animation(&format!("ual2/{clip}"), UAL2, clip, kind));
+    }
+}
 
 // Allow-list of overlay/base tag pairs — absence of a rule means that overlay never layers on
 // that base. Clear-and-reinsert (no natural pair key to upsert against) so this stays correct
@@ -291,6 +348,16 @@ impl Seed for TextureEntry {
             ctx.db.texture_entry().texture_id().update(data);
         } else {
             ctx.db.texture_entry().insert(data);
+        }
+    }
+}
+
+impl Seed for AnimationEntry {
+    fn seed(ctx: &ReducerContext, data: AnimationEntry) {
+        if ctx.db.animation_entry().animation_id().find(&data.animation_id).is_some() {
+            ctx.db.animation_entry().animation_id().update(data);
+        } else {
+            ctx.db.animation_entry().insert(data);
         }
     }
 }

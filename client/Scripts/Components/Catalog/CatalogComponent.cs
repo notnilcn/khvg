@@ -5,8 +5,9 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// Caches the static catalog subscription views — AllItems, AllEnchantments, AllTextures —
-/// and resolves lookups against them (GetItem/GetEnchantment/GetEnchantments/GetResPath2D/GetResPath3D).
+/// Caches the static catalog subscription views — AllItems, AllEnchantments, AllTextures,
+/// AllAnimations — and resolves lookups against them (GetItem/GetEnchantment/GetEnchantments/
+/// GetResPath2D/GetResPath3D/GetAnimation/GetAnimations).
 /// Emits <see cref="EnchantmentsChanged"/> whenever the enchantment view changes so UI
 /// observers can refresh (logic moved out of GameManager.cs). Rows arrive via the child
 /// TableBinderComponents declared inline in game.tscn (signals wired in the editor;
@@ -33,11 +34,13 @@ public partial class CatalogComponent : Component
     private readonly Dictionary<string, string> texture3DCache = new();
     private readonly Dictionary<string, SpacetimeDB.Types.Item> itemCache = new();
     private readonly Dictionary<string, Enchantment> enchantmentCache = new();
+    private readonly Dictionary<string, AnimationEntry> animationCache = new();
 
-    /// Child binders (declared inline in game.tscn) feeding the three catalog views.
+    /// Child binders (declared inline in game.tscn) feeding the catalog views.
     private TableBinderComponent allTexturesBinder = null!;
     private TableBinderComponent allItemsBinder = null!;
     private TableBinderComponent allEnchantmentsBinder = null!;
+    private TableBinderComponent allAnimationsBinder = null!;
 
     public override void _Ready()
     {
@@ -45,6 +48,7 @@ public partial class CatalogComponent : Component
         allTexturesBinder = GetNode<TableBinderComponent>("AllTexturesBinder");
         allItemsBinder = GetNode<TableBinderComponent>("AllItemsBinder");
         allEnchantmentsBinder = GetNode<TableBinderComponent>("AllEnchantmentsBinder");
+        allAnimationsBinder = GetNode<TableBinderComponent>("AllAnimationsBinder");
     }
 
     // --- TableBinderComponent signal handlers (wired in game.tscn) ---
@@ -63,6 +67,17 @@ public partial class CatalogComponent : Component
         var textureId = ((TextureEntry)allTexturesBinder.LastDeletedRow!).TextureId;
         texture2DCache.Remove(textureId);
         texture3DCache.Remove(textureId);
+    }
+
+    private void OnAnimationRow()
+    {
+        var animation = (AnimationEntry)allAnimationsBinder.LastRow!;
+        animationCache[animation.AnimationId] = animation;
+    }
+
+    private void OnAnimationRowDeleted()
+    {
+        animationCache.Remove(((AnimationEntry)allAnimationsBinder.LastDeletedRow!).AnimationId);
     }
 
     private void OnItemRow()
@@ -110,4 +125,9 @@ public partial class CatalogComponent : Component
         enchantmentCache.TryGetValue(enchantmentId, out var enchantment) ? enchantment : null;
 
     public IEnumerable<Enchantment> GetEnchantments() => enchantmentCache.Values;
+
+    public AnimationEntry? GetAnimation(string animationId) =>
+        animationCache.TryGetValue(animationId, out var animation) ? animation : null;
+
+    public IEnumerable<AnimationEntry> GetAnimations() => animationCache.Values;
 }

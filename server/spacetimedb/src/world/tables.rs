@@ -80,6 +80,28 @@ pub struct TextureEntry {
     pub kind: TextureKind,
 }
 
+#[derive(SpacetimeType, Clone)]
+pub enum AnimationKind {
+    Locomotion,
+    Combat,
+    Interaction,
+    Emote,
+}
+
+// A named animation clip living inside a source scene's AnimationPlayer (e.g. the Universal
+// Animation Library glbs). The client merges clips from res_path into the active character
+// model's AnimationPlayer under animation_id and plays them by that id.
+#[table(accessor = animation_entry, public)]
+pub struct AnimationEntry {
+    #[primary_key]
+    pub animation_id: String,
+    // Scene whose AnimationPlayer holds the clip (merged into the character model at runtime).
+    pub res_path: String,
+    // Clip name inside that scene's AnimationPlayer.
+    pub clip_name: String,
+    pub kind: AnimationKind,
+}
+
 // Allow-list: an overlay tagged `overlay_tag` may be layered on a base tagged `allowed_base_tag`.
 // Default is deny — most overlay/base pairs don't make sense, so compatibility is opt-in.
 #[table(accessor = layering_rule, public)]

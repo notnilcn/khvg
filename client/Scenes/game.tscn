@@ -58,6 +58,11 @@ script = ExtResource("4_81klo")
 ReplayExistingRows = true
 TableName = "AllEnchantments"
 
+[node name="AllAnimationsBinder" type="Node" parent="CatalogComponent" unique_id=731247700]
+script = ExtResource("4_81klo")
+ReplayExistingRows = true
+TableName = "AllAnimations"
+
 [node name="EntitySpawnerComponent" type="Node" parent="." unique_id=1156729041]
 script = ExtResource("5_tgy6u")
 LocalPlayerScene = ExtResource("6_cwurv")
@@ -115,6 +120,7 @@ script = ExtResource("30_bcliff")
 [node name="CameraRigComponent" type="Node" parent="." unique_id=429369880]
 script = ExtResource("14_lmoi6")
 PitchMax = 0.0
+DefaultPitch = -70.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
 layer = -1
@@ -126,7 +132,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-stretch = true
 
 [node name="SubViewport" type="SubViewport" parent="3D/SubViewportContainer" unique_id=803652251]
 transparent_bg = true
@@ -270,6 +275,37 @@ offset_top = 8.0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
 
+[node name="PixelArtButton" type="Button" parent="DebugOverlay" unique_id=341770228]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -110.0
+offset_top = 8.0
+offset_right = -10.0
+offset_bottom = 39.0
+text = "3dpixelart"
+
+[node name="CharacterAssetsButton" type="Button" parent="DebugOverlay" unique_id=561242893]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -240.0
+offset_top = 8.0
+offset_right = -140.0
+offset_bottom = 39.0
+text = "char assets"
+
+[node name="CharacterAnimationsButton" type="Button" parent="DebugOverlay" unique_id=846150327]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -370.0
+offset_top = 8.0
+offset_right = -270.0
+offset_bottom = 39.0
+grow_horizontal = 0
+text = "char anims"
+
 [connection signal="RowDeleted" from="CatalogComponent/AllTexturesBinder" to="CatalogComponent" method="OnTextureRowDeleted"]
 [connection signal="RowInserted" from="CatalogComponent/AllTexturesBinder" to="CatalogComponent" method="OnTextureRow"]
 [connection signal="RowUpdated" from="CatalogComponent/AllTexturesBinder" to="CatalogComponent" method="OnTextureRow"]
@@ -279,6 +315,9 @@ theme_override_constants/outline_size = 4
 [connection signal="RowDeleted" from="CatalogComponent/AllEnchantmentsBinder" to="CatalogComponent" method="OnEnchantmentRowDeleted"]
 [connection signal="RowInserted" from="CatalogComponent/AllEnchantmentsBinder" to="CatalogComponent" method="OnEnchantmentRow"]
 [connection signal="RowUpdated" from="CatalogComponent/AllEnchantmentsBinder" to="CatalogComponent" method="OnEnchantmentRow"]
+[connection signal="RowDeleted" from="CatalogComponent/AllAnimationsBinder" to="CatalogComponent" method="OnAnimationRowDeleted"]
+[connection signal="RowInserted" from="CatalogComponent/AllAnimationsBinder" to="CatalogComponent" method="OnAnimationRow"]
+[connection signal="RowUpdated" from="CatalogComponent/AllAnimationsBinder" to="CatalogComponent" method="OnAnimationRow"]
 [connection signal="RowDeleted" from="EntitySpawnerComponent/LocalPlayerBinder" to="EntitySpawnerComponent" method="OnLocalPlayerDelete"]
 [connection signal="RowInserted" from="EntitySpawnerComponent/LocalPlayerBinder" to="EntitySpawnerComponent" method="OnLocalPlayerInsert"]
 [connection signal="RowDeleted" from="EntitySpawnerComponent/NearbyRemotePlayersBinder" to="EntitySpawnerComponent" method="OnNearbyRemotePlayerDelete"]

@@ -19,6 +19,14 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	[Signal] public delegate void AimSettingsChangedEventHandler();
 	[Signal] public delegate void StatsChangedEventHandler();
 
+	// Catalog animation ids (AllAnimations rows, e.g. "ual1/Walk") played on the 3D model
+	// per state — runtime-editable from the debug overlay's character animations panel.
+	[ExportGroup("Character Animations")]
+	[Export] public string IdleAnimation { get; set; } = "ual1/Idle";
+	[Export] public string WalkAnimation { get; set; } = "ual1/Walk";
+	[Export] public string FireAnimation { get; set; } = "ual1/Pistol_Shoot";
+	[Export] public string InteractAnimation { get; set; } = "ual1/Interact";
+
 	public static LocalPlayer? Local { get; private set; }
 
 	// IEntity — LocalPlayer can't derive from Entity (it needs CharacterBody2D), so it
@@ -76,6 +84,8 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	private string? _model3DPath;
 	// Profile texture waiting on world3D to be cached in _Ready (profile rows can land first).
 	private string? _pendingModelTextureId;
+	// Debug one-shot animations hold off the state-driven locomotion override until this tick.
+	private ulong _manualAnimationUntilMs;
 	private AnimatedSprite2D sprite = null!;
 	private PositionSyncComponent? positionSync;
 	private ElevationMapComponent? elevationMap;
@@ -143,9 +153,61 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		if (path == null || (_model3D != null && path == _model3DPath)) return;
 		_model3D?.Dispose();
 		_model3DPath = path;
-		_model3D = new CharacterModel3D(GD.Load<PackedScene>(path), GlobalPosition, world3D,
-			groundY: elevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
+		_model3D = CreateModel3D(path);
 		world3D.SetCameraFollowTarget(_model3D.Node);
+	}
+
+	/// Swaps the 3D character model to an arbitrary scene path — the debug overlay's
+	/// "character assets" panel. A later profile-row refresh rebuilds the catalog model.
+	public void SetCharacterAsset(string resPath)
+	{
+		if (world3D == null)
+		{
+			GD.PushWarning("SetCharacterAsset: no 3D world (2D mode).");
+			return;
+		}
+		if (_model3D != null && resPath == _model3DPath) return;
+		_model3D?.Dispose();
+		_model3DPath = resPath;
+		_model3D = CreateModel3D(resPath);
+		world3D.SetCameraFollowTarget(_model3D.Node);
+	}
+
+	private CharacterModel3D CreateModel3D(string path)
+	{
+		var model = new CharacterModel3D(GD.Load<PackedScene>(path), GlobalPosition, world3D!,
+			groundY: elevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
+		GraftCatalogAnimations(model);
+		return model;
+	}
+
+	/// Merges every catalog animation clip (AllAnimations rows) into the model's
+	/// AnimationPlayer under its animation_id. Safe to re-call — existing ids skip (rows can
+	/// land after the model is built; PlayCharacterAnimation re-grafts on demand).
+	private void GraftCatalogAnimations(CharacterModel3D model)
+	{
+		foreach (var entry in GameManager.GetAnimations())
+			model.AddAnimationClip(entry.AnimationId, entry.ResPath, entry.ClipName);
+	}
+
+	/// Debug one-shot (the debug overlay's "character animations" panel, and the interact
+	/// action): plays any catalog clip now, holding off the state-driven locomotion override
+	/// until it has run through once.
+	public void PlayCharacterAnimation(string animationId)
+	{
+		if (_model3D == null) return;
+		if (!_model3D.HasAnimation(animationId))
+		{
+			GraftCatalogAnimations(_model3D);
+			if (!_model3D.HasAnimation(animationId))
+			{
+				GD.PushWarning($"PlayCharacterAnimation: {animationId} not available on the current model.");
+				return;
+			}
+		}
+		_model3D.PlayAnimation(animationId);
+		var length = Mathf.Max(_model3D.GetAnimationLength(animationId), 0.5f);
+		_manualAnimationUntilMs = Time.GetTicksMsec() + (ulong)(length * 1000);
 	}
 
 
@@ -181,7 +243,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		// the sprite/3D-model facing, CombatComponent's aim, and the screen-rotation report.
 		if (Input.IsActionPressed("fire"))
 		{
-			Rotation = GlobalPosition.AngleToPoint(GetCursorWorldPosition());
+			Rotation = GlobalPosition.AngleToPoint(GetCursorWorldPosition()) + Mathf.Pi/2;
 		}
 
 		Velocity = ExternalMovementActive ? Vector2.Zero : input * (positionSync?.CurrentSpeed ?? BaseSpeed);
@@ -196,6 +258,13 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		var anim = input != Vector2.Zero ? "Walk" : "Idle";
 		if (sprite.SpriteFrames != null && sprite.SpriteFrames.HasAnimation(anim))
 			sprite.Play(anim);
+
+		// 3D model: mapped catalog clips per state (exports — the debug overlay edits them).
+		if (_model3D != null && Time.GetTicksMsec() >= _manualAnimationUntilMs)
+			_model3D.PlayAnimation(Input.IsActionPressed("fire") ? FireAnimation
+				: input != Vector2.Zero ? WalkAnimation : IdleAnimation);
+		if (Input.IsActionJustPressed("interact"))
+			PlayCharacterAnimation(InteractAnimation);
 	}
 
 	// Per-hex elevation prediction (server re-validates in report_movement — uphill

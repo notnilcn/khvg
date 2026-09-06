@@ -4,11 +4,12 @@ Runtime node paths for every interactive UI element, extracted from the `.tscn` 
 
 ## `main_menu.tscn` — runtime root `/root/MainMenu` (script `LobbyGui.cs`)
 
-The scene has **two** nodes named `MainMenu`: the root `Control` and a child `CenterContainer`.
+The scene has **two** nodes named `MainMenu`: the root `Control` and a child `CenterContainer`. On startup the `--2D`/`--3D` launch args (per-instance debug options) press the matching mode button automatically, so a play session leaves this scene immediately — these paths exist for menu-UI testing only.
 
 | Path | Control | Effect |
 |---|---|---|
-| `/root/MainMenu/MainMenu/Panel/CenterContainer/VBoxContainer/CharSlots` | Button "Character Slots" | `ChangeSceneToFile("res://Scenes/game.tscn")` — only way into gameplay; frees this tree |
+| `/root/MainMenu/MainMenu/Panel/CenterContainer/VBoxContainer/TwoD` | Button "2D" | Sets `GameVisuals.Mode = TwoD`, `ChangeSceneToFile("res://Scenes/game.tscn")` — frees this tree |
+| `/root/MainMenu/MainMenu/Panel/CenterContainer/VBoxContainer/ThreeD` | Button "3D" | Sets `GameVisuals.Mode = ThreeD`, same scene change |
 | `/root/MainMenu/MainMenu/Panel/CenterContainer/VBoxContainer/ServerList` | Button "Server List" | Shows `ServerList` panel, hides `MainMenu` + `Settings` |
 | `/root/MainMenu/MainMenu/Panel/CenterContainer/VBoxContainer/Settings` | Button "Settings" | Shows `Settings` panel, hides `MainMenu` + `ServerList` |
 | `/root/MainMenu/ServerList/Panel/CenterContainer/Button` | Button "BACK" | Back to main menu |
@@ -17,6 +18,8 @@ The scene has **two** nodes named `MainMenu`: the root `Control` and a child `Ce
 Startup: only the `MainMenu` CenterContainer is visible. `ServerList`/`Settings` panels start hidden; their `ScrollContainer/VBoxContainer`s are empty placeholders. No Quit button, no text fields.
 
 ## Lobby — `/root/<root>/UI/LobbyComponent` (from `lobby_component.tscn`)
+
+On game-scene entry the `--charN` launch arg presses the Nth panel's Join button automatically (the last panel when fewer than N profiles exist), so this UI only stays on screen when the identity has no profiles. The paths below cover that case (and the create/delete flows).
 
 | Path (relative to `LobbyComponent`) | Control | Effect |
 |---|---|---|
@@ -32,7 +35,7 @@ Each profile panel (all named `Profile`, auto-suffixed — access via `VBoxConta
 - `Delete` — Button "DELETE": `DeleteProfile` reducer + frees the panel. Same visibility guard.
 - `Name`, `ID` — Labels. `Icon` — Sprite2D.
 
-Join success: `LobbyComponent.visible == false` and `/root/<root>/LocalPlayer` exists. No wired path back to the lobby from gameplay.
+In-world check: `LobbyComponent.visible == false` and `/root/<root>/LocalPlayer` exists. No wired path back to the lobby from gameplay.
 
 ## Inventory — base `/root/<root>/LocalPlayer/InventoryCanvas/InventoryPanel/`
 

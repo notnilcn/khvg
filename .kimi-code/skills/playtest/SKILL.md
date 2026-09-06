@@ -2,18 +2,18 @@
 name: playtest
 description: Playtest and verify the game end-to-end — drive the running Godot client via open-godot-mcp (click/hover/drag/keys with node-path-resolved coordinates) and use the `spacetime` CLI for server-side setup/inspection (seed, spawn, give, SQL, logs)
 type: prompt
-whenToUse: When playtesting, verifying, or driving the running game — navigating menus, joining the world, toggling inventory, dragging items, opening chests, spawning enemies, giving items, reading tables, or checking module logs. Covers both the Godot MCP tools and the `spacetime` CLI.
+whenToUse: When playtesting, verifying, or driving the running game — entering the world, toggling inventory, dragging items, opening chests, spawning enemies, giving items, reading tables, or checking module logs. Covers both the Godot MCP tools and the `spacetime` CLI.
 ---
 
 # Playtest: Godot MCP + SpacetimeDB CLI
 
 ## Which tool for what — read this first
 
-**Anything a real player does in the game goes through the Godot MCP tools** (recipes below): joining the world, moving, clicking UI, dragging items, opening chests. Do **not** join the world or drive gameplay with `spacetime call` — a CLI `join_world` creates a server-side player with no client attached, so nothing renders, input paths go untested, and it doesn't verify what you were asked to verify. If the task is "join the game / play / test this flow", use the Godot recipes.
+**Anything a real player does in the game goes through the Godot MCP tools** (recipes below): entering the world, moving, clicking UI, dragging items, opening chests. Do **not** join the world or drive gameplay with `spacetime call` — a CLI `join_world` creates a server-side player with no client attached, so nothing renders, input paths go untested, and it doesn't verify what you were asked to verify. If the task is "join the game / play / test this flow", use the Godot recipes.
 
 **The `spacetime` CLI is for server-side setup and inspection around that playtest**: claiming admin, spawning/despawning enemies, giving items, seeding chests, reading tables with SQL, and checking module logs. Use it to arrange the scenario, then verify the result in the running client via the Godot tools (or via SQL when the check is purely server-side state).
 
-Typical combined flow: `spacetime call bullethell claim_admin` → `spawn_enemy`/`give_item` to set up → Godot MCP recipes to join and play → verify via `godot_exec eval` on live nodes and/or `spacetime sql`.
+Typical combined flow: `spacetime call bullethell claim_admin` → `spawn_enemy`/`give_item` to set up → `godot_game play` (auto-enters the world) → verify via `godot_exec eval` on live nodes and/or `spacetime sql`.
 
 # Part 1 — Godot MCP playtest recipes
 
@@ -28,12 +28,13 @@ The full node-path tables are in `${KIMI_SKILL_DIR}/references/ui-map.md` — re
    "/c/Users/Clinton/g/Godot/Godot-stable_mono_win64_console.exe" -e --path "C:/Users/Clinton/g/main/client"
    ```
    Wait ~20 s, then `godot_instance list` → the instance appears already adopted; `godot_health check` to verify the bridge (port 6970).
-2. **Always run from `main_menu.tscn`** — the project's main scene and the only correct entry point. `godot_editor_edit open_scene res://Scenes/main_menu.tscn`, then `godot_game play` **with `scene: "res://Scenes/main_menu.tscn"` passed explicitly** — never run whatever scene happens to be open in the editor, and never start from `game.tscn` directly (that's the gameplay scene; reaching it through the menu's Character Slots button is recipe 1, which also exercises the menu).
-3. Logs: `godot_log get` / `godot_log errors`. Eval is the escape hatch for any live node (`find_child`, signal lists, `get(...)` exports).
+2. **Always run from `main_menu.tscn`** — the project's main scene and the only correct entry point. `godot_editor_edit open_scene res://Scenes/main_menu.tscn`, then `godot_game play` **with `scene: "res://Scenes/main_menu.tscn"` passed explicitly** — never run whatever scene happens to be open in the editor, and never start from `game.tscn` directly (that's the gameplay scene).
+3. **Entering the world is automatic.** Each instance's launch args (saved in the editor's per-instance debug options) do the whole menu flow: `--2D`/`--3D` picks the visual mode on the main menu and `--charN` joins the Nth character profile (the last profile when fewer than N exist), so a played instance lands directly in the world with no menu clicking. Verify with the **in-world check**: eval `get_node("/root/game/UI/LobbyComponent").visible == false` **and** `get_node("/root/game/LocalPlayer")` exists (pid-stamped per the standing rule). If the lobby stays visible instead, the instance's identity has no profiles — see recipe 1.
+4. Logs: `godot_log get` / `godot_log errors`. Eval is the escape hatch for any live node (`find_child`, signal lists, `get(...)` exports).
 
 ## Standing rules
 
-- **The editor runs 2 game instances by default** (Debug → Run Multiple Instances; instance 1 gets `--p1`, instance 2 gets `--p2`). Every runtime tool (`godot_exec`/`godot_input`/`godot_runtime_state`/`godot_screenshot`/`godot_game_time`/`godot_profiler`) targets **instance 1** unless you pass `"instance": <n>` in `params` — verified end-to-end for `eval`, `input sequence`, and `screenshot`; each instance is driven fully independently (own scene tree, own SpacetimeDB connection). `godot_game` action `instances` lists them (pid, launch args, ready). All recipes below work unchanged per instance — just add `instance` when you mean the second one. Both instances run the same window size, so resolved coordinates are usually identical across instances — still resolve per instance, never hardcode. `godot_log get` accepts `instance` too (game entries are tagged).
+- **The editor runs 2 game instances by default** (Debug → Run Multiple Instances; instance 1 gets `--p1 --3D --char1`, instance 2 gets `--p2 --3D --char1`). Every runtime tool (`godot_exec`/`godot_input`/`godot_runtime_state`/`godot_screenshot`/`godot_game_time`/`godot_profiler`) targets **instance 1** unless you pass `"instance": <n>` in `params` — verified end-to-end for `eval`, `input sequence`, and `screenshot`; each instance is driven fully independently (own scene tree, own SpacetimeDB connection). `godot_game` action `instances` lists them (pid, launch args, ready). All recipes below work unchanged per instance — just add `instance` when you mean the second one. Both instances run the same window size, so resolved coordinates are usually identical across instances — still resolve per instance, never hardcode. `godot_log get` accepts `instance` too (game entries are tagged).
 - **Prove which instance answered with a pid stamp** — include `"pid": OS.get_process_id()` in verification evals and compare against `godot_game instances`. Two identical-looking lobbies can make a silently misrouted call look successful; the pid cannot lie. Don't trust the OS windows either: a minimized instance shows a stale preview, and injected input hits the in-engine viewport regardless of window state.
 - **Sequence timeouts = check the frame loop, not the plugin.** `input sequence` awaits `process_frame` between steps, so a stalled game loop times out while plain `eval` still answers (the debugger channel is serviced separately). Diagnose: read `Engine.get_process_frames()` twice — no advance = stalled. Known cause: the client's "Connection lost" state can freeze the main loop; the only fix is `godot_game stop` + `play` (fresh instances), then redo the flow. `frame_delay: 0` skips the await but press+release land in the same frame and clicks don't register — it's a probe, not a workaround.
 
@@ -89,29 +90,21 @@ Eval `get_node("<path>").grab_focus()` → `godot_input text` with the text. (Or
 
 ## Recipes
 
-### 1. Menu → gameplay
+### 1. Create a profile (only when the lobby is showing)
 
-CLICK `/root/MainMenu/MainMenu/Panel/CenterContainer/VBoxContainer/CharSlots` (the "Character Slots" button — the only way into gameplay; `ChangeSceneToFile` frees the old tree). The lobby shows as `/root/game/UI/LobbyComponent`.
-
-### 2. Create a profile
+The lobby stays visible only when the instance's identity has no profiles to auto-join. Create one, then re-play so the launch args join it:
 
 1. CLICK `/root/<root>/UI/LobbyComponent/Panel/Create` ("CREATE", toggles `CreateProfilePanel` visible).
 2. TYPE `/root/<root>/UI/LobbyComponent/CreateProfilePanel/Panel/LineEdit` with the profile name.
 3. CLICK `/root/<root>/UI/LobbyComponent/CreateProfilePanel/Panel/Create`.
 4. Verify: eval the child count of `/root/<root>/UI/LobbyComponent/ScrollContainer/VBoxContainer` increased by one.
+5. `godot_game stop` + `play` again — the `--charN` arg now auto-joins. Confirm with the in-world check.
 
-### 3. Join the world
-
-CLICK the Join button of profile *i*, where the `<path>` is built by index: `get_node("/root/<root>/UI/LobbyComponent/ScrollContainer/VBoxContainer").get_child(i).get_node("Join")` — run the CLICK primitive's eval on that expression (still returning the flat `{"x", "y"}` dict), then the one `sequence` click. (All profile panels are named `Profile` with auto-suffixed siblings — index-based access is the reliable route.)
-
-- **Join and Delete no-op while `CreateProfilePanel` is visible** — close it first if a click does nothing.
-- Join succeeded when eval shows `get_node("/root/<root>/UI/LobbyComponent").visible == false` **and** `get_node("/root/<root>/LocalPlayer")` exists.
-
-### 4. Toggle the inventory menu
+### 2. Toggle the inventory menu
 
 PRESS `Tab`. This flips two containers under `/root/<root>/LocalPlayer/InventoryCanvas/InventoryPanel/`: `Menu` (backpack + sidebars) shows while `Hotbar` hides. **Hotbar slots can't be hovered or dragged while the menu is open.** `Equipment` and `StatusBarComponent` stay visible either way.
 
-### 5. Move an item (drag slot → slot)
+### 3. Move an item (drag slot → slot)
 
 DRAG from the source slot to the target slot (paths in `references/ui-map.md`; example target: `/root/<root>/LocalPlayer/InventoryCanvas/InventoryPanel/Menu/Backpack/Row - 1/General - 7`).
 
@@ -119,26 +112,26 @@ DRAG from the source slot to the target slot (paths in `references/ui-map.md`; e
 - Fires the `SwapSlots(from, to)` reducer; verify via the target slot's `Icon.Texture` becoming non-null or via `InventoryChanged`-driven state.
 - Right-click (press) a **backpack** slot with an item = `DropItem`. Left-click (press) an ability slot (32–37) = activate ability.
 
-### 6. Allocate a stat point
+### 4. Allocate a stat point
 
 With the menu open (Tab), CLICK `/root/<root>/LocalPlayer/InventoryCanvas/InventoryPanel/Menu/StatsSidebar/Panel/<Stat>Plus` where `<Stat>` is `Strength`/`Wisdom`/`Dexterity`/`DamageDealer`/`Supporter`/`Artisan`. All six buttons share one visibility flag — they're only visible while `UnspentPoints > 0`; check `visible` before clicking.
 
-### 7. Open a chest and take an item
+### 5. Open a chest and take an item
 
 1. Move the local player inside the chest's interact radius (48px circle on `/root/<root>/Chest/InteractComponent`): drive WASD via `godot_input key`, or eval-set the player's position for pure UI testing.
 2. PRESS `Shift+E` — toggles `/root/<root>/Chest/ChestCanvas/ChestPanel` visible. It closes when the player steps out, so don't move afterwards.
 3. DRAG from a chest entry (`Chest/ChestCanvas/ChestPanel/MarginContainer/VBoxContainer/ItemsGrid/ChestSlot`, auto-suffixed `ChestSlot2`, …) onto any player `SlotComponent`. Fires `TakeFromChest`.
 - **Re-resolve chest entry paths after every content change** — entries are freed and re-instantiated, so cached paths/indexes go stale. Later chests also get auto-suffixed root names; locate them by iterating `/root/<root>` children, not by exact name.
 
-### 8. Two players in one world (multi-instance)
+### 6. Two players in one world (multi-instance)
 
-Run recipe 1 (Character Slots) then recipe 3 (Join) twice: once plain (instance 1), once with `"instance": 2` in every `params`. Both clients join the same world as separate players — this is the standard setup for testing multiplayer sync (remote-player rendering, combat between players, shared chests/loot). Verify with the Join-succeeded check on **each** instance (`LobbyComponent.visible == false` and `LocalPlayer` exists, pid-stamped per the standing rule), then confirm each instance sees the other's player as a `NonLocalPlayer` node under `/root/<root>`. Run the two instances **sequentially** — don't fire runtime calls at both in the same batch.
+Play starts both instances and each auto-joins the world on its own (`--p1`/`--p2` give them distinct identities, each with its own `--charN` profile pick) — this is the standard setup for testing multiplayer sync (remote-player rendering, combat between players, shared chests/loot). Verify with the in-world check on **each** instance (pid-stamped per the standing rule, `"instance": 2` in `params` for the second), then confirm each instance sees the other's player as a `NonLocalPlayer` node under `/root/<root>`. Run the two instances **sequentially** — don't fire runtime calls at both in the same batch.
 
 ## When a recipe fails
 
 Check in order: (1) is the target `visible` and is the parent chain visible (menu open/closed state); (2) did the click land — `gui_get_hovered_control()` after a motion to the same point; (3) `godot_log errors` for reducer or script errors; (4) only then `godot_screenshot game` and read the PNG to see what's actually on screen.
 
-**"Connection lost" state:** if the SpacetimeDB connection drops, the game shows `/root/<root>/UI/ConnectionLostComponent` with a `CenterContainer/Panel/VBoxContainer/Reconnect` button and all player nodes despawn — a joined instance can look like it "went back to the menu". Reconnect = CLICK that button, but it returns through `main_menu.tscn` with **no auto-rejoin** — redo recipes 1 and 3. If the frame loop has also stalled (sequence timeouts; see the standing rule), skip the button and just `godot_game stop` + `play`. First confirm the server is actually up (`spacetime server ping https://khvgames.com/server`) or reconnect will fail again.
+**"Connection lost" state:** if the SpacetimeDB connection drops, the game shows `/root/<root>/UI/ConnectionLostComponent` with a `CenterContainer/Panel/VBoxContainer/Reconnect` button and all player nodes despawn — a joined instance can look like it "went back to the menu". Reconnect = CLICK that button; it returns through `main_menu.tscn`, where the launch args carry it straight back into the world — confirm with the in-world check. If the frame loop has also stalled (sequence timeouts; see the standing rule), skip the button and just `godot_game stop` + `play`. First confirm the server is actually up (`spacetime server ping https://khvgames.com/server`) or reconnect will fail again.
 
 # Part 2 — SpacetimeDB CLI (`bullethell` module)
 

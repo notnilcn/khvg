@@ -1,3 +1,6 @@
+i dont really give a shit about any of this shit tbh since i'm a solo dev.
+i wanted to hire a bunch of people but i got a fuck ton of scammers and bots so idc anymore.
+
 # High Concept
 Wizards tried to implement world-wide long range teleportation gates but they fucked it up and caused 75% of the planet to be patchwork-merged with other worlds which have monsters and stuff. Kinda post apocalyptic.
 # Demographic

@@ -5,6 +5,11 @@ public partial class LobbyGui : Control
 {
 	public override void _Ready()
 	{
+		// --2D/--3D launch args auto-pick the visual mode (see LaunchArgs). Deferred:
+		// ChangeSceneToFile removes the current scene, which is illegal while the tree
+		// is still busy adding it (i.e. anywhere inside _Ready).
+		if (LaunchArgs.ForcedMode == VisualMode.TwoD) CallDeferred(MethodName.TwoDPressed);
+		else if (LaunchArgs.ForcedMode == VisualMode.ThreeD) CallDeferred(MethodName.ThreeDPressed);
 	}
 
 	public void TwoDPressed()

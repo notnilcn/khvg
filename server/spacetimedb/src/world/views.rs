@@ -9,6 +9,11 @@ fn all_textures(ctx: &AnonymousViewContext) -> impl Query<TextureEntry> {
     ctx.from.texture_entry().build()
 }
 
+#[spacetimedb::view(accessor = all_animations, public)]
+fn all_animations(ctx: &AnonymousViewContext) -> impl Query<AnimationEntry> {
+    ctx.from.animation_entry().build()
+}
+
 #[spacetimedb::view(accessor = nearby_terrain_tiles, public)]
 fn nearby_terrain_tiles(ctx: &ViewContext) -> impl Query<TriangleTile> {
     let empty = ctx.from.triangle_tile().r#where(|t| t.tile_id.eq(u64::MAX)).build();

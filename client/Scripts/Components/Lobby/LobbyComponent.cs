@@ -3,7 +3,9 @@ using Godot;
 using PhantomCamera;
 using SpacetimeDB;
 using SpacetimeDB.Types;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// The lobby / character-select UI: the CharSlots markup lives in lobby_component.tscn
@@ -40,6 +42,38 @@ public partial class LobbyComponent : ControlComponent
             .GetNodeOrNull<Node2D>("MainMenuPhantomCamera2D")?.AsPhantomCamera2D();
 
         ShowLobby();
+        if (LaunchArgs.CharIndex is int charIndex)
+            QueueAutoJoin(charIndex);
+    }
+
+    // --charN: join the Nth profile once the full list is known — the lobby wave's
+    // applied callback (rows already cached on a re-shown lobby, so join straight away).
+    private void QueueAutoJoin(int charIndex)
+    {
+        var subscriber = GetSibling<TableSubscriber>();
+        if (subscriber == null) return;
+        if (subscriber.LobbySubActive) AutoJoin(charIndex);
+        else
+        {
+            void Handler() { subscriber.LobbyApplied -= Handler; AutoJoin(charIndex); }
+            subscriber.LobbyApplied += Handler;
+        }
+    }
+
+    private void AutoJoin(int charIndex)
+    {
+        var conn = DatabaseConnector.Instance?.Conn;
+        if (conn == null) return;
+        // ProfileId order matches the panel order (cache iteration is primary-key order).
+        var profiles = conn.Db.LocalPlayerProfiles.Iter().OrderBy(p => p.ProfileId).ToList();
+        if (profiles.Count == 0)
+        {
+            GD.PrintErr($"[LobbyComponent] --char{charIndex}: no profiles to join.");
+            return;
+        }
+        var profile = profiles[Math.Min(charIndex, profiles.Count) - 1];
+        GD.Print($"[LobbyComponent] --char{charIndex}: auto-joining profile {profile.ProfileName}");
+        OnJoinPressed(profile);
     }
 
     public void ShowLobby()

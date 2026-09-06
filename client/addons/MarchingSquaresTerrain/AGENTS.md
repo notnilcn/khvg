@@ -39,6 +39,7 @@ Upstream docs (read these first for feature work):
 
 ## Gotchas
 - Everything is `@tool` — scripts run in the editor. Guard editor-only APIs and be careful with scene-tree assumptions at load.
+- The terrain shader has an **opt-in cloud-shadow block** (`Effects.Cloud_Shadows` uniform group in `mst_terrain.gdshaderinc`, off by default): the game's 3dpixelart pipeline pushes the uniforms at runtime via `register_cloud_material` on the shared `terrain_material` and the shader darkens albedo by the sun-projected coverage (albedo-side, not `light()`-side — the toon light caps at 0.3 against sky ambient, so attenuating it alone is barely visible). Keep the uniform names/coverage math in sync with `3dpixelart/shaders/pixel_art_object.gdshader`.
 - Vertex "colors" are texture indices, not tint colors: the shader (`resources/shaders/mst_terrain.gdshaderinc`) reads the pair of "on" channels across COLOR/CUSTOM0 as one of 16 slots (0 = rr, 1 = rg, … 15 = aa). Slot 15 (aa) = void (top fan skipped). Only textures 1–6 can have grass. Encode/decode via `MSTHexMath.slot_to_color_pair`/`color_pair_to_slot`.
 - Elevations are integer levels (`y = elevation * level_height`), stored per hex — there is no per-vertex heightmap anymore.
 - Terrain settings are stored on the `MarchingSquaresTerrain` node via storage-only exports and edited through the plugin's Terrain Settings tool, not the default inspector.

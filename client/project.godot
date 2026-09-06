@@ -267,8 +267,7 @@ _frozen_on_start=false
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+renderer/rendering_method.mobile="forward_plus"
 shading/overrides/force_vertex_shading=true
 shading/overrides/force_lambert_over_burley=true
 anti_aliasing/screen_space_roughness_limiter/enabled=false

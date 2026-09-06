@@ -3,7 +3,7 @@ use std::time::Duration;
 use crate::world::hex::{chunk_center_hex, hex_area, hex_to_world, inv_hexmod, spiral_chunk_index, world_to_chunk};
 use crate::world::wrap::wrap_world_pos;
 use crate::world::terrain::{internal_generate_world_manual, internal_generate_world_proc};
-use crate::world::tables::{building_tile, map_config, texture_entry, BuildingTile, MapConfig, TextureEntry};
+use crate::world::tables::{animation_entry, building_tile, map_config, texture_entry, AnimationEntry, BuildingTile, MapConfig, TextureEntry, TextureKind};
 use crate::world::def_tables::{biome_def, biome_region_def, world_def, BiomeDef, BiomeRegionDef, ManualBiomeInput, WorldDef};
 use crate::player::tables::*;
 use crate::player::methods::*;
@@ -76,6 +76,61 @@ pub fn upsert_texture_entry(ctx: &ReducerContext, entry: TextureEntry) -> Result
         ctx.db.texture_entry().texture_id().update(entry);
     } else {
         ctx.db.texture_entry().insert(entry);
+    }
+    Ok(())
+}
+
+/// Field-wise upsert into `texture_entry` for admin CLI authoring: looks up the
+/// row by `texture_id`, inserting when absent and updating when present.
+/// Pass "_" for any of `res_path2d`/`res_path3d`/`kind` to preserve the
+/// existing entry's value for that column on update. "_" on insert is an
+/// error — a new row has nothing to preserve, so pass explicit values
+/// (use "" for `res_path3d` when there is no 3D representation).
+/// `kind` is parsed case-insensitively: Player|Enemy|Projectile|Item|Environment.
+#[spacetimedb::reducer]
+pub fn upsert_texture_entry_fields(ctx: &ReducerContext, texture_id: String, res_path2d: String, res_path3d: String, kind: String) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if texture_id.is_empty() { return Err("texture_id cannot be empty.".to_string()); }
+    if texture_id == "_" { return Err("texture_id cannot be \"_\".".to_string()); }
+    fn parse_kind(s: &str) -> Result<TextureKind, String> {
+        match s.to_ascii_lowercase().as_str() {
+            "player" => Ok(TextureKind::Player),
+            "enemy" => Ok(TextureKind::Enemy),
+            "projectile" => Ok(TextureKind::Projectile),
+            "item" => Ok(TextureKind::Item),
+            "environment" => Ok(TextureKind::Environment),
+            _ => Err(format!("Unknown texture kind '{}'. Expected Player|Enemy|Projectile|Item|Environment or \"_\" to preserve.", s)),
+        }
+    }
+    if let Some(prev) = ctx.db.texture_entry().texture_id().find(&texture_id) {
+        let next = TextureEntry {
+            texture_id,
+            res_path2d: if res_path2d == "_" { prev.res_path2d.clone() } else { res_path2d },
+            res_path3d: if res_path3d == "_" { prev.res_path3d.clone() } else { res_path3d },
+            kind: if kind == "_" { prev.kind.clone() } else { parse_kind(&kind)? },
+        };
+        ctx.db.texture_entry().texture_id().update(next);
+    } else {
+        if res_path2d == "_" || res_path3d == "_" || kind == "_" {
+            return Err(format!("Texture '{}' not found; pass explicit values for all fields to insert (\"_\" only preserves an existing entry).", texture_id));
+        }
+        ctx.db.texture_entry().insert(TextureEntry {
+            texture_id,
+            res_path2d,
+            res_path3d,
+            kind: parse_kind(&kind)?,
+        });
+    }
+    Ok(())
+}
+
+#[spacetimedb::reducer]
+pub fn upsert_animation_entry(ctx: &ReducerContext, entry: AnimationEntry) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    if ctx.db.animation_entry().animation_id().find(&entry.animation_id).is_some() {
+        ctx.db.animation_entry().animation_id().update(entry);
+    } else {
+        ctx.db.animation_entry().insert(entry);
     }
     Ok(())
 }
