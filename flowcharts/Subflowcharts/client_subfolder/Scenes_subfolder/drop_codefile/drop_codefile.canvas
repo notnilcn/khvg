@@ -14,7 +14,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Items/Drop-_dot_-cs-_hashtag_-Drop-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Drop_codefile/Drop_codefile-_dot_-canvas-_colon_-script",
@@ -28,7 +27,8 @@
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Components_subfolder-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Scenes_subfolder-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-scene",
-				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-scene"
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-scene",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

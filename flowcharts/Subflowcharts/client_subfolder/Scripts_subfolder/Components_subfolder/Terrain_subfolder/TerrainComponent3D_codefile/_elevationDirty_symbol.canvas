@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "9d9363a588bf0f96",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/TerrainComponent3D.cs",
+			"subpath": "#_elevationDirty",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

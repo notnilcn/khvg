@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "718b60069aac4dfc",
+			"type": "file",
+			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
+			"subpath": "#GraftCatalogAnimations",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

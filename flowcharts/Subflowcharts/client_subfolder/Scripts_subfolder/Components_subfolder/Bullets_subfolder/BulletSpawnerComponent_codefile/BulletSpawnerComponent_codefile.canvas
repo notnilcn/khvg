@@ -1,11 +1,31 @@
 {
 	"nodes": [
 		{
+			"id": "28c2ef1838b2c510",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/_elevationMap_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "f2892406998bd270",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/_Process_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "32a8907553af52d0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/_pruneBuffer_symbol.canvas",
+			"color": "5",
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/_Ready_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/ApplyBulletTexture_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +55,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/ApplyMotion_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "62217723a035fae0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/Band_symbol.canvas",
+			"color": "5",
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/bulletPatternEventBinder_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/BulletSpawnerComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/bulletTextureCache_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +105,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/BulletTransform_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "af22af49af7d765c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/currentBandElevation_symbol.canvas",
+			"color": "5",
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/currentMaxSpeedBonus_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +135,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/currentSpeedAcceleration_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2a13772172a0da60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/currentTextureId_symbol.canvas",
+			"color": "5",
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/EnemyBulletSpawner_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +165,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/HashToUnit_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cf32630108697994",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/Hide2DIn3DMode_symbol.canvas",
+			"color": "5",
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/Jitter_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +195,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/liveEnemyBullets_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 8740,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ce924c260341b4f4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/livePlayerBullets_symbol.canvas",
+			"color": "5",
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +215,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/MakeSpeedDataEntry_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 9660,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +225,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/OnBulletPatternRowInserted_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 10120,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +235,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 10580,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +245,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/PelletSeed_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 11040,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -185,7 +255,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/PlayerBulletSpawner_symbol.canvas",
 			"color": "5",
-			"x": 8280,
+			"x": 11500,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -195,7 +265,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/ProjectileTextureAngleOffset_symbol.canvas",
 			"color": "5",
-			"x": 8740,
+			"x": 11960,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -205,17 +275,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/PruneInterval_symbol.canvas",
 			"color": "5",
-			"x": 9200,
+			"x": 12420,
 			"y": 0,
 			"width": 400,
 			"height": 400
 		},
 		{
-			"id": "4a894bc9f4bb8166",
+			"id": "ce38b94363c3be74",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/PruneLiveEnemyBullets_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/PruneLiveBullets_symbol.canvas",
 			"color": "5",
-			"x": 9660,
+			"x": 12880,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -225,7 +295,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/PruneThreshold_symbol.canvas",
 			"color": "5",
-			"x": 10120,
+			"x": 13340,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -235,7 +305,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/pruneTimer_symbol.canvas",
 			"color": "5",
-			"x": 10580,
+			"x": 13800,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -245,7 +315,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/ResolveTargetAngle_symbol.canvas",
 			"color": "5",
-			"x": 11040,
+			"x": 14260,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -255,7 +325,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/ResolveTargetPosition_symbol.canvas",
 			"color": "5",
-			"x": 11500,
+			"x": 14720,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -265,7 +335,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SetSpeed_symbol.canvas",
 			"color": "5",
-			"x": 11960,
+			"x": 15180,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -275,7 +345,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SetupEnemyBullets_symbol.canvas",
 			"color": "5",
-			"x": 12420,
+			"x": 15640,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -285,7 +355,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SetupPlayerBullets_symbol.canvas",
 			"color": "5",
-			"x": 12880,
+			"x": 16100,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -295,7 +365,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnControllable_symbol.canvas",
 			"color": "5",
-			"x": 13340,
+			"x": 16560,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -305,7 +375,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnCurtain_symbol.canvas",
 			"color": "5",
-			"x": 13800,
+			"x": 17020,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -315,7 +385,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnEnemyBullet_symbol.canvas",
 			"color": "5",
-			"x": 14260,
+			"x": 17480,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -325,7 +395,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnEnemyBulletFan_symbol.canvas",
 			"color": "5",
-			"x": 14720,
+			"x": 17940,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -335,7 +405,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnExplosion_symbol.canvas",
 			"color": "5",
-			"x": 15180,
+			"x": 18400,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -345,7 +415,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnPlayerBullet_symbol.canvas",
 			"color": "5",
-			"x": 15640,
+			"x": 18860,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -355,7 +425,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnPlayerBullets_symbol.canvas",
 			"color": "5",
-			"x": 16100,
+			"x": 19320,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -365,7 +435,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnRing_symbol.canvas",
 			"color": "5",
-			"x": 16560,
+			"x": 19780,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -375,7 +445,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnShotgun_symbol.canvas",
 			"color": "5",
-			"x": 17020,
+			"x": 20240,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -385,7 +455,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnSingle_symbol.canvas",
 			"color": "5",
-			"x": 17480,
+			"x": 20700,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -395,7 +465,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SpawnVolley_symbol.canvas",
 			"color": "5",
-			"x": 17940,
+			"x": 21160,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -405,7 +475,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/SplitMix64_symbol.canvas",
 			"color": "5",
-			"x": 18400,
+			"x": 21620,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5ee39ee8156b4a30",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/TextureId_symbol.canvas",
+			"color": "5",
+			"x": 22080,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2bdaa768d7903d10",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletSpawnerComponent_codefile/TrackedBulletInfo_symbol.canvas",
+			"color": "5",
+			"x": 22540,
 			"y": 0,
 			"width": 400,
 			"height": 400

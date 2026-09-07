@@ -21,11 +21,31 @@
 			"height": 400
 		},
 		{
+			"id": "67c2204439276b70",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/AutoJoin_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "ac89e357ebf3e644",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/FailJoin_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ecc8c013f6dc74a6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/Handler_symbol.canvas",
+			"color": "5",
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/HideLobby_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/joinPending_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/LobbyComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/mainMenuPCam2D_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnCreatePanelPressed_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnCreatePressed_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnDeletePressed_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnJoinPressed_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnJoinTimeout_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnJoinWorldResult_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnProfileRowInserted_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/profilePanels_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +185,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/profilesBinder_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 8280,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "566bdeb3ea1c04ba",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/QueueAutoJoin_symbol.canvas",
+			"color": "5",
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/LobbyComponent_codefile/ShowLobby_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -187,6 +217,13 @@
 			"tags": [
 				"includeInAggregateFlowchart",
 				"codefile",
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_profiles-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-create_profile-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-rpc",

@@ -1,34 +1,229 @@
 {
-	"nodes":[
-		{"id":"14ad81da70556260","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas","color":"5","x":0,"y":500,"width":400,"height":400},
-		{"id":"907b62b678c6b608","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/UI_subfolder.canvas","color":"5","x":460,"y":500,"width":400,"height":400},
-		{"id":"8074404aaec0f508","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/drop_codefile/drop_codefile.canvas","color":"5","x":460,"y":0,"width":400,"height":400},
-		{"id":"3e75a59f8a2cb088","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder.canvas","color":"5","x":920,"y":0,"width":400,"height":400},
-		{"id":"16dfd093be813eb8","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas","color":"5","x":0,"y":1000,"width":400,"height":400},
-		{"id":"8466c29300c138b0","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas","color":"5","x":460,"y":1000,"width":400,"height":400},
-		{"id":"048460f3ecc5ac34","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas","color":"5","x":1380,"y":0,"width":400,"height":400},
-		{"id":"990bb4d7f9f8d1c0","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/Weapon_subfolder.canvas","color":"5","x":1270,"y":1000,"width":400,"height":400},
-		{"id":"51fdfc79fa8f5462","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas","color":"5","x":920,"y":500,"width":400,"height":400},
-		{"id":"803eb7303a83a4c0","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas","color":"5","x":930,"y":2000,"width":400,"height":400},
-		{"id":"4414d6e4f159cb40","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas","color":"5","x":810,"y":2500,"width":400,"height":400},
-		{"id":"23ad101c7f63b520","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas","color":"5","x":810,"y":1500,"width":400,"height":400}
+	"nodes": [
+		{
+			"id": "14ad81da70556260",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "907b62b678c6b608",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/UI_subfolder.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8074404aaec0f508",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/drop_codefile/drop_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3e75a59f8a2cb088",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/Catalog_subfolder.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "16dfd093be813eb8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8466c29300c138b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "048460f3ecc5ac34",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "990bb4d7f9f8d1c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/Weapon_subfolder.canvas",
+			"color": "5",
+			"x": 1270,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "51fdfc79fa8f5462",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "803eb7303a83a4c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas",
+			"color": "5",
+			"x": 930,
+			"y": 2000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4414d6e4f159cb40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
+			"color": "5",
+			"x": 810,
+			"y": 2500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "23ad101c7f63b520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
+			"color": "5",
+			"x": 810,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		}
 	],
-	"edges":[
-		{"id":"b37fd37a5d9ac57c","fromNode":"14ad81da70556260","fromSide":"bottom","toNode":"16dfd093be813eb8","toSide":"top","toEnd":"arrow","label":"script"},
-		{"id":"742aa2a2a8fc5938","fromNode":"907b62b678c6b608","fromSide":"bottom","toNode":"8466c29300c138b0","toSide":"top","toEnd":"arrow","label":"script"},
-		{"id":"8e527e2fd4e6b126","fromNode":"8074404aaec0f508","fromSide":"bottom","toNode":"51fdfc79fa8f5462","toSide":"top","toEnd":"arrow","label":"script"},
-		{"id":"93371b4222141d5c","fromNode":"8074404aaec0f508","fromSide":"bottom","toNode":"14ad81da70556260","toSide":"top","toEnd":"arrow","label":"scene"},
-		{"id":"a68823c50772711c","fromNode":"16dfd093be813eb8","fromSide":"bottom","toNode":"23ad101c7f63b520","toSide":"top","toEnd":"arrow","label":"rpc"},
-		{"id":"0c6e3c0006b62000","fromNode":"8466c29300c138b0","fromSide":"bottom","toNode":"23ad101c7f63b520","toSide":"top","toEnd":"arrow","label":"rpc"},
-		{"id":"f15d6020137306c0","fromNode":"990bb4d7f9f8d1c0","fromSide":"bottom","toNode":"23ad101c7f63b520","toSide":"top","toEnd":"arrow","label":"rpc"},
-		{"id":"14c76f2cbe8fa668","fromNode":"803eb7303a83a4c0","fromSide":"bottom","toNode":"23ad101c7f63b520","toSide":"top","toEnd":"arrow"},
-		{"id":"50b95b0a813a0d44","fromNode":"803eb7303a83a4c0","fromSide":"bottom","toNode":"4414d6e4f159cb40","toSide":"top","toEnd":"arrow"},
-		{"id":"75e573610247e2aa","fromNode":"4414d6e4f159cb40","fromSide":"bottom","toNode":"23ad101c7f63b520","toSide":"top","toEnd":"arrow"},
-		{"id":"dfe63c46f64327cc","fromNode":"4414d6e4f159cb40","fromSide":"bottom","toNode":"803eb7303a83a4c0","toSide":"top","toEnd":"arrow"},
-		{"id":"a9ac7258fc6eae60","fromNode":"23ad101c7f63b520","fromSide":"bottom","toNode":"803eb7303a83a4c0","toSide":"top","toEnd":"arrow"}
-	],
-	"metadata":{
-		"version":"1.0-1.0",
-		"frontmatter":{}
-	}
+	"edges": [
+		{
+			"id": "b37fd37a5d9ac57c",
+			"fromNode": "14ad81da70556260",
+			"fromSide": "bottom",
+			"toNode": "16dfd093be813eb8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "742aa2a2a8fc5938",
+			"fromNode": "907b62b678c6b608",
+			"fromSide": "bottom",
+			"toNode": "8466c29300c138b0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "8e527e2fd4e6b126",
+			"fromNode": "8074404aaec0f508",
+			"fromSide": "bottom",
+			"toNode": "51fdfc79fa8f5462",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "93371b4222141d5c",
+			"fromNode": "8074404aaec0f508",
+			"fromSide": "bottom",
+			"toNode": "14ad81da70556260",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "scene"
+		},
+		{
+			"id": "a68823c50772711c",
+			"fromNode": "16dfd093be813eb8",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "0c6e3c0006b62000",
+			"fromNode": "8466c29300c138b0",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "f15d6020137306c0",
+			"fromNode": "990bb4d7f9f8d1c0",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "14c76f2cbe8fa668",
+			"fromNode": "803eb7303a83a4c0",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "50b95b0a813a0d44",
+			"fromNode": "803eb7303a83a4c0",
+			"fromSide": "bottom",
+			"toNode": "4414d6e4f159cb40",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "75e573610247e2aa",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "dfe63c46f64327cc",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "803eb7303a83a4c0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a9ac7258fc6eae60",
+			"fromNode": "23ad101c7f63b520",
+			"fromSide": "bottom",
+			"toNode": "803eb7303a83a4c0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	]
 }

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "81c3463b896b9d54",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/methods.rs",
+			"subpath": "#rotate_radians",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,15 +1,22 @@
 #[compute]
 #version 450
 
-// ProPixelizer "apply pixelization map" pass (port of SRP/ApplyPixelizationMap.shader).
+// Apply-pixelization-map pass.
 //
 // Samples the original scene color at the snapped anchor UV and writes it to
 // the scene color buffer. Occlusion fix: if the original scene depth at this
 // pixel is in front of the snapped sample, keep the original color so
 // non-pixelized geometry overlapping pixelized objects is not smeared.
 //
-// Optionally applies palette-LUT color grading (port of SRP/ColorGrading.hlsl)
+// Optionally applies palette-LUT color grading
 // to pixelized pixels, dithered per macro-block.
+//
+// Additions over plain anchor replication:
+//   * smooth scroll: anchor += pixel_shift (integer sub-texel remainder shift)
+//     unless the pixel is pinned (stencil id probe with dilation).
+//   * upscale mode: nearest texel fetch vs linear-filtered (sharp-bilinear)
+//     anchor sample.
+//   * pinned subjects (id 255): Shift = 0, optional red debug tint.
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
@@ -20,10 +27,13 @@ layout(set = 0, binding = 3) uniform sampler2D scene_depth;
 layout(set = 0, binding = 4) uniform sampler2D metadata_depth;
 layout(set = 0, binding = 5) uniform sampler2D metadata;
 layout(set = 0, binding = 6) uniform sampler2D palette_lut;
+layout(set = 0, binding = 7) uniform sampler2D scene_color_linear;
 
 layout(push_constant, std430) uniform Params {
 	vec4 grading; // x: grading enabled (0/1), yzw: unused
 	vec4 debug; // x: debug view (0=off, 1=map, 2=metadata, 3=metadata depth)
+	vec4 shift; // xy: integer pixel shift (smooth scroll), z: smooth enabled, w: upscale_aa
+	vec4 pin; // x: pin dilate radius (px), y: debug pin mask, z: pin stencil id, w: unused
 } params;
 
 const float PIXELMAP_DELTA_MAX = 10.0;
@@ -31,12 +41,16 @@ const float MAXCOLOR = 16.0;
 const float RES = 16.0;
 const float DITHER_SIZE = 16.0;
 
-// PackingUtils.hlsl port: id (0-255) and pixel size (0-5) packed into G as
+// ID/size packing: id (0-255) and pixel size (0-5) packed into G as
 // (id + pixelSize * 256) / 4096. The white background decodes to size 16,
 // which is out of range and means "not pixelized".
 float metadata_pixel_size(float g) {
 	float ps = floor(round(g * 4096.0) / 256.0);
 	return ps <= 5.0 ? ps : 0.0;
+}
+
+float metadata_id(float g) {
+	return mod(round(g * 4096.0), 256.0);
 }
 
 // UnpackPixelMap: exact integer texel shift.
@@ -45,7 +59,22 @@ ivec2 unpack_pixel_map(ivec2 pixel, vec2 packed_shift, ivec2 size) {
 	return clamp(pixel + ivec2(shift), ivec2(0), size - 1);
 }
 
-// ColorGrading.hlsl
+// Pinned-subject probe (masked Shift=0): any metadata texel with the
+// pin stencil id inside the dilation radius pins this pixel.
+bool is_pinned(ivec2 pixel, ivec2 size) {
+	int r = int(ceil(params.pin.x));
+	for (int u = -r; u <= r; u++) {
+		for (int v = -r; v <= r; v++) {
+			ivec2 t = clamp(pixel + ivec2(u, v), ivec2(0), size - 1);
+			if (abs(metadata_id(texelFetch(metadata, t, 0).g) - params.pin.z) < 0.5) {
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+// Palette-LUT color grading (gamma space, macro-pixel dithered).
 vec3 color_grade(vec3 color, vec2 macro_pixel) {
 	// Grade in gamma space (the LUT stores sRGB colors).
 	vec3 orig = pow(clamp(color, vec3(0.0), vec3(64.0)), vec3(1.0 / 2.2));
@@ -75,6 +104,17 @@ void main() {
 	vec4 packed = texelFetch(anchor_map, pixel, 0);
 	ivec2 anchor = unpack_pixel_map(pixel, packed.rg, size);
 
+	bool pinned = is_pinned(pixel, size);
+	if (params.pin.y > 0.5 && pinned) {
+		imageStore(color_image, pixel, vec4(1.0, 0.0, 0.0, 1.0));
+		return;
+	}
+
+	// Smooth scroll: integer remainder shift for unpinned pixels only.
+	if (params.shift.z > 0.5 && !pinned) {
+		anchor = clamp(anchor + ivec2(int(params.shift.x), int(params.shift.y)), ivec2(0), size - 1);
+	}
+
 	if (params.debug.x > 2.5) {
 		imageStore(color_image, pixel, vec4(texelFetch(metadata_depth, pixel, 0).rrr, 1.0));
 		return;
@@ -86,7 +126,15 @@ void main() {
 		return;
 	}
 
-	vec4 color = texelFetch(scene_color_copy, anchor, 0);
+	vec4 color;
+	if (params.shift.w > 0.5) {
+		// Sharp-bilinear upscale: linear-filtered sample at the anchor texel
+		// center (identical to nearest at exact centers, softer under motion).
+		vec2 anchor_uv = (vec2(anchor) + 0.5) / vec2(size);
+		color = textureLod(scene_color_linear, anchor_uv, 0.0);
+	} else {
+		color = texelFetch(scene_color_copy, anchor, 0);
+	}
 	float original_depth = texelFetch(scene_depth, pixel, 0).r;
 	float pixelated_depth = texelFetch(metadata_depth, anchor, 0).r;
 

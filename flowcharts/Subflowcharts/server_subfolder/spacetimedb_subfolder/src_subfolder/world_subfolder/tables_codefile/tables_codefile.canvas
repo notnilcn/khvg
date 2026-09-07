@@ -1,11 +1,31 @@
 {
 	"nodes": [
 		{
+			"id": "d5a7d822ba992d7c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/AnimationEntry_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ae696cd21a45cfb0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/AnimationKind_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "83c0b3d549a5b828",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/BaseAdjacencyRule_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/BuildingTile_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/DecorGroundRule_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/LayeringRule_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/load_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/MapConfig_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2760,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -65,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/OverlayAdjacencyRule_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/TextureEntry_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/TextureKind_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400

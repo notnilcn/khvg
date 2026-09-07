@@ -110,13 +110,13 @@
 			"label": "bind"
 		},
 		{
-			"id": "eb05797342b6c400",
+			"id": "e57f1a24a9e8a938",
 			"fromNode": "30e96d437fcb3e10",
 			"fromSide": "bottom",
 			"toNode": "23ad101c7f63b520",
 			"toSide": "top",
 			"toEnd": "arrow",
-			"label": "rpc"
+			"label": "read"
 		},
 		{
 			"id": "efc2f30642c9adb4",

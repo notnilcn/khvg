@@ -66,6 +66,7 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemySpawnSchedule",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-ConsumableEffectSchedule",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed_default_textures",
+				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed_default_animations",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed_layering_rules",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed_adjacency_rules",
 				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed_decor_ground_rules",

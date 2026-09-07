@@ -1,9 +1,9 @@
 @tool
 class_name PixelArtOutlinePass
 extends CompositorEffect
-## Fullscreen outline detection over the metadata buffer
-## (port of SRP/OutlineDetection.shader). Runs PRE_OPAQUE on the main
-## viewport so the outline texture is ready when opaque objects draw.
+## Fullscreen outline detection over the metadata buffer.
+## Runs PRE_OPAQUE on the main viewport so the outline texture is ready
+## when opaque objects draw.
 
 ## Suppresses outlines where objects intersect.
 @export var depth_test_intersections := true
@@ -14,6 +14,14 @@ extends CompositorEffect
 @export var use_normal_edge_detection := true
 ## Higher values make crease detection less sensitive.
 @export var normal_edge_detection_sensitivity := 3.5
+## Master toggle; writes black when disabled.
+@export var pass_enabled := true
+## Second-derivative (FarCurve) depth outlines on top of ID edges.
+@export var depth_curve_enabled := false
+## FarCurve threshold for the depth second-derivative test.
+@export var depth_curve_threshold := 0.001
+## Fall back to the (-0.5, 0.5, 1) bias normal for degenerate packed normals.
+@export var normal_bias_fallback := true
 
 var rd: RenderingDevice
 var shader: RID
@@ -89,6 +97,10 @@ func _render_callback(p_callback_type: int, p_render_data: RenderData) -> void:
 		1.0 / maxf(normal_edge_detection_sensitivity, 0.001),
 		1.0 if depth_test_intersections else 0.0,
 		1.0 if use_normal_edge_detection else 0.0,
+		depth_curve_threshold,
+		1.0 if depth_curve_enabled else 0.0,
+		1.0 if normal_bias_fallback else 0.0,
+		1.0 if pass_enabled else 0.0,
 	])
 
 	var size := PixelArtSharedBuffers.outlines_size

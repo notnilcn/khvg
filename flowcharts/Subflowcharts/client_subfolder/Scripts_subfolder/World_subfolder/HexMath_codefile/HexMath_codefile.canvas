@@ -1,11 +1,31 @@
 {
 	"nodes": [
 		{
+			"id": "460ecab4d23370b8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/ChunkCenterHex_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "4e443ce5d4fbdfb2",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/HexMath (class)_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "281884b670016414",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/HexToLocal_symbol.canvas",
+			"color": "5",
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/HexToWorld_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/HexToWorld3D_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/SpiralIndex_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/Sqrt3_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/ToLowerRes_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/HexMath_codefile/WorldToHex_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400

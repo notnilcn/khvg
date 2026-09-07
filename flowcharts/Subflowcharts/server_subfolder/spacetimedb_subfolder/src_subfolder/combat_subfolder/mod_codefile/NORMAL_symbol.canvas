@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "af120e2cd10f13d0",
+			"type": "file",
+			"file": "server/spacetimedb/src/combat/mod.rs",
+			"subpath": "#NORMAL",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

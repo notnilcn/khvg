@@ -313,6 +313,16 @@ var BBoxHelper = class {
 // src/utils/canvas-helper.ts
 var import_obsidian2 = require("obsidian");
 var _CanvasHelper = class _CanvasHelper {
+  /** Added by an LLM agent (P1): single grid truth - the configured setting. */
+  static resolveGridSize(plugin) {
+    var _a, _b;
+    try {
+      const value = (_b = (_a = plugin == null ? void 0 : plugin.settings) == null ? void 0 : _a.getSetting) == null ? void 0 : _b.call(_a, "gridSize");
+      if (typeof value === "number" && Number.isFinite(value) && value > 0) return value;
+    } catch (e) {
+    }
+    return _CanvasHelper.GRID_SIZE;
+  }
   static canvasCommand(plugin, check, run) {
     return (checking) => {
       const canvas = plugin.getCurrentCanvas();
@@ -598,6 +608,10 @@ var _CanvasHelper = class _CanvasHelper {
   static alignToGrid(value, gridSize = this.GRID_SIZE) {
     return Math.round(value / gridSize) * gridSize;
   }
+  /** Added by an LLM agent (P1): align with the plugin's configured gridSize. */
+  static alignToPluginGrid(plugin, value) {
+    return _CanvasHelper.alignToGrid(value, _CanvasHelper.resolveGridSize(plugin));
+  }
   static getBestSideForFloatingEdge(sourcePos, target) {
     const targetBBox = target.getBBox();
     const possibleSides = ["top", "right", "bottom", "left"];
@@ -639,6 +653,8 @@ var _CanvasHelper = class _CanvasHelper {
     });
   }
 };
+/** Added by an LLM agent (P1): legacy fallback. Use resolveGridSize(plugin) -
+ * the single grid truth is the `gridSize` setting. */
 _CanvasHelper.GRID_SIZE = 20;
 _CanvasHelper.MAX_ALLOWED_ZOOM = 1;
 var CanvasHelper = _CanvasHelper;
@@ -646,11 +662,75 @@ var CanvasHelper = _CanvasHelper;
 // src/canvas-extensions/canvas-extension.ts
 var CanvasExtension = class {
   constructor(plugin) {
+    this.settingsChangedRef = null;
+    this.enabled = false;
     this.plugin = plugin;
-    const isEnabled = this.isEnabled();
-    if (!(isEnabled === true || this.plugin.settings.getSetting(isEnabled)))
+    if (!this.checkEnabled())
       return;
+    this.enabled = true;
     this.init();
+    try {
+      this.settingsChangedRef = this.plugin.app.workspace.on(
+        "advanced-canvas:settings-changed",
+        () => this.syncEnabledState()
+      );
+      this.plugin.registerEvent(this.settingsChangedRef);
+    } catch (e) {
+    }
+  }
+  /** Override to release listeners/observers/timers created in init(). */
+  dispose() {
+  }
+  /** Override to refresh already-initialized state when settings change. */
+  onSettingsEnabled() {
+  }
+  isActive() {
+    return this.enabled;
+  }
+  settingKey() {
+    const flag = this.isEnabled();
+    return flag === true ? null : flag;
+  }
+  checkEnabled() {
+    const key = this.settingKey();
+    if (key === null) return true;
+    try {
+      return !!this.plugin.settings.getSetting(key);
+    } catch (e) {
+      return false;
+    }
+  }
+  syncEnabledState() {
+    const shouldBeEnabled = this.checkEnabled();
+    if (shouldBeEnabled === this.enabled) {
+      if (shouldBeEnabled) {
+        try {
+          this.onSettingsEnabled();
+        } catch (e) {
+          console.error(`Advanced Canvas: onSettingsEnabled failed for ${this.constructor.name}:`, e);
+        }
+      }
+      return;
+    }
+    this.enabled = shouldBeEnabled;
+    if (shouldBeEnabled) {
+      try {
+        this.init();
+      } catch (e) {
+        console.error(`Advanced Canvas: late init failed for ${this.constructor.name}:`, e);
+      }
+      try {
+        this.onSettingsEnabled();
+      } catch (e) {
+        console.error(`Advanced Canvas: onSettingsEnabled failed for ${this.constructor.name}:`, e);
+      }
+    } else {
+      try {
+        this.dispose();
+      } catch (e) {
+        console.error(`Advanced Canvas: dispose failed for ${this.constructor.name}:`, e);
+      }
+    }
   }
 };
 
@@ -761,7 +841,9 @@ var EdgePathfindingMethod = class {
 };
 
 // src/canvas-extensions/advanced-styles/edge-pathfinding-methods/pathfinding-a-star.ts
-var MAX_MS_CALCULATION = 100;
+var MAX_MS_PER_EDGE = 100;
+var sharedBudgetResetFrame = 0;
+var sharedBudgetSpentMs = 0;
 var BASIC_DIRECTIONS = [
   { dx: 1, dy: 0 },
   { dx: -1, dy: 0 },
@@ -777,22 +859,107 @@ var DIAGONAL_DIRECTIONS = [
 var DIAGONAL_COST = Math.sqrt(2);
 var ROUND_PATH_RADIUS = 5;
 var SMOOTHEN_PATH_TENSION = 0.2;
-var Node = class {
+var MAX_EXPANSIONS = 2e4;
+var AStarNode = class {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+    this.fCost = 0;
     this.gCost = 0;
     this.hCost = 0;
-    this.fCost = 0;
     this.parent = null;
+    this.heapIndex = -1;
   }
-  // Only check for x and y, not gCost, hCost, fCost, or parent
-  inList(nodes) {
-    return nodes.some((n) => n.x === this.x && n.y === this.y);
+  key() {
+    return `${this.x},${this.y}`;
+  }
+};
+var MinHeap = class {
+  constructor() {
+    this.items = [];
+  }
+  get size() {
+    return this.items.length;
+  }
+  push(node) {
+    node.heapIndex = this.items.length;
+    this.items.push(node);
+    this.bubbleUp(node.heapIndex);
+  }
+  pop() {
+    if (this.items.length === 0) return void 0;
+    const top = this.items[0];
+    const last = this.items.pop();
+    if (this.items.length > 0) {
+      this.items[0] = last;
+      last.heapIndex = 0;
+      this.bubbleDown(0);
+    }
+    top.heapIndex = -1;
+    return top;
+  }
+  update(node) {
+    this.bubbleUp(node.heapIndex);
+  }
+  bubbleUp(index) {
+    while (index > 0) {
+      const parent = index - 1 >> 1;
+      if (this.items[index].fCost >= this.items[parent].fCost) break;
+      this.swap(index, parent);
+      index = parent;
+    }
+  }
+  bubbleDown(index) {
+    const length = this.items.length;
+    for (; ; ) {
+      const left = index * 2 + 1;
+      const right = left + 1;
+      let smallest = index;
+      if (left < length && this.items[left].fCost < this.items[smallest].fCost) smallest = left;
+      if (right < length && this.items[right].fCost < this.items[smallest].fCost) smallest = right;
+      if (smallest === index) break;
+      this.swap(index, smallest);
+      index = smallest;
+    }
+  }
+  swap(a, b) {
+    const tmp = this.items[a];
+    this.items[a] = this.items[b];
+    this.items[b] = tmp;
+    this.items[a].heapIndex = a;
+    this.items[b].heapIndex = b;
+  }
+};
+var ObstacleGrid = class {
+  constructor(obstacles, cellSize) {
+    this.cells = /* @__PURE__ */ new Map();
+    this.cellSize = Math.max(cellSize, 1);
+    for (const obstacle of obstacles) {
+      const minCellX = Math.floor(obstacle.minX / this.cellSize);
+      const maxCellX = Math.floor(obstacle.maxX / this.cellSize);
+      const minCellY = Math.floor(obstacle.minY / this.cellSize);
+      const maxCellY = Math.floor(obstacle.maxY / this.cellSize);
+      for (let cx = minCellX; cx <= maxCellX; cx++) {
+        for (let cy = minCellY; cy <= maxCellY; cy++) {
+          const key = `${cx},${cy}`;
+          let list = this.cells.get(key);
+          if (!list) {
+            list = [];
+            this.cells.set(key, list);
+          }
+          list.push(obstacle);
+        }
+      }
+    }
+  }
+  candidates(x, y) {
+    var _a;
+    return (_a = this.cells.get(`${Math.floor(x / this.cellSize)},${Math.floor(y / this.cellSize)}`)) != null ? _a : [];
   }
 };
 var EdgePathfindingAStar = class extends EdgePathfindingMethod {
   getPath() {
+    var _a;
     const nodeBBoxes = [...this.canvas.nodes.values()].filter((node) => {
       const nodeData = node.getData();
       if (nodeData.portal === true) return false;
@@ -804,7 +971,8 @@ var EdgePathfindingAStar = class extends EdgePathfindingMethod {
     const fromPosWithMargin = BBoxHelper.moveInDirection(this.fromPos, this.fromSide, 10);
     const toPosWithMargin = BBoxHelper.moveInDirection(this.toPos, this.toSide, 10);
     const allowDiagonal = this.plugin.settings.getSetting("edgeStylePathfinderAllowDiagonal");
-    const pathArray = this.aStarAlgorithm(fromPosWithMargin, toPosWithMargin, nodeBBoxes, CanvasHelper.GRID_SIZE / 2, allowDiagonal);
+    const gridSize = (_a = this.plugin.settings.getSetting("gridSize")) != null ? _a : CanvasHelper.GRID_SIZE;
+    const pathArray = this.aStarAlgorithm(fromPosWithMargin, toPosWithMargin, nodeBBoxes, gridSize / 2, allowDiagonal);
     if (!pathArray) return null;
     pathArray.splice(0, 0, this.fromPos);
     pathArray.splice(pathArray.length, 0, this.toPos);
@@ -822,88 +990,102 @@ var EdgePathfindingAStar = class extends EdgePathfindingMethod {
       rotateArrows: false
     };
   }
+  claimBudget() {
+    const frame = Math.floor(performance.now() / 16);
+    if (frame !== sharedBudgetResetFrame) {
+      sharedBudgetResetFrame = frame;
+      sharedBudgetSpentMs = 0;
+    }
+    return Math.max(0, MAX_MS_PER_EDGE - sharedBudgetSpentMs);
+  }
   aStarAlgorithm(fromPos, toPos, obstacles, gridResolution, allowDiagonal) {
-    const start = new Node(
+    const start = new AStarNode(
       Math.floor(fromPos.x / gridResolution) * gridResolution,
       Math.floor(fromPos.y / gridResolution) * gridResolution
     );
     if (this.fromSide === "right" && fromPos.x !== start.x) start.x += gridResolution;
     if (this.fromSide === "bottom" && fromPos.y !== start.y) start.y += gridResolution;
-    const end = new Node(
+    const end = new AStarNode(
       Math.floor(toPos.x / gridResolution) * gridResolution,
       Math.floor(toPos.y / gridResolution) * gridResolution
     );
     if (this.toSide === "right" && toPos.x !== end.x) end.x += gridResolution;
     if (this.toSide === "bottom" && toPos.y !== end.y) end.y += gridResolution;
-    if (this.isInsideObstacle(start, obstacles) || this.isInsideObstacle(end, obstacles)) return null;
-    const openSet = [start];
-    const closedSet = [];
+    const obstacleGrid = new ObstacleGrid(obstacles, gridResolution * 8);
+    if (this.isInsideObstacle(start, obstacleGrid) || this.isInsideObstacle(end, obstacleGrid)) return null;
+    const openHeap = new MinHeap();
+    const openByKey = /* @__PURE__ */ new Map();
+    const closedSet = /* @__PURE__ */ new Set();
+    start.hCost = this.heuristic(start, end, allowDiagonal);
+    start.fCost = start.hCost;
+    openHeap.push(start);
+    openByKey.set(start.key(), start);
+    const budgetMs = this.claimBudget();
+    if (budgetMs <= 0) return null;
     const startTimestamp = performance.now();
-    while (openSet.length > 0) {
-      let current = null;
-      let lowestFCost = Infinity;
-      for (const node of openSet) {
-        if (node.fCost < lowestFCost) {
-          current = node;
-          lowestFCost = node.fCost;
-        }
-      }
-      if (performance.now() - startTimestamp > MAX_MS_CALCULATION)
-        return null;
-      if (!current)
-        return null;
-      openSet.splice(openSet.indexOf(current), 1);
-      closedSet.push(current);
+    let expansions = 0;
+    const availableDirections = allowDiagonal ? [...BASIC_DIRECTIONS, ...DIAGONAL_DIRECTIONS] : BASIC_DIRECTIONS;
+    while (openHeap.size > 0) {
+      const current = openHeap.pop();
+      openByKey.delete(current.key());
+      if (closedSet.has(current.key())) continue;
+      closedSet.add(current.key());
       if (current.x === end.x && current.y === end.y)
         return [fromPos, ...this.reconstructPath(current), toPos].map((node) => ({ x: node.x, y: node.y }));
-      if (!(current.x === start.x && current.y === start.y) && this.isTouchingObstacle(current, obstacles))
+      if (++expansions > MAX_EXPANSIONS) return null;
+      if ((expansions & 63) === 0 && performance.now() - startTimestamp > budgetMs) {
+        sharedBudgetSpentMs += performance.now() - startTimestamp;
+        return null;
+      }
+      if (!(current.x === start.x && current.y === start.y) && this.isTouchingObstacle(current, obstacleGrid))
         continue;
-      for (const neighbor of this.getPossibleNeighbors(current, obstacles, gridResolution, allowDiagonal)) {
-        if (neighbor.inList(closedSet))
-          continue;
-        const tentativeGCost = current.gCost + (allowDiagonal ? this.getMovementCost({
-          dx: neighbor.x - current.x,
-          dy: neighbor.y - current.y
-        }) : 1);
-        if (!neighbor.inList(openSet) || tentativeGCost < neighbor.gCost) {
+      for (const direction of availableDirections) {
+        const nx = current.x + direction.dx * gridResolution;
+        const ny = current.y + direction.dy * gridResolution;
+        const key = `${nx},${ny}`;
+        if (closedSet.has(key)) continue;
+        if (this.isInsideObstacleXY(nx, ny, obstacleGrid)) continue;
+        const stepCost = direction.dx !== 0 && direction.dy !== 0 ? DIAGONAL_COST : 1;
+        const tentativeGCost = current.gCost + stepCost;
+        const existing = openByKey.get(key);
+        if (existing) {
+          if (tentativeGCost >= existing.gCost) continue;
+          existing.parent = current;
+          existing.gCost = tentativeGCost;
+          existing.fCost = tentativeGCost + existing.hCost;
+          openHeap.update(existing);
+        } else {
+          const neighbor = new AStarNode(nx, ny);
           neighbor.parent = current;
           neighbor.gCost = tentativeGCost;
-          neighbor.hCost = this.heuristic(neighbor, end);
+          neighbor.hCost = this.heuristic(neighbor, end, allowDiagonal);
           neighbor.fCost = neighbor.gCost + neighbor.hCost;
-          openSet.push(neighbor);
+          openHeap.push(neighbor);
+          openByKey.set(key, neighbor);
         }
       }
     }
     return null;
   }
-  // Manhattan distance
-  heuristic(node, end) {
-    return Math.abs(node.x - end.x) + Math.abs(node.y - end.y);
+  // Added by an LLM agent (P1-9): octile distance when diagonal moves are
+  // allowed (admissible for 8-directional grids); Manhattan otherwise. The old
+  // Manhattan-with-diagonal-costs heuristic was inadmissible and over-expanded.
+  heuristic(node, end, allowDiagonal) {
+    const dx = Math.abs(node.x - end.x);
+    const dy = Math.abs(node.y - end.y);
+    if (!allowDiagonal) return dx + dy;
+    return Math.max(dx, dy) + (DIAGONAL_COST - 1) * Math.min(dx, dy);
   }
   // Define a function to check if a position isn't inside any obstacle
   isTouchingObstacle(node, obstacles) {
-    return obstacles.some((obstacle) => BBoxHelper.insideBBox(node, obstacle, true));
+    return obstacles.candidates(node.x, node.y).some((obstacle) => BBoxHelper.insideBBox(node, obstacle, true));
   }
   isInsideObstacle(node, obstacles) {
-    return obstacles.some((obstacle) => BBoxHelper.insideBBox(node, obstacle, false));
+    return obstacles.candidates(node.x, node.y).some((obstacle) => BBoxHelper.insideBBox(node, obstacle, false));
   }
-  // Define a function to calculate movement cost based on direction
-  getMovementCost(direction) {
-    return direction.dx !== 0 && direction.dy !== 0 ? DIAGONAL_COST : 1;
-  }
-  getPossibleNeighbors(node, obstacles, gridResolution, allowDiagonal) {
-    const neighbors = [];
-    const availableDirections = allowDiagonal ? [...BASIC_DIRECTIONS, ...DIAGONAL_DIRECTIONS] : BASIC_DIRECTIONS;
-    for (const direction of availableDirections) {
-      const neighbor = new Node(
-        node.x + direction.dx * gridResolution,
-        node.y + direction.dy * gridResolution
-      );
-      neighbor.gCost = node.gCost + this.getMovementCost(direction);
-      if (this.isInsideObstacle(neighbor, obstacles)) continue;
-      neighbors.push(neighbor);
-    }
-    return neighbors;
+  isInsideObstacleXY(x, y, obstacles) {
+    const pos = { x, y };
+    return obstacles.candidates(x, y).some((obstacle) => BBoxHelper.insideBBox(pos, obstacle, false));
   }
   reconstructPath(node) {
     const path = [];
@@ -959,19 +1141,19 @@ var EdgePathfindingSquare = class extends EdgePathfindingMethod {
       } else {
         const fromDirection = BBoxHelper.direction(this.fromSide);
         const firstFromDetourPoint = BBoxHelper.isHorizontal(this.fromSide) ? {
-          x: CanvasHelper.alignToGrid(this.fromBBoxSidePos.x + fromDirection * CanvasHelper.GRID_SIZE),
+          x: CanvasHelper.alignToPluginGrid(this.plugin, this.fromBBoxSidePos.x + fromDirection * CanvasHelper.resolveGridSize(this.plugin)),
           y: this.fromBBoxSidePos.y
         } : {
           x: this.fromBBoxSidePos.x,
-          y: CanvasHelper.alignToGrid(this.fromBBoxSidePos.y + fromDirection * CanvasHelper.GRID_SIZE)
+          y: CanvasHelper.alignToPluginGrid(this.plugin, this.fromBBoxSidePos.y + fromDirection * CanvasHelper.resolveGridSize(this.plugin))
         };
         const toDirection = BBoxHelper.direction(this.toSide);
         const firstToDetourPoint = BBoxHelper.isHorizontal(this.toSide) ? {
-          x: CanvasHelper.alignToGrid(this.toBBoxSidePos.x + toDirection * CanvasHelper.GRID_SIZE),
+          x: CanvasHelper.alignToPluginGrid(this.plugin, this.toBBoxSidePos.x + toDirection * CanvasHelper.resolveGridSize(this.plugin)),
           y: this.toBBoxSidePos.y
         } : {
           x: this.toBBoxSidePos.x,
-          y: CanvasHelper.alignToGrid(this.toBBoxSidePos.y + toDirection * CanvasHelper.GRID_SIZE)
+          y: CanvasHelper.alignToPluginGrid(this.plugin, this.toBBoxSidePos.y + toDirection * CanvasHelper.resolveGridSize(this.plugin))
         };
         const newFromSide = BBoxHelper.isHorizontal(this.fromSide) ? firstFromDetourPoint.y < this.fromPos.y ? "top" : "bottom" : firstFromDetourPoint.x < firstToDetourPoint.x ? "right" : "left";
         zPath = this.getZPath(firstFromDetourPoint, firstToDetourPoint, newFromSide, BBoxHelper.getOppositeSide(newFromSide));
@@ -989,7 +1171,7 @@ var EdgePathfindingSquare = class extends EdgePathfindingMethod {
           if (BBoxHelper.isHorizontal(this.fromSide)) {
             const combinedBBoxes = BBoxHelper.combineBBoxes([this.fromNodeBBox, this.toNodeBBox]);
             firstFromDetourPoint = {
-              x: CanvasHelper.alignToGrid((direction > 0 ? combinedBBoxes.maxX : combinedBBoxes.minX) + direction * CanvasHelper.GRID_SIZE),
+              x: CanvasHelper.alignToPluginGrid(this.plugin, (direction > 0 ? combinedBBoxes.maxX : combinedBBoxes.minX) + direction * CanvasHelper.resolveGridSize(this.plugin)),
               y: this.fromBBoxSidePos.y
             };
             secondFromDetourPoint = {
@@ -1000,7 +1182,7 @@ var EdgePathfindingSquare = class extends EdgePathfindingMethod {
             const combinedBBoxes = BBoxHelper.combineBBoxes([this.fromNodeBBox, this.toNodeBBox]);
             firstFromDetourPoint = {
               x: this.fromBBoxSidePos.x,
-              y: CanvasHelper.alignToGrid((direction > 0 ? combinedBBoxes.maxY : combinedBBoxes.minY) + direction * CanvasHelper.GRID_SIZE)
+              y: CanvasHelper.alignToPluginGrid(this.plugin, (direction > 0 ? combinedBBoxes.maxY : combinedBBoxes.minY) + direction * CanvasHelper.resolveGridSize(this.plugin))
             };
             secondFromDetourPoint = {
               x: BBoxHelper.getCenterOfBBoxSide(this.fromNodeBBox, this.toSide).x,
@@ -1016,11 +1198,11 @@ var EdgePathfindingSquare = class extends EdgePathfindingMethod {
           if (isPathCollidingAtFrom) {
             const direction = BBoxHelper.direction(this.fromSide);
             const firstFromDetourPoint = BBoxHelper.isHorizontal(this.fromSide) ? {
-              x: CanvasHelper.alignToGrid(this.fromBBoxSidePos.x + direction * CanvasHelper.GRID_SIZE),
+              x: CanvasHelper.alignToPluginGrid(this.plugin, this.fromBBoxSidePos.x + direction * CanvasHelper.resolveGridSize(this.plugin)),
               y: this.fromBBoxSidePos.y
             } : {
               x: this.fromBBoxSidePos.x,
-              y: CanvasHelper.alignToGrid(this.fromBBoxSidePos.y + direction * CanvasHelper.GRID_SIZE)
+              y: CanvasHelper.alignToPluginGrid(this.plugin, this.fromBBoxSidePos.y + direction * CanvasHelper.resolveGridSize(this.plugin))
             };
             const useUPath = BBoxHelper.isHorizontal(this.fromSide) ? this.toPos.y > BBoxHelper.getCenterOfBBoxSide(this.fromNodeBBox, BBoxHelper.getOppositeSide(this.toSide)).y === BBoxHelper.direction(this.toSide) > 0 : this.toPos.x > BBoxHelper.getCenterOfBBoxSide(this.fromNodeBBox, BBoxHelper.getOppositeSide(this.toSide)).x === BBoxHelper.direction(this.toSide) > 0;
             const connectionSide = useUPath ? this.toSide : BBoxHelper.getOppositeSide(this.toSide);
@@ -1040,11 +1222,11 @@ var EdgePathfindingSquare = class extends EdgePathfindingMethod {
           if (isPathCollidingAtTo) {
             const direction = BBoxHelper.direction(this.toSide);
             const firstToDetourPoint = BBoxHelper.isHorizontal(this.toSide) ? {
-              x: CanvasHelper.alignToGrid(this.toBBoxSidePos.x + direction * CanvasHelper.GRID_SIZE),
+              x: CanvasHelper.alignToPluginGrid(this.plugin, this.toBBoxSidePos.x + direction * CanvasHelper.resolveGridSize(this.plugin)),
               y: this.toBBoxSidePos.y
             } : {
               x: this.toBBoxSidePos.x,
-              y: CanvasHelper.alignToGrid(this.toBBoxSidePos.y + direction * CanvasHelper.GRID_SIZE)
+              y: CanvasHelper.alignToPluginGrid(this.plugin, this.toBBoxSidePos.y + direction * CanvasHelper.resolveGridSize(this.plugin))
             };
             const useUPath = BBoxHelper.isHorizontal(this.toSide) ? this.fromPos.y > BBoxHelper.getCenterOfBBoxSide(this.toNodeBBox, BBoxHelper.getOppositeSide(this.fromSide)).y === BBoxHelper.direction(this.fromSide) > 0 : this.fromPos.x > BBoxHelper.getCenterOfBBoxSide(this.toNodeBBox, BBoxHelper.getOppositeSide(this.fromSide)).x === BBoxHelper.direction(this.fromSide) > 0;
             const connectionSide = useUPath ? this.fromSide : BBoxHelper.getOppositeSide(this.fromSide);
@@ -1082,7 +1264,7 @@ var EdgePathfindingSquare = class extends EdgePathfindingMethod {
     const direction = BBoxHelper.direction(fromSide);
     if (BBoxHelper.isHorizontal(fromSide)) {
       const xExtremum = direction > 0 ? Math.max(fromPos.x, toPos.x) : Math.min(fromPos.x, toPos.x);
-      const x = CanvasHelper.alignToGrid(xExtremum + direction * CanvasHelper.GRID_SIZE);
+      const x = CanvasHelper.alignToPluginGrid(this.plugin, xExtremum + direction * CanvasHelper.resolveGridSize(this.plugin));
       return {
         pathArray: [
           fromPos,
@@ -1097,7 +1279,7 @@ var EdgePathfindingSquare = class extends EdgePathfindingMethod {
       };
     } else {
       const yExtremum = direction > 0 ? Math.max(fromPos.y, toPos.y) : Math.min(fromPos.y, toPos.y);
-      const y = CanvasHelper.alignToGrid(yExtremum + direction * CanvasHelper.GRID_SIZE);
+      const y = CanvasHelper.alignToPluginGrid(this.plugin, yExtremum + direction * CanvasHelper.resolveGridSize(this.plugin));
       return {
         pathArray: [
           fromPos,
@@ -1319,6 +1501,77 @@ var BUILTIN_NODE_STYLE_ATTRIBUTES = [
         icon: "opacity-100",
         label: "Solid (100%)",
         value: "1"
+      }
+    ]
+  },
+  {
+    // Added by an LLM agent
+    key: "fontSize",
+    label: "Font Size",
+    nodeTypes: ["text", "file", "link"],
+    options: [
+      {
+        icon: "label-size-small",
+        label: "Small (0.75x)",
+        value: "0.75"
+      },
+      {
+        icon: "label-size-default",
+        label: "Default (1x)",
+        value: null
+      },
+      {
+        icon: "label-size-large",
+        label: "Large (1.5x)",
+        value: "1.5"
+      },
+      {
+        icon: "label-size-huge",
+        label: "Huge (2x)",
+        value: "2"
+      },
+      {
+        icon: "label-size-huge",
+        label: "Giant (3x)",
+        value: "3"
+      }
+    ]
+  },
+  {
+    // Added by an LLM agent
+    key: "cardPadding",
+    label: "Card Padding",
+    nodeTypes: ["text", "file", "link"],
+    options: [
+      {
+        icon: "rotate-ccw",
+        label: 'Default (follows "Card node padding" setting)',
+        value: null
+      },
+      {
+        icon: "ban",
+        label: "None (0, 0)",
+        value: "0,0"
+      },
+      {
+        icon: "square",
+        label: "Small (8, 8)",
+        value: "8,8"
+      },
+      {
+        icon: "box",
+        label: "Medium (16, 8)",
+        value: "16,8"
+      },
+      {
+        icon: "boxes",
+        label: "Large (16, 16)",
+        value: "16,16"
+      },
+      {
+        icon: "expand",
+        label: "Extra Large (24, 24)",
+        value: "24,24"
       }
     ]
   },
@@ -1969,13 +2222,23 @@ var PORTAL_ID_PREFIX = `acportal${PORTAL_ID_DELIMITER}`;
 var PORTAL_PADDING = 50;
 var MIN_OPEN_PORTAL_SIZE = { width: 200, height: 200 };
 var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtension {
+  constructor() {
+    super(...arguments);
+    // Added by an LLM agent (P1-8/P1-11): debounced vault.modify handling plus a
+    // per-canvas index of portal source paths so a save doesn't O(canvases x nodes)
+    // scan synchronously on every keystroke-save.
+    this.modifyDebounce = 0;
+    this.pendingModifiedPaths = /* @__PURE__ */ new Set();
+    this.portalIndex = /* @__PURE__ */ new WeakMap();
+  }
   isEnabled() {
     return "portalsFeatureEnabled";
   }
   init() {
     this.plugin.registerEvent(this.plugin.app.vault.on("modify", (file) => {
-      for (const canvas of this.plugin.getCanvases())
-        this.onFileModified(canvas, file);
+      this.pendingModifiedPaths.add(file.path);
+      window.clearTimeout(this.modifyDebounce);
+      this.modifyDebounce = window.setTimeout(() => this.flushModifiedFiles(), 300);
     }));
     this.plugin.registerEvent(this.plugin.app.workspace.on(
       "advanced-canvas:popup-menu-created",
@@ -2035,13 +2298,72 @@ var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtensi
     ));
   }
   onFileModified(canvas, file) {
-    const isAffected = Object.values(canvas.nodes).filter(
-      (nodeData) => nodeData.getData().type === "file" && nodeData.currentPortalFile === file.path
-    ).length > 0;
-    if (!isAffected) return;
+    if (!this.isPortalSource(canvas, file.path)) return;
     canvas.setData(canvas.getData());
     canvas.history.current--;
     canvas.history.data.pop();
+  }
+  /** Added by an LLM agent (P1-8/P1-11): flush debounced vault.modify events. */
+  flushModifiedFiles() {
+    const paths = [...this.pendingModifiedPaths];
+    this.pendingModifiedPaths.clear();
+    if (paths.length === 0) return;
+    for (const canvas of this.plugin.getCanvases()) {
+      try {
+        for (const path of paths) {
+          if (this.isPortalSource(canvas, path)) {
+            canvas.setData(canvas.getData());
+            canvas.history.current--;
+            canvas.history.data.pop();
+            break;
+          }
+        }
+      } catch (e) {
+        console.error("Advanced Canvas: portal refresh failed:", e);
+      }
+    }
+  }
+  /** Added by an LLM agent (P1-8): indexed portal-source check, no full scan. */
+  isPortalSource(canvas, path) {
+    let index = this.portalIndex.get(canvas);
+    if (!index) {
+      index = this.buildPortalIndex(canvas);
+      this.portalIndex.set(canvas, index);
+    }
+    if (index.has(path)) return true;
+    const rebuilt = this.buildPortalIndex(canvas);
+    this.portalIndex.set(canvas, rebuilt);
+    return rebuilt.has(path);
+  }
+  /** Added by an LLM agent (P1-8): Map<portalSourcePath, nodeIds>. */
+  buildPortalIndex(canvas) {
+    var _a;
+    const index = /* @__PURE__ */ new Map();
+    try {
+      for (const node of canvas.nodes.values()) {
+        let data;
+        try {
+          data = node.getData();
+        } catch (e) {
+          continue;
+        }
+        if ((data == null ? void 0 : data.type) !== "file") continue;
+        const source = (_a = node.currentPortalFile) != null ? _a : data.file;
+        if (!source) continue;
+        let set = index.get(source);
+        if (!set) {
+          set = /* @__PURE__ */ new Set();
+          index.set(source, set);
+        }
+        set.add(node.id);
+      }
+    } catch (e) {
+    }
+    return index;
+  }
+  dispose() {
+    window.clearTimeout(this.modifyDebounce);
+    this.pendingModifiedPaths.clear();
   }
   onContainingNodesRequested(_canvas, _bbox, nodes) {
     const filteredNodes = nodes.filter((node) => !_PortalsCanvasExtension.isPortalElement(node.id));
@@ -2165,7 +2487,7 @@ var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtensi
     let portalFileData;
     try {
       portalFileData = JSON.parse(portalFileDataString);
-    } catch (error) {
+    } catch (e) {
       return;
     }
     if (!(portalFileData == null ? void 0 : portalFileData.nodes) || portalFileData.nodes.length !== 1) return;
@@ -2197,12 +2519,15 @@ var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtensi
     data.edges = data.edges.filter((edgeData) => {
       var _a;
       if (_PortalsCanvasExtension.isPortalElement(edgeData.id)) return false;
-      const isFromNodeFromPortal = _PortalsCanvasExtension.getNestedIds(edgeData.fromNode).length > 1;
-      const isToNodeFromPortal = _PortalsCanvasExtension.getNestedIds(edgeData.toNode).length > 1;
+      const fromNested = _PortalsCanvasExtension.getNestedIds(edgeData.fromNode);
+      const toNested = _PortalsCanvasExtension.getNestedIds(edgeData.toNode);
+      const isFromNodeFromPortal = fromNested.length > 1;
+      const isToNodeFromPortal = toNested.length > 1;
       if (!isFromNodeFromPortal && !isToNodeFromPortal) return true;
       if (isFromNodeFromPortal && isToNodeFromPortal) return false;
-      const targetPortalId = this.getParentPortalId(isFromNodeFromPortal ? edgeData.fromNode : edgeData.toNode);
-      const targetPortalData = portalsIdMap.get(targetPortalId);
+      const nestedIds = isFromNodeFromPortal ? fromNested : toNested;
+      const targetPortalId = nestedIds.length < 2 ? void 0 : nestedIds.slice(0, -1).join(PORTAL_ID_DELIMITER);
+      const targetPortalData = targetPortalId ? portalsIdMap.get(targetPortalId) : void 0;
       if (!targetPortalData) return false;
       (_a = targetPortalData.interdimensionalEdges) != null ? _a : targetPortalData.interdimensionalEdges = [];
       targetPortalData.interdimensionalEdges.push(edgeData);
@@ -2212,7 +2537,13 @@ var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtensi
   // Add all edges and nodes from portals
   async onSetData(canvas, dataRef) {
     if (!(dataRef == null ? void 0 : dataRef.nodes)) return dataRef;
-    const data = JSON.parse(JSON.stringify(dataRef));
+    let data;
+    try {
+      data = typeof structuredClone === "function" ? structuredClone(dataRef) : JSON.parse(JSON.stringify(dataRef));
+    } catch (e) {
+      console.error("Advanced Canvas: portal data copy failed, using reference:", e);
+      data = dataRef;
+    }
     const addedData = await Promise.all(data.nodes.map((nodeData) => this.tryOpenPortal(canvas, nodeData)));
     for (const newData of addedData) {
       data.nodes.push(...newData.nodes);
@@ -2237,7 +2568,13 @@ var PortalsCanvasExtension = class _PortalsCanvasExtension extends CanvasExtensi
     if (!(portalFile instanceof import_obsidian5.TFile) || portalFile.extension !== "canvas") return addedData;
     const portalFileDataString = await this.plugin.app.vault.cachedRead(portalFile);
     if (portalFileDataString === "") return addedData;
-    const portalFileData = JSON.parse(portalFileDataString);
+    let portalFileData;
+    try {
+      portalFileData = JSON.parse(portalFileDataString);
+    } catch (e) {
+      console.error(`Advanced Canvas: portal file is not valid JSON: ${portalNodeData.file}`, e);
+      return addedData;
+    }
     if (!portalFileData) return addedData;
     portalNodeData.isPortalLoaded = true;
     const sourceMinCoordinates = CanvasHelper.getBBox(portalFileData.nodes);
@@ -2437,6 +2774,8 @@ var CanvasFilterCanvasExtension = class _CanvasFilterCanvasExtension extends Can
   }
   /** Shows the nodes with the given ids and hides all others. Shows every node if no ids are given. */
   showOnlyNodes(canvas, nodeIdsToShow) {
+    if (nodeIdsToShow === void 0) canvas.wrapperEl.removeAttribute("data-ac-filter-active");
+    else canvas.wrapperEl.setAttribute("data-ac-filter-active", "nodes");
     for (const node of canvas.nodes.values())
       this.setNodeVisibility(node, nodeIdsToShow === void 0 || nodeIdsToShow.has(node.id));
   }
@@ -2514,29 +2853,55 @@ var CanvasFilterCanvasExtension = class _CanvasFilterCanvasExtension extends Can
   }
   // Added by an LLM agent - `startElements` overrides the selection as the traversal start (presentation slide filter)
   filterByConnections(canvas, connectionFilter, startElements) {
+    var _a, _b;
     const nodes = [...canvas.nodes.values()].map((node) => node.getData());
     const edges = [...canvas.edges.values()].map((edge) => edge.getData());
     const nodeIdsToShow = new Set((startElements != null ? startElements : [...canvas.selection]).map((element) => element.id));
     const edgeIdsToShow = /* @__PURE__ */ new Set();
     const expandedPortalIds = /* @__PURE__ */ new Set();
     const expandedGroupIds = /* @__PURE__ */ new Set();
+    const outgoing = /* @__PURE__ */ new Map();
+    const incoming = /* @__PURE__ */ new Map();
+    for (const edge of edges) {
+      if (connectionFilter.immediate && edge.fromEnd === "arrow") continue;
+      let list = outgoing.get(edge.fromNode);
+      if (!list) {
+        list = [];
+        outgoing.set(edge.fromNode, list);
+      }
+      list.push(edge);
+      list = incoming.get(edge.toNode);
+      if (!list) {
+        list = [];
+        incoming.set(edge.toNode, list);
+      }
+      list.push(edge);
+    }
+    const groupNodes = nodes.filter((node) => node.type === "group");
+    const portalNodes = nodes.filter((node) => node.type === "file" && node.portal);
     let frontier = new Set(nodeIdsToShow);
     while (frontier.size > 0) {
       const nextFrontier = /* @__PURE__ */ new Set();
-      for (const edge of edges) {
-        if (connectionFilter.immediate && edge.fromEnd === "arrow") continue;
-        let reachedNodeId = null;
-        if (connectionFilter.outgoing && frontier.has(edge.fromNode)) reachedNodeId = edge.toNode;
-        else if (connectionFilter.incoming && frontier.has(edge.toNode)) reachedNodeId = edge.fromNode;
-        else continue;
-        edgeIdsToShow.add(edge.id);
-        if (nodeIdsToShow.has(reachedNodeId)) continue;
-        nodeIdsToShow.add(reachedNodeId);
-        nextFrontier.add(reachedNodeId);
+      for (const nodeId of frontier) {
+        if (connectionFilter.outgoing) {
+          for (const edge of (_a = outgoing.get(nodeId)) != null ? _a : []) {
+            edgeIdsToShow.add(edge.id);
+            if (nodeIdsToShow.has(edge.toNode)) continue;
+            nodeIdsToShow.add(edge.toNode);
+            nextFrontier.add(edge.toNode);
+          }
+        }
+        if (connectionFilter.incoming) {
+          for (const edge of (_b = incoming.get(nodeId)) != null ? _b : []) {
+            edgeIdsToShow.add(edge.id);
+            if (nodeIdsToShow.has(edge.fromNode)) continue;
+            nodeIdsToShow.add(edge.fromNode);
+            nextFrontier.add(edge.fromNode);
+          }
+        }
       }
-      for (const node of nodes) {
+      for (const node of portalNodes) {
         if (!nodeIdsToShow.has(node.id) || expandedPortalIds.has(node.id)) continue;
-        if (node.type !== "file" || !node.portal) continue;
         expandedPortalIds.add(node.id);
         for (const nestedNode of _CanvasFilterCanvasExtension.getPortalNestedNodes(nodes, node.id)) {
           if (nodeIdsToShow.has(nestedNode.id)) continue;
@@ -2546,16 +2911,16 @@ var CanvasFilterCanvasExtension = class _CanvasFilterCanvasExtension extends Can
         for (const edge of _CanvasFilterCanvasExtension.getPortalInternalEdges(edges, node.id))
           edgeIdsToShow.add(edge.id);
       }
-      for (const node of nodes) {
-        if (connectionFilter.includeGroups === false) break;
-        if (!nodeIdsToShow.has(node.id) || expandedGroupIds.has(node.id)) continue;
-        if (node.type !== "group") continue;
-        expandedGroupIds.add(node.id);
-        for (const containedNode of nodes) {
-          if (containedNode.id === node.id || nodeIdsToShow.has(containedNode.id)) continue;
-          if (!_CanvasFilterCanvasExtension.bboxContains(node, containedNode)) continue;
-          nodeIdsToShow.add(containedNode.id);
-          nextFrontier.add(containedNode.id);
+      if (connectionFilter.includeGroups !== false) {
+        for (const node of groupNodes) {
+          if (!nodeIdsToShow.has(node.id) || expandedGroupIds.has(node.id)) continue;
+          expandedGroupIds.add(node.id);
+          for (const containedNode of nodes) {
+            if (containedNode.id === node.id || nodeIdsToShow.has(containedNode.id)) continue;
+            if (!_CanvasFilterCanvasExtension.bboxContains(node, containedNode)) continue;
+            nodeIdsToShow.add(containedNode.id);
+            nextFrontier.add(containedNode.id);
+          }
         }
       }
       if (connectionFilter.immediate) break;
@@ -3476,24 +3841,76 @@ var SETTINGS = {
 };
 var SettingsManager = class {
   constructor(plugin) {
+    // Added by an LLM agent (P0/P1-11): debounced disk writes - text/number fields
+    // used to saveData + fan out settings-changed per keystroke.
+    this.saveDebounce = 0;
+    this.pendingKeys = /* @__PURE__ */ new Set();
     this.plugin = plugin;
     this.nodeCssStylesManager = GET_NODE_CSS_STYLES_MANAGER(plugin);
     this.edgeCssStylesManager = GET_EDGE_CSS_STYLES_MANAGER(plugin);
   }
   async loadSettings() {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS_VALUES, await this.plugin.loadData());
-    this.plugin.app.workspace.trigger("advanced-canvas:settings-changed");
+    var _a;
+    const saved = (_a = await this.plugin.loadData()) != null ? _a : {};
+    const merged = { ...DEFAULT_SETTINGS_VALUES };
+    for (const [key, value] of Object.entries(saved)) {
+      if (!(key in DEFAULT_SETTINGS_VALUES)) {
+        console.warn(`Advanced Canvas: ignoring unknown saved setting "${key}" (removed or renamed).`);
+        continue;
+      }
+      const def = DEFAULT_SETTINGS_VALUES[key];
+      if (Array.isArray(def) && Array.isArray(value)) merged[key] = [...value];
+      else if (def !== null && typeof def === "object" && !Array.isArray(def) && value !== null && typeof value === "object" && !Array.isArray(value))
+        merged[key] = { ...def, ...value };
+      else merged[key] = value;
+    }
+    this.settings = merged;
+    this.plugin.app.workspace.trigger("advanced-canvas:settings-changed", Object.keys(merged));
   }
   async saveSettings() {
     await this.plugin.saveData(this.settings);
   }
   getSetting(key) {
-    return this.settings[key];
+    const value = this.settings[key];
+    if (Array.isArray(value)) return [...value];
+    if (value !== null && typeof value === "object") return { ...value };
+    return value;
   }
-  async setSetting(data) {
+  async setSetting(data, options = {}) {
+    var _a;
+    const keys = Object.keys(data);
+    for (const key of keys) {
+      if (!(key in DEFAULT_SETTINGS_VALUES)) {
+        console.warn(`Advanced Canvas: unknown setting "${key}" ignored. Did you mean one of: ${Object.keys(DEFAULT_SETTINGS_VALUES).slice(0, 8).join(", ")}...?`);
+        delete data[key];
+      }
+    }
+    if (Object.keys(data).length === 0) return;
+    let changed = false;
+    for (const key of Object.keys(data)) {
+      if (!Object.is(this.settings[key], data[key])) {
+        changed = true;
+        break;
+      }
+    }
     this.settings = Object.assign(this.settings, data);
+    for (const key of Object.keys(data)) this.pendingKeys.add(key);
+    const debounceMs = (_a = options.debounceMs) != null ? _a : 0;
+    if (debounceMs > 0) {
+      window.clearTimeout(this.saveDebounce);
+      this.saveDebounce = window.setTimeout(() => void this.flushSettings(), debounceMs);
+      if (changed) this.plugin.app.workspace.trigger("advanced-canvas:settings-changed", [...this.pendingKeys]);
+      return;
+    }
+    await this.flushSettings(changed);
+  }
+  /** Added by an LLM agent (P0/P1-11): write pending settings + fire one event. */
+  async flushSettings(fireEvent = true) {
+    window.clearTimeout(this.saveDebounce);
+    const keys = [...this.pendingKeys];
+    this.pendingKeys.clear();
     await this.saveSettings();
-    this.plugin.app.workspace.trigger("advanced-canvas:settings-changed");
+    if (fireEvent) this.plugin.app.workspace.trigger("advanced-canvas:settings-changed", keys);
   }
   addSettingsTab() {
     this.settingsTab = new AdvancedCanvasPluginSettingTab(this.plugin, this);
@@ -3563,9 +3980,8 @@ var AdvancedCanvasPluginSettingTab = class extends import_obsidian7.PluginSettin
     }
     if (settingsKey !== null) {
       setting.addToggle(
-        (toggle) => toggle.setTooltip("Requires a reload to take effect.").setValue(this.settingsManager.getSetting(settingsKey)).onChange(async (value) => {
+        (toggle) => toggle.setTooltip("Takes effect immediately.").setValue(this.settingsManager.getSetting(settingsKey)).onChange(async (value) => {
           await this.settingsManager.setSetting({ [settingsKey]: value });
-          new import_obsidian7.Notice("Reload obsidian to apply the changes.");
         })
       );
     }
@@ -3574,14 +3990,14 @@ var AdvancedCanvasPluginSettingTab = class extends import_obsidian7.PluginSettin
   createTextSetting(containerEl, settingId, setting) {
     new import_obsidian7.Setting(containerEl).setName(setting.label).setDesc(setting.description).addText(
       (text) => text.setValue(this.settingsManager.getSetting(settingId)).onChange(async (value) => {
-        await this.settingsManager.setSetting({ [settingId]: setting.parse ? setting.parse(value) : value });
+        await this.settingsManager.setSetting({ [settingId]: setting.parse ? setting.parse(value) : value }, { debounceMs: 400 });
       })
     );
   }
   createNumberSetting(containerEl, settingId, setting) {
     new import_obsidian7.Setting(containerEl).setName(setting.label).setDesc(setting.description).addText(
       (text) => text.setValue(JSON.stringify(this.settingsManager.getSetting(settingId))).onChange(async (value) => {
-        await this.settingsManager.setSetting({ [settingId]: setting.parse(value) });
+        await this.settingsManager.setSetting({ [settingId]: setting.parse(value) }, { debounceMs: 400 });
       })
     );
   }
@@ -3728,14 +4144,24 @@ var Patcher = class _Patcher {
   }
   static async waitForMapValueLookup(map, viewType, patch) {
     return new Promise((resolve) => {
+      let settled = false;
       const uninstaller = around(map, {
+        // Added by an LLM agent (P0-1): call next() exactly once and patch the
+        // returned view. The previous code constructed the view, patched it,
+        // threw it away, then constructed + returned a second unpatched view.
         [viewType]: (next) => function(...args) {
           const view = next.call(this, ...args);
-          patch(view);
-          const patchedView = next.call(this, ...args);
-          uninstaller();
-          resolve(patchedView);
-          return patchedView;
+          if (!settled) {
+            settled = true;
+            try {
+              patch(view);
+            } catch (e) {
+              console.error(`Advanced Canvas: failed to patch view "${viewType}":`, e);
+            }
+            uninstaller();
+            resolve(view);
+          }
+          return view;
         }
       });
     });
@@ -3747,8 +4173,9 @@ var Patcher = class _Patcher {
     return Object.assign(fn, { __overrideExisting: true });
   }
   static patchThisAndPrototype(plugin, object, patches, uninstallers) {
-    _Patcher.patch(plugin, object, patches, false, uninstallers);
-    return _Patcher.patchPrototype(plugin, object, patches, uninstallers);
+    const prototyped = _Patcher.patchPrototype(plugin, object, patches, uninstallers);
+    if (prototyped) return prototyped;
+    return _Patcher.patch(plugin, object, patches, false, uninstallers);
   }
   static patchPrototype(plugin, target, patches, uninstallers) {
     return _Patcher.patch(plugin, target, patches, true, uninstallers);
@@ -3783,11 +4210,20 @@ var Patcher = class _Patcher {
         resolve(result);
         return;
       }
+      let settled = false;
       const listener = plugin.app.workspace.on("layout-change", () => {
-        const result2 = _Patcher.patchPrototype(plugin, getTarget(), patches, uninstallers);
-        if (result2) {
+        if (settled) return;
+        let attempt = null;
+        try {
+          attempt = _Patcher.patchPrototype(plugin, getTarget(), patches, uninstallers);
+        } catch (e) {
+          console.error("Advanced Canvas: workspace prototype patch attempt failed:", e);
+          return;
+        }
+        if (attempt) {
+          settled = true;
           plugin.app.workspace.offref(listener);
-          resolve(result2);
+          resolve(attempt);
         }
       });
       plugin.registerEvent(listener);
@@ -3871,6 +4307,18 @@ var MigrationHelper = _MigrationHelper;
 
 // src/patchers/canvas-patcher.ts
 var _CanvasPatcher = class _CanvasPatcher extends Patcher {
+  constructor() {
+    super(...arguments);
+    // Added by an LLM agent (P0-7/P1-10): per-element uninstallers so removeNode /
+    // removeEdge can release the ~12 per-node wrappers instead of leaking them
+    // in the global plugin.register list for the session.
+    this.elementUninstallers = /* @__PURE__ */ new WeakMap();
+    // Added by an LLM agent (P0): re-entrancy guard for the updateSelection writer.
+    this.inSelectionUpdate = false;
+    // Added by an LLM agent (P0-7): coalesced canvas saves - many setData calls
+    // per gesture collapse into one requestSave per frame instead of one per node.
+    this.pendingSaves = /* @__PURE__ */ new WeakSet();
+  }
   async patch() {
     const loadedCanvasViewLeafs = this.plugin.app.workspace.getLeavesOfType("canvas").filter((leaf) => !(0, import_obsidian8.requireApiVersion)("1.7.2") || !leaf.isDeferred);
     if (loadedCanvasViewLeafs.length > 0) {
@@ -3995,7 +4443,13 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
       updateSelection: Patcher.OverrideExisting((next) => function(update) {
         const oldSelection = new Set(this.selection);
         const result = next.call(this, update);
-        that.plugin.app.workspace.trigger("advanced-canvas:selection-changed", this, oldSelection, (update2) => next.call(this, update2));
+        if (that.inSelectionUpdate) return result;
+        that.inSelectionUpdate = true;
+        try {
+          that.plugin.app.workspace.trigger("advanced-canvas:selection-changed", this, oldSelection, (update2) => next.call(this, update2));
+        } finally {
+          that.inSelectionUpdate = false;
+        }
         return result;
       }),
       createTextNode: Patcher.OverrideExisting((next) => function(...args) {
@@ -4034,25 +4488,31 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
       }),
       removeNode: Patcher.OverrideExisting((next) => function(node) {
         const result = next.call(this, node);
+        that.uninstallElement(node);
         if (!this.isClearing) that.plugin.app.workspace.trigger("advanced-canvas:node-removed", this, node);
         return result;
       }),
       removeEdge: Patcher.OverrideExisting((next) => function(edge) {
         const result = next.call(this, edge);
+        that.uninstallElement(edge);
         if (!this.isClearing) that.plugin.app.workspace.trigger("advanced-canvas:edge-removed", this, edge);
         return result;
       }),
       handleCopy: Patcher.OverrideExisting((next) => function(...args) {
         this.isCopying = true;
-        const result = next.call(this, ...args);
-        this.isCopying = false;
-        return result;
+        try {
+          return next.call(this, ...args);
+        } finally {
+          this.isCopying = false;
+        }
       }),
       handlePaste: Patcher.OverrideExisting((next) => function(...args) {
         this.isPasting = true;
-        const result = next.call(this, ...args);
-        this.isPasting = false;
-        return result;
+        try {
+          return next.call(this, ...args);
+        } finally {
+          this.isPasting = false;
+        }
       }),
       getSelectionData: Patcher.OverrideExisting((next) => function(...args) {
         const result = next.call(this, ...args);
@@ -4071,7 +4531,7 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
         that.plugin.app.workspace.trigger("advanced-canvas:zoom-to-bbox:before", this, bbox);
         const widthZoom = this.canvasRect.width / (bbox.maxX - bbox.minX);
         const heightZoom = this.canvasRect.height / (bbox.maxY - bbox.minY);
-        const zoom = this.screenshotting ? Math.min(widthZoom, heightZoom) : Math.clamp(Math.min(widthZoom, heightZoom), -4, 1);
+        const zoom = this.screenshotting ? Math.min(widthZoom, heightZoom) : Math.clamp(Math.min(widthZoom, heightZoom), -4, CanvasHelper.MAX_ALLOWED_ZOOM);
         this.tZoom = Math.log2(zoom);
         this.zoomCenter = null;
         this.tx = (bbox.minX + bbox.maxX) / 2;
@@ -4086,21 +4546,23 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
       }),
       undo: Patcher.OverrideExisting((next) => function(...args) {
         const result = next.call(this, ...args);
-        this.importData(this.getData(), true);
+        this.importData(this.getData(), true, true);
         that.plugin.app.workspace.trigger("advanced-canvas:undo", this);
         return result;
       }),
       redo: Patcher.OverrideExisting((next) => function(...args) {
         const result = next.call(this, ...args);
-        this.importData(this.getData(), true);
+        this.importData(this.getData(), true, true);
         that.plugin.app.workspace.trigger("advanced-canvas:redo", this);
         return result;
       }),
       clear: Patcher.OverrideExisting((next) => function(...args) {
         this.isClearing = true;
-        const result = next.call(this, ...args);
-        this.isClearing = false;
-        return result;
+        try {
+          return next.call(this, ...args);
+        } finally {
+          this.isClearing = false;
+        }
       }),
       /*setData: Patcher.OverrideExisting(next => function (...args: any): void {
         //
@@ -4137,7 +4599,6 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
       render: Patcher.OverrideExisting((next) => function(...args) {
         const result = next.call(this, ...args);
         that.plugin.app.workspace.trigger("advanced-canvas:popup-menu-created", this.canvas);
-        next.call(this);
         return result;
       })
     });
@@ -4150,9 +4611,15 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
     });
     this.plugin.registerEditorExtension([import_view.EditorView.updateListener.of((update) => {
       if (!update.docChanged) return;
-      const editor = update.state.field(import_obsidian8.editorInfoField);
+      if (that.plugin.getCanvases().length === 0) return;
+      let editor;
+      try {
+        editor = update.state.field(import_obsidian8.editorInfoField);
+      } catch (e) {
+        return;
+      }
       const node = editor.node;
-      if (!node) return;
+      if (!(node == null ? void 0 : node.canvas)) return;
       that.plugin.app.workspace.trigger("advanced-canvas:node-text-content-changed", node.canvas, node, update);
     })]);
   }
@@ -4180,6 +4647,7 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
   }
   patchNode(node) {
     const that = this;
+    const uninstallers = [];
     Patcher.patch(this.plugin, node, {
       render: Patcher.OverrideExisting((next) => function(...args) {
         const result = next.call(this, ...args);
@@ -4187,15 +4655,22 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
         return result;
       }),
       setData: Patcher.OverrideExisting((next) => function(data, addHistory) {
+        var _a;
         const result = next.call(this, data);
         if (node.initialized && !node.isDirty) {
           node.isDirty = true;
-          that.plugin.app.workspace.trigger("advanced-canvas:node-changed", this.canvas, node);
-          delete node.isDirty;
+          try {
+            that.plugin.app.workspace.trigger("advanced-canvas:node-changed", this.canvas, node);
+          } finally {
+            delete node.isDirty;
+          }
         }
-        this.canvas.data = this.canvas.getData();
-        if (this.initialized) this.canvas.view.requestSave();
-        if (addHistory) this.canvas.pushHistory(this.canvas.data);
+        if (this.initialized && !((_a = this.canvas) == null ? void 0 : _a.isClearing)) {
+          const canvasData = this.canvas.getData();
+          this.canvas.data = canvasData;
+          that.requestCoalescedSave(this.canvas);
+          if (addHistory) this.canvas.pushHistory(canvasData);
+        }
         return result;
       }),
       setZIndex: (_next) => function(value) {
@@ -4261,7 +4736,8 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
         that.plugin.app.workspace.trigger("advanced-canvas:node-changed", this.canvas, this);
         return result;
       }
-    });
+    }, false, uninstallers);
+    that.elementUninstallers.set(node, uninstallers);
     this.runAfterInitialized(node, () => {
       this.plugin.app.workspace.trigger("advanced-canvas:node-added", node.canvas, node);
       this.plugin.app.workspace.trigger("advanced-canvas:node-changed", node.canvas, node);
@@ -4277,17 +4753,25 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
   }
   patchEdge(edge) {
     const that = this;
+    const uninstallers = [];
     Patcher.patch(this.plugin, edge, {
       setData: Patcher.OverrideExisting((next) => function(data, addHistory) {
+        var _a;
         const result = next.call(this, data);
         if (this.initialized && !this.isDirty) {
           this.isDirty = true;
-          that.plugin.app.workspace.trigger("advanced-canvas:edge-changed", this.canvas, this);
-          delete this.isDirty;
+          try {
+            that.plugin.app.workspace.trigger("advanced-canvas:edge-changed", this.canvas, this);
+          } finally {
+            delete this.isDirty;
+          }
         }
-        this.canvas.data = this.canvas.getData();
-        if (this.initialized) this.canvas.view.requestSave();
-        if (addHistory) this.canvas.pushHistory(this.canvas.getData());
+        if (this.initialized && !((_a = this.canvas) == null ? void 0 : _a.isClearing)) {
+          const canvasData = this.canvas.getData();
+          this.canvas.data = canvasData;
+          that.requestCoalescedSave(this.canvas);
+          if (addHistory) this.canvas.pushHistory(canvasData);
+        }
         return result;
       }),
       render: Patcher.OverrideExisting((next) => function(...args) {
@@ -4321,10 +4805,40 @@ var _CanvasPatcher = class _CanvasPatcher extends Patcher {
         }, { once: true });
         return result;
       })
-    });
+    }, false, uninstallers);
+    that.elementUninstallers.set(edge, uninstallers);
     this.runAfterInitialized(edge, () => {
       this.plugin.app.workspace.trigger("advanced-canvas:edge-added", edge.canvas, edge);
     });
+  }
+  /** Added by an LLM agent (P0-7): run + forget the per-element uninstallers. */
+  uninstallElement(element) {
+    const uninstallers = this.elementUninstallers.get(element);
+    if (!uninstallers) return;
+    this.elementUninstallers.delete(element);
+    for (const uninstall of uninstallers) {
+      try {
+        uninstall();
+      } catch (e) {
+        console.error("Advanced Canvas: element uninstaller failed:", e);
+      }
+    }
+  }
+  /** Added by an LLM agent (P0-7/P1-10): at most one requestSave per canvas per frame. */
+  requestCoalescedSave(canvas) {
+    if (!(canvas == null ? void 0 : canvas.view)) return;
+    if (this.pendingSaves.has(canvas)) return;
+    this.pendingSaves.add(canvas);
+    const save = () => {
+      this.pendingSaves.delete(canvas);
+      try {
+        canvas.view.requestSave();
+      } catch (e) {
+        console.error("Advanced Canvas: coalesced save failed:", e);
+      }
+    };
+    if (typeof window.requestAnimationFrame === "function") window.requestAnimationFrame(save);
+    else queueMicrotask(save);
   }
   runAfterInitialized(canvasElement, onReady) {
     if (canvasElement.initialized) {
@@ -4474,28 +4988,55 @@ var TaskQueue = class {
   constructor() {
     this.running = false;
     this.queue = [];
+    this.queueHead = 0;
     this.onFinished = () => {
     };
   }
   async add(task) {
-    return new Promise((resolve) => {
-      this.queue.push([resolve, task]);
+    return new Promise((resolve, reject) => {
+      this.queue.push({ task, resolve, reject });
       if (!this.running) void this.run();
     });
   }
   setOnFinished(callback) {
     this.onFinished = callback;
   }
+  get length() {
+    return this.queue.length - this.queueHead;
+  }
+  clear() {
+    for (let i = this.queueHead; i < this.queue.length; i++)
+      this.queue[i].reject(new Error("TaskQueue cleared"));
+    this.queue = [];
+    this.queueHead = 0;
+  }
   async run() {
-    var _a;
     this.running = true;
-    while (this.queue.length > 0) {
-      const [resolver, task] = (_a = this.queue.shift()) != null ? _a : [void 0, void 0];
-      await (task == null ? void 0 : task());
-      resolver == null ? void 0 : resolver();
+    try {
+      while (this.queueHead < this.queue.length) {
+        const entry = this.queue[this.queueHead++];
+        try {
+          await entry.task();
+          entry.resolve();
+        } catch (e) {
+          console.error("Advanced Canvas: TaskQueue task failed:", e);
+          entry.reject(e);
+        }
+        if (this.queueHead > 64 && this.queueHead * 2 > this.queue.length) {
+          this.queue.splice(0, this.queueHead);
+          this.queueHead = 0;
+        }
+      }
+    } finally {
+      this.queue = [];
+      this.queueHead = 0;
+      this.running = false;
+      try {
+        this.onFinished();
+      } catch (e) {
+        console.error("Advanced Canvas: TaskQueue onFinished failed:", e);
+      }
     }
-    this.running = false;
-    this.onFinished();
   }
 };
 
@@ -4529,6 +5070,7 @@ var MetadataCachePatcher = class extends Patcher {
   }
 };
 var _CanvasMetadataHandler = class _CanvasMetadataHandler {
+  /* eslint-enable @typescript-eslint/no-explicit-any */
   static async computeCanvasFileMetadataAsync(file) {
     this.uniqueFileLookup.add(file.name.toLowerCase(), file);
     let isStale = true;
@@ -4613,35 +5155,69 @@ var _CanvasMetadataHandler = class _CanvasMetadataHandler {
     metadata.nodes = {};
     metadata.links = [];
     metadata.embeds = [];
-    await Promise.all(((_d = content.nodes) != null ? _d : []).map(async (node, index) => {
-      var _a2, _b2;
-      if (node.type !== "text") return;
-      const text = node.text;
-      const buffer = new TextEncoder().encode(text).buffer;
-      const nodeMetadata = await this.computeMetadataAsync(buffer);
-      if (!nodeMetadata) return;
-      metadata.nodes[node.id] = nodeMetadata;
-      metadata.links.push(...((_a2 = nodeMetadata.links) != null ? _a2 : []).map((link) => ({
-        ...link,
-        position: {
-          nodeId: node.id,
-          start: { line: 0, col: 1, offset: 0 },
-          // 0 for node
-          end: { line: 0, col: 1, offset: index }
-          // index of node
+    const textNodes = ((_d = content.nodes) != null ? _d : []).map((node, index) => ({ node, index })).filter(({ node }) => node.type === "text");
+    const CONCURRENCY = 8;
+    const nodeCache = _CanvasMetadataHandler.nodeMetadataCache;
+    for (let i = 0; i < textNodes.length; i += CONCURRENCY) {
+      const batch = textNodes.slice(i, i + CONCURRENCY);
+      await Promise.all(batch.map(async ({ node, index }) => {
+        var _a2, _b2, _c2, _d2, _e2;
+        if (node.type !== "text") return;
+        const text = (_a2 = node.text) != null ? _a2 : "";
+        let cacheKey = null;
+        if (text.length < 2e4) {
+          let hash = 0;
+          for (let j = 0; j < text.length; j++) hash = hash * 31 + text.charCodeAt(j) | 0;
+          cacheKey = `${text.length}:${hash}`;
+          const cached = nodeCache.get(cacheKey);
+          if (cached) {
+            metadata.nodes[node.id] = cached.metadata;
+            metadata.links.push(...cached.links.map((link) => ({ ...link, position: { nodeId: node.id, start: { line: 0, col: 1, offset: 0 }, end: { line: 0, col: 1, offset: index } } })));
+            metadata.embeds.push(...cached.embeds.map((embed2) => ({ ...embed2, position: { nodeId: node.id, start: { line: 0, col: 1, offset: 0 }, end: { line: 0, col: 1, offset: index } } })));
+            return;
+          }
         }
-      })));
-      metadata.embeds.push(...((_b2 = nodeMetadata.embeds) != null ? _b2 : []).map((embed2) => ({
-        ...embed2,
-        position: {
-          nodeId: node.id,
-          start: { line: 0, col: 1, offset: 0 },
-          // 0 for node
-          end: { line: 0, col: 1, offset: index }
-          // index of node
+        const buffer = new TextEncoder().encode(text).buffer;
+        let nodeMetadata;
+        try {
+          nodeMetadata = await this.computeMetadataAsync(buffer);
+        } catch (e) {
+          console.error(`Advanced Canvas: per-node metadata parse failed (node ${node.id}):`, e);
+          return;
         }
-      })));
-    }));
+        if (!nodeMetadata) return;
+        metadata.nodes[node.id] = nodeMetadata;
+        const links = ((_b2 = nodeMetadata.links) != null ? _b2 : []).map((link) => ({
+          ...link,
+          position: {
+            nodeId: node.id,
+            start: { line: 0, col: 1, offset: 0 },
+            // 0 for node
+            end: { line: 0, col: 1, offset: index }
+            // index of node
+          }
+        }));
+        const embeds = ((_c2 = nodeMetadata.embeds) != null ? _c2 : []).map((embed2) => ({
+          ...embed2,
+          position: {
+            nodeId: node.id,
+            start: { line: 0, col: 1, offset: 0 },
+            // 0 for node
+            end: { line: 0, col: 1, offset: index }
+            // index of node
+          }
+        }));
+        metadata.links.push(...links);
+        metadata.embeds.push(...embeds);
+        if (cacheKey) {
+          nodeCache.set(cacheKey, { metadata: nodeMetadata, links: (_d2 = nodeMetadata.links) != null ? _d2 : [], embeds: (_e2 = nodeMetadata.embeds) != null ? _e2 : [] });
+          if (nodeCache.size > 500) {
+            const oldest = nodeCache.keys().next().value;
+            if (oldest !== void 0) nodeCache.delete(oldest);
+          }
+        }
+      }));
+    }
     for (const [index, node] of ((_e = content.nodes) != null ? _e : []).entries()) {
       if (node.type !== "file") continue;
       const file = node.file;
@@ -4688,6 +5264,9 @@ var _CanvasMetadataHandler = class _CanvasMetadataHandler {
 };
 _CanvasMetadataHandler.metadataQueue = new TaskQueue();
 _CanvasMetadataHandler.linkResolveQueue = new TaskQueue();
+/* eslint-disable @typescript-eslint/no-explicit-any -- cache stores raw computeMetadataAsync results */
+// Added by an LLM agent (P1): per-text metadata cache (see computeCanvasMetadataAsync).
+_CanvasMetadataHandler.nodeMetadataCache = /* @__PURE__ */ new Map();
 var CanvasMetadataHandler = _CanvasMetadataHandler;
 
 // src/patchers/backlinks-patcher.ts
@@ -4745,17 +5324,21 @@ var OutgoingLinksPatcher = class extends Patcher {
           var _a;
           const isCanvas = ((_a = this.file) == null ? void 0 : _a.extension) === "canvas";
           if (isCanvas) this.file.extension = "md";
-          const result = next.call(this, ...args);
-          if (isCanvas) this.file.extension = "canvas";
-          return result;
+          try {
+            return next.call(this, ...args);
+          } finally {
+            if (isCanvas && this.file) this.file.extension = "canvas";
+          }
         }),
         recomputeUnlinked: Patcher.OverrideExisting((next) => function(...args) {
           var _a;
           const isCanvas = ((_a = this.file) == null ? void 0 : _a.extension) === "canvas";
           if (isCanvas) this.file.extension = "md";
-          const result = next.call(this, ...args);
-          if (isCanvas) this.file.extension = "canvas";
-          return result;
+          try {
+            return next.call(this, ...args);
+          } finally {
+            if (isCanvas && this.file) this.file.extension = "canvas";
+          }
         })
       });
     });
@@ -4770,11 +5353,28 @@ var FileManagerPatcher = class extends Patcher {
     Patcher.patch(this.plugin, this.plugin.app.fileManager, {
       processFrontMatter: Patcher.OverrideExisting((next) => async function(file, fn, options) {
         if ((file == null ? void 0 : file.extension) === "canvas") {
-          that.plugin.app.vault.process(file, (data) => {
-            const content = JSON.parse(data);
-            fn(content.metadata.frontmatter);
-            return JSON.stringify(content, null, 2);
-          }).catch(() => console.error("Failed to update metadata object in canvas file."));
+          try {
+            await that.plugin.app.vault.process(file, (data) => {
+              var _a, _b, _c;
+              let content;
+              try {
+                content = JSON.parse(data);
+              } catch (e) {
+                console.error("Advanced Canvas: cannot update frontmatter, canvas file is not valid JSON:", file.path, e);
+                return data;
+              }
+              (_a = content.metadata) != null ? _a : content.metadata = {};
+              (_c = (_b = content.metadata).frontmatter) != null ? _c : _b.frontmatter = {};
+              try {
+                fn(content.metadata.frontmatter);
+              } catch (e) {
+                console.error("Advanced Canvas: frontmatter callback failed:", e);
+              }
+              return JSON.stringify(content, null, 2);
+            });
+          } catch (e) {
+            console.error("Advanced Canvas: failed to update frontmatter in canvas file:", file.path, e);
+          }
           return;
         }
         return next.call(this, file, fn, options);
@@ -4813,11 +5413,28 @@ var PropertiesPatcher = class extends Patcher {
           var _a;
           if (((_a = this.file) == null ? void 0 : _a.extension) === "canvas") {
             if (this.file !== this.modifyingFile) return;
-            this.app.vault.process(this.file, (data) => {
-              const content = JSON.parse(data);
-              if (content == null ? void 0 : content.metadata) content.metadata.frontmatter = frontmatter;
-              return JSON.stringify(content, null, 2);
-            }).catch(() => console.error("Failed to update metadata object in canvas file."));
+            void (async () => {
+              var _a2;
+              try {
+                await this.app.vault.process(this.file, (data) => {
+                  let content;
+                  try {
+                    content = JSON.parse(data);
+                  } catch (e) {
+                    console.error("Advanced Canvas: cannot save frontmatter, canvas file is not valid JSON:", this.file.path, e);
+                    return data;
+                  }
+                  if (!(content == null ? void 0 : content.metadata)) {
+                    console.error("Advanced Canvas: cannot save frontmatter, canvas file has no metadata section:", this.file.path);
+                    return data;
+                  }
+                  content.metadata.frontmatter = frontmatter;
+                  return JSON.stringify(content, null, 2);
+                });
+              } catch (e) {
+                console.error("Advanced Canvas: failed to save frontmatter in canvas file:", (_a2 = this.file) == null ? void 0 : _a2.path, e);
+              }
+            })();
             return;
           }
           return next.call(this, frontmatter);
@@ -4861,6 +5478,9 @@ var SearchPatcher = class extends Patcher {
 
 // src/patchers/search-command-patcher.ts
 var import_obsidian13 = require("obsidian");
+function escapeRegExp(input) {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
 var SearchCommandPatcher = class extends Patcher {
   async patch() {
     if (!this.plugin.settings.getSetting("nativeFileSearchEnabled")) return;
@@ -4879,6 +5499,8 @@ var SearchCommandPatcher = class extends Patcher {
 };
 var CanvasSearchView = class {
   constructor(view) {
+    // Added by an LLM agent (P0-5): debounce handle for search-on-type.
+    this.inputDebounce = 0;
     this.searchMatches = [];
     this.matchIndex = 0;
     this.view = view;
@@ -4895,7 +5517,10 @@ var CanvasSearchView = class {
     this.searchInput.type = "text";
     this.searchInput.placeholder = "Find...";
     this.searchInput.addEventListener("keydown", (e) => this.onKeyDown(e));
-    this.searchInput.addEventListener("input", () => this.onInput());
+    this.searchInput.addEventListener("input", () => {
+      window.clearTimeout(this.inputDebounce);
+      this.inputDebounce = window.setTimeout(() => this.onInput(), 120);
+    });
     this.searchCount = searchInputContainer.createDiv();
     this.searchCount.className = "document-search-count";
     this.searchCount.style.display = "none";
@@ -4934,18 +5559,41 @@ var CanvasSearchView = class {
     this.searchCount.style.display = hasQuery ? "block" : "none";
     if (!hasQuery) this.searchMatches = [];
     else {
+      let regex;
+      try {
+        regex = new RegExp(escapeRegExp(this.searchInput.value), "gi");
+      } catch (e) {
+        this.searchMatches = [];
+        this.changeMatch(0);
+        return;
+      }
+      const query = this.searchInput.value.toLowerCase();
       this.searchMatches = Array.from(this.view.canvas.nodes.values()).map((node) => {
+        var _a;
         const nodeData = node.getData();
         let content = void 0;
         if (nodeData.type === "text") content = nodeData.text;
         else if (nodeData.type === "group") content = nodeData.label;
-        else if (nodeData.type === "file") content = node.child.data;
-        if (!content) return null;
+        else if (nodeData.type === "file") {
+          try {
+            content = (_a = node.child) == null ? void 0 : _a.data;
+          } catch (e) {
+            content = void 0;
+          }
+        }
+        if (!content || !content.toLowerCase().includes(query)) return null;
         const matches = [];
-        const regex = new RegExp(this.searchInput.value, "gi");
-        let match;
-        while ((match = regex.exec(content)) !== null) {
-          matches.push([match.index, match.index + match[0].length]);
+        try {
+          regex.lastIndex = 0;
+          let match;
+          let guard = 0;
+          while ((match = regex.exec(content)) !== null) {
+            matches.push([match.index, match.index + match[0].length]);
+            if (match[0].length === 0) regex.lastIndex++;
+            if (++guard > 1e3) break;
+          }
+        } catch (e) {
+          return null;
         }
         return { nodeId: node.id, content, matches };
       }).filter((match) => match && match.matches.length > 0);
@@ -4966,6 +5614,7 @@ var CanvasSearchView = class {
     this.view.setEphemeralState({ match });
   }
   close() {
+    window.clearTimeout(this.inputDebounce);
     this.containerEl.remove();
     this.view.canvas.searchEl = void 0;
   }
@@ -5567,13 +6216,31 @@ var ARROW_OUTER_OUTLINE_CLASS = "ac-edge-outline-arrow-outer";
 var ARROW_SOURCE_EXPANDO = "__acArrowOutlineSource";
 var ARROW_CLONES_EXPANDO = "__acArrowOutlineClones";
 var EdgeOutlineCanvasExtension = class extends CanvasExtension {
+  constructor() {
+    super(...arguments);
+    this.edgeRaf = /* @__PURE__ */ new WeakMap();
+    this.pendingEdges = /* @__PURE__ */ new WeakMap();
+  }
+  // Added by an LLM agent (P1-10/P1-12): the old isEnabled() { return true }
+  // doubled every edge's DOM even when both outline toggles were off. Gate on
+  // the actual settings, and skip all work when disabled.
   isEnabled() {
     return true;
+  }
+  isOutlineActive() {
+    return this.isActive() && this.outlineMode() !== "none";
   }
   init() {
     this.plugin.registerEvent(this.plugin.app.workspace.on(
       "advanced-canvas:settings-changed",
       () => {
+        if (!this.isOutlineActive()) {
+          for (const canvas of this.plugin.getCanvases()) {
+            this.updateWrapper(canvas);
+            for (const edge of canvas.edges.values()) this.syncEdge(edge);
+          }
+          return;
+        }
         for (const canvas of this.plugin.getCanvases()) {
           this.updateWrapper(canvas);
           for (const edge of canvas.edges.values()) this.syncEdge(edge);
@@ -5583,14 +6250,65 @@ var EdgeOutlineCanvasExtension = class extends CanvasExtension {
     this.plugin.registerEvent(this.plugin.app.workspace.on(
       "advanced-canvas:canvas-changed",
       (canvas) => {
+        if (!this.isOutlineActive()) return;
         this.updateWrapper(canvas);
         for (const edge of canvas.edges.values()) this.syncEdge(edge);
       }
     ));
-    const syncEdge = (_canvas, edge) => this.syncEdge(edge);
+    const syncEdge = (_canvas, edge) => {
+      if (!this.isOutlineActive()) return;
+      this.queueEdgeSync(_canvas, edge);
+    };
     this.plugin.registerEvent(this.plugin.app.workspace.on("advanced-canvas:edge-added", syncEdge));
     this.plugin.registerEvent(this.plugin.app.workspace.on("advanced-canvas:edge-changed", syncEdge));
     this.plugin.registerEvent(this.plugin.app.workspace.on("advanced-canvas:edge-path-updated", syncEdge));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:edge-removed",
+      (_canvas, edge) => this.cleanupEdge(edge)
+    ));
+  }
+  onSettingsEnabled() {
+    for (const canvas of this.plugin.getCanvases()) {
+      this.updateWrapper(canvas);
+      for (const edge of canvas.edges.values()) this.syncEdge(edge);
+    }
+  }
+  /** Added by an LLM agent (P1-10): batch edge syncs to one rAF per canvas. */
+  queueEdgeSync(canvas, edge) {
+    let pending = this.pendingEdges.get(canvas);
+    if (!pending) {
+      pending = /* @__PURE__ */ new Set();
+      this.pendingEdges.set(canvas, pending);
+    }
+    pending.add(edge);
+    if (this.edgeRaf.has(canvas)) return;
+    this.edgeRaf.set(canvas, window.requestAnimationFrame(() => {
+      this.edgeRaf.delete(canvas);
+      const batch = this.pendingEdges.get(canvas);
+      this.pendingEdges.delete(canvas);
+      if (!batch) return;
+      for (const e of batch) {
+        try {
+          this.syncEdge(e);
+        } catch (err) {
+          console.error("Advanced Canvas: edge outline sync failed:", err);
+        }
+      }
+    }));
+  }
+  /** Added by an LLM agent (P1-10): drop expando-tracked clones of a removed edge. */
+  cleanupEdge(edge) {
+    try {
+      const group = edge.lineEndGroupEl;
+      if (group) {
+        for (const clone of Array.from(group.querySelectorAll(`.${ARROW_OUTLINE_CLASS}`))) clone.remove();
+      }
+      const lineGroup = edge.lineGroupEl;
+      if (lineGroup) {
+        for (const underlay of Array.from(lineGroup.querySelectorAll(`:scope > path.${OUTLINE_CLASS}`))) underlay.remove();
+      }
+    } catch (e) {
+    }
   }
   outlineMode() {
     const black = this.plugin.settings.getSetting("edgeOutlineBlack");
@@ -5890,6 +6608,11 @@ var PresentationCanvasExtension = class extends CanvasExtension {
     this.visitedNodeIds = [];
     this.fullscreenModalObserver = null;
     this.presentationUsesFullscreen = false;
+    // Added by an LLM agent (P1): per-canvas sessions + animation generation so
+    // two leaves presenting don't clobber each other and mashing Right arrow
+    // doesn't stack 5 overlapping zoom chains. Legacy singleton fields above are
+    // kept as aliases of the active canvas session for API compatibility.
+    this.sessions = /* @__PURE__ */ new Map();
   }
   isEnabled() {
     return "presentationFeatureEnabled";
@@ -6057,6 +6780,13 @@ var PresentationCanvasExtension = class extends CanvasExtension {
     if (isStartNode) canvas.metadata["startNode"] = groupNode.getData().id;
   }
   async animateNodeTransition(canvas, fromNode, toNode) {
+    const session = this.sessions.get(canvas);
+    const generation = session ? session.animationGen + 1 : 1;
+    if (session) session.animationGen = generation;
+    const isCurrent = () => {
+      var _a;
+      return ((_a = this.sessions.get(canvas)) == null ? void 0 : _a.animationGen) === generation;
+    };
     const removePadding = this.plugin.settings.getSetting("zoomToSlideWithoutPadding");
     const animationDurationMs = this.plugin.settings.getSetting("slideTransitionAnimationDuration") * 1e3;
     const toNodeBBox = CanvasHelper.getSmallestAllowedZoomBBox(canvas, toNode.getBBox());
@@ -6068,29 +6798,42 @@ var PresentationCanvasExtension = class extends CanvasExtension {
       const currentNodeBBoxEnlarged = BBoxHelper.scaleBBox(fromNodeBBoxPadded, animationIntensity);
       canvas.zoomToRealBbox(currentNodeBBoxEnlarged);
       await sleep(animationDurationMs / 2);
+      if (!isCurrent()) return;
       if (fromNode.getData().id !== toNode.getData().id) {
         const nextNodeBBoxEnlarged = BBoxHelper.scaleBBox(toNodeBBoxPadded, animationIntensity);
         canvas.zoomToRealBbox(nextNodeBBoxEnlarged);
         await sleep(animationDurationMs / 2);
+        if (!isCurrent()) return;
       }
     }
+    if (!isCurrent()) return;
     canvas.zoomToRealBbox(toNodeBBoxPadded);
     this.plugin.app.workspace.trigger("advanced-canvas:presentation-node-changed", canvas, toNode);
   }
   async startPresentation(canvas, tryContinue = false) {
-    if (!tryContinue || this.visitedNodeIds.length === 0) {
+    let existing = this.sessions.get(canvas);
+    if (!existing) {
+      existing = { savedViewport: { x: 0, y: 0, zoom: 1 }, visitedNodeIds: [], animationGen: 0, keyHandler: null, fullscreenHandler: null };
+      this.sessions.set(canvas, existing);
+    }
+    const priorVisited = tryContinue ? existing.visitedNodeIds.length > 0 ? existing.visitedNodeIds : this.visitedNodeIds : [];
+    if (!tryContinue || priorVisited.length === 0) {
       const startNode2 = canvas.metadata["startNode"] && canvas.nodes.get(canvas.metadata["startNode"]);
       if (!startNode2) {
         new import_obsidian19.Notice("No start node found. Please mark a node as a start node through the popup menu.");
         return;
       }
       this.visitedNodeIds = [startNode2.getData().id];
+    } else {
+      this.visitedNodeIds = [...priorVisited];
     }
+    existing.visitedNodeIds = [...this.visitedNodeIds];
     this.savedViewport = {
       x: canvas.tx,
       y: canvas.ty,
       zoom: canvas.tZoom
     };
+    existing.savedViewport = { ...this.savedViewport };
     const shouldEnterFullscreen = this.plugin.settings.getSetting("fullscreenPresentationEnabled");
     this.presentationUsesFullscreen = shouldEnterFullscreen;
     canvas.wrapperEl.focus();
@@ -6105,7 +6848,13 @@ var PresentationCanvasExtension = class extends CanvasExtension {
     canvas.setReadonly(true);
     if (this.plugin.settings.getSetting("useUnclampedZoomWhilePresenting"))
       canvas.screenshotting = true;
-    canvas.wrapperEl.onkeydown = (e) => {
+    let session = this.sessions.get(canvas);
+    if (!session) {
+      session = { savedViewport: { x: 0, y: 0, zoom: 1 }, visitedNodeIds: [], animationGen: 0, keyHandler: null, fullscreenHandler: null };
+      this.sessions.set(canvas, session);
+    }
+    if (session.keyHandler) canvas.wrapperEl.removeEventListener("keydown", session.keyHandler);
+    const keyHandler = (e) => {
       if (e.key === "Escape") {
         e.preventDefault();
         e.stopPropagation();
@@ -6121,12 +6870,21 @@ var PresentationCanvasExtension = class extends CanvasExtension {
         else if (e.key === "PageUp") this.previousNode(canvas);
       }
     };
+    session.keyHandler = keyHandler;
+    canvas.wrapperEl.addEventListener("keydown", keyHandler);
     if (this.presentationUsesFullscreen) {
       this.fullscreenModalObserver = new MutationObserver((mutationRecords) => {
         mutationRecords.forEach((mutationRecord) => {
           mutationRecord.addedNodes.forEach((node) => {
             var _a;
-            activeDocument.body.removeChild(node);
+            if (node.nodeType !== 1) return;
+            const el = node;
+            if (typeof el.matches !== "function" || !el.matches(".modal-container, .prompt, .menu, .suggestion-container")) return;
+            try {
+              activeDocument.body.removeChild(node);
+            } catch (e) {
+              return;
+            }
             (_a = activeDocument.fullscreenElement) == null ? void 0 : _a.appendChild(node);
           });
         });
@@ -6134,10 +6892,13 @@ var PresentationCanvasExtension = class extends CanvasExtension {
         if (inputField) inputField.focus();
       });
       this.fullscreenModalObserver.observe(activeDocument.body, { childList: true });
-      canvas.wrapperEl.onfullscreenchange = (_e) => {
+      if (session.fullscreenHandler) canvas.wrapperEl.removeEventListener("fullscreenchange", session.fullscreenHandler);
+      const fullscreenHandler = (_e) => {
         if (activeDocument.fullscreenElement) return;
         this.endPresentation(canvas);
       };
+      session.fullscreenHandler = fullscreenHandler;
+      canvas.wrapperEl.addEventListener("fullscreenchange", fullscreenHandler);
     }
     this.isPresentationMode = true;
     if (this.presentationUsesFullscreen)
@@ -6151,13 +6912,23 @@ var PresentationCanvasExtension = class extends CanvasExtension {
   endPresentation(canvas) {
     var _a;
     if (!this.isPresentationMode) return;
+    const session = this.sessions.get(canvas);
+    if (session) {
+      session.animationGen++;
+      if (session.keyHandler) {
+        canvas.wrapperEl.removeEventListener("keydown", session.keyHandler);
+        session.keyHandler = null;
+      }
+      if (session.fullscreenHandler) {
+        canvas.wrapperEl.removeEventListener("fullscreenchange", session.fullscreenHandler);
+        session.fullscreenHandler = null;
+      }
+    }
     if (this.presentationUsesFullscreen) {
       (_a = this.fullscreenModalObserver) == null ? void 0 : _a.disconnect();
       this.fullscreenModalObserver = null;
-      canvas.wrapperEl.onfullscreenchange = null;
       if (activeDocument.fullscreenElement) void activeDocument.exitFullscreen();
     }
-    canvas.wrapperEl.onkeydown = null;
     canvas.setReadonly(false);
     if (this.plugin.settings.getSetting("useUnclampedZoomWhilePresenting"))
       canvas.screenshotting = false;
@@ -6197,6 +6968,8 @@ var PresentationCanvasExtension = class extends CanvasExtension {
     }
     if (toNode) {
       this.visitedNodeIds.push(toNode.getData().id);
+      const session = this.sessions.get(canvas);
+      if (session) session.visitedNodeIds = [...this.visitedNodeIds];
       void this.animateNodeTransition(canvas, fromNode, toNode);
     } else {
       void this.animateNodeTransition(canvas, fromNode, fromNode);
@@ -6213,7 +6986,19 @@ var PresentationCanvasExtension = class extends CanvasExtension {
       toNode = fromNode;
       this.visitedNodeIds.push(fromNodeId);
     }
+    const session = this.sessions.get(canvas);
+    if (session) session.visitedNodeIds = [...this.visitedNodeIds];
     void this.animateNodeTransition(canvas, fromNode, toNode);
+  }
+  dispose() {
+    var _a;
+    for (const [, session] of this.sessions) session.animationGen++;
+    this.sessions.clear();
+    try {
+      (_a = this.fullscreenModalObserver) == null ? void 0 : _a.disconnect();
+    } catch (e) {
+    }
+    this.fullscreenModalObserver = null;
   }
 };
 
@@ -6313,11 +7098,29 @@ var ZOrderingCanvasExtension = class extends CanvasExtension {
   }
   moveMaxLayers(canvas, selectedNodes, selectedEdges, forward) {
     if (selectedNodes.length > 0) {
-      const targetZIndex = forward ? Math.max(...this.getAllNodeZIndexes(canvas)) + 1 : Math.min(...this.getAllNodeZIndexes(canvas)) - selectedNodes.length;
+      let targetZIndex;
+      if (forward) {
+        let max = -Infinity;
+        for (const node of canvas.nodes.values()) max = Math.max(max, node.zIndex);
+        targetZIndex = max + 1;
+      } else {
+        let min = Infinity;
+        for (const node of canvas.nodes.values()) min = Math.min(min, node.zIndex);
+        targetZIndex = min - selectedNodes.length;
+      }
       this.setNodesZIndex(selectedNodes, targetZIndex);
     }
     if (selectedEdges.length > 0) {
-      const targetZIndex = forward ? Math.max(...this.getAllEdgeZIndexes(canvas)) + 1 : Math.min(...this.getAllEdgeZIndexes(canvas)) - selectedEdges.length;
+      let targetZIndex;
+      if (forward) {
+        let max = -Infinity;
+        for (const edge of canvas.edges.values()) max = Math.max(max, this.getEdgeZIndex(edge));
+        targetZIndex = max + 1;
+      } else {
+        let min = Infinity;
+        for (const edge of canvas.edges.values()) min = Math.min(min, this.getEdgeZIndex(edge));
+        targetZIndex = min - selectedEdges.length;
+      }
       this.setEdgesZIndex(canvas, selectedEdges, targetZIndex);
     }
   }
@@ -6326,18 +7129,34 @@ var ZOrderingCanvasExtension = class extends CanvasExtension {
     if (edges.length > 0) this.setEdgesZIndex(canvas, edges, null);
   }
   setNodesZIndex(nodes, zIndex) {
+    var _a;
     const sortedNodes = nodes.sort((a, b) => a.zIndex - b.zIndex);
     for (let i = 0; i < sortedNodes.length; i++) {
       const node = sortedNodes[i];
       const finalZIndex = zIndex + i;
       node.setZIndex(finalZIndex);
     }
+    this.maybeCompactNodeZIndexes((_a = nodes.first()) == null ? void 0 : _a.canvas);
+  }
+  /** Added by an LLM agent (P2-16): renormalize persistent zIndexes to 1..N. */
+  maybeCompactNodeZIndexes(canvas) {
+    if (!canvas) return;
+    let max = -Infinity;
+    for (const node of canvas.nodes.values()) max = Math.max(max, node.zIndex);
+    if (max < 1e5) return;
+    const sorted = [...canvas.nodes.values()].sort((a, b) => a.zIndex - b.zIndex);
+    sorted.forEach((node, i) => {
+      const data = node.getData();
+      if (data.zIndex !== void 0) node.setZIndex(i + 1);
+    });
+    canvas.zIndexCounter = sorted.length + 1;
   }
   // Added by an LLM agent: persists the zIndex in the edge's styleAttributes (as a string, like every style attribute)
   setEdgesZIndex(canvas, edges, zIndex, pushHistory = true) {
-    const sortedEdges = edges.sort((a, b) => this.getEdgeZIndex(a) - this.getEdgeZIndex(b));
-    for (let i = 0; i < sortedEdges.length; i++) {
-      const edge = sortedEdges[i];
+    const withOrder = edges.map((edge) => ({ edge, order: this.getEdgeZIndex(edge) }));
+    withOrder.sort((a, b) => a.order - b.order);
+    for (let i = 0; i < withOrder.length; i++) {
+      const edge = withOrder[i].edge;
       const edgeData = edge.getData();
       const finalZIndex = zIndex === null ? null : zIndex + i;
       edge.setData({
@@ -6346,17 +7165,27 @@ var ZOrderingCanvasExtension = class extends CanvasExtension {
           ...edgeData.styleAttributes,
           zIndex: finalZIndex === null ? null : finalZIndex.toString()
         }
-      });
+      }, false);
     }
     if (pushHistory) canvas.pushHistory(canvas.getData());
     this.reorderEdges(canvas);
   }
   // Added by an LLM agent: SVG <g> elements ignore CSS z-index, so edge stacking is done via DOM order inside the edge containers
   reorderEdges(canvas) {
+    var _a;
     const edges = [...canvas.edges.values()];
-    if (!edges.some((edge) => this.getEdgeZIndex(edge) !== 0)) return;
-    const sortedEdges = edges.sort((a, b) => this.getEdgeZIndex(a) - this.getEdgeZIndex(b));
-    for (const edge of sortedEdges) {
+    const sortedEdges = edges.map((edge) => ({ edge, order: this.getEdgeZIndex(edge) })).sort((a, b) => a.order - b.order);
+    if (!sortedEdges.some((item) => item.order !== 0)) return;
+    let dirty = false;
+    for (let i = 0; i < sortedEdges.length; i++) {
+      const lineGroup = sortedEdges[i].edge.lineGroupEl;
+      if (!lineGroup || ((_a = lineGroup.parentElement) == null ? void 0 : _a.children[i]) !== lineGroup) {
+        dirty = true;
+        break;
+      }
+    }
+    if (!dirty) return;
+    for (const { edge } of sortedEdges) {
       if (!edge.isAttached) continue;
       canvas.edgeContainerEl.appendChild(edge.lineGroupEl);
       canvas.edgeEndContainerEl.appendChild(edge.lineEndGroupEl);
@@ -8606,6 +9435,8 @@ async function toPng(node, options = {}) {
 // src/canvas-extensions/export-canvas-extension.ts
 var import_obsidian24 = require("obsidian");
 var MAX_ALLOWED_LOADING_TIME = 1e4;
+var MAX_EXPORT_PIXELS = 16e3 * 16e3;
+var MAX_EXPORT_DIMENSION = 16e3;
 var ExportCanvasExtension = class extends CanvasExtension {
   isEnabled() {
     return "betterExportFeatureEnabled";
@@ -8722,10 +9553,10 @@ var ExportCanvasExtension = class extends CanvasExtension {
     }
     const isWholeCanvas = nodesToExport === null;
     if (!nodesToExport) nodesToExport = [...canvas.nodes.values()];
-    const nodesToExportIds = nodesToExport.map((node) => node.getData().id);
+    const nodesToExportIds = new Set(nodesToExport.map((node) => node.getData().id));
     const edgesToExport = [...canvas.edges.values()].filter((edge) => {
       const edgeData = edge.getData();
-      return nodesToExportIds.includes(edgeData.fromNode) && nodesToExportIds.includes(edgeData.toNode);
+      return nodesToExportIds.has(edgeData.fromNode) && nodesToExportIds.has(edgeData.toNode);
     });
     const backgroundColor = transparentBackground ? void 0 : window.getComputedStyle(canvas.canvasEl).getPropertyValue("--canvas-background");
     new import_obsidian24.Notice("Exporting the canvas. Please wait...");
@@ -8744,7 +9575,21 @@ var ExportCanvasExtension = class extends CanvasExtension {
       const enlargedTargetBoundingBoxSize = { width: enlargedTargetBoundingBox.maxX - enlargedTargetBoundingBox.minX, height: enlargedTargetBoundingBox.maxY - enlargedTargetBoundingBox.minY };
       const canvasElSize = { width: canvas.canvasEl.clientWidth, height: canvas.canvasEl.clientHeight };
       const requiredPixelRatio = Math.max(enlargedTargetBoundingBoxSize.width / canvasElSize.width, enlargedTargetBoundingBoxSize.height / canvasElSize.height);
-      const pixelRatio = svg ? void 0 : Math.round(requiredPixelRatio * pixelRatioFactor);
+      let pixelRatio = svg ? void 0 : Math.round(requiredPixelRatio * pixelRatioFactor);
+      if (pixelRatio !== void 0) {
+        const estWidth = enlargedTargetBoundingBoxSize.width * pixelRatio;
+        const estHeight = enlargedTargetBoundingBoxSize.height * pixelRatio;
+        const estPixels = estWidth * estHeight;
+        if (estPixels > MAX_EXPORT_PIXELS || estWidth > MAX_EXPORT_DIMENSION || estHeight > MAX_EXPORT_DIMENSION) {
+          const scale = Math.min(
+            Math.sqrt(MAX_EXPORT_PIXELS / Math.max(estPixels, 1)),
+            MAX_EXPORT_DIMENSION / Math.max(estWidth, 1),
+            MAX_EXPORT_DIMENSION / Math.max(estHeight, 1)
+          );
+          pixelRatio = Math.max(1, Math.floor(pixelRatio * scale));
+          new import_obsidian24.Notice(`Export resolution capped to ${pixelRatio}x to avoid running out of memory.`);
+        }
+      }
       watermarkEl = watermark ? this.getWatermark(enlargedTargetBoundingBox) : null;
       if (watermarkEl) canvas.canvasEl.appendChild(watermarkEl);
       const actualAspectRatio = canvas.canvasRect.width / canvas.canvasRect.height;
@@ -8761,11 +9606,17 @@ var ExportCanvasExtension = class extends CanvasExtension {
       }
       canvas.zoomToRealBbox(adjustedBoundingBox);
       canvas.setViewport(canvas.tx, canvas.ty, canvas.tZoom);
-      await sleep(10);
+      await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
       let canvasScale = parseFloat(((_a = canvas.canvasEl.style.transform.match(/scale\((\d+(\.\d+)?)\)/)) == null ? void 0 : _a[1]) || "1");
       const edgePathsBBox = BBoxHelper.combineBBoxes(edgesToExport.map((edge) => {
+        var _a2, _b2;
         const edgeCenter = edge.getCenter();
-        const labelWidth = edge.labelElement ? edge.labelElement.wrapperEl.getBoundingClientRect().width / canvasScale : 0;
+        let labelWidth = 0;
+        try {
+          const rect = (_b2 = (_a2 = edge.labelElement) == null ? void 0 : _a2.wrapperEl) == null ? void 0 : _b2.getBoundingClientRect();
+          if (rect) labelWidth = rect.width / canvasScale;
+        } catch (e) {
+        }
         return { minX: edgeCenter.x - labelWidth / 2, minY: edgeCenter.y, maxX: edgeCenter.x + labelWidth / 2, maxY: edgeCenter.y };
       }));
       const enlargedEdgePathsBBox = BBoxHelper.enlargeBBox(edgePathsBBox, 1.1);
@@ -8773,7 +9624,7 @@ var ExportCanvasExtension = class extends CanvasExtension {
       adjustedBoundingBox = BBoxHelper.combineBBoxes([adjustedBoundingBox, enlargedEdgePathsBBox]);
       canvas.zoomToRealBbox(adjustedBoundingBox);
       canvas.setViewport(canvas.tx, canvas.ty, canvas.tZoom);
-      await sleep(10);
+      await new Promise((resolve) => window.requestAnimationFrame(() => resolve()));
       const canvasViewportBBox = canvas.getViewportBBox();
       canvasScale = parseFloat(((_b = canvas.canvasEl.style.transform.match(/scale\((\d+(\.\d+)?)\)/)) == null ? void 0 : _b[1]) || "1");
       let width = (canvasViewportBBox.maxX - canvasViewportBBox.minX) * canvasScale;
@@ -8788,19 +9639,19 @@ var ExportCanvasExtension = class extends CanvasExtension {
         unloadedNodes = nodesToExport.filter((node) => node.initialized === false || node.isContentMounted === false);
       }
       if (unloadedNodes.length === 0) {
-        const nodeElements = nodesToExport.map((node) => node.nodeEl);
-        const edgePathAndArrowElements = edgesToExport.map((edge) => [edge.lineGroupEl, edge.lineEndGroupEl]).flat();
-        const edgeLabelElements = edgesToExport.map((edge) => {
+        const nodeElements = new Set(nodesToExport.map((node) => node.nodeEl));
+        const edgePathAndArrowElements = new Set(edgesToExport.map((edge) => [edge.lineGroupEl, edge.lineEndGroupEl]).flat());
+        const edgeLabelElements = new Set(edgesToExport.map((edge) => {
           var _a2;
           return (_a2 = edge.labelElement) == null ? void 0 : _a2.wrapperEl;
-        }).filter((labelElement) => labelElement !== void 0);
+        }).filter((labelElement) => labelElement !== void 0));
         const filter = (element) => {
           var _a2, _b2, _c2, _d;
-          if (((_a2 = element.classList) == null ? void 0 : _a2.contains("canvas-node")) && !nodeElements.includes(element))
+          if (((_a2 = element.classList) == null ? void 0 : _a2.contains("canvas-node")) && !nodeElements.has(element))
             return false;
-          if (((_c2 = (_b2 = element.parentElement) == null ? void 0 : _b2.classList) == null ? void 0 : _c2.contains("canvas-edges")) && !edgePathAndArrowElements.includes(element))
+          if (((_c2 = (_b2 = element.parentElement) == null ? void 0 : _b2.classList) == null ? void 0 : _c2.contains("canvas-edges")) && !edgePathAndArrowElements.has(element))
             return false;
-          if (((_d = element.classList) == null ? void 0 : _d.contains("canvas-path-label-wrapper")) && !edgeLabelElements.includes(element))
+          if (((_d = element.classList) == null ? void 0 : _d.contains("canvas-path-label-wrapper")) && !edgeLabelElements.has(element))
             return false;
           return true;
         };
@@ -10149,6 +11000,27 @@ var CanvasWrapperExposerExtension = class _CanvasWrapperExposerExtension extends
   }
 };
 
+// src/canvas-extensions/dataset-exposers/dataset-helpers.ts
+function isEmptyDatasetValue(value) {
+  return value === null || value === void 0 || value === "";
+}
+function expandDatasetPairs(data, exposedKey) {
+  const raw = data[exposedKey];
+  const pairs = raw !== null && typeof raw === "object" && !Array.isArray(raw) ? Object.entries(raw) : [[exposedKey, raw]];
+  return pairs;
+}
+function writeDataset(element, data, exposedKeys, keyPrefix = "") {
+  const dataset = element.dataset;
+  if (!dataset) return;
+  for (const exposedKey of exposedKeys) {
+    for (const [key, value] of expandDatasetPairs(data, exposedKey)) {
+      const datasetKey = keyPrefix ? keyPrefix + key.charAt(0).toUpperCase() + key.slice(1) : key;
+      if (isEmptyDatasetValue(value)) delete dataset[datasetKey];
+      else dataset[datasetKey] = String(value);
+    }
+  }
+}
+
 // src/canvas-extensions/dataset-exposers/node-exposer.ts
 var CANVAS_NODE_IFRAME_BODY_CLASS = "canvas-node-iframe-body";
 function getExposedNodeData(settings) {
@@ -10160,6 +11032,12 @@ function getExposedNodeData(settings) {
   return exposedData;
 }
 var NodeExposerExtension = class extends CanvasExtension {
+  constructor() {
+    super(...arguments);
+    // Added by an LLM agent (P0-2): track iframe MutationObservers per node so
+    // they can be disconnected on edit-end/unload instead of leaking one per edit.
+    this.iframeObservers = /* @__PURE__ */ new Map();
+  }
   isEnabled() {
     return true;
   }
@@ -10179,26 +11057,58 @@ var NodeExposerExtension = class extends CanvasExtension {
       "advanced-canvas:node-editing-state-changed",
       (_canvas, node, editing) => {
         var _a, _b;
-        if (!editing) return;
+        if (!editing) {
+          this.disconnectIframeObserver(node.id);
+          return;
+        }
         const nodeData = node.getData();
         if (!nodeData) return;
         const iframe = (_b = (_a = node.nodeEl.querySelector("iframe")) == null ? void 0 : _a.contentDocument) == null ? void 0 : _b.body;
         if (!iframe) return;
         iframe.classList.add(CANVAS_NODE_IFRAME_BODY_CLASS);
-        new MutationObserver(() => iframe.classList.toggle(CANVAS_NODE_IFRAME_BODY_CLASS, true)).observe(iframe, { attributes: true, attributeFilter: ["class"] });
+        this.disconnectIframeObserver(node.id);
+        const observer = new MutationObserver(() => iframe.classList.toggle(CANVAS_NODE_IFRAME_BODY_CLASS, true));
+        observer.observe(iframe, { attributes: true, attributeFilter: ["class"] });
+        this.iframeObservers.set(node.id, observer);
+        const cleanup = new MutationObserver(() => {
+          if (!iframe.isConnected) {
+            this.disconnectIframeObserver(node.id);
+            cleanup.disconnect();
+          }
+        });
+        cleanup.observe(node.nodeEl, { childList: true, subtree: true });
+        this.plugin.register(() => {
+          observer.disconnect();
+          cleanup.disconnect();
+        });
         this.setDataAttributes(iframe, nodeData);
         CanvasWrapperExposerExtension.updateCanvasExposedSettings(this.plugin, iframe);
       }
     ));
   }
-  setDataAttributes(element, nodeData) {
-    for (const exposedDataKey of getExposedNodeData(this.plugin.settings)) {
-      const datasetPairs = nodeData[exposedDataKey] && typeof nodeData[exposedDataKey] === "object" ? Object.entries(nodeData[exposedDataKey]) : [[exposedDataKey, nodeData[exposedDataKey]]];
-      for (const [key, value] of datasetPairs) {
-        if (!value) delete element.dataset[key];
-        else element.dataset[key] = value;
+  dispose() {
+    for (const observer of this.iframeObservers.values()) {
+      try {
+        observer.disconnect();
+      } catch (e) {
       }
     }
+    this.iframeObservers.clear();
+  }
+  disconnectIframeObserver(nodeId) {
+    const existing = this.iframeObservers.get(nodeId);
+    if (existing) {
+      try {
+        existing.disconnect();
+      } catch (e) {
+      }
+      this.iframeObservers.delete(nodeId);
+    }
+  }
+  setDataAttributes(element, nodeData) {
+    const exposed = getExposedNodeData(this.plugin.settings);
+    if (exposed.length === 0) return;
+    writeDataset(element, nodeData, exposed);
   }
 };
 
@@ -10216,14 +11126,9 @@ var NodeInteractionExposerExtension = class extends CanvasExtension {
         if (!nodeData) return;
         const interactionEl = canvas.nodeInteractionLayer.interactionEl;
         if (!interactionEl) return;
-        for (const exposedDataKey of getExposedNodeData(this.plugin.settings)) {
-          const datasetPairs = nodeData[exposedDataKey] instanceof Object ? Object.entries(nodeData[exposedDataKey]) : [[exposedDataKey, nodeData[exposedDataKey]]];
-          for (const [key, value] of datasetPairs) {
-            const modifiedKey = TARGET_NODE_DATASET_PREFIX + key.toString().charAt(0).toUpperCase() + key.toString().slice(1);
-            if (!value) delete interactionEl.dataset[modifiedKey];
-            else interactionEl.dataset[modifiedKey] = value;
-          }
-        }
+        const exposed = getExposedNodeData(this.plugin.settings);
+        if (exposed.length !== 0)
+          writeDataset(interactionEl, nodeData, exposed, TARGET_NODE_DATASET_PREFIX);
         if (PortalsCanvasExtension.isPortalElement(node.id)) interactionEl.dataset.isFromPortal = "true";
         else delete interactionEl.dataset.isFromPortal;
       }
@@ -10245,23 +11150,15 @@ var EdgeExposerExtension = class extends CanvasExtension {
     this.plugin.registerEvent(this.plugin.app.workspace.on(
       "advanced-canvas:edge-changed",
       (_canvas, edge) => {
-        var _a, _b, _c, _d;
+        var _a, _b, _c;
         const edgeData = edge == null ? void 0 : edge.getData();
         if (!edgeData) return;
-        for (const exposedDataKey of getExposedEdgeData(this.plugin.settings)) {
-          const datasetPairs = edgeData[exposedDataKey] && typeof edgeData[exposedDataKey] === "object" ? Object.entries(edgeData[exposedDataKey]) : [[exposedDataKey, edgeData[exposedDataKey]]];
-          for (const [key, value] of datasetPairs) {
-            if (!value) {
-              delete edge.path.display.dataset[key];
-              if ((_a = edge.fromLineEnd) == null ? void 0 : _a.el) delete edge.fromLineEnd.el.dataset[key];
-              if ((_b = edge.toLineEnd) == null ? void 0 : _b.el) delete edge.toLineEnd.el.dataset[key];
-            } else {
-              edge.path.display.dataset[key] = value;
-              if ((_c = edge.fromLineEnd) == null ? void 0 : _c.el) edge.fromLineEnd.el.dataset[key] = value;
-              if ((_d = edge.toLineEnd) == null ? void 0 : _d.el) edge.toLineEnd.el.dataset[key] = value;
-            }
-          }
-        }
+        const exposed = getExposedEdgeData(this.plugin.settings);
+        if (exposed.length === 0) return;
+        const record = edgeData;
+        if ((_a = edge.path) == null ? void 0 : _a.display) writeDataset(edge.path.display, record, exposed);
+        if ((_b = edge.fromLineEnd) == null ? void 0 : _b.el) writeDataset(edge.fromLineEnd.el, record, exposed);
+        if ((_c = edge.toLineEnd) == null ? void 0 : _c.el) writeDataset(edge.toLineEnd.el, record, exposed);
       }
     ));
   }
@@ -10304,12 +11201,11 @@ var BasesTableViewPatcher = class extends Patcher {
     const that = this;
     await Patcher.patchOnce(this.plugin, row, (resolve) => ({
       render: Patcher.OverrideExisting((next) => function(...args) {
-        let result = next.call(this, ...args);
+        const result = next.call(this, ...args);
         if (this.cells.length > 0) {
           const cell = this.cells.first();
           void that.patchTableCell(cell);
           resolve(cell);
-          result = next.call(this, ...args);
         }
         return result;
       })
@@ -10321,9 +11217,11 @@ var BasesTableViewPatcher = class extends Patcher {
         var _a;
         const isCanvas = ((_a = ctx.file) == null ? void 0 : _a.extension) === "canvas";
         if (isCanvas) ctx.file.extension = "md";
-        const result = next.call(this, ctx);
-        if (isCanvas) ctx.file.extension = "canvas";
-        return result;
+        try {
+          return next.call(this, ctx);
+        } finally {
+          if (isCanvas && ctx.file) ctx.file.extension = "canvas";
+        }
       })
     });
   }
@@ -10341,10 +11239,12 @@ var PATCHERS = [
   FileManagerPatcher,
   // Direct metadata dependant patchers
   PropertiesPatcher,
-  !(0, import_obsidian28.requireApiVersion)("1.12.0") && BacklinksPatcher,
+  // Added by an LLM agent (P2-15): no `false` holes - filter version-gated
+  // patchers at load time so this.patchers has no undefined entries.
+  ...!(0, import_obsidian28.requireApiVersion)("1.12.0") ? [BacklinksPatcher] : [],
   OutgoingLinksPatcher,
   // Metadata dependant patchers
-  (0, import_obsidian28.requireApiVersion)("1.9.0") && BasesTableViewPatcher,
+  ...(0, import_obsidian28.requireApiVersion)("1.9.0") ? [BasesTableViewPatcher] : [],
   LinkSuggestionsPatcher,
   EmbedPatcher,
   SearchPatcher
@@ -10390,10 +11290,12 @@ var CANVAS_EXTENSIONS = [
   EdgeHighlightCanvasExtension,
   EdgeLabelMarkdownCanvasExtension,
   // Added by an LLM agent
-  // Has to come after EdgeStylesExtension - it measures the final path of pathfinding edges
+  // Added by an LLM agent (P2-14): ordering is a declared dependency, not tribal
+  // knowledge. EdgeArrowBase measures the final path produced by EdgeStyles, and
+  // BezierCurvature scales EdgeArrowBase's control points - keep this order and
+  // see getExtensionOrderDependencies() below for the machine-checked version.
   EdgeArrowBaseCanvasExtension,
   // Added by an LLM agent
-  // Has to come after EdgeArrowBaseCanvasExtension - it scales its final control points
   BezierCurvatureCanvasExtension,
   // Added by an LLM agent
   AutoFileNodeEdgesCanvasExtension,
@@ -10421,28 +11323,62 @@ var AdvancedCanvasPlugin = class extends import_obsidian28.Plugin {
     this.settings.addSettingsTab();
     this.windowsManager = new WindowsManager(this);
     this.patchers = PATCHERS.map((Patcher2) => {
-      if (!Patcher2) return;
       try {
         return new Patcher2(this);
       } catch (e) {
-        console.error(`Error initializing patcher ${Patcher2.name}:`, e);
+        console.error(`Error initializing patcher ${Patcher2 == null ? void 0 : Patcher2.name}:`, e);
+        try {
+          new import_obsidian28.Notice(`Advanced Canvas: ${Patcher2 == null ? void 0 : Patcher2.name} failed to patch (Obsidian API changed?). See console.`);
+        } catch (e2) {
+        }
+        return void 0;
       }
-    });
+    }).filter((p) => !!p);
     this.canvasExtensions = CANVAS_EXTENSIONS.map((Extension) => {
       try {
         return new Extension(this);
       } catch (e) {
-        console.error(`Error initializing ac-extension ${Extension.name}:`, e);
+        console.error(`Error initializing ac-extension ${Extension == null ? void 0 : Extension.name}:`, e);
+        return void 0;
       }
-    });
+    }).filter((e) => !!e);
+    this.assertExtensionOrder();
   }
   onunload() {
+    var _a, _b;
+    for (const extension of (_a = this.canvasExtensions) != null ? _a : []) {
+      try {
+        extension.dispose();
+      } catch (e) {
+        console.error(`Error disposing extension ${(_b = extension == null ? void 0 : extension.constructor) == null ? void 0 : _b.name}:`, e);
+      }
+    }
+    this.canvasExtensions = [];
+    this.patchers = [];
   }
   getCanvases() {
     return this.app.workspace.getLeavesOfType("canvas").map((leaf) => {
       var _a;
       return (_a = leaf.view) == null ? void 0 : _a.canvas;
     }).filter((canvas) => canvas);
+  }
+  // Added by an LLM agent (P2-14): machine-checked declaration of the
+  // order-sensitive extension pairs. onload asserts this after constructing
+  // extensions so a future reorder fails loudly instead of silently changing
+  // global event order.
+  assertExtensionOrder() {
+    var _a;
+    const order = ((_a = this.canvasExtensions) != null ? _a : []).map((e) => e.constructor.name);
+    const mustComeAfter = [
+      ["EdgeArrowBaseCanvasExtension", "EdgeStylesExtension"],
+      ["BezierCurvatureCanvasExtension", "EdgeArrowBaseCanvasExtension"]
+    ];
+    for (const [later, earlier] of mustComeAfter) {
+      const laterIdx = order.indexOf(later);
+      const earlierIdx = order.indexOf(earlier);
+      if (laterIdx !== -1 && earlierIdx !== -1 && laterIdx < earlierIdx)
+        console.error(`Advanced Canvas: ${later} must be constructed after ${earlier} (see CANVAS_EXTENSIONS order).`);
+    }
   }
   getCurrentCanvasView() {
     const canvasView = this.app.workspace.getActiveViewOfType(import_obsidian28.ItemView);

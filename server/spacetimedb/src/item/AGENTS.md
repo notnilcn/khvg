@@ -1,7 +1,8 @@
 # item/ AGENTS.md
 
 Catalog tables + seeds for items and enchantments. See `server/AGENTS.md` for the module
-map and the SpacetimeDB Rust rules — they all apply here. This file is the focused recipe
+map and the SpacetimeDB Rust rules — they all apply here. File index (generated —
+regenerate, never hand-edit): [[server/spacetimedb/src/item/pointers.md|pointers]]. This file is the focused recipe
 for **adding abilities** (the most common task touching this module).
 
 ## The recipe
@@ -54,7 +55,7 @@ The full contributor-facing tutorial is
 ## Rules that bite here
 
 - **Capability is behavior, not slot.** Look up with `ability_behavior(&item)` /
-  `consumable_behavior(&item)` in `player/methods.rs`, never by inspecting `equip_slot`.
+  `consumable_behavior(&item)` in `item/methods.rs`, never by inspecting `equip_slot`.
 - **Slot indices are load-bearing on both sides:** 0 weapon, 1–4 hotbar, 5 accessory,
   6 armor, 7–30 general, 31 bag, 32–37 ability (`ABILITY_SLOT_START`/`COUNT`). Ability
   items span `slot_cost` contiguous cells; the head holds the item, followers get

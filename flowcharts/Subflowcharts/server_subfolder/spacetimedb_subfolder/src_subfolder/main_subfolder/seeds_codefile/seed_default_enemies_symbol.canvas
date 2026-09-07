@@ -15,9 +15,8 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"symbol",
-				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-3",
+				"edge-_colon_-server/spacetimedb/src/main/seeds-_dot_-rs-_hashtag_-seed-_hashtag_-4",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/seeds_codefile/seeds_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
@@ -31,8 +30,10 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-make_phase",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/mod_codefile/mod_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/defs_subfolder/defs_subfolder-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementBehavior",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-WanderParams",
+				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-steering",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MoveGoal",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovePattern",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MeanderParams",
 				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-make_sequence",
 				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-seq_single",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
@@ -41,9 +42,12 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-FleeParams",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-VolleyParams",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ShotgunParams",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-OrbitParams",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-CurtainParams",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ChaseParams",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ExplosionParams"
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ZigzagParams",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-LungeParams",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-ExplosionParams",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

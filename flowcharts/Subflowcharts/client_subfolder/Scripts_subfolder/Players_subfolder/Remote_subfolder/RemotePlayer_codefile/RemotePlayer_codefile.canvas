@@ -1,11 +1,41 @@
 {
 	"nodes": [
 		{
+			"id": "b7a115a60879a630",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/_ExitTree_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "48ee9dae1692f950",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/_model3D_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3102ef0ddd285870",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/_Process_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "7a04382b9b2a8b7c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/_Ready_symbol.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/componentRegistry_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/GetComponent (no params)_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/GetComponent (System.Type)_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/OnPositionRowUpdated_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/OnRotationRowUpdated_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/positionBinder_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/RegisterComponent_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/RemotePlayer (class)_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/rotationBinder_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Remote_subfolder/RemotePlayer_codefile/UnregisterComponent_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400

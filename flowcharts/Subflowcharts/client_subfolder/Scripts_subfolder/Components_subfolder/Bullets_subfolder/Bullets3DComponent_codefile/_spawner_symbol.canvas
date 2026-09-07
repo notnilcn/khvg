@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "98a867de63e7690c",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/Bullets3DComponent.cs",
+			"subpath": "#_spawner",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

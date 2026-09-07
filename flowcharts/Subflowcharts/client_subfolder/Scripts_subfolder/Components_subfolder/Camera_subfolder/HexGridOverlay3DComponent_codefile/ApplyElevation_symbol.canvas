@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "5e48ba9a8b2fb618",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/HexGridOverlay3DComponent.cs",
+			"subpath": "#ApplyElevation",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a6f6fbb0ac260160",
+			"type": "file",
+			"file": "client/Scripts/Players/CharacterModel3D.cs",
+			"subpath": "#librarySceneCache",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

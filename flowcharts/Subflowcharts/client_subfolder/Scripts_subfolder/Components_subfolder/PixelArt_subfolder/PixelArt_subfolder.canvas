@@ -1,0 +1,33 @@
+{
+	"nodes": [
+		{
+			"id": "3039d4b0f9229180",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/PixelArtPipelineComponent_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "82a49a3e06b3f2d8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/WaterComponent3D_codefile/WaterComponent3D_codefile.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"subfolder"
+			]
+		}
+	}
+}

@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
 			"color": "5",
-			"x": 1170,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1150,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
 			"color": "5",
-			"x": 1510,
+			"x": 2190,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -45,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
 			"color": "5",
-			"x": 210,
+			"x": 810,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -55,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
 			"color": "5",
-			"x": 1630,
+			"x": 1610,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/Weapon_subfolder.canvas",
 			"color": "5",
-			"x": 1050,
+			"x": 1270,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -75,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
 			"color": "5",
-			"x": 2090,
+			"x": 2070,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/anticheat_subfolder.canvas",
 			"color": "5",
-			"x": 1180,
+			"x": 500,
 			"y": 1500,
 			"width": 400,
 			"height": 400
@@ -95,8 +95,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
 			"color": "5",
-			"x": 1770,
-			"y": 1500,
+			"x": 1730,
+			"y": 500,
 			"width": 400,
 			"height": 400
 		},
@@ -105,8 +105,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas",
 			"color": "5",
-			"x": 960,
-			"y": 2000,
+			"x": 1150,
+			"y": 1500,
 			"width": 400,
 			"height": 400
 		},
@@ -115,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 1400,
+			"x": 1500,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -177,19 +177,19 @@
 			"label": "rpc"
 		},
 		{
-			"id": "53f428f016989580",
+			"id": "d01d34b130bacd78",
 			"fromNode": "f55e33efc44c6b58",
 			"fromSide": "bottom",
-			"toNode": "89313a32243e91e0",
+			"toNode": "92a8020e4de518b8",
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "rpc"
 		},
 		{
-			"id": "d01d34b130bacd78",
+			"id": "53f428f016989580",
 			"fromNode": "f55e33efc44c6b58",
 			"fromSide": "bottom",
-			"toNode": "92a8020e4de518b8",
+			"toNode": "89313a32243e91e0",
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "rpc"
@@ -237,27 +237,10 @@
 			"toEnd": "arrow"
 		},
 		{
-			"id": "651c70b33780497e",
+			"id": "f3a94f6ffc46acd2",
 			"fromNode": "92a8020e4de518b8",
 			"fromSide": "bottom",
 			"toNode": "23ad101c7f63b520",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "read"
-		},
-		{
-			"id": "da88e8b7d0814e0a",
-			"fromNode": "92a8020e4de518b8",
-			"fromSide": "bottom",
-			"toNode": "69d7625af2ec04d0",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "3d06ed6b20eae1c2",
-			"fromNode": "23ad101c7f63b520",
-			"fromSide": "bottom",
-			"toNode": "69d7625af2ec04d0",
 			"toSide": "top",
 			"toEnd": "arrow"
 		},

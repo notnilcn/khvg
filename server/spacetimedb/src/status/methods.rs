@@ -13,8 +13,9 @@ use crate::player::tables::*;
 use crate::player::methods::players_near_point;
 use crate::enemy::def_tables::StunBehavior;
 use crate::enemy::instance_tables::{enemy, Enemy};
-use crate::enemy::methods::{seconds_since, enemies_near_point};
-use crate::combat::{deal_damage_to_player_opts, heal_player, apply_damage_to_enemy, apply_damage_to_enemy_opts, MitigationMode, IncomingDamageOptions, BLEED_DRAIN_OPTIONS, DOT_TICK_OPTIONS};
+use crate::enemy::methods::enemies_near_point;
+use crate::main::time::seconds_since;
+use crate::combat::{deal_damage_to_player_opts, heal_player, apply_damage_to_enemy, DamageRequest, SHARED_PORTION_OPTIONS, REDIRECTED_OPTIONS, BLEED_DRAIN_OPTIONS};
 use crate::anticheat::tables::player_hit_flag;
 use super::tables::*;
 
@@ -136,7 +137,7 @@ pub fn stunned_magnitude(ctx: &ReducerContext, enemy_id: u64) -> Option<f32> {
 /// bleed mark (DamageToBleed with params.outgoing) CONVERTS a hit on the marked enemy into
 /// an enemy DoT (magnitude = damage/3 for 3s) instead of instant damage. Returns true when
 /// the hit was converted (caller skips the hp subtraction and kill handling). Skipped for
-/// DoT ticks themselves (DOT_TICK_OPTIONS) so the bleed can't re-convert into itself.
+/// DoT ticks themselves (DamageRequest::DOT_TICK) so the bleed can't re-convert into itself.
 pub fn convert_outgoing_to_bleed(ctx: &ReducerContext, attacker: Option<u64>, enemy_id: u64, damage: u32) -> bool {
     let Some(profile_id) = attacker else { return false };
     if damage == 0 { return false; }
@@ -177,11 +178,7 @@ fn share_zone_damage(ctx: &ReducerContext, profile_id: u64, source_enemy_id: Opt
     let share = damage / occupants.len() as u32;
     for occupant in occupants.iter().filter(|p| p.profile_id != profile_id) {
         if let Some(login) = ctx.db.logged_in_player().profile_id().find(&occupant.profile_id) {
-            let _ = deal_damage_to_player_opts(ctx, &login, source_enemy_id, share, IncomingDamageOptions {
-                skip_conversion: true, // loop guard: shared portions never re-intercept
-                respect_floor: true,
-                skip_redirect: true,
-            });
+            let _ = deal_damage_to_player_opts(ctx, &login, source_enemy_id, share, SHARED_PORTION_OPTIONS);
         }
     }
     share
@@ -219,11 +216,7 @@ pub fn intercept_incoming(ctx: &ReducerContext, profile_id: u64, source_enemy_id
     } else if !skip_redirect {
         if let Some(redirect) = rows.iter().find(|r| r.kind == StatusEffectKind::RedirectToCaster) {
             if let Some(paladin) = ctx.db.logged_in_player().profile_id().find(&redirect.source_profile_id) {
-                let _ = deal_damage_to_player_opts(ctx, &paladin, source_enemy_id, base_damage, IncomingDamageOptions {
-                    skip_conversion: false,
-                    respect_floor: true,
-                    skip_redirect: true,
-                });
+                let _ = deal_damage_to_player_opts(ctx, &paladin, source_enemy_id, base_damage, REDIRECTED_OPTIONS);
                 absorbed = true;
             }
         }
@@ -327,7 +320,7 @@ fn settle_store_mark(ctx: &ReducerContext, row: &ActiveStatusEffect, login: &Log
     let payout = (row.pool * multiplier) as u32;
     if payout > 0 {
         if let Some(enemy) = ctx.db.enemy().enemy_id().find(&row.marked_enemy_id) {
-            apply_damage_to_enemy(ctx, enemy, payout, 0, MitigationMode::FlatRelease, Some(row.profile_id), Some(login.player_id));
+            apply_damage_to_enemy(ctx, enemy, payout, 0, DamageRequest::FLAT_RELEASE, Some(row.profile_id), Some(login.player_id));
         }
     }
     ctx.db.active_status_effect().effect_id().delete(&row.effect_id);
@@ -450,7 +443,7 @@ pub fn tick(ctx: &ReducerContext) {
                     if row.pool >= 1.0 {
                         if let Some(pos) = ctx.db.player_position().profile_id().find(&row.profile_id) {
                             for enemy in enemies_near_point(ctx, pos.x, pos.y, row.params.release_radius) {
-                                apply_damage_to_enemy(ctx, enemy, row.pool as u32, 0, MitigationMode::Normal, Some(row.profile_id), Some(login.player_id));
+                                apply_damage_to_enemy(ctx, enemy, row.pool as u32, 0, DamageRequest::NORMAL, Some(row.profile_id), Some(login.player_id));
                             }
                         }
                     }
@@ -500,9 +493,9 @@ pub fn tick(ctx: &ReducerContext) {
         }
     }
 
-    // Enemy statuses: DoT ticks deal their magnitude through the one damage sink (Normal
-    // mitigation — per-tick defence applies, min 1, so DoT is weak vs armour; DOT_TICK_OPTIONS
-    // keeps an outgoing bleed mark from re-converting the tick into itself). XP credit goes
+    // Enemy statuses: DoT ticks deal their magnitude through the one damage sink
+    // (DamageRequest::DOT_TICK — per-tick defence applies, min 1, so DoT is weak vs
+    // armour, and an outgoing bleed mark can't re-convert the tick into itself). XP credit goes
     // to the debuff's source profile; aggro to that player's identity only while they're
     // still logged in (a scheduled reducer has no meaningful sender). The same pass sweeps
     // expired rows and purges orphans — enemies killed by weapon fire skip this tick, so
@@ -516,7 +509,7 @@ pub fn tick(ctx: &ReducerContext) {
             let amount = row.magnitude as u32;
             if amount > 0 {
                 let aggro_from = ctx.db.logged_in_player().profile_id().find(&row.source_profile_id).map(|l| l.player_id);
-                apply_damage_to_enemy_opts(ctx, enemy, amount, 0, MitigationMode::Normal, Some(row.source_profile_id), aggro_from, DOT_TICK_OPTIONS);
+                apply_damage_to_enemy(ctx, enemy, amount, 0, DamageRequest::DOT_TICK, Some(row.source_profile_id), aggro_from);
                 // The tick may have killed the enemy — its debuff rows died with it.
                 if ctx.db.enemy().enemy_id().find(&row.enemy_id).is_none() { continue; }
             }
@@ -591,7 +584,7 @@ pub fn tick(ctx: &ReducerContext) {
                 // (a scheduled reducer has no meaningful sender) — same rule as DoT ticks.
                 let aggro_from = ctx.db.logged_in_player().profile_id().find(&zone.owner_profile_id).map(|l| l.player_id);
                 for enemy in enemies_near_point(ctx, zone.x, zone.y, zone.radius) {
-                    apply_damage_to_enemy(ctx, enemy, zone.magnitude as u32, 0, MitigationMode::Normal, Some(zone.owner_profile_id), aggro_from);
+                    apply_damage_to_enemy(ctx, enemy, zone.magnitude as u32, 0, DamageRequest::NORMAL, Some(zone.owner_profile_id), aggro_from);
                 }
             }
             _ => {}

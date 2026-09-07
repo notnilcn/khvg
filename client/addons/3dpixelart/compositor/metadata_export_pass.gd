@@ -3,8 +3,7 @@ class_name PixelArtMetadataExportPass
 extends CompositorEffect
 ## Runs inside the metadata SubViewport (PRE_TRANSPARENT) and exports its
 ## color layer (packed metadata) and depth layer into the shared textures,
-## so the main viewport's effects can consume them. Replaces the metadata
-## color/depth render targets from ProPixelizer's OutlineDetectionPass.
+## so the main viewport's effects can consume them.
 
 var rd: RenderingDevice
 var shader: RID

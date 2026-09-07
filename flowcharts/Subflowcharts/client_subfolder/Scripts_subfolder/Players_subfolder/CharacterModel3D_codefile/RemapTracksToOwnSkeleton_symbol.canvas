@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4317cae84b9b3bd0",
+			"type": "file",
+			"file": "client/Scripts/Players/CharacterModel3D.cs",
+			"subpath": "#RemapTracksToOwnSkeleton",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

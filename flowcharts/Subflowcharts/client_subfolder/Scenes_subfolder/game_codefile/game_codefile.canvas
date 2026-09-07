@@ -14,7 +14,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Game/GameManager-_dot_-cs-_hashtag_-GameManager-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/GameManager_codefile/GameManager_codefile-_dot_-canvas-_colon_-script",
@@ -39,6 +38,8 @@
 				"edge-_colon_-client/Scripts/Components/Bullets/BulletControllerComponent-_dot_-cs-_hashtag_-BulletControllerComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletControllerComponent_codefile/BulletControllerComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Bullets/BulletCliffComponent-_dot_-cs-_hashtag_-BulletCliffComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/BulletCliffComponent_codefile/BulletCliffComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Camera/CameraRigComponent-_dot_-cs-_hashtag_-CameraRigComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/CameraRigComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/Camera_subfolder-_dot_-canvas-_colon_-script",
@@ -51,6 +52,8 @@
 				"edge-_colon_-client/Scripts/Components/Terrain/TerrainComponent-_dot_-cs-_hashtag_-TerrainComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent_codefile/TerrainComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/Terrain_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Terrain/ElevationMapComponent-_dot_-cs-_hashtag_-ElevationMapComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/ElevationMapComponent_codefile/ElevationMapComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/Scripts/Components/Zones/ZoneRendererComponent-_dot_-cs-_hashtag_-ZoneRendererComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/ZoneRendererComponent_codefile/ZoneRendererComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Zones_subfolder/Zones_subfolder-_dot_-canvas-_colon_-script",
@@ -68,8 +71,6 @@
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-client/Scenes/Components/Bullets/bullet_hit_router_component-_dot_-tscn-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/bullet_hit_router_component_codefile/bullet_hit_router_component_codefile-_dot_-canvas-_colon_-scene",
-				"edge-_colon_-client/Scenes/world_3d-_dot_-tscn-_colon_-scene",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/world_3d_codefile/world_3d_codefile-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-client/Scenes/Components/Lobby/lobby_component-_dot_-tscn-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Lobby_subfolder/lobby_component_codefile/lobby_component_codefile-_dot_-canvas-_colon_-scene",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder-_dot_-canvas-_colon_-scene",
@@ -84,6 +85,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/item/views-_dot_-rs-_hashtag_-all_enchantments-_colon_-bind",
+				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-all_animations-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-bind",
@@ -101,10 +103,12 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_terrain_tiles-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_hex_decor-_colon_-bind",
+				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_building_tiles-_colon_-bind",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-GroundZone-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-bind",
-				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-AbilityVisualEvent-_colon_-bind"
+				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-AbilityVisualEvent-_colon_-bind",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

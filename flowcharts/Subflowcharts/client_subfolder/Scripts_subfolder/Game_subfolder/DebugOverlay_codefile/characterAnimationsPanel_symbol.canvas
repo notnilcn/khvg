@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "5ca2b66740fc5ad8",
+			"type": "file",
+			"file": "client/Scripts/Game/DebugOverlay.cs",
+			"subpath": "#characterAnimationsPanel",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

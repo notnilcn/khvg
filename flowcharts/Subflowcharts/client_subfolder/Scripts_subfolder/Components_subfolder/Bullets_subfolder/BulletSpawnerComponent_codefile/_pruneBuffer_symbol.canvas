@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a7ebf5fa3a09e2a4",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs",
+			"subpath": "#_pruneBuffer",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

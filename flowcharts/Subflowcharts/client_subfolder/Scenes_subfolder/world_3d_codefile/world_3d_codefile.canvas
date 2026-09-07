@@ -14,7 +14,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"codefile",
 				"edge-_colon_-client/Scripts/Components/Camera/World3DComponent-_dot_-cs-_hashtag_-World3DComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/World3DComponent_codefile/World3DComponent_codefile-_dot_-canvas-_colon_-script",
@@ -23,21 +22,32 @@
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Scripts_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/client_subfolder-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Camera/HexGridOverlay3DComponent-_dot_-cs-_hashtag_-HexGridOverlay3DComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlay3DComponent_codefile/HexGridOverlay3DComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/PixelArt/PixelArtPipelineComponent-_dot_-cs-_hashtag_-PixelArtPipelineComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/PixelArtPipelineComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArt_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/PixelArt/WaterComponent3D-_dot_-cs-_hashtag_-WaterComponent3D-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/WaterComponent3D_codefile/WaterComponent3D_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-client/sstdbsdk/TableBinderComponent-_dot_-cs-_hashtag_-TableBinderComponent-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/TableBinderComponent_codefile/TableBinderComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-client/Scripts/Components/Bullets/EnemyBullets3DComponent-_dot_-cs-_hashtag_-EnemyBullets3DComponent-_colon_-script",
-				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/EnemyBullets3DComponent_codefile/EnemyBullets3DComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Camera/HexGridOverlay3DComponent-_dot_-cs-_hashtag_-HexGridOverlay3DComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/HexGridOverlay3DComponent_codefile/HexGridOverlay3DComponent_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-client/Scripts/Components/Bullets/Bullets3DComponent-_dot_-cs-_hashtag_-Bullets3DComponent-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets3DComponent_codefile/Bullets3DComponent_codefile-_dot_-canvas-_colon_-script",
 				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder-_dot_-canvas-_colon_-script",
-				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-bind",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-client/Scripts/Components/Terrain/TerrainComponent3D-_dot_-cs-_hashtag_-TerrainComponent3D-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/TerrainComponent3D_codefile-_dot_-canvas-_colon_-script",
+				"edge-_colon_-flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/Terrain_subfolder-_dot_-canvas-_colon_-script",
+				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_terrain_tiles-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-bind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-bind",
-				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-bind"
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-bind",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-bind",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-bind",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

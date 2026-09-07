@@ -11,11 +11,21 @@
 			"height": 400
 		},
 		{
+			"id": "5bf861eb7b71687a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/allAnimationsBinder_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "b4d55bba30d89e78",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/allEnchantmentsBinder_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/allItemsBinder_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +45,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/allTexturesBinder_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3f1accd750d281a4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/animationCache_symbol.canvas",
+			"color": "5",
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/CatalogComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +75,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/enchantmentCache_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f30f9105b72d6640",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/GetAnimation_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ae4113ac4b0cdb70",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/GetAnimations_symbol.canvas",
+			"color": "5",
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/GetEnchantment_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/GetEnchantments_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,17 +125,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/GetItem_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
 		},
 		{
-			"id": "0e86c80a08990a08",
+			"id": "4a2fe4b8722777e0",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/GetResPath_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/GetResPath2D_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "317d7b1982edf1ec",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/GetResPath3D_symbol.canvas",
+			"color": "5",
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +155,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/itemCache_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1be0e47089e6fcc0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/OnAnimationRow_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "36c73ea3fe584a22",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/OnAnimationRowDeleted_symbol.canvas",
+			"color": "5",
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/OnEnchantmentRow_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/OnEnchantmentRowDeleted_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/OnItemRow_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +215,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/OnItemRowDeleted_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 9660,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +225,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/OnTextureRow_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 10120,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,17 +235,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/OnTextureRowDeleted_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 10580,
 			"y": 0,
 			"width": 400,
 			"height": 400
 		},
 		{
-			"id": "9e31409400684698",
+			"id": "40f69efa7d89d614",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/textureCache_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/texture2DCache_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 11040,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "977a9c11cc435bfc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Catalog_subfolder/CatalogComponent_codefile/texture3DCache_symbol.canvas",
+			"color": "5",
+			"x": 11500,
 			"y": 0,
 			"width": 400,
 			"height": 400

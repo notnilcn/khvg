@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c8c74e19621fef52",
+			"type": "file",
+			"file": "client/Scripts/Game/LaunchArgs.cs",
+			"subpath": "#Parse",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

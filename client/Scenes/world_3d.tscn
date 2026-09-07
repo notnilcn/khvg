@@ -111,6 +111,15 @@ metadata/_custom_type_script = "uid://csjccrhj5wnx7"
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1778573569]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
 top_level = true
+projection = 1
+; Ortho frustum height in world units. The 1.0 default is a 1-unit close-up
+; (full-screen terrain = the green screen); 460 matches the old perspective
+; framing (fov 75 at the rig's default Distance 300: 2*300*tan(37.5deg)).
+; World3DComponent re-drives this every frame from the rig's zoom distance.
+; The PhantomCameraHost never touches it (no Camera3DResource on the
+; PhantomCamera3D, and all of the host's projection/fov/size overrides are
+; gated on one existing).
+size = 460.0
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D" unique_id=390949796]
 process_priority = 300

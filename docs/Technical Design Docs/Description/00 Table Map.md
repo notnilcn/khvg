@@ -1,603 +1,706 @@
-# 00 Table Map
+# 00 Table Map — every table, who changes it and who reads it
 
-The per-table spine of the Description docs: every table in the SpacetimeDB module (`server/spacetimedb/src/`), **who writes it** (reducer, scheduled tick, lifecycle hook, or seed) and **how the client reads it** (view accessor or raw public table, subscription wave, binder component). The system docs 04–13 transclude their "Table changes" sections from the `^table-*` anchors here — fix an entry here, not in the system docs. Link syntax is in [[01 Roadmap#Conventions]]; the module layout is [[server/AGENTS.md]]; views/waves/binders themselves are explained in [[03 Connection, Subscriptions & Views]].
+The per-table spine every system doc transcludes from. Each entry tells one story in two lenses: **Changers** (which reducer, scheduled tick, lifecycle hook, or seed writes rows) and **Readers** (which view or raw-table subscription carries rows to the client and which binder component consumes them, plus server-side reads that matter). System docs sync-embed these entries instead of re-typing them.
 
-Subscription waves referenced below are the static name lists in [[client/sstdbsdk/TableSubscriber.cs#BaseTables|TableSubscriber]]: `BaseTables` (catalog, subscribed on connect), `LobbyTables` (profile selection), `GameTables` (the live world). "Replay on/off" is the binder's `ReplayExistingRows` ([[client/sstdbsdk/TableBinderComponent.cs#ReplayExistingRows|TableBinderComponent]]) — replays cached rows through `RowInserted` on bind; it stays **off** on event tables (no last-seen-id tracking, so replay would re-fire the whole history) and **on** for persistent tables so late joiners see existing rows. Scheduled-job tables appear as their own entries; their only "writer" is whoever arms/disarms the job row (the runtime auto-deletes the row after each run and re-arms per its interval).
+Sections are one per folder in `server/spacetimedb/src/`, in alphabetical directory-listing order (the phase-0 order — a new folder means a new section here plus a new `04+` doc). That order also fixes the `04+` doc numbering: 04 Anticheat, 05 Chest, 06 Combat, 07 Enemy, 08 Item, 09 Main, 10 Player, 11 Status, 12 World. Entries within a section follow table-definition order in the source file(s).
 
-# Lobby & Identity
+Conventions used below: a **view accessor** is a parameterized server view (see `03 Connection, Subscriptions & Views.md`) — the client subscribes to it by name. A **wave** is one of the `BaseTables` / `LobbyTables` / `GameTables` subscription waves in [[client/sstdbsdk/TableSubscriber.cs#GameTables|TableSubscriber]]. A **binder** is a `TableBinderComponent` child whose row events are wired in a `.tscn`. "Replay on/off" is the binder's `ReplayExistingRows` flag — on for persistent tables, off for event tables. `public` means clients *can* subscribe; "never updated" / "server-only" / "public but unsubscribed" are first-class outcomes, stated explicitly.
 
-**LoggedInPlayer** — [[server/spacetimedb/src/player/tables.rs#LoggedInPlayer|definition]]
+Prerequisite maintainer refs (narrative complement — not restated here): [[AGENTS.md|root AGENTS.md]], [[client/AGENTS.md|client AGENTS.md]], [[server/AGENTS.md|server AGENTS.md]], [[server/spacetimedb/src/enemy/AGENTS.md|enemy AGENTS.md]], [[server/spacetimedb/src/item/AGENTS.md|item AGENTS.md]].
 
-- Writers:
-  - insert: [[server/spacetimedb/src/player/reducers.rs#join_world|join_world]] (the lobby → world transition).
-  - update: [[server/spacetimedb/src/player/reducers.rs#set_username|set_username]]; [[server/spacetimedb/src/main/admin.rs#claim_admin|claim_admin]] / [[server/spacetimedb/src/main/admin.rs#release_admin|release_admin]] (the single global admin slot).
-  - delete: [[server/spacetimedb/src/player/reducers.rs#leave_world|leave_world]], [[server/spacetimedb/src/main/lifecycle.rs#client_disconnected|client_disconnected]], the already-in-world recovery path in [[server/spacetimedb/src/main/lifecycle.rs#client_connected|client_connected]], and the death cleanup in [[server/spacetimedb/src/combat/mod.rs#deal_damage_to_player_opts|deal_damage_to_player_opts]] — every delete is paired with a ^table-logged-out-player insert.
-- Client read: per-caller view `local_player` ([[server/spacetimedb/src/player/views.rs#local_player|local_player]]) in the `GameTables` wave → EntitySpawnerComponent's `LocalPlayerBinder` in [[client/Scenes/game.tscn|game.tscn]] (replay on) spawns the local-player puppet. The raw table is `public` but never subscribed directly.
-- Server readers: every reducer guard — [[server/spacetimedb/src/player/methods.rs#require_in_world|require_in_world]] / [[server/spacetimedb/src/player/methods.rs#require_logged_in|require_logged_in]] / [[server/spacetimedb/src/player/methods.rs#is_admin|is_admin]] — and the left semijoins in the `nearby_remote_players` / `nearby_remote_player_rotations` views, which keep logged-out ghost rows of ^table-player-position / ^table-player-rotation from streaming.
+## Anticheat
 
-^table-logged-in-player
+### File index
 
-**LoggedOutPlayer** — [[server/spacetimedb/src/player/tables.rs#LoggedOutPlayer|definition]]
+Generated entry points: [[server/spacetimedb/src/anticheat/pointers.md|anticheat pointers]].
 
-- Writers:
-  - insert: [[server/spacetimedb/src/main/lifecycle.rs#client_connected|client_connected]] (first connect, plus the already-in-world recovery), [[server/spacetimedb/src/main/lifecycle.rs#client_disconnected|client_disconnected]], [[server/spacetimedb/src/player/reducers.rs#leave_world|leave_world]], the death cleanup in [[server/spacetimedb/src/combat/mod.rs#deal_damage_to_player_opts|deal_damage_to_player_opts]].
-  - update: [[server/spacetimedb/src/player/reducers.rs#set_username|set_username]]; [[server/spacetimedb/src/main/admin.rs#claim_admin|claim_admin]] / [[server/spacetimedb/src/main/admin.rs#release_admin|release_admin]].
-  - delete: [[server/spacetimedb/src/player/reducers.rs#join_world|join_world]].
-- Client read: **not `public`** — a client only ever sees its own row, through the per-caller view `local_lobby_player` ([[server/spacetimedb/src/player/views.rs#local_lobby_player|local_lobby_player]]) in the `LobbyTables` wave. [[client/sstdbsdk/DatabaseConnector.cs|DatabaseConnector]] hooks its row events internally (sets `Username`); there is no binder component.
-
-^table-logged-out-player
-
-**PlayerProfile** — [[server/spacetimedb/src/player/tables.rs#PlayerProfile|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/main/lifecycle.rs#client_connected|client_connected]] (a default "Knight" profile on first connect), [[server/spacetimedb/src/player/reducers.rs#create_profile|create_profile]].
-  - update: **never updated** — no update site exists.
-  - delete: [[server/spacetimedb/src/player/reducers.rs#delete_profile|delete_profile]] (which also runs the ^table-player-data teardown archetype helper).
-- Client read: three views — `local_player_profiles` (in **both** the `LobbyTables` and `GameTables` waves) → LobbyComponent's `LocalPlayerProfilesBinder` ([[client/Scenes/Components/Lobby/lobby_component.tscn|lobby_component.tscn]], replay on) drives the character-slot panels; `local_player_active_profile` (`GameTables`) → LocalPlayerProfileComponent's `LocalPlayerActiveProfileBinder` ([[client/Scenes/local_player.tscn|local_player.tscn]], replay on) drives the local sprite/aim settings; `nearby_remote_players_profiles` (`GameTables`, AOI-filtered via the same chunk set as ^table-player-position's remote view) — no binder, [[client/Scripts/Players/Remote/RemotePlayer.cs|RemotePlayer]] does a one-shot `Iter()` lookup for its texture.
-- Server readers: [[server/spacetimedb/src/player/methods.rs#find_profile_by_name|find_profile_by_name]] (admin give/remove flows).
-
-^table-player-profile
-
-# Player Data & Progression
-
-**PlayerData** — [[server/spacetimedb/src/player/tables.rs#PlayerData|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/methods.rs#try_scaffold_profile|try_scaffold_profile]] (the archetype scaffold on `join_world`).
-  - update: [[server/spacetimedb/src/player/methods.rs#recompute_stats|recompute_stats]] (max_hp/defense/base_speed resolution + hp clamp), [[server/spacetimedb/src/player/methods.rs#internal_gain_xp|internal_gain_xp]] (level/xp/hp on level-up), and the two hp writers in the combat pipeline — [[server/spacetimedb/src/combat/mod.rs#deal_damage_to_player_opts|deal_damage_to_player_opts]] (damage, death at 0) and [[server/spacetimedb/src/combat/mod.rs#heal_player|heal_player]].
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]] (death cleanup and `delete_profile`).
-- Client read: per-caller view `local_player_data` (`GameTables`) → LocalPlayerDataComponent's `LocalPlayerDataBinder` (local_player.tscn, replay on) → the HealthComponent mirror.
-- Server readers: the combat pipeline reads `defense`/`hp` on every incoming hit; [[server/spacetimedb/src/player/reducers.rs#report_movement|report_movement]] clamps reported speed to `base_speed`.
-
-^table-player-data
-
-**PlayerStats** — [[server/spacetimedb/src/player/tables.rs#PlayerStats|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/player/methods.rs#recompute_stats|recompute_stats]] is the **only** writer — it inserts the row when missing and updates it otherwise, resolving `(base + allocated + gear flat) × (1 + mult)` for the six allocatable stats.
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]].
-- Client read: per-caller view `local_player_stats` (`GameTables`) → LocalPlayerDataComponent's `LocalPlayerStatsBinder` (local_player.tscn, replay on) → the StatsComponent mirror.
-- Server readers: [[server/spacetimedb/src/player/methods.rs#check_stat_requirements|check_stat_requirements]] (equip gating) and the outgoing damage formulas read resolved stats.
-
-^table-player-stats
-
-**PlayerStatAllocation** — [[server/spacetimedb/src/player/tables.rs#PlayerStatAllocation|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/methods.rs#try_scaffold_profile|try_scaffold_profile]].
-  - update: [[server/spacetimedb/src/player/reducers.rs#allocate_stat|allocate_stat]] (player spends `unspent_points`), [[server/spacetimedb/src/player/methods.rs#internal_gain_xp|internal_gain_xp]] (+`SKILL_POINTS_PER_LEVEL` per level), [[server/spacetimedb/src/main/admin.rs#change_stats|change_stats]] (admin).
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]].
-- Client read: per-caller view `local_player_stat_allocation` (`GameTables`) → LocalPlayerDataComponent's `LocalPlayerStatAllocationBinder` (local_player.tscn, replay on); the StatsSidebar `+` buttons call `allocate_stat`.
-
-^table-player-stat-allocation
-
-# Movement & AOI
-
-**PlayerPosition** — [[server/spacetimedb/src/player/tables.rs#PlayerPosition|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/methods.rs#try_scaffold_profile|try_scaffold_profile]] (spawn at world origin).
-  - update: [[server/spacetimedb/src/player/reducers.rs#report_movement|report_movement]] (10 Hz, displacement-clamped against `base_speed × dt × MOVE_SLACK`; unchanged positions skip the write), [[server/spacetimedb/src/player/methods.rs#teleport_player|teleport_player]] (exempt from the clamp), `try_scaffold_profile` (repositions an existing row on rejoin).
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]] **only** — `leave_world`/logout does not delete the row, so logged-out players leave ghost positions that the AOI views filter out via their ^table-logged-in-player semijoin (cleanup happens only on death or `delete_profile`).
-- Client read: two views — `local_player_position` (`GameTables`) → PositionSyncComponent's `LocalPlayerPositionBinder` (local_player.tscn, replay on); `nearby_remote_players` (`GameTables`, chunk-filtered through ^table-player-chunk, own row excluded) → EntitySpawnerComponent's `NearbyRemotePlayersBinder` (game.tscn, replay on; spawn/despawn) plus each RemotePlayer's child binder in [[client/Scenes/non_local_player.tscn|non_local_player.tscn]] (`RowUpdated`, replay off) driving InterpolationComponent.
-- Server readers: every AOI view's chunk scan; the `HIT_VALIDATION_RADIUS` range checks in [[server/spacetimedb/src/player/reducers.rs#report_hit|report_hit]] / [[server/spacetimedb/src/enemy/reducers.rs#report_enemy_hit|report_enemy_hit]]; [[server/spacetimedb/src/player/methods.rs#players_near_point|players_near_point]] (zone/AoE membership); a full scan by [[server/spacetimedb/src/main/debug.rs#tick_player_position_debug|tick_player_position_debug]].
-
-^table-player-position
-
-**PlayerRotation** — [[server/spacetimedb/src/player/tables.rs#PlayerRotation|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/methods.rs#try_scaffold_profile|try_scaffold_profile]].
-  - update: [[server/spacetimedb/src/player/reducers.rs#report_screen_rotation|report_screen_rotation]] (~30 Hz client cadence; sub-~0.5° changes skip the write; `chunk_index` mirrors the ^table-player-position row so AOI views filter identically).
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]].
-- Client read: view `nearby_remote_player_rotations` (`GameTables`) → RemotePlayer's second child binder in non_local_player.tscn (`RowUpdated`, replay off). The local player never reads its own rotation back — rotation is write-only for the owner.
-
-^table-player-rotation
-
-**PlayerChunk** — [[server/spacetimedb/src/player/tables.rs#PlayerChunk|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/methods.rs#try_scaffold_profile|try_scaffold_profile]].
-  - update: [[server/spacetimedb/src/player/reducers.rs#report_movement|report_movement]] and [[server/spacetimedb/src/player/methods.rs#teleport_player|teleport_player]] — **only when the chunk actually changes**. That is why the table exists: AOI views key off it instead of ^table-player-position, so they recompute on real chunk crossings rather than on every 10 Hz movement report.
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]].
-- Client read: `public` but in no subscription wave — **the client never sees it**. It exists purely to drive server-side view recomputation.
-- Server readers: [[server/spacetimedb/src/player/views.rs#nearby_indices_from_chunk|nearby_indices_from_chunk]] — the helper every AOI view (`nearby_remote_players`, `nearby_enemies`, `nearby_terrain_tiles`, `nearby_loot_drops`, `nearby_chests`, …) builds its chunk filter on.
-
-^table-player-chunk
-
-**PlayerMovementState** — [[server/spacetimedb/src/player/tables.rs#PlayerMovementState|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/reducers.rs#report_movement|report_movement]] / [[server/spacetimedb/src/player/methods.rs#teleport_player|teleport_player]] (first report).
-  - update: the same two (restamp `last_report` per report; teleports restamp to stay exempt from the clamp).
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]].
-- Client read: not `public` — **server-only**. It is the bookkeeping behind `report_movement`'s displacement clamp: the per-report budget is `base_speed × dt × MOVE_SLACK`, and `dt` comes from this row.
-
-^table-player-movement-state
-
-**PlayerDisplacementAllowance** — [[server/spacetimedb/src/player/tables.rs#PlayerDisplacementAllowance|definition]]
-
-- Writers:
-  - insert + update: the Grapple arm of [[server/spacetimedb/src/player/reducers.rs#apply_ability_effect|apply_ability_effect]] (stamps `max_distance` = the scaled grapple range with a short expiry; restamps an existing row).
-  - delete: [[server/spacetimedb/src/player/reducers.rs#report_movement|report_movement]] consumes the row on the first oversized report it legitimizes (and on contact with an expired one); [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]].
-- Client read: not `public` — **server-only**. The grapple pull is client-tweened; this one-shot allowance is what lets the tween's movement reports past the displacement clamp described in ^table-player-position instead of rubber-banding.
-
-^table-player-displacement-allowance
-
-# Terrain & World
-
-**MapConfig** — [[server/spacetimedb/src/world/tables.rs#MapConfig|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/main/admin.rs#internal_add_chunks|internal_add_chunks]] upserts the singleton row (id 0) — called by [[server/spacetimedb/src/main/lifecycle.rs#init|init]] and the admin [[server/spacetimedb/src/main/admin.rs#add_chunks|add_chunks]].
-  - delete: **never deleted** ([[server/spacetimedb/src/main/admin.rs#clear_chunks|clear_chunks]] deletes building tiles, not this row). Note: `impl Seed for MapConfig` exists in [[server/spacetimedb/src/main/seeds.rs#seed#1|main/seeds.rs]] but is never called — this upsert is the only writer.
-- Client read: raw `public` table in the `GameTables` wave, three consumers — [[client/sstdbsdk/TableSubscriber.cs#OnMapConfigInsert|TableSubscriber]]'s own internal row hooks (the `LapQ`/`LapR` torus-lap statics every InterpolationComponent reads per frame), TerrainComponent's `MapConfigBinder` and HexGridOverlayComponent's `MapConfigBinder` in [[client/Scenes/game.tscn|game.tscn]], and HexGridOverlay3DComponent's binder in [[client/Scenes/world_3d.tscn|world_3d.tscn]] (all replay on).
-- Server readers: [[server/spacetimedb/src/world/tables.rs#load|MapConfig::load]] runs in nearly every reducer that does world math (wrap, chunk, AOI); [[server/spacetimedb/src/player/views.rs|player/views.rs]] reads the row directly because a `ViewContext` can't call the helper.
-
-^table-map-config
-
-**BuildingTile** — [[server/spacetimedb/src/world/tables.rs#BuildingTile|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/main/admin.rs#internal_add_chunks|internal_add_chunks]] (one row per world hex).
-  - update: [[server/spacetimedb/src/world/reducers.rs#place_building|place_building]] (admin-only) / [[server/spacetimedb/src/world/reducers.rs#remove_building|remove_building]] (owner or admin) — they set/clear `building_type` + `owner_id` on the existing row.
-  - delete: [[server/spacetimedb/src/main/admin.rs#clear_chunks|clear_chunks]].
-- Client read: `public` but **unsubscribed** — the client never sees buildings. Placement is write-only world authoring for now; buildings aren't a designed feature yet and no client UI calls the reducers.
-
-^table-building-tile
-
-**TextureEntry** — [[server/spacetimedb/src/world/tables.rs#TextureEntry|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/main/seeds.rs#seed_default_textures|seed_default_textures]] (upsert by `texture_id` via `impl Seed for TextureEntry`, [[server/spacetimedb/src/main/seeds.rs#seed#2|main/seeds.rs]]), [[server/spacetimedb/src/main/admin.rs#upsert_texture_entry|upsert_texture_entry]] (admin).
-  - delete: **never deleted**.
-- Client read: global anonymous view `all_textures` ([[server/spacetimedb/src/world/views.rs#all_textures|world/views.rs]]) in the `BaseTables` wave → CatalogComponent's `AllTexturesBinder` (game.tscn, replay on) — the `texture_id` → `res_path` cache every visual component resolves through.
-
-^table-texture-entry
-
-**LayeringRule** — [[server/spacetimedb/src/world/tables.rs#LayeringRule|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/main/seeds.rs#seed_layering_rules|seed_layering_rules]] (clear-and-reinsert allow-list of overlay/base tag pairs).
-  - update: **never updated**.
-  - delete: the same seed clears all rows before reinserting.
-- Client read: `public` but **unsubscribed** — terrain rules are generation inputs, not client data.
-- Server readers: the conflict checks in `world/terrain/rules.rs` during generation (the overlay pass consults them per wedge).
-
-^table-layering-rule
-
-**BaseAdjacencyRule** — [[server/spacetimedb/src/world/tables.rs#BaseAdjacencyRule|definition]]
-
-- Writers:
-  - insert: none today — [[server/spacetimedb/src/main/seeds.rs#seed_adjacency_rules|seed_adjacency_rules]] is clear-and-reinsert with an **empty** seed list (no clashing base-texture pairs exist yet), so the table is empty in practice.
-  - update: **never updated**.
-  - delete: `seed_adjacency_rules` clears all rows each publish.
-- Client read: `public` but **unsubscribed**.
-- Server readers: `world/terrain/rules.rs` neighbor-tag checks during generation.
-
-^table-base-adjacency-rule
-
-**OverlayAdjacencyRule** — [[server/spacetimedb/src/world/tables.rs#OverlayAdjacencyRule|definition]]
-
-- Writers: identical shape to ^table-base-adjacency-rule — [[server/spacetimedb/src/main/seeds.rs#seed_adjacency_rules|seed_adjacency_rules]] clears all rows and seeds none (no overlays in use). **Never updated.**
-- Client read: `public` but **unsubscribed**.
-- Server readers: `world/terrain/rules.rs` neighbor-tag checks during generation.
-
-^table-overlay-adjacency-rule
-
-**DecorGroundRule** — [[server/spacetimedb/src/world/tables.rs#DecorGroundRule|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/main/seeds.rs#seed_decor_ground_rules|seed_decor_ground_rules]] (clear-and-reinsert deny-list; two rules seeded — trees/rocks denied on stone).
-  - update: **never updated**.
-  - delete: the same seed clears all rows before reinserting.
-- Client read: `public` but **unsubscribed**.
-- Server readers: the decor placement checks in `world/terrain/rules.rs` / `world/terrain/decor.rs`.
-
-^table-decor-ground-rule
-
-**WorldDef** — [[server/spacetimedb/src/world/def_tables.rs#WorldDef|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/main/seeds.rs#seed_world_defs|seed_world_defs]] (upsert by `world_id` via `impl Seed for WorldDef`, [[server/spacetimedb/src/main/seeds.rs#seed#4|main/seeds.rs]] — seeds the single "Earth" world), [[server/spacetimedb/src/main/admin.rs#upsert_world_def|upsert_world_def]] (admin).
-  - delete: **never deleted**.
-- Client read: `public` but **unsubscribed**.
-- Server readers: [[server/spacetimedb/src/world/terrain/mod.rs#internal_generate_world_proc|internal_generate_world_proc]] (the biome-weighted generation front-end, also called by `init`).
-
-^table-world-def
-
-**BiomeDef** — [[server/spacetimedb/src/world/def_tables.rs#BiomeDef|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/main/seeds.rs#seed_world_defs|seed_world_defs]] (upsert by `biome_id` via `impl Seed for BiomeDef`, [[server/spacetimedb/src/main/seeds.rs#seed#5|main/seeds.rs]]), [[server/spacetimedb/src/main/admin.rs#upsert_biome_def|upsert_biome_def]] (admin).
-  - delete: **never deleted**.
-- Client read: `public` but **unsubscribed** — the client never joins biome definitions; the per-tile results are baked into ^table-triangle-tile / ^table-hex-decor rows at generation time.
-- Server readers: the terrain pipeline's ground/overlay/decor passes (`world/terrain/`) read texture configs, noise scales, and region weights from these rows.
-
-^table-biome-def
-
-**BiomeRegionDef** — [[server/spacetimedb/src/world/def_tables.rs#BiomeRegionDef|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/main/seeds.rs#seed_world_defs|seed_world_defs]] via its `seed_region_def` helper (upsert by `region_def_id` via `impl Seed for BiomeRegionDef`, [[server/spacetimedb/src/main/seeds.rs#seed#6|main/seeds.rs]]), [[server/spacetimedb/src/main/admin.rs#upsert_biome_region_def|upsert_biome_region_def]] (admin).
-  - delete: **never deleted**.
-- Client read: `public` but **unsubscribed**.
-- Server readers: [[server/spacetimedb/src/world/terrain/mod.rs#run_generation|run_generation]] resolves region seeds from these defs; the instantiated result lands in ^table-biome-region.
-
-^table-biome-region-def
-
-**BiomeRegion** — [[server/spacetimedb/src/world/instance_tables.rs#BiomeRegion|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/world/terrain/mod.rs#run_generation|run_generation]] (one row per distributed region seed, carrying `enemy_template_ids`/`max_enemies`/`spawn_radius` from its ^table-biome-region-def).
-  - update: **never updated**.
-  - delete: [[server/spacetimedb/src/world/terrain/mod.rs#clear_world_geometry|clear_world_geometry]] at the start of every generation run.
-- Client read: `public` but **unsubscribed**.
-- Server readers: [[server/spacetimedb/src/enemy/methods.rs#spawn_from_biome_regions|spawn_from_biome_regions]] full-scans this table on the 2 s spawn tick — it **doubles as the enemy spawn-zone table** (there is no `EnemyZone`).
-
-^table-biome-region
-
-**TriangleTile** — [[server/spacetimedb/src/world/instance_tables.rs#TriangleTile|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/world/terrain/mod.rs#write_triangle_tiles|write_triangle_tiles]] (the terrain pipeline — 6 wedge rows per world hex, ground + overlay baked).
-  - update: **never updated**.
-  - delete: [[server/spacetimedb/src/world/terrain/mod.rs#clear_world_geometry|clear_world_geometry]] at the start of every generation run.
-- Client read: AOI view `nearby_terrain_tiles` ([[server/spacetimedb/src/world/views.rs#nearby_terrain_tiles|world/views.rs]]; `DEFAULT_TERRAIN_AOI_CHUNK_RADIUS` off ^table-player-chunk) in the `GameTables` wave → TerrainComponent's `TerrainTilesBinder` (game.tscn, replay on) → the pooled TileComponent ground/overlay layers.
-
-^table-triangle-tile
-
-**HexDecor** — [[server/spacetimedb/src/world/instance_tables.rs#HexDecor|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/world/terrain/decor.rs#place_decor|place_decor]] (at most one decor prop per hex; a hex with no decor simply has no row).
-  - update: **never updated**.
-  - delete: [[server/spacetimedb/src/world/terrain/mod.rs#clear_world_geometry|clear_world_geometry]] at the start of every generation run.
-- Client read: AOI view `nearby_hex_decor` ([[server/spacetimedb/src/world/views.rs#nearby_hex_decor|world/views.rs]]) in the `GameTables` wave → TerrainComponent's `HexDecorBinder` (game.tscn, replay on) → the decor/shadow MultiMesh layers.
-
-^table-hex-decor
-
-# Enemies & AI
-
-**Enemy** — [[server/spacetimedb/src/enemy/instance_tables.rs#Enemy|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/methods.rs#spawn_enemy_archetype|spawn_enemy_archetype]] — the only sanctioned path, called by [[server/spacetimedb/src/enemy/methods.rs#spawn_from_biome_regions|spawn_from_biome_regions]] (the 2 s spawn tick) and admin [[server/spacetimedb/src/main/admin.rs#spawn_enemy|spawn_enemy]].
-  - update: [[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_behavior|tick_enemy_behavior]] (x/y/chunk + the `movement_direction`/`movement_speed` dead-reckoning pair, delta-checked — the write is skipped when nothing changed), [[server/spacetimedb/src/combat/mod.rs#apply_damage_to_enemy_opts|apply_damage_to_enemy_opts]] (hp/phase on every hit), the Bash arm of [[server/spacetimedb/src/player/reducers.rs#apply_ability_effect|apply_ability_effect]] and the 1 Hz [[server/spacetimedb/src/status/methods.rs#tick|status tick]] (the `stagger` bar).
-  - delete: [[server/spacetimedb/src/enemy/methods.rs#despawn_enemy_archetype|despawn_enemy_archetype]] — reached by the combat kill path in `apply_damage_to_enemy_opts` and by admin [[server/spacetimedb/src/main/admin.rs#despawn_enemy|despawn_enemy]] / [[server/spacetimedb/src/main/admin.rs#despawn_all_enemies|despawn_all_enemies]].
-- Client read: AOI view `nearby_enemies` ([[server/spacetimedb/src/enemy/views.rs#nearby_enemies|enemy/views.rs]]) in the `GameTables` wave, with **three** binders — EntitySpawnerComponent's `NearbyEnemiesBinder` (game.tscn, replay on) spawns/despawns the puppets; each Enemy's own `NearbyEnemiesBinder` in [[client/Scenes/default_enemy.tscn|default_enemy.tscn]] (replay on, so late-spawned puppets still initialize) mirrors hp/stagger/position into HealthComponent + InterpolationComponent; CombatComponent's `NearbyEnemiesBinder` in local_player.tscn (replay **off** — only `RowDeleted` is wired, for nearest-enemy invalidation of aim lock).
-- Server readers: [[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_behavior|tick_enemy_behavior]] **full-scans** it every 100 ms; the hit reducers and combat sink read it per hit.
-
-^table-enemy
-
-**EnemyBehavior** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemyBehavior|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/methods.rs#build_enemy_behavior|build_enemy_behavior]] (archetype build — root of the per-enemy behavior tree).
-  - update: [[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_behavior|tick_enemy_behavior]] (aggro target/lock, `was_simulating`, active phase, the unit heading memory in `velocity_x/y` — delta-checked), [[server/spacetimedb/src/combat/mod.rs#apply_damage_to_enemy_opts|apply_damage_to_enemy_opts]] (re-aggro onto the attacker on hit).
-  - delete: [[server/spacetimedb/src/enemy/methods.rs#delete_enemy_behavior|delete_enemy_behavior]] (archetype teardown — cascades through ^table-enemy-phase / ^table-enemy-attack / ^table-enemy-sequence-step / ^table-repeat-step-instance).
-- Client read: `public` but **unsubscribed** — puppets mirror ^table-enemy's flat row instead; the behavior tree is server simulation state.
-
-^table-enemy-behavior
-
-**EnemyPhase** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemyPhase|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/methods.rs#build_enemy_behavior|build_enemy_behavior]] (one row per template phase).
-  - update: [[server/spacetimedb/src/enemy/methods.rs#build_enemy_behavior|build_enemy_behavior]] (post-build fix-up of the inserted rows), [[server/spacetimedb/src/enemy/methods.rs#begin_phase_cycle|begin_phase_cycle]] (phase reset on HP-threshold transitions), [[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_behavior|tick_enemy_behavior]] (phase timers — delta-checked).
-  - delete: [[server/spacetimedb/src/enemy/methods.rs#delete_enemy_behavior|delete_enemy_behavior]].
-- Client read: `public` but **unsubscribed**.
-
-^table-enemy-phase
-
-**EnemyAttack** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemyAttack|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/methods.rs#build_enemy_behavior|build_enemy_behavior]] (one row per attack sequence in the phase).
-  - update: [[server/spacetimedb/src/enemy/methods.rs#activate_all_attacks|activate_all_attacks]] / [[server/spacetimedb/src/enemy/methods.rs#begin_phase_cycle|begin_phase_cycle]] / [[server/spacetimedb/src/enemy/methods.rs#tick_phase|tick_phase]] / [[server/spacetimedb/src/enemy/methods.rs#tick_sequence|tick_sequence]] (step index, step/loop timers, wait flags).
-  - delete: [[server/spacetimedb/src/enemy/methods.rs#delete_enemy_behavior|delete_enemy_behavior]].
-- Client read: `public` but **unsubscribed**.
-
-^table-enemy-attack
-
-**EnemySequenceStep** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemySequenceStep|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/methods.rs#build_enemy_behavior|build_enemy_behavior]] (one row per step, referencing a step def).
-  - update: **never updated**.
-  - delete: [[server/spacetimedb/src/enemy/methods.rs#delete_enemy_behavior|delete_enemy_behavior]].
-- Client read: `public` but **unsubscribed**.
-
-^table-enemy-sequence-step
-
-**RepeatStepInstance** — [[server/spacetimedb/src/enemy/instance_tables.rs#RepeatStepInstance|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/methods.rs#build_enemy_behavior|build_enemy_behavior]] — a per-enemy copy of the ^table-repeat-step-def so `repeat_count` can advance independently per enemy.
-  - update: [[server/spacetimedb/src/enemy/methods.rs#reset_repeat_counts|reset_repeat_counts]] / [[server/spacetimedb/src/enemy/methods.rs#tick_sequence|tick_sequence]] (the `repeat_count` counter that bakes `angle_step` spin per shot).
-  - delete: [[server/spacetimedb/src/enemy/methods.rs#delete_enemy_behavior|delete_enemy_behavior]].
-- Client read: `public` but **unsubscribed**.
-
-^table-repeat-step-instance
-
-**EnemyTemplate** — [[server/spacetimedb/src/enemy/def_tables.rs#EnemyTemplate|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/main/seeds.rs#seed_default_enemies|seed_default_enemies]] and [[server/spacetimedb/src/enemy/defs/gorgon_boss.rs#seed|gorgon_boss::seed]] (upsert by `template_id` via `impl Seed for EnemyTemplate`, [[server/spacetimedb/src/main/seeds.rs#seed#3|main/seeds.rs]]; difficulty variants are separate rows — `Foo_Easy` … `Foo_Madness`), [[server/spacetimedb/src/main/admin.rs#upsert_enemy_template|upsert_enemy_template]] (admin).
-  - delete: **never deleted**.
-- Client read: global anonymous view `enemy_templates` ([[server/spacetimedb/src/enemy/views.rs#enemy_templates|enemy/views.rs]]) in the `GameTables` wave — no binder; [[client/Scripts/Players/Enemies/Enemy.cs|Enemy.cs]] reads the template directly (max_hp for its HealthComponent, display data).
-- Server readers: the behavior tick (phases, sim factors, `stun_behavior`), the combat sink (flat `defense`), and `spawn_enemy` read templates constantly.
-
-^table-enemy-template
-
-**MovementDef** — [[server/spacetimedb/src/enemy/def_tables.rs#MovementDef|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/defs/mod.rs#make_phase|make_phase]] (every phase build inserts its MovementDef row — seed-time content authoring), [[server/spacetimedb/src/main/admin.rs#upsert_movement_def|upsert_movement_def]] (admin; `def_id: 0` = insert).
-  - update: [[server/spacetimedb/src/main/admin.rs#upsert_movement_def|upsert_movement_def]] (existing `def_id`).
-  - delete: **never deleted**.
-- Client read: `public` but **unsubscribed**.
-- Server readers: [[server/spacetimedb/src/enemy/methods.rs#apply_movement|apply_movement]] on the behavior tick.
-
-^table-movement-def
-
-**SingleStepDef** — [[server/spacetimedb/src/enemy/def_tables.rs#SingleStepDef|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/defs/mod.rs#seq_single|seq_single]] (called by seed code and by `Emitter::compile` when it lowers an emitter to an `AttackSequence`), [[server/spacetimedb/src/main/admin.rs#upsert_single_step_def|upsert_single_step_def]] (admin; `def_id: 0` = insert).
-  - update: [[server/spacetimedb/src/main/admin.rs#upsert_single_step_def|upsert_single_step_def]] (existing `def_id`).
-  - delete: **never deleted**.
-- Client read: `public` but **unsubscribed** — ^table-bullet-pattern-event carries each shot's resolved damage and parameters, so clients never join step defs.
-- Server readers: [[server/spacetimedb/src/enemy/methods.rs#tick_sequence|tick_sequence]] / [[server/spacetimedb/src/enemy/methods.rs#step_damage|step_damage]] on the behavior tick, and [[server/spacetimedb/src/player/reducers.rs#report_hit|report_hit]] damage resolution.
-
-^table-single-step-def
-
-**RepeatStepDef** — [[server/spacetimedb/src/enemy/def_tables.rs#RepeatStepDef|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/defs/mod.rs#seq_repeat|seq_repeat]] (seeds / `Emitter::compile`), [[server/spacetimedb/src/main/admin.rs#upsert_repeat_step_def|upsert_repeat_step_def]] (admin; `def_id: 0` = insert).
-  - update: [[server/spacetimedb/src/main/admin.rs#upsert_repeat_step_def|upsert_repeat_step_def]] (existing `def_id`).
-  - delete: **never deleted**.
-- Client read: `public` but **unsubscribed** (same reasoning as ^table-single-step-def).
-- Server readers: the behavior tick — copied into ^table-repeat-step-instance at spawn, then read via the instance.
-
-^table-repeat-step-def
-
-**MultiStepDef** — [[server/spacetimedb/src/enemy/def_tables.rs#MultiStepDef|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/defs/mod.rs#seq_multi|seq_multi]] (available to content, currently unused by shipped enemies), [[server/spacetimedb/src/main/admin.rs#upsert_multi_step_def|upsert_multi_step_def]] (admin; `def_id: 0` = insert).
-  - update: [[server/spacetimedb/src/main/admin.rs#upsert_multi_step_def|upsert_multi_step_def]] (existing `def_id`).
-  - delete: **never deleted**.
-- Client read: `public` but **unsubscribed** (same reasoning as ^table-single-step-def).
-- Server readers: the behavior tick.
-
-^table-multi-step-def
-
-**EnemySpawnSchedule** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemySpawnSchedule|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/main/admin.rs#toggle_enemy_spawning|toggle_enemy_spawning]](true) arms the 2 s interval job driving [[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_spawn|tick_enemy_spawn]]. [[server/spacetimedb/src/main/lifecycle.rs#init|init]] deliberately does **not** arm it — biome spawning starts disarmed for debugging.
-  - update: **never updated** (the runtime re-arms the row automatically per interval).
-  - delete: `toggle_enemy_spawning`(false) cancels the job row.
-- Client read: not `public` — **server-only**.
-
-^table-enemy-spawn-schedule
-
-**EnemyBehaviorSchedule** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemyBehaviorSchedule|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/main/lifecycle.rs#init|init]] arms one 100 ms interval job driving [[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_behavior|tick_enemy_behavior]] — the enemy simulation tick.
-  - update: **never updated**; delete: **never deleted** (no disarm path exists — the behavior tick always runs, independent of spawn arming).
-- Client read: not `public` — **server-only**.
-
-^table-enemy-behavior-schedule
-
-# Combat & Events
-
-**BulletPatternEvent** — [[server/spacetimedb/src/enemy/instance_tables.rs#BulletPatternEvent|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_behavior|tick_enemy_behavior]] — one append per fired shot, origin stamped server-side, `damage` pre-resolved via [[server/spacetimedb/src/enemy/methods.rs#step_damage|step_damage]] so clients can compare bullet damage without subscribing step defs.
-  - update: **never updated**; delete: no explicit delete site — the `event` flag makes this an append-only ephemeral broadcast table, not retained state.
-- Client read: raw `public` event table in the `GameTables` wave → **one shared** `BulletPatternEventBinder` on BulletSpawnerComponent ([[client/Scenes/Components/Bullets/bullet_spawner_component.tscn|bullet_spawner_component.tscn]], replay **OFF** — replaying an event table would re-fire its whole history). The event rows are self-contained, so there is no per-enemy binder fan-out; BulletSpawnerComponent renders each event verbatim through BlastBullets2D.
-
-^table-bullet-pattern-event
-
-**BulletControlEvent** — [[server/spacetimedb/src/enemy/instance_tables.rs#BulletControlEvent|definition]]
-
-- Writers:
-  - insert: the bullet-control arms of [[server/spacetimedb/src/player/reducers.rs#apply_ability_effect|apply_ability_effect]] (Delete/Split/Attract, the rect variants, Slash, Wall — with full ability validation/cooldown via `activate_ability` / the charge release). The server tracks no live bullets; it validates the caster and rebroadcasts the cast.
-  - update: **never updated**; delete: no explicit delete site (append-only `event` table).
-- Client read: raw `public` event table in the `GameTables` wave → BulletControllerComponent's `BulletControlEventBinder` (game.tscn, replay **OFF**); every client resolves the proximity query against its own local bullets, and the caster applies optimistically and skips its own echo via `cast_by`. There is no `control_bullets` reducer — **this table is the bullet-control protocol**.
-
-^table-bullet-control-event
-
-**AbilityVisualEvent** — [[server/spacetimedb/src/enemy/instance_tables.rs#AbilityVisualEvent|definition]]
-
-- Writers:
-  - insert: the Spell arm of [[server/spacetimedb/src/player/reducers.rs#apply_ability_effect|apply_ability_effect]] — a visual-only relay of a P5 shape-spell cast; the damage is applied server-side in the same dispatch, this row only tells clients to draw the flash.
-  - update: **never updated**; delete: no explicit delete site (append-only `event` table).
-- Client read: raw `public` event table in the `GameTables` wave → SpellVisualComponent's `AbilityVisualEventBinder` (game.tscn, replay **OFF**), which draws the Polygon2D flash per `AbilityVisualKind` and frees it after `duration`; the caster renders optimistically and skips its own echo via `cast_by` (the ^table-bullet-control-event pattern).
-
-^table-ability-visual-event
-
-**PlayerHitRate** — [[server/spacetimedb/src/player/tables.rs#PlayerHitRate|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/player/methods.rs#hit_rate_allow|hit_rate_allow]] — the 1-second fixed-window token bucket behind the two self-reported hit reducers: `outgoing` caps [[server/spacetimedb/src/enemy/reducers.rs#report_enemy_hit|report_enemy_hit]] at weapon fire_rate × effective shot_count × `HIT_RATE_SLACK`, `incoming` caps [[server/spacetimedb/src/player/reducers.rs#report_hit|report_hit]] at `INCOMING_HIT_RATE_CAP`.
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]].
-- Client read: not `public` — **server-only** anti-spam bookkeeping; it never touches damage math itself.
-
-^table-player-hit-rate
+### Tables
 
 **PlayerHitFlag** — [[server/spacetimedb/src/anticheat/tables.rs#PlayerHitFlag|definition]]
 
-- Writers:
-  - insert: [[server/spacetimedb/src/anticheat/reducers.rs#flag_player_hit|flag_player_hit]] — a witness report that *another* client saw a player get hit (self-reports silently ignored; no bullet identity carried).
-  - update: **never updated**.
-  - delete: the 1 Hz [[server/spacetimedb/src/player/reducers.rs#tick_status_effects|tick_status_effects]] sweep drops flags older than `HIT_FLAG_MAX_AGE_SECONDS` (60 s).
-- Client read: not `public` — **server-only**; it corroborates the victim's self-reported `report_hit` against independent witnesses.
-- Server readers: [[server/spacetimedb/src/status/methods.rs#settle_store_mark|settle_store_mark]] consults flags for the `NoHits` store-damage wager.
+- **Changers**
+  - Insert: [[server/spacetimedb/src/anticheat/reducers.rs#flag_player_hit|flag_player_hit]] — any in-world caller reports that `hit_player` was seen hit; self-reports are silently ignored (the victim's own client reports damage through `report_hit`, this table collects only independent corroboration).
+  - Update: never updated.
+  - Delete: the 1 Hz [[server/spacetimedb/src/player/reducers.rs#tick_status_effects|tick_status_effects]] pass sweeps rows older than `HIT_FLAG_MAX_AGE_SECONDS` (60 s).
+- **Client readers** — none. Server-only table (not `public`): the client never subscribes; it only *writes* via the reducer. The write path to its visible end is: enemy bullet overlaps a remote puppet's hurtbox → `BulletHitRouterComponent` forwards to [[client/Scripts/Components/Combat/RemoteHitWitnessComponent.cs#ProcessBulletHit|RemoteHitWitnessComponent.ProcessBulletHit]] (declared inline in [[client/Scenes/non_local_player.tscn|non_local_player.tscn]]) → calls the `FlagPlayerHit` reducer. Damage itself is still reported exclusively by the victim's own client.
+- **Server readers** — `settle_store_mark` in [[server/spacetimedb/src/status/methods.rs#settle_store_mark|status/methods.rs]] corroborates a `StoreDamage` NoHits-wager 0-hits claim: flags on the claimant filed after the mark's `last_event_at` downgrade a 2x payout to 1x once they reach `NO_HIT_WITNESS_THRESHOLD`.
 
 ^table-player-hit-flag
 
-# Items, Inventory & Loot
+## Chest
 
-**Item** — [[server/spacetimedb/src/item/tables.rs#Item|definition]]
+### File index
 
-- Writers:
-  - insert + update: [[server/spacetimedb/src/item/seeds.rs#seed_world_items|seed_world_items]] (upsert by `item_id` via `impl Seed for Item`, [[server/spacetimedb/src/item/seeds.rs#seed|item/seeds.rs]] — reseeding is idempotent), [[server/spacetimedb/src/item/reducers.rs#upsert_item|upsert_item]] (admin).
-  - delete: **never deleted** — the catalog is shared/static; runtime state lives on ^table-player-inventory-slot, never here.
-- Client read: global anonymous view `all_items` ([[server/spacetimedb/src/item/views.rs#all_items|item/views.rs]]) in the `BaseTables` wave → CatalogComponent's `AllItemsBinder` (game.tscn, replay on) — the catalog cache behind every item display, EffectiveWeaponResolver, and catalog-fingerprint invalidation.
-- Server readers: [[server/spacetimedb/src/player/methods.rs#recompute_stats|recompute_stats]] / [[server/spacetimedb/src/player/methods.rs#resolve_effective_weapon|resolve_effective_weapon]] / the behavior lookups read catalog rows constantly; acquisition paths (`give_item`, chest takes, pickups) validate against them.
+Generated entry points: [[server/spacetimedb/src/chest/pointers.md|chest pointers]].
 
-^table-item
-
-**Enchantment** — [[server/spacetimedb/src/item/tables.rs#Enchantment|definition]]
-
-- Writers:
-  - insert + update: [[server/spacetimedb/src/item/seeds.rs#seed_world_enchantments|seed_world_enchantments]] (upsert by `enchantment_id` via `impl Seed for Enchantment`, [[server/spacetimedb/src/main/seeds.rs#seed#7|main/seeds.rs]]), [[server/spacetimedb/src/item/reducers.rs#upsert_enchantment|upsert_enchantment]] (admin).
-  - delete: **never deleted**.
-- Client read: global anonymous view `all_enchantments` ([[server/spacetimedb/src/item/views.rs#all_enchantments|item/views.rs]]) in the `BaseTables` wave → CatalogComponent's `AllEnchantmentsBinder` (game.tscn, replay on).
-- Server readers: [[server/spacetimedb/src/player/methods.rs#recompute_stats|recompute_stats]] folds socketed + innate enchantment stat modifiers; [[server/spacetimedb/src/player/methods.rs#equipped_enchantment_behaviors|equipped_enchantment_behaviors]] folds their behaviors (deterministic slot-ascending, innate-before-socketed order the client's EffectiveWeaponResolver mirrors).
-
-^table-enchantment
-
-**PlayerInventorySlot** — [[server/spacetimedb/src/player/tables.rs#PlayerInventorySlot|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/methods.rs#try_scaffold_profile|try_scaffold_profile]] (the full fixed slot scaffold — weapon/hotbar/accessory/armor/general/bag/ability roles at load-bearing indices).
-  - update: **every** slot mutation goes through [[server/spacetimedb/src/player/methods.rs#update_slot|update_slot]] — [[server/spacetimedb/src/player/reducers.rs#swap_slots|swap_slots]], [[server/spacetimedb/src/player/reducers.rs#use_item|use_item]], [[server/spacetimedb/src/player/reducers.rs#spend_ability|spend_ability]] (cooldown/charge spend), [[server/spacetimedb/src/player/reducers.rs#set_slot_toggle|set_slot_toggle]], [[server/spacetimedb/src/player/reducers.rs#apply_enchantment|apply_enchantment]] / [[server/spacetimedb/src/player/reducers.rs#remove_enchantment|remove_enchantment]], [[server/spacetimedb/src/player/methods.rs#store_item_in_inventory|store_item_in_inventory]] (shared by `pickup_drop` and `take_from_chest`), [[server/spacetimedb/src/player/methods.rs#place_span|place_span]] / [[server/spacetimedb/src/player/methods.rs#clear_span|clear_span]] (multi-slot ability spans), and admin [[server/spacetimedb/src/item/reducers.rs#give_item|give_item]] / [[server/spacetimedb/src/item/reducers.rs#remove_item|remove_item]].
-  - delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]] only — slots are cleared by update mid-game, never deleted.
-- Client read: per-caller view `local_player_inventory` (`GameTables`) → LocalPlayerInventoryComponent's `LocalPlayerInventoryBinder` (local_player.tscn, replay on) → the 39 SlotComponent UI slots, ability activation, and the echoed-row recast guard.
-- Server readers: [[server/spacetimedb/src/player/methods.rs#recompute_stats|recompute_stats]] and [[server/spacetimedb/src/player/methods.rs#resolve_effective_weapon|resolve_effective_weapon]] fold the equipped heads (followers of a span never contribute).
-
-^table-player-inventory-slot
-
-**ActiveConsumableEffect** — [[server/spacetimedb/src/player/tables.rs#ActiveConsumableEffect|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/methods.rs#apply_consumable_effect|apply_consumable_effect]] — buff effects only; Heal effects bypass the table via [[server/spacetimedb/src/combat/mod.rs#heal_player|heal_player]]. Called by [[server/spacetimedb/src/player/reducers.rs#use_item|use_item]] and by ability Heal/Buff effects.
-  - update: [[server/spacetimedb/src/player/reducers.rs#tick_status_effects|tick_status_effects]] (the 1 Hz `remaining` countdown).
-  - delete: the same tick's expiry sweep (with a `recompute_stats` per affected profile), [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]].
-- Client read: `public` but in **no subscription wave** — the client never sees buff rows; a buff reaches the client only through the recomputed ^table-player-stats / ^table-player-data rows it feeds.
-- Server readers: [[server/spacetimedb/src/player/methods.rs#recompute_stats|recompute_stats]] folds active buffs into the stat accumulators.
-
-^table-active-consumable-effect
-
-**LootDrop** — [[server/spacetimedb/src/player/tables.rs#LootDrop|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/player/reducers.rs#drop_item|drop_item]] — stamps the slot's runtime state (`cooldown_until`/`charges`) onto the row so it travels with the item.
-  - update: **never updated**.
-  - delete: [[server/spacetimedb/src/player/reducers.rs#pickup_drop|pickup_drop]] (successful take, or an expired drop touched), the 1 Hz [[server/spacetimedb/src/player/reducers.rs#tick_status_effects|tick_status_effects]] expiry sweep (`LOOT_DROP_EXPIRY` = 10 s).
-- Client read: AOI view `nearby_loot_drops` ([[server/spacetimedb/src/player/views.rs#nearby_loot_drops|player/views.rs]]) in the `GameTables` wave → EntitySpawnerComponent's `NearbyLootDropsBinder` (game.tscn, replay on) spawns [[client/Scripts/Items/Drop.cs|Drop]] puppets; the PickupComponent on each Drop calls the `pickup_drop` reducer on body-entered.
-- Server readers: `pickup_drop` enforces `expires_at` and a wrap-aware `INTERACT_RADIUS` check against the caller's ^table-player-position row before the take.
-
-^table-loot-drop
-
-**ConsumableEffectSchedule** — [[server/spacetimedb/src/player/tables.rs#ConsumableEffectSchedule|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/main/lifecycle.rs#init|init]] arms one 1 Hz interval job driving [[server/spacetimedb/src/player/reducers.rs#tick_status_effects|tick_status_effects]] — **the** single 1 Hz schedule in the module: consumable expiry + stat recompute, the ^table-player-hit-flag sweep, the ^table-loot-drop expiry sweep, and all of `status::methods::tick` hang off it.
-  - update: **never updated**; delete: **never deleted** (no disarm path exists).
-- Client read: not `public` — **server-only**.
-
-^table-consumable-effect-schedule
-
-# Status Effects, Zones & Charges
-
-**ActiveStatusEffect** — [[server/spacetimedb/src/status/tables.rs#ActiveStatusEffect|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/status/methods.rs#apply_status_effect|apply_status_effect]] — the shared entry point every targeting variant calls: the status arms of [[server/spacetimedb/src/player/reducers.rs#apply_ability_effect|apply_ability_effect]], the charge SelfSlow in [[server/spacetimedb/src/status/reducers.rs#begin_ability_charge|begin_ability_charge]], and the 1 Hz zone refresh.
-  - update: [[server/spacetimedb/src/status/methods.rs#intercept_incoming|intercept_incoming]] (every hit stamps counter/`last_event_at`, grows bleed/store pools, consumes shields), the outgoing consults [[server/spacetimedb/src/status/methods.rs#note_damage_dealt|note_damage_dealt]] / [[server/spacetimedb/src/status/methods.rs#withhold_outgoing|withhold_outgoing]], [[server/spacetimedb/src/player/reducers.rs#report_movement|report_movement]] (radius-wager exit stamps), the 1 Hz [[server/spacetimedb/src/status/methods.rs#tick|tick]] (pool drains, Regen, purge progress).
-  - delete: consume/replace sites in the intercept and in `apply_ability_effect` (recasting a mark replaces it; a Bash consumes an armed StoreIncomingBash pool), [[server/spacetimedb/src/status/methods.rs#settle_store_mark|settle_store_mark]], [[server/spacetimedb/src/status/methods.rs#purge_profile_statuses|purge_profile_statuses]] (death/`leave_world`/disconnect — no status may tick a logged-out player), `remove_self_slow` on charge release, the tick's expiry sweep.
-- Client read: raw `public` table in the `GameTables` wave → StatusBarComponent's `ActiveStatusEffectBinder` (local_player.tscn, replay on — persistent table), filtered to the local profile in code; row insert/update/delete is the source of truth, labels count down locally between the 1 Hz updates.
-
-^table-active-status-effect
-
-**ActiveEnemyStatusEffect** — [[server/spacetimedb/src/status/tables.rs#ActiveEnemyStatusEffect|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/status/methods.rs#apply_enemy_status|apply_enemy_status]] — from the Curse/Bash arms of [[server/spacetimedb/src/player/reducers.rs#apply_ability_effect|apply_ability_effect]] and the 1 Hz tick's enemy-zone pass.
-  - update: `apply_enemy_status` refresh on re-apply (one row per (enemy, kind) — magnitude/remaining/source replaced); the 1 Hz [[server/spacetimedb/src/status/methods.rs#tick|tick]] (`remaining` countdown).
-  - delete: [[server/spacetimedb/src/status/methods.rs#on_enemy_killed|on_enemy_killed]] (rows never outlive their enemy — called by every kill/despawn path), the tick's expiry/orphan sweep.
-- Client read: raw `public` table in the `GameTables` wave → EnemyDebuffIndicatorComponent's `ActiveEnemyStatusEffectBinder` ([[client/Scenes/default_enemy.tscn|default_enemy.tscn]], replay on), filtered per enemy instance in code — the debuff chips + stagger bar.
-- Server readers: the combat sink [[server/spacetimedb/src/combat/mod.rs#apply_damage_to_enemy_opts|apply_damage_to_enemy_opts]] (ArmorBreak zeroes defence, Vulnerability multiplies), the behavior tick (Slow/Stunned via movement/pacing consults), DoT ticks in the status tick.
-
-^table-active-enemy-status-effect
-
-**GroundZone** — [[server/spacetimedb/src/status/tables.rs#GroundZone|definition]]
-
-- Writers:
-  - insert: the CastZone arm of [[server/spacetimedb/src/player/reducers.rs#apply_ability_effect|apply_ability_effect]] (zone at the range-clamped cursor point, owned by the caster).
-  - update: the 1 Hz [[server/spacetimedb/src/status/methods.rs#tick|status tick]] (`remaining` countdown; ally zones re-apply their status each tick to live occupants, enemy zones refresh debuffs, bursts fire once at expiry).
-  - delete: the tick's expiry sweep, [[server/spacetimedb/src/status/methods.rs#purge_profile_zones|purge_profile_zones]] (a caster's zones die with them — death/`leave_world`/disconnect).
-- Client read: raw `public` table in the `GameTables` wave → ZoneRendererComponent's `GroundZoneBinder` (game.tscn, replay **on** — persistent table, so late joiners still see live zones; the opposite of the event-table rule) rendering a colored Polygon2D circle per `ZoneKind`.
-- Server readers: the tick's zone pass computes **live** membership each tick via [[server/spacetimedb/src/player/methods.rs#players_near_point|players_near_point]] / `enemies_near_point`; [[server/spacetimedb/src/status/methods.rs#intercept_incoming|intercept_incoming]] consults DamageShare zones live.
-
-^table-ground-zone
-
-**AbilityCharge** — [[server/spacetimedb/src/status/tables.rs#AbilityCharge|definition]]
-
-- Writers:
-  - insert: [[server/spacetimedb/src/status/reducers.rs#begin_ability_charge|begin_ability_charge]] — one held charge per player; the reducer refuses while a row exists.
-  - update: **never updated**.
-  - delete: [[server/spacetimedb/src/status/reducers.rs#internal_release_charge|internal_release_charge]] (the shared release path behind `release_ability_charge` **and** the 1 Hz tick's `MAX_CHARGE_SECONDS` timeout auto-release), [[server/spacetimedb/src/status/methods.rs#purge_profile_statuses|purge_profile_statuses]] (death/`leave_world`/disconnect — a vanished charge spends **no** cooldown).
-- Client read: raw `public` table in the `GameTables` wave → AbilityChargeComponent's `AbilityChargeBinder` (local_player.tscn, replay on — persistent table), echo-only and filtered to the local profile; it drives CombatComponent's fire suppression and the cosmetic charge SelfSlow on PositionSyncComponent. Timeout auto-releases and lifecycle purges clear the UI state by themselves, which is why there is no optimistic flag.
-
-^table-ability-charge
-
-# Chests
+### Tables
 
 **Chest** — [[server/spacetimedb/src/chest/mod.rs#Chest|definition]]
 
-- Writers:
-  - insert: [[server/spacetimedb/src/chest/mod.rs#add_chest|add_chest]] (admin-only world authoring; `chunk_index` stamped from the wrapped coordinate like enemy spawns).
-  - update: **never updated**; delete: **never deleted**.
-- Client read: AOI view `nearby_chests` (chest/mod.rs — the same chunk filter as `nearby_loot_drops`, off ^table-player-chunk) in the `GameTables` wave → EntitySpawnerComponent's `NearbyChestsBinder` (game.tscn, replay on) spawns [[client/Scripts/Items/Chest.cs|Chest]] puppets; the InteractComponent on each chest toggles its panel on the `interact` action.
+- **Changers**
+  - Insert: [[server/spacetimedb/src/chest/mod.rs#add_chest|add_chest]] (admin-only world authoring; wraps the position onto the torus and stamps `chunk_index` from the wrapped coordinate).
+  - Update: never updated (fixed world position).
+  - Delete: no delete path — chests are permanent once placed.
+- **Client readers** — via the `nearby_chests` view (same AOI chunk-index OR-chain as `nearby_loot_drops`) in the Game wave → `EntitySpawnerComponent`'s replaying `NearbyChests` binder (declared inline in [[client/Scenes/game.tscn|game.tscn]]) → spawns/despawns the [[client/Scenes/chest.tscn|chest.tscn]] puppet (`Items/Chest.cs`) at the row's x/y.
+- **Server readers** — `take_from_chest` reads the row for the range check (wrap-aware `INTERACT_RADIUS` against the caller's position row) and for the parent `chunk_index`.
 
 ^table-chest
 
 **ChestItem** — [[server/spacetimedb/src/chest/mod.rs#ChestItem|definition]]
 
-- Writers:
-  - insert: [[server/spacetimedb/src/chest/mod.rs#add_item_to_chest|add_item_to_chest]] (admin-only; the `every_single_item` special case inserts one row per catalog item).
-  - update: **never updated**.
-  - delete: [[server/spacetimedb/src/chest/mod.rs#take_from_chest|take_from_chest]] — **only for non-regenerating rows**; a `regenerating` row is never consumed, so the surviving row IS the next copy.
-- Client read: AOI view `nearby_chest_items` (chest/mod.rs — an OR-chain over the nearby chest ids, since ChestItem has no `chunk_index` of its own) in the `GameTables` wave → each Chest's `NearbyChestItemsBinder` ([[client/Scenes/chest.tscn|chest.tscn]], replay on) feeds the open panel's draggable ChestSlotComponent entries; dragging one onto any player SlotComponent reports `take_from_chest`.
-- Server readers: `take_from_chest` does a wrap-aware `INTERACT_RADIUS` range check against the caller's ^table-player-position row and routes placement through [[server/spacetimedb/src/player/methods.rs#store_item_in_inventory|store_item_in_inventory]].
+- **Changers**
+  - Insert: [[server/spacetimedb/src/chest/mod.rs#add_item_to_chest|add_item_to_chest]] (admin-only, single item; validates the catalog `item_id`) and [[server/spacetimedb/src/chest/mod.rs#add_all_items_to_chest|add_all_items_to_chest]] (admin-only bulk fill — one row per catalog item, its own reducer rather than a magic item_id). Both mirror the parent chest's `chunk_index` onto the row so the view filters on the chunk btree directly.
+  - Update: never updated.
+  - Delete: [[server/spacetimedb/src/chest/mod.rs#take_from_chest|take_from_chest]] deletes the row on take — unless `regenerating`, in which case the surviving row IS the next copy (the chest regenerates by never running out).
+- **Client readers** — via the `nearby_chest_items` view (same AOI filter over the row's own mirrored `chunk_index`) in the Game wave → the replaying `NearbyChestItemsBinder` in [[client/Scenes/chest.tscn|chest.tscn]] → an open chest panel rebuilds draggable `ChestSlotComponent` rows (`Scenes/UI/chest_slot.tscn`) from the cache; dragging one onto a player slot reports `TakeFromChest`.
+- **Server readers** — `take_from_chest` guards on the row: `regenerating` rows enforce the per-player `CHEST_TAKE_COOLDOWN_SECONDS` cooldown via ^table-chest-take-cooldown instead of being consumed.
 
 ^table-chest-item
 
 **ChestTakeCooldown** — [[server/spacetimedb/src/chest/mod.rs#ChestTakeCooldown|definition]]
 
-- Writers:
-  - insert + update: [[server/spacetimedb/src/chest/mod.rs#take_from_chest|take_from_chest]] — one row per (profile, chest) for **regenerating** chests only (those rows are never consumed, so the take rate is gated instead), restamped per take; takes inside `CHEST_TAKE_COOLDOWN_SECONDS` are rejected.
-  - delete: **never deleted**.
-- Client read: not `public` — **server-only**.
+- **Changers**
+  - Insert: [[server/spacetimedb/src/chest/mod.rs#take_from_chest|take_from_chest]] inserts one row per (profile, chest) on the first regenerating take.
+  - Update: `take_from_chest` restamps `last_taken` on every further regenerating take.
+  - Delete: never deleted (one row per (profile, chest), restamped forever).
+- **Client readers** — none. Server-only table (not `public`).
+- **Server readers** — `take_from_chest` rejects regenerating takes within `CHEST_TAKE_COOLDOWN_SECONDS` of `last_taken`.
 
 ^table-chest-take-cooldown
 
-# Admin & Debug
+## Combat
+
+This module owns **no tables** — it is the shared damage pipeline (`mod.rs` policy types plus `calc.rs` pure math plus `apply.rs` sinks: [[server/spacetimedb/src/combat/mod.rs#DamageRequest|DamageRequest]] / `IncomingDamageOptions`, `compute_player_damage` / `compute_incoming_damage`, `apply_damage_to_enemy` / `deal_damage_to_enemy` / `deal_damage_to_player` / `heal_player`). Every reducer that resolves base damage delegates here, so the module is told as a cross-table flow in its doc (`06 Combat Tables.md`), not as table entries. Its row effects land on other modules' tables: damage subtracts `PlayerData.hp` (kills delegate death cleanup to `kill_player` in [[server/spacetimedb/src/player/methods.rs#kill_player|player/methods.rs]]) and `Enemy.hp` (kills call `despawn_enemy_archetype` plus `internal_gain_xp` for `xp_credit`; survivors get a phase recompute and re-aggro).
+
+## Enemy
+
+### File index
+
+Generated entry points: [[server/spacetimedb/src/enemy/pointers.md|enemy pointers]]. Authoring detail (tick/phase/sequence semantics, field encodings, add-an-enemy recipe) lives in [[server/spacetimedb/src/enemy/AGENTS.md|enemy AGENTS.md]].
+
+### Tables — static definitions (`def_tables.rs`)
+
+**MovementDef** — [[server/spacetimedb/src/enemy/def_tables.rs#MovementDef|definition]]
+
+- **Changers**
+  - Insert: content seeds via `make_phase` in `defs/` (upsert-by-id through `EnemyTemplate::seed`-style helpers) and the admin [[server/spacetimedb/src/main/admin.rs#upsert_movement_def|upsert_movement_def]] (pass `def_id: 0` to insert, an existing id to update).
+  - Update: `upsert_movement_def` only; the simulation never rewrites definitions.
+  - Delete: no delete path.
+- **Client readers** — none. `public` but unsubscribed: definitions are server-side simulation inputs; the client sees only their consequences (`Enemy` movement rows, `BulletPatternEvent` volleys).
+- **Server readers** — `apply_movement` in [[server/spacetimedb/src/enemy/methods.rs#apply_movement|enemy/methods.rs]] reads the phase's movement each behavior tick (Goal × Pattern × Avoidance steering).
+
+^table-movement-def
+
+**SingleStepDef** — [[server/spacetimedb/src/enemy/def_tables.rs#SingleStepDef|definition]]
+
+- **Changers**
+  - Insert: content seeds (`defs/` raw step helpers) and admin [[server/spacetimedb/src/main/admin.rs#upsert_single_step_def|upsert_single_step_def]].
+  - Update: `upsert_single_step_def` only.
+  - Delete: no delete path.
+- **Client readers** — none (`public` but unsubscribed — same definition rule as ^table-movement-def).
+- **Server readers** — `tick_sequence` resolves `SequenceStepRef::Single` against this table each behavior tick.
+
+^table-single-step-def
+
+**RepeatStepDef** — [[server/spacetimedb/src/enemy/def_tables.rs#RepeatStepDef|definition]]
+
+- **Changers**
+  - Insert: content seeds and admin [[server/spacetimedb/src/main/admin.rs#upsert_repeat_step_def|upsert_repeat_step_def]].
+  - Update: `upsert_repeat_step_def` only.
+  - Delete: no delete path.
+- **Client readers** — none (`public` but unsubscribed).
+- **Server readers** — `tick_sequence` copies the def into a per-enemy ^table-repeat-step-instance row at build time and then ticks the copy (`repeat_count`, catch-up firing capped at `MAX_CATCHUP_SHOTS`, `angle_step` spin accumulation).
+
+^table-repeat-step-def
+
+**MultiStepDef** — [[server/spacetimedb/src/enemy/def_tables.rs#MultiStepDef|definition]]
+
+- **Changers**
+  - Insert: content seeds and admin [[server/spacetimedb/src/main/admin.rs#upsert_multi_step_def|upsert_multi_step_def]].
+  - Update: `upsert_multi_step_def` only.
+  - Delete: no delete path.
+- **Client readers** — none (`public` but unsubscribed).
+- **Server readers** — `tick_sequence` fans a visit out to all `shots` at once (capped at `MAX_MULTI_SHOTS`/visit).
+
+^table-multi-step-def
+
+**EnemyTemplate** — [[server/spacetimedb/src/enemy/def_tables.rs#EnemyTemplate|definition]]
+
+- **Changers**
+  - Insert: `seed_default_textures`-style content seeds — `seed_default_enemies` in [[server/spacetimedb/src/main/seeds.rs#seed_default_enemies|main/seeds.rs]] plus per-enemy `seed(ctx)` fns in `defs/` (`gorgon_boss.rs` is the reference), upserting by `template_id`; difficulty variants are separate rows (`Foo_Easy` … `Foo_Madness`), not a runtime flag.
+  - Update: admin [[server/spacetimedb/src/main/admin.rs#upsert_enemy_template|upsert_enemy_template]] (runtime enemy authoring).
+  - Delete: no delete path.
+- **Client readers** — via the global `enemy_templates` view in the Game wave → `Enemy.cs` reads the row for its `HealthComponent` max_hp mirror (`SetFromServer(hp, maxHp)`) and loads the catalog `res_path3d` model for the 3D mirror; `TestBoss` doubles as the every-movement/every-pattern showcase.
+- **Server readers** — `spawn_enemy_archetype` builds the whole behavior tree from the template's `phases`; the combat sink recomputes the active phase from `hp_threshold`s via `compute_phase`; `tick_enemy_behavior` consults `stun_behavior` and the `move_sim_factor` / `attack_sim_factor` sim gating.
+
+^table-enemy-template
+
+### Tables — runtime instances (`instance_tables.rs`)
+
+**RepeatStepInstance** — [[server/spacetimedb/src/enemy/instance_tables.rs#RepeatStepInstance|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/enemy/methods.rs#spawn_enemy_archetype|spawn_enemy_archetype]] copies the `RepeatStepDef` into a per-enemy row so `repeat_count` advances independently.
+  - Update: `tick_sequence` advances `repeat_count` / `step_timer` on every behavior tick.
+  - Delete: [[server/spacetimedb/src/enemy/methods.rs#despawn_enemy_archetype|despawn_enemy_archetype]] removes the tree (never orphan behavior rows).
+- **Client readers** — none in practice: `public` but unsubscribed (no view, not in any wave) — server-side tick state.
+- **Server readers** — `tick_sequence` only.
+
+^table-repeat-step-instance
+
+**EnemySequenceStep** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemySequenceStep|definition]]
+
+- **Changers**
+  - Insert: `spawn_enemy_archetype` builds one row per compiled sequence step.
+  - Update: never updated (step position advances on the parent `EnemyAttack.step_index` instead).
+  - Delete: `despawn_enemy_archetype`.
+- **Client readers** — none (`public` but unsubscribed — tick state).
+- **Server readers** — `tick_sequence` walks the steps in order.
+
+^table-enemy-sequence-step
+
+**EnemyAttack** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemyAttack|definition]]
+
+- **Changers**
+  - Insert: `spawn_enemy_archetype` (one row per attack sequence in the active phase set).
+  - Update: `tick_sequence` (`step_index`, `step_timer`, `step_waiting` / `start_delaying` / `loop_waiting` pacing flags; `loop_delay >= 0` sequences self-restart independently of the phase).
+  - Delete: `despawn_enemy_archetype`.
+- **Client readers** — none (`public` but unsubscribed — tick state).
+- **Server readers** — `tick_phase` / `tick_sequence` only.
+
+^table-enemy-attack
+
+**EnemyPhase** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemyPhase|definition]]
+
+- **Changers**
+  - Insert: `spawn_enemy_archetype` (one row per `PhaseDef`).
+  - Update: `tick_phase` (`phase_waiting` / `phase_loop_timer` loop silence, `move_cycle_started_at` for move/pause cycles); the combat sink flips `active_phase_index` on the behavior row when HP crosses a threshold.
+  - Delete: `despawn_enemy_archetype`.
+- **Client readers** — none (`public` but unsubscribed — tick state).
+- **Server readers** — `tick_phase` only; a phase restarts only when EVERY sequence finishes.
+
+^table-enemy-phase
+
+**EnemyBehavior** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemyBehavior|definition]]
+
+- **Changers**
+  - Insert: `spawn_enemy_archetype`.
+  - Update: `tick_enemy_behavior` (`aggro_target` / `aggro_locked_until`, `was_simulating`, `active_phase_index`, the `velocity_x/y` unit-heading memory).
+  - Delete: `despawn_enemy_archetype`.
+- **Client readers** — none in practice: `public` but unsubscribed (no view exposes it) — the client-facing movement lives on the `Enemy` row's angle+scalar pair.
+- **Server readers** — the behavior tick and `apply_movement` (Meander's persistent sway heading reads `velocity_x/y`).
+
+^table-enemy-behavior
+
+**Enemy** — [[server/spacetimedb/src/enemy/instance_tables.rs#Enemy|definition]]
+
+- **Changers**
+  - Insert: `spawn_enemy_archetype`, called by the scheduled [[server/spacetimedb/src/enemy/reducers.rs#tick_enemy_spawn|tick_enemy_spawn]] (biome-region spawning, disarmed at `init` — re-armed by admin [[server/spacetimedb/src/main/admin.rs#toggle_enemy_spawning|toggle_enemy_spawning]]) and by admin [[server/spacetimedb/src/main/admin.rs#spawn_enemy|spawn_enemy]].
+  - Update: `tick_enemy_behavior` (position, `movement_direction`/`movement_speed` angle+scalar, `phase`); the combat sink `apply_damage_to_enemy` (hp subtraction, phase recompute, re-aggro; stagger-bar fills from bashes); the 1 Hz status `tick` (stagger decay, enemy-DoT ticks).
+  - Delete: `despawn_enemy_archetype`, called on kill (plus `internal_gain_xp` for `xp_credit`) and by admin `despawn_enemy` (which also calls `on_enemy_killed` so no status rows dangle).
+- **Client readers** — via the `nearby_enemies` AOI view in the Game wave → `EntitySpawnerComponent`'s replaying `NearbyEnemies` binder → spawns the [[client/Scenes/default_enemy.tscn|default_enemy.tscn]] puppet (`Players/Enemies/Enemy.cs`): row hp + template max_hp feed its `HealthComponent`, the angle+scalar pair feeds `InterpolationComponent.SetTarget` for dead reckoning, `stagger` mirrors onto `Enemy.Stagger` for the debuff indicator's bar; the 3D model loads from the template's catalog `res_path3d`. Bullet patterns bypass the puppet — one shared `BulletPatternEventBinder` on `BulletSpawnerComponent` renders volleys verbatim.
+- **Server readers** — chunk-gated simulation set (enemies inside `SIMULATION_CHUNK_RINGS` of a logged-in player, capped at `BEHAVIOR_TICK_ENEMY_BUDGET` per tick — no full scan); `players_near_point`-style AOI for AoE; `on_enemy_killed` purges statuses referencing the dead id.
+
+^table-enemy
+
+**EnemySpawnSchedule** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemySpawnSchedule|definition]]
+
+- **Changers** — the only changer is whoever arms/disarms the job row: `init` deliberately inserts NO row (spawning starts disarmed); admin `toggle_enemy_spawning(true/false)` inserts/deletes it to drive `tick_enemy_spawn` every 2 s.
+- **Client readers** — none (scheduled table, not `public`).
+- **Server readers** — the scheduler fires `tick_enemy_spawn` per row.
+
+^table-enemy-spawn-schedule
+
+**EnemyBehaviorSchedule** — [[server/spacetimedb/src/enemy/instance_tables.rs#EnemyBehaviorSchedule|definition]]
+
+- **Changers** — armed once by [[server/spacetimedb/src/main/lifecycle.rs#init|init]] (100 ms `BEHAVIOR_TICK_DT` interval); never disarmed.
+- **Client readers** — none (scheduled table, not `public`).
+- **Server readers** — the scheduler fires `tick_enemy_behavior` per row.
+
+^table-enemy-behavior-schedule
+
+**BulletControlEvent** — [[server/spacetimedb/src/enemy/instance_tables.rs#BulletControlEvent|definition]]
+
+- **Changers**
+  - Insert: `activate_ability` → `apply_ability_effect` in [[server/spacetimedb/src/player/reducers.rs#activate_ability|player/reducers.rs]] appends the validated cast (there is deliberately no `control_bullets` reducer — validation always runs). Geometry encodes per `BulletControlKind` (documented on the table: Delete/Split center+radius; Attract adds homing target+linger; rect kinds encode origin + far end + width; SlashRect repurposes `duration` as the damage threshold's f32 bits; WallRect as linger seconds).
+  - Update / Delete: never — ephemeral event table (rows are a broadcast, not state).
+- **Client readers** — raw `public event` table in the Game wave, replay OFF → the `BulletControlEventBinder` child of `BulletControllerComponent` (wired in [[client/Scenes/game.tscn|game.tscn]]) → each client resolves the proximity query against its own live bullets (`DeleteNear`/`SplitNear`/`AttractNear`/`DeleteInRect`/`SplitInRect`/`SlashInRect` + lingering attract/wall zones); the caster applies the cast optimistically via `TryActivateAbility` and skips its own echo by `cast_by`. Visible end: enemy bullets vanish/split/curve mid-flight plus the black slash-rect flash polygon.
+- **Server readers** — none (the server tracks no live bullets — it validates and rebroadcasts).
+
+^table-bullet-control-event
+
+**AbilityVisualEvent** — [[server/spacetimedb/src/enemy/instance_tables.rs#AbilityVisualEvent|definition]]
+
+- **Changers**
+  - Insert: the P5 Spell arm of `apply_ability_effect` appends one row per cast (damage itself is applied server-side in the same dispatch — the row is visual-only relay; per-kind encoding documented on the table).
+  - Update / Delete: never — ephemeral event table.
+- **Client readers** — raw `public event` table in the Game wave, replay OFF → the `AbilityVisualEventBinder` child of `SpellVisualComponent` (declared inline in [[client/Scenes/game.tscn|game.tscn]]) → `Render` draws the per-`AbilityVisualKind` Polygon2D flash (Circle ring, Line rectangle, Cone wedge, Meteor/Converge streak variants) that fades after the event's duration; the caster renders optimistically and skips its own `cast_by` echo.
+- **Server readers** — none.
+
+^table-ability-visual-event
+
+**BulletFireAttestation** — [[server/spacetimedb/src/enemy/instance_tables.rs#BulletFireAttestation|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/enemy/methods.rs#attest_bullet_fire|attest_bullet_fire]] stamps one row per fired `BulletPatternEvent` (`remaining` = the event's pellet pool).
+  - Update: [[server/spacetimedb/src/player/reducers.rs#report_hit|report_hit]] decrements `remaining` per accepted claim — replaying one `event_id` past its pellets is rejected.
+  - Delete: consumed rows die on acceptance; `tick_status_effects` sweeps rows past `BULLET_ATTESTATION_TTL_SECONDS`.
+- **Client readers** — none. Server-only table (not `public`): clients only send the `event_id` back.
+- **Server readers** — `report_hit` attests every victim claim against this row (pellet-pool decrement + TTL) before delegating to the damage sink.
+
+^table-bullet-fire-attestation
+
+**BulletPatternEvent** — [[server/spacetimedb/src/enemy/instance_tables.rs#BulletPatternEvent|definition]]
+
+- **Changers**
+  - Insert: `tick_phase`/`tick_sequence` append one row per shot (`damage` resolved at insert; angles/offsets baked server-side at fire time; `chunk_index` stamped for potential AOI use).
+  - Update / Delete: never — ephemeral event table.
+- **Client readers** — raw `public event` table in the Game wave, replay OFF → ONE shared `BulletPatternEventBinder` on `BulletSpawnerComponent` (bound before any enemy spawns; rows are self-contained with absolute origin, so no per-enemy fan-out and no lost volley during a puppet's deferred-spawn window) → per-`PatternType` dispatch into the BlastBullets2D factory; `angular_speed`/`speed_acceleration` map to rotation/speed data. Visible end: the enemy bullet hell itself on screen (plus the 3D mirror in `Bullets3DComponent`); `BulletData.Damage` (stamped from this row) is what `SlashInRect` compares against.
+- **Server readers** — none beyond the attestation writer above.
+
+^table-bullet-pattern-event
+
+## Item
+
+### File index
+
+Generated entry points: [[server/spacetimedb/src/item/pointers.md|item pointers]]. The ability-authoring recipe (seed-only vs new effect type) lives in [[server/spacetimedb/src/item/AGENTS.md|item AGENTS.md]].
+
+### Tables
+
+**Item** — [[server/spacetimedb/src/item/tables.rs#Item|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/item/seeds.rs#seed_world_items|seed_world_items]] (the whole catalog — `Bow` two-pattern, innate-toggle `Fan Bow`, P6 class-gated toggle weapons, `Null Sigil`/`Delete Orb` bullet-delete abilities; `Item::seed` upserts by key so reseeds are idempotent — every publish wipes the DB, so unseeded items don't exist).
+  - Update: admin [[server/spacetimedb/src/item/reducers.rs#upsert_item|upsert_item]] (runtime catalog edit).
+  - Delete: admin [[server/spacetimedb/src/item/reducers.rs#remove_item|remove_item]].
+- **Client readers** — via the `all_items` view in the Base wave → `CatalogComponent`'s replaying binder (`GetItem`) → item icons/descriptions in `ItemSidebar`, weapon composition in `EffectiveWeaponResolver`/`CombatComponent` (toggle options = own `Weapon` behaviors + `WeaponToggle` grants, indexed by the slot's `active_toggle`), drop/chest sprites in `Drop.cs`/`Chest.cs`. Runtime state (cooldown/charges) is never on this row — it lives on ^table-player-inventory-slot.
+- **Server readers** — capability lookups are behavior-based (`ability_behavior` / `consumable_behavior` in [[server/spacetimedb/src/item/methods.rs#ability_behavior|item/methods.rs]]), never `equip_slot`-based; `resolve_effective_weapon` composes the toggle-selected behavior; `check_stat_requirements` gates equipping.
+
+^table-item
+
+**Enchantment** — [[server/spacetimedb/src/item/tables.rs#Enchantment|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/item/seeds.rs#seed_world_enchantments|seed_world_enchantments]] (`splitting` shot-doubler, `echoing` on-ability buff, innate-only `point_blank`/`scatter_fan`; `Enchantment` seeds via `impl Seed for Enchantment` in [[server/spacetimedb/src/main/seeds.rs#Seed|main/seeds.rs]]).
+  - Update: admin `upsert_enchantment`.
+  - Delete: no delete reducer (remove the socket via `remove_enchantment` on the player side instead).
+- **Client readers** — via the `all_enchantments` view in the Base wave → `CatalogComponent` (`GetEnchantment(s)`, `EnchantmentsChanged`, `CatalogVersion`) → socket/remove buttons and composition lines in `ItemSidebar`, toggle-grant folding in `EffectiveWeaponResolver` (fold order — slot ascending, innate before socketed — must match the server exactly).
+- **Server readers** — `equipped_enchantment_behaviors` folds socketed **and innate** enchantments into `recompute_stats` and weapon resolution; `innate_enchantment_ids` on the item always apply, don't eat sockets, can't be removed.
+
+^table-enchantment
+
+## Main
+
+### File index
+
+Generated entry points: [[server/spacetimedb/src/main/pointers.md|main pointers]].
+
+### Tables
 
 **PlayerPositionDebug** — [[server/spacetimedb/src/main/debug.rs#PlayerPositionDebug|definition]]
 
-- Writers:
-  - insert + update: [[server/spacetimedb/src/main/debug.rs#tick_player_position_debug|tick_player_position_debug]] — while armed, upserts one row per ^table-player-position row every second (position + rotation + hex/chunk indices).
-  - delete: the same tick deletes rows whose player no longer has a position row; [[server/spacetimedb/src/main/debug.rs#toggle_debug|toggle_debug]] wipes the whole table when disabling.
-- Client read: not `public` — **server-only**, inspect via `spacetime sql`. The client's DebugOverlay does **not** read this table — it is a purely local perf HUD (FPS/memory/enemy count), so [[client/AGENTS.md]]'s "paired with server main/debug.rs" note is stale.
+- **Changers**
+  - Insert / Update: the scheduled [[server/spacetimedb/src/main/debug.rs#tick_player_position_debug|tick_player_position_debug]] (1 Hz while armed) mirrors every `PlayerPosition` row plus hex and facing into this row (insert or update per player; stale ids pruned).
+  - Delete: the same tick prunes rows for vanished players; admin [[server/spacetimedb/src/main/debug.rs#toggle_debug|toggle_debug]] clears the whole table when disarming.
+- **Client readers** — none. Server-only table (not `public`; inspect via `spacetime sql`). Note: `client/AGENTS.md`'s old "paired with server main/debug.rs" line is stale — `DebugOverlay.cs` (declared inline in [[client/Scenes/game.tscn|game.tscn]]) is a purely local perf HUD (FPS/memory/enemy count) and never touches this table.
+- **Server readers** — none (debug mirror only).
 
 ^table-player-position-debug
 
 **PlayerPositionDebugSchedule** — [[server/spacetimedb/src/main/debug.rs#PlayerPositionDebugSchedule|definition]]
 
-- Writers:
-  - insert: [[server/spacetimedb/src/main/debug.rs#toggle_debug|toggle_debug]] (admin) arms the 1 s interval job driving [[server/spacetimedb/src/main/debug.rs#tick_player_position_debug|tick_player_position_debug]]. Never armed by `init`.
-  - update: **never updated**.
-  - delete: `toggle_debug` cancels the job row (and wipes ^table-player-position-debug) when already active.
-- Client read: not `public` — **server-only**.
+- **Changers** — the only changer is whoever arms/disarms the job row: admin `toggle_debug` inserts/deletes it (1 s interval driving `tick_player_position_debug`).
+- **Client readers** — none (scheduled table, not `public`).
 
 ^table-player-position-debug-schedule
+
+(Lifecycle `init` / `client_connected` / `client_disconnected` in [[server/spacetimedb/src/main/lifecycle.rs#init|lifecycle.rs]] and the admin reducers in [[server/spacetimedb/src/main/admin.rs#claim_admin|admin.rs]] write other modules' tables — lobby rows, schedules, world rows, catalog rows — and are cited on those entries. Tunables live in [[server/spacetimedb/src/main/global.rs#DEFAULT_CHUNK_HEX_RADIUS|global.rs]], mirrored client-side by `World/ServerConstants.cs`.)
+
+## Player
+
+### File index
+
+Generated entry points: [[server/spacetimedb/src/player/pointers.md|player pointers]].
+
+### Tables
+
+**PlayerInventorySlot** — [[server/spacetimedb/src/player/tables.rs#PlayerInventorySlot|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/player/methods.rs#try_scaffold_profile|try_scaffold_profile]] deals the 39 starter rows (indices 0 weapon, 1–4 hotbar, 5 accessory, 6 armor, 7–30 general backpack, 31 bag, 32–37 ability); `place_span` inserts follower cells for multi-slot ability items (`occupied_by = Some(head)`).
+  - Update: `swap_slots` (region-based span moves; runtime state travels with the item), `use_item`, `activate_ability` / charge spend (`cooldown_until`/`charges`), `set_slot_toggle`, `apply_enchantment` / `remove_enchantment`, `transfer_item_to_inventory` (the single acquire path — `pickup_drop`, `take_from_chest`, `give_item` all route through it, then `recompute_stats`).
+  - Delete: [[server/spacetimedb/src/player/methods.rs#teardown_profile|teardown_profile]] wipes the profile's rows (death via `kill_player`, or `delete_profile`); `clear_span` removes follower cells; `drop_item` on a follower drops the whole span.
+- **Client readers** — via the `local_player_inventory` view in the Game wave → `LocalPlayerInventoryComponent` (declared in [[client/Scenes/local_player.tscn|local_player.tscn]]) → the 39 inline `SlotComponent` nodes (hotbar/equipment/backpack), `ItemSidebar` hover composition, `CombatComponent`'s effective-weapon resolution, ability casts (`TryActivateAbility` → `ActivateAbility` reducer + optimistic bullet-control/spell visuals).
+- **Server readers** — `slot_allowed` derives each slot's acceptance set from its `SlotRole`; `recompute_stats` folds only equipped heads (Weapon/Accessory/Armor at 1.0, Ability heads position-scaled, followers never); `equipped_head_slots` / `weapon_toggle_options` drive the weapon path.
+
+^table-player-inventory-slot
+
+**LoggedInPlayer** — [[server/spacetimedb/src/player/tables.rs#LoggedInPlayer|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/player/reducers.rs#join_world|join_world]] moves the lobby row in (deletes `LoggedOutPlayer`, inserts here with the chosen `profile_id`).
+  - Update: [[server/spacetimedb/src/player/reducers.rs#set_username|set_username]] (either login row); `claim_admin` / `release_admin` flip `is_admin`.
+  - Delete: [[server/spacetimedb/src/player/reducers.rs#leave_world|leave_world]], [[server/spacetimedb/src/main/lifecycle.rs#client_disconnected|client_disconnected]], and the already-in-world recovery arm of `client_connected` (purges statuses/zones, bounces the player back to the lobby — flagged only by a `log::error!`, a known gap, see doc 10) move the row back to `LoggedOutPlayer`; `teardown_profile` (death/disconnect path via `kill_player`) is the same move.
+- **Client readers** — via the `local_player` view (own row only) in the Game wave → `EntitySpawnerComponent`'s replaying `LocalPlayer` binder → spawns the `LocalPlayer` entity; `LobbyComponent` waits on the `JoinWorld` callback before hiding the lobby.
+- **Server readers** — the omnipresent login guard: `require_logged_in` / `require_in_world` resolve `profile_id` off this row for every world reducer; AOI views semijoin it to exclude logged-out ghosts; the enemy sim's chunk-gated set keys off logged-in players.
+
+^table-logged-in-player
+
+**LoggedOutPlayer** — [[server/spacetimedb/src/player/tables.rs#LoggedOutPlayer|definition]]
+
+- **Changers**
+  - Insert: `client_connected` (brand-new identity also gets a starter `PlayerProfile`), `client_disconnected`, `leave_world`, `kill_player` death cleanup, and the already-in-world recovery arm of `client_connected`.
+  - Update: `set_username`, `claim_admin` / `release_admin`.
+  - Delete: `join_world` moves the row to `LoggedInPlayer`.
+- **Client readers** — via the `local_lobby_player` view in the Lobby wave → `DatabaseConnector`'s internal hook (username/admin display before joining). The table itself is deliberately not `public` (per-identity view only).
+- **Server readers** — `require_in_lobby` gates profile management; `claim_admin` refuses when ANY login row already holds the admin slot.
+
+^table-logged-out-player
+
+**PlayerProfile** — [[server/spacetimedb/src/player/tables.rs#PlayerProfile|definition]]
+
+- **Changers**
+  - Insert: `client_connected` seeds the first ("Knight") profile; [[server/spacetimedb/src/player/reducers.rs#create_profile|create_profile]] adds more.
+  - Update: profile settings writes (aim assist / lock-on toggles).
+  - Delete: [[server/spacetimedb/src/player/reducers.rs#delete_profile|delete_profile]] (runs the same union cleanup list as death — allocation and rotation rows included).
+- **Client readers** — via `local_player_profiles` (all own profiles, Lobby + Game waves) → `LobbyComponent`'s CharSlots panels (tracked by profile id; Join calls `join_world`); via `local_player_active_profile` (Game wave) → `LocalPlayerProfileComponent` → sprite frames in 2D / `SetModel3DTexture` catalog model in 3D plus aim-assist/lock-on cone for `CombatComponent`; via `nearby_remote_players_profiles` (AOI-filtered through the same chunk set as `nearby_remote_players`) → `RemotePlayer`'s one-shot texture lookup (and 3D model mirror).
+- **Server readers** — `find_profile_by_name` resolves `(player_id, profile_name)` for `give_item`-style admin targeting.
+
+^table-player-profile
+
+**PlayerData** — [[server/spacetimedb/src/player/tables.rs#PlayerData|definition]]
+
+- **Changers**
+  - Insert: `try_scaffold_profile` (level 1, `BASE_MAX_HP`, `BASE_SPEED`).
+  - Update: `recompute_stats` (resolves `max_hp` over `compute_base_max_hp`, `defense`, `base_speed` from gear/buff/enchantment folds; clamps `hp` down); `internal_gain_xp` (xp/level on enemy kill); the combat sinks (`deal_damage_to_player*` subtract, `heal_player` adds, death at zero delegates to `kill_player`).
+  - Delete: `teardown_profile`.
+- **Client readers** — via the `local_player_data` view in the Game wave → `LocalPlayerDataComponent` → `HealthComponent.SetFromServer(hp, maxHp)` (health bar, `HealthDidZero` death UI) plus `Level` / `Defense` / `BaseSpeed` mirrors (`StatsSidebar` DEF line, `PositionSyncComponent.CurrentSpeed`).
+- **Server readers** — `report_movement` clamps speed against `base_speed`; mitigation reads `defense`; `xp_for_level` / `compute_level` gate level-ups (each grants `SKILL_POINTS_PER_LEVEL` unspent points).
+
+^table-player-data
+
+**PlayerStats** — [[server/spacetimedb/src/player/tables.rs#PlayerStats|definition]]
+
+- **Changers**
+  - Insert: `try_scaffold_profile` (flat `BASE_STAT` base — growth comes from allocation, not base).
+  - Update: `recompute_stats` ONLY — folds allocated points + equipped-item `StatModifier`s (socketed and innate enchantments included) + active consumable buffs as `(base + flat) * (1 + mult)` with additive mults; never written directly.
+  - Delete: `teardown_profile`.
+- **Client readers** — via the `local_player_stats` view in the Game wave → `LocalPlayerDataComponent` → `StatsComponent.SetFromServer` per `StatKind` (the six allocatable stats feed `StatsSidebar`'s STR/WIS/DEX/DPS/SUP/ART lines and `+` buttons; `HealthComponent.Health` is shared-registered under `StatKind.Hp`).
+- **Server readers** — `check_stat_requirements` gates equipping against these resolved values; spell scaling (`SpellParams.scaling`) and the strength damage term read them.
+
+^table-player-stats
+
+**PlayerStatAllocation** — [[server/spacetimedb/src/player/tables.rs#PlayerStatAllocation|definition]]
+
+- **Changers**
+  - Insert: `try_scaffold_profile` (zeroed + starting unspent).
+  - Update: [[server/spacetimedb/src/player/reducers.rs#allocate_stat|allocate_stat]] moves unspent points into one of the six (rejects Hp/Defense/BaseSpeed); `internal_gain_xp` adds `SKILL_POINTS_PER_LEVEL` per level; consumed by `recompute_stats`.
+  - Delete: `teardown_profile` (in the shared union cleanup list).
+- **Client readers** — via the `local_player_stat_allocation` view in the Game wave → `LocalPlayerDataComponent.UnspentPoints` → `StatsSidebar` `+` buttons (visible only while points remain) call `AllocateStat`.
+- **Server readers** — input to `recompute_stats` only.
+
+^table-player-stat-allocation
+
+**PlayerPosition** — [[server/spacetimedb/src/player/tables.rs#PlayerPosition|definition]]
+
+- **Changers**
+  - Insert: `try_scaffold_profile` / `join_world` spawn placement.
+  - Update: [[server/spacetimedb/src/player/reducers.rs#report_movement|report_movement]] (10 Hz x/y + `movement_direction`/`movement_speed` angle+scalar: speed clamped to resolved `base_speed` × held-charge `SelfSlow`, displacement-clamped wrap-aware to `base_speed` × dt × `MOVE_SLACK`, one-shot `PlayerDisplacementAllowance` for grapples, elevation walk/fall rules off `BuildingTile.elevation`, unchanged positions skip the write); `teleport_player` (P4, exempt + restamps); `activate_ability` Teleport arm.
+  - Delete: `teardown_profile` only on death/profile-delete — rows otherwise persist while logged out ("ghosts"; the sim guards via `logged_in_player` checks instead).
+- **Client readers** — own row via `local_player_position` (Game wave, spawn/echo anchor); others via `nearby_remote_players` (own row excluded, logged-out ghosts semijoined out) → `RemotePlayer`'s binders → `InterpolationComponent.SetTarget` (velocity reconstructed from the angle+scalar pair) → moving puppets on screen. (Drops spawn from a different view — see ^table-loot-drop.) Enemy bullets collide against the puppet hurtboxes.
+- **Server readers** — every range check in the module (`pickup_drop` / `take_from_chest` `INTERACT_RADIUS`, `report_enemy_hit` `HIT_VALIDATION_RADIUS`, zone membership, ally targeting) reads this row; AOI views deliberately do NOT key off it (they use ^table-player-chunk).
+
+^table-player-position
+
+**PlayerRotation** — [[server/spacetimedb/src/player/tables.rs#PlayerRotation|definition]]
+
+- **Changers**
+  - Insert: `try_scaffold_profile`.
+  - Update: [[server/spacetimedb/src/player/reducers.rs#report_screen_rotation|report_screen_rotation]] (~30 Hz facing reports; mirrors `chunk_index` from the position row; sub-~0.5° changes skip the write).
+  - Delete: `teardown_profile`.
+- **Client readers** — remote rows via `nearby_remote_player_rotations` (same AOI filter as `nearby_remote_players`) → `RemotePlayer`'s rotation binder → `SetScreenRotationTarget` (puppet facing). The local client never subscribes its own row (it owns the camera).
+- **Server readers** — none (facing is display + client aim state).
+
+^table-player-rotation
+
+**PlayerChunk** — [[server/spacetimedb/src/player/tables.rs#PlayerChunk|definition]]
+
+- **Changers**
+  - Insert: `try_scaffold_profile`.
+  - Update: `report_movement` / `teleport_player` — written ONLY when the chunk actually changes (unlike `PlayerPosition` at 10 Hz).
+  - Delete: `teardown_profile`.
+- **Client readers** — none. `public` but unsubscribed by design: this table exists so views don't key off `PlayerPosition`.
+- **Server readers** — `nearby_indices` / `nearby_indices_from_chunk` resolve the caller's chunk set for every AOI view in the module (and chest/enemy/world AOI views reuse them).
+
+^table-player-chunk
+
+**ActiveConsumableEffect** — [[server/spacetimedb/src/player/tables.rs#ActiveConsumableEffect|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/player/methods.rs#apply_consumable_effect|apply_consumable_effect]] (consumable use + Heal/Buff ability arms; heals delegate to `combat::heal_player`).
+  - Update: `tick_status_effects` decrements `remaining` each second.
+  - Delete: `tick_status_effects` expiry sweep (then `recompute_stats`); `apply_consumable_effect` replaces same-kind rows.
+- **Client readers** — none. `public` but unsubscribed (not in any wave — no binder, no bindings consumer outside generated code): plain pre-baked stat buffs have no UI mirror; anything with runtime/tick visibility lives in ^table-active-status-effect instead.
+- **Server readers** — `recompute_stats` folds live buffs into the stat resolution.
+
+^table-active-consumable-effect
+
+**ConsumableEffectSchedule** — [[server/spacetimedb/src/player/tables.rs#ConsumableEffectSchedule|definition]]
+
+- **Changers** — the only changer is whoever arms the job row: `init` inserts the single 1 Hz row driving `tick_status_effects`. There is exactly one 1 Hz schedule in the module — new per-second work hangs off `status::methods::tick`, never a second schedule.
+- **Client readers** — none (scheduled table, not `public`).
+
+^table-consumable-effect-schedule
+
+**LootDrop** — [[server/spacetimedb/src/player/tables.rs#LootDrop|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/player/reducers.rs#drop_item|drop_item]] (stamps the slot's `cooldown_until`/`charges` so ability runtime state survives drop → pickup; dropping a follower drops the whole span).
+  - Update: never updated.
+  - Delete: [[server/spacetimedb/src/player/reducers.rs#pickup_drop|pickup_drop]] on take (wrap-aware `INTERACT_RADIUS` + `expires_at` rejection up front; restores carried cooldown/charges; ability items auto-equip into the first free span if stat requirements pass, else loose backpack storage); `tick_status_effects` sweeps rows past `expires_at` (`LOOT_DROP_EXPIRY` = 10 s).
+- **Client readers** — via the `nearby_loot_drops` AOI view in the Game wave → `EntitySpawnerComponent`'s replaying `NearbyLootDrops` binder → spawns the [[client/Scenes/drop.tscn|drop.tscn]] puppet (`Items/Drop.cs`, catalog-textured sprite) with its `PickupComponent` Area2D → body-entered calls `PickupDrop`. Visible end: loot on the ground that vanishes into the backpack on touch.
+- **Server readers** — `pickup_drop`'s range/expiry guards.
+
+^table-loot-drop
+
+**PlayerMovementState** — [[server/spacetimedb/src/player/tables.rs#PlayerMovementState|definition]]
+
+- **Changers**
+  - Insert: first `report_movement` / `teleport_player` contact.
+  - Update: every movement report restamps `last_report`; downhill falls set `falling_until` lockout (movement locked while the client tweens the fall).
+  - Delete: `teardown_profile`.
+- **Client readers** — none. Server-only table (not `public`).
+- **Server readers** — `report_movement`'s displacement budget (`base_speed` × dt × `MOVE_SLACK`, floor `MIN_REPORT_DISPLACEMENT`) and the fall-damage path (`FALL_DAMAGE_PER_LEVEL` past `FALL_SAFE_DROP`).
+
+^table-player-movement-state
+
+**PlayerDisplacementAllowance** — [[server/spacetimedb/src/player/tables.rs#PlayerDisplacementAllowance|definition]]
+
+- **Changers**
+  - Insert: the Grapple arm of `apply_ability_effect` stamps the one-shot window (`max_distance` = scaled grapple range, short expiry).
+  - Update: never updated — consumed, not edited.
+  - Delete: consumed by the next oversized `report_movement` (which also skips elevation rules on that report), on expiry contact, and by `teardown_profile`.
+- **Client readers** — none. Server-only table (not `public`).
+- **Server readers** — `report_movement`'s clamp accepts ONE oversized report up to `max_distance` while the row lives, so legit client-tweened grapples don't rubber-band.
+
+^table-player-displacement-allowance
+
+**PlayerHitRate** — [[server/spacetimedb/src/player/tables.rs#PlayerHitRate|definition]]
+
+- **Changers**
+  - Insert / Update: `report_enemy_hit` and `report_hit` stamp the 1-second fixed-window `outgoing` / `incoming` counters (`hit_rate_allow` in [[server/spacetimedb/src/player/methods.rs#hit_rate_allow|player/methods.rs]]).
+  - Delete: `teardown_profile`.
+- **Client readers** — none. Server-only table (not `public`).
+- **Server readers** — `outgoing` caps `report_enemy_hit` at weapon fire_rate × effective shot_count × `HIT_RATE_SLACK` (bounds hit-spam and StoreIncoming farming); `incoming` caps `report_hit` at `INCOMING_HIT_RATE_CAP` (~30/s, bullet-hell generous).
+
+^table-player-hit-rate
+
+## Status
+
+### File index
+
+Generated entry points: [[server/spacetimedb/src/status/pointers.md|status pointers]].
+
+### Tables
+
+**GroundZone** — [[server/spacetimedb/src/status/tables.rs#GroundZone|definition]]
+
+- **Changers**
+  - Insert: the P3 `CastZone` arm of `apply_ability_effect` places the zone at the range-clamped cursor point (radius/magnitude position-scaled).
+  - Update: the 1 Hz `tick` decrements `remaining` (ally zones re-apply statuses with `ZONE_STATUS_REFRESH_SECONDS` on live membership; bursts fire once at expiry).
+  - Delete: expiry sweep in `tick`; [[server/spacetimedb/src/status/methods.rs#purge_profile_zones|purge_profile_zones]] on death / `leave_world` / disconnect (a caster's zones die with them).
+- **Client readers** — raw `public` table in the Game wave (co-op-scale raw subscription, no view), replay ON → `ZoneRendererComponent`'s `GroundZoneBinder` (declared inline in [[client/Scenes/game.tscn|game.tscn]]) → one code-created `Polygon2D` circle per row, colored per `ZoneKind`, deleted on row delete. Visible end: witch-doctor circles / wizard spire rings on the ground.
+- **Server readers** — `tick` recomputes membership live each pass (`players_near_point` / enemy scans on the zone center — never carried); `intercept_incoming` consults `DamageShare` zones live per hit.
+
+^table-ground-zone
+
+**ActiveStatusEffect** — [[server/spacetimedb/src/status/tables.rs#ActiveStatusEffect|definition]]
+
+- **Changers**
+  - Insert / Update: [[server/spacetimedb/src/status/methods.rs#apply_status_effect|apply_status_effect]] (one row per (profile, kind); the two mark kinds share ONE slot — recasting any mark replaces it: bleed pools dump instantly, store pools forfeit). Every hit — even fully absorbed — stamps `counter` / `last_event_at`.
+  - Delete: expiry sweep and purge evaluation in the 1 Hz `tick` (bleed drains via the flagged damage path, never direct HP writes; Regen ticks; StoreDamage settles through `settle_store_mark` with ^table-player-hit-flag corroboration); `purge_profile_statuses` on death / `leave_world` / disconnect (no status may kill or tick a logged-out player).
+- **Client readers** — raw `public` table in the Game wave (co-op-scale raw subscription, no view), replay ON → `StatusBarComponent`'s `ActiveStatusEffectBinder` (declared under `InventoryCanvas/InventoryPanel` in [[client/Scenes/local_player.tscn|local_player.tscn]], filtered to the local profile) → "Kind N.Ns" labels counting down locally between server updates. Visible end: the status strip above the hotbar.
+- **Server readers** — `intercept_incoming` runs the fixed order (Invulnerable → DamageShield → RedirectToCaster loop-guarded → DamageShare → DamageReductionPct → DamageToBleed) before mitigation; outgoing consults (`outgoing_damage_mult`, `withhold_outgoing`, `convert_outgoing_to_bleed`, `note_damage_dealt`) run per hit; `HpFloor` clamps after mitigation.
+
+^table-active-status-effect
+
+**AbilityCharge** — [[server/spacetimedb/src/status/tables.rs#AbilityCharge|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/status/reducers.rs#begin_ability_charge|begin_ability_charge]] (refuses while a row exists — one held charge per player; applies the `SelfSlow` status the server's speed clamp enforces).
+  - Update: never updated.
+  - Delete: [[server/spacetimedb/src/status/reducers.rs#release_ability_charge|release_ability_charge]] (shared `internal_release_charge` path; removes the `SelfSlow`), the 1 Hz tick's timeout auto-release at `MAX_CHARGE_SECONDS` (target = the player's own position), and the lifecycle purge (a vanished charge spends NO cooldown).
+- **Client readers** — raw `public` table in the Game wave (no view), replay ON → `AbilityChargeComponent`'s `AbilityChargeBinder` (declared in [[client/Scenes/local_player.tscn|local_player.tscn]], echo-only, filtered to the local profile) → cosmetic charge `SelfSlow` on `PositionSyncComponent` plus `Charging`/`ChargedSlot` for `CombatComponent`'s fire suppression. Visible end: the held-charge slow + suppressed fire + (on release) the scaled cast.
+- **Server readers** — `report_movement` multiplies the speed clamp by the minimum held-charge `SelfSlow` factor; `activate_ability` rejects charge-capable items (they must route through begin/release).
+
+^table-ability-charge
+
+**ActiveEnemyStatusEffect** — [[server/spacetimedb/src/status/tables.rs#ActiveEnemyStatusEffect|definition]]
+
+- **Changers**
+  - Insert / Update: `apply_enemy_status` (one row per (enemy_id, kind) — re-applying refreshes magnitude/remaining/source; P2 curses, P3 enemy zones, stagger-stun application).
+  - Delete: the 1 Hz `tick` (expiry + orphan sweep + DoT ticks through `DOT_TICK_OPTIONS`); [[server/spacetimedb/src/status/methods.rs#on_enemy_killed|on_enemy_killed]] (rows never outlive their enemy; wager pools forfeit).
+- **Client readers** — raw `public` table in the Game wave (subscribed at P6, co-op-scale raw subscription, no view), replay ON → `EnemyDebuffIndicatorComponent`'s `ActiveEnemyStatusEffectBinder` (at the `DebuffAttach` point in [[client/Scenes/default_enemy.tscn|default_enemy.tscn]], filtered per enemy instance) → colored chips per `EnemyStatusKind` (DoT green, Slow blue, Vulnerability purple, ArmorBreak orange, Stunned yellow) beside the 0–100 stagger bar. Fine at co-op scale.
+- **Server readers** — `enemy_defense` (ArmorBreak zeroes flat defence) / `enemy_vulnerability_mult` / `enemy_movement_mult` / `stunned_magnitude` consults in the combat sink and behavior tick (`Pause` freezes `tick_enemy_behavior`; `Slowed`/`Enraged` scale movement and fire pacing via `effective_interval`).
+
+^table-active-enemy-status-effect
+
+## World
+
+### File index
+
+Generated entry points: [[server/spacetimedb/src/world/pointers.md|world pointers]].
+
+### Tables — config (`tables.rs`)
+
+**MapConfig** — [[server/spacetimedb/src/world/tables.rs#MapConfig|definition]]
+
+- **Changers**
+  - Insert: `Seed` impl in [[server/spacetimedb/src/main/seeds.rs#Seed|main/seeds.rs]] plus admin [[server/spacetimedb/src/main/admin.rs#internal_add_chunks|internal_add_chunks]] / `add_chunks` (singleton id 0; lap vectors derived from the chunk grid).
+  - Update: `add_chunks` rewrites the singleton when the grid changes.
+  - Delete: never deleted (fallback: `MapConfig::load` with caller-chosen degenerate cols/rows).
+- **Client readers** — raw `public` table in the Game wave → `TableSubscriber`'s internal `MapConfig` hooks mirror `LapQ`/`LapR` statics (read per entity per frame by `InterpolationComponent`; reset in `_ExitTree`) → `TerrainComponent` grid geometry, `HexGridOverlayComponent` debug grid, `ElevationMapComponent.GetElevationAt` radius. Visible end: every correctly wrapped tile/entity near a torus seam.
+- **Server readers** — read through `MapConfig::load(ctx, …)` (simulation paths pass `0, 0`, admin paths `1, 1`); the one exception is `player/views.rs`, which reads the row directly (a `ViewContext` can't call the helper) defaulting to `1, 1`.
+
+^table-map-config
+
+**BuildingTile** — [[server/spacetimedb/src/world/tables.rs#BuildingTile|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/main/admin.rs#internal_add_chunks|internal_add_chunks]] (one row per hex — empty `building_type`, no owner, `elevation` 0; called by `init` and by admin `add_chunks`).
+  - Update: the `run_generation` elevation pass in [[server/spacetimedb/src/world/terrain/mod.rs#run_generation|world/terrain/mod.rs]] stamps the quantized noise `elevation` onto existing rows (`clear_world_geometry` never touches this table); admin [[server/spacetimedb/src/world/reducers.rs#place_building|place_building]] stamps `building_type` + `owner_id` (errors when the hex has no row yet — "has add_chunks been called?"; no client UI calls it — world authoring like `add_chest`); [[server/spacetimedb/src/world/reducers.rs#remove_building|remove_building]] clears them back (any logged-in owner, or admin).
+  - Delete: admin [[server/spacetimedb/src/main/admin.rs#clear_chunks|clear_chunks]] wipes all tiles (regeneration rewrites geometry, not this table).
+- **Client readers** — via the `nearby_building_tiles` AOI view in the Game wave, replay ON → `ElevationMapComponent`'s `MapConfigBinder` + `NearbyBuildingTilesBinder` (declared inline in [[client/Scenes/game.tscn|game.tscn]]) → the `(q, r) → level` dictionary behind `GetElevation` / `GetElevationAt` / `GetWorldHeightAt` (`ElevationChanged` event) → `LocalPlayer` movement prediction + fall tween, bullet band rule, terrain tint, 3D mesh heights. Visible end: cliffs that block, falls that tween, bullets that fly over low ground.
+- **Server readers** — `report_movement`'s elevation rules (walkable ±`MAX_WALKABLE_*_DELTA`, steeper-up rejects, steeper-down falls with `FALL_DAMAGE_PER_LEVEL` past `FALL_SAFE_DROP`); enemy steering cliff probing (no enemy fall mechanic).
+
+^table-building-tile
+
+**TextureEntry** — [[server/spacetimedb/src/world/tables.rs#TextureEntry|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/main/seeds.rs#seed_default_textures|seed_default_textures]] (every `texture_id` an item/enemy/profile references needs a row — missing entry = blank icon, no error).
+  - Update: admin [[server/spacetimedb/src/main/admin.rs#upsert_texture_entry|upsert_texture_entry]].
+  - Delete: no delete path.
+- **Client readers** — via the `all_textures` view in the Base wave → `CatalogComponent` (`GetResPath2D` / `GetResPath3D`, empty 3D path normalized to null = no 3D representation) → every sprite/icon/model load in the game (entities, drops, tiles, UI icons, 3D model mirrors).
+- **Server readers** — none (rendering-only catalog).
+
+^table-texture-entry
+
+**AnimationEntry** — [[server/spacetimedb/src/world/tables.rs#AnimationEntry|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/main/seeds.rs#seed_default_animations|seed_default_animations]].
+  - Update / Delete: no paths (static seed content).
+- **Client readers** — via the `all_animations` view in the Base wave → `CatalogComponent`'s `AllAnimationsBinder` → `LocalPlayer` merges every clip into the 3D character model's `AnimationPlayer` under its `animation_id` (e.g. `ual1/Walk`); `DebugOverlay` lists the rows. Visible end: animated 3D character models.
+- **Server readers** — none (rendering-only catalog).
+
+^table-animation-entry
+
+**LayeringRule** — [[server/spacetimedb/src/world/tables.rs#LayeringRule|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/main/seeds.rs#seed_layering_rules|seed_layering_rules]].
+  - Update / Delete: no paths (static generation input; default is deny — compatibility is opt-in per overlay/base tag pair).
+- **Client readers** — none. `public` but unsubscribed: generation input, not rendered content.
+- **Server readers** — `choose_overlay` consults the rules per wedge at generation time.
+
+^table-layering-rule
+
+**BaseAdjacencyRule** — [[server/spacetimedb/src/world/tables.rs#BaseAdjacencyRule|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/main/seeds.rs#seed_adjacency_rules|seed_adjacency_rules]].
+  - Update / Delete: no paths (deny-list: symmetric tag_a/tag_b clashing pairs like swamp-next-to-sand; default is allow).
+- **Client readers** — none (`public` but unsubscribed — generation input).
+- **Server readers** — ground pass adjacency checks in `run_generation`.
+
+^table-base-adjacency-rule
+
+**OverlayAdjacencyRule** — [[server/spacetimedb/src/world/tables.rs#OverlayAdjacencyRule|definition]]
+
+- **Changers**
+  - Insert: `seed_adjacency_rules` (same seeder as ^table-base-adjacency-rule; kept as a separate table so a shared tag string can never cross-apply between a base rule and an overlay rule).
+  - Update / Delete: no paths.
+- **Client readers** — none (`public` but unsubscribed — generation input).
+- **Server readers** — overlay pass adjacency checks in `run_generation`.
+
+^table-overlay-adjacency-rule
+
+**DecorGroundRule** — [[server/spacetimedb/src/world/tables.rs#DecorGroundRule|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/main/seeds.rs#seed_decor_ground_rules|seed_decor_ground_rules]].
+  - Update / Delete: no paths (deny-list decor_tag × denied_base_tag — not symmetric, since it relates two tag kinds).
+- **Client readers** — none (`public` but unsubscribed — generation input).
+- **Server readers** — `place_decor` conflict checks.
+
+^table-decor-ground-rule
+
+### Tables — generation inputs (`def_tables.rs`)
+
+**WorldDef** — [[server/spacetimedb/src/world/def_tables.rs#WorldDef|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/main/seeds.rs#seed_world_defs|seed_world_defs]].
+  - Update: admin [[server/spacetimedb/src/main/admin.rs#upsert_world_def|upsert_world_def]].
+  - Delete: no delete path.
+- **Client readers** — none (`public` but unsubscribed — generation input: biome-weight front-end over `run_generation`).
+- **Server readers** — `internal_generate_world_proc` reads the def (biome Voronoi distribution over `BIOME_VORONOI_SEED_BUDGET` seeds).
+
+^table-world-def
+
+**BiomeDef** — [[server/spacetimedb/src/world/def_tables.rs#BiomeDef|definition]]
+
+- **Changers**
+  - Insert: `seed_world_defs` (ground/overlay/decor texture configs with per-biome tags/chances/rotations + noise scales + separation).
+  - Update: admin [[server/spacetimedb/src/main/admin.rs#upsert_biome_def|upsert_biome_def]].
+  - Delete: no delete path.
+- **Client readers** — none (`public` but unsubscribed — generation input).
+- **Server readers** — `choose_ground` / `choose_overlay` / `place_decor` per-hex/wedge passes (noise-clustered via `value_noise2d`, weighted picks via `prng`).
+
+^table-biome-def
+
+**BiomeRegionDef** — [[server/spacetimedb/src/world/def_tables.rs#BiomeRegionDef|definition]]
+
+- **Changers**
+  - Insert: [[server/spacetimedb/src/main/seeds.rs#seed_region_def|seed_region_def]].
+  - Update: admin [[server/spacetimedb/src/main/admin.rs#upsert_biome_region_def|upsert_biome_region_def]].
+  - Delete: no delete path.
+- **Client readers** — none (`public` but unsubscribed — generation input: enemy roster + `max_enemies` + `spawn_radius` per region def).
+- **Server readers** — region seeding (`seed_region_def` + manual `ManualRegionInput` front-end).
+
+^table-biome-region-def
+
+### Tables — generated world (`instance_tables.rs`)
+
+**BiomeRegion** — [[server/spacetimedb/src/world/instance_tables.rs#BiomeRegion|definition]]
+
+- **Changers**
+  - Insert: `run_generation` (both proc and manual front-ends).
+  - Update: never updated.
+  - Delete: `clear_world_geometry` wipes all regions on every regeneration (unlike ^table-building-tile, which regeneration only re-stamps).
+- **Client readers** — none. `public` but unsubscribed: spawn regions are server-side simulation inputs (there is deliberately no `EnemyZone` table — this is it).
+- **Server readers** — `tick_enemy_spawn` picks spawn points inside regions (`center_hex_q/r`, `spawn_radius`, `max_enemies`, `enemy_template_ids`).
+
+^table-biome-region
+
+**TriangleTile** — [[server/spacetimedb/src/world/instance_tables.rs#TriangleTile|definition]]
+
+- **Changers**
+  - Insert: `write_triangle_tiles` in [[server/spacetimedb/src/world/terrain/mod.rs#write_triangle_tiles|world/terrain/mod.rs]] (one row per triangle wedge: ground texture + optional overlay + rotation/scale + biome/region ids, deterministic draw order).
+  - Update / Delete: regeneration rewrites the set (no per-row updates).
+- **Client readers** — via the `nearby_terrain_tiles` AOI view (`DEFAULT_TERRAIN_AOI_CHUNK_RADIUS`) in the Game wave → `TerrainComponent`'s binder → pooled `TileComponent` chunk pool (`1+3R(R+1)` pre-warmed) with per-texture MultiMesh batch leaves; `WaterComponent3D` renders ocean wherever rows are ABSENT. Visible end: the ground itself (plus elevation tint from ^table-building-tile).
+- **Server readers** — none post-generation (rendering payload).
+
+^table-triangle-tile
+
+**HexDecor** — [[server/spacetimedb/src/world/instance_tables.rs#HexDecor|definition]]
+
+- **Changers**
+  - Insert: `place_decor` (at most one prop per hex; hexes with no decor simply have no row).
+  - Update / Delete: regeneration rewrites the set.
+- **Client readers** — via the `nearby_hex_decor` AOI view in the Game wave → `TerrainComponent`'s decor layers (per-texture batches + paired shadow sprites rotating as one unit). Visible end: trees/rocks/props on the map.
+- **Server readers** — none post-generation (rendering payload).
+
+^table-hex-decor

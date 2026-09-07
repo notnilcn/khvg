@@ -16,6 +16,12 @@ public partial class World3DComponent : Node3DComponent
 {
     [Export] public float DefaultModelScale = 50f;
 
+    // Ortho frustum height per unit of rig zoom distance: 2*tan(75deg/2) keeps the
+    // framing identical to the old perspective setup (fov 75) at the same arm
+    // length, so scroll-zoom feels unchanged. Camera3D ignores Size in perspective
+    // mode, so driving it unconditionally is a no-op if projection ever goes back.
+    private const float OrthoSizePerDistance = 1.5347f;
+
     private PhantomCamera3D? _pcam3D;
     private Camera3D? _camera3D;
     private CameraRigComponent? _rig;
@@ -34,11 +40,13 @@ public partial class World3DComponent : Node3DComponent
 
     public override void _Process(double delta)
     {
-        if (_pcam3D == null || _rig == null || LocalPlayer.Local == null) return;
+        if (_pcam3D == null || _camera3D == null || _rig == null || LocalPlayer.Local == null) return;
         // 2D RotationOffset is clockwise in a y-down space; 3D yaw about +Y is counter-clockwise,
         // so negate. This sign convention is stated once, here, and nowhere else.
         _pcam3D.SetThirdPersonRotationDegrees(new Vector3(_rig.PitchDegrees, -Mathf.RadToDeg(_rig.Yaw), 0f));
         _pcam3D.SpringLength = _rig.Distance;
+        // Dolly zoom does nothing to an ortho frustum, so zoom drives Size instead.
+        _camera3D.Size = _rig.Distance * OrthoSizePerDistance;
     }
 
     public void SetCameraFollowTarget(Node3D model)

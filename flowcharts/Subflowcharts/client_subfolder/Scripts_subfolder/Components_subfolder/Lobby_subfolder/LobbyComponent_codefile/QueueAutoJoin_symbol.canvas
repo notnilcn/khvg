@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "8e935d6086b58c40",
+			"type": "file",
+			"file": "client/Scripts/Components/Lobby/LobbyComponent.cs",
+			"subpath": "#QueueAutoJoin",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

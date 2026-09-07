@@ -15,7 +15,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/status/methods-_dot_-rs-_hashtag_-apply_status_effect",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
@@ -31,24 +30,22 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-StatusEffectKind",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-deal_damage_to_player_opts",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/mod_codefile/mod_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-PurgeKind",
-				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-seconds_since",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/main/time-_dot_-rs-_hashtag_-seconds_since",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/time_codefile/time_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrapped_distance_sq",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/wrap_codefile/wrap_codefile-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-heal_player",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-enemies_near_point",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-apply_damage_to_enemy",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-MitigationMode",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-DamageRequest",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/mod_codefile/mod_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveStatusEffect",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-EnemyStatusKind",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-apply_damage_to_enemy_opts",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveEnemyStatusEffect",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-players_near_point",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
@@ -88,7 +85,8 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedInPlayer-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-GroundZone-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-GroundZone-_colon_-write"
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-GroundZone-_colon_-write",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

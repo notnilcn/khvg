@@ -1125,7 +1125,7 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/defs/gorgon_boss-_dot_-rs-_hashtag_-shotgun_20deg_vsmall",
 				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-Difficulty",
 				"edge-_colon_-server/spacetimedb/src/enemy/defs/mod-_dot_-rs-_hashtag_-make_phase",
-				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-MovementBehavior",
+				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SteeringMovement",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-AttackSequence",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-EnemyTemplate",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-StunBehavior",

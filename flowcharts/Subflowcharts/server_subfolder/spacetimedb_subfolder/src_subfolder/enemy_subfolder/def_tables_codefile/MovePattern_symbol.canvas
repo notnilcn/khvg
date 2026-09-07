@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "571260c1c2a17b20",
+			"type": "file",
+			"file": "server/spacetimedb/src/enemy/def_tables.rs",
+			"subpath": "#MovePattern",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

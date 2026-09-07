@@ -3,7 +3,6 @@ class_name PixelDitherPattern
 extends Resource
 ## A 4x4 ordered dither threshold matrix, stored as 16 floats in [0, 1].
 ##
-## Port of ProPixelizer's Tools/DitherPattern.cs.
 ## Indexing is x-major: order = 4 * (x % 4) + (y % 4).
 ## Used when baking palette LUTs (see PixelPalette) and by the runtime
 ## transparency dither. The classic preset is the Bayer 4x4 matrix.

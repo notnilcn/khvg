@@ -1,21 +1,21 @@
 {
 	"nodes": [
 		{
-			"id": "b28422a194e287b2",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemies_subfolder.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "91a1b9b1ede40182",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/CharacterModel3D_codefile.canvas",
 			"color": "5",
 			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b28422a194e287b2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemies_subfolder.canvas",
+			"color": "5",
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400

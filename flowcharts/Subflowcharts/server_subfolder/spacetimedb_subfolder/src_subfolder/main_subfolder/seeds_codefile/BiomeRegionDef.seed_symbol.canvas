@@ -1,10 +1,10 @@
 {
 	"nodes": [
 		{
-			"id": "3ef2fb3036ac65e0",
+			"id": "3ff2fcc39733bb52",
 			"type": "file",
 			"file": "server/spacetimedb/src/main/seeds.rs",
-			"subpath": "#seed#6",
+			"subpath": "#seed#7",
 			"x": 0,
 			"y": 0,
 			"width": 400,
@@ -15,7 +15,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-BiomeRegionDef",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
@@ -30,7 +29,8 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
-				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write"
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

@@ -1,7 +1,7 @@
 #[compute]
 #version 450
 
-// ProPixelizer pixelization map pass (port of SRP/PixelizationMap.shader).
+// Pixelization map pass.
 //
 // For every screen pixel, search a 5x5 texel neighbourhood for "anchor"
 // pixels of macro-blocks that claim this pixel, keep the nearest claimant
@@ -11,12 +11,12 @@
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
 layout(rgba8, set = 0, binding = 0) uniform writeonly image2D anchor_map;
-layout(set = 0, binding = 1) uniform sampler2D metadata; // ProPixelizer metadata buffer
+layout(set = 0, binding = 1) uniform sampler2D metadata; // packed ID/size/normal buffer
 layout(set = 0, binding = 2) uniform sampler2D metadata_depth; // R32F raw depth of pixelized objects
 
 const float PIXELMAP_DELTA_MAX = 10.0;
 
-// PackingUtils.hlsl port: id (0-255) and pixel size (0-5) packed into G as
+// ID/size packing: id (0-255) and pixel size (0-5) packed into G as
 // (id + pixelSize * 256) / 4096. The white background decodes to size 16,
 // which is out of range and means "not pixelized".
 float metadata_pixel_size(float g) {

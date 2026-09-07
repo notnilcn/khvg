@@ -206,6 +206,10 @@ public partial class DebugOverlay : CanvasLayer
 		Slider("Noise Scale", 0.0001f, 0.02f, 0.0001f, () => p.CloudNoiseScale, v => p.CloudNoiseScale = v);
 		Slider("Threshold", 0, 1, 0.01f, () => p.CloudThreshold, v => p.CloudThreshold = v);
 		Slider("Bands (0 = off)", 0, 10, 1, () => p.CloudBands, v => p.CloudBands = v);
+		Slider("Tightness", 0.1f, 4.0f, 0.05f, () => p.CloudTightness, v => p.CloudTightness = v);
+		Slider("Octave Drop", 0.1f, 1.0f, 0.05f, () => p.CloudOctaveDrop, v => p.CloudOctaveDrop = v);
+		Slider("Gap Erosion", 0, 0.45f, 0.01f, () => p.CloudGapErosion, v => p.CloudGapErosion = v);
+		Slider("Detail Strength", 0, 1, 0.05f, () => p.CloudDetailStrength, v => p.CloudDetailStrength = v);
 		Slider("Wind X", -0.1f, 0.1f, 0.001f, () => p.CloudWind.X, v => p.CloudWind = new Vector2(v, p.CloudWind.Y));
 		Slider("Wind Y", -0.1f, 0.1f, 0.001f, () => p.CloudWind.Y, v => p.CloudWind = new Vector2(p.CloudWind.X, v));
 		Slider("Plane Size", 500, 10000, 100, () => p.CloudPlaneSize, v => p.CloudPlaneSize = v);
@@ -225,6 +229,14 @@ public partial class DebugOverlay : CanvasLayer
 		Slider("Decay", 0, 10, 0.1f, () => p.RayDecay, v => p.RayDecay = v);
 		Slider("Quantize Bands", 0, 16, 1, () => p.RayQuantizeBands, v => p.RayQuantizeBands = v);
 		Slider("Dust Strength", 0, 1, 0.01f, () => p.RayDustStrength, v => p.RayDustStrength = v);
+		Slider("Near Fade Start", 0, 500, 5, () => p.RayNearFadeStart, v => p.RayNearFadeStart = v);
+		Slider("Near Fade Range", 0, 500, 5, () => p.RayNearFadeRange, v => p.RayNearFadeRange = v);
+		Slider("Near Fade Power", 0.1f, 4, 0.1f, () => p.RayNearFadePower, v => p.RayNearFadePower = v);
+		Slider("Depth Cutoff", 0, 2000, 10, () => p.RayDepthCutoff, v => p.RayDepthCutoff = v);
+		Slider("Surface Fade", 0, 200, 1, () => p.RaySurfaceFade, v => p.RaySurfaceFade = v);
+		Slider("Max Stack", 0, 20, 0.5f, () => p.RayMaxStack, v => p.RayMaxStack = v);
+		Slider("Quantum", 0, 10, 0.1f, () => p.RayQuantum, v => p.RayQuantum = v);
+		Slider("Distance Falloff", 0, 0.05f, 0.001f, () => p.RayDistanceFalloff, v => p.RayDistanceFalloff = v);
 
 		AddChild(panel);
 		return panel;

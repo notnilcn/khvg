@@ -1,43 +1,25 @@
-# 01 Roadmap
+# 01 Roadmap — what these docs are, and in what order to read them
 
-## What these docs are
+These docs are the narrative, learn-from-scratch companion to the terse maintainer refs ([[AGENTS.md|root AGENTS.md]], [[client/AGENTS.md|client AGENTS.md]], [[server/AGENTS.md|server AGENTS.md]]). They are written for an **intermediate programmer brand new to Godot, C#, Rust, and SpacetimeDB**: unfamiliar concepts (reducers, views, subscriptions, node trees, scenes, `.tscn` files) are explained briefly inline; general programming ideas are not.
 
-This folder is the narrative, learn-from-scratch documentation of the bullet-hell MMO: a Godot 4.7 mono C# client (`client/`) over a SpacetimeDB 2.2 Rust server module (`server/spacetimedb/`). It is the companion to the terse maintainer references — [[AGENTS.md|the root AGENTS.md]], [[client/AGENTS.md]], [[server/AGENTS.md]], and the module-level [[server/spacetimedb/src/enemy/AGENTS.md|enemy]] and [[server/spacetimedb/src/item/AGENTS.md|item]] files — which stay the authoritative jump-off maps; these docs explain the *why* and the end-to-end flow instead of restating them.
+Every system doc is organized around **how its tables are viewed and changed** — not around features or code layout in the abstract. Each table has exactly one story: **how it is changed** (which reducer, scheduled tick, lifecycle hook, or seed inserts/updates/deletes rows) and **how it is viewed** (which view or raw-table subscription carries it over the wire and which binder component consumes the row events on the client, plus any server-side reads that matter). If a mechanism doesn't change a table or explain how a table is viewed, it lives as a sentence inside the Changers/Readers prose of the table(s) it touches — never as its own section. `00 Table Map.md` is the per-table spine they all transclude from; docs `02`–`12` never re-type a table entry.
 
-The docs are organized around **the server's tables**. Every table has exactly one story worth telling: **who writes it** (which reducer, scheduled tick, lifecycle hook, or seed inserts/updates/deletes rows) and **how the client reads it** (which view or raw-table subscription carries it over the wire, and which binder component consumes the row events). [[00 Table Map]] is the per-table reference spine — one entry per table, written in full — and each system doc (04–13) covers a group of tables, transcluding its table entries from 00 rather than re-typing them.
+Aspirational systems from the Game Design Docs that have no code behind them stay **out** of these docs: guild territory PvP, base-building beyond `place_building`/`remove_building`, biomes as gameplay, most of enchantment breadth, the un-built `BulletDespawnEvent`/`slash_bullet` bullet-despawn design. Where a doc touches such an edge it says so explicitly. (There is no `control_bullets` reducer — the implemented bullet-control protocol is the `BulletControlEvent` event table.)
 
-**Who they're for:** an intermediate programmer who is brand new to Godot, C#, Rust, and SpacetimeDB. Unfamiliar concepts (reducers, views, subscriptions, node trees, scenes, `.tscn` files) are explained briefly inline as they come up; general programming ideas are not. The code is the only source of truth for everything written here — every mechanism claim names the file/function that implements it, and where the AGENTS.md files and the code disagree, the code won.
+## Conventions (how to read these docs)
 
-## Reading order & status
+**Wikilinks to code** name the file and the symbol, so every mechanism claim points at its implementation:
 
-Read [[02 The Component Framework]] first (the client-side architecture every later doc assumes), then [[03 Connection, Subscriptions & Views]] (the read path every table shares — prerequisite for all table docs). Docs 04–13 are the per-system table docs and can be read in any order after 03; [[00 Table Map]] is a reference, not a chapter. Status values: blank = not yet written/verified, `done` = verified against the code in the final pass.
+```
+[[filename#function name|display text]]
+```
 
-| Doc | Title | Status | Covers |
-| --- | ----- | ------ | ------ |
-| 00 | [[00 Table Map]] | done | Every server table: writers (reducer/tick/hook/seed per operation) and the client read path (view, subscription wave, binder component) — the reference spine |
-| 01 | [[01 Roadmap]] | done | This file — scope, audience, conventions, reading order |
-| 02 | [[02 The Component Framework]] | done | The client's entity/component model (component bases, registry, binder pattern) and its server-side mirror: one table per concern, ids joining an entity's rows |
-| 03 | [[03 Connection, Subscriptions & Views]] | done | DatabaseConnector, the base/lobby/game subscription waves, the view layer (anonymous global / per-caller / AOI-filtered), TableBinderComponent, the event-table pattern |
-| 04 | [[04 Lobby & Identity Tables]] | done | LoggedInPlayer/LoggedOutPlayer/PlayerProfile — connect/disconnect hooks, lobby UI, join/leave flow |
-| 05 | [[05 Player Data & Progression Tables]] | done | PlayerData/PlayerStats/PlayerStatAllocation — XP/level math, `recompute_stats`, stat allocation |
-| 06 | [[06 Movement & AOI Tables]] | done | PlayerPosition/PlayerRotation/PlayerChunk + the AOI views — movement reporting, displacement clamp, interpolation |
-| 07 | [[07 Terrain & World Tables]] | done | MapConfig, textures, terrain rules, world/biome defs, generated tiles/decor — the terrain pipeline and its client rendering |
-| 08 | [[08 Enemy Tables]] | done | EnemyTemplate + step defs, the behavior-tree instance tables, the 100 ms tick and spawn schedule |
-| 09 | [[09 Combat & Event Tables]] | done | The damage pipeline, the three event tables (bullet patterns, bullet control, spell visuals), hit rate-limiting and the anti-cheat witness flag |
-| 10 | [[10 Items, Inventory & Loot Tables]] | done | The Item/Enchantment catalog, PlayerInventorySlot (slots, spans, runtime state), consumables, loot drops |
-| 11 | [[11 Status, Zone & Charge Tables]] | done | ActiveStatusEffect/ActiveEnemyStatusEffect/GroundZone/AbilityCharge and the single 1 Hz status tick |
-| 12 | [[12 Chest Tables]] | done | Chest/ChestItem/ChestTakeCooldown — chest views, the take flow, chest UI |
-| 13 | [[13 Admin & Debug Tables]] | done | Admin reducers (the CLI-only writers of seed/catalog tables), seeds, PlayerPositionDebug + its schedule |
+- Example: `[[server/spacetimedb/src/main/seeds.rs#seed_default_enemies|seed_default_enemies]]`.
+- The vault root is the repo root (not `docs/`), so these links resolve to `client/`, `server/`, and `flowcharts/` alike.
 
-## Visual overview
+**Wikilinks to canvas flowcharts** are ordinary wikilinks including the folder path, e.g. `[[flowcharts/main-combat.canvas]]` — linked by path, never by node id.
 
-The generated flowchart map of the whole codebase is at [[flowcharts/main.canvas]] (each system doc links its own `main-<slug>.canvas` plus deep-dive subflowcharts). This link is expected to be unresolved until the flowchart composition runs — it is generated, not hand-written.
-
-## Conventions
-
-- **Wikilinks to code** use the form `[[path/from/repo/root#function name#function index|display text]]` — e.g. `[[server/spacetimedb/src/main/seeds.rs#seed#4|seeds]]`. The function index disambiguates same-name functions in one file (the seven `seed` impls in `main/seeds.rs`); it is omitted when the name is unique. Indices are best-effort and get spot-checked in the final pass.
-- **Wikilinks to canvas flowcharts** are ordinary wikilinks including the folder path, never deep-links to a node.
-- **Sync-embed blocks** (the sync-embeds plugin) transclude shared content from its single source instead of re-typing it — system-doc table sections embed entries from [[00 Table Map]] by block anchor:
+**Sync-embed blocks** (sync-embeds plugin) transclude table entries from the single source instead of re-typing them:
 
 ````
 ```sync
@@ -45,11 +27,36 @@ The generated flowchart map of the whole codebase is at [[flowcharts/main.canvas
 ```
 ````
 
-  `marker:NN.` is the entry number *as it should render in the embedding doc*, zero-padded to two digits — system docs number their table sections from `01.` regardless of the entry's position in 00.
-- **Block anchors**: every table entry in 00 ends with a `^table-<kebab-case-name>` anchor; docs cross-refer to tables by anchor (`^table-player-chunk`), never by bare table name.
-- **Section references between docs** use ordinary Obsidian wikilinks, with display text where helpful.
-- The Obsidian vault is the **repo root**, not `docs/` — that's the only way links to `client/`, `server/`, and `flowcharts/` resolve. The docs assume the `sync-embeds`, `block-link-plus`, `advanced-canvas`, and `vscode-editor` community plugins are enabled.
+- `marker:NN.` is the entry number *as it renders in the embedding doc*, zero-padded to two digits. System-doc table sections number their entries from `01.` regardless of the entry's position in 00.
 
-## What stays out
+**Section references between docs** are ordinary Obsidian wikilinks, with display text where it reads better.
 
-These docs describe **what the code does now**, not what it's planned to do. Aspirational systems described in the Game Design Docs but absent from the code — guild territory PvP, base-building beyond `place_building`/`remove_building`, biomes as gameplay, most of the enchantment breadth, the un-built `BulletDespawnEvent`/`slash_bullet` bullet-despawn design — stay **out**; where a doc touches such an edge it says so explicitly. (There is no `control_bullets` reducer either — the implemented bullet-control protocol is the `BulletControlEvent` event table.) TODOs, stubs, unwired UI, and known bugs in the code are documented per-system in each doc's "Known gaps" section, not silently omitted.
+**Table anchors** (`^table-<kebab-case-table-name>`) live in `00 Table Map.md` and nowhere else. Entries cross-refer by anchor name, never by table name alone.
+
+## Reading order and status
+
+Read top-down: machinery first (the framework, then the read path every table shares), then one module doc per folder in `server/spacetimedb/src/` (alphabetical directory-listing order — the phase-0 order).
+
+| # | Title | Status | Coverage |
+|---|-------|--------|----------|
+| 00 | Table Map | done | Every table in the module: changers, client readers to their visible end, server readers that matter |
+| 01 | Roadmap (this doc) | done | What the docs are, conventions, reading order, flowchart overview link |
+| 02 | The Component Framework | done | Component/entity base classes; the server-side mirror (one table per concern) via the profile/enemy archetype helpers |
+| 03 | Connection, Subscriptions & Views | done | Connector, subscriber waves, binder, the three view flavors; `main_menu.tscn` + `game.tscn` inline subscriber; the event-table subscription pattern |
+| 04 | Anticheat Tables | done | `PlayerHitFlag`: witness corroboration for damage claims and wager settlements |
+| 05 | Chest Tables | done | `Chest`, `ChestItem`, server-only `ChestTakeCooldown`; AOI chest views; the chest panel |
+| 06 | Combat Tables | done | Owns no tables — the shared damage pipeline (calc + sinks + policy types) as a cross-table flow |
+| 07 | Enemy Tables | done | Template defs, behavior-tree instances, event tables (`BulletPatternEvent`, `BulletControlEvent`, `AbilityVisualEvent`), `BulletFireAttestation`, schedules |
+| 08 | Item Tables | done | Unified `Item` catalog + `Enchantment`: slot/behavior independence, toggle options, seeds |
+| 09 | Main Tables | done | `PlayerPositionDebug` + schedule; lifecycle/admin/seeds as changers of other modules' tables |
+| 10 | Player Tables | done | Login rows, profiles, data/stats/allocation, position/rotation/chunk, inventory slots, consumable effects, loot drops, server-only validation tables |
+| 11 | Status Tables | done | `ActiveStatusEffect`, `ActiveEnemyStatusEffect`, `GroundZone`, `AbilityCharge`: intercepts, wagers, zones, charges on the single 1 Hz tick |
+| 12 | World Tables | done | `MapConfig`, `BuildingTile` elevation, texture/animation catalogs, generation rules/defs, generated tiles/decor |
+
+Status values: blank / `done`. Docs 00–12 were written in the first pass; the phase-2 pass still owns the shared verification (anchor sweep, pointer freshness, final flowchart compose) before this table is final.
+
+## Visual overview
+
+The aggregate flowchart for the whole system is [[flowcharts/main.canvas]] — the `"main"` flow composed from the root/client/server subfolder canvases. Per-system canvases (`flowcharts/main-<doc-slug>.canvas` plus 1–3 deep-dive subflowcharts) are linked from each doc's **Flowcharts** section.
+
+> Note on current state: `flowcharts/flows.json` is pre-seeded with the previous flow set (`framework`, `subscriptions`, plus the older per-system flows `lobby`, `player-data`, `movement`, `terrain`, `enemies`, `combat`, `items`, `status`, `chests`, `admin`). The phase-2 pass curates it to the lineup above (one flow per `04+` module doc, slug = module folder name: `anticheat`, `chest`, `combat`, `enemy`, `item`, `main`, `player`, `status`, `world`) and re-runs the full "Regenerate all flowcharts" compose, which is when every `main*.canvas` link above is guaranteed fresh and `missingCanvases` is verified empty.

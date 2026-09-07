@@ -1,7 +1,7 @@
 class_name PixelArtObject3D
 extends Node3D
 ## Per-object configuration for pixelization, outlines and render snapping.
-## Port of ProPixelizer's ObjectRenderSnapable + OutlineControl.
+## Per-object pixel size, grid anchor, outline ID/color and mover snap.
 ##
 ## Note: object render snapping (cache/restore transform around rendering) is
 ## currently not driven — see PixelArtCameraSnap's docstring for why
@@ -46,10 +46,18 @@ const SHADER_PATH := "res://addons/3dpixelart/shaders/pixel_art_object.gdshader"
 
 @export_group("Outline")
 ## ID used to differentiate objects for outlines (0-254). Adjacent pixels
-## with different IDs produce an outline.
-@export_range(0, 254) var outline_id := 1:
+## with different IDs produce an outline. ID 255 is RESERVED for pinned
+## subjects (see [member pinned]) — do not assign it manually.
+@export_range(0, 255) var outline_id := 1:
 	set(value):
 		outline_id = value
+		_apply_instance_parameters()
+## Pin this subject: forces stencil ID 255 so the
+## macro-pixel pass skips the smooth-scroll shift here. Managed by
+## PixelArtPinning (ownership-tracked); setting it manually is allowed.
+@export var pinned := false:
+	set(value):
+		pinned = value
 		_apply_instance_parameters()
 ## Randomly generate an outline ID at runtime.
 @export var use_random_uid := false
@@ -79,6 +87,12 @@ const SHADER_PATH := "res://addons/3dpixelart/shaders/pixel_art_object.gdshader"
 @export_group("Snapping")
 ## Snap position to pixel centers (orthographic cameras, no pixel creep).
 @export var snap_position := true
+## Mover snap: round the anchor-grid pivot to whole
+## screen pixels so moving subjects don't jitter sub-texel. Per-object.
+@export var mover_snap := false:
+	set(value):
+		mover_snap = value
+		_apply_instance_parameters()
 ## Snap euler rotation angles to [member angle_resolution] steps.
 @export var snap_euler_angles := true
 ## Resolution (degrees) to which euler angles are snapped.
@@ -185,11 +199,23 @@ func _apply_instance_parameters() -> void:
 	if target == null or not is_inside_tree():
 		return
 	target.set_instance_shader_parameter("pixel_size", float(pixel_size))
-	target.set_instance_shader_parameter("outline_id", float(outline_id))
+	# ID 255 is reserved for pinned subjects; use_random_uid never emits it.
+	target.set_instance_shader_parameter("outline_id", 255.0 if pinned else float(outline_id))
 	target.set_instance_shader_parameter("outline_color", outline_color)
 	target.set_instance_shader_parameter("edge_highlight_color", edge_highlight_color)
 	target.set_instance_shader_parameter("use_object_position", use_object_position)
 	target.set_instance_shader_parameter("pixel_grid_origin", pixel_grid_origin)
+	target.set_instance_shader_parameter("use_mover_snap", 1.0 if mover_snap else 0.0)
+
+
+## Ownership-tracked pin switch used by PixelArtPinning. When [param pin_on]
+## is true the metadata stencil becomes [param pin_id] (default 255);
+## otherwise the regular [member outline_id] is written again.
+func set_pinned(pin_on: bool, pin_id := 255) -> void:
+	pinned = pin_on
+	if pin_on:
+		outline_id = pin_id
+	_apply_instance_parameters()
 
 
 func _apply_root_inheritance() -> void:

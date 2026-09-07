@@ -3,8 +3,8 @@ class_name PixelPalette
 extends Resource
 ## Bakes a 256x256 palette LUT used for per-object color grading.
 ##
-## Port of ProPixelizer's Tools/Palette.cs. The LUT layout matches the
-## original: x = r + 16 * b, y = g + 16 * ditherBand, with 16 dither bands.
+## The LUT layout is: x = r + 16 * b, y = g + 16 * ditherBand,
+## with 16 dither bands.
 ## Runtime only needs the baked PNG (see the material's palette_lut uniform).
 
 ## How palette matches are scored.

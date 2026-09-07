@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d4a9800554f82e84",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/TerrainComponent3D.cs",
+			"subpath": "#_applied",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

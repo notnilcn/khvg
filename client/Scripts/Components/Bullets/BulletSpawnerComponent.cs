@@ -232,7 +232,7 @@ public partial class BulletSpawnerComponent : Component
         // instance this event spawns (shared spawn state, like currentSpeedAcceleration).
         currentBandElevation = ElevationMap?.GetElevationAt(origin) ?? 0;
         currentTextureId = bulletPattern.TextureId;
-        EnemyBulletSpawner.Set("bullets_custom_data", new BulletData { SourceStep = bulletPattern.SourceStep, EnemyId = bulletPattern.EnemyId, Damage = bulletPattern.Damage });
+        EnemyBulletSpawner.Set("bullets_custom_data", new BulletData { EventId = bulletPattern.EventId, Damage = bulletPattern.Damage });
         EnemyBulletSpawner.Set("max_life_time", bulletPattern.Lifetime);
         ApplyBulletTexture(EnemyBulletSpawner, bulletPattern.TextureId);
         ApplyMotion(bulletPattern.AngularSpeed, bulletPattern.SpeedAcceleration, bulletPattern.Lifetime);
@@ -446,7 +446,7 @@ public partial class BulletSpawnerComponent : Component
     }
 
     /// Fan of enemy bullets for BulletControllerComponent's split effect. Keeps the source
-    /// bullet's BulletData so split pellets still report the original SourceStep on hit, and
+    /// bullet's BulletData so split pellets still attest against the original event on hit, and
     /// whatever texture was last applied to the shared enemy spawner.
     public void SpawnEnemyBulletFan(Vector2 origin, float baseAngle, int count, float spread, float speed, float lifetime, BulletData? customData)
     {

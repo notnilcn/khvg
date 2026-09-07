@@ -198,6 +198,23 @@ pub struct AbilityVisualEvent {
     pub cast_by: Identity,
 }
 
+/// Server-only fire attestation behind report_hit: one row per BulletPatternEvent,
+/// proving the enemy actually fired the volley the victim's client is reporting.
+/// `remaining` starts at the event's pellet count (pattern_bullet_count) and each
+/// accepted report_hit decrements it — replaying one event_id past its pellets is
+/// rejected. Rows live until consumed or swept past BULLET_ATTESTATION_TTL_SECONDS
+/// by the 1 Hz tick_status_effects pass. Not public: clients never read it, they
+/// only send the event_id back.
+#[table(accessor = bullet_fire_attestation)]
+pub struct BulletFireAttestation {
+    #[primary_key]
+    pub event_id: u64,
+    pub enemy_id: u64,
+    pub damage: u32,
+    pub remaining: u32,
+    pub fired_at: Timestamp,
+}
+
 #[table(accessor = bullet_pattern_event, public, event)]
 pub struct BulletPatternEvent {
     #[primary_key] #[auto_inc]

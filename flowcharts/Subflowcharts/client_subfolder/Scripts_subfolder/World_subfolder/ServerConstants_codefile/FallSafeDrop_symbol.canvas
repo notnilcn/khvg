@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "5c82e025905c7ad8",
+			"type": "file",
+			"file": "client/Scripts/World/ServerConstants.cs",
+			"subpath": "#FallSafeDrop",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

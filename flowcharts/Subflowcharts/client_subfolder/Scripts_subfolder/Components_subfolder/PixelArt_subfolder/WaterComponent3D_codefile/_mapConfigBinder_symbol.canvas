@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "bc19f0380f74b210",
+			"type": "file",
+			"file": "client/Scripts/Components/PixelArt/WaterComponent3D.cs",
+			"subpath": "#_mapConfigBinder",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

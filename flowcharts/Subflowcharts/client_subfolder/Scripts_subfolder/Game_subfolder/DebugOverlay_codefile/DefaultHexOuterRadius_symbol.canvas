@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "4274e800039c3000",
+			"type": "file",
+			"file": "client/Scripts/Game/DebugOverlay.cs",
+			"subpath": "#DefaultHexOuterRadius",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/decor_codefile/decor_codefile.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/ground_codefile/ground_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/overlay_codefile/overlay_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/rules_codefile/rules_codefile.canvas",
 			"color": "5",
-			"x": 910,
+			"x": 680,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -55,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/voronoi_codefile/voronoi_codefile.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -163,9 +163,13 @@
 				"edge-_colon_-server/spacetimedb/src/world/terrain/mod-_dot_-rs-_hashtag_-clear_world_geometry",
 				"edge-_colon_-server/spacetimedb/src/world/terrain/mod-_dot_-rs-_hashtag_-write_triangle_tiles",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-BuildingTile",
 				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-BiomeRegion",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-BuildingTile-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-BuildingTile-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-BiomeRegionDef-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-TriangleTile",
 				"edge-_colon_-server/spacetimedb/src/world/terrain/rules-_dot_-rs-_hashtag_-overlay_compatible_with_base",
 				"edge-_colon_-server/spacetimedb/src/world/terrain/rules-_dot_-rs-_hashtag_-overlay_tags_conflict",

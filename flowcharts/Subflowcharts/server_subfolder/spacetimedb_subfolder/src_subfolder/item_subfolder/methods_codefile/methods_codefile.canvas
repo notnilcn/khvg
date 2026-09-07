@@ -1,0 +1,148 @@
+{
+	"nodes": [
+		{
+			"id": "fe60e4e1f52678ae",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/ability_behavior_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cb5c6a11b92bc214",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/ability_is_charge_capable_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3883d7dc47788ee0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/consumable_behavior_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0e7d2bfb766ccb8c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/EffectiveWeapon_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "80bb4ee72b6820d2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/equipped_enchantment_behaviors_symbol.canvas",
+			"color": "5",
+			"x": 1850,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "19eacf0ccc187178",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/equipped_head_slots_symbol.canvas",
+			"color": "5",
+			"x": 2320,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "27cdbb8311f992ba",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/resolve_effective_weapon_symbol.canvas",
+			"color": "5",
+			"x": 2310,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "751cc7027519a870",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/weapon_toggle_options_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "34ef813b4d13aece",
+			"fromNode": "27cdbb8311f992ba",
+			"fromSide": "bottom",
+			"toNode": "19eacf0ccc187178",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "b1b59d04e3e52540",
+			"fromNode": "27cdbb8311f992ba",
+			"fromSide": "bottom",
+			"toNode": "80bb4ee72b6820d2",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "f2cb6db466681d28",
+			"fromNode": "751cc7027519a870",
+			"fromSide": "bottom",
+			"toNode": "80bb4ee72b6820d2",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Item",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-AbilityBehavior",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ItemBehavior",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-AbilityEffect",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConsumableBehavior",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WeaponBehavior",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EnchantmentBehavior",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerInventorySlot",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-SlotRole",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerInventorySlot-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Item-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Enchantment-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/item/methods-_dot_-rs-_hashtag_-equipped_head_slots",
+				"edge-_colon_-server/spacetimedb/src/item/methods-_dot_-rs-_hashtag_-equipped_enchantment_behaviors"
+			]
+		}
+	}
+}

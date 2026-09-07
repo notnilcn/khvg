@@ -1,12 +1,11 @@
 shader_type spatial;
 render_mode ambient_light_disabled, specular_disabled;
 
-// ProPixelizer base material — Godot port of SRP/PixelizedWithOutline.shader +
-// ProPixelizerBase.shadergraph. One shader serves both the main camera (lit,
+// Base pixel-art material. One shader serves both the main camera (lit,
 // pixel-clipped appearance) and the metadata camera (packed metadata output),
 // selected by the cull mask of the camera currently rendering.
 //
-// Core no-creep mechanism (port of SRP/PixelUtils.hlsl): every fragment except
+// Core no-creep mechanism: every fragment except
 // one "anchor" per macro-block is discarded, on a screen grid anchored to the
 // object's projected pivot. The compositor's pixelization pass then replicates
 // the anchor color across the block.
@@ -55,6 +54,14 @@ instance uniform vec4 outline_color = vec4(0.0, 0.0, 0.0, 1.0);
 instance uniform vec4 edge_highlight_color = vec4(0.5, 0.5, 0.5, 1.0);
 // Filled by PixelArtPipeline3D at runtime; black = no outlines.
 uniform sampler2D pixel_art_outlines : filter_nearest, repeat_disable, hint_default_black;
+// 256x2 HDR outline palette (16-bit float RGBA): row 0 =
+// exterior per ID, row 1 = interior per ID, alpha = multiply flag.
+uniform sampler2D pixel_art_outline_palette : filter_nearest, repeat_disable, hint_default_black;
+uniform bool use_outline_palette = false;
+// Mover snap: round the anchor-grid pivot to whole
+// screen pixels so moving subjects don't jitter sub-texel. Set by
+// PixelArtObject3D.mover_snap as an instance uniform.
+instance uniform float use_mover_snap = 0.0;
 
 // ---------------------------------------------------------------------------
 // Color grading (per-object, applied to albedo before lighting)
@@ -72,6 +79,10 @@ uniform float cloud_height = 10.0;
 uniform float cloud_noise_scale = 0.05;
 uniform float cloud_threshold : hint_range(0.0, 1.0) = 0.5;
 uniform float cloud_bands = 3.0;
+uniform float cloud_tightness = 1.0; // coverage curve tightness
+uniform float cloud_octave_drop = 0.5; // FBM amplitude falloff per octave
+uniform float cloud_gap_erosion = 0.0; // erodes cloud gaps
+uniform float cloud_detail_strength = 0.0; // procedural FBM detail mix (0 = texture only)
 uniform vec2 cloud_wind = vec2(0.02, 0.0); // dir * speed
 uniform float cloud_shadow_strength : hint_range(0.0, 1.0) = 0.6;
 // Shadow shaping: coverage ramps from 0 to 1 across
@@ -80,6 +91,8 @@ uniform float cloud_shadow_strength : hint_range(0.0, 1.0) = 0.6;
 uniform bool cloud_shadow_banding_enabled = true;
 uniform float cloud_shadow_levels = 3.0;
 uniform float cloud_shadow_softness : hint_range(0.0, 1.0) = 0.4;
+
+#include "res://addons/3dpixelart/shaders/cloud_fbm.gdshaderinc"
 
 // ---------------------------------------------------------------------------
 // Metadata pass
@@ -108,7 +121,7 @@ const float MAXCOLOR = 16.0;
 const float LUT_RES = 16.0;
 const float DITHER_SIZE = 16.0;
 
-// PackingUtils.hlsl DecodeFloatRG (truncating, as in the original).
+// Truncating RG decode (floor-based, matches the packing).
 float decode_float_rg(vec2 enc) {
 	float ex = floor(enc.x * 15.0);
 	float ey = floor(enc.y * 15.0);
@@ -133,8 +146,8 @@ vec4 sample_pixel_texture(sampler2D tex, vec2 uv) {
 	return textureGrad(tex, snapped, dFdx(uv), dFdy(uv));
 }
 
-// ColorGrading.hlsl: grade a gamma-space color through the 256x256 palette
-// LUT, dithered by the macro-pixel position.
+// Palette-LUT color grading: grade a gamma-space color through the 256x256
+// palette LUT, dithered by the macro-pixel position.
 vec3 color_grade(vec3 color, vec2 macro_pixel_delta) {
 	vec3 orig = pow(clamp(color, vec3(0.0), vec3(1.0)), vec3(1.0 / 2.2));
 	orig = clamp(orig, vec3(0.0), vec3(0.9999));
@@ -154,14 +167,45 @@ vec3 color_grade(vec3 color, vec2 macro_pixel_delta) {
 // ramps from 0 to 1 across [threshold - softness, threshold], so the widest
 // faintest band borders the clear sky and the core above the threshold is
 // uniformly darkest; banding quantizes the ramp into discrete levels.
+// Tightness shapes the curve: pow on smooth coverage,
+// smoothstep shaping inside bands. Gap erosion eats the coverage edges.
 float cloud_coverage_from_noise(float n) {
 	float edge0 = clamp(cloud_threshold - max(cloud_shadow_softness, 0.001), 0.0, 1.0);
 	float cov = smoothstep(edge0, cloud_threshold, n);
+	cov = pow(clamp(cov, 0.0, 1.0), clamp(cloud_tightness, 0.1, 4.0));
+	if (cloud_gap_erosion > 0.001) {
+		float inv_erode = 1.0 / max(1e-4, 1.0 - cloud_gap_erosion);
+		cov = clamp((cov - cloud_gap_erosion) * inv_erode, 0.0, 1.0);
+	}
 	if (cloud_shadow_banding_enabled) {
 		float levels = max(cloud_shadow_levels, 1.0);
-		cov = floor(cov * levels + 0.5) / levels;
+		if (levels > 1.5 && cloud_tightness > 1.01) {
+			// Band-tightness shaping: smoothstep inside each cell.
+			float x = clamp(cov, 0.0, 1.0) * levels;
+			float cell = floor(x);
+			float f = fract(x);
+			float tight = max(cloud_tightness, 1e-3);
+			float interp = smoothstep(0.0, 1.0, clamp((f - 0.5) * tight + 0.5, 0.0, 1.0));
+			cov = clamp((cell + interp) / levels, 0.0, 1.0);
+		} else {
+			cov = floor(cov * levels + 0.5) / levels;
+		}
 	}
 	return cov;
+}
+
+// Procedural FBM detail mixed with the texture noise (0 = texture only).
+float cloud_noise_combined(vec2 base_uv, float time_s) {
+	float tex_n = textureLod(cloud_noise, base_uv, 0.0).r;
+	if (cloud_detail_strength < 0.001) {
+		return tex_n;
+	}
+	// Quantize the texture contribution into cloud_bands
+	// before mixing, so gaps stay aligned with the god-ray field.
+	float bands = max(cloud_bands, 2.0);
+	float banded_tex = floor(tex_n * bands) / (bands - 1.0);
+	float fbm_n = cloud_fbm(vec3(base_uv * 4.0, time_s * 0.05), 4.0, 2.0, clamp(cloud_octave_drop, 0.1, 1.0));
+	return mix(banded_tex, fbm_n, clamp(cloud_detail_strength, 0.0, 1.0));
 }
 
 void vertex() {
@@ -179,8 +223,7 @@ void fragment() {
 	cloud_coverage = 0.0;
 
 	if (in_shadow_pass > 0.5) {
-		// Shadow/depth-only passes (port of PixelUtils.hlsl SHADOWTEST):
-		// plain alpha cutout, no anchor clipping.
+		// Shadow/depth-only passes: plain alpha cutout, no anchor clipping.
 		if (alpha < alpha_clip_threshold) {
 			discard;
 		}
@@ -195,8 +238,10 @@ void fragment() {
 		vec2 obj_pixel_pos = (obj_ndc * 0.5 + 0.5) * VIEWPORT_SIZE;
 		float pixel = max(1.0, round(pixel_size));
 		// Perspective needs the pivot rounded to kill sub-pixel jitter;
-		// ortho projection is already pixel-stable.
-		if (is_ortho < 0.5) {
+		// ortho projection is already pixel-stable. Mover snap
+		// (VIEWPORT_SIZE lattice) forces the same rounding for opted-in
+		// moving subjects so they don't jitter sub-texel.
+		if (is_ortho < 0.5 || use_mover_snap > 0.5) {
 			obj_pixel_pos = round(obj_pixel_pos);
 		}
 
@@ -224,7 +269,7 @@ void fragment() {
 
 		in_metadata_pass = (float(CAMERA_VISIBLE_LAYERS) == metadata_cull_mask) ? 1.0 : 0.0;
 		if (in_metadata_pass > 0.5) {
-			// --- Metadata output (port of SRP/OutlinePass.hlsl) ------------
+			// --- Metadata output ------------------------------------------
 			// Tonemapping for this camera is linear, values pass through as-is.
 			vec3 packed_data;
 			if (write_view_normals) {
@@ -257,7 +302,7 @@ void fragment() {
 				float cloud_t = (cloud_height - world_pos.y) / cloud_sun_dir.y;
 				vec2 cloud_uv = (world_pos + cloud_sun_dir * cloud_t).xz * cloud_noise_scale
 					+ cloud_wind * TIME;
-				float cloud_n = textureLod(cloud_noise, cloud_uv, 0.0).r;
+				float cloud_n = cloud_noise_combined(cloud_uv, TIME);
 				cloud_coverage = cloud_coverage_from_noise(cloud_n);
 			}
 
@@ -276,10 +321,32 @@ void fragment() {
 			id_outline = outline.r;
 			edge_outline = outline.b;
 
-			// Edge highlight: < 0.5 darkens, 0.5 is neutral, > 0.5 lightens.
-			vec3 edge_mul = mix(vec3(1.0), edge_highlight_color.rgb * 2.0, edge_outline);
+			// Per-ID palette (256x2 HDR): row 0 = exterior,
+			// row 1 = interior, alpha = multiply-with-scene flag. When
+			// use_outline_palette is off, fall back to per-object colors.
+			vec3 outline_col_eff = outline_color.rgb;
+			float outline_alpha_eff = outline_color.a;
+			vec3 edge_col_eff = edge_highlight_color.rgb;
+			float edge_multiply = 1.0;
+			float exterior_multiply = 0.0;
+			if (use_outline_palette) {
+				float pal_u = (clamp(outline_id, 0.0, 255.0) + 0.5) / 256.0;
+				vec4 pal_ext = textureLod(pixel_art_outline_palette, vec2(pal_u, 0.25), 0.0);
+				vec4 pal_int = textureLod(pixel_art_outline_palette, vec2(pal_u, 0.75), 0.0);
+				exterior_multiply = step(0.5, pal_ext.a);
+				// Multiply exterior tints the scene albedo; flat replaces.
+				outline_col_eff = mix(pal_ext.rgb, pal_ext.rgb * albedo * 2.0, exterior_multiply);
+				outline_alpha_eff = 1.0;
+				edge_col_eff = pal_int.rgb;
+				edge_multiply = pal_int.a;
+			}
 
-			ALBEDO = albedo * edge_mul;
+			// Edge highlight: < 0.5 darkens, 0.5 is neutral, > 0.5 lightens.
+			// Flat interior (multiply flag off) replaces the albedo instead.
+			vec3 edge_mul = mix(vec3(1.0), edge_col_eff * 2.0, edge_outline * edge_multiply);
+			vec3 albedo_flat_mix = mix(albedo, edge_col_eff, edge_outline * (1.0 - edge_multiply));
+
+			ALBEDO = mix(albedo * edge_mul, albedo_flat_mix, (use_outline_palette ? 1.0 : 0.0) * (1.0 - edge_multiply));
 
 			vec3 emissive = vec3(0.0);
 			if (use_emission) {
@@ -287,8 +354,10 @@ void fragment() {
 					* mix(vec3(1.0), COLOR.rgb, emissive_vertex_color_weight);
 			}
 			vec3 ambient = albedo * ambient_light.rgb;
-			// Outlined pixels are replaced by the flat outline color.
-			EMISSION = mix((ambient + emissive) * edge_mul, outline_color.rgb, outline.r * outline_color.a);
+			// Outlined pixels are replaced by the exterior color (flat or
+			// scene-multiplied via the palette flag).
+			vec3 lit_base = mix((ambient + emissive) * edge_mul, (ambient + emissive), (use_outline_palette ? 1.0 : 0.0) * (1.0 - edge_multiply) * edge_outline);
+			EMISSION = mix(lit_base, outline_col_eff, outline.r * outline_alpha_eff);
 		}
 	}
 }
@@ -298,8 +367,7 @@ void light() {
 		DIFFUSE_LIGHT = vec3(0.0);
 		SPECULAR_LIGHT = vec3(0.0);
 	} else {
-		// Cell shading: ramp over saturated NdotL (port of the CellShade
-		// subgraph fed by CalculateLighting's saturated dot product).
+		// Cell shading: ramp over the saturated NdotL dot product.
 		float ndl = clamp(dot(NORMAL, LIGHT), 0.0, 1.0);
 		vec3 ramp = textureLod(lighting_ramp, vec2(ndl, 0.5), 0.0).rgb;
 		float att = receive_shadows ? ATTENUATION : 1.0;

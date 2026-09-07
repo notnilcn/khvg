@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "c22a4d455522252e",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/BulletCliffComponent.cs",
+			"subpath": "#CullAboveBand",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

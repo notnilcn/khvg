@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "6753687656d8f7e4",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/TerrainComponent3D.cs",
+			"subpath": "#_chunkCols",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

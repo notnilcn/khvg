@@ -1,20 +1,32 @@
 # 3D Pixel Art
 
+> Designed for **orthographic cameras**; perspective is left as-is and
+> **unsupported** (snapping and the anchor lattice assume an ortho projection).
+
 A Godot 4 addon that renders 3D objects in a pixelated 2D-sprite art style:
 chunky macro-pixels glued to each object, per-object outlines, no pixel creep,
 full-resolution real-time lights and shadows, and palette-LUT color grading.
 
-It is a port of the Unity URP asset **ProPixelizer** by Elliot Bentine.
+Ortho-first feature set: fixed low-res ortho width, anchor-relative camera
+snap, smooth scroll, sharp-bilinear vs nearest upscale, subject pinning
+(stencil 255), 256×2 HDR outline palette, god-rays + cloud FBM, water
+normals, point-light example, fireflies, ortho camera controls, editor
+preview (minimal), and debug overlay.
 
-## Requirements
+## Requirements (renderer setup)
 
 - Godot **4.7+**
 - **Forward+ or Mobile** renderer (uses `CompositorEffect`s; the Compatibility
   renderer is not supported)
 - MSAA 3D **disabled** (`rendering/anti_aliasing/quality/msaa_3d = 0`)
-- `scaling_3d_scale` = **1.0**
+- `scaling_3d_scale` = **1.0**, `scaling_3d_mode` = **BILINEAR**
+- TAA **off** (`use_taa = false`)
+- Orthographic `Camera3D` (`projection = PROJECTION_ORTHOGONAL`); use
+  `PixelArtCameraSnap` to prevent creep. Perspective code stays but is unsupported.
 
-`PixelArtPipeline3D` prints warnings at runtime when these are violated.
+`PixelArtPipeline3D.apply_recommended_settings()` (auto-run when
+`apply_recommended` is true) enforces MSAA off, TAA off, scale 1.0 BILINEAR
+and warns on perspective. One pipeline per scene, runtime-only.
 
 ## Installation
 
@@ -54,27 +66,52 @@ Drives the entire render pipeline for one camera.
 | `camera` | Camera that renders the pixelized scene (default: current camera). Its cull mask **must include** the metadata layer. |
 | `metadata_layer` (1–20, default 20) | Render layer marking pixelized objects. The metadata camera renders only this layer. |
 | `export_metadata_depth` (default on) | Export metadata depth for correct ordering where pixelized objects overlap. Off = cheaper, minor artifacts at overlaps. |
+| `enabled` | Master toggle; bypasses outlines/rays/pixelization when off. |
+| `override_view` | Force `camera` current every frame. |
+| **Resolution** | |
+| `internal_resolution` (default 960×540) | Informational low-res target; `get_ortho_width() = ResX * units_per_pixel`. No true downsample. |
+| `pixels_per_unit` (default 0.5) | Screen pixels per world unit at zoom 1. |
+| `zoom_scale` | Zoom multiplier; scales pixels-per-unit. |
+| `fix_internal` | Force viewport size to `internal_resolution` on setup. Off by default. |
+| `camera_snap` | Optional `PixelArtCameraSnap`; `get_units_per_pixel()` reads measured texel size from it. |
+| **Pixel Stability** | |
+| `smooth_scroll` (default off) | Sub-texel remainder → integer `Shift=round(remainder)`. Off by default. |
+| `upscale_aa` | Sharp-bilinear vs nearest upscale. |
+| `apply_recommended` (default on) | Auto-run `apply_recommended_settings()` (MSAA off, TAA off, scale 1.0 BILINEAR). |
 | **Outlines** | |
+| `enable_outline` | Master outline toggle. |
+| `outline_palette` | `PixelOutlinePalette` resource (256×2 HDR, row 0 exterior / row 1 interior, alpha = multiply flag). Null = legacy per-object `outline_color`. ID 255 reserved for pinning. |
 | `depth_test_intersections` | Suppress outlines where objects intersect. |
 | `depth_test_threshold` | Depth-test suppression threshold (default 0.0001). |
 | `use_normal_edge_detection` | Detect creases from view-space normals. |
 | `normal_edge_detection_sensitivity` | Higher = less sensitive crease detection (default 3.5). |
+| `outline_depth_curve` / `outline_depth_curve_threshold` | FarCurve `max(-H,-V)` second-derivative depth outlines (default off / 0.001). |
+| **Subject Pinning** (stencil 255) | |
+| `auto_pin` / `auto_pin_target` | Auto-pin every `PixelArtObject3D` under target. |
+| `pin_stencil_id` (default 255) | Reserved ID; do not use as regular `outline_id`. |
+| `pin_dilate` (default 2.0) | Pin-mask dilation radius px. |
+| `debug_pin_mask` | Tint pinned pixels red. |
 | **Color Grading** | |
 | `global_palette_lut` | Optional palette LUT (baked by `PixelPalette`) applied to all pixelized pixels after lighting. |
-| **Clouds** | |
+| **Clouds** (banding + FBM) | |
 | `clouds_enabled` | Cloud shadows on pixelized materials (off by default). |
 | `cloud_noise` | Coverage noise texture (sampled `filter_nearest`, scrolling). |
 | `cloud_sun` | `DirectionalLight3D` casting the cloud shadows/rays; its direction is pushed to materials every frame. |
 | `cloud_height` | Height of the imaginary cloud plane (default 10). |
 | `cloud_noise_scale` / `cloud_threshold` / `cloud_bands` | Noise zoom, coverage cutoff, and noise quantization for the god-ray gaps. |
+| `cloud_tightness` | Coverage curve exponent (default 1.0). |
+| `cloud_octave_drop` | FBM amplitude falloff per octave (default 0.5). |
+| `cloud_gap_erosion` | Erodes ray-march gaps (default 0.0). |
+| `cloud_detail_strength` | Mix procedural FBM detail into texture noise (0 = texture only). Shared `cloud_fbm.glslinc` / `.gdshaderinc` (hash 1664525/1013904223, rot 0.825/0.564). |
 | `cloud_wind` | Wind direction × speed; scrolls the noise. |
 | `cloud_shadow_strength` | How much clouds attenuate the toon ramp (ambient untouched). |
 | `cloud_shadow_banding_enabled` | Quantize the shadow into discrete darkness levels (hard contour rings) vs a smooth penumbra (default on). |
 | `cloud_shadow_levels` | Darkness levels when banding (default 3; 1 = binary hard shadow). |
 | `cloud_shadow_softness` | Width of the penumbra below `cloud_threshold` the shadow ramps across (default 0.4). |
-| `god_rays_enabled` | Add god rays through the cloud gaps *before* pixelization, so the rays get macro-pixels too. Tune via `get_god_ray_pass()` (steps, intensity, decay, quantize bands, dust). |
+| `god_rays_enabled` | Add god rays through the cloud gaps *before* pixelization, so the rays get macro-pixels too. Tune via `get_god_ray_pass()` (steps, intensity, decay, quantize bands, dust, near-fade, depth-cutoff, surface-fade, max-stack/quantum, distance-falloff). Pass order ray→macro-pixel is required (same-type POST_SKY effects run in array order). |
 | **Debug** | |
 | `debug_view` | 0 = off, 1 = anchor map, 2 = metadata buffer, 3 = metadata depth. |
+| `debug_overlay` | Print `get_debug_status_line()` once/sec (internal IxI, upscale, units/px, orthoW, remainder, grid-phase, snap-delta, pin, outlines); `DemoDebugHud` shows it + crosshair. |
 
 Methods: `register_material(material)` / `unregister_material(material)`
 (called automatically by `PixelArtObject3D`),
@@ -82,7 +119,17 @@ Methods: `register_material(material)` / `unregister_material(material)`
 (feeds ONLY the cloud-shadow uniforms to a non-pixelized material — the shader
 must implement the coverage itself under the same uniform names),
 `save_shared_textures_debug(color_path, depth_path)` (dumps the shared
-metadata textures as PNGs).
+metadata textures as PNGs), `get_units_per_pixel()` / `get_ortho_width()` /
+`get_remainder_texels()` / `apply_recommended_settings()` /
+`get_debug_status_line()`.
+
+Console/capture CLI flags:
+`-- --capture` (screenshot + metadata dumps, quit at frame 120),
+`--plain` (baseline creep/outline regression), `--debug-view=N`,
+`--debug-overlay` (HUD print). Palette ini example: create a
+`PixelOutlinePalette` resource, set `exterior_colors {1: black}`,
+`multiply_exterior`, `interior_colors`, `multiply_interior`, assign to
+`PixelArtPipeline3D.outline_palette` (256×2 HDR, NEAREST).
 
 ### `PixelArtObject3D` (child of a `MeshInstance3D`)
 
@@ -104,7 +151,7 @@ Per-object configuration. All of its parameters are applied as
 | `edge_highlight_color` | Crease highlight: < 0.5 darkens, > 0.5 lightens, exactly 0.5 disables. |
 
 The **Snapping** group (`snap_position`, `snap_euler_angles`, …) is currently
-**inert** — object render snapping was intentionally not ported (see
+**inert** — object transform snapping is intentionally left out (see
 "Limitations").
 
 ### `PixelArtCameraSnap`
@@ -182,7 +229,7 @@ The pipeline's **Clouds** group adds two effects from the Pixel Perfect
 
 ## Water example
 
-`demo/water.gdshader` (used by the demo scene's pond) ports layers 1–5 of the
+`demo/water.gdshader` (used by the demo scene's pond) implements layers 1–5 of the
 Pixel Perfect "Pixel Art Oceans" water: quantized depth fade, refraction of
 the (already pixelized) screen, A×B vertex waves, noise-broken shoreline foam
 and whitecaps. Layer 6 (planar reflections) is skipped as future work.
@@ -217,6 +264,7 @@ its outline from the shared outlines texture. See `AGENTS.md` for details.
 ## Credits
 
 - ProPixelizer by Elliot Bentine (only the public stuff since I'm pretty sure this has a license)
+- Stable3D9ec4e65a8926V1 orthographic pixel-art plugin (design inspiration)
 - 3DPixelArt_Tutorial by EduardoSchildt
 - 3d-pixel-art-in-godot by denovodavid
 - godot-3d-pixel-art by astrellon

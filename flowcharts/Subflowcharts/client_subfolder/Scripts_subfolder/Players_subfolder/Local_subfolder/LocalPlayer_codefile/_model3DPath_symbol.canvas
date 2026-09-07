@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "df7c6862c503f660",
+			"type": "file",
+			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
+			"subpath": "#_model3DPath",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

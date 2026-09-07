@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a5af4fdca126ac20",
+			"type": "file",
+			"file": "client/Scripts/Components/PixelArt/WaterComponent3D.cs",
+			"subpath": "#OnTerrainTileRowUpdated",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

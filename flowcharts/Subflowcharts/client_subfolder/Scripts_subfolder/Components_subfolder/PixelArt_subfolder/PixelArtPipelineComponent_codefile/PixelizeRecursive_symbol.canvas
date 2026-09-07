@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "1f712fd41f7b08f0",
+			"type": "file",
+			"file": "client/Scripts/Components/PixelArt/PixelArtPipelineComponent.cs",
+			"subpath": "#PixelizeRecursive",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

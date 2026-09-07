@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d8f106a2d1bf7b30",
+			"type": "file",
+			"file": "client/Scripts/Components/Terrain/ElevationMapComponent.cs",
+			"subpath": "#_elevationByHex",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

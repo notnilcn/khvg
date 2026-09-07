@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "1b0821b57bd7f0fa",
+			"type": "file",
+			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
+			"subpath": "#SetCharacterAsset",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -15,7 +15,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerInventorySlot",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
@@ -27,13 +26,15 @@
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-AbilityBehavior",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-equipped_enchantment_behaviors",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/item/methods-_dot_-rs-_hashtag_-equipped_enchantment_behaviors",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EnchantmentBehavior",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-apply_consumable_effect",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConsumableBehavior",
 				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ConsumableEffect",
-				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-update_slot"
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-update_slot",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

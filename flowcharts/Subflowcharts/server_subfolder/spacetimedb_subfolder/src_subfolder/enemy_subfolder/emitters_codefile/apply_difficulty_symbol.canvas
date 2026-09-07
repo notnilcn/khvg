@@ -15,7 +15,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-scale_count",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/emitters_codefile/emitters_codefile-_dot_-canvas",
@@ -26,7 +25,8 @@
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/enemy/emitters-_dot_-rs-_hashtag_-scale_speed",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-PatternType",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

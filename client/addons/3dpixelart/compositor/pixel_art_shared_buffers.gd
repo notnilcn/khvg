@@ -31,6 +31,10 @@ static var outlines: RID
 
 static var outlines_size: Vector2i
 
+## RD texture: 256x2 HDR outline palette (R16G16B16A16_SFLOAT), row 0 =
+## exterior colors, row 1 = interior colors, alpha = multiply flag.
+static var outline_palette: RID
+
 
 static func reset() -> void:
 	metadata_color = RID()
@@ -40,3 +44,4 @@ static func reset() -> void:
 	use_exported_depth = true
 	outlines = RID()
 	outlines_size = Vector2i()
+	outline_palette = RID()

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "fc20516c7e510ba8",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/BulletHitRouterComponent.cs",
+			"subpath": "#_spawner",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

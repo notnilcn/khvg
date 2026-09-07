@@ -9,6 +9,7 @@ use crate::player::tables::*;
 use crate::player::methods::*;
 use crate::combat::deal_damage_to_player;
 use crate::item::tables::*;
+use crate::item::methods::{ability_behavior, ability_is_charge_capable, consumable_behavior, equipped_enchantment_behaviors, weapon_toggle_options};
 use crate::enemy::instance_tables::*;
 use crate::enemy::methods::enemies_near_point;
 use crate::status::tables::*;
@@ -170,7 +171,7 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     // their own wrap-aware direction, not rejected — rejecting would rubber-band legit
     // lag. teleport_player is exempt (it writes the row directly and restamps the clock).
     let budget = state.as_ref()
-        .map(|s| speed_cap * crate::enemy::methods::seconds_since(ctx, s.last_report) * MOVE_SLACK)
+        .map(|s| speed_cap * crate::main::time::seconds_since(ctx, s.last_report) * MOVE_SLACK)
         .unwrap_or(0.0)
         .max(MIN_REPORT_DISPLACEMENT);
     let (x, y) = if dist > budget {
@@ -278,7 +279,7 @@ pub fn report_screen_rotation(ctx: &ReducerContext, screen_rotation: f32) -> Res
 }
 
 #[spacetimedb::reducer]
-pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef, enemy_id: u64) -> Result<(), String> {
+pub fn report_hit(ctx: &ReducerContext, event_id: u64) -> Result<(), String> {
     let player = require_in_world(ctx)?;
 
     // Rate limit (PlayerHitRate token bucket, 1s window): self-reported damage intake is
@@ -288,10 +289,26 @@ pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef, enemy_id: u64) 
         return Err("Hit report rate exceeded.".to_string());
     }
 
-    // Hit attribution: the client stamps each spawned enemy bullet with the enemy_id of its
-    // BulletPatternEvent and reports it back (a SequenceStepRef identifies the step def, not
-    // the enemy). Validate the enemy exists and is plausibly near the player — report_hit
-    // remains self-reported (see the trust model), this only rejects nonsense attributions.
+    // Hit attestation: the victim's client sends back the event_id of the
+    // BulletPatternEvent that spawned the bullet, and the server only honors claims
+    // against a live attestation row stamped by the behavior tick. A client-chosen
+    // (step, enemy) pair is no longer accepted — the step must have actually fired,
+    // from that enemy, within the TTL window. Each accepted claim decrements the
+    // event's pellet pool, so one volley cannot be replayed past its bullets; player-
+    // ability fan/split pellets draw from the same pool as their source event.
+    let attestation = ctx.db.bullet_fire_attestation().event_id().find(&event_id).ok_or("Unknown bullet event.")?;
+    if crate::main::time::seconds_since(ctx, attestation.fired_at) >= BULLET_ATTESTATION_TTL_SECONDS as f32 {
+        ctx.db.bullet_fire_attestation().event_id().delete(&event_id);
+        return Err("Bullet event expired.".to_string());
+    }
+    if attestation.remaining == 0 {
+        ctx.db.bullet_fire_attestation().event_id().delete(&event_id);
+        return Err("Bullet event already claimed.".to_string());
+    }
+
+    // The attested enemy must still exist and be plausibly near the player — this
+    // rejects nonsense attributions (stale event ids, far-away enemies).
+    let enemy_id = attestation.enemy_id;
     let enemy = ctx.db.enemy().enemy_id().find(&enemy_id).ok_or("Attack source enemy not found.")?;
     let pos = ctx.db.player_position().profile_id().find(&player.profile_id).ok_or("Position not found.")?;
     let cfg = MapConfig::load(ctx, 0, 0);
@@ -300,9 +317,13 @@ pub fn report_hit(ctx: &ReducerContext, attack: SequenceStepRef, enemy_id: u64) 
         return Err("Attack source enemy is not near the player.".to_string());
     }
 
-    // step_damage is the same resolution the behavior tick uses to stamp
-    // BulletPatternEvent.damage — keep them on one implementation.
-    let base_damage = crate::enemy::methods::step_damage(ctx, &attack).ok_or("Attack step not found.")?;
+    // Damage is the tick-stamped value on the attestation — never client-supplied.
+    let base_damage = attestation.damage;
+    if attestation.remaining == 1 {
+        ctx.db.bullet_fire_attestation().event_id().delete(&event_id);
+    } else {
+        ctx.db.bullet_fire_attestation().event_id().update(BulletFireAttestation { remaining: attestation.remaining - 1, ..attestation });
+    }
 
     deal_damage_to_player(ctx, &player, Some(enemy_id), base_damage)?;
     Ok(())
@@ -332,10 +353,9 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
 
     // Runtime state travels with the item: a dropped ability's residual cooldown/charges
     // restore onto the destination slot (a different player picking it up inherits them).
-    store_item_in_inventory(ctx, profile_id, &item, drop.enchantment_ids.clone(), drop.cooldown_until, drop.charges)?;
+    transfer_item_to_inventory(ctx, profile_id, &item, drop.enchantment_ids.clone(), drop.cooldown_until, drop.charges)?;
 
     ctx.db.loot_drop().drop_id().delete(&drop_id);
-    recompute_stats(ctx, profile_id);
     Ok(())
 }
 
@@ -542,8 +562,16 @@ pub fn tick_status_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule)
     // Anti-cheat housekeeping: sweep witness flags older than HIT_FLAG_MAX_AGE_SECONDS —
     // no NoHits wager window outlives that, and the table must not grow unbounded.
     for flag in ctx.db.player_hit_flag().iter().collect::<Vec<_>>() {
-        if crate::enemy::methods::seconds_since(ctx, flag.reported_at) >= HIT_FLAG_MAX_AGE_SECONDS as f32 {
+        if crate::main::time::seconds_since(ctx, flag.reported_at) >= HIT_FLAG_MAX_AGE_SECONDS as f32 {
             ctx.db.player_hit_flag().flag_id().delete(&flag.flag_id);
+        }
+    }
+    // Fire-attestation housekeeping: sweep unclaimed rows older than
+    // BULLET_ATTESTATION_TTL_SECONDS — every fired volley inserts one, and missed
+    // volleys are never claimed, so without this the table grows with the fire rate.
+    for attestation in ctx.db.bullet_fire_attestation().iter().collect::<Vec<_>>() {
+        if crate::main::time::seconds_since(ctx, attestation.fired_at) >= BULLET_ATTESTATION_TTL_SECONDS as f32 {
+            ctx.db.bullet_fire_attestation().event_id().delete(&attestation.event_id);
         }
     }
     // Expired loot drops (expires_at is also enforced at pickup time).
@@ -815,7 +843,7 @@ pub fn apply_ability_effect(
                             (target_x, target_y)
                         };
                         for enemy in enemies_near_point(ctx, tx, ty, p.release_radius) {
-                            crate::combat::apply_damage_to_enemy(ctx, enemy, existing.pool as u32, 0, crate::combat::MitigationMode::Normal, Some(profile_id), Some(ctx.sender()));
+                            crate::combat::apply_damage_to_enemy(ctx, enemy, existing.pool as u32, 0, crate::combat::DamageRequest::NORMAL, Some(profile_id), Some(ctx.sender()));
                         }
                     }
                     ctx.db.active_status_effect().effect_id().delete(&existing.effect_id);
@@ -966,7 +994,7 @@ pub fn apply_ability_effect(
                 let enemy_id = enemy.enemy_id;
                 for _ in 0..hits {
                     let Some(alive) = ctx.db.enemy().enemy_id().find(&enemy_id) else { break };
-                    crate::combat::apply_damage_to_enemy(ctx, alive, per_hit, 0, crate::combat::MitigationMode::Normal, Some(profile_id), Some(ctx.sender()));
+                    crate::combat::apply_damage_to_enemy(ctx, alive, per_hit, 0, crate::combat::DamageRequest::NORMAL, Some(profile_id), Some(ctx.sender()));
                 }
             }
             // The visual event encodes the shape per AbilityVisualEvent's field encoding:

@@ -41,11 +41,151 @@
 			"height": 400
 		},
 		{
+			"id": "cdefe57660a74bb4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/animationRows_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "26faa95fdb60f2ae",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/BuildCharacterAnimationsPanel_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2059b0ad429a6d0a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/BuildCharacterAssetsPanel_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "328c1954227650e8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/BuildPixelArtPanel_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "eda6b5d1c8889f6e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/characterAnimationsButton_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bf6d9a6f27813f10",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/characterAnimationsPanel_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c7af8da048d4a900",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/CharacterAssetDirs_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7094019a590bab88",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/CharacterAssetExtensions_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0b77c08bf0c2de86",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/characterAssetsButton_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "de6ca23d0933eae0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/characterAssetsPanel_symbol.canvas",
+			"color": "5",
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0c854b8c916be098",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/ColorRow_symbol.canvas",
+			"color": "5",
+			"x": 6440,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4d99b752191be450",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/CreateSidePanel_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "7c9bbe7f0a21ff98",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DebugOverlay (class)_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "82f2cf7ad4b9d4ac",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/DefaultHexOuterRadius_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c590d6ac13768d88",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/Header_symbol.canvas",
+			"color": "5",
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +195,117 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/label_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 8740,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "63a60c364639773c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/MakeHeader_symbol.canvas",
+			"color": "5",
+			"x": 9200,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3e4865e79215e1dc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/MappingRow_symbol.canvas",
+			"color": "5",
+			"x": 9660,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "603045cec7702ebc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/OnCharacterAnimationsButtonPressed_symbol.canvas",
+			"color": "5",
+			"x": 10120,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "00ee39602fedd200",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/OnCharacterAssetsButtonPressed_symbol.canvas",
+			"color": "5",
+			"x": 10580,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5e29ba77bbdc026a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/OnPixelArtButtonPressed_symbol.canvas",
+			"color": "5",
+			"x": 11040,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fd42f2285f3e34a0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/pixelArtButton_symbol.canvas",
+			"color": "5",
+			"x": 11500,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5d66666443b620f8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/pixelArtPanel_symbol.canvas",
+			"color": "5",
+			"x": 11960,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e3852aac89b03728",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/PlayerInfo_symbol.canvas",
+			"color": "5",
+			"x": 12420,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "93429eb7d919621e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/RebuildAnimationPanelRows_symbol.canvas",
+			"color": "5",
+			"x": 12880,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c3ee120c90784828",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/Slider_symbol.canvas",
+			"color": "5",
+			"x": 13340,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b8786a5de3508754",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/Toggle_symbol.canvas",
+			"color": "5",
+			"x": 13800,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +315,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/DebugOverlay_codefile/UpdateInterval_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 14260,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -76,7 +326,14 @@
 		"frontmatter": {
 			"tags": [
 				"includeInAggregateFlowchart",
-				"codefile"
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read"
 			]
 		}
 	}

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "18e5de4d33ea9d82",
+			"type": "file",
+			"file": "client/Scripts/Game/DebugOverlay.cs",
+			"subpath": "#RebuildAnimationPanelRows",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -2,13 +2,14 @@
 
 Everything an agent needs to work in this module without re-deriving the model. Read
 `server/AGENTS.md` first (module-wide map + SpacetimeDB Rust rules — they apply here).
+File index (generated — regenerate, never hand-edit): [[server/spacetimedb/src/enemy/pointers.md|pointers]].
 
 ## File map
 
 | File | Role | Edit it when |
 |---|---|---|
 | `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`/`StunBehavior`), the four step-def tables, `PatternType` + param structs, the `SteeringMovement`/`MoveGoal`/`MovePattern` steering model, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
-| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, schedules, and the event tables: `BulletPatternEvent` (`damage` resolved at insert), `BulletControlEvent` (rect kinds encode origin (x, y) + far end (target_x, target_y) + width (radius); Attract `duration` = linger, 0 = one-shot; SlashRect `duration` = damage threshold as f32 bits; WallRect `duration` = linger seconds), `AbilityVisualEvent` (P5 spell flashes; per-kind encoding documented on the table) | Rarely — schema changes |
+| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, schedules, server-only `BulletFireAttestation` (one row per fired `BulletPatternEvent`: pellet pool + TTL, consumed by `report_hit` — stamped by `attest_bullet_fire`, swept in `tick_status_effects`), and the event tables: `BulletPatternEvent` (`damage` resolved at insert), `BulletControlEvent` (rect kinds encode origin (x, y) + far end (target_x, target_y) + width (radius); Attract `duration` = linger, 0 = one-shot; SlashRect `duration` = damage threshold as f32 bits; WallRect `duration` = linger seconds), `AbilityVisualEvent` (P5 spell flashes; per-kind encoding documented on the table) | Rarely — schema changes |
 | `methods.rs` | Pure logic: archetype helpers, behavior-tree build/teardown, `tick_phase`/`tick_sequence`, movement, biome spawning | Changing *how* enemies simulate |
 | `reducers.rs` | `tick_enemy_spawn`/`tick_enemy_behavior` (scheduled), `report_enemy_hit` (rate-limited + range-checked, see below) | Wiring, not content |
 | `emitters.rs` | **Authoring vocabulary**: `Emitter` builder + `Difficulty`/`DifficultySteps`; `compile()` lowers an emitter to an `AttackSequence` | Extending the vocabulary (e.g. a new builder) |
@@ -17,13 +18,17 @@ Everything an agent needs to work in this module without re-deriving the model. 
 
 ## The model in one paragraph
 
-Template = data. A behavior tick (100 ms, `BEHAVIOR_TICK_DT`) walks every in-range enemy,
-ticks its current phase's attack sequences (concurrent), and appends one
-`BulletPatternEvent` per shot; the client renders events verbatim (angles/offsets are
-baked server-side at fire time). HP thresholds advance phases via `compute_phase` in the
-combat path. Spawn/despawn always goes through `spawn_enemy_archetype` /
-`despawn_enemy_archetype` — the behavior tree (EnemyBehavior → EnemyPhase → EnemyAttack →
-EnemySequenceStep → RepeatStepInstance) must not have orphan rows.
+Template = data. A behavior tick (100 ms, `BEHAVIOR_TICK_DT`) walks the chunk-gated
+simulation set (enemies inside `SIMULATION_CHUNK_RINGS` of a logged-in player, capped at
+`BEHAVIOR_TICK_ENEMY_BUDGET` per tick — no full table scan), ticks each candidate's
+current phase's attack sequences (concurrent), and appends one `BulletPatternEvent` per
+shot (+ one `BulletFireAttestation` row); the client renders events verbatim
+(angles/offsets are baked server-side at fire time). Repeat catch-up is capped at
+`MAX_CATCHUP_SHOTS`/tick, Multi at `MAX_MULTI_SHOTS`/visit. HP thresholds advance phases
+via `compute_phase` in the combat path. Spawn/despawn always goes through
+`spawn_enemy_archetype` / `despawn_enemy_archetype` — the behavior tree (EnemyBehavior →
+EnemyPhase → EnemyAttack → EnemySequenceStep → RepeatStepInstance) must not have orphan
+rows.
 
 ## Movement (context steering)
 

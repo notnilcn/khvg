@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "a32799a73ac82a72",
+			"type": "file",
+			"file": "client/Scripts/Players/CharacterModel3D.cs",
+			"subpath": "#animPlayer",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

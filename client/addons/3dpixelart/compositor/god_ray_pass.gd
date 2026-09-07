@@ -23,6 +23,16 @@ extends CompositorEffect
 @export var ray_quantize_bands := 4.0
 ## How strongly a second, slower high-threshold noise modulates the shafts.
 @export_range(0.0, 1.0) var ray_dust_strength := 0.5
+## Stacked light-sheet controls: near fade, depth cutoff, surface fade,
+## max stack clamp + quantum scale, distance falloff.
+@export var ray_near_fade_start := 0.0
+@export var ray_near_fade_range := 0.0
+@export var ray_near_fade_power := 1.0
+@export var ray_depth_cutoff := 0.0
+@export var ray_surface_fade := 0.0
+@export var ray_max_stack := 10.0
+@export var ray_quantum := 0.0
+@export var ray_distance_falloff := 0.0
 
 # Pushed by PixelArtPipeline3D (mirrors of its Clouds export group).
 var cloud_noise: Texture2D:
@@ -34,6 +44,11 @@ var cloud_height := 10.0
 var cloud_noise_scale := 0.05
 var cloud_threshold := 0.5
 var cloud_bands := 3.0
+var cloud_tightness := 1.0
+var cloud_softness := 0.4
+var cloud_octave_drop := 0.5
+var cloud_gap_erosion := 0.0
+var cloud_detail_strength := 0.0
 var cloud_wind := Vector2(0.02, 0.0)
 
 var rd: RenderingDevice
@@ -47,7 +62,7 @@ var _noise_dirty := false
 var _noise_rd: RID
 var _warned_no_noise := false
 
-const PARAMS_SIZE := 160 # 10 vec4s: mat4 + 6 vec4
+const PARAMS_SIZE := 224 # mat4 (64) + 10 vec4s (160)
 
 
 func _init() -> void:
@@ -121,11 +136,11 @@ func _render_callback(p_callback_type: int, p_render_data: RenderData) -> void:
 	if not _noise_rd.is_valid():
 		return
 
-	# Fill the per-frame uniform buffer (10 vec4s, matches the GLSL Params block).
+	# Fill the per-frame uniform buffer (mat4 + 10 vec4s, matches GLSL Params).
 	var cam_xform := scene_data.get_cam_transform()
 	var inv_vp: Projection = (scene_data.get_cam_projection() * Projection(cam_xform.affine_inverse())).inverse()
 	var values := PackedFloat32Array()
-	values.resize(40)
+	values.resize(56)
 	var cols := [inv_vp.x, inv_vp.y, inv_vp.z, inv_vp.w]
 	for c in 4:
 		values[c * 4 + 0] = cols[c].x
@@ -136,9 +151,12 @@ func _render_callback(p_callback_type: int, p_render_data: RenderData) -> void:
 	values[i] = cam_xform.origin.x; values[i + 1] = cam_xform.origin.y; values[i + 2] = cam_xform.origin.z; i += 4
 	values[i] = cloud_sun_dir.x; values[i + 1] = cloud_sun_dir.y; values[i + 2] = cloud_sun_dir.z; i += 4
 	values[i] = cloud_noise_scale; values[i + 1] = cloud_threshold; values[i + 2] = cloud_bands; values[i + 3] = cloud_height; i += 4
-	values[i] = cloud_wind.x; values[i + 1] = cloud_wind.y; values[i + 2] = Time.get_ticks_msec() / 1000.0; i += 4
+	values[i] = cloud_wind.x; values[i + 1] = cloud_wind.y; values[i + 2] = Time.get_ticks_msec() / 1000.0; values[i + 3] = cloud_softness; i += 4
 	values[i] = ray_max_distance; values[i + 1] = ray_intensity; values[i + 2] = ray_decay; values[i + 3] = ray_quantize_bands; i += 4
-	values[i] = ray_dust_strength; values[i + 1] = float(ray_steps)
+	values[i] = ray_dust_strength; values[i + 1] = float(ray_steps); values[i + 2] = 0.0; values[i + 3] = 0.0; i += 4
+	values[i] = cloud_tightness; values[i + 1] = cloud_octave_drop; values[i + 2] = cloud_gap_erosion; values[i + 3] = cloud_detail_strength; i += 4
+	values[i] = ray_near_fade_start; values[i + 1] = ray_near_fade_range; values[i + 2] = ray_near_fade_power; values[i + 3] = ray_depth_cutoff; i += 4
+	values[i] = ray_surface_fade; values[i + 1] = ray_max_stack; values[i + 2] = ray_distance_falloff; values[i + 3] = ray_quantum
 	rd.buffer_update(params_buffer, 0, PARAMS_SIZE, values.to_byte_array())
 
 	var x_groups := (size.x - 1) / 8 + 1

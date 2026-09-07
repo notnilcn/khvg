@@ -13,15 +13,33 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Game Design Docs/01 Executive Summary.md",
+                "file": "server/spacetimedb/src/world/pointers.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "01 Executive Summary"
+              "title": "pointers"
+            }
+          },
+          {
+            "id": "80e701ed4e7d8e2a",
+            "type": "leaf",
+            "state": {
+              "type": "canvas",
+              "state": {
+                "file": "flowcharts/main-chests.canvas",
+                "viewState": {
+                  "x": 933.2167804325338,
+                  "y": 630.1697327160111,
+                  "zoom": -0.7439970561870612
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "main-chests"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -83,7 +101,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 354.16668701171875
   },
   "right": {
     "id": "af61fe3fbe59f298",
@@ -214,19 +232,54 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "940a97cd19f20e2e",
+  "active": "80e701ed4e7d8e2a",
   "lastOpenFiles": [
-    "client/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/libblastbullets2d.ios.template_release.single",
-    "client/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/Info.plist",
-    "client/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_release.single.xcframework/ios-arm64/libblastbullets2d.ios.template_release.single.framework/desktop.ini",
-    "client/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/libblastbullets2d.ios.template_debug.single",
-    "client/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/Info.plist",
-    "client/addons/blastbullets2d/bin/ios/libblastbullets2d.ios.template_debug.single.xcframework/ios-arm64/libblastbullets2d.ios.template_debug.single.framework/desktop.ini",
-    "client/addons/phantom_camera/examples/example_scenes/3D/sub_scenes/playable_character_third_person_3d.tscn",
-    "client/addons/phantom_camera/examples/example_scenes/3D/sub_scenes/desktop.ini",
-    "client/addons/phantom_camera/examples/example_scenes/3D/sub_scenes/playable_character_3d.tscn",
-    "client/addons/phantom_camera/examples/example_scenes/2D/sub_scenes/playable_character_2d.tscn",
-    "client/addons/phantom_camera/examples/example_scenes/2D/sub_scenes/desktop.ini",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
+    "flowcharts/main-chests.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/chest_codefile/chest_codefile.canvas",
+    "flowcharts/main-admin.canvas",
+    "flowcharts/Subflowcharts/client_subfolder/client_subfolder.canvas",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder.canvas",
+    "flowcharts/Subflowcharts/server_subfolder/server_subfolder.canvas",
+    "docs/Technical Design Docs/Description/02 The Component Framework.md",
+    "flowcharts/main-terrain.canvas",
+    "flowcharts/main-subscriptions.canvas",
+    "flowcharts/main-status.canvas",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/release_subfolder/build_subfolder/serde-4a33e031e74f9f91_subfolder/out_subfolder/private_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/release_subfolder/build_subfolder/serde-4a33e031e74f9f91_subfolder/out_subfolder",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/release_subfolder/build_subfolder/serde-4a33e031e74f9f91_subfolder",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/release_subfolder/build_subfolder/serde_core-1f0a89d6bc2965de_subfolder/out_subfolder/private_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/release_subfolder/build_subfolder/serde_core-1f0a89d6bc2965de_subfolder/out_subfolder",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/release_subfolder/build_subfolder/serde_core-1f0a89d6bc2965de_subfolder",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/release_subfolder/build_subfolder",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/release_subfolder",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/debug_subfolder/build_subfolder/serde-6d44148bd71b9e70_subfolder/out_subfolder/private_codefile",
+    "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/target_subfolder/wasm32-unknown-unknown_subfolder/debug_subfolder/build_subfolder/serde-6d44148bd71b9e70_subfolder/out_subfolder",
+    "docs/Technical Design Docs/Description/03 Connection, Subscriptions & Views.md",
+    "docs/Technical Design Docs/Description/01 Roadmap.md",
+    "docs/Technical Design Docs/Description/00 Table Map.md",
+    "server/spacetimedb/src/item/pointers.md",
+    "docs/Technical Design Docs/Description/12 World Tables.md",
+    "docs/Technical Design Docs/Description/11 Status Tables.md",
+    "docs/Technical Design Docs/Description/10 Player Tables.md",
+    "docs/Technical Design Docs/Description/09 Main Tables.md",
+    "docs/Technical Design Docs/Description/08 Item Tables.md",
+    "server/spacetimedb/src/combat/pointers.md",
+    "docs/Technical Design Docs/Description/07 Enemy Tables.md",
+    "docs/Technical Design Docs/Description/06 Combat Tables.md",
+    "docs/Technical Design Docs/Description/04 Anticheat Tables.md",
+    "docs/Technical Design Docs/Description/05 Chest Tables.md",
+    "docs/Technical Design Docs/Description/AGENTS.md",
+    "server/spacetimedb/src/world/pointers.md",
+    "server/spacetimedb/src/enemy/pointers.md",
+    "server/spacetimedb/src/main/pointers.md",
+    "server/spacetimedb/src/player/pointers.md",
+    "server/spacetimedb/src/status/pointers.md",
+    "server/spacetimedb/src/anticheat/pointers.md",
+    "server/spacetimedb/src/chest/pointers.md",
+    "client/Scenes/world_3d_TerrainData/pointers.md",
+    "client/Scenes/UI/pointers.md",
     "client/addons/phantom_camera/examples/textures/3D/target.png",
     "client/addons/phantom_camera/examples/textures/3D/checker_pattern_dark.png",
     "client/addons/phantom_camera/examples/textures/2D/sign_prompt.png",
@@ -236,41 +289,6 @@
     "client/addons/phantom_camera/examples/textures/2D/inventory_container.png",
     "client/addons/phantom_camera/icons/viewfinder/Select.svg",
     "client/addons/phantom_camera/icons/viewfinder/SceneTypesIcon.svg",
-    "client/addons/phantom_camera/icons/viewfinder/Camera3DIcon.svg",
-    "client/addons/MarchingSquaresTerrain/documentation/documentation+/navmesh_guide.md",
-    "client/addons/MarchingSquaresTerrain/documentation/documentation+/internal_tool_system.md",
-    "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_locations.md",
-    "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_style_guide.md",
-    "client/addons/3dpixelart/README.md",
-    "client/addons/3dpixelart/AGENTS.md",
-    "client/addons/MarchingSquaresTerrain/documentation/plugin_quick_guide.md",
-    "client/addons/MarchingSquaresTerrain/documentation/hex_terrain_guide.md",
-    "client/addons/MarchingSquaresTerrain/documentation/credits.md",
-    "client/addons/MarchingSquaresTerrain/README.md",
-    "client/addons/MarchingSquaresTerrain/AGENTS.md",
-    "client/addons/blastbullets2d/README.md",
-    "client/addons/blastbullets2d/LICENSE.md",
-    "docs/Game Design Docs/00.canvas",
-    "docs/Game Design Docs/01 Executive Summary.md",
-    "docs/Youtube Transcripts and stuff/_CONTEXT.md",
-    "docs/Youtube Transcripts and stuff/The Trick I Used to Make Combat Fun! ｜ Devlog [6BrZryMz-ac].en.md",
-    "docs/Youtube Transcripts and stuff/Volumetric Lighting in Pixel Art？! ｜ Pixel Perfect [fKp-Lg7vAn4].en.md",
-    "docs/Youtube Transcripts and stuff/The Secret to Crisp 3D Pixel Art Rendering ｜ Pixel Perfect [Mp7eQsiZ_wA].en.md",
-    "docs/Youtube Transcripts and stuff/How I solved my biggest pixel art problem ｜ Pixel Perfect [Ua2EXkOmrpA].en.md",
-    "docs/Youtube Transcripts and stuff/How I Created Pixel Art Oceans ｜ Pixel Perfect [RU3EReALbEU].en.md",
-    "docs/Youtube Transcripts and stuff/Giving Personality to Procedural Animations using Math [KPoeNZZ6H4s].en.md",
-    "docs/Youtube Transcripts and stuff/Designing a Better Aim Assist for 2D Games [yGci-Lb87zs].en.md",
-    "docs/Youtube Transcripts and stuff/Crafting a Better Shader for Pixel Art Upscaling [d6tp43wZqps].en.md",
-    "docs/Youtube Transcripts and stuff/new_enemy_movement_system.md",
-    "docs/Game Design Docs/02 Gameplay.md",
-    "Untitled.canvas",
-    "flowcharts/main-items.canvas",
-    "flowcharts/main-terrain.canvas",
-    "flowcharts/Subflowcharts/server_subfolder/server_subfolder.canvas",
-    "flowcharts/Subflowcharts/root_subfolder.canvas",
-    "flowcharts/main-subscriptions.canvas",
-    "flowcharts/main-status.canvas",
-    "flowcharts/main-player-data.canvas",
-    "flowcharts/main-movement.canvas"
+    "client/addons/phantom_camera/icons/viewfinder/Camera3DIcon.svg"
   ]
 }

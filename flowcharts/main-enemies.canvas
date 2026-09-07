@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/default_enemy_codefile/default_enemy_codefile.canvas",
 			"color": "5",
-			"x": 580,
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
 			"color": "5",
-			"x": 1040,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemies_subfolder.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 120,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -35,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas",
 			"color": "5",
-			"x": 570,
+			"x": 0,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -46,7 +46,7 @@
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
 			"color": "5",
 			"x": 0,
-			"y": 500,
+			"y": 1500,
 			"width": 400,
 			"height": 400
 		},
@@ -55,8 +55,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
 			"color": "5",
-			"x": 230,
-			"y": 1500,
+			"x": 0,
+			"y": 2000,
 			"width": 400,
 			"height": 400
 		}
@@ -94,6 +94,14 @@
 			"fromNode": "92a8020e4de518b8",
 			"fromSide": "bottom",
 			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "cfe692754e0a2d42",
+			"fromNode": "92a8020e4de518b8",
+			"fromSide": "bottom",
+			"toNode": "4414d6e4f159cb40",
 			"toSide": "top",
 			"toEnd": "arrow"
 		},

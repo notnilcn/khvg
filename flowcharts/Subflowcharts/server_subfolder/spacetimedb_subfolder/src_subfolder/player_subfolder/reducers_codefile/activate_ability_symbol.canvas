@@ -16,7 +16,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-resolve_ability_slot",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas",
@@ -29,7 +28,10 @@
 				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-apply_ability_effect",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
-				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-ability_is_charge_capable"
+				"edge-_colon_-server/spacetimedb/src/item/methods-_dot_-rs-_hashtag_-ability_is_charge_capable",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

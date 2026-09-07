@@ -11,21 +11,11 @@
 			"height": 400
 		},
 		{
-			"id": "80eb6ddef33cd494",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/ChaseParams_symbol.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "5673191ae9511b70",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/CurtainParams_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +25,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/EnemyTarget_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/EnemyTemplate_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -54,6 +44,16 @@
 			"id": "27270333e9d27d00",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/ExplosionParams_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "12575b1c25fc7a90",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/FixedPoint_symbol.canvas",
 			"color": "5",
 			"x": 2300,
 			"y": 0,
@@ -71,11 +71,31 @@
 			"height": 400
 		},
 		{
-			"id": "6a0f9df73eddfd4a",
+			"id": "a514d57f8ee30b34",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/MovementBehavior_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/LungeParams_symbol.canvas",
 			"color": "5",
 			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2b325ffc968666b8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/MeanderParams_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7e2647bad559d770",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/MoveGoal_symbol.canvas",
+			"color": "5",
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +105,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/MovementDef_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8cbf85935550c8b4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/MovePattern_symbol.canvas",
+			"color": "5",
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/MultiShot_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +135,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/MultiStepDef_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5980,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5edc5be4a3a55640",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/OrbitParams_symbol.canvas",
+			"color": "5",
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/PatternType_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/PhaseDef_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/RepeatStepDef_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/RingParams_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/SequenceStepDef_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/ShotgunParams_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +215,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/SingleStepDef_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 9660,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e3a47fce8e2d0c34",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/SteeringMovement_symbol.canvas",
+			"color": "5",
+			"x": 10120,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -185,7 +235,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/StunBehavior_symbol.canvas",
 			"color": "5",
-			"x": 8280,
+			"x": 10580,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -195,17 +245,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/VolleyParams_symbol.canvas",
 			"color": "5",
-			"x": 8740,
+			"x": 11040,
 			"y": 0,
 			"width": 400,
 			"height": 400
 		},
 		{
-			"id": "4f17b86760b6471a",
+			"id": "e9b623869ce44330",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/WanderParams_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/def_tables_codefile/ZigzagParams_symbol.canvas",
 			"color": "5",
-			"x": 9200,
+			"x": 11500,
 			"y": 0,
 			"width": 400,
 			"height": 400

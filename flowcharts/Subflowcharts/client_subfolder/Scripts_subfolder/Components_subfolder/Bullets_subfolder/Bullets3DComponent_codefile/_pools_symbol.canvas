@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "b6960ec5cd2ab2ac",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/Bullets3DComponent.cs",
+			"subpath": "#_pools",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

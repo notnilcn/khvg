@@ -1,21 +1,21 @@
 {
 	"nodes": [
 		{
-			"id": "15cccba3bad78b5a",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/StatKind_codefile/StatKind_codefile.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "8bbcfd3b584369ca",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/Stat_codefile/Stat_codefile.canvas",
 			"color": "5",
 			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "15cccba3bad78b5a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/StatKind_codefile/StatKind_codefile.canvas",
+			"color": "5",
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400

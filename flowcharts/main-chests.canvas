@@ -1,130 +1,23 @@
 {
-	"nodes": [
-		{
-			"id": "907b62b678c6b608",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/UI_subfolder.canvas",
-			"color": "5",
-			"x": 920,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "05a4754216fe2c08",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/chest_codefile/chest_codefile.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "16dfd093be813eb8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "8466c29300c138b0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
-			"color": "5",
-			"x": 920,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "69206441fa058f50",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
-			"color": "5",
-			"x": 1380,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "51fdfc79fa8f5462",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "f81d30fe20d07fb0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder.canvas",
-			"color": "5",
-			"x": 460,
-			"y": 1000,
-			"width": 400,
-			"height": 400
-		}
+	"nodes":[
+		{"id":"907b62b678c6b608","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/UI_subfolder/UI_subfolder.canvas","x":920,"y":0,"width":400,"height":400,"color":"5"},
+		{"id":"05a4754216fe2c08","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/chest_codefile/chest_codefile.canvas","x":0,"y":0,"width":400,"height":400,"color":"5"},
+		{"id":"8466c29300c138b0","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas","x":920,"y":500,"width":400,"height":400,"color":"5"},
+		{"id":"69206441fa058f50","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas","x":1380,"y":0,"width":400,"height":400,"color":"5"},
+		{"id":"51fdfc79fa8f5462","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Items_subfolder/Items_subfolder.canvas","x":460,"y":500,"width":400,"height":400,"color":"5"},
+		{"id":"f81d30fe20d07fb0","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder.canvas","x":460,"y":1000,"width":400,"height":400,"color":"5"},
+		{"id":"16dfd093be813eb8","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Interaction_subfolder/Interaction_subfolder.canvas","x":0,"y":500,"width":400,"height":400,"color":"5"}
 	],
-	"edges": [
-		{
-			"id": "742aa2a2a8fc5938",
-			"fromNode": "907b62b678c6b608",
-			"fromSide": "bottom",
-			"toNode": "8466c29300c138b0",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "script"
-		},
-		{
-			"id": "1ad7cfcc1fc779f0",
-			"fromNode": "05a4754216fe2c08",
-			"fromSide": "bottom",
-			"toNode": "51fdfc79fa8f5462",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "script"
-		},
-		{
-			"id": "d75822c4acd73010",
-			"fromNode": "05a4754216fe2c08",
-			"fromSide": "bottom",
-			"toNode": "16dfd093be813eb8",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "script"
-		},
-		{
-			"id": "7cdf7f0343b562b2",
-			"fromNode": "05a4754216fe2c08",
-			"fromSide": "bottom",
-			"toNode": "f81d30fe20d07fb0",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "bind"
-		},
-		{
-			"id": "117db5de312328b8",
-			"fromNode": "8466c29300c138b0",
-			"fromSide": "bottom",
-			"toNode": "f81d30fe20d07fb0",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "rpc"
-		},
-		{
-			"id": "0cc397bcf48d0330",
-			"fromNode": "51fdfc79fa8f5462",
-			"fromSide": "bottom",
-			"toNode": "f81d30fe20d07fb0",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "read"
-		}
-	]
+	"edges":[
+		{"id":"742aa2a2a8fc5938","fromNode":"907b62b678c6b608","fromSide":"bottom","toNode":"8466c29300c138b0","toSide":"top","label":"script"},
+		{"id":"1ad7cfcc1fc779f0","fromNode":"05a4754216fe2c08","fromSide":"bottom","toNode":"51fdfc79fa8f5462","toSide":"top","label":"script"},
+		{"id":"d75822c4acd73010","fromNode":"05a4754216fe2c08","fromSide":"bottom","toNode":"16dfd093be813eb8","toSide":"top","label":"script"},
+		{"id":"7cdf7f0343b562b2","fromNode":"05a4754216fe2c08","fromSide":"bottom","toNode":"f81d30fe20d07fb0","toSide":"top","label":"bind"},
+		{"id":"117db5de312328b8","fromNode":"8466c29300c138b0","fromSide":"bottom","toNode":"f81d30fe20d07fb0","toSide":"top","label":"rpc"},
+		{"id":"0cc397bcf48d0330","fromNode":"51fdfc79fa8f5462","fromSide":"bottom","toNode":"f81d30fe20d07fb0","toSide":"top","label":"read"}
+	],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
 }

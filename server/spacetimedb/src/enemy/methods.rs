@@ -1,6 +1,7 @@
 use spacetimedb::{ReducerContext, Identity, Table, Timestamp};
 use std::time::Duration;
 use crate::main::global::*;
+use crate::main::time::seconds_since;
 use crate::world::prng::{hash_to_unit, next_unit, splitmix64};
 use crate::world::hex::{hex_to_world, spiral_chunk_index, world_to_chunk, world_to_hex};
 use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
@@ -73,21 +74,51 @@ pub fn enemies_near_point(ctx: &ReducerContext, x: f32, y: f32, radius: f32) -> 
         .collect()
 }
 
-pub fn seconds_since(ctx: &ReducerContext, since: Timestamp) -> f32 {
-    let now = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros();
-    let then = since.to_duration_since_unix_epoch().unwrap_or_default().as_micros();
-    now.saturating_sub(then) as f32 / 1_000_000.0
-}
-
-/// A step's per-bullet damage, resolved from a SequenceStepRef. Shared by report_hit (hit
-/// attribution) and the behavior tick (stamps BulletPatternEvent.damage for damage-aware
-/// bullet controllers).
+/// A step's per-bullet damage, resolved from a SequenceStepRef. Shared by the behavior
+/// tick (stamps BulletPatternEvent.damage for damage-aware bullet controllers) and the
+/// fire attestation below. report_hit no longer resolves this itself — it only trusts
+/// the stamped damage on a live attestation row.
 pub fn step_damage(ctx: &ReducerContext, step: &SequenceStepRef) -> Option<u32> {
     match step {
         SequenceStepRef::Single(def_id) => ctx.db.single_step_def().def_id().find(def_id).map(|s| s.damage),
         SequenceStepRef::Repeat(repeat_id) => ctx.db.repeat_step_instance().repeat_id().find(repeat_id).map(|r| r.damage),
         SequenceStepRef::Multi(multi_ref) => ctx.db.multi_step_def().def_id().find(&multi_ref.def_id).and_then(|m| m.shots.get(multi_ref.shot_index as usize).map(|s| s.damage)),
     }
+}
+
+/// How many live bullets one BulletPatternEvent produces. Must match the client's
+/// spawn code pellet-for-pellet (BulletSpawnerComponent SpawnRing/SpawnVolley/
+/// SpawnCurtain/SpawnShotgun/SpawnExplosion): Ring and Volley batch Count bullets per
+/// Line stack level, Shotgun the same, Curtain skips its gap index, Explosion is one
+/// instance per pellet. A zero-pellet event attests nothing.
+pub fn pattern_bullet_count(pattern: &PatternType) -> u32 {
+    match pattern {
+        PatternType::Ring(r) => r.count.saturating_mul(r.line.max(1)),
+        PatternType::Volley(v) => v.count.saturating_mul(v.line.max(1)),
+        PatternType::Curtain(c) => {
+            if c.gap_index < c.count { c.count - 1 } else { c.count }
+        }
+        PatternType::Shotgun(s) => s.count.saturating_mul(s.line.max(1)),
+        PatternType::Explosion(e) => e.count,
+    }
+}
+
+/// Stamp a fire attestation for a freshly inserted BulletPatternEvent. Called on the
+/// behavior tick's fire path with the insert's returned row (which carries the
+/// assigned event_id). Player-ability fan/split bullets (SpawnEnemyBulletFan) reuse
+/// the original event's attestation — they draw from the same pellet pool.
+pub fn attest_bullet_fire(ctx: &ReducerContext, event_id: u64, enemy_id: u64, damage: u32, pattern: &PatternType) {
+    let remaining = pattern_bullet_count(pattern);
+    if remaining == 0 {
+        return;
+    }
+    ctx.db.bullet_fire_attestation().insert(BulletFireAttestation {
+        event_id,
+        enemy_id,
+        damage,
+        remaining,
+        fired_at: ctx.timestamp,
+    });
 }
 
 /// Fire-pacing consult (Stunned on an Enraged template): every interval runs faster —
@@ -525,7 +556,13 @@ pub fn tick_sequence(ctx: &ReducerContext, enemy_id: u64, stun_behavior: &StunBe
                     return vec![];
                 }
                 attack.step_timer = ctx.timestamp;
-                let events = m.shots.iter().enumerate().map(|(i, s)| BulletStepEvent {
+                // Burst cap: Multi emits its whole shots vec in one visit (content-sized, no
+                // pacing like Repeat's MAX_CATCHUP_SHOTS loop), so an oversized def is a
+                // per-tick row-insert storm. Truncation is logged, not silent.
+                if m.shots.len() > MAX_MULTI_SHOTS {
+                    log::warn!("Multi step {} has {} shots; capped at {}", multi_ref.def_id, m.shots.len(), MAX_MULTI_SHOTS);
+                }
+                let events = m.shots.iter().enumerate().take(MAX_MULTI_SHOTS).map(|(i, s)| BulletStepEvent {
                     pattern_type: s.pattern_type.clone(), target: s.target.clone(),
                     offset_x: s.offset_x, offset_y: s.offset_y,
                     base_angle_offset: s.base_angle_offset,
@@ -764,6 +801,15 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
     let (chunk_hex_radius, hex_outer_radius, chunk_cols, chunk_rows) =
         (cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows);
 
+    // Global live cap + per-tick spawn budget: the per-region max_enemies check below
+    // still allows 1 spawn per region per tick, each with a behavior-tree fan-out. Count
+    // once (one full scan per 2 s tick) and increment per spawn so the cap holds.
+    let mut live_enemies = ctx.db.enemy().iter().count() as u32;
+    if live_enemies >= MAX_LIVE_ENEMIES {
+        return;
+    }
+    let mut spawned_this_tick: u32 = 0;
+
     for region in ctx.db.biome_region().iter() {
         let (center_x, center_y) = hex_to_world(region.center_hex_q, region.center_hex_r, hex_outer_radius);
 
@@ -780,6 +826,7 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
             .count() as u32;
 
         if live_count >= region.max_enemies || region.enemy_template_ids.is_empty() { continue; }
+        if spawned_this_tick >= MAX_SPAWNS_PER_TICK { break; }
 
         let us = ctx.timestamp.to_duration_since_unix_epoch().unwrap_or_default().as_micros() as u64;
         let template_idx = (region.region_id ^ (us / 1_000_000)) as usize % region.enemy_template_ids.len();
@@ -805,5 +852,8 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
         let (cq, cr) = world_to_chunk(spawn_x, spawn_y, chunk_hex_radius, hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);
         spawn_enemy_archetype(ctx, &template, spawn_x, spawn_y, false, false, chunk_index);
+        live_enemies += 1;
+        spawned_this_tick += 1;
+        if live_enemies >= MAX_LIVE_ENEMIES { break; }
     }
 }

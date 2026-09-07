@@ -1,22 +1,60 @@
 {
 	"nodes": [
 		{
+			"id": "417851cc0f9f1160",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/apply_codefile/apply_codefile.canvas",
+			"color": "5",
+			"x": 230,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "707ea986e7c3be4c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/calc_codefile/calc_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "55d7fb240f6ae180",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/mod_codefile/mod_codefile.canvas",
 			"color": "5",
-			"x": 0,
-			"y": 0,
+			"x": 460,
+			"y": 500,
 			"width": 400,
 			"height": 400
 		}
 	],
-	"edges": [],
+	"edges": [
+		{
+			"id": "2a89ce84d3466870",
+			"fromNode": "417851cc0f9f1160",
+			"fromSide": "bottom",
+			"toNode": "55d7fb240f6ae180",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "908c98937c6fdcc6",
+			"fromNode": "417851cc0f9f1160",
+			"fromSide": "bottom",
+			"toNode": "707ea986e7c3be4c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
 	"metadata": {
 		"frontmatter": {
 			"tags": [
 				"includeInAggregateFlowchart",
 				"subfolder",
+				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-DamageRequest",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-despawn_enemy_archetype",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-internal_gain_xp",
@@ -26,12 +64,13 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyBehavior-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemyBehavior-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-Enemy-_colon_-write",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/mod_codefile/mod_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
@@ -48,30 +87,30 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-apply_damage_to_enemy_opts",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerData-_colon_-read",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-resolve_effective_weapon",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerStats-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-compute_player_damage",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-apply_damage_to_enemy",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-deal_damage_to_enemy_bonus",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-compute_incoming_damage",
+				"edge-_colon_-server/spacetimedb/src/combat/apply-_dot_-rs-_hashtag_-apply_damage_to_enemy",
+				"edge-_colon_-server/spacetimedb/src/combat/calc-_dot_-rs-_hashtag_-compute_player_damage",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/calc_codefile/calc_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/combat/apply-_dot_-rs-_hashtag_-deal_damage_to_enemy_bonus",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedInPlayer",
-				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-teardown_profile",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedOutPlayer",
+				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-IncomingDamageOptions",
+				"edge-_colon_-server/spacetimedb/src/combat/calc-_dot_-rs-_hashtag_-compute_incoming_damage",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-kill_player",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerData",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerData-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveStatusEffect-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedInPlayer-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedOutPlayer-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerData-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/combat/mod-_dot_-rs-_hashtag_-deal_damage_to_player_opts"
+				"edge-_colon_-server/spacetimedb/src/combat/apply-_dot_-rs-_hashtag_-deal_damage_to_player_opts",
+				"edge-_colon_-server/spacetimedb/src/item/methods-_dot_-rs-_hashtag_-resolve_effective_weapon",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerStats-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas"
 			]
 		}
 	}

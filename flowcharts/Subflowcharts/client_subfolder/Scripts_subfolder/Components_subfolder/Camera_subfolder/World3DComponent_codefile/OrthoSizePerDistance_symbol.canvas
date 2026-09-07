@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "acf15c27d0517fbe",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/World3DComponent.cs",
+			"subpath": "#OrthoSizePerDistance",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

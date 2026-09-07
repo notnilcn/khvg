@@ -1,16 +1,12 @@
 use spacetimedb::{table, Query, ReducerContext, Table, Timestamp, ViewContext};
 use crate::main::global::*;
 use crate::item::tables::item;
-use crate::player::methods::{is_admin, recompute_stats, require_in_world, store_item_in_inventory};
+use crate::player::methods::{is_admin, require_in_world, transfer_item_to_inventory};
 use crate::player::tables::player_position;
 use crate::player::views::nearby_indices;
 use crate::world::hex::{spiral_chunk_index, world_to_chunk};
 use crate::world::tables::MapConfig;
 use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
-
-/// The add_item_to_chest special case: passing this as item_id inserts one ChestItem row
-/// per catalog item (the `regenerating` flag applies to all of them).
-pub const EVERY_SINGLE_ITEM: &str = "every_single_item";
 
 // A loot container at a fixed world position. Contents are ChestItem rows keyed by
 // chest_id; players take items out with take_from_chest.
@@ -25,7 +21,9 @@ pub struct Chest {
 }
 
 // One row per item in a chest. A `regenerating` row is not consumed by take_from_chest —
-// the row stays, so the chest always holds another copy of the item.
+// the row stays, so the chest always holds another copy of the item. `chunk_index` mirrors
+// the parent chest so nearby_chest_items filters on the chunk btree directly instead of a
+// two-query chest-id fan-out.
 #[table(accessor = chest_item, public)]
 pub struct ChestItem {
     #[primary_key] #[auto_inc]
@@ -34,6 +32,8 @@ pub struct ChestItem {
     pub chest_id: u64,
     pub item_id: String,
     pub regenerating: bool,
+    #[index(btree)]
+    pub chunk_index: i64,
 }
 
 /// Server-only per-player take cooldown for REGENERATING chests (those rows are never
@@ -62,18 +62,25 @@ pub fn add_chest(ctx: &ReducerContext, x: f32, y: f32) -> Result<(), String> {
 #[spacetimedb::reducer]
 pub fn add_item_to_chest(ctx: &ReducerContext, chest_id: u64, item_id: String, regenerating: bool) -> Result<(), String> {
     if !is_admin(ctx) { return Err("Admin only.".to_string()); }
-    ctx.db.chest().chest_id().find(&chest_id)
+    let chest = ctx.db.chest().chest_id().find(&chest_id)
         .ok_or_else(|| format!("Chest {} not found.", chest_id))?;
-    if item_id == EVERY_SINGLE_ITEM {
-        let item_ids: Vec<String> = ctx.db.item().iter().map(|i| i.item_id).collect();
-        for id in item_ids {
-            ctx.db.chest_item().insert(ChestItem { chest_item_id: 0, chest_id, item_id: id, regenerating });
-        }
-        return Ok(());
-    }
     ctx.db.item().item_id().find(&item_id)
         .ok_or_else(|| format!("Item '{}' not found.", item_id))?;
-    ctx.db.chest_item().insert(ChestItem { chest_item_id: 0, chest_id, item_id, regenerating });
+    ctx.db.chest_item().insert(ChestItem { chest_item_id: 0, chest_id, item_id, regenerating, chunk_index: chest.chunk_index });
+    Ok(())
+}
+
+/// Admin-only bulk fill: one ChestItem row per catalog item (the `regenerating` flag
+/// applies to all of them). Explicit reducer instead of a magic item_id special case.
+#[spacetimedb::reducer]
+pub fn add_all_items_to_chest(ctx: &ReducerContext, chest_id: u64, regenerating: bool) -> Result<(), String> {
+    if !is_admin(ctx) { return Err("Admin only.".to_string()); }
+    let chest = ctx.db.chest().chest_id().find(&chest_id)
+        .ok_or_else(|| format!("Chest {} not found.", chest_id))?;
+    let item_ids: Vec<String> = ctx.db.item().iter().map(|i| i.item_id).collect();
+    for id in item_ids {
+        ctx.db.chest_item().insert(ChestItem { chest_item_id: 0, chest_id, item_id: id, regenerating, chunk_index: chest.chunk_index });
+    }
     Ok(())
 }
 
@@ -99,7 +106,7 @@ pub fn take_from_chest(ctx: &ReducerContext, chest_item_id: u64) -> Result<(), S
     if chest_item.regenerating {
         match ctx.db.chest_take_cooldown().profile_id().filter(&profile_id).find(|c| c.chest_id == chest.chest_id) {
             Some(cd) => {
-                if crate::enemy::methods::seconds_since(ctx, cd.last_taken) < CHEST_TAKE_COOLDOWN_SECONDS as f32 {
+                if crate::main::time::seconds_since(ctx, cd.last_taken) < CHEST_TAKE_COOLDOWN_SECONDS as f32 {
                     return Err("This chest was taken too recently.".to_string());
                 }
                 ctx.db.chest_take_cooldown().id().update(ChestTakeCooldown { last_taken: ctx.timestamp, ..cd });
@@ -112,14 +119,13 @@ pub fn take_from_chest(ctx: &ReducerContext, chest_item_id: u64) -> Result<(), S
         }
     }
 
-    store_item_in_inventory(ctx, profile_id, &item, vec![], None, u32::MAX)?;
+    transfer_item_to_inventory(ctx, profile_id, &item, vec![], None, u32::MAX)?;
 
     // Non-regenerating items are consumed; regenerating ones keep their row, which IS the
     // next copy — the chest regenerates the item by never running out of it.
     if !chest_item.regenerating {
         ctx.db.chest_item().chest_item_id().delete(&chest_item_id);
     }
-    recompute_stats(ctx, profile_id);
     Ok(())
 }
 
@@ -140,9 +146,9 @@ fn nearby_chests(ctx: &ViewContext) -> impl Query<Chest> {
     }).build()
 }
 
-// Contents of the chests inside the caller's AOI — ChestItem has no chunk_index of its
-// own, so the filter is an OR-chain over the nearby chest ids (the same chunk filter as
-// nearby_chests, read imperatively).
+// Contents of the chests inside the caller's AOI — the same chunk-index OR-chain as
+// nearby_chests, over ChestItem's own chunk_index (mirrored from the parent chest at
+// insert). No imperative two-query fan-out.
 #[spacetimedb::view(accessor = nearby_chest_items, public)]
 fn nearby_chest_items(ctx: &ViewContext) -> impl Query<ChestItem> {
     let empty = ctx.from.chest_item().r#where(|i| i.chest_item_id.eq(u64::MAX)).build();
@@ -150,14 +156,9 @@ fn nearby_chest_items(ctx: &ViewContext) -> impl Query<ChestItem> {
         Some(i) if !i.is_empty() => i,
         _ => return empty,
     };
-    let mut chest_ids: Vec<u64> = Vec::new();
-    for idx in &indices {
-        chest_ids.extend(ctx.db.chest().chunk_index().filter(idx).map(|c| c.chest_id));
-    }
-    if chest_ids.is_empty() { return empty; }
     ctx.from.chest_item().r#where(move |i| {
-        let mut cond = i.chest_id.eq(chest_ids[0]);
-        for &id in &chest_ids[1..] { cond = cond.or(i.chest_id.eq(id)); }
+        let mut cond = i.chunk_index.eq(indices[0]);
+        for &idx in &indices[1..] { cond = cond.or(i.chunk_index.eq(idx)); }
         cond
     }).build()
 }

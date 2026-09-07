@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "5d0995a9b8644584",
+			"type": "file",
+			"file": "client/Scripts/Players/Local/LocalPlayer.cs",
+			"subpath": "#PlayCharacterAnimation",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

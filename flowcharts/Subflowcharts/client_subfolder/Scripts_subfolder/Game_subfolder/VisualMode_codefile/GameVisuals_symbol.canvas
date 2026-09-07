@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "f1c257166fc6e8d0",
+			"type": "file",
+			"file": "client/Scripts/Game/VisualMode.cs",
+			"subpath": "#GameVisuals",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

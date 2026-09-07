@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/game_codefile/game_codefile.canvas",
 			"color": "5",
-			"x": 770,
+			"x": 870,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -16,7 +16,7 @@
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/main_menu_codefile/main_menu_codefile.canvas",
 			"color": "5",
 			"x": 0,
-			"y": 0,
+			"y": 500,
 			"width": 400,
 			"height": 400
 		},
@@ -25,8 +25,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
 			"color": "5",
-			"x": 10,
-			"y": 500,
+			"x": 120,
+			"y": 1000,
 			"width": 400,
 			"height": 400
 		},
@@ -55,8 +55,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas",
 			"color": "5",
-			"x": 1110,
-			"y": 3000,
+			"x": 1360,
+			"y": 3500,
 			"width": 400,
 			"height": 400
 		},
@@ -65,8 +65,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas",
 			"color": "5",
-			"x": 670,
-			"y": 2000,
+			"x": 1120,
+			"y": 2500,
 			"width": 400,
 			"height": 400
 		},
@@ -75,8 +75,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
 			"color": "5",
-			"x": 570,
-			"y": 2500,
+			"x": 460,
+			"y": 3000,
 			"width": 400,
 			"height": 400
 		},
@@ -85,8 +85,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 320,
-			"y": 1500,
+			"x": 730,
+			"y": 2000,
 			"width": 400,
 			"height": 400
 		},
@@ -95,8 +95,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
 			"color": "5",
-			"x": 1150,
-			"y": 3500,
+			"x": 120,
+			"y": 1500,
 			"width": 400,
 			"height": 400
 		}
@@ -175,6 +175,15 @@
 			"label": "script"
 		},
 		{
+			"id": "8e21839aec5be78c",
+			"fromNode": "916e18fd110ee05a",
+			"fromSide": "bottom",
+			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
 			"id": "efc2f30642c9adb4",
 			"fromNode": "194079a7791dc546",
 			"fromSide": "bottom",
@@ -228,6 +237,15 @@
 			"toEnd": "arrow"
 		},
 		{
+			"id": "b7091dfa7c8f8c04",
+			"fromNode": "f81d30fe20d07fb0",
+			"fromSide": "bottom",
+			"toNode": "803eb7303a83a4c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
 			"id": "2e74ae3037db5020",
 			"fromNode": "f81d30fe20d07fb0",
 			"fromSide": "bottom",
@@ -236,13 +254,12 @@
 			"toEnd": "arrow"
 		},
 		{
-			"id": "b7091dfa7c8f8c04",
-			"fromNode": "f81d30fe20d07fb0",
+			"id": "f3a94f6ffc46acd2",
+			"fromNode": "92a8020e4de518b8",
 			"fromSide": "bottom",
-			"toNode": "803eb7303a83a4c0",
+			"toNode": "23ad101c7f63b520",
 			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "read"
+			"toEnd": "arrow"
 		},
 		{
 			"id": "1f947366e96bb564",
@@ -253,13 +270,20 @@
 			"toEnd": "arrow"
 		},
 		{
-			"id": "651c70b33780497e",
+			"id": "cfe692754e0a2d42",
 			"fromNode": "92a8020e4de518b8",
 			"fromSide": "bottom",
-			"toNode": "23ad101c7f63b520",
+			"toNode": "4414d6e4f159cb40",
 			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "read"
+			"toEnd": "arrow"
+		},
+		{
+			"id": "fb0ee3046cdf0a18",
+			"fromNode": "92a8020e4de518b8",
+			"fromSide": "bottom",
+			"toNode": "803eb7303a83a4c0",
+			"toSide": "top",
+			"toEnd": "arrow"
 		},
 		{
 			"id": "14c76f2cbe8fa668",

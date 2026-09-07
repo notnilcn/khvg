@@ -71,6 +71,14 @@ public partial class PixelArtPipelineComponent : Component
     /// Noise quantization for the sky sheet and god rays (≤1 disables). The ground
     /// shadows use CloudShadowLevels instead.
     [Export] public float CloudBands { get; set; } = 3f;
+    /// Coverage curve exponent: 1 = unchanged, higher = narrower cloud cores.
+    [Export(PropertyHint.Range, "0.1,4.0,0.05")] public float CloudTightness { get; set; } = 1f;
+    /// Amplitude falloff per FBM octave for the procedural detail.
+    [Export(PropertyHint.Range, "0.1,1.0,0.05")] public float CloudOctaveDrop { get; set; } = 0.5f;
+    /// Erodes the ray-march cloud gaps; 0 = unchanged.
+    [Export(PropertyHint.Range, "0,0.45,0.01")] public float CloudGapErosion { get; set; } = 0f;
+    /// Mix procedural FBM detail into the texture noise (0 = texture only).
+    [Export(PropertyHint.Range, "0,1,0.05")] public float CloudDetailStrength { get; set; } = 0f;
     [Export] public Vector2 CloudWind { get; set; } = new(0.01f, 0.004f);
     [Export] public float CloudPlaneSize { get; set; } = 3000f;
     [Export] public Color CloudColor { get; set; } = Colors.White;
@@ -106,6 +114,23 @@ public partial class PixelArtPipelineComponent : Component
     /// Stepped banding of the rays (pixel look); ≤1 disables quantization.
     [Export] public float RayQuantizeBands { get; set; } = 4f;
     [Export(PropertyHint.Range, "0,1")] public float RayDustStrength { get; set; } = 0.15f;
+    /// Stacked light-sheet controls (all inert at defaults; 0 disables).
+    /// Distance along the ray where the near fade-in starts (world units).
+    [Export] public float RayNearFadeStart { get; set; } = 0f;
+    /// Fade-in range past the start; 0 disables the near fade.
+    [Export] public float RayNearFadeRange { get; set; } = 0f;
+    /// Near fade curve exponent.
+    [Export] public float RayNearFadePower { get; set; } = 1f;
+    /// Kill rays past this distance; 0 disables the cutoff.
+    [Export] public float RayDepthCutoff { get; set; } = 0f;
+    /// Fade within this distance of the surface hit; 0 disables.
+    [Export] public float RaySurfaceFade { get; set; } = 0f;
+    /// Clamp applied when RayQuantum scales the accumulation.
+    [Export] public float RayMaxStack { get; set; } = 10f;
+    /// Scale applied to the accumulation before the max-stack clamp; 0 disables.
+    [Export] public float RayQuantum { get; set; } = 0f;
+    /// Exponential falloff per world unit along the march.
+    [Export] public float RayDistanceFalloff { get; set; } = 0f;
 
     private Node? _pipeline; // GDScript PixelArtPipeline3D (untyped interop)
     private Texture2D? _cloudNoise; // export or the generated default
@@ -144,6 +169,10 @@ public partial class PixelArtPipelineComponent : Component
         _pipeline.Set("cloud_noise_scale", CloudNoiseScale);
         _pipeline.Set("cloud_threshold", CloudThreshold);
         _pipeline.Set("cloud_bands", CloudBands);
+        _pipeline.Set("cloud_tightness", CloudTightness);
+        _pipeline.Set("cloud_octave_drop", CloudOctaveDrop);
+        _pipeline.Set("cloud_gap_erosion", CloudGapErosion);
+        _pipeline.Set("cloud_detail_strength", CloudDetailStrength);
         _pipeline.Set("cloud_wind", CloudWind);
         _pipeline.Set("cloud_shadow_strength", CloudShadowStrength);
         _pipeline.Set("cloud_shadow_banding_enabled", CloudShadowBandingEnabled);
@@ -202,6 +231,14 @@ public partial class PixelArtPipelineComponent : Component
         pass.Set("ray_decay", RayDecay);
         pass.Set("ray_quantize_bands", RayQuantizeBands);
         pass.Set("ray_dust_strength", RayDustStrength);
+        pass.Set("ray_near_fade_start", RayNearFadeStart);
+        pass.Set("ray_near_fade_range", RayNearFadeRange);
+        pass.Set("ray_near_fade_power", RayNearFadePower);
+        pass.Set("ray_depth_cutoff", RayDepthCutoff);
+        pass.Set("ray_surface_fade", RaySurfaceFade);
+        pass.Set("ray_max_stack", RayMaxStack);
+        pass.Set("ray_quantum", RayQuantum);
+        pass.Set("ray_distance_falloff", RayDistanceFalloff);
     }
 
     /// Re-pushes every runtime-editable export into the pipeline, the god-ray
@@ -221,6 +258,10 @@ public partial class PixelArtPipelineComponent : Component
         _pipeline.Set("cloud_noise_scale", CloudNoiseScale);
         _pipeline.Set("cloud_threshold", CloudThreshold);
         _pipeline.Set("cloud_bands", CloudBands);
+        _pipeline.Set("cloud_tightness", CloudTightness);
+        _pipeline.Set("cloud_octave_drop", CloudOctaveDrop);
+        _pipeline.Set("cloud_gap_erosion", CloudGapErosion);
+        _pipeline.Set("cloud_detail_strength", CloudDetailStrength);
         _pipeline.Set("cloud_wind", CloudWind);
         _pipeline.Set("cloud_shadow_strength", CloudShadowStrength);
         _pipeline.Set("cloud_shadow_banding_enabled", CloudShadowBandingEnabled);

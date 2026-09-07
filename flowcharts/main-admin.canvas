@@ -1,123 +1,23 @@
 {
-	"nodes": [
-		{
-			"id": "876a7d8e0eb60d08",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/game_codefile/game_codefile.canvas",
-			"color": "5",
-			"x": 130,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "916e18fd110ee05a",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
-			"color": "5",
-			"x": 580,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "803eb7303a83a4c0",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas",
-			"color": "5",
-			"x": 120,
-			"y": 500,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "4414d6e4f159cb40",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
-			"color": "5",
-			"x": 0,
-			"y": 1000,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "23ad101c7f63b520",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
-			"color": "5",
-			"x": 110,
-			"y": 1500,
-			"width": 400,
-			"height": 400
-		}
+	"nodes":[
+		{"id":"876a7d8e0eb60d08","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/game_codefile/game_codefile.canvas","color":"5","x":130,"y":0,"width":400,"height":400},
+		{"id":"916e18fd110ee05a","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas","color":"5","x":580,"y":500,"width":400,"height":400},
+		{"id":"803eb7303a83a4c0","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder.canvas","color":"5","x":120,"y":500,"width":400,"height":400},
+		{"id":"4414d6e4f159cb40","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas","color":"5","x":0,"y":1000,"width":400,"height":400},
+		{"id":"23ad101c7f63b520","type":"file","file":"flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas","color":"5","x":110,"y":1500,"width":400,"height":400}
 	],
-	"edges": [
-		{
-			"id": "f34f3e7fb2fcaf6a",
-			"fromNode": "876a7d8e0eb60d08",
-			"fromSide": "bottom",
-			"toNode": "916e18fd110ee05a",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "script"
-		},
-		{
-			"id": "dcf9ded810817090",
-			"fromNode": "876a7d8e0eb60d08",
-			"fromSide": "bottom",
-			"toNode": "803eb7303a83a4c0",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "bind"
-		},
-		{
-			"id": "4d2714cbe122bd62",
-			"fromNode": "876a7d8e0eb60d08",
-			"fromSide": "bottom",
-			"toNode": "23ad101c7f63b520",
-			"toSide": "top",
-			"toEnd": "arrow",
-			"label": "bind"
-		},
-		{
-			"id": "14c76f2cbe8fa668",
-			"fromNode": "803eb7303a83a4c0",
-			"fromSide": "bottom",
-			"toNode": "23ad101c7f63b520",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "50b95b0a813a0d44",
-			"fromNode": "803eb7303a83a4c0",
-			"fromSide": "bottom",
-			"toNode": "4414d6e4f159cb40",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "75e573610247e2aa",
-			"fromNode": "4414d6e4f159cb40",
-			"fromSide": "bottom",
-			"toNode": "23ad101c7f63b520",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "dfe63c46f64327cc",
-			"fromNode": "4414d6e4f159cb40",
-			"fromSide": "bottom",
-			"toNode": "803eb7303a83a4c0",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "a9ac7258fc6eae60",
-			"fromNode": "23ad101c7f63b520",
-			"fromSide": "bottom",
-			"toNode": "803eb7303a83a4c0",
-			"toSide": "top",
-			"toEnd": "arrow"
-		}
-	]
+	"edges":[
+		{"id":"f34f3e7fb2fcaf6a","fromNode":"876a7d8e0eb60d08","fromSide":"bottom","toNode":"916e18fd110ee05a","toSide":"top","toEnd":"arrow","label":"script"},
+		{"id":"dcf9ded810817090","fromNode":"876a7d8e0eb60d08","fromSide":"bottom","toNode":"803eb7303a83a4c0","toSide":"top","toEnd":"arrow","label":"bind"},
+		{"id":"4d2714cbe122bd62","fromNode":"876a7d8e0eb60d08","fromSide":"bottom","toNode":"23ad101c7f63b520","toSide":"top","toEnd":"arrow","label":"bind"},
+		{"id":"14c76f2cbe8fa668","fromNode":"803eb7303a83a4c0","fromSide":"bottom","toNode":"23ad101c7f63b520","toSide":"top","toEnd":"arrow"},
+		{"id":"50b95b0a813a0d44","fromNode":"803eb7303a83a4c0","fromSide":"bottom","toNode":"4414d6e4f159cb40","toSide":"top","toEnd":"arrow"},
+		{"id":"75e573610247e2aa","fromNode":"4414d6e4f159cb40","fromSide":"bottom","toNode":"23ad101c7f63b520","toSide":"top","toEnd":"arrow"},
+		{"id":"dfe63c46f64327cc","fromNode":"4414d6e4f159cb40","fromSide":"bottom","toNode":"803eb7303a83a4c0","toSide":"top","toEnd":"arrow"},
+		{"id":"a9ac7258fc6eae60","fromNode":"23ad101c7f63b520","fromSide":"bottom","toNode":"803eb7303a83a4c0","toSide":"top","toEnd":"arrow"}
+	],
+	"metadata":{
+		"version":"1.0-1.0",
+		"frontmatter":{}
+	}
 }

@@ -11,11 +11,31 @@
 			"height": 400
 		},
 		{
+			"id": "fc9d6cee2a401670",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/AddAnimationClip_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "380fb603bc13ea9e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/animPlayer_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "313f330b6b22b94e",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/CharacterModel3D (class)_symbol.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -25,7 +45,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/CharacterModel3D.CharacterModel3D_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "912467874758cf56",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/currentAnimationId_symbol.canvas",
+			"color": "5",
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +65,47 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/Dispose_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "761968473e6d377e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/FindDescendant_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f0f14fb54815bcc2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/GetAnimationLength_symbol.canvas",
+			"color": "5",
+			"x": 3680,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "6624aa9d956adf2e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/HasAnimation_symbol.canvas",
+			"color": "5",
+			"x": 4140,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f5246e9694d947bc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/librarySceneCache_symbol.canvas",
+			"color": "5",
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +115,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/Node_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bc9ebe8bfc4037e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/PlayAnimation_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "110a686c02086740",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/RemapTracksToOwnSkeleton_symbol.canvas",
+			"color": "5",
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/CharacterModel3D_codefile/SyncFrom2D_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400

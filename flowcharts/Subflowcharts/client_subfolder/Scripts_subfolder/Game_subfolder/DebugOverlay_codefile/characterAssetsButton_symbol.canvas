@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "60ab5af94c7e83fa",
+			"type": "file",
+			"file": "client/Scripts/Game/DebugOverlay.cs",
+			"subpath": "#characterAssetsButton",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

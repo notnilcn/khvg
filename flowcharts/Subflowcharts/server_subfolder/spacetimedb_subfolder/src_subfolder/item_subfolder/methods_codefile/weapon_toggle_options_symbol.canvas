@@ -1,0 +1,35 @@
+{
+	"nodes": [
+		{
+			"id": "d24ea446c5690ba0",
+			"type": "file",
+			"file": "server/spacetimedb/src/item/methods.rs",
+			"subpath": "#weapon_toggle_options",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"edge-_colon_-server/spacetimedb/src/item/methods-_dot_-rs-_hashtag_-equipped_enchantment_behaviors",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Item",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-WeaponBehavior",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-ItemBehavior",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-EnchantmentBehavior",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

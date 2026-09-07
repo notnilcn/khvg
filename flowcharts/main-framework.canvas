@@ -1,0 +1,118 @@
+{
+	"nodes": [
+		{
+			"id": "fbc749a97e8bd786",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Components_subfolder.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "83dfef8316be863e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Entities_subfolder/Entities_subfolder.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "916e18fd110ee05a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "194079a7791dc546",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "92a8020e4de518b8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas",
+			"color": "5",
+			"x": 130,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "23ad101c7f63b520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
+			"color": "5",
+			"x": 570,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "1592ad47b5f57d8a",
+			"fromNode": "fbc749a97e8bd786",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "7cb96da293276de0",
+			"fromNode": "fbc749a97e8bd786",
+			"fromSide": "bottom",
+			"toNode": "92a8020e4de518b8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "efc2f30642c9adb4",
+			"fromNode": "194079a7791dc546",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "f68f13a6b8210304",
+			"fromNode": "194079a7791dc546",
+			"fromSide": "bottom",
+			"toNode": "92a8020e4de518b8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "subscribe"
+		},
+		{
+			"id": "f3a94f6ffc46acd2",
+			"fromNode": "92a8020e4de518b8",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "303509cf55cbffc2",
+			"fromNode": "23ad101c7f63b520",
+			"fromSide": "bottom",
+			"toNode": "92a8020e4de518b8",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	]
+}

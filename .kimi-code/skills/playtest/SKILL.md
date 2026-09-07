@@ -175,7 +175,7 @@ spacetime call bullethell give_item '"<username>"' '"<profile>"' '"Bow"'
 spacetime call bullethell remove_item '"<username>"' '"<profile>"' '"Bow"'
 spacetime call bullethell change_stats '"<username>"' '"<profile>"' 10 10 10 10 10 10   # str wis dex dps sup art
 spacetime call bullethell add_chest 0 0                               # (x, y)
-spacetime call bullethell add_item_to_chest 1 '"every_single_item"' false   # magic id = one of every catalog item
+spacetime call bullethell add_all_items_to_chest 1 false   # one of every catalog item
 spacetime call bullethell generate_world_proc '"default"' 123         # (world_id, seed)
 spacetime call bullethell toggle_debug                                # 1 Hz position debug rows
 ```

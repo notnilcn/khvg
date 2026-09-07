@@ -7,8 +7,9 @@
 
 use spacetimedb::{reducer, ReducerContext, Table};
 use crate::main::global::*;
-use crate::enemy::methods::seconds_since;
-use crate::player::methods::{require_in_world, ability_is_charge_capable};
+use crate::main::time::seconds_since;
+use crate::player::methods::require_in_world;
+use crate::item::methods::ability_is_charge_capable;
 use crate::player::reducers::{resolve_ability_slot, apply_ability_effect, spend_ability};
 use super::methods::apply_status_effect;
 use super::tables::*;

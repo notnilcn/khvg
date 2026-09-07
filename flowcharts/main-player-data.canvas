@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -56,7 +56,7 @@
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
 			"color": "5",
 			"x": 920,
-			"y": 1000,
+			"y": 0,
 			"width": 400,
 			"height": 400
 		},
@@ -75,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -122,14 +122,6 @@
 			"fromNode": "4414d6e4f159cb40",
 			"fromSide": "bottom",
 			"toNode": "23ad101c7f63b520",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
-			"id": "3d06ed6b20eae1c2",
-			"fromNode": "23ad101c7f63b520",
-			"fromSide": "bottom",
-			"toNode": "69d7625af2ec04d0",
 			"toSide": "top",
 			"toEnd": "arrow"
 		}

@@ -117,6 +117,23 @@ pub const BEHAVIOR_TICK_DT: f32 = 0.1;
 // intervals (a 25/s emitter needs ~3 per tick in steady state). Bounds the burst dumped
 // after a stall, e.g. when an enemy re-enters simulation range.
 pub const MAX_CATCHUP_SHOTS: usize = 8;
+// Per-tick enemy simulation budget for tick_enemy_behavior. The biome spawner caps live
+// enemies per region, but admin spawn_enemy does not — without this a spawn flood makes
+// one 10 Hz tick simulate (and fire/row-insert for) an unbounded set. Lowest enemy_ids
+// win; overflow is logged, not silent. Never binds in normal play (biome cap ≈ 45).
+pub const BEHAVIOR_TICK_ENEMY_BUDGET: usize = 96;
+// Per-visit Multi-step shot cap. Multi emits its whole shots vec at once (content-sized,
+// no pacing), so one authored/admin-upserted mega-Multi is a row-insert storm (event +
+// attestation per shot, per firing enemy, per tick). No shipped content uses Multi.
+pub const MAX_MULTI_SHOTS: usize = 24;
+// Global live-enemy cap for the automatic biome spawner (9 regions × max_enemies 5 = 45
+// biome max; headroom is for admin spawns). Per-region caps alone allow 1 spawn per
+// region per 2 s tick with unbounded behavior-tree fan-out rows each.
+pub const MAX_LIVE_ENEMIES: u32 = 64;
+// Biome spawns per 2 s tick. Each spawn inserts a behavior-tree fan-out (Enemy +
+// Behavior + Phase/Attack/Step rows), so this — not 1-per-region — bounds per-tick
+// insert pressure. Admin spawn_enemy stays operator-gated and uncapped.
+pub const MAX_SPAWNS_PER_TICK: u32 = 3;
 
 // Context-steering movement (see enemy/new_enemy_movement_system.md). Angles here are
 // radians — the movement layer's unit.
@@ -218,6 +235,11 @@ pub const GRAPPLE_ALLOWANCE_SECONDS: f32 = 1.0;
 // player_hit_flag rows older than this are swept by the 1 Hz status tick — no NoHits
 // wager window outlives it, and the table must not grow unbounded.
 pub const HIT_FLAG_MAX_AGE_SECONDS: u64 = 60;
+// BulletFireAttestation rows older than this are swept by the 1 Hz status tick. Must
+// exceed the longest bullet lifetime plus report lag so legit late hits still attest;
+// rejected claims fail safe (no damage applied). Unclaimed rows (missed volleys) must
+// not accumulate — every fired event inserts one.
+pub const BULLET_ATTESTATION_TTL_SECONDS: u64 = 30;
 // Per-player cooldown between takes from a regenerating chest (the row is never
 // consumed, so the take rate is gated instead).
 pub const CHEST_TAKE_COOLDOWN_SECONDS: u64 = 1;

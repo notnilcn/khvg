@@ -101,6 +101,16 @@
 			"height": 400
 		},
 		{
+			"id": "6ca05a6963226082",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/parse_kind_symbol.canvas",
+			"color": "5",
+			"x": 8740,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "c7ea7abe4846b310",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/release_admin_symbol.canvas",
@@ -131,11 +141,21 @@
 			"height": 400
 		},
 		{
+			"id": "50b251e2d9f88b70",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_animation_entry_symbol.canvas",
+			"color": "5",
+			"x": 5060,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "50cb8bb79af7f862",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_biome_def_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_biome_region_def_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_enemy_template_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_movement_def_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_multi_step_def_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -185,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_repeat_step_def_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -195,7 +215,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_single_step_def_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 8280,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "14eb514bc0bd9e9c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_texture_entry_fields_symbol.canvas",
+			"color": "5",
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -205,7 +235,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_texture_entry_symbol.canvas",
 			"color": "5",
-			"x": 8280,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -215,7 +245,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/admin_codefile/upsert_world_def_symbol.canvas",
 			"color": "5",
-			"x": 8740,
+			"x": 9660,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -235,6 +265,14 @@
 			"fromNode": "ecd372f3d8a8c7c6",
 			"fromSide": "bottom",
 			"toNode": "decba69f2ffea020",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "e05bbd06db9ee0f0",
+			"fromNode": "14eb514bc0bd9e9c",
+			"fromSide": "bottom",
+			"toNode": "6ca05a6963226082",
 			"toSide": "top",
 			"toEnd": "arrow"
 		}
@@ -310,6 +348,7 @@
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-TextureKind",
 				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrap_world_pos",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-world_to_chunk",
 				"edge-_colon_-server/spacetimedb/src/enemy/methods-_dot_-rs-_hashtag_-spawn_enemy_archetype",
@@ -321,6 +360,8 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/instance_tables-_dot_-rs-_hashtag_-EnemySpawnSchedule-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-AnimationEntry",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-AnimationEntry-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-BiomeDef",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-BiomeDef-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/def_tables_codefile/def_tables_codefile-_dot_-canvas-_colon_-write",
@@ -338,7 +379,9 @@
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-RepeatStepDef-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef",
 				"edge-_colon_-server/spacetimedb/src/enemy/def_tables-_dot_-rs-_hashtag_-SingleStepDef-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/main/admin-_dot_-rs-_hashtag_-parse_kind",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-TextureEntry",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-TextureEntry-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-TextureEntry-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-WorldDef",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-WorldDef-_colon_-write"

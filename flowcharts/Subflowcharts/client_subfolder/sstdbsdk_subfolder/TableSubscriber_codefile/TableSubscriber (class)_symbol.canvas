@@ -15,7 +15,6 @@
 	"metadata": {
 		"frontmatter": {
 			"tags": [
-				"includeInAggregateFlowchart",
 				"symbol",
 				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-all_textures-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-subscribe",
@@ -28,6 +27,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/item/views-_dot_-rs-_hashtag_-all_enchantments-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-all_animations-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_lobby_player-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-subscribe",
@@ -49,6 +49,7 @@
 				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_terrain_tiles-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_hex_decor-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/enemy/views-_dot_-rs-_hashtag_-enemy_templates-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/world/views-_dot_-rs-_hashtag_-nearby_building_tiles-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-nearby_chests-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder-_dot_-canvas-_colon_-subscribe",
@@ -64,7 +65,8 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveEnemyStatusEffect-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-GroundZone-_colon_-subscribe",
-				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge-_colon_-subscribe"
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge-_colon_-subscribe",
+				"includeInAggregateFlowchart"
 			]
 		}
 	}

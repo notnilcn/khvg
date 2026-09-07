@@ -35,8 +35,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
 			"color": "5",
-			"x": 260,
-			"y": 1000,
+			"x": 20,
+			"y": 1500,
 			"width": 400,
 			"height": 400
 		},
@@ -55,8 +55,8 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder.canvas",
 			"color": "5",
-			"x": 20,
-			"y": 1500,
+			"x": 140,
+			"y": 1000,
 			"width": 400,
 			"height": 400
 		}
@@ -96,14 +96,6 @@
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "read"
-		},
-		{
-			"id": "3d06ed6b20eae1c2",
-			"fromNode": "23ad101c7f63b520",
-			"fromSide": "bottom",
-			"toNode": "69d7625af2ec04d0",
-			"toSide": "top",
-			"toEnd": "arrow"
 		},
 		{
 			"id": "61bbe75a4e9fdbac",

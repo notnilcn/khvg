@@ -1,7 +1,7 @@
 @tool
 class_name PixelArtMacroPixelPass
 extends CompositorEffect
-## The pixelization blit chain (port of SRP/ProPixelizerPixelizationPass.cs).
+## The pixelization blit chain: copy, anchor map, apply.
 ## Runs PRE_TRANSPARENT: copies the scene color, builds the anchor map
 ## from the metadata buffer, then applies it so every macro-block shows its
 ## anchor pixel's color.
@@ -11,7 +11,7 @@ extends CompositorEffect
 ## un-pixelated depth.
 
 ## Optional palette LUT (baked by PixelPalette) applied to pixelized pixels
-## after lighting - the faithful ProPixelizer grading look. One LUT for the
+## after lighting. One LUT for the
 ## whole frame; use TONE_MAPPER_LINEAR in your environment for exact colors.
 @export var global_palette_lut: Texture2D:
 	set(value):
@@ -22,6 +22,21 @@ extends CompositorEffect
 ## 2 = metadata buffer, 3 = metadata depth.
 @export var debug_view := 0
 
+## Master toggle; early-outs (no pixelization) when disabled.
+var pass_enabled := true
+## Integer anchor shift from smooth scroll (Shift = round(remainder)).
+var pixel_shift := Vector2i.ZERO
+## Whether the smooth-scroll shift is applied (pipeline smooth_scroll).
+var smooth_scroll_enabled := false
+## Sharp-bilinear (linear-filtered) vs nearest anchor sampling (bUpscaleAA).
+var upscale_aa := false
+## Pin-mask dilation radius in pixels.
+var pin_dilate := 2.0
+## Reserved stencil ID marking pinned subjects (default 255).
+var pin_stencil_id := 255
+## Tint pinned pixels red (debug).
+var debug_pin_mask := false
+
 var rd: RenderingDevice
 var copy_shader: RID
 var copy_pipeline: RID
@@ -30,6 +45,7 @@ var map_pipeline: RID
 var apply_shader: RID
 var apply_pipeline: RID
 var sampler: RID
+var linear_sampler: RID
 
 var _lut_dirty := false
 var _lut_rd: RID
@@ -48,6 +64,8 @@ func _notification(what: int) -> void:
 	if what == NOTIFICATION_PREDELETE:
 		if sampler.is_valid():
 			rd.free_rid(sampler)
+		if linear_sampler.is_valid():
+			rd.free_rid(linear_sampler)
 		if copy_shader.is_valid():
 			rd.free_rid(copy_shader)
 		if map_shader.is_valid():
@@ -74,6 +92,14 @@ func _initialize_compute() -> void:
 	state.repeat_v = RenderingDevice.SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE
 	state.repeat_w = RenderingDevice.SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE
 	sampler = rd.sampler_create(state)
+	var linear_state := RDSamplerState.new()
+	linear_state.min_filter = RenderingDevice.SAMPLER_FILTER_LINEAR
+	linear_state.mag_filter = RenderingDevice.SAMPLER_FILTER_LINEAR
+	linear_state.mip_filter = RenderingDevice.SAMPLER_FILTER_NEAREST
+	linear_state.repeat_u = RenderingDevice.SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE
+	linear_state.repeat_v = RenderingDevice.SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE
+	linear_state.repeat_w = RenderingDevice.SAMPLER_REPEAT_MODE_CLAMP_TO_EDGE
+	linear_sampler = rd.sampler_create(linear_state)
 
 
 func _make_sampler_uniform(p_binding: int, texture: RID) -> RDUniform:
@@ -81,6 +107,15 @@ func _make_sampler_uniform(p_binding: int, texture: RID) -> RDUniform:
 	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_SAMPLER_WITH_TEXTURE
 	uniform.binding = p_binding
 	uniform.add_id(sampler)
+	uniform.add_id(texture)
+	return uniform
+
+
+func _make_linear_sampler_uniform(p_binding: int, texture: RID) -> RDUniform:
+	var uniform := RDUniform.new()
+	uniform.uniform_type = RenderingDevice.UNIFORM_TYPE_SAMPLER_WITH_TEXTURE
+	uniform.binding = p_binding
+	uniform.add_id(linear_sampler if linear_sampler.is_valid() else sampler)
 	uniform.add_id(texture)
 	return uniform
 
@@ -174,6 +209,7 @@ func _render_callback(p_callback_type: int, p_render_data: RenderData) -> void:
 			_make_sampler_uniform(4, metadata_depth),
 			_make_sampler_uniform(5, metadata),
 			_make_sampler_uniform(6, lut),
+			_make_linear_sampler_uniform(7, scene_color_copy),
 		])
 		if not apply_set.is_valid():
 			if not _warned_invalid_set:
@@ -186,6 +222,8 @@ func _render_callback(p_callback_type: int, p_render_data: RenderData) -> void:
 			var push_constants := PackedFloat32Array([
 				1.0 if _lut_rd.is_valid() else 0.0, 0.0, 0.0, 0.0,
 				float(debug_view), 0.0, 0.0, 0.0,
+				float(pixel_shift.x), float(pixel_shift.y), 1.0 if smooth_scroll_enabled else 0.0, 1.0 if upscale_aa else 0.0,
+				pin_dilate, 1.0 if debug_pin_mask else 0.0, float(pin_stencil_id), 0.0,
 			])
 			compute_list = rd.compute_list_begin()
 			rd.compute_list_bind_compute_pipeline(compute_list, apply_pipeline)

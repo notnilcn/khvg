@@ -25,6 +25,16 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HealthComponent_codefile/HealthComponent_codefile.canvas",
 			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8ec9d58d305609ca",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HitZone_codefile/HitZone_codefile.canvas",
+			"color": "5",
 			"x": 1380,
 			"y": 0,
 			"width": 400,
@@ -36,16 +46,6 @@
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/RemoteHitWitnessComponent_codefile/RemoteHitWitnessComponent_codefile.canvas",
 			"color": "5",
 			"x": 1840,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
-			"id": "8ec9d58d305609ca",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/HitZone_codefile/HitZone_codefile.canvas",
-			"color": "5",
-			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -64,12 +64,12 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-rpc",
-				"edge-_colon_-server/spacetimedb/src/anticheat/reducers-_dot_-rs-_hashtag_-flag_player_hit-_colon_-rpc",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/anticheat_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-server/spacetimedb/src/enemy/reducers-_dot_-rs-_hashtag_-report_enemy_hit-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-rpc"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-server/spacetimedb/src/anticheat/reducers-_dot_-rs-_hashtag_-flag_player_hit-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/anticheat_subfolder-_dot_-canvas-_colon_-rpc"
 			]
 		}
 	}

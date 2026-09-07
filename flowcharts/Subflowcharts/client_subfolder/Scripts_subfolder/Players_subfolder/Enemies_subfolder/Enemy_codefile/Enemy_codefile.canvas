@@ -159,6 +159,16 @@
 			"y": 0,
 			"width": 400,
 			"height": 400
+		},
+		{
+			"id": "5c990e5f3faa6a1e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Enemies_subfolder/Enemy_codefile/world3D_symbol.canvas",
+			"color": "5",
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
 		}
 	],
 	"edges": [],

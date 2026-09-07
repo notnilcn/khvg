@@ -1,5 +1,5 @@
 {
-  "server": "https://khvgames.com/server",
+  "server": "khvg-proxy",
   "module-path": "./spacetimedb",
   "generate": [
     {

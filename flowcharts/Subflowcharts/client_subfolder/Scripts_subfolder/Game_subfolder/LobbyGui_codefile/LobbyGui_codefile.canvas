@@ -21,21 +21,11 @@
 			"height": 400
 		},
 		{
-			"id": "f7bbb452acbecda8",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/CharSlotsPressed_symbol.canvas",
-			"color": "5",
-			"x": 920,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "ad5ba2c354b207b0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui (class)_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/ServerListPressed_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +45,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/SettingsPressed_symbol.canvas",
 			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f92cbe3510555b0a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/ThreeDPressed_symbol.canvas",
+			"color": "5",
 			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "16338e5b9729475e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/TwoDPressed_symbol.canvas",
+			"color": "5",
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400

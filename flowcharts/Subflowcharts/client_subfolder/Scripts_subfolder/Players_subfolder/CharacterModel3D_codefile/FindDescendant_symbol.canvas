@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "e3b58fc3750a7572",
+			"type": "file",
+			"file": "client/Scripts/Players/CharacterModel3D.cs",
+			"subpath": "#FindDescendant",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

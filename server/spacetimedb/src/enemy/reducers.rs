@@ -1,10 +1,12 @@
 use spacetimedb::{ReducerContext, Table};
 use crate::main::global::*;
+use crate::world::aoi::surrounding_chunk_indices;
 use crate::world::hex::{spiral_chunk_index, world_to_chunk};
 use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
 use crate::world::tables::MapConfig;
 use crate::player::methods::*;
-use crate::player::tables::player_position;
+use crate::item::methods::resolve_effective_weapon;
+use crate::player::tables::{logged_in_player, player_chunk, player_position};
 use crate::combat::deal_damage_to_enemy;
 use crate::enemy::def_tables::*;
 use crate::enemy::instance_tables::*;
@@ -20,7 +22,37 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
     let (chunk_hex_radius, hex_outer_radius, chunk_cols, chunk_rows) =
         (cfg.chunk_hex_radius, cfg.hex_outer_radius, cfg.chunk_cols, cfg.chunk_rows);
 
-    for enemy in ctx.db.enemy().iter() {
+    // Simulation set, chunk-gated: only enemies inside SIMULATION_CHUNK_RINGS of a
+    // logged-in player simulate at 10 Hz — no full enemy-table scan. PlayerChunk is the
+    // right source (written only on real chunk crossings, not on every movement tick).
+    // SIMULATION_CHUNK_RINGS covers the largest move/attack_sim_factor range (see
+    // global.rs), so anything outside this set would fail the exact wrap-distance check
+    // below anyway. Distant enemies keep was_simulating=true while unvisited; that is
+    // harmless — re-entry retargets via the stale-target check, and stale step_timers
+    // are clamped by BACKLOG_CAP.
+    let mut active_chunks: Vec<i64> = Vec::new();
+    for player in ctx.db.logged_in_player().iter() {
+        if let Some(chunk) = ctx.db.player_chunk().profile_id().find(&player.profile_id) {
+            active_chunks.extend(surrounding_chunk_indices(
+                chunk.chunk_q, chunk.chunk_r, chunk_cols, chunk_rows, Some(SIMULATION_CHUNK_RINGS),
+            ));
+        }
+    }
+    active_chunks.sort_unstable();
+    active_chunks.dedup();
+    let mut candidates: Vec<Enemy> = Vec::new();
+    for idx in &active_chunks {
+        candidates.extend(ctx.db.enemy().chunk_index().filter(idx));
+    }
+    // Per-tick simulation budget: bounds the admin-spawn flood path (biome spawning caps
+    // live enemies per region; spawn_enemy does not). Lowest enemy_ids win; the overflow
+    // is logged, not silent.
+    if candidates.len() > BEHAVIOR_TICK_ENEMY_BUDGET {
+        log::warn!("tick_enemy_behavior over budget ({} enemies, budget {}); lowest ids simulate this tick", candidates.len(), BEHAVIOR_TICK_ENEMY_BUDGET);
+        candidates.truncate(BEHAVIOR_TICK_ENEMY_BUDGET);
+    }
+
+    for enemy in candidates {
         let mut behavior = match ctx.db.enemy_behavior().behavior_id().find(&enemy.behavior_id) {
             Some(b) => b,
             None => continue,
@@ -99,12 +131,13 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         if has_player_in_simulation_range(ctx, enemy.x, enemy.y, template.attack_sim_factor * CAMERA_VIEW_RADIUS) {
             for ev in tick_phase(ctx, enemy.enemy_id, &template.stun_behavior, &mut phase, phase_def) {
                 let target = resolve_step_target(ev.target, behavior.aggro_target);
-                ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
+                // Damage is stamped here so clients (and report_hit, via the attestation
+                // row) never resolve step defs themselves.
+                let damage = step_damage(ctx, &ev.source_step).unwrap_or(0);
+                let fired = ctx.db.bullet_pattern_event().insert(BulletPatternEvent {
                     event_id: 0, enemy_id: enemy.enemy_id,
                     source_step: ev.source_step.clone(),
-                    // Resolved the way report_hit resolves it (step_damage), so clients can
-                    // compare bullet damage without subscribing the step-def tables.
-                    damage: step_damage(ctx, &ev.source_step).unwrap_or(0),
+                    damage,
                     origin_x: enemy.x, origin_y: enemy.y,
                     origin_offset_x: ev.offset_x, origin_offset_y: ev.offset_y,
                     base_angle_offset: ev.base_angle_offset,
@@ -114,6 +147,9 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
                     speed_acceleration: ev.speed_acceleration,
                     chunk_index: enemy.chunk_index,
                 });
+                // Prove this volley was really fired so report_hit can attest the
+                // victim's claim against it instead of trusting a client-chosen step.
+                attest_bullet_fire(ctx, fired.event_id, enemy.enemy_id, damage, &fired.pattern_type);
             }
         }
 

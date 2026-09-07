@@ -6,6 +6,7 @@ use crate::world::aoi::chunk_indices_covering;
 use crate::world::tables::MapConfig;
 use crate::player::tables::*;
 use crate::item::tables::*;
+use crate::item::methods::ability_behavior;
 
 pub fn require_logged_in(ctx: &ReducerContext) -> Result<(), String> {
     if ctx.db.logged_in_player().player_id().find(ctx.sender()).is_none() {
@@ -42,7 +43,7 @@ pub fn hit_rate_allow(ctx: &ReducerContext, profile_id: u64, outgoing: bool, cap
     let exists = existing.is_some();
     let mut rate = existing
         .unwrap_or(PlayerHitRate { profile_id, window_start: ctx.timestamp, outgoing: 0, incoming: 0 });
-    if crate::enemy::methods::seconds_since(ctx, rate.window_start) >= 1.0 {
+    if crate::main::time::seconds_since(ctx, rate.window_start) >= 1.0 {
         rate.window_start = ctx.timestamp;
         rate.outgoing = 0;
         rate.incoming = 0;
@@ -101,28 +102,6 @@ fn buff_to_modifier(effect: &ConsumableBuffEffect) -> StatModifier {
         ConsumableBuffEffect::Artisan(v) => (StatKind::Artisan, *v),
     };
     StatModifier { stat, amount, mode: StatMode::Flat }
-}
-
-pub fn consumable_behavior(item: &Item) -> Option<&ConsumableBehavior> {
-    item.behaviors.iter().find_map(|b| match b {
-        ItemBehavior::Consumable(c) => Some(c),
-        _ => None,
-    })
-}
-
-pub fn ability_behavior(item: &Item) -> Option<&AbilityBehavior> {
-    item.behaviors.iter().find_map(|b| match b {
-        ItemBehavior::Ability(a) => Some(a),
-        _ => None,
-    })
-}
-
-/// Charge-capable abilities (P4) route through begin/release_ability_charge instead of
-/// activate_ability. One helper so a future charge-capable variant adds a single arm
-/// here; the client mirrors this check (LocalPlayerInventoryComponent.IsChargeCapable).
-pub fn ability_is_charge_capable(ability: &AbilityBehavior) -> bool {
-    matches!(&ability.effect, AbilityEffect::Teleport(p) if p.charge_scaled)
-        || matches!(&ability.effect, AbilityEffect::Spell(p) if p.charge_scaled)
 }
 
 /// The lap-shifted copy of point (x, y) nearest to the reference point — the same 9-shift
@@ -257,18 +236,17 @@ pub fn teleport_player(ctx: &ReducerContext, profile_id: u64, x: f32, y: f32) ->
     Ok(())
 }
 
-pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
-    let data = match ctx.db.player_data().profile_id().find(&profile_id) {
-        Some(d) => d,
-        None => return,
-    };
+fn fold_modifier(flat: &mut [f32; 9], mult: &mut [f32; 9], m: &StatModifier, scale: f32) {
+    let idx = stat_index(m.stat);
+    match m.mode {
+        StatMode::Flat => flat[idx] += m.amount * scale,
+        StatMode::Mult => mult[idx] += m.amount * scale,
+    }
+}
 
-    let mut flat = [0f32; 9];
-    let mut mult = [0f32; 9];
-
-    // Allocated skill points fold into the flat accumulator, so gear mults scale them
-    // like any other flat source — temperaments work exactly like normal stats. (Folded
-    // before fold_modifier is defined — the closure borrows `flat` for the rest of the fn.)
+/// Stage 1: allocated skill points fold into the flat accumulator, so gear mults scale
+/// them like any other flat source — temperaments work exactly like normal stats.
+fn fold_allocation(ctx: &ReducerContext, profile_id: u64, flat: &mut [f32; 9]) {
     if let Some(alloc) = ctx.db.player_stat_allocation().profile_id().find(&profile_id) {
         flat[0] += alloc.strength as f32;
         flat[1] += alloc.wisdom as f32;
@@ -277,20 +255,14 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         flat[4] += alloc.supporter as f32;
         flat[5] += alloc.artisan as f32;
     }
+}
 
-    let mut fold_modifier = |m: &StatModifier, scale: f32| {
-        let idx = stat_index(m.stat);
-        match m.mode {
-            StatMode::Flat => flat[idx] += m.amount * scale,
-            StatMode::Mult => mult[idx] += m.amount * scale,
-        }
-    };
-
+/// Stage 2: equipped items and their enchantments. Only worn equipment and ability heads
+/// contribute — the role check (not slot inference) decides. Ability passives scale by
+/// the position multiplier (first ability stronger); enchantment behaviors never do.
+fn fold_equipment(ctx: &ReducerContext, profile_id: u64, flat: &mut [f32; 9], mult: &mut [f32; 9]) {
     for slot in ctx.db.player_inventory_slot().profile_id().filter(&profile_id) {
         if slot.occupied_by.is_some() { continue; } // span follower cells hold no item
-        // Only worn equipment and ability heads contribute stats — this role check replaces
-        // the old `allowed_slots.len() != 1` "is equipped" inference. Ability passives scale
-        // by the position multiplier (first ability stronger).
         let scale = match slot.role {
             SlotRole::Weapon | SlotRole::Accessory | SlotRole::Armor => 1.0,
             SlotRole::Ability => ability_position_multiplier(slot.slot_index),
@@ -299,22 +271,38 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         let item_id = match &slot.item_id { Some(id) => id, None => continue };
         let item = match ctx.db.item().item_id().find(item_id) { Some(i) => i, None => continue };
         for m in &item.stat_modifiers {
-            fold_modifier(m, scale);
+            fold_modifier(flat, mult, m, scale);
         }
         // Innate enchantments (on the item row) apply like socketed ones (on the slot
         // row) but can't be removed and don't count against max_enchantments.
         for enchantment_id in item.innate_enchantment_ids.iter().chain(slot.enchantment_ids.iter()) {
             if let Some(enchantment) = ctx.db.enchantment().enchantment_id().find(enchantment_id) {
                 for m in &enchantment.stat_modifiers {
-                    fold_modifier(m, scale);
+                    fold_modifier(flat, mult, m, scale);
                 }
             }
         }
     }
+}
 
+/// Stage 3: active consumable buffs apply unscaled on top.
+fn fold_buffs(ctx: &ReducerContext, profile_id: u64, flat: &mut [f32; 9], mult: &mut [f32; 9]) {
     for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id) {
-        fold_modifier(&active.modifier, 1.0);
+        fold_modifier(flat, mult, &active.modifier, 1.0);
     }
+}
+
+pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
+    let data = match ctx.db.player_data().profile_id().find(&profile_id) {
+        Some(d) => d,
+        None => return,
+    };
+
+    let mut flat = [0f32; 9];
+    let mut mult = [0f32; 9];
+    fold_allocation(ctx, profile_id, &mut flat);
+    fold_equipment(ctx, profile_id, &mut flat, &mut mult);
+    fold_buffs(ctx, profile_id, &mut flat, &mut mult);
 
     let resolve = |idx: usize, base: i32| -> i32 {
         ((base as f32 + flat[idx]) * (1.0 + mult[idx])).round() as i32
@@ -345,98 +333,6 @@ pub fn recompute_stats(ctx: &ReducerContext, profile_id: u64) {
         let new_hp = data.hp.min(new_max_hp);
         ctx.db.player_data().profile_id().update(PlayerData { max_hp: new_max_hp, hp: new_hp, defense: new_defense, base_speed: new_base_speed, ..data });
     }
-}
-
-/// Every EnchantmentBehavior from the player's equipped items (Weapon/Accessory/Armor/
-/// Ability heads; backpack/hotbar don't count), innate enchantments before socketed
-/// ones, slots in slot-index order. The order is deterministic and load-bearing:
-/// resolve_effective_weapon's toggle indexing and the client's mirror both depend on it.
-/// Unlike stat modifiers, behaviors are NOT scaled by ability position.
-pub fn equipped_enchantment_behaviors(ctx: &ReducerContext, profile_id: u64) -> Vec<EnchantmentBehavior> {
-    let mut heads: Vec<PlayerInventorySlot> = ctx.db.player_inventory_slot().profile_id().filter(&profile_id)
-        .filter(|s| s.occupied_by.is_none() && s.item_id.is_some())
-        .filter(|s| matches!(s.role, SlotRole::Weapon | SlotRole::Accessory | SlotRole::Armor | SlotRole::Ability))
-        .collect();
-    heads.sort_by_key(|s| s.slot_index);
-    let mut out = Vec::new();
-    for slot in heads {
-        let item = match slot.item_id.as_ref().and_then(|id| ctx.db.item().item_id().find(id)) {
-            Some(i) => i,
-            None => continue,
-        };
-        for enchantment_id in item.innate_enchantment_ids.iter().chain(slot.enchantment_ids.iter()) {
-            if let Some(enchantment) = ctx.db.enchantment().enchantment_id().find(enchantment_id) {
-                out.extend(enchantment.behaviors.iter().cloned());
-            }
-        }
-    }
-    out
-}
-
-/// The toggle options of an item: its own Weapon behaviors first, then WeaponToggle
-/// grants from the player's equipped enchantments.
-pub fn weapon_toggle_options(ctx: &ReducerContext, profile_id: u64, item: &Item) -> Vec<WeaponBehavior> {
-    let mut options: Vec<WeaponBehavior> = item.behaviors.iter().filter_map(|b| match b {
-        ItemBehavior::Weapon(w) => Some(w.clone()),
-        _ => None,
-    }).collect();
-    for b in equipped_enchantment_behaviors(ctx, profile_id) {
-        if let EnchantmentBehavior::WeaponToggle(w) = b {
-            options.push(w);
-        }
-    }
-    options
-}
-
-/// The weapon the player is actually firing: the weapon head slot's item, the
-/// active_toggle-selected pattern, with shot-count/damage enchantment behaviors folded
-/// in. Both compute_player_damage (server) and CombatComponent (client mirror) derive
-/// everything from this composition.
-pub struct EffectiveWeapon {
-    pub behavior: WeaponBehavior,
-    pub flat_bullet_mod: f32,
-    pub true_flat: f32,
-    pub true_pct: f32,
-}
-
-pub fn resolve_effective_weapon(ctx: &ReducerContext, profile_id: u64) -> Option<EffectiveWeapon> {
-    let slot = equipped_head_slots(ctx, profile_id, SlotRole::Weapon).into_iter().next()?;
-    let item = ctx.db.item().item_id().find(slot.item_id.as_ref()?)?;
-    let enchantments = equipped_enchantment_behaviors(ctx, profile_id);
-
-    let mut options: Vec<WeaponBehavior> = item.behaviors.iter().filter_map(|b| match b {
-        ItemBehavior::Weapon(w) => Some(w.clone()),
-        _ => None,
-    }).collect();
-    for b in &enchantments {
-        if let EnchantmentBehavior::WeaponToggle(w) = b {
-            options.push(w.clone());
-        }
-    }
-    if options.is_empty() { return None; }
-    // Clamp instead of erroring: removing a toggle-granting enchantment can leave
-    // active_toggle pointing past the end.
-    let mut behavior = options[(slot.active_toggle as usize).min(options.len() - 1)].clone();
-
-    let mut add_shots: i32 = 0;
-    let mut shot_mult = 0f32;
-    let mut flat_bullet_mod = 0f32;
-    let mut true_flat = 0f32;
-    let mut true_pct = 0f32;
-    for b in &enchantments {
-        match b {
-            EnchantmentBehavior::AddShots(n) => add_shots += n,
-            EnchantmentBehavior::ShotCountMult(m) => shot_mult += m,
-            EnchantmentBehavior::FlatBulletDamageMod(v) => flat_bullet_mod += v,
-            EnchantmentBehavior::TrueDamageFlat(v) => true_flat += v,
-            EnchantmentBehavior::TrueDamagePercent(v) => true_pct += v,
-            _ => {}
-        }
-    }
-    behavior.shot_count = ((behavior.shot_count as i32 + add_shots).max(1) as f32 * (1.0 + shot_mult))
-        .round().max(1.0) as u32;
-
-    Some(EffectiveWeapon { behavior, flat_bullet_mod, true_flat, true_pct })
 }
 
 fn inventory_slot(profile_id: u64, slot_index: u32, role: SlotRole, item_id: Option<String>) -> PlayerInventorySlot {
@@ -550,6 +446,17 @@ pub fn teardown_profile(ctx: &ReducerContext, profile_id: u64) {
     crate::status::methods::purge_profile_zones(ctx, profile_id);
 }
 
+/// Player death cleanup: the single place that tears down a dead player's world rows
+/// and moves them back to the lobby. Combat calls this on a killing blow instead of
+/// orchestrating teardown_profile + the lobby move itself — death is player-domain, and
+/// reducers stay transactional (no deferred death event that could split the kill).
+/// player.player_id, not ctx.sender() — scheduled-reducer drains have no sender.
+pub fn kill_player(ctx: &ReducerContext, player: &LoggedInPlayer) {
+    teardown_profile(ctx, player.profile_id);
+    ctx.db.logged_in_player().player_id().delete(&player.player_id);
+    ctx.db.logged_out_player().insert(LoggedOutPlayer { player_id: player.player_id, username: player.username.clone(), is_admin: player.is_admin });
+}
+
 use crate::combat::heal_player;
 
 pub fn apply_consumable_effect(ctx: &ReducerContext, profile_id: u64, consumable: &ConsumableBehavior) {
@@ -637,12 +544,6 @@ pub fn update_slot(ctx: &ReducerContext, slot: PlayerInventorySlot) {
 }
 
 /// Occupied (item-holding) head cells of a role — span followers are excluded.
-pub fn equipped_head_slots(ctx: &ReducerContext, profile_id: u64, role: SlotRole) -> Vec<PlayerInventorySlot> {
-    ctx.db.player_inventory_slot().profile_id().filter(&profile_id)
-        .filter(|s| s.role == role && s.occupied_by.is_none() && s.item_id.is_some())
-        .collect()
-}
-
 pub fn ability_position_multiplier(slot_index: u32) -> f32 {
     let pos = slot_index.saturating_sub(ABILITY_SLOT_START) as usize;
     ABILITY_POSITION_MULTIPLIERS.get(pos).copied().unwrap_or(1.0)
@@ -759,5 +660,16 @@ pub fn store_item_in_inventory(ctx: &ReducerContext, profile_id: u64, item: &Ite
     update_slot(ctx, PlayerInventorySlot {
         item_id: Some(item.item_id.clone()), enchantment_ids, cooldown_until, charges, ..target.clone()
     });
+    Ok(())
+}
+
+/// The single inventory-transfer entry point for item acquisition: stores the item (with
+/// carried runtime state) and re-resolves stats. Reducers outside the player module
+/// (pickup_drop, take_from_chest) must go through this instead of pairing
+/// store_item_in_inventory + recompute_stats by hand — forgetting the recompute silently
+/// desyncs stats from equipment.
+pub fn transfer_item_to_inventory(ctx: &ReducerContext, profile_id: u64, item: &Item, enchantment_ids: Vec<String>, cooldown_until: Option<spacetimedb::Timestamp>, charges: u32) -> Result<(), String> {
+    store_item_in_inventory(ctx, profile_id, item, enchantment_ids, cooldown_until, charges)?;
+    recompute_stats(ctx, profile_id);
     Ok(())
 }

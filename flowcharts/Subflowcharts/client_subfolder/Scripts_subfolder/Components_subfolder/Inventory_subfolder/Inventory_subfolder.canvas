@@ -11,21 +11,21 @@
 			"height": 400
 		},
 		{
-			"id": "82983c95748a351c",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/InventoryPanel_codefile/InventoryPanel_codefile.canvas",
-			"color": "5",
-			"x": 920,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "5c8c2b31a7c03ba4",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/ChestSlotComponent_codefile/ChestSlotComponent_codefile.canvas",
 			"color": "5",
 			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "82983c95748a351c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/InventoryPanel_codefile/InventoryPanel_codefile.canvas",
+			"color": "5",
+			"x": 920,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -51,21 +51,21 @@
 			"height": 400
 		},
 		{
-			"id": "e4cdd7b5121bd544",
-			"type": "file",
-			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebar_codefile/StatsSidebar_codefile.canvas",
-			"color": "5",
-			"x": 2760,
-			"y": 0,
-			"width": 400,
-			"height": 400
-		},
-		{
 			"id": "46fcedd92e7f1534",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/SlotComponent_codefile/SlotComponent_codefile.canvas",
 			"color": "5",
 			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e4cdd7b5121bd544",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/StatsSidebar_codefile/StatsSidebar_codefile.canvas",
+			"color": "5",
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -91,12 +91,12 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/reducers_codefile/reducers_codefile-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-server/spacetimedb/src/status/reducers-_dot_-rs-_hashtag_-release_ability_charge-_colon_-rpc",
-				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-allocate_stat-_colon_-rpc",
 				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-take_from_chest-_colon_-rpc",
 				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-swap_slots-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-rpc",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chest_subfolder/chest_subfolder-_dot_-canvas-_colon_-rpc",
-				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-drop_item-_colon_-rpc"
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-drop_item-_colon_-rpc",
+				"edge-_colon_-server/spacetimedb/src/player/reducers-_dot_-rs-_hashtag_-allocate_stat-_colon_-rpc"
 			]
 		}
 	}

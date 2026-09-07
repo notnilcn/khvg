@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "492beb96e809ffa4",
+			"type": "file",
+			"file": "client/Scripts/Components/Bullets/BulletSpawnerComponent.cs",
+			"subpath": "#currentTextureId",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

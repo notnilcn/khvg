@@ -10,11 +10,23 @@ extends Node
 ##     macro-pixel (POST_SKY) passes to the main camera,
 ##   * own the shared textures and push them to registered materials.
 ##
+## Designed for ORTHOGRAPHIC cameras; perspective is left as-is and
+## unsupported (snapping and the anchor lattice assume an ortho projection).
 ## Requires the Forward+ or Mobile renderer, MSAA off, scaling_3d_scale 1.0.
 ## Runtime only (not @tool). Only one PixelArtPipeline3D should exist per scene.
 
+## Master toggle. When false, outlines/rays/pixelization are bypassed
+## (the outline buffer is cleared to black, other passes early-out).
+@export var enabled := true:
+	set(value):
+		enabled = value
+		_propagate_enabled()
+
 ## Camera that renders the pixelized scene. Defaults to the current camera.
 @export var camera: Camera3D
+
+## When true, this pipeline's [member camera] is forced current every frame.
+@export var override_view := false
 
 ## Render layer (1-20) that marks pixelized objects. The metadata camera
 ## renders only this layer; your main camera must include it too.
@@ -30,7 +42,61 @@ extends Node
 ## (cheaper, minor artifacts around overlaps).
 @export var export_metadata_depth := true
 
+@export_group("Resolution")
+## Internal pixel-art resolution target, e.g. 960x540 (ortho width =
+## ResX * (1/PPU); see [method get_ortho_width]). Informational:
+## there is no true downsample step, the anchor lattice works at full res.
+@export var internal_resolution := Vector2i(960, 540)
+## Screen pixels per world unit at [member zoom_scale] 1.
+@export var pixels_per_unit := 0.5
+## Zoom multiplier. Scales [member pixels_per_unit].
+@export var zoom_scale := 1.0:
+	set(value):
+		zoom_scale = value
+		_push_stability_params()
+## When true, force the viewport size to [member internal_resolution] on setup.
+## Off by default (never resize silently).
+@export var fix_internal := false
+
+@export_group("Camera")
+## Optional camera snap node. When assigned, [method get_units_per_pixel]
+## reads the measured texel size from it and the per-frame sub-texel
+## remainder for [member smooth_scroll] comes from it.
+@export var camera_snap: PixelArtCameraSnap
+
+@export_group("Pixel Stability")
+## Sub-texel camera remainder is applied as an integer anchor shift
+## (Shift = round(remainder * scale)). Off by default; on, slow pans look
+## smoother but pixels visibly crawl.
+@export var smooth_scroll := false:
+	set(value):
+		smooth_scroll = value
+		_push_stability_params()
+## Sharp-bilinear vs nearest upscale. Off = exact
+## texel fetch; on = linear-filtered anchor sample. Subtle by design: with
+## no true low-res downsample step both sample texel centers.
+@export var upscale_aa := false:
+	set(value):
+		upscale_aa = value
+		_push_stability_params()
+## Run [method apply_recommended_settings] automatically on setup.
+@export var apply_recommended := true
+
 @export_group("Outlines")
+## Master outline toggle (writes black when off).
+@export var enable_outline := true:
+	set(value):
+		enable_outline = value
+		if _outline_pass != null:
+			_outline_pass.pass_enabled = value
+## Per-ID exterior/interior outline colors (256x2 HDR palette).
+## When null, per-object outline_color is used (legacy behavior).
+@export var outline_palette: PixelOutlinePalette:
+	set(value):
+		outline_palette = value
+		if is_inside_tree():
+			_rebuild_outline_palette()
+			_update_material_metadata()
 ## Suppresses outlines where objects intersect.
 @export var depth_test_intersections := true:
 	set(value):
@@ -54,6 +120,49 @@ extends Node
 		normal_edge_detection_sensitivity = value
 		if _outline_pass != null:
 			_outline_pass.normal_edge_detection_sensitivity = value
+## Second-derivative (FarCurve) depth outlines on top of ID edges. Off by
+## default; enable for silhouette outlines where same-ID surfaces fold away.
+@export var outline_depth_curve := false:
+	set(value):
+		outline_depth_curve = value
+		if _outline_pass != null:
+			_outline_pass.depth_curve_enabled = value
+@export var outline_depth_curve_threshold := 0.001:
+	set(value):
+		outline_depth_curve_threshold = value
+		if _outline_pass != null:
+			_outline_pass.depth_curve_threshold = value
+
+@export_group("Subject Pinning")
+## Auto-pin every PixelArtObject3D under [member auto_pin_target]
+## Pinned subjects (stencil 255) ignore the
+## smooth-scroll shift while the background moves.
+@export var auto_pin := false:
+	set(value):
+		auto_pin = value
+		if is_inside_tree():
+			_update_auto_pin()
+@export var auto_pin_target: Node3D:
+	set(value):
+		auto_pin_target = value
+		if is_inside_tree():
+			_update_auto_pin()
+## Reserved outline ID marking pinned subjects (stencil 255).
+## Do not use 255 as a regular outline_id.
+@export_range(0, 255) var pin_stencil_id := 255:
+	set(value):
+		pin_stencil_id = value
+		_push_stability_params()
+## Pin-mask dilation radius in pixels.
+@export_range(0.0, 4.0, 0.5) var pin_dilate := 2.0:
+	set(value):
+		pin_dilate = value
+		_push_stability_params()
+## Tint pinned pixels red (debug).
+@export var debug_pin_mask := false:
+	set(value):
+		debug_pin_mask = value
+		_push_stability_params()
 
 @export_group("Color Grading")
 ## Optional palette LUT (baked by PixelPalette) applied to all pixelized
@@ -93,10 +202,31 @@ extends Node
 	set(value):
 		cloud_threshold = value
 		_push_cloud_params()
-## Stepped banding of the noise before thresholding (matches the toon ramp).
+## Stepped banding of the noise before thresholding.
 @export var cloud_bands := 3.0:
 	set(value):
 		cloud_bands = value
+		_push_cloud_params()
+## Coverage curve tightness: exponent on the shaped
+## coverage. 1.0 = unchanged, higher = narrower cloud cores.
+@export_range(0.1, 4.0, 0.05) var cloud_tightness := 1.0:
+	set(value):
+		cloud_tightness = value
+		_push_cloud_params()
+## Amplitude falloff per FBM octave for the procedural detail.
+@export_range(0.1, 1.0, 0.05) var cloud_octave_drop := 0.5:
+	set(value):
+		cloud_octave_drop = value
+		_push_cloud_params()
+## Erodes the ray-march cloud gaps. 0 = unchanged.
+@export_range(0.0, 0.45, 0.01) var cloud_gap_erosion := 0.0:
+	set(value):
+		cloud_gap_erosion = value
+		_push_cloud_params()
+## Mix procedural FBM detail into the texture noise (0 = texture only).
+@export_range(0.0, 1.0, 0.05) var cloud_detail_strength := 0.0:
+	set(value):
+		cloud_detail_strength = value
 		_push_cloud_params()
 ## Wind direction * speed; scrolls the noise over time.
 @export var cloud_wind := Vector2(0.02, 0.0):
@@ -142,6 +272,9 @@ extends Node
 		debug_view = value
 		if _macro_pixel_pass != null:
 			_macro_pixel_pass.debug_view = value
+## Show the measured pipeline values on a runtime HUD (needs
+## demo_debug_hud.gd in the scene, or prints to stdout when absent).
+@export var debug_overlay := false
 
 var _metadata_mask := 1 << 19
 
@@ -158,13 +291,16 @@ var _metadata_compositor: Compositor
 var _outlines_texture: RID
 var _metadata_color_texture: RID
 var _metadata_depth_texture: RID
+var _outline_palette_texture: RID
 var _outlines_texture_rd := Texture2DRD.new()
+var _outline_palette_rd := Texture2DRD.new()
 var _materials: Array = []
 # Non-pixelized materials that still receive the cloud-shadow uniforms
 # (terrain, water): registered via register_cloud_material.
 var _cloud_materials: Array = []
 
 var _ready_done := false
+var _pin_manager: PixelArtPinning
 
 
 func _enter_tree() -> void:
@@ -196,13 +332,68 @@ func _process(_delta: float) -> void:
 		if camera == null:
 			return
 		_setup()
+	if override_view and camera != null and not camera.current:
+		camera.make_current()
 	# Keep the metadata camera glued to the main camera. When a
 	# PixelArtCameraSnap is active it re-syncs after snapping, so this
 	# per-frame sync only covers the unsnapped case.
 	sync_metadata_camera()
 	_check_depth_export()
+	_update_smooth_shift()
 	if clouds_enabled and cloud_sun != null:
 		_push_cloud_sun_dir(-cloud_sun.global_transform.basis.z)
+	if debug_overlay:
+		_print_debug_overlay()
+
+
+# -----------------------------------------------------------------------------
+# Public helpers
+# -----------------------------------------------------------------------------
+
+## World units per screen pixel at the current zoom. Reads the measured
+## texel size from [member camera_snap] when assigned, otherwise derives it
+## from [member pixels_per_unit] x [member zoom_scale].
+func get_units_per_pixel() -> float:
+	if camera_snap != null and is_instance_valid(camera_snap):
+		return camera_snap.get_units_per_texel()
+	return 1.0 / maxf(pixels_per_unit, 0.00001) / maxf(zoom_scale, 0.00001)
+
+
+## Effective ortho width of the internal pixel-art resolution
+## (ortho width = ResX * (1/PPU) at the current zoom).
+func get_ortho_width() -> float:
+	return float(internal_resolution.x) * get_units_per_pixel()
+
+
+## Sub-texel camera remainder in texel units [0, 1), from [member camera_snap]
+## (zero when no snap node is assigned).
+func get_remainder_texels() -> Vector2:
+	if camera_snap != null and is_instance_valid(camera_snap):
+		return camera_snap.remainder_texels
+	return Vector2.ZERO
+
+
+## Enforces the renderer
+## state this pipeline needs (MSAA off, TAA off, scaling 1.0 BILINEAR).
+## Prints warnings for anything it cannot fix from here.
+func apply_recommended_settings() -> void:
+	var viewport := get_viewport()
+	if viewport == null:
+		return
+	if viewport.msaa_3d != Viewport.MSAA_DISABLED:
+		viewport.msaa_3d = Viewport.MSAA_DISABLED
+		print("3DPixelArt: msaa_3d forced off (recommended).")
+	if viewport.use_taa:
+		viewport.use_taa = false
+		print("3DPixelArt: TAA forced off (recommended).")
+	if viewport.scaling_3d_scale != 1.0:
+		viewport.scaling_3d_scale = 1.0
+		print("3DPixelArt: scaling_3d_scale forced to 1.0 (recommended).")
+	if viewport.scaling_3d_mode != Viewport.SCALING_3D_MODE_BILINEAR:
+		viewport.scaling_3d_mode = Viewport.SCALING_3D_MODE_BILINEAR
+		print("3DPixelArt: scaling_3d_mode forced to BILINEAR (recommended).")
+	if camera != null and camera.projection != Camera3D.PROJECTION_ORTHOGONAL:
+		push_warning("3DPixelArt: pipeline is designed for orthographic cameras; perspective is unsupported.")
 
 
 # If the metadata viewport's compositor never runs (e.g. unsupported in
@@ -225,19 +416,33 @@ func _setup() -> void:
 	_ready_done = true
 
 	var viewport := get_viewport()
-	if viewport.msaa_3d != Viewport.MSAA_DISABLED:
-		push_warning("3DPixelArt: MSAA 3D should be disabled (project setting rendering/anti_aliasing/quality/msaa_3d).")
-	if viewport.scaling_3d_scale != 1.0:
-		push_warning("3DPixelArt: scaling_3d_scale should be 1.0.")
+	if apply_recommended:
+		apply_recommended_settings()
+	else:
+		if viewport.msaa_3d != Viewport.MSAA_DISABLED:
+			push_warning("3DPixelArt: MSAA 3D should be disabled (project setting rendering/anti_aliasing/quality/msaa_3d).")
+		if viewport.scaling_3d_scale != 1.0:
+			push_warning("3DPixelArt: scaling_3d_scale should be 1.0.")
+		if viewport.use_taa:
+			push_warning("3DPixelArt: TAA should be disabled.")
 	if not camera.get_cull_mask_value(metadata_layer):
 		push_warning("3DPixelArt: the main camera's cull mask does not include layer %d; pixelized objects will be invisible." % metadata_layer)
 	if camera.cull_mask == _metadata_mask:
 		push_warning("3DPixelArt: the main camera cull mask equals the metadata mask; the shader cannot tell the cameras apart.")
+	if camera.projection != Camera3D.PROJECTION_ORTHOGONAL:
+		push_warning("3DPixelArt: designed for orthographic cameras; perspective left as-is, unsupported.")
+	if fix_internal:
+		var vp_size := Vector2i(viewport.get_visible_rect().size)
+		if vp_size != internal_resolution:
+			viewport.size = internal_resolution
+			print("3DPixelArt: fix_internal resized viewport %s -> %s." % [vp_size, internal_resolution])
 
 	_create_metadata_viewport()
 	_create_textures(Vector2i(viewport.get_visible_rect().size))
 	_setup_compositors()
 	_update_material_metadata()
+	_update_auto_pin()
+	_push_stability_params()
 
 	if not viewport.size_changed.is_connected(_on_viewport_size_changed):
 		viewport.size_changed.connect(_on_viewport_size_changed)
@@ -252,6 +457,10 @@ func _teardown() -> void:
 	if viewport != null and viewport.size_changed.is_connected(_on_viewport_size_changed):
 		viewport.size_changed.disconnect(_on_viewport_size_changed)
 
+	if _pin_manager != null:
+		_pin_manager.unpin_all()
+		_pin_manager.queue_free()
+		_pin_manager = null
 	if _metadata_camera != null:
 		_metadata_camera.compositor = null
 		_metadata_camera = null
@@ -287,9 +496,21 @@ func _free_textures_rt() -> void:
 		_rd.free_rid(_metadata_color_texture)
 	if _metadata_depth_texture.is_valid():
 		_rd.free_rid(_metadata_depth_texture)
+	if _outline_palette_texture.is_valid():
+		_rd.free_rid(_outline_palette_texture)
 	_outlines_texture = RID()
 	_metadata_color_texture = RID()
 	_metadata_depth_texture = RID()
+	_outline_palette_texture = RID()
+
+
+func _propagate_enabled() -> void:
+	if _outline_pass != null:
+		_outline_pass.pass_enabled = enabled
+	if _macro_pixel_pass != null:
+		_macro_pixel_pass.pass_enabled = enabled
+	if _god_ray_pass != null:
+		_god_ray_pass.rays_enabled = god_rays_enabled and enabled
 
 
 # -----------------------------------------------------------------------------
@@ -357,10 +578,13 @@ func sync_metadata_camera() -> void:
 func _create_textures(size: Vector2i) -> void:
 	size.x = maxi(size.x, 2)
 	size.y = maxi(size.y, 2)
-	RenderingServer.call_on_render_thread(_create_textures_rt.bind(size))
+	var palette_bytes := PackedByteArray()
+	if outline_palette != null:
+		palette_bytes = outline_palette.bake_bytes()
+	RenderingServer.call_on_render_thread(_create_textures_rt.bind(size, palette_bytes))
 
 
-func _create_textures_rt(size: Vector2i) -> void:
+func _create_textures_rt(size: Vector2i, palette_bytes: PackedByteArray) -> void:
 	# Invalidate the shared RIDs BEFORE freeing the old textures: the compositor
 	# passes early-return on invalid shared textures, so this closes the window
 	# where a pass builds a uniform set with a just-freed RID ("Texture (binding:
@@ -368,12 +592,15 @@ func _create_textures_rt(size: Vector2i) -> void:
 	PixelArtSharedBuffers.outlines = RID()
 	PixelArtSharedBuffers.metadata_color = RID()
 	PixelArtSharedBuffers.metadata_depth = RID()
+	PixelArtSharedBuffers.outline_palette = RID()
 	if _outlines_texture.is_valid():
 		_rd.free_rid(_outlines_texture)
 	if _metadata_color_texture.is_valid():
 		_rd.free_rid(_metadata_color_texture)
 	if _metadata_depth_texture.is_valid():
 		_rd.free_rid(_metadata_depth_texture)
+	if _outline_palette_texture.is_valid():
+		_rd.free_rid(_outline_palette_texture)
 
 	var format := RDTextureFormat.new()
 	format.texture_type = RenderingDevice.TEXTURE_TYPE_2D
@@ -397,13 +624,66 @@ func _create_textures_rt(size: Vector2i) -> void:
 	format.format = RenderingDevice.DATA_FORMAT_R32_SFLOAT
 	_metadata_depth_texture = _rd.texture_create(format, RDTextureView.new(), [])
 
+	# 256x2 HDR outline palette (16-bit float RGBA): row 0 =
+	# exterior colors, row 1 = interior colors, alpha = multiply flag.
+	var palette_format := RDTextureFormat.new()
+	palette_format.texture_type = RenderingDevice.TEXTURE_TYPE_2D
+	palette_format.width = 256
+	palette_format.height = 2
+	palette_format.depth = 1
+	palette_format.array_layers = 1
+	palette_format.mipmaps = 1
+	palette_format.samples = RenderingDevice.TEXTURE_SAMPLES_1
+	palette_format.usage_bits = RenderingDevice.TEXTURE_USAGE_SAMPLING_BIT \
+		| RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT
+	palette_format.format = RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT
+	var palette_data := palette_bytes
+	if palette_data.size() != 256 * 2 * 8:
+		palette_data = PixelOutlinePalette.default_bytes()
+	_outline_palette_texture = _rd.texture_create(palette_format, RDTextureView.new(), [palette_data])
+
 	_outlines_texture_rd.texture_rd_rid = _outlines_texture
+	_outline_palette_rd.texture_rd_rid = _outline_palette_texture
 	PixelArtSharedBuffers.outlines = _outlines_texture
 	PixelArtSharedBuffers.outlines_size = size
 	PixelArtSharedBuffers.metadata_color = _metadata_color_texture
 	PixelArtSharedBuffers.metadata_depth = _metadata_depth_texture
 	PixelArtSharedBuffers.metadata_depth_size = size
 	PixelArtSharedBuffers.use_exported_depth = export_metadata_depth
+	PixelArtSharedBuffers.outline_palette = _outline_palette_texture
+
+
+## Rebuilds the shared 256x2 outline-palette texture from [member outline_palette].
+func _rebuild_outline_palette() -> void:
+	if _rd == null or not _ready_done:
+		return
+	var palette_bytes := PackedByteArray()
+	if outline_palette != null:
+		palette_bytes = outline_palette.bake_bytes()
+	RenderingServer.call_on_render_thread(_rebuild_outline_palette_rt.bind(palette_bytes))
+
+
+func _rebuild_outline_palette_rt(palette_bytes: PackedByteArray) -> void:
+	PixelArtSharedBuffers.outline_palette = RID()
+	if _outline_palette_texture.is_valid():
+		_rd.free_rid(_outline_palette_texture)
+	var palette_format := RDTextureFormat.new()
+	palette_format.texture_type = RenderingDevice.TEXTURE_TYPE_2D
+	palette_format.width = 256
+	palette_format.height = 2
+	palette_format.depth = 1
+	palette_format.array_layers = 1
+	palette_format.mipmaps = 1
+	palette_format.samples = RenderingDevice.TEXTURE_SAMPLES_1
+	palette_format.usage_bits = RenderingDevice.TEXTURE_USAGE_SAMPLING_BIT \
+		| RenderingDevice.TEXTURE_USAGE_CAN_COPY_FROM_BIT
+	palette_format.format = RenderingDevice.DATA_FORMAT_R16G16B16A16_SFLOAT
+	var palette_data := palette_bytes
+	if palette_data.size() != 256 * 2 * 8:
+		palette_data = PixelOutlinePalette.default_bytes()
+	_outline_palette_texture = _rd.texture_create(palette_format, RDTextureView.new(), [palette_data])
+	_outline_palette_rd.texture_rd_rid = _outline_palette_texture
+	PixelArtSharedBuffers.outline_palette = _outline_palette_texture
 
 
 ## Debug helper: dumps the shared metadata color/depth textures as PNGs.
@@ -465,15 +745,19 @@ func _setup_compositors() -> void:
 		_compositor = camera.compositor
 
 	_outline_pass = PixelArtOutlinePass.new()
+	_outline_pass.pass_enabled = enabled
 	_outline_pass.depth_test_intersections = depth_test_intersections
 	_outline_pass.depth_test_threshold = depth_test_threshold
 	_outline_pass.use_normal_edge_detection = use_normal_edge_detection
 	_outline_pass.normal_edge_detection_sensitivity = normal_edge_detection_sensitivity
+	_outline_pass.depth_curve_enabled = outline_depth_curve
+	_outline_pass.depth_curve_threshold = outline_depth_curve_threshold
 
 	_god_ray_pass = PixelArtGodRayPass.new()
-	_god_ray_pass.rays_enabled = god_rays_enabled
+	_god_ray_pass.rays_enabled = god_rays_enabled and enabled
 
 	_macro_pixel_pass = PixelArtMacroPixelPass.new()
+	_macro_pixel_pass.pass_enabled = enabled
 	_macro_pixel_pass.global_palette_lut = global_palette_lut
 	_macro_pixel_pass.debug_view = debug_view
 
@@ -494,6 +778,51 @@ func get_god_ray_pass() -> PixelArtGodRayPass:
 
 
 # -----------------------------------------------------------------------------
+# Smooth scroll + upscale (per-frame stability uniforms)
+# -----------------------------------------------------------------------------
+
+func _update_smooth_shift() -> void:
+	if _macro_pixel_pass == null:
+		return
+	var shift := Vector2i.ZERO
+	if smooth_scroll and camera_snap != null and is_instance_valid(camera_snap):
+		# Smooth scroll: Shift = round(remainder * scale); the
+		# remainder is already in texel units, so scale is 1.
+		var remainder := camera_snap.remainder_texels
+		shift = Vector2i(int(roundf(remainder.x)), int(roundf(remainder.y)))
+	_macro_pixel_pass.pixel_shift = shift
+	_macro_pixel_pass.smooth_scroll_enabled = smooth_scroll
+
+
+func _push_stability_params() -> void:
+	if _macro_pixel_pass == null:
+		return
+	_macro_pixel_pass.upscale_aa = upscale_aa
+	_macro_pixel_pass.smooth_scroll_enabled = smooth_scroll
+	_macro_pixel_pass.pin_dilate = pin_dilate
+	_macro_pixel_pass.pin_stencil_id = pin_stencil_id
+	_macro_pixel_pass.debug_pin_mask = debug_pin_mask
+
+
+# -----------------------------------------------------------------------------
+# Subject pinning
+# -----------------------------------------------------------------------------
+
+func _update_auto_pin() -> void:
+	if not _ready_done:
+		return
+	if _pin_manager == null:
+		_pin_manager = PixelArtPinning.new()
+		_pin_manager.pin_outline_id = pin_stencil_id
+		add_child(_pin_manager)
+	_pin_manager.pin_outline_id = pin_stencil_id
+	if auto_pin and auto_pin_target != null:
+		_pin_manager.pin_subtree(auto_pin_target)
+	else:
+		_pin_manager.unpin_all()
+
+
+# -----------------------------------------------------------------------------
 # Material registry
 # -----------------------------------------------------------------------------
 
@@ -504,6 +833,8 @@ func register_material(material: Material) -> void:
 		return
 	_materials.append(material)
 	material.set_shader_parameter("pixel_art_outlines", _outlines_texture_rd)
+	material.set_shader_parameter("pixel_art_outline_palette", _outline_palette_rd)
+	material.set_shader_parameter("use_outline_palette", outline_palette != null)
 	material.set_shader_parameter("metadata_cull_mask", _metadata_mask)
 	_push_cloud_params_to(material)
 
@@ -536,6 +867,8 @@ func _update_material_metadata() -> void:
 			_materials.remove_at(i)
 			continue
 		material.set_shader_parameter("pixel_art_outlines", _outlines_texture_rd)
+		material.set_shader_parameter("pixel_art_outline_palette", _outline_palette_rd)
+		material.set_shader_parameter("use_outline_palette", outline_palette != null)
 		material.set_shader_parameter("metadata_cull_mask", _metadata_mask)
 
 
@@ -562,6 +895,11 @@ func _push_cloud_params() -> void:
 		_god_ray_pass.cloud_noise_scale = cloud_noise_scale
 		_god_ray_pass.cloud_threshold = cloud_threshold
 		_god_ray_pass.cloud_bands = cloud_bands
+		_god_ray_pass.cloud_tightness = cloud_tightness
+		_god_ray_pass.cloud_softness = cloud_shadow_softness
+		_god_ray_pass.cloud_gap_erosion = cloud_gap_erosion
+		_god_ray_pass.cloud_detail_strength = cloud_detail_strength
+		_god_ray_pass.cloud_octave_drop = cloud_octave_drop
 		_god_ray_pass.cloud_wind = cloud_wind
 	if clouds_enabled and cloud_sun != null:
 		_push_cloud_sun_dir(-cloud_sun.global_transform.basis.z)
@@ -574,6 +912,10 @@ func _push_cloud_params_to(material: Material) -> void:
 	material.set_shader_parameter("cloud_noise_scale", cloud_noise_scale)
 	material.set_shader_parameter("cloud_threshold", cloud_threshold)
 	material.set_shader_parameter("cloud_bands", cloud_bands)
+	material.set_shader_parameter("cloud_tightness", cloud_tightness)
+	material.set_shader_parameter("cloud_octave_drop", cloud_octave_drop)
+	material.set_shader_parameter("cloud_gap_erosion", cloud_gap_erosion)
+	material.set_shader_parameter("cloud_detail_strength", cloud_detail_strength)
 	material.set_shader_parameter("cloud_wind", cloud_wind)
 	material.set_shader_parameter("cloud_shadow_strength", cloud_shadow_strength)
 	material.set_shader_parameter("cloud_shadow_banding_enabled", cloud_shadow_banding_enabled)
@@ -596,3 +938,38 @@ func _push_cloud_sun_dir(dir: Vector3) -> void:
 		cloud_material.set_shader_parameter("cloud_sun_dir", dir)
 	if _god_ray_pass != null:
 		_god_ray_pass.cloud_sun_dir = dir
+
+
+# -----------------------------------------------------------------------------
+# Debug overlay
+# -----------------------------------------------------------------------------
+
+func _print_debug_overlay() -> void:
+	# The scene HUD (demo_debug_hud.gd) reads these same values every frame;
+	# this print is the fallback when no HUD is present (once per second).
+	if Engine.get_process_frames() % 60 != 0:
+		return
+	print("3DPixelArt overlay: %s" % get_debug_status_line())
+
+
+## One-line status for the debug HUD / overlay:
+## internal resolution, upscale mode, units-per-texel, sub-texel remainder,
+## grid phase, snap delta and pin/outline state.
+func get_debug_status_line() -> String:
+	var size := Vector2i(get_viewport().get_visible_rect().size)
+	var snap_delta := Vector2.ZERO
+	if camera != null:
+		snap_delta = Vector2(camera.h_offset, camera.v_offset)
+	var remainder := get_remainder_texels()
+	var grid_phase := Vector2(absf(remainder.x - floorf(remainder.x)), absf(remainder.y - floorf(remainder.y)))
+	return "internal %dx%d | view %dx%d | upscale %s | units/px %.5f | orthoW %.3f | remainder (%.3f, %.3f) | grid-phase (%.3f, %.3f) | snap-delta (%.4f, %.4f) | pin %d dil %.1f | outlines %s" % [
+		internal_resolution.x, internal_resolution.y,
+		size.x, size.y,
+		"sharp-bilinear" if upscale_aa else "nearest",
+		get_units_per_pixel(), get_ortho_width(),
+		remainder.x, remainder.y,
+		grid_phase.x, grid_phase.y,
+		snap_delta.x, snap_delta.y,
+		pin_stencil_id, pin_dilate,
+		"on" if (enable_outline and enabled) else "off",
+	]
