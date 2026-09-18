@@ -9,6 +9,7 @@ use spacetimedb::{reducer, ReducerContext, Table};
 use crate::main::global::*;
 use crate::main::time::seconds_since;
 use crate::player::methods::require_in_world;
+use crate::player::tables::player_position;
 use crate::item::methods::ability_is_charge_capable;
 use crate::player::reducers::{resolve_ability_slot, apply_ability_effect, spend_ability};
 use super::methods::apply_status_effect;
@@ -77,4 +78,80 @@ fn remove_self_slow(ctx: &ReducerContext, profile_id: u64) {
             ctx.db.active_status_effect().effect_id().delete(&row.effect_id);
         }
     }
+}
+
+// ===== Progressive / channeled actions (Phase 1 — BitCraft progressive_action_state
+// + craft.rs start/commit split, translated) =====
+
+/// Begin a channeled action: validates range (AOI), enforces max-1-active-per-player
+/// + max-N-per-target slot limits (mirror BitCraft validate_slots), stamps the lock,
+/// and applies a SelfSlow (reusing the charge pattern) while channeling.
+#[reducer]
+pub fn begin_channeled_action(
+    ctx: &ReducerContext,
+    kind: ChanneledActionKind,
+    target_id: u64,
+    target_x: f32,
+    target_y: f32,
+    required: f32,
+    is_public: bool,
+) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let profile_id = player.profile_id;
+    let existing: Vec<_> = ctx.db.channeled_action().profile_id().filter(&profile_id).collect();
+    if existing.len() >= MAX_ACTIVE_CHANNELED_PER_PLAYER {
+        return Err("Already channeling an action.".to_string());
+    }
+    let on_target = ctx.db.channeled_action().by_channel_target().filter(&target_id).count();
+    if on_target >= MAX_CHANNELED_PER_TARGET {
+        return Err("Too many players channeling that target.".to_string());
+    }
+    // Range check against the server position row (players_near_point-style AOI leash).
+    let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+    let dx = pos.x - target_x;
+    let dy = pos.y - target_y;
+    if dx * dx + dy * dy > INTERACT_RADIUS * INTERACT_RADIUS * 4.0 {
+        return Err("Target is too far away.".to_string());
+    }
+    let required = if required <= 0.0 { CHANNELED_DEFAULT_REQUIRED } else { required };
+    ctx.db.channeled_action().insert(ChanneledAction {
+        action_id: 0, profile_id, kind, target_id, target_x, target_y,
+        progress: 0.0, required,
+        lock_expires_at: ctx.timestamp + std::time::Duration::from_secs_f32(required + 10.0),
+        is_public,
+    });
+    let params = StatusParams { slow_factor: CHARGE_SELF_SLOW_FACTOR, ..StatusParams::none() };
+    apply_status_effect(ctx, profile_id, StatusEffectKind::SelfSlow, params, required + 10.0, 0, profile_id);
+    Ok(())
+}
+
+/// Continue is implicit (the 1 Hz sweep advances progress); this reducer lets the
+/// client explicitly ping progress / keep-alive. Completion dispatches automatically.
+#[reducer]
+pub fn continue_channeled_action(ctx: &ReducerContext, action_id: u64) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let action = ctx.db.channeled_action().action_id().find(&action_id).ok_or("Channel not found.")?;
+    if action.profile_id != player.profile_id {
+        return Err("Not your channel.".to_string());
+    }
+    if ctx.timestamp >= action.lock_expires_at {
+        ctx.db.channeled_action().action_id().delete(&action_id);
+        remove_self_slow(ctx, player.profile_id);
+        return Err("Channel expired.".to_string());
+    }
+    Ok(())
+}
+
+/// Cancel a channeled action early: releases the lock + removes the SelfSlow, with no
+/// effect dispatch and no cooldown spent (mirror charge cancel semantics).
+#[reducer]
+pub fn cancel_channeled_action(ctx: &ReducerContext, action_id: u64) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    let action = ctx.db.channeled_action().action_id().find(&action_id).ok_or("Channel not found.")?;
+    if action.profile_id != player.profile_id {
+        return Err("Not your channel.".to_string());
+    }
+    ctx.db.channeled_action().action_id().delete(&action_id);
+    remove_self_slow(ctx, player.profile_id);
+    Ok(())
 }

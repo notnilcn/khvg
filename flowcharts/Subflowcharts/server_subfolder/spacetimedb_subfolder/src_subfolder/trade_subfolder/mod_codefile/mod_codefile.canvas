@@ -1,0 +1,346 @@
+{
+	"nodes": [
+		{
+			"id": "51f8d2303d0b90e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/active_session_for_symbol.canvas",
+			"color": "5",
+			"x": 130,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f4dafd13d0d58044",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/confirm_swap_symbol.canvas",
+			"color": "5",
+			"x": 2930,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8f6a8049b3c4add6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/in_combat_symbol.canvas",
+			"color": "5",
+			"x": 590,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "17e02f880ab78140",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/local_trade_session_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3113215690492e00",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/offer_mut_symbol.canvas",
+			"color": "5",
+			"x": 1980,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "73cd4eb99de2063c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/parties_in_range_symbol.canvas",
+			"color": "5",
+			"x": 2450,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cad6de89032bfed6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/tick_trade_sessions_symbol.canvas",
+			"color": "5",
+			"x": 1850,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1f817e62ea49ed90",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/trade_accept_symbol.canvas",
+			"color": "5",
+			"x": 2940,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8558e83d83921bf4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/trade_add_item_symbol.canvas",
+			"color": "5",
+			"x": 1070,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "89fb5ad6d499b15c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/trade_decline_symbol.canvas",
+			"color": "5",
+			"x": 1530,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1cb2e0852b270e4c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/trade_initiate_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bc9395eafb58aedc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/trade_remove_item_symbol.canvas",
+			"color": "5",
+			"x": 1990,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "022be1b525bbc1c2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/TradePocket_symbol.canvas",
+			"color": "5",
+			"x": 3400,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "93f4bc27cbfd7498",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/TradeSession_symbol.canvas",
+			"color": "5",
+			"x": 1520,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "449e680922391fae",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/TradeStatus_symbol.canvas",
+			"color": "5",
+			"x": 3860,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "f21332466ce56438",
+			"fromNode": "51f8d2303d0b90e0",
+			"fromSide": "bottom",
+			"toNode": "93f4bc27cbfd7498",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "71799b5df541dfa8",
+			"fromNode": "f4dafd13d0d58044",
+			"fromSide": "bottom",
+			"toNode": "93f4bc27cbfd7498",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "0ac3f47064946360",
+			"fromNode": "cad6de89032bfed6",
+			"fromSide": "bottom",
+			"toNode": "73cd4eb99de2063c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "79ee2bb2da0aedbc",
+			"fromNode": "cad6de89032bfed6",
+			"fromSide": "bottom",
+			"toNode": "8f6a8049b3c4add6",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "6ea9a5c97ddd6fe4",
+			"fromNode": "cad6de89032bfed6",
+			"fromSide": "bottom",
+			"toNode": "93f4bc27cbfd7498",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "8d52b017c88e0b22",
+			"fromNode": "1f817e62ea49ed90",
+			"fromSide": "bottom",
+			"toNode": "73cd4eb99de2063c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "c437342c2e523a38",
+			"fromNode": "1f817e62ea49ed90",
+			"fromSide": "bottom",
+			"toNode": "f4dafd13d0d58044",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "ae24c6e1a4bdd61e",
+			"fromNode": "1f817e62ea49ed90",
+			"fromSide": "bottom",
+			"toNode": "93f4bc27cbfd7498",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "0d2674b5216a034a",
+			"fromNode": "8558e83d83921bf4",
+			"fromSide": "bottom",
+			"toNode": "3113215690492e00",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "afa33fd7a7a8321a",
+			"fromNode": "8558e83d83921bf4",
+			"fromSide": "bottom",
+			"toNode": "93f4bc27cbfd7498",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "4a90974ec886c5f0",
+			"fromNode": "89fb5ad6d499b15c",
+			"fromSide": "bottom",
+			"toNode": "93f4bc27cbfd7498",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "eee2ef1e26903cb4",
+			"fromNode": "1cb2e0852b270e4c",
+			"fromSide": "bottom",
+			"toNode": "51f8d2303d0b90e0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "8b5a6949f495da1a",
+			"fromNode": "1cb2e0852b270e4c",
+			"fromSide": "bottom",
+			"toNode": "73cd4eb99de2063c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "83c4c9eb6ab33682",
+			"fromNode": "1cb2e0852b270e4c",
+			"fromSide": "bottom",
+			"toNode": "8f6a8049b3c4add6",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "013a40d695f0ffe4",
+			"fromNode": "1cb2e0852b270e4c",
+			"fromSide": "bottom",
+			"toNode": "93f4bc27cbfd7498",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "9dd97a3fea51ac8a",
+			"fromNode": "bc9395eafb58aedc",
+			"fromSide": "bottom",
+			"toNode": "3113215690492e00",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "93e81579b1088c16",
+			"fromNode": "bc9395eafb58aedc",
+			"fromSide": "bottom",
+			"toNode": "93f4bc27cbfd7498",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/trade/mod-_dot_-rs-_hashtag_-TradeSession-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/trade_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-transfer_item_to_inventory",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerInventorySlot",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-get_slot",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-SlotRole",
+				"edge-_colon_-server/spacetimedb/src/item/tables-_dot_-rs-_hashtag_-Item-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/trade/mod-_dot_-rs-_hashtag_-TradeSession-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/item_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/trade_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedInPlayer-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/trade/mod-_dot_-rs-_hashtag_-parties_in_range",
+				"edge-_colon_-server/spacetimedb/src/trade/mod-_dot_-rs-_hashtag_-in_combat",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/trade_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/trade/mod-_dot_-rs-_hashtag_-confirm_swap",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
+				"edge-_colon_-server/spacetimedb/src/trade/mod-_dot_-rs-_hashtag_-offer_mut",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-is_admin",
+				"edge-_colon_-server/spacetimedb/src/trade/mod-_dot_-rs-_hashtag_-active_session_for"
+			]
+		}
+	}
+}

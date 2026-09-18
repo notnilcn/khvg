@@ -1,0 +1,10 @@
+{
+  "allowedOutgoingSides": [
+    "left",
+    "right"
+  ],
+  "allowedIncomingSides": [
+    "top",
+    "bottom"
+  ]
+}

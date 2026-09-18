@@ -212,6 +212,18 @@ func _on_setting_changed(p_setting_name: String, p_value: Variant) -> void:
 func _on_terrain_setting_changed(p_setting_name: String, p_value: Variant) -> void:
 	var terrain := plugin.current_terrain_node
 	match p_setting_name:
+		"grid_mode":
+			if p_value is int:
+				terrain.grid_mode = p_value
+		"dimensions":
+			if p_value is Vector3i:
+				terrain.dimensions = p_value
+		"cell_size":
+			if p_value is Vector2:
+				terrain.cell_size = p_value
+		"noise_hmap":
+			if p_value is Noise or p_value == null:
+				terrain.noise_hmap = p_value
 		"hex_size":
 			if p_value is float or p_value is int:
 				terrain.hex_size = p_value

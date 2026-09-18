@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 1510,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
 			"color": "5",
-			"x": 1150,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +35,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Bullets_subfolder/Bullets_subfolder.canvas",
 			"color": "5",
-			"x": 2190,
+			"x": 1970,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -45,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
 			"color": "5",
-			"x": 810,
+			"x": 230,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -55,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
 			"color": "5",
-			"x": 1610,
+			"x": 1970,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Weapon_subfolder/Weapon_subfolder.canvas",
 			"color": "5",
-			"x": 1270,
+			"x": 1050,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -75,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/Game_subfolder.canvas",
 			"color": "5",
-			"x": 2070,
+			"x": 2430,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/anticheat_subfolder.canvas",
 			"color": "5",
-			"x": 500,
+			"x": 1160,
 			"y": 1500,
 			"width": 400,
 			"height": 400
@@ -95,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
 			"color": "5",
-			"x": 1730,
+			"x": 1510,
 			"y": 500,
 			"width": 400,
 			"height": 400
@@ -105,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/enemy_subfolder.canvas",
 			"color": "5",
-			"x": 1150,
+			"x": 700,
 			"y": 1500,
 			"width": 400,
 			"height": 400
@@ -115,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
 			"color": "5",
-			"x": 1500,
+			"x": 1380,
 			"y": 1000,
 			"width": 400,
 			"height": 400
@@ -245,14 +245,6 @@
 			"toEnd": "arrow"
 		},
 		{
-			"id": "303509cf55cbffc2",
-			"fromNode": "23ad101c7f63b520",
-			"fromSide": "bottom",
-			"toNode": "92a8020e4de518b8",
-			"toSide": "top",
-			"toEnd": "arrow"
-		},
-		{
 			"id": "d3eea1ebe5bff134",
 			"fromNode": "23ad101c7f63b520",
 			"fromSide": "bottom",
@@ -260,6 +252,14 @@
 			"toSide": "top",
 			"toEnd": "arrow",
 			"label": "write"
+		},
+		{
+			"id": "303509cf55cbffc2",
+			"fromNode": "23ad101c7f63b520",
+			"fromSide": "bottom",
+			"toNode": "92a8020e4de518b8",
+			"toSide": "top",
+			"toEnd": "arrow"
 		}
 	]
 }

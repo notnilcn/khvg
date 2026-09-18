@@ -1,0 +1,740 @@
+/* Track Changes — styles
+ *
+ * Conventions:
+ *  - `tc-` prefix on every class to avoid clashes.
+ *  - Colors use Obsidian CSS variables where possible so themes drive them.
+ *  - Inline rendering must be visually quiet enough to read prose around it.
+ */
+
+/* ---------- Author hue palette ----------
+ *
+ * Per-author tinting. The hue index is set by JS via data-author-hue="0..7"
+ * (see src/authors.ts) on chips, panel messages/cards, reading-mode comment
+ * icons, AND every inline mark (addition/deletion/substitution/highlight) in
+ * both live-preview and source mode. Saturation/lightness are fixed so the
+ * result is legible across themes.
+ *
+ * Two signals are layered without colliding:
+ *   - the OPERATION (add/del/highlight) is communicated by the green/red/yellow
+ *     background — those stay exactly as before;
+ *   - the AUTHOR is communicated by a hue-colored border (left border on block
+ *     elements, bottom-border "underline" on inline marks), so the background
+ *     stays free for the operation color.
+ *
+ * One rule per index sets `--tc-hue`; the selectors below consume it. */
+[data-author-hue="0"] { --tc-hue: 210; } /* blue */
+[data-author-hue="1"] { --tc-hue: 280; } /* purple */
+[data-author-hue="2"] { --tc-hue: 150; } /* green */
+[data-author-hue="3"] { --tc-hue: 30; }  /* orange */
+[data-author-hue="4"] { --tc-hue: 340; } /* pink */
+[data-author-hue="5"] { --tc-hue: 190; } /* teal */
+[data-author-hue="6"] { --tc-hue: 50; }  /* yellow */
+[data-author-hue="7"] { --tc-hue: 0; }   /* red — Claude */
+
+/* Chip: hue drives its border + faint background fill. */
+.tc-chip[data-author-hue] {
+  border-color: hsla(var(--tc-hue), 70%, 55%, 0.4);
+  background: hsla(var(--tc-hue), 70%, 55%, 0.08);
+}
+
+/* Panel message / suggestion card / diff block: hue as a left border. The
+ * operation/semantic background is set per-class and is left untouched. */
+.tc-message[data-author-hue],
+.tc-card[data-author-hue],
+.tc-diff[data-author-hue] {
+  border-left: 3px solid hsla(var(--tc-hue), 70%, 55%, 0.6);
+}
+
+/* Reading-mode comment icon: hue tints the glyph itself. */
+.tc-rm-comment[data-author-hue] {
+  color: hsla(var(--tc-hue), 70%, 50%, 0.9);
+  background: transparent;
+  border: none;
+}
+
+/* Inline marks (live-preview + source mode): hue as a bottom-border
+ * "underline". `border-bottom` doesn't conflict with line-through, and leaves
+ * the operation background (green/red/yellow) doing its own job. */
+.tc-addition[data-author-hue],
+.tc-deletion[data-author-hue],
+.tc-highlight[data-author-hue],
+.tc-sub-old[data-author-hue],
+.tc-sub-new[data-author-hue],
+.tc-sub-raw-old[data-author-hue],
+.tc-sub-raw-new[data-author-hue],
+.tc-raw-comment[data-author-hue] {
+  border-bottom: 2px solid hsla(var(--tc-hue), 70%, 50%, 0.55);
+}
+
+/* ---------- Inline (editor / live preview) ---------- */
+
+.tc-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 6px;
+  margin: 0 2px;
+  border-radius: 10px;
+  font-size: 0.72em;
+  line-height: 1.5;
+  cursor: pointer;
+  user-select: none;
+  /* inline-flex doesn't compute a clean text baseline; "middle" sits on the
+   * x-height which lines up with surrounding prose better than "baseline". */
+  vertical-align: middle;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-secondary);
+  color: var(--text-normal);
+  white-space: nowrap;
+}
+.tc-chip:hover {
+  background: var(--background-modifier-hover);
+}
+@keyframes tc-chip-blink {
+  0%, 33%, 66%, 100% {
+    box-shadow: 0 0 0 0 var(--interactive-accent);
+    filter: brightness(1);
+  }
+  16%, 50%, 83% {
+    box-shadow: 0 0 0 2px var(--interactive-accent);
+    filter: brightness(1.25);
+  }
+}
+.tc-chip-flash {
+  animation: tc-chip-blink 1.2s ease-in-out;
+}
+.tc-chip-you {
+  border-color: rgba(0, 122, 204, 0.4);
+  background: rgba(0, 122, 204, 0.08);
+}
+.tc-chip-named {
+  /* hue/background come from [data-author-hue="N"] selectors above */
+}
+.tc-chip-icon {
+  font-size: 0.7em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
+}
+.tc-chip-num {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.tc-chip-badge {
+  background: var(--background-modifier-border);
+  color: var(--text-muted);
+  border-radius: 8px;
+  font-size: 0.85em;
+  padding: 0 5px;
+  margin-left: 2px;
+}
+
+/* Small chip: same shape, dialed down. */
+.tc-chip.tc-chip-sm {
+  gap: 2px;
+  padding: 0 4px;
+  border-radius: 8px;
+  font-size: 0.62em;
+}
+.tc-chip.tc-chip-sm .tc-chip-badge {
+  padding: 0 3px;
+}
+
+/* Footnote chip: a bare superscript number that reads like a `[^1]` reference —
+ * no border, no background, no author label. `vertical-align: super` with a
+ * reduced font-size keeps the line height of the paragraph untouched, which is
+ * the whole point: it must not interrupt reading. */
+.tc-chip.tc-chip-note {
+  display: inline;
+  padding: 0;
+  margin: 0 0 0 1px;
+  border: none;
+  background: none;
+  border-radius: 0;
+  font-size: 0.7em;
+  line-height: 0;
+  vertical-align: super;
+}
+.tc-chip.tc-chip-note:hover {
+  background: none;
+  text-decoration: underline;
+}
+.tc-chip.tc-chip-note .tc-chip-num {
+  color: var(--text-accent);
+  font-weight: 500;
+}
+/* Named-author footnote numbers still carry the author hue, so who commented
+ * stays legible at a glance without spending any horizontal space on a label. */
+.tc-chip.tc-chip-note[data-author-hue] {
+  border: none;
+  background: none;
+}
+.tc-chip.tc-chip-note[data-author-hue] .tc-chip-num {
+  color: hsl(var(--tc-hue), 60%, 45%);
+}
+
+.tc-addition {
+  background: rgba(56, 161, 105, 0.12);
+}
+.tc-deletion {
+  background: rgba(220, 38, 38, 0.08);
+  text-decoration: line-through;
+}
+.tc-highlight {
+  background: rgba(252, 211, 77, 0.30);
+}
+/* AI-added text: a two-colour "sunset" gradient on the glyphs (orange → violet).
+   A solid fallback colour keeps the text visible if background-clip is
+   unsupported; the @supports rule only goes transparent where the clip works.
+   Swap the two stops below to retune the colours. */
+.tc-aitext {
+  color: var(--text-normal);
+  background-image: linear-gradient(90deg, #f97316, #a855f7);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .tc-aitext {
+    -webkit-text-fill-color: transparent;
+  }
+}
+.tc-sub-old {
+  text-decoration: line-through;
+  background: rgba(220, 38, 38, 0.06);
+}
+.tc-sub-new {
+  background: rgba(56, 161, 105, 0.12);
+}
+.tc-sub-raw-old {
+  background: rgba(220, 38, 38, 0.06);
+  text-decoration: line-through;
+}
+.tc-sub-raw-new {
+  background: rgba(56, 161, 105, 0.12);
+}
+.tc-raw-comment {
+  border-radius: 2px;
+}
+.tc-raw-comment-named {
+  background: hsla(280, 70%, 55%, 0.12); /* purple — AI */
+}
+.tc-raw-comment-you {
+  background: rgba(0, 122, 204, 0.10); /* blue — matches tc-chip-you */
+}
+.tc-sub-arrow {
+  color: var(--text-muted);
+  font-size: 0.9em;
+  cursor: pointer;
+}
+/* Obsidian parses `{~~old~>new~~}` as `~~strikethrough~~`, which would draw
+ * a line across our green `new` half. Making the halves inline-block turns
+ * them into atomic inline-level boxes — per the CSS Text Decoration spec,
+ * an ancestor's text-decoration does not propagate into atomic inline-level
+ * descendants, so the parent .cm-strikethrough's line stops at our box
+ * boundary. Scoped to our marks only; real ~~strike~~ elsewhere is
+ * unaffected. */
+.tc-sub-old,
+.tc-sub-new,
+.tc-sub-raw-old,
+.tc-sub-raw-new {
+  display: inline-block;
+}
+.tc-sub-old-changed {
+  display: inline;
+  background: rgba(220, 38, 38, 0.28);
+}
+.tc-sub-new-changed {
+  display: inline;
+  background: rgba(56, 161, 105, 0.30);
+}
+
+/* ---------- Display modes ----------
+ *
+ * `markupDisplayMode` appends a modifier class to every inline mark (see
+ * src/display.ts modeClass); the decoration ranges are identical in all three
+ * modes, only the treatment changes. Every rule below is a two-class selector,
+ * so it outranks the single-class base rules above without needing !important.
+ *
+ *  .tc-min   — minimal: no operation fills. Marks keep a thin author-hued
+ *              underline so a change is still noticeable in peripheral vision,
+ *              and deletions keep their strike so removed text can't be misread
+ *              as final. Comment threads render as footnote numbers (forced by
+ *              effectiveMarkerSize, not by CSS).
+ *  .tc-quiet — hidden: no fill, no underline, no tint at all. Deletions and the
+ *              old half of a substitution keep a faint strike for the same
+ *              reason; nothing else marks the text. Comment threads render
+ *              nothing (handled structurally in decorations.ts).
+ */
+.tc-addition.tc-min,
+.tc-sub-new.tc-min,
+.tc-sub-raw-new.tc-min,
+.tc-addition.tc-quiet,
+.tc-deletion.tc-quiet,
+.tc-highlight.tc-quiet,
+.tc-sub-old.tc-quiet,
+.tc-sub-new.tc-quiet,
+.tc-sub-raw-old.tc-quiet,
+.tc-sub-raw-new.tc-quiet,
+.tc-sub-old-changed.tc-quiet,
+.tc-sub-new-changed.tc-quiet,
+.tc-raw-comment.tc-quiet {
+  background: none;
+}
+/* Minimal keeps the change legible without a fill: a faint tint on removals
+ * only, since a strike alone reads as ordinary `~~text~~`. */
+.tc-deletion.tc-min,
+.tc-sub-old.tc-min,
+.tc-sub-raw-old.tc-min {
+  background: rgba(220, 38, 38, 0.05);
+}
+/* Author underline: thinner in minimal, gone in hidden. */
+.tc-addition.tc-min[data-author-hue],
+.tc-deletion.tc-min[data-author-hue],
+.tc-highlight.tc-min[data-author-hue],
+.tc-sub-old.tc-min[data-author-hue],
+.tc-sub-new.tc-min[data-author-hue],
+.tc-sub-raw-old.tc-min[data-author-hue],
+.tc-sub-raw-new.tc-min[data-author-hue],
+.tc-raw-comment.tc-min[data-author-hue] {
+  border-bottom: 1px solid hsla(var(--tc-hue), 70%, 50%, 0.35);
+}
+.tc-addition.tc-quiet[data-author-hue],
+.tc-deletion.tc-quiet[data-author-hue],
+.tc-highlight.tc-quiet[data-author-hue],
+.tc-sub-old.tc-quiet[data-author-hue],
+.tc-sub-new.tc-quiet[data-author-hue],
+.tc-sub-raw-old.tc-quiet[data-author-hue],
+.tc-sub-raw-new.tc-quiet[data-author-hue],
+.tc-raw-comment.tc-quiet[data-author-hue] {
+  border-bottom: none;
+}
+/* Removed text keeps a strike in both modes — it is the one signal that can't
+ * be dropped without changing what the sentence appears to say. */
+.tc-deletion.tc-quiet,
+.tc-sub-old.tc-quiet,
+.tc-sub-raw-old.tc-quiet {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+/* AI-added text: the rainbow gradient is the loudest thing on the page, so both
+ * quiet modes drop it back to normal prose colour. */
+.tc-aitext.tc-min,
+.tc-aitext.tc-quiet {
+  background-image: none;
+  color: var(--text-normal);
+  -webkit-text-fill-color: currentColor;
+}
+.tc-aitext.tc-min {
+  border-bottom: 1px solid rgba(168, 85, 247, 0.35);
+}
+
+/* `{==…==}` contains literal `==`, so Obsidian's own Live-Preview highlighter
+ * also paints a band of its own. That band is NOT a usable stand-in for ours:
+ * Obsidian's `==…==` never crosses a blank line, so on a highlight that spans
+ * paragraphs it covers only the first one — the exact bug where the opening
+ * lines looked highlighted and the rest looked like plain prose. Where it does
+ * land it just double-paints over our mark, darkening part of the same span.
+ *
+ * So: our `.tc-highlight` is the only paint in every mode, and the native band
+ * is switched off wherever it wraps one of our marks. `:has()` scopes this to
+ * our marks, leaving a real `==highlight==` elsewhere in the document alone.
+ * The selector mirrors Obsidian's own `.cm-s-obsidian span.cm-highlight`
+ * (0,2,1) and adds `:has()` on top, so it outranks it without !important. */
+.cm-s-obsidian span.cm-highlight:has(.tc-highlight) {
+  background-color: transparent;
+}
+/* Minimal keeps highlights readable with a fill faint enough not to shout. It
+ * has to be our own paint: see the .cm-highlight note below for why borrowing
+ * Obsidian's band doesn't work. */
+.tc-highlight.tc-min {
+  background: rgba(252, 211, 77, 0.12);
+}
+
+/* The substitution arrow stays clickable but stops competing with the prose. */
+.tc-sub-arrow.tc-min,
+.tc-sub-arrow.tc-quiet {
+  opacity: 0.5;
+}
+
+/* ---------- Right panel ---------- */
+
+.tc-panel {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tc-empty {
+  color: var(--text-muted);
+  font-style: italic;
+}
+.tc-header {
+  border-bottom: 1px solid var(--background-modifier-border);
+  padding-bottom: 8px;
+}
+.tc-header-title {
+  font-weight: 600;
+  font-size: 1.05em;
+}
+.tc-header-counts {
+  color: var(--text-muted);
+  font-size: 0.85em;
+}
+
+.tc-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tc-card {
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 10px;
+  background: var(--background-primary);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.tc-card:hover {
+  border-color: var(--interactive-accent);
+}
+.tc-card-flash {
+  box-shadow: 0 0 0 2px var(--interactive-accent);
+}
+.tc-line-ref {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+/* Author/date meta row on suggestion + highlight cards. Hidden by the panel
+ * (the row isn't emitted) when there is neither a resolved author nor a date. */
+.tc-card-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 0.78em;
+  color: var(--text-muted);
+}
+.tc-meta-author {
+  font-weight: 600;
+}
+.tc-meta-date {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+}
+.tc-thread-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tc-thread-header .tc-line-ref {
+  flex: 1;
+}
+.tc-thread-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.tc-thread-toggle:hover {
+  color: var(--text-normal);
+}
+.tc-thread-reply-count {
+  font-size: 0.75em;
+  color: var(--text-muted);
+  background: var(--background-modifier-border);
+  border-radius: 8px;
+  padding: 1px 6px;
+  font-variant-numeric: tabular-nums;
+}
+.tc-thread-preview,
+.tc-card-preview {
+  display: none;
+  font-size: 0.9em;
+  color: var(--text-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tc-card-collapsed {
+  gap: 4px;
+}
+.tc-card-collapsed .tc-thread-preview,
+.tc-card-collapsed .tc-card-preview {
+  display: block;
+}
+.tc-card-collapsed .tc-messages,
+.tc-card-collapsed .tc-reply,
+.tc-card-collapsed .tc-card-body {
+  display: none;
+}
+.tc-card-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tc-card-header .tc-line-ref {
+  flex: 1;
+}
+.tc-card-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.tc-card-toggle:hover {
+  color: var(--text-normal);
+}
+.tc-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tc-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tc-message {
+  border-radius: 6px;
+  padding: 6px 8px;
+  background: var(--background-secondary);
+}
+.tc-message-you {
+  background: rgba(0, 122, 204, 0.08);
+  border-left: 3px solid rgba(0, 122, 204, 0.5);
+}
+.tc-message-named {
+  /* hue/background come from [data-author-hue="N"] selectors above */
+}
+.tc-message-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78em;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+.tc-message-author {
+  font-weight: 600;
+}
+.tc-message-date {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-faint);
+  margin-left: 8px;
+}
+.tc-message-body {
+  font-size: 0.92em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.tc-message-body p {
+  margin: 0.25em 0;
+}
+.tc-message-body p:first-child {
+  margin-top: 0;
+}
+.tc-message-body p:last-child {
+  margin-bottom: 0;
+}
+
+.tc-icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 4px;
+}
+.tc-icon-btn:hover {
+  color: var(--text-error);
+  background: var(--background-modifier-hover);
+}
+
+.tc-reply {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.tc-reply-input {
+  width: 100%;
+  resize: vertical;
+  font-family: inherit;
+  font-size: 0.92em;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--background-modifier-border);
+  background: var(--background-primary);
+  color: var(--text-normal);
+}
+.tc-reply-input:focus {
+  outline: none;
+  border-color: var(--interactive-accent);
+}
+.tc-reply-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.tc-btn-primary,
+.tc-btn-accept {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+.tc-btn-primary:hover,
+.tc-btn-accept:hover {
+  background: var(--interactive-accent-hover);
+}
+.tc-btn-reject,
+.tc-btn-danger {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--background-modifier-border);
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+.tc-btn-reject:hover,
+.tc-btn-danger:hover {
+  border-color: var(--text-error);
+  color: var(--text-error);
+}
+
+.tc-card-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+/* Diff blocks */
+.tc-diff {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.92em;
+}
+.tc-diff-label {
+  font-size: 0.75em;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.tc-diff-added {
+  background: rgba(56, 161, 105, 0.12);
+  border-left: 3px solid rgba(56, 161, 105, 0.6);
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text-muted);
+}
+.tc-diff-removed {
+  background: rgba(220, 38, 38, 0.08);
+  border-left: 3px solid rgba(220, 38, 38, 0.5);
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--text-muted);
+}
+.tc-diff-changed {
+  color: var(--text-normal);
+  border-radius: 2px;
+}
+.tc-diff-removed .tc-diff-changed {
+  background: rgba(220, 38, 38, 0.30);
+}
+.tc-diff-added .tc-diff-changed {
+  background: rgba(56, 161, 105, 0.32);
+}
+.tc-diff-arrow {
+  color: var(--text-muted);
+  font-size: 0.85em;
+  text-align: center;
+}
+.tc-diff-highlight {
+  background: rgba(252, 211, 77, 0.35);
+  border-left: 3px solid rgba(252, 211, 77, 0.8);
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Reading mode ---------- */
+
+.tc-rm-comment {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: text-bottom;
+  margin: 0 2px;
+  color: var(--text-muted);
+  cursor: help;
+}
+.tc-rm-comment .svg-icon {
+  width: 1em;
+  height: 1em;
+}
+.tc-rm-comment-sm .svg-icon {
+  width: 0.8em;
+  height: 0.8em;
+}
+/* Footnote marker in reading view — same superscript treatment as the
+ * Live-Preview chip so the two modes look like one feature. */
+.tc-rm-note {
+  display: inline;
+  margin: 0 0 0 1px;
+  font-size: 0.7em;
+  line-height: 0;
+  vertical-align: super;
+  font-weight: 500;
+  color: var(--text-accent);
+}
+.tc-rm-note[data-author-hue] {
+  color: hsl(var(--tc-hue), 60%, 45%);
+}
+.tc-rm-hidden {
+  display: none;
+}
+
+/* ---------- Finalize modal ---------- */
+
+.tc-finalize-modal .tc-finalize-summary {
+  background: var(--background-secondary);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 8px 0;
+}
+.tc-finalize-modal .tc-finalize-summary ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.tc-finalize-modal .tc-finalize-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.tc-confirm-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}

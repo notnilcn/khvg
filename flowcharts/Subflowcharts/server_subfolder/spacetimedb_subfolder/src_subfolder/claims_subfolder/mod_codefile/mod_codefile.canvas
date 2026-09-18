@@ -1,0 +1,322 @@
+{
+	"nodes": [
+		{
+			"id": "0d932db0ceb84aa0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/all_territories_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fad38840ee10de80",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/can_interact_pos_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "415933614df50e10",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/check_build_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8de9584bdb283452",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/check_interact_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "25a531f3de1867cc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/claim_territory_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "132cf1b8f46bae80",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/disband_territory_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b94757fe28eacdbc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/has_permission_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "83c8326d2d071b8e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/territory_add_member_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "941b5a9d4fef8514",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/territory_at_tile_symbol.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "333b604d78938330",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/territory_deposit_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4601c0826f43aea0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/territory_id_at_hex_symbol.canvas",
+			"color": "5",
+			"x": 940,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bd65b5e830334850",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/territory_remove_member_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fede7d183a8a7a70",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/Territory_symbol.canvas",
+			"color": "5",
+			"x": 1850,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1518369326a1bda8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/TerritoryPermission_symbol.canvas",
+			"color": "5",
+			"x": 2760,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f0df33dcfea22ac0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/tick_upkeep_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8b04390ab252e068",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/unclaim_buildings_in_territory_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "6ff71aec69a64970",
+			"fromNode": "fad38840ee10de80",
+			"fromSide": "bottom",
+			"toNode": "b94757fe28eacdbc",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "3567b7a547767f62",
+			"fromNode": "fad38840ee10de80",
+			"fromSide": "bottom",
+			"toNode": "941b5a9d4fef8514",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "7316cbc40b4d9650",
+			"fromNode": "415933614df50e10",
+			"fromSide": "bottom",
+			"toNode": "fad38840ee10de80",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "b8650534b81bd808",
+			"fromNode": "8de9584bdb283452",
+			"fromSide": "bottom",
+			"toNode": "fad38840ee10de80",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "7f80a79a73c03530",
+			"fromNode": "25a531f3de1867cc",
+			"fromSide": "bottom",
+			"toNode": "fede7d183a8a7a70",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "12ebb0f403cb89a0",
+			"fromNode": "132cf1b8f46bae80",
+			"fromSide": "bottom",
+			"toNode": "8b04390ab252e068",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "ef3d8c4f10c5fc1a",
+			"fromNode": "132cf1b8f46bae80",
+			"fromSide": "bottom",
+			"toNode": "fede7d183a8a7a70",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "ea24ab816e15cf8a",
+			"fromNode": "83c8326d2d071b8e",
+			"fromSide": "bottom",
+			"toNode": "fede7d183a8a7a70",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "156a8749a1ab423a",
+			"fromNode": "941b5a9d4fef8514",
+			"fromSide": "bottom",
+			"toNode": "fede7d183a8a7a70",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "11c08523f9160f76",
+			"fromNode": "333b604d78938330",
+			"fromSide": "bottom",
+			"toNode": "fede7d183a8a7a70",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "b512b31b275d1d76",
+			"fromNode": "4601c0826f43aea0",
+			"fromSide": "bottom",
+			"toNode": "941b5a9d4fef8514",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "19495b522cf5db08",
+			"fromNode": "bd65b5e830334850",
+			"fromSide": "bottom",
+			"toNode": "fede7d183a8a7a70",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "b2ed5b31ab4febbe",
+			"fromNode": "f0df33dcfea22ac0",
+			"fromSide": "bottom",
+			"toNode": "8b04390ab252e068",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "df53bc366648033c",
+			"fromNode": "f0df33dcfea22ac0",
+			"fromSide": "bottom",
+			"toNode": "fede7d183a8a7a70",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/claims/mod-_dot_-rs-_hashtag_-has_permission",
+				"edge-_colon_-server/spacetimedb/src/claims/mod-_dot_-rs-_hashtag_-territory_at_tile",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/claims_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/claims/mod-_dot_-rs-_hashtag_-can_interact_pos",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
+				"edge-_colon_-server/spacetimedb/src/claims/mod-_dot_-rs-_hashtag_-Territory-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/claims/mod-_dot_-rs-_hashtag_-Territory-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/claims_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/claims_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/claims/mod-_dot_-rs-_hashtag_-unclaim_buildings_in_territory",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-is_admin",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-BuildingState-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-ProjectSiteState-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/building_codefile-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-write"
+			]
+		}
+	}
+}

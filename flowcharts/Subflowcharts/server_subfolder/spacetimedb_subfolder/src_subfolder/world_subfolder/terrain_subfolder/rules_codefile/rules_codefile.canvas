@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "4c1dce22e002e6f0",
+			"id": "4e1fc057f7f7a4dc",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/rules_codefile/DecidedWedgeTags_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/rules_codefile/DecidedHexTags_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,
@@ -74,8 +74,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-same_hex_neighbor_indices",
-				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-cross_hex_neighbor",
+				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-hex_neighbors",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/hex_codefile/hex_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",

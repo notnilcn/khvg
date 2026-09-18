@@ -24,6 +24,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ChanneledAction-_colon_-write",
 				"includeInAggregateFlowchart"
 			]
 		}

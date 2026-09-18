@@ -9,7 +9,7 @@ File index (generated — regenerate, never hand-edit): [[server/spacetimedb/src
 | File | Role | Edit it when |
 |---|---|---|
 | `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`/`StunBehavior`), the four step-def tables, `PatternType` + param structs, the `SteeringMovement`/`MoveGoal`/`MovePattern` steering model, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
-| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, schedules, server-only `BulletFireAttestation` (one row per fired `BulletPatternEvent`: pellet pool + TTL, consumed by `report_hit` — stamped by `attest_bullet_fire`, swept in `tick_status_effects`), and the event tables: `BulletPatternEvent` (`damage` resolved at insert), `BulletControlEvent` (rect kinds encode origin (x, y) + far end (target_x, target_y) + width (radius); Attract `duration` = linger, 0 = one-shot; SlashRect `duration` = damage threshold as f32 bits; WallRect `duration` = linger seconds), `AbilityVisualEvent` (P5 spell flashes; per-kind encoding documented on the table) | Rarely — schema changes |
+| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, schedules, server-only `BulletFireAttestation` (one row per fired `BulletPatternEvent`: pellet pool + TTL, consumed by `report_hit` — stamped by `attest_bullet_fire`, swept in `tick_status_effects`), and the event tables: `BulletPatternEvent` (`damage` resolved at insert), `BulletControlEvent` (rect kinds encode origin (x, y) + far end (target_x, target_y) + width (radius); Attract `duration` = linger, 0 = one-shot; SlashRect `duration` = damage threshold as f32 bits; WallRect `duration` = linger seconds), `AbilityVisualEvent` (spell flashes; per-kind encoding documented on the table) | Rarely — schema changes |
 | `methods.rs` | Pure logic: archetype helpers, behavior-tree build/teardown, `tick_phase`/`tick_sequence`, movement, biome spawning | Changing *how* enemies simulate |
 | `reducers.rs` | `tick_enemy_spawn`/`tick_enemy_behavior` (scheduled), `report_enemy_hit` (rate-limited + range-checked, see below) | Wiring, not content |
 | `emitters.rs` | **Authoring vocabulary**: `Emitter` builder + `Difficulty`/`DifficultySteps`; `compile()` lowers an emitter to an `AttackSequence` | Extending the vocabulary (e.g. a new builder) |
@@ -43,8 +43,8 @@ offset, anti-jitter) and cliff probing (`world_to_hex` + `hex_elevation` vs the
 mechanic) — and moves along the argmax. Blocked directions fall to the next best instead
 of cancelling out, so enemies slide along cliffs and don't clump; it is local steering,
 not pathfinding. `EnemyBehavior.velocity_x/y` is the **unit heading memory** (Meander's
-persistent noise-swayed heading; other patterns' last chosen direction), server-only as
-before. The `Enemy` row additionally carries `spawn_x`/`spawn_y` (Meander's leash anchor)
+persistent noise-swayed heading; other patterns' last chosen direction), server-only.
+The `Enemy` row additionally carries `spawn_x`/`spawn_y` (Meander's leash anchor)
 and `movement_direction`/`movement_speed` — movement as an **angle + scalar** (speed 0
 when standing, same convention as `PlayerPosition`); clients reconstruct the velocity for
 dead reckoning (`Enemy.cs` → `InterpolationComponent.SetTarget`). All angles in the
@@ -81,11 +81,11 @@ movement layer are **radians**; bullet angles stay degrees.
   `speed + step × (j+1)` — a speed ladder, not spatial copies.
 - **`angular_speed`/`speed_acceleration`** (every step + `BulletPatternEvent`): mid-flight
   curve/accel, rendered client-side via BlastBullets2D rotation/speed data. If you add an
-  event field, the client (`BulletSpawnerComponent.cs`) must learn to render it, and
-  bindings regenerate via `server/build.sh` (never hand-edit `module_bindings/`).
+  event field, the client (`BulletSpawnerComponent.cs`) must learn to render it
+  (bindings flow in `server/AGENTS.md`).
 - **Difficulty is compile-time.** Variants are separate `EnemyTemplate` rows seeded per
   `Difficulty` tier (`Foo_Easy` … `Foo_Madness`); spawn by name. No runtime difficulty flag.
-- **Enemy statuses + stagger (status/ module, P2).** `Enemy.stagger` (0–100) decays on the
+- **Enemy statuses + stagger (status/ module).** `Enemy.stagger` (0–100) decays on the
   1 Hz status tick; a full bar applies a Stunned debuff whose effect depends on the
   template's `stun_behavior`: Pause freezes the enemy wholesale in `tick_enemy_behavior`,
   Slowed/Enraged scale movement in `apply_movement`, and Enraged additionally divides every
@@ -101,26 +101,25 @@ movement layer are **radians**; bullet angles stay degrees.
    for a move/pause cycle);
    `pub fn seed(ctx)` building the template(s) (`EnemyTemplate::seed` upserts by `template_id`).
 2. `pub mod my_enemy;` in `defs/mod.rs`; seed call in `main/lifecycle.rs::init`.
-3. `cargo check` → `server/build.sh` → `dotnet build client/khvg.csproj`.
+3. `cargo check`, then the build/publish flow — see Verification below.
 4. Spawn with admin `spawn_enemy <template_id> x y false false`; inspect with `spacetime sql`.
 Full tutorial: `docs/Technical Design Docs/Workflows/Adding a Boss (Enemy Authoring Workflow).md`.
 
 ## Anti-patterns — don't
 
 - **Don't hand-unroll steps** (40 `seq_single` calls with incrementing angles). If the model
-  can't express a pattern, add a primitive to `def_tables.rs` + `methods.rs` the way
-  `angle_step`/`loop_delay` were added — or compose with `window()`/loops in content.
+  can't express a pattern, add a primitive to `def_tables.rs` + `methods.rs` — or compose
+  with `window()`/loops in content.
 - Don't insert `Enemy`/behavior rows directly; use the archetype helpers.
 - Don't skip `defs/` and seed from `main/seeds.rs` — that file is for world/item/shared
-  seeds and the `TestBoss` movement/pattern showcase (kept as a second example).
+  seeds and the `TestBoss` movement/pattern showcase.
 - Don't give a phase a mix of infinite emitters and an expected loop — see semantics above.
-- Don't invent SpacetimeDB APIs; `server/AGENTS.md`'s rules apply (`ctx.sender()` with
-  parens, `ctx.db.table()` method calls, `..row` spreads on update, no panics on expected errors).
+- Don't invent SpacetimeDB APIs; `server/AGENTS.md`'s rules apply.
 
 ## Verification
 
 `cargo check --manifest-path server/spacetimedb/Cargo.toml` is the only automated gate on
-this side; publish flow is `server/build.sh` (wipes DB, reseeds — schema changes are hard
-cuts). Row-level sanity: `spacetime sql bullethell "SELECT … FROM enemy_template /
-repeat_step_def / movement_def"`. Anything past that (patterns looking right, phase pacing,
+this side (publish flow: `server/AGENTS.md` Commands). Row-level sanity:
+`spacetime sql bullethell "SELECT … FROM enemy_template / repeat_step_def /
+movement_def"`. Anything past that (patterns looking right, phase pacing,
 multiplayer) is verified by the user in-game — describe spawn steps per variant and stop.

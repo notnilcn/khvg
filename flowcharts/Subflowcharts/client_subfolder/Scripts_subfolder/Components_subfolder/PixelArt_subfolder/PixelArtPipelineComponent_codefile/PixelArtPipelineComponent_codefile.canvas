@@ -31,11 +31,21 @@
 			"height": 400
 		},
 		{
+			"id": "1fdbfae9beecf968",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/_lastPushedCloudHeight_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "17f56894bf1d2240",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/_nextOutlineId_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/_pipeline_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/_Process_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +75,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/_skyClouds_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3220,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "773703dcea0f8d20",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/_skyMaterial_symbol.canvas",
+			"color": "5",
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/_terrainCloudsRegistered_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/_waterCloudsRegistered_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/ApplyGodRayTuning_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/ApplyRuntimeTweaks_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/AttachPixelArtObject_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/CreateSkyClouds_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/GenerateNoiseTexture_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +165,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/OnRegistered_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "21beb962f6f75acc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/OrthoSizePerDistance_symbol.canvas",
+			"color": "5",
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/PipelineScriptPath_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/PixelArtObjectScriptPath_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/PixelArtPipelineComponent (class)_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -185,7 +215,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/PixelizeObject_symbol.canvas",
 			"color": "5",
-			"x": 8280,
+			"x": 9660,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -195,7 +225,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/PixelizeRecursive_symbol.canvas",
 			"color": "5",
-			"x": 8740,
+			"x": 10120,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -205,7 +235,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/RegisterCloudMaterials_symbol.canvas",
 			"color": "5",
-			"x": 9200,
+			"x": 10580,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -215,7 +245,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/SkyCloudsShaderPath_symbol.canvas",
 			"color": "5",
-			"x": 9660,
+			"x": 11040,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "34d1b2163ac4c2e4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/PixelArt_subfolder/PixelArtPipelineComponent_codefile/SnapSkyCloudsToCamera_symbol.canvas",
+			"color": "5",
+			"x": 11500,
 			"y": 0,
 			"width": 400,
 			"height": 400

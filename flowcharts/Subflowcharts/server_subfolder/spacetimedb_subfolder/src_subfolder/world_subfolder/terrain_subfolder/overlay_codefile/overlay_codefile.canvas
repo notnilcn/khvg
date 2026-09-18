@@ -19,7 +19,7 @@
 				"codefile",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-HexCell",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-OverlayTextureConfig",
-				"edge-_colon_-server/spacetimedb/src/world/terrain/rules-_dot_-rs-_hashtag_-DecidedWedgeTags",
+				"edge-_colon_-server/spacetimedb/src/world/terrain/rules-_dot_-rs-_hashtag_-DecidedHexTags",
 				"edge-_colon_-server/spacetimedb/src/world/terrain/rules-_dot_-rs-_hashtag_-overlay_compatible_with_base",
 				"edge-_colon_-server/spacetimedb/src/world/noise-_dot_-rs-_hashtag_-value_noise2d",
 				"edge-_colon_-server/spacetimedb/src/world/prng-_dot_-rs-_hashtag_-next_unit",

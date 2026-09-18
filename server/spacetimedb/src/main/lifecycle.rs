@@ -30,8 +30,10 @@ pub fn init(ctx: &ReducerContext) {
     seed_world_items(ctx);
     seed_world_enchantments(ctx);
     seed_world_defs(ctx);
+    crate::world::building::seed_default_buildings(ctx);
     let _ = internal_add_chunks(ctx, DEFAULT_CHUNK_HEX_RADIUS, DEFAULT_CHUNK_COLS, DEFAULT_CHUNK_ROWS, DEFAULT_HEX_OUTER_RADIUS);
     let _ = internal_generate_world_proc(ctx, "Earth".to_string(), 0);
+    super::agents::init_agents(ctx);
 }
 
 #[spacetimedb::reducer(client_connected)]

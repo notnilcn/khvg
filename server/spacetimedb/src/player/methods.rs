@@ -7,6 +7,8 @@ use crate::world::tables::MapConfig;
 use crate::player::tables::*;
 use crate::item::tables::*;
 use crate::item::methods::ability_behavior;
+use crate::anticheat::tables::move_validation_strikes;
+use crate::status::tables::channeled_action;
 
 pub fn require_logged_in(ctx: &ReducerContext) -> Result<(), String> {
     if ctx.db.logged_in_player().player_id().find(ctx.sender()).is_none() {
@@ -394,6 +396,15 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
         recompute_stats(ctx, profile_id);
     }
 
+    if ctx.db.player_survival().profile_id().find(&profile_id).is_none() {
+        ctx.db.player_survival().insert(PlayerSurvival {
+            profile_id, last_damage_at: None, attrition_ticks: 0, last_regen_at: None,
+        });
+    }
+    if ctx.db.player_knowledge().profile_id().find(&profile_id).is_none() {
+        ctx.db.player_knowledge().insert(PlayerKnowledge { profile_id, discovered: vec![], acquired: vec![] });
+    }
+
     // Spawn is always at the world origin: leave_world keeps the position/chunk rows,
     // so without this reset a re-join would resume wherever the player last was.
     let cfg = MapConfig::load(ctx, 0, 0);
@@ -437,6 +448,12 @@ pub fn teardown_profile(ctx: &ReducerContext, profile_id: u64) {
     ctx.db.player_movement_state().profile_id().delete(profile_id);
     ctx.db.player_displacement_allowance().profile_id().delete(profile_id);
     ctx.db.player_hit_rate().profile_id().delete(profile_id);
+    ctx.db.move_validation_strikes().profile_id().delete(profile_id);
+    ctx.db.player_knowledge().profile_id().delete(profile_id);
+    ctx.db.player_survival().profile_id().delete(profile_id);
+    for action in ctx.db.channeled_action().profile_id().filter(&profile_id).collect::<Vec<_>>() {
+        ctx.db.channeled_action().action_id().delete(&action.action_id);
+    }
     for active in ctx.db.active_consumable_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
         ctx.db.active_consumable_effect().effect_id().delete(active.effect_id);
     }
@@ -672,4 +689,69 @@ pub fn transfer_item_to_inventory(ctx: &ReducerContext, profile_id: u64, item: &
     store_item_in_inventory(ctx, profile_id, item, enchantment_ids, cooldown_until, charges)?;
     recompute_stats(ctx, profile_id);
     Ok(())
+}
+
+// ===== Inventory validation patterns (Phase 0C — BitCraft item_stack_move /
+// validate_interact / validate_move pattern, translated) =====
+
+/// Shared in-world interaction gate (BitCraft `validate_interact`): the caller must be
+/// in the world, have a position row, and be within wrap-aware INTERACT_RADIUS of
+/// (x, y). Used by `pickup_drop`, `take_from_chest`, and chest-adjacent `swap_slots`
+/// paths so range checks never drift between call sites.
+pub fn validate_interact(ctx: &ReducerContext, profile_id: u64, x: f32, y: f32) -> Result<(), String> {
+    let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
+    let cfg = MapConfig::load(ctx, 0, 0);
+    let dist_sq = wrapped_distance_sq(pos.x, pos.y, x, y, (cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
+    if dist_sq > INTERACT_RADIUS * INTERACT_RADIUS {
+        return Err("Target is too far away.".to_string());
+    }
+    // Territory permission consult (Phase 4): inside a claimed area the interaction
+    // needs Inventory permission; outside claims everything is allowed.
+    crate::claims::check_interact(ctx, profile_id, x, y)?;
+    Ok(())
+}
+
+/// Storage-category gate (BitCraft storage-category pattern): span-follower remnants
+/// and items without an id are never storable; everything else is allowed by default.
+pub fn is_storable(item_id: &Option<String>) -> bool {
+    item_id.as_deref().map(|id| !id.is_empty()).unwrap_or(false)
+}
+
+// ===== Discovery / knowledge helpers (Phase 1) =====
+
+/// Knowledge state for one item id (BitCraft `KnowledgeState::{Unknown, Discovered,
+/// Acquired}`): acquired implies discovered; discovered-but-not-acquired gates
+/// equipping/activation; unknown renders as ??? client-side.
+pub fn knowledge_state(ctx: &ReducerContext, profile_id: u64, item_id: &str) -> u8 {
+    match ctx.db.player_knowledge().profile_id().find(&profile_id) {
+        Some(row) => {
+            if row.acquired.iter().any(|id| id == item_id) { 2 }
+            else if row.discovered.iter().any(|id| id == item_id) { 1 }
+            else { 0 }
+        }
+        None => 0,
+    }
+}
+
+/// Auto-discover on pickup/observe (BitCraft `discover_item_stack`): idempotent,
+/// creates the row on first use.
+pub fn discover_ids(ctx: &ReducerContext, profile_id: u64, ids: Vec<String>) {
+    match ctx.db.player_knowledge().profile_id().find(&profile_id) {
+        Some(row) => {
+            let mut discovered = row.discovered.clone();
+            let mut changed = false;
+            for id in ids {
+                if !discovered.iter().any(|d| d == &id) {
+                    discovered.push(id);
+                    changed = true;
+                }
+            }
+            if changed {
+                ctx.db.player_knowledge().profile_id().update(PlayerKnowledge { discovered, ..row });
+            }
+        }
+        None => {
+            ctx.db.player_knowledge().insert(PlayerKnowledge { profile_id, discovered: ids, acquired: vec![] });
+        }
+    }
 }

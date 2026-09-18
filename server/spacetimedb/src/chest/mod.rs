@@ -2,11 +2,10 @@ use spacetimedb::{table, Query, ReducerContext, Table, Timestamp, ViewContext};
 use crate::main::global::*;
 use crate::item::tables::item;
 use crate::player::methods::{is_admin, require_in_world, transfer_item_to_inventory};
-use crate::player::tables::player_position;
 use crate::player::views::nearby_indices;
 use crate::world::hex::{spiral_chunk_index, world_to_chunk};
 use crate::world::tables::MapConfig;
-use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
+use crate::world::wrap::wrap_world_pos;
 
 // A loot container at a fixed world position. Contents are ChestItem rows keyed by
 // chest_id; players take items out with take_from_chest.
@@ -93,13 +92,12 @@ pub fn take_from_chest(ctx: &ReducerContext, chest_item_id: u64) -> Result<(), S
     let item = ctx.db.item().item_id().find(&chest_item.item_id).ok_or("Item not found.")?;
     let chest = ctx.db.chest().chest_id().find(&chest_item.chest_id).ok_or("Chest not found.")?;
 
-    // Wrap-aware range check against the caller's position row — no remote looting.
-    let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
-    let cfg = MapConfig::load(ctx, 0, 0);
-    let dist_sq = wrapped_distance_sq(pos.x, pos.y, chest.x, chest.y, (cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
-    if dist_sq > INTERACT_RADIUS * INTERACT_RADIUS {
-        return Err("Chest is too far away.".to_string());
-    }
+    // Shared interaction gate (Phase 0C validate_interact): wrap-aware range check
+    // + territory inventory-permission consult — no remote looting, no looting in a
+    // claim without permission.
+    crate::player::methods::validate_interact(ctx, profile_id, chest.x, chest.y).map_err(|e| {
+        if e == "Target is too far away." { "Chest is too far away.".to_string() } else { e }
+    })?;
 
     // Regenerating rows are never consumed, so gate the take rate instead: one take per
     // player per chest per CHEST_TAKE_COOLDOWN_SECONDS.
@@ -120,6 +118,9 @@ pub fn take_from_chest(ctx: &ReducerContext, chest_item_id: u64) -> Result<(), S
     }
 
     transfer_item_to_inventory(ctx, profile_id, &item, vec![], None, u32::MAX)?;
+
+    // Discovery: taking from a chest auto-discovers the item (Phase 1).
+    crate::player::methods::discover_ids(ctx, profile_id, vec![item.item_id.clone()]);
 
     // Non-regenerating items are consumed; regenerating ones keep their row, which IS the
     // next copy — the chest regenerates the item by never running out of it.

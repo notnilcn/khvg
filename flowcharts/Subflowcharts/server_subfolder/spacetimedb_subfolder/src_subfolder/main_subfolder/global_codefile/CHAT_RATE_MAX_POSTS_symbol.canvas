@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d348de0f23af39ca",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#CHAT_RATE_MAX_POSTS",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

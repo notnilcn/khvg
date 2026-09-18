@@ -28,7 +28,7 @@ using System.Collections.Generic;
 /// - Elevation rows are AOI-filtered (NearbyBuildingTiles, 2-chunk ring): distant chunks
 ///   render flat at level 0 until the player approaches — same data scope as the 2D
 ///   terrain.
-/// - Server TriangleTile ground/overlay textures are a per-wedge 2D sprite system with
+/// - Server HexTile ground/overlay textures are a per-hex 2D sprite system with
 ///   no 1:1 mapping onto MST texture slots; the terrain uses the plugin's default
 ///   ground texture for now.
 /// </summary>
@@ -48,6 +48,15 @@ public partial class TerrainComponent3D : Node3DComponent
 	private readonly Dictionary<(int Q, int R), int> _applied = new();
 	private bool _chunksBuilt;
 	private bool _elevationDirty;
+
+	// Dark duplicate of each chunk mesh hung below the real tops (see
+	// RefreshShells). Shared unshaded soil material, created on first use.
+	// 10u catches buried sightlines starting up to 10 below the tops (the
+	// observed hole band) while staying far above the below-world ray
+	// origins at pitch <= ~20, which must keep missing it so the verified
+	// sea-horizon look is preserved.
+	private const float ShellDrop = 10f;
+	private StandardMaterial3D? _shellMaterial;
 
 	private int _chunkRadius;
 	private int _chunkCols;
@@ -148,5 +157,45 @@ public partial class TerrainComponent3D : Node3DComponent
 		foreach (var coords in dirtyChunks)
 			if (_chunkNodes.TryGetValue(coords, out var chunk))
 				chunk.Call("regenerate_mesh");
+
+		RefreshShells();
+	}
+
+	// Every chunk mesh is a hollow shell (tops + cliff walls, no interior or
+	// bottom). At shallow pitches the ortho frustum slices foreground hills
+	// open: bottom-edge ray origins dip below the hilltops, and those
+	// below-top sightlines thread under the tops, through the backface-culled
+	// step risers, and land on the BackingOcean — water-blue pixels framed by
+	// walls that read as "clipped ground" (proven pixel-identical with the
+	// terrain hidden). A dark duplicate of each chunk mesh hung ShellDrop
+	// below the tops terminates those rays on earth instead. Default
+	// backface culling is kept on the duplicates, so below-world rays at
+	// pitch <= ~20 still miss them from underneath and the verified
+	// sea-horizon look is preserved; ShellDrop is orders of magnitude above
+	// ortho depth precision, so normal views never see the duplicates. The
+	// duplicates are visual-only (no collision), share each chunk's mesh (no
+	// extra geometry memory), and are runtime children of game-only nodes, so
+	// the editor never saves them.
+	private void RefreshShells()
+	{
+		_shellMaterial ??= new StandardMaterial3D
+		{
+			ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+			AlbedoColor = new Color(0.15f, 0.13f, 0.09f),
+		};
+		foreach (var (coords, chunk) in _chunkNodes)
+		{
+			if (chunk.GetNodeOrNull("UnderShell") is not MeshInstance3D shell)
+			{
+				shell = new MeshInstance3D
+				{
+					Name = "UnderShell",
+					CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+					Position = new Vector3(0f, -ShellDrop, 0f),
+				};
+				chunk.AddChild(shell);
+			}
+			shell.Mesh = ((MeshInstance3D)chunk).Mesh;
+		}
 	}
 }

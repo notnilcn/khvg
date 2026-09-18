@@ -283,3 +283,48 @@ pub struct Enchantment {
     pub behaviors: Vec<EnchantmentBehavior>,
     pub allowed_slots: Vec<EquipSlot>,
 }
+
+/// Static-data staging (Phase 0B — BitCraft `stage_*/validate_staged` pattern).
+/// Same fields as `Item` plus `staged_by`; live rows are untouched until an admin
+/// validates + imports. Deterministic, admin-only, `Err` not panic.
+#[table(accessor = staged_item)]
+pub struct StagedItem {
+    #[primary_key]
+    pub item_id: String,
+    pub display_name: String,
+    pub description: String,
+    pub texture_id: String,
+    pub equip_slot: EquipSlot,
+    pub slot_cost: u32,
+    pub stat_modifiers: Vec<StatModifier>,
+    pub behaviors: Vec<ItemBehavior>,
+    pub max_enchantments: u32,
+    pub innate_enchantment_ids: Vec<String>,
+    pub stat_requirements: StatRequirements,
+    pub staged_by: String,
+}
+
+/// Per-ability knowledge gate (Phase 1 — BitCraft `required_knowledges` pattern).
+/// Separate side table so `AbilityBehavior` seeds stay untouched (default empty =
+/// backward compatible: no row means no gate). `blocking_knowledges` equivalent =
+/// "already know everything" early-out in the check.
+#[table(accessor = ability_knowledge_requirement)]
+pub struct AbilityKnowledgeRequirement {
+    #[primary_key]
+    pub item_id: String,
+    pub required_ids: Vec<String>,
+}
+
+/// Staged counterpart of `Enchantment` (same fields + `staged_by`).
+#[table(accessor = staged_enchantment)]
+pub struct StagedEnchantment {
+    #[primary_key]
+    pub enchantment_id: String,
+    pub display_name: String,
+    pub description: String,
+    pub texture_id: String,
+    pub stat_modifiers: Vec<StatModifier>,
+    pub behaviors: Vec<EnchantmentBehavior>,
+    pub allowed_slots: Vec<EquipSlot>,
+    pub staged_by: String,
+}

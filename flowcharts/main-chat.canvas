@@ -1,0 +1,35 @@
+{
+	"nodes": [
+		{
+			"id": "194079a7791dc546",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "51bb48aa549e3de8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/chat_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "4ddbb89d7884e22c",
+			"fromNode": "194079a7791dc546",
+			"fromSide": "bottom",
+			"toNode": "51bb48aa549e3de8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "subscribe"
+		}
+	]
+}

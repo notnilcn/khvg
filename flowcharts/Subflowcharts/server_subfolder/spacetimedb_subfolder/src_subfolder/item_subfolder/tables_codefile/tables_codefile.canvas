@@ -21,11 +21,21 @@
 			"height": 400
 		},
 		{
+			"id": "29b3ffbedac50878",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/AbilityKnowledgeRequirement_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "c41fb5d924fd2a6c",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/AbilityUseBuffParams_symbol.canvas",
 			"color": "5",
-			"x": 920,
+			"x": 1380,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -35,7 +45,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/BashParams_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 1840,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +55,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/CircleParams_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConeParams_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableBehavior_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableBuffEffect_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ConsumableEffect_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/CurseParams_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/Enchantment_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/EnchantmentBehavior_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/EquipSlot_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/Item_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ItemBehavior_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +165,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/LineParams_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/MarkBleedParams_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/MarkStoreParams_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -185,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/RectParams_symbol.canvas",
 			"color": "5",
-			"x": 8280,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -195,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ReduceParams_symbol.canvas",
 			"color": "5",
-			"x": 8740,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -205,7 +215,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/RegenParams_symbol.canvas",
 			"color": "5",
-			"x": 9200,
+			"x": 9660,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -215,7 +225,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ScalingStat_symbol.canvas",
 			"color": "5",
-			"x": 9660,
+			"x": 10120,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -225,7 +235,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/SlashParams_symbol.canvas",
 			"color": "5",
-			"x": 10120,
+			"x": 10580,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -235,7 +245,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/SpellParams_symbol.canvas",
 			"color": "5",
-			"x": 10580,
+			"x": 11040,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -245,7 +255,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/SpellShape_symbol.canvas",
 			"color": "5",
-			"x": 11040,
+			"x": 11500,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "cd1989c4a2eb8558",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StagedEnchantment_symbol.canvas",
+			"color": "5",
+			"x": 11960,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "51941fd6a12c18d0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StagedItem_symbol.canvas",
+			"color": "5",
+			"x": 12420,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -255,7 +285,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatKind_symbol.canvas",
 			"color": "5",
-			"x": 11500,
+			"x": 12880,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -265,7 +295,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatMode_symbol.canvas",
 			"color": "5",
-			"x": 11960,
+			"x": 13340,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -275,7 +305,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatModifier_symbol.canvas",
 			"color": "5",
-			"x": 12420,
+			"x": 13800,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -285,7 +315,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StatRequirements_symbol.canvas",
 			"color": "5",
-			"x": 12880,
+			"x": 14260,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -295,7 +325,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/StoreIncomingParams_symbol.canvas",
 			"color": "5",
-			"x": 13340,
+			"x": 14720,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -305,7 +335,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/TeleportParams_symbol.canvas",
 			"color": "5",
-			"x": 13800,
+			"x": 15180,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -315,7 +345,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/WallParams_symbol.canvas",
 			"color": "5",
-			"x": 14260,
+			"x": 15640,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -325,7 +355,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/WeaponBehavior_symbol.canvas",
 			"color": "5",
-			"x": 14720,
+			"x": 16100,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -335,7 +365,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/WeaponPattern_symbol.canvas",
 			"color": "5",
-			"x": 15180,
+			"x": 16560,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -345,7 +375,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/item_subfolder/tables_codefile/ZoneParams_symbol.canvas",
 			"color": "5",
-			"x": 15640,
+			"x": 17020,
 			"y": 0,
 			"width": 400,
 			"height": 400

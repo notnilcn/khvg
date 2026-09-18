@@ -53,7 +53,7 @@ public partial class RemotePlayer : Node2D, IEntity
 			var world3D = this.GetAncestor<GameManager>()?.GetComponent<World3DComponent>();
 			var resPath3D = GameManager.GetResPath3D(profile.TextureId);
 			if (world3D != null && resPath3D != null)
-				_model3D = new CharacterModel3D(GD.Load<PackedScene>(resPath3D), GlobalPosition, world3D);
+				_model3D = new CharacterModel3D(GD.Load<PackedScene>(resPath3D), GlobalPosition, world3D.CharacterRoot ?? world3D);
 		}
 	}
 

@@ -1,0 +1,172 @@
+{
+	"nodes": [
+		{
+			"id": "4984e543510db192",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/agents_codefile/AgentConfig_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7722643150b11552",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/agents_codefile/init_agents_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5378f187ab036648",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/agents_codefile/set_agents_enabled_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fce0689f1f580360",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/agents_codefile/should_run_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "848c9c10a1e8de60",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/agents_codefile/tick_cleanup_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7e8471cdc6f297cc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/agents_codefile/tick_regen_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "dbb5c5c701058900",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/agents_codefile/tick_zones_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "248e4d6267812b14",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/agents_codefile/update_agent_timers_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "4cc84d5fa702d40c",
+			"fromNode": "7722643150b11552",
+			"fromSide": "bottom",
+			"toNode": "4984e543510db192",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "93632007f1b38ae4",
+			"fromNode": "5378f187ab036648",
+			"fromSide": "bottom",
+			"toNode": "4984e543510db192",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "88354a7c2fa75838",
+			"fromNode": "fce0689f1f580360",
+			"fromSide": "bottom",
+			"toNode": "4984e543510db192",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "f4517e476801934a",
+			"fromNode": "848c9c10a1e8de60",
+			"fromSide": "bottom",
+			"toNode": "fce0689f1f580360",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d56e4559beff0192",
+			"fromNode": "7e8471cdc6f297cc",
+			"fromSide": "bottom",
+			"toNode": "fce0689f1f580360",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "af119cbb65853dea",
+			"fromNode": "dbb5c5c701058900",
+			"fromSide": "bottom",
+			"toNode": "fce0689f1f580360",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "82483c74e71c9940",
+			"fromNode": "248e4d6267812b14",
+			"fromSide": "bottom",
+			"toNode": "7722643150b11552",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/main/agents-_dot_-rs-_hashtag_-AgentConfig-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-ConsumableEffectSchedule-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-is_admin",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/main/agents-_dot_-rs-_hashtag_-should_run",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/main/agents-_dot_-rs-_hashtag_-init_agents"
+			]
+		}
+	}
+}

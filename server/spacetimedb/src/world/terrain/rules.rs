@@ -5,7 +5,7 @@
 
 use std::collections::HashMap;
 use spacetimedb::{ReducerContext, Table};
-use crate::world::hex::{cross_hex_neighbor, same_hex_neighbor_indices};
+use crate::world::hex::hex_neighbors;
 use crate::world::tables::{base_adjacency_rule, decor_ground_rule, layering_rule, overlay_adjacency_rule};
 
 pub fn overlay_compatible_with_base(ctx: &ReducerContext, overlay_tags: &[String], base_tags: &[String]) -> bool {
@@ -26,22 +26,20 @@ pub fn decor_ground_conflict(ctx: &ReducerContext, decor_tags: &[String], hex_ta
     ctx.db.decor_ground_rule().iter().any(|r| decor_tags.contains(&r.decor_tag) && hex_tags.contains(&r.denied_base_tag))
 }
 
-// Tags of a wedge already written this generation pass, kept around just long enough for
-// not-yet-written neighbor wedges to check adjacency against. Not persisted to TriangleTile.
+// Tags of a hex already written this generation pass, kept around just long enough for
+// not-yet-written neighbor hexes to check adjacency against. Not persisted to HexTile.
 #[derive(Default, Clone)]
-pub struct DecidedWedgeTags {
+pub struct DecidedHexTags {
     pub ground_tags: Vec<String>,
     pub overlay_tags: Vec<String>,
 }
 
-pub type NeighborTagMap = HashMap<(i32, i32, u8), DecidedWedgeTags>;
+pub type NeighborTagMap = HashMap<(i32, i32), DecidedHexTags>;
 
-pub fn decided_neighbor_tags(map: &NeighborTagMap, hex_q: i32, hex_r: i32, tri_index: u8) -> Vec<&DecidedWedgeTags> {
-    let mut out = Vec::with_capacity(3);
-    for n in same_hex_neighbor_indices(tri_index) {
-        if let Some(d) = map.get(&(hex_q, hex_r, n)) { out.push(d); }
+pub fn decided_neighbor_tags(map: &NeighborTagMap, hex_q: i32, hex_r: i32) -> Vec<&DecidedHexTags> {
+    let mut out = Vec::with_capacity(6);
+    for (nq, nr) in hex_neighbors(hex_q, hex_r) {
+        if let Some(d) = map.get(&(nq, nr)) { out.push(d); }
     }
-    let (nq, nr, ntri) = cross_hex_neighbor(hex_q, hex_r, tri_index);
-    if let Some(d) = map.get(&(nq, nr, ntri)) { out.push(d); }
     out
 }

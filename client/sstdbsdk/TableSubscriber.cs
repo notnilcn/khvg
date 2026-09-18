@@ -55,6 +55,24 @@ public partial class TableSubscriber : Component
 		// Raw public charge table (P4, no view) — one row per charging player, filtered
 		// to the local profile by AbilityChargeComponent. Persistent table, replay OK.
 		"AbilityCharge",
+		// Raw public channeled-action table (Phase 1 progressive actions, no view) — one
+		// row per channel, filtered per profile/target in code. Persistent: replay OK.
+		"ChanneledAction",
+		// Per-caller knowledge view (Phase 1 discovery gating) — drives the ItemSidebar
+		// ??? masking. Persistent view table: binder replay OK.
+		"LocalPlayerKnowledge",
+		// Per-caller trade session view (Phase 3) — drives the trade offer panel.
+		// Persistent view table: binder replay OK.
+		"LocalTradeSession",
+		// Global territory view (Phase 4 claims-lite) — drives hex tint overlays.
+		// Persistent view table: binder replay OK.
+		"AllTerritories",
+		// Global channel list (Phase 5 chat) — drives the channel picker.
+		// Persistent view table: binder replay OK.
+		"AllChatChannels",
+		// Per-caller chat history (Phase 5 — member channels only, bounded by the
+		// retention sweep; never full-table replay). Persistent view: replay OK.
+		"LocalChatMessages",
 	};
 
 	/// Every table name across all waves — TableBinderComponent's dropdown source.

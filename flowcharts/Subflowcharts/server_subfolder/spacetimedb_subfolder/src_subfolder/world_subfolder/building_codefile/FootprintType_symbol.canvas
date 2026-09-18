@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "9e3a6ee87a979570",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/building.rs",
+			"subpath": "#FootprintType",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

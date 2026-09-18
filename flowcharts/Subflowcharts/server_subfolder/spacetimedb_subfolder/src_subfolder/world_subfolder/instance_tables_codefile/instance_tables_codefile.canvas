@@ -21,9 +21,9 @@
 			"height": 400
 		},
 		{
-			"id": "17dd093216752d84",
+			"id": "88ef54fd1bff5faa",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/instance_tables_codefile/TriangleTile_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/instance_tables_codefile/HexTile_symbol.canvas",
 			"color": "5",
 			"x": 920,
 			"y": 0,

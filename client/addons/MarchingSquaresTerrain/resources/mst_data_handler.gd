@@ -249,8 +249,23 @@ static func export_chunk_data(chunk: MarchingSquaresTerrainChunk) -> MSTChunkDat
 	var data := MSTChunkData.new()
 	data.chunk_coords = chunk.chunk_coords
 	data.chunk_radius = chunk.get_chunk_radius()
+	if "merge_mode" in chunk:
+		data.merge_mode = chunk.merge_mode
 	
-	# Source data
+	# Source data (squares mode)
+	if chunk.height_map and not chunk.height_map.is_empty():
+		data.height_map = chunk.height_map.duplicate(true)
+	if chunk.color_map_0 and not chunk.color_map_0.is_empty():
+		var cell_count : int = chunk.color_map_0.size()
+		data.ground_texture_idx.resize(cell_count)
+		data.wall_texture_idx.resize(cell_count)
+		data.grass_mask.resize(cell_count)
+		for i in cell_count:
+			data.ground_texture_idx[i] = _colors_to_texture_idx(chunk.color_map_0[i], chunk.color_map_1[i])
+			data.wall_texture_idx[i] = _colors_to_texture_idx(chunk.wall_color_map_0[i], chunk.wall_color_map_1[i])
+			data.grass_mask[i] = 1 if chunk.grass_mask_map[i].r > 0.5 else 0
+	
+	# Source data (hex mode)
 	var hex_count : int = chunk.hex_data.size()
 	data.local_offsets.resize(hex_count * 2)
 	data.elevations.resize(hex_count)
@@ -299,24 +314,51 @@ static func import_chunk_data(chunk: MarchingSquaresTerrainChunk, data: MSTChunk
 		printerr("MSTDataHandler: import_chunk_data called with null data")
 		return
 	
-	if not data.is_v3_format():
-		# Hard format break: V2 square-grid data is not migrated, the chunk stays default.
-		push_warning("MSTDataHandler: Chunk data at ", data.chunk_coords, " is not V3 hex format, skipping")
-		return
-	
 	chunk.chunk_coords = data.chunk_coords
-	chunk.hex_data.clear()
+	if "merge_mode" in chunk and data.merge_mode != null:
+		chunk.merge_mode = data.merge_mode as MarchingSquaresTerrainChunk.Mode
+	if data.height_map and not (data.height_map as Array).is_empty():
+		chunk.height_map = (data.height_map as Array).duplicate(true)
 	
-	var hex_count : int = data.elevations.size()
-	for i in range(hex_count):
-		var lhex := Vector2i(data.local_offsets[i * 2], data.local_offsets[i * 2 + 1])
-		chunk.hex_data[lhex] = {
-			"elevation": data.elevations[i],
-			"ground": data.ground_idx[i],
-			"wall": data.wall_idx[i],
-			"grass": data.grass[i] > 0,
-			"edges": data.edges[i],
-		}
+	# Restore hex records when V3 data is present
+	chunk.hex_data.clear()
+	if data.is_v3_format() and not data.elevations.is_empty():
+		var hex_count : int = data.elevations.size()
+		for i in range(hex_count):
+			var lhex := Vector2i(data.local_offsets[i * 2], data.local_offsets[i * 2 + 1])
+			chunk.hex_data[lhex] = {
+				"elevation": data.elevations[i],
+				"ground": data.ground_idx[i],
+				"wall": data.wall_idx[i],
+				"grass": data.grass[i] > 0,
+				"edges": data.edges[i],
+			}
+	
+	# Restore squares color data when V2 compact data is present
+	if data.is_v2_format():
+		var cell_count : int = data.ground_texture_idx.size()
+		chunk.color_map_0.resize(cell_count)
+		chunk.color_map_1.resize(cell_count)
+		chunk.wall_color_map_0.resize(cell_count)
+		chunk.wall_color_map_1.resize(cell_count)
+		chunk.grass_mask_map.resize(cell_count)
+		for i in cell_count:
+			var ground_colors : Array = _texture_idx_to_colors(data.ground_texture_idx[i])
+			chunk.color_map_0[i] = ground_colors[0]
+			chunk.color_map_1[i] = ground_colors[1]
+			var wall_colors : Array = _texture_idx_to_colors(data.wall_texture_idx[i])
+			chunk.wall_color_map_0[i] = wall_colors[0]
+			chunk.wall_color_map_1[i] = wall_colors[1]
+			chunk.grass_mask_map[i] = Color(1, 0, 0, 0) if data.grass_mask[i] > 0 else Color(0, 0, 0, 0)
+	elif not data.color_map_0.is_empty():
+		# V1 / v1.1 legacy format: direct copy
+		chunk.color_map_0 = data.color_map_0.duplicate()
+		chunk.color_map_1 = data.color_map_1.duplicate()
+		chunk.wall_color_map_0 = data.wall_color_map_0.duplicate()
+		chunk.wall_color_map_1 = data.wall_color_map_1.duplicate()
+		chunk.grass_mask_map = data.grass_mask_map.duplicate()
+		# Mark dirty to force re-save
+		chunk._data_dirty = true
 	
 	# Restore baked assets if present
 	if data.mesh:
@@ -353,8 +395,8 @@ static func needs_migration(terrain: MarchingSquaresTerrain) -> bool:
 	
 	for chunk_coords in terrain.chunks:
 		var chunk : MarchingSquaresTerrainChunk = terrain.chunks[chunk_coords]
-		# Check if chunk has embedded data (hex records populated)
-		if not chunk.hex_data.is_empty():
+		# Check if chunk has embedded data (either grid store populated)
+		if not chunk.hex_data.is_empty() or (chunk.height_map and not chunk.height_map.is_empty()):
 			if not metadata_exists(dir_path, chunk_coords):
 				return true
 	
@@ -376,6 +418,53 @@ static func migrate_to_external_storage(terrain: MarchingSquaresTerrain) -> void
 	print("MSTDataHandler: Migration complete. External data saved to: ", terrain.data_directory)
 
 #endregion
+
+static func _colors_to_texture_idx(c0: Color, c1: Color) -> int:
+	var c0_idx := 0
+	var c0_max := c0.r
+	if c0.g > c0_max: c0_max = c0.g; c0_idx = 1
+	if c0.b > c0_max: c0_max = c0.b; c0_idx = 2
+	if c0.a > c0_max: c0_idx = 3
+	
+	var c1_idx := 0
+	var c1_max := c1.r
+	if c1.g > c1_max: c1_max = c1.g; c1_idx = 1
+	if c1.b > c1_max: c1_max = c1.b; c1_idx = 2
+	if c1.a > c1_max: c1_idx = 3
+	
+	return c0_idx * 4 + c1_idx
+
+
+## Convert texture index (0-15) to Color pair.
+## Reverses the encoding: index / 4 = c0 channel, index % 4 = c1 channel.
+static func _texture_idx_to_colors(idx: int) -> Array:
+	var c0 := Color(0, 0, 0, 0)
+	var c1 := Color(0, 0, 0, 0)
+	@warning_ignore_start("integer_division") 
+	var c0_ch := idx / 4
+	var c1_ch := idx % 4
+	@warning_ignore_restore("integer_division")
+	
+	match c0_ch:
+		0: c0.r = 1.0
+		1: c0.g = 1.0
+		2: c0.b = 1.0
+		3: c0.a = 1.0
+	
+	match c1_ch:
+		0: c1.r = 1.0
+		1: c1.g = 1.0
+		2: c1.b = 1.0
+		3: c1.a = 1.0
+	
+	return [c0, c1]
+
+#endregion
+
+#region terrain directory cleanup
+
+## Clean up terrain data directories for terrains that no longer exist in the scene.
+
 
 #region cleanup
 

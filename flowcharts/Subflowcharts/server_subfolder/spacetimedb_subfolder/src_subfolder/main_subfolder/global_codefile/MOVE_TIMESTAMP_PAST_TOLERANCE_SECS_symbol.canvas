@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "21981f77e53ab478",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#MOVE_TIMESTAMP_PAST_TOLERANCE_SECS",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

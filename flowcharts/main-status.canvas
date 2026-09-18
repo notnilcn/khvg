@@ -98,12 +98,13 @@
 			"label": "read"
 		},
 		{
-			"id": "61bbe75a4e9fdbac",
+			"id": "85f33fc579bc0bec",
 			"fromNode": "23ad101c7f63b520",
 			"fromSide": "bottom",
 			"toNode": "df99756ee0557b28",
 			"toSide": "top",
-			"toEnd": "arrow"
+			"toEnd": "arrow",
+			"label": "write"
 		},
 		{
 			"id": "1f423eae58692bec",

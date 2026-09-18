@@ -8,7 +8,7 @@
 //! few-strong-bullets ones. Weapon damage is per trigger pull, divided among the
 //! pattern's bullets. True-damage enchantment bonuses apply after defence.
 
-use spacetimedb::{ReducerContext, Table};
+use spacetimedb::ReducerContext;
 use crate::player::tables::{player_data, player_stats};
 use crate::item::methods::resolve_effective_weapon;
 

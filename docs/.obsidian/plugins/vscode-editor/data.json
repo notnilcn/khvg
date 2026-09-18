@@ -1,0 +1,34 @@
+{
+  "extensions": [
+    "rs",
+    "cs",
+    "tscn"
+  ],
+  "folding": true,
+  "lineNumbers": false,
+  "wordWrap": true,
+  "minimap": true,
+  "semanticValidation": true,
+  "syntaxValidation": true,
+  "themeColor": "AUTO",
+  "fontSize": 14,
+  "fontFamily": "'Cascadia Code', 'Fira Code', Consolas, 'Courier New', monospace",
+  "fontLigatures": true,
+  "showEmbedHeader": false,
+  "canvasNodeWidth": 400,
+  "canvasNodeHeight": 400,
+  "flowchartNodeSpacingX": 60,
+  "flowchartNodeSpacingY": 100,
+  "linkableSymbolKinds": [
+    "function",
+    "variable",
+    "enum",
+    "struct",
+    "class",
+    "interface"
+  ],
+  "includeGeneratedCodeFiles": false,
+  "flowchartDefaultGranularity": "file",
+  "embedMaxHeight": 1500,
+  "embedMinHeight": 0
+}

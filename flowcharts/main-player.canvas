@@ -1,0 +1,510 @@
+{
+	"nodes": [
+		{
+			"id": "3dafdbce8383b4e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
+			"color": "5",
+			"x": 120,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7a615a526756e130",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
+			"color": "5",
+			"x": 4280,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "773ad628851456c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
+			"color": "5",
+			"x": 1610,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b715f8cabe07b138",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/local_player_codefile/local_player_codefile.canvas",
+			"color": "5",
+			"x": 2300,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e2a267a20ff56b88",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/non_local_player_codefile/non_local_player_codefile.canvas",
+			"color": "5",
+			"x": 2670,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3da1f6e0399b76c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/profile_panel_codefile/profile_panel_codefile.canvas",
+			"color": "5",
+			"x": 3130,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "f55e33efc44c6b58",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Combat_subfolder/Combat_subfolder.canvas",
+			"color": "5",
+			"x": 3810,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "65b0058b54a9ffd4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Data_subfolder/Data_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8466c29300c138b0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas",
+			"color": "5",
+			"x": 3350,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "30e96d437fcb3e10",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Lobby_subfolder/Lobby_subfolder.canvas",
+			"color": "5",
+			"x": 2430,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1d60b7451412fc10",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Movement_subfolder/Movement_subfolder.canvas",
+			"color": "5",
+			"x": 1500,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69206441fa058f50",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/Spawning_subfolder.canvas",
+			"color": "5",
+			"x": 3590,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "048460f3ecc5ac34",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Visual_subfolder/Visual_subfolder.canvas",
+			"color": "5",
+			"x": 1970,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5a21b129c8a4e508",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Game_subfolder/LobbyGui_codefile/LobbyGui_codefile.canvas",
+			"color": "5",
+			"x": 4050,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0bfa04cd733308ca",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Players_subfolder/Players_subfolder.canvas",
+			"color": "5",
+			"x": 1040,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "3ee2ac3c9d2c01d8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Resources_subfolder/Stats_subfolder/Stats_subfolder.canvas",
+			"color": "5",
+			"x": 4510,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "be52b4b1ea23850a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/World_subfolder/World_subfolder.canvas",
+			"color": "5",
+			"x": 4970,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "194079a7791dc546",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/sstdbsdk_subfolder/sstdbsdk_subfolder.canvas",
+			"color": "5",
+			"x": 4270,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "69d7625af2ec04d0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/combat_subfolder/combat_subfolder.canvas",
+			"color": "5",
+			"x": 580,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "4414d6e4f159cb40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/main_subfolder/main_subfolder.canvas",
+			"color": "5",
+			"x": 2890,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "23ad101c7f63b520",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder.canvas",
+			"color": "5",
+			"x": 2990,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "02cb56c63df73908",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
+			"color": "5",
+			"x": 4000,
+			"y": 2000,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "2b6145c861d0e650",
+			"fromNode": "3dafdbce8383b4e0",
+			"fromSide": "bottom",
+			"toNode": "65b0058b54a9ffd4",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "c63c54823406e778",
+			"fromNode": "7a615a526756e130",
+			"fromSide": "bottom",
+			"toNode": "30e96d437fcb3e10",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "1bbbd4601e08d740",
+			"fromNode": "7a615a526756e130",
+			"fromSide": "bottom",
+			"toNode": "194079a7791dc546",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "82ca8c0177e3f7ba",
+			"fromNode": "7a615a526756e130",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "198f68297b84a876",
+			"fromNode": "773ad628851456c0",
+			"fromSide": "bottom",
+			"toNode": "1d60b7451412fc10",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "cb31c853da95776e",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "0bfa04cd733308ca",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "0b40ed8f215a7b5e",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "8466c29300c138b0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "b09a2c60818c4640",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "194079a7791dc546",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "d1bcdf8447016998",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "f55e33efc44c6b58",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "b63b603e7870e31c",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "1d60b7451412fc10",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "4f5592e0ebf3cbc0",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "65b0058b54a9ffd4",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "dcccfab5139d35ea",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "048460f3ecc5ac34",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "e17074795f2ce268",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "3dafdbce8383b4e0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "scene"
+		},
+		{
+			"id": "577b24018954304a",
+			"fromNode": "b715f8cabe07b138",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "4d4dd83955c4b42a",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "0bfa04cd733308ca",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "c668fb57fe23fd16",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "048460f3ecc5ac34",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "4c2b71d26dac2ee4",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "194079a7791dc546",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "143c64d26c76f2d8",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "f55e33efc44c6b58",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "script"
+		},
+		{
+			"id": "6b0f0bd6a2bd9f68",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "773ad628851456c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "scene"
+		},
+		{
+			"id": "128cb08f385ea2da",
+			"fromNode": "e2a267a20ff56b88",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "bind"
+		},
+		{
+			"id": "8675c1bdd4e6e938",
+			"fromNode": "f55e33efc44c6b58",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "0c6e3c0006b62000",
+			"fromNode": "8466c29300c138b0",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "e57f1a24a9e8a938",
+			"fromNode": "30e96d437fcb3e10",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "d6b2486fee4cd478",
+			"fromNode": "1d60b7451412fc10",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "rpc"
+		},
+		{
+			"id": "0657c0ad473cd6b6",
+			"fromNode": "0bfa04cd733308ca",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "efc2f30642c9adb4",
+			"fromNode": "194079a7791dc546",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "9f24586f67baf872",
+			"fromNode": "194079a7791dc546",
+			"fromSide": "bottom",
+			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "b4f8d63390c3ba7a",
+			"fromNode": "69d7625af2ec04d0",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "75e573610247e2aa",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "8142c790a761d380",
+			"fromNode": "4414d6e4f159cb40",
+			"fromSide": "bottom",
+			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "35d2214253eeb5fc",
+			"fromNode": "23ad101c7f63b520",
+			"fromSide": "bottom",
+			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "56c7ada2739ade14",
+			"fromNode": "02cb56c63df73908",
+			"fromSide": "bottom",
+			"toNode": "23ad101c7f63b520",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	]
+}

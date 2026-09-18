@@ -220,6 +220,37 @@ pub struct AbilityCharge {
     pub started_at: Timestamp,
 }
 
+/// Channeled action kind (Phase 1 — BitCraft `progressive_action_state` pattern).
+/// Revive / Capture / ChannelCast share one lock/progress/expiry shape; completion
+/// dispatches into the existing effect helpers (`heal_player`, `apply_ability_effect`).
+#[derive(SpacetimeType, Clone, Copy, PartialEq)]
+pub enum ChanneledActionKind {
+    Revive,
+    Capture,
+    ChannelCast,
+}
+
+/// A progressive / channeled action (Phase 1 — BitCraft `ProgressiveActionState`,
+/// translated to one-table-per-concern). Max 1 active per player + max N per target
+/// (mirror BitCraft `validate_slots`). `lock_expires_at` auto-releases on the 1 Hz
+/// tick (mirror the charge MAX_CHARGE_SECONDS path). `is_public` mirrors BitCraft's
+/// public-vs-owned craft split.
+#[table(accessor = channeled_action, public, index(accessor = by_channel_target, btree(columns = [target_id])))]
+pub struct ChanneledAction {
+    #[primary_key] #[auto_inc]
+    pub action_id: u64,
+    #[index(btree)]
+    pub profile_id: u64,
+    pub kind: ChanneledActionKind,
+    pub target_id: u64,
+    pub target_x: f32,
+    pub target_y: f32,
+    pub progress: f32,
+    pub required: f32,
+    pub lock_expires_at: Timestamp,
+    pub is_public: bool,
+}
+
 /// One active enemy debuff row. Uniqueness: one row per (enemy_id, kind) — re-applying
 /// refreshes (replaces magnitude/remaining/source). Lifetime is managed by the 1 Hz status
 /// tick (expiry sweep + DoT damage) and by on_enemy_killed (rows never outlive their enemy).

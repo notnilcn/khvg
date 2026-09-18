@@ -5,7 +5,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/damage_receiving_component_codefile/damage_receiving_component_codefile.canvas",
 			"color": "5",
-			"x": 0,
+			"x": 460,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -15,7 +15,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scenes_subfolder/Components_subfolder/Combat_subfolder/health_component_codefile/health_component_codefile.canvas",
 			"color": "5",
-			"x": 460,
+			"x": 0,
 			"y": 0,
 			"width": 400,
 			"height": 400

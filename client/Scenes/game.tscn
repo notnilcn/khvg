@@ -120,7 +120,7 @@ script = ExtResource("30_bcliff")
 [node name="CameraRigComponent" type="Node" parent="." unique_id=429369880]
 script = ExtResource("14_lmoi6")
 PitchMax = 0.0
-DefaultPitch = -70.0
+PivotHeightOffset = 60.0
 
 [node name="3D" type="CanvasLayer" parent="." unique_id=358806965]
 layer = -1
@@ -134,7 +134,6 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="SubViewport" type="SubViewport" parent="3D/SubViewportContainer" unique_id=803652251]
-transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1280, 720)
 render_target_update_mode = 4
@@ -283,7 +282,7 @@ offset_left = -110.0
 offset_top = 8.0
 offset_right = -10.0
 offset_bottom = 39.0
-text = "3dpixelart"
+text = "Pixelizer3D"
 
 [node name="CharacterAssetsButton" type="Button" parent="DebugOverlay" unique_id=561242893]
 anchors_preset = 1

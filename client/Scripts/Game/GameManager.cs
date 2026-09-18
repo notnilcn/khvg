@@ -83,6 +83,7 @@ public partial class GameManager : Node2D, IEntity
 	public static IEnumerable<AnimationEntry> GetAnimations() => Get<CatalogComponent>()?.GetAnimations() ?? Enumerable.Empty<AnimationEntry>();
 	public static SpellVisualComponent? SpellVisuals => Get<SpellVisualComponent>();
 	public static ElevationMapComponent? ElevationMap => Get<ElevationMapComponent>();
+	public static CameraRigComponent? CameraRig => Get<CameraRigComponent>();
 
 	/// Forwarded from the CatalogComponent; subscribe/unsubscribe are no-ops once Main is gone.
 	public static event Action? EnchantmentsChanged

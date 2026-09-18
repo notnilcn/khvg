@@ -91,9 +91,9 @@
 			"height": 400
 		},
 		{
-			"id": "8336bad2254bd2a8",
+			"id": "681c0ca2e8a1e808",
 			"type": "file",
-			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/mod_codefile/write_triangle_tiles_symbol.canvas",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/terrain_subfolder/mod_codefile/write_hex_tile_symbol.canvas",
 			"color": "5",
 			"x": 460,
 			"y": 1000,
@@ -135,10 +135,10 @@
 			"toEnd": "arrow"
 		},
 		{
-			"id": "1380bc46d1463d3c",
+			"id": "15f33819ae26a17e",
 			"fromNode": "48fe9bcc9e5a6e50",
 			"fromSide": "bottom",
-			"toNode": "8336bad2254bd2a8",
+			"toNode": "681c0ca2e8a1e808",
 			"toSide": "top",
 			"toEnd": "arrow"
 		}
@@ -158,7 +158,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-BiomeRegion-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-TriangleTile-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-HexTile-_colon_-write",
 				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-HexDecor-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-write",
@@ -187,7 +187,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/prng_codefile/prng_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/world/def_tables-_dot_-rs-_hashtag_-RegionWeight",
 				"edge-_colon_-server/spacetimedb/src/world/terrain/mod-_dot_-rs-_hashtag_-clear_world_geometry",
-				"edge-_colon_-server/spacetimedb/src/world/terrain/mod-_dot_-rs-_hashtag_-write_triangle_tiles",
+				"edge-_colon_-server/spacetimedb/src/world/terrain/mod-_dot_-rs-_hashtag_-write_hex_tile",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
 				"edge-_colon_-server/spacetimedb/src/world/hex-_dot_-rs-_hashtag_-HexCell",
 				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-BuildingTile",
@@ -200,7 +200,7 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/noise_codefile/noise_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-write",
-				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-TriangleTile"
+				"edge-_colon_-server/spacetimedb/src/world/instance_tables-_dot_-rs-_hashtag_-HexTile"
 			]
 		}
 	}

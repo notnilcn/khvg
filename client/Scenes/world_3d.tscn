@@ -15,10 +15,14 @@
 [ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="9_mst"]
 [ext_resource type="Script" uid="uid://b28hx71s228ed" path="res://Scripts/Components/PixelArt/PixelArtPipelineComponent.cs" id="10_pipeline"]
 [ext_resource type="Script" uid="uid://bab41r0vux14a" path="res://Scripts/Components/PixelArt/WaterComponent3D.cs" id="11_water"]
+[ext_resource type="Script" uid="uid://btdtpfyyn50j0" path="res://addons/pixelizer_3d/nodes/pixelizer_applier_3d.gd" id="12_applier"]
+[ext_resource type="Script" uid="uid://kg625atl872n" path="res://addons/pixelizer_3d/nodes/pixelizer_manager_3d.gd" id="13_manager"]
+[ext_resource type="Script" uid="uid://b3jprkygkht3l" path="res://addons/pixelizer_3d/effects/pixelizer_sky_clouds_3d.gd" id="14_skyclouds"]
+[ext_resource type="Script" uid="uid://cpyhokopcry0s" path="res://addons/pixelizer_3d/effects/pixelizer_god_rays_3d.gd" id="15_godrays"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kqqpj"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
-ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.08, 0.25, 0.45, 1)
 
 [sub_resource type="Sky" id="Sky_5pobv"]
 sky_material = SubResource("ProceduralSkyMaterial_kqqpj")
@@ -33,15 +37,45 @@ script = ExtResource("3_1j568")
 
 [node name="World3DComponent" type="Node3D" unique_id=1360330812]
 script = ExtResource("1_1j568")
+AutoZoomAtShallowPitch = true
+
+[node name="PixelizerManager3D" type="Node3D" parent="." unique_id=2100000001]
+script = ExtResource("13_manager")
+snap_camera = false
+sun = NodePath("../DirectionalLight3D")
+
+[node name="CharactersPixelApplier" type="Node3D" parent="PixelizerManager3D" unique_id=2100000002]
+script = ExtResource("12_applier")
+override_outline_color = true
+
+[node name="BulletsPixelApplier" type="Node3D" parent="PixelizerManager3D" unique_id=1581820700]
+script = ExtResource("12_applier")
+override_outline_color = true
+
+[node name="Bullets3DComponent" type="Node3D" parent="PixelizerManager3D/BulletsPixelApplier" unique_id=1581820701]
+script = ExtResource("7_bullets3d")
+BulletScene = ExtResource("6_bullet")
+ModelYawOffset = 1.5699999999999998
+ModelRollOffset = 0.0
+
+[node name="PixelizerSkyClouds3D" type="MeshInstance3D" parent="." unique_id=2100000003]
+script = ExtResource("14_skyclouds")
+manager = NodePath("../PixelizerManager3D")
+clouds_enabled = true
+plane_size = 16000.0
+
+[node name="PixelizerGodRays3D" type="Node3D" parent="." unique_id=2100000004]
+script = ExtResource("15_godrays")
+enabled = false
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1996365010]
 transform = Transform3D(0.86602527, 0.38302252, -0.32139382, 0, 0.64278734, 0.7660447, 0.50000024, -0.66341406, 0.55667007, 0, 0, 0)
 shadow_enabled = true
 
-[node name="PixelArtPipelineComponent" type="Node" parent="." unique_id=1279853097 node_paths=PackedStringArray("Camera", "Sun")]
+[node name="PixelArtPipelineComponent" type="Node" parent="." unique_id=1279853097 node_paths=PackedStringArray("Sun")]
 script = ExtResource("10_pipeline")
-Camera = NodePath("../Camera3D")
 Sun = NodePath("../DirectionalLight3D")
+CloudWind = Vector2(0, 0)
 GodRaysEnabled = false
 
 [node name="WaterComponent3D" type="Node3D" parent="." unique_id=1707236026]
@@ -75,12 +109,6 @@ script = ExtResource("4_binder")
 ReplayExistingRows = true
 TableName = "MapConfig"
 
-[node name="Bullets3DComponent" type="Node3D" parent="." unique_id=1581820701]
-script = ExtResource("7_bullets3d")
-BulletScene = ExtResource("6_bullet")
-ModelYawOffset = 1.5699999999999998
-ModelRollOffset = 0.0
-
 [node name="TerrainComponent3D" type="Node3D" parent="." unique_id=1697761499]
 script = ExtResource("8_terrain3d")
 
@@ -111,15 +139,9 @@ metadata/_custom_type_script = "uid://csjccrhj5wnx7"
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1778573569]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
 top_level = true
-projection = 1
-; Ortho frustum height in world units. The 1.0 default is a 1-unit close-up
-; (full-screen terrain = the green screen); 460 matches the old perspective
-; framing (fov 75 at the rig's default Distance 300: 2*300*tan(37.5deg)).
-; World3DComponent re-drives this every frame from the rig's zoom distance.
-; The PhantomCameraHost never touches it (no Camera3DResource on the
-; PhantomCamera3D, and all of the host's projection/fov/size overrides are
-; gated on one existing).
+fov = 24.0
 size = 460.0
+far = 20000.0
 
 [node name="PhantomCameraHost" type="Node" parent="Camera3D" unique_id=390949796]
 process_priority = 300

@@ -12,18 +12,17 @@ pub struct BiomeRegion {
     pub spawn_radius: f32,
 }
 
-#[table(accessor = triangle_tile, public)]
-pub struct TriangleTile {
+#[table(accessor = hex_tile, public)]
+pub struct HexTile {
     #[primary_key] #[auto_inc]
     pub tile_id: u64,
     pub hex_q: i32,
     pub hex_r: i32,
-    pub tri_index: u8,
     #[index(btree)]
     pub chunk_index: i64,
     pub texture_id: String,
     pub rotation: u8,
-    // None when no overlay was rolled for this triangle. overlay_rotation/overlay_scale are
+    // None when no overlay was rolled for this hex. overlay_rotation/overlay_scale are
     // unused when None. overlay_scale is copied from the biome's OverlayTextureConfig at
     // generation time so the client can render it without joining back through BiomeDef.
     pub overlay_texture_id: Option<String>,
@@ -34,7 +33,7 @@ pub struct TriangleTile {
 }
 
 // One decor prop per hex, at most — separation rules mean two decor can never be close enough
-// for multiple-per-hex to come up. Unlike TriangleTile, a hex with no decor simply has no row
+// for multiple-per-hex to come up. Like HexTile, a hex with no decor simply has no row
 // here rather than a blank placeholder, since decor is optional content, not a required fill.
 #[table(accessor = hex_decor, public)]
 pub struct HexDecor {

@@ -256,6 +256,12 @@
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ActiveEnemyStatusEffect-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-GroundZone-_colon_-subscribe",
 				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-AbilityCharge-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/status/tables-_dot_-rs-_hashtag_-ChanneledAction-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-local_player_knowledge-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/trade/mod-_dot_-rs-_hashtag_-local_trade_session-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/claims/mod-_dot_-rs-_hashtag_-all_territories-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-all_chat_channels-_colon_-subscribe",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-local_chat_messages-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/views_codefile/views_codefile-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-subscribe",
@@ -273,7 +279,13 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/enemy_subfolder/instance_tables_codefile/instance_tables_codefile-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-subscribe",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-subscribe",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-subscribe"
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/status_subfolder-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/trade_subfolder-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/claims_subfolder-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/mod_codefile-_dot_-canvas-_colon_-subscribe",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/chat_subfolder-_dot_-canvas-_colon_-subscribe"
 			]
 		}
 	}

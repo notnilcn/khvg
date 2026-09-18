@@ -19,6 +19,7 @@ public partial class CameraRigComponent : Component
     [Export] public float DistanceMax = 1200f;
     [Export] public float ZoomStep = 1.1f;   // multiplicative per scroll tick
     [Export] public float ZoomReferenceDistance = 300f;   // Distance that maps to 2D zoom 1.0
+    [Export] public float PivotHeightOffset = 0f;   // world units above the follow target origin (player's feet) that the 3D camera orbits around
 
     // ── Canonical state ─────────────────────────────────────────────────────
     // Yaw is the one true heading. It IS the 2D PhantomCamera2D.RotationOffset (radians,

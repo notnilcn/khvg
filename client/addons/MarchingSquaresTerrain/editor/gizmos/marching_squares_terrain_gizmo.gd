@@ -48,20 +48,36 @@ func _redraw():
 			add_chunk_lines(terrain_system, terrain_plugin.current_hovered_chunk, addchunk_material)
 	else:
 		for chunk_coords: Vector2i in terrain_system.chunks:
-			for dir in range(6):
-				try_add_chunk(terrain_system, chunk_coords + MSTHexMath.neighbor_offset(dir))
-			try_add_chunk(terrain_system, chunk_coords)
+			if terrain_system.grid_mode == 0:
+				try_add_chunk(terrain_system, Vector2i(chunk_coords.x - 1, chunk_coords.y))
+				try_add_chunk(terrain_system, Vector2i(chunk_coords.x + 1, chunk_coords.y))
+				try_add_chunk(terrain_system, Vector2i(chunk_coords.x, chunk_coords.y - 1))
+				try_add_chunk(terrain_system, Vector2i(chunk_coords.x, chunk_coords.y + 1))
+				try_add_chunk(terrain_system, chunk_coords)
+			else:
+				for dir in range(6):
+					try_add_chunk(terrain_system, chunk_coords + MSTHexMath.neighbor_offset(dir))
+				try_add_chunk(terrain_system, chunk_coords)
 	
 	var pos : Vector3 = terrain_plugin.brush_position
 	var cursor_chunk_coords : Vector2i
 	var cursor_hex_coords : Vector2i
+	var cursor_cell_coords : Vector2i
 	
 	if terrain_plugin.is_setting and not terrain_plugin.draw_height_set:
 		terrain_plugin.draw_height_set = true
 		
-		var cursor_hex := MSTHexMath.world_to_hex(pos.x, pos.z, terrain_system.hex_size)
-		cursor_chunk_coords = MSTHexMath.world_to_chunk(cursor_hex.x, cursor_hex.y, terrain_system.chunk_radius)
-		cursor_hex_coords = MSTHexMath.hex_to_local(cursor_hex.x, cursor_hex.y, terrain_system.chunk_radius)
+		if terrain_system.grid_mode == 0:
+			var chunk_x := floor(pos.x / ((terrain_system.dimensions.x - 1) * terrain_system.cell_size.x))
+			var chunk_z := floor(pos.z / ((terrain_system.dimensions.z - 1) * terrain_system.cell_size.y))
+			cursor_chunk_coords = Vector2i(chunk_x, chunk_z)
+			var x := int(floor(((pos.x + terrain_system.cell_size.x / 2) / terrain_system.cell_size.x) - chunk_x * (terrain_system.dimensions.x - 1)))
+			var z := int(floor(((pos.z + terrain_system.cell_size.y / 2) / terrain_system.cell_size.y) - chunk_z * (terrain_system.dimensions.z - 1)))
+			cursor_cell_coords = Vector2i(x, z)
+		else:
+			var cursor_hex := MSTHexMath.world_to_hex(pos.x, pos.z, terrain_system.hex_size)
+			cursor_chunk_coords = MSTHexMath.world_to_chunk(cursor_hex.x, cursor_hex.y, terrain_system.chunk_radius)
+			cursor_hex_coords = MSTHexMath.hex_to_local(cursor_hex.x, cursor_hex.y, terrain_system.chunk_radius)
 		
 		# When setting, if there is no pattern and alt not held, go to draw mode
 		var has_pattern : bool = not terrain_plugin.current_draw_pattern.is_empty()
@@ -73,12 +89,17 @@ func _redraw():
 		
 		# Otherwise, drag that pattern's height
 		else:
-			# If alt held, ONLY drag the cursor hex
+			# If alt held, ONLY drag the cursor cell/hex
 			if Input.is_key_pressed(KEY_ALT) and terrain_system.chunks.has(cursor_chunk_coords):
-				var cursor_chunk : MarchingSquaresTerrainChunk = terrain_system.chunks[cursor_chunk_coords]
-				terrain_plugin.current_draw_pattern.clear()
-				terrain_plugin.current_draw_pattern[cursor_chunk_coords] = {}
-				terrain_plugin.current_draw_pattern[cursor_chunk_coords][cursor_hex_coords] = cursor_chunk.get_elevation(cursor_hex_coords) * terrain_system.level_height
+				if terrain_system.grid_mode == 0:
+					terrain_plugin.current_draw_pattern.clear()
+					terrain_plugin.current_draw_pattern[cursor_chunk_coords] = {}
+					terrain_plugin.current_draw_pattern[cursor_chunk_coords][cursor_cell_coords] = terrain_system.chunks[cursor_chunk_coords].get_height(cursor_cell_coords)
+				else:
+					var cursor_chunk : MarchingSquaresTerrainChunk = terrain_system.chunks[cursor_chunk_coords]
+					terrain_plugin.current_draw_pattern.clear()
+					terrain_plugin.current_draw_pattern[cursor_chunk_coords] = {}
+					terrain_plugin.current_draw_pattern[cursor_chunk_coords][cursor_hex_coords] = cursor_chunk.get_elevation(cursor_hex_coords) * terrain_system.level_height
 				terrain_plugin.draw_height = pos.y
 			terrain_plugin.base_position = pos
 	
@@ -90,6 +111,10 @@ func _redraw():
 	
 	# Check if we're in wall painting mode
 	var is_wall_painting : bool = terrain_plugin.paint_walls_mode and terrain_plugin.mode == terrain_plugin.TerrainToolMode.VERTEX_PAINTING
+	
+	# SQUARES mode: scale the square brush visual to the cell size.
+	if terrain_system.grid_mode == 0 and terrain_plugin.get("BRUSH_VISUAL") != null:
+		terrain_plugin.BRUSH_VISUAL.size = Vector2(1.0, 1.0) * (terrain_system.cell_size.x + terrain_system.cell_size.y) / 4.0
 	
 	var hex_mesh := _get_brush_hex_mesh(terrain_system.hex_size)
 	var hex_scale_basis := Basis()
@@ -131,72 +156,148 @@ func _redraw():
 		elif terrain_plugin.mode != terrain_plugin.TerrainToolMode.SMOOTH and terrain_plugin.mode != terrain_plugin.TerrainToolMode.GRASS_MASK and terrain_plugin.mode != terrain_plugin.TerrainToolMode.DEBUG_BRUSH:
 			add_mesh(terrain_plugin.BRUSH_RADIUS_VISUAL, null, brush_transform)
 		
-		pos = terrain_plugin.brush_position
-		
-		var brush_hexes : Dictionary = BrushPatternCalculator.hexes_in_brush(
-			terrain_system, pos, terrain_plugin.brush_size, terrain_plugin.current_brush_index,
-			terrain_plugin.falloff, terrain_plugin.falloff_curve
-		)
-		
-		for brush_chunk_coords : Vector2i in brush_hexes:
-			var chunk : MarchingSquaresTerrainChunk = terrain_system.chunks[brush_chunk_coords]
-			var center := MSTHexMath.chunk_center(brush_chunk_coords.x, brush_chunk_coords.y, terrain_system.chunk_radius)
-			var chunk_dict : Dictionary = brush_hexes[brush_chunk_coords]
-			
-			for local_hex : Vector2i in chunk_dict:
-				var sample : float = chunk_dict[local_hex]
-				var world_xz := MSTHexMath.hex_to_world(center.x + local_hex.x, center.y + local_hex.y, terrain_system.hex_size)
-				
-				var y : float
-				if not terrain_plugin.current_draw_pattern.is_empty() and terrain_plugin.flatten:
-					y = terrain_plugin.draw_height
-				else:
-					y = chunk.get_elevation(local_hex) * terrain_system.level_height
-				
-				hex_scale_basis = Basis().scaled(Vector3(sample, sample, sample))
-				var draw_transform := Transform3D(hex_scale_basis, Vector3(world_xz.x, y, world_xz.y))
-				# Only draw ground brush hexes if NOT in wall paint mode
-				if not is_wall_painting:
-					add_mesh(hex_mesh, brush_material, draw_transform)
-				
-				# Draw to current pattern
-				if terrain_plugin.is_drawing:
-					if not terrain_plugin.current_draw_pattern.has(brush_chunk_coords):
-						terrain_plugin.current_draw_pattern[brush_chunk_coords] = {}
-					if terrain_plugin.current_draw_pattern[brush_chunk_coords].has(local_hex):
-						var prev_sample = terrain_plugin.current_draw_pattern[brush_chunk_coords][local_hex]
-						if sample > prev_sample:
-							terrain_plugin.current_draw_pattern[brush_chunk_coords][local_hex] = sample
+		if terrain_system.grid_mode == 0:
+			# SQUARES mode brush visualization (merged from original).
+			pos = terrain_plugin.brush_position
+
+			var bounds = BrushPatternCalculator.calculate_bounds_squares(pos, terrain_plugin.brush_size, terrain_system)
+			var max_distance : float = BrushPatternCalculator.calculate_max_distance(terrain_plugin.brush_size, terrain_plugin.current_brush_index)
+			var brush_pos : Vector2 = Vector2(pos.x, pos.z)
+
+			for chunk_z in range(bounds.chunk_tl.y, bounds.chunk_br.y + 1):
+				for chunk_x in range(bounds.chunk_tl.x, bounds.chunk_br.x + 1):
+					cursor_chunk_coords = Vector2i(chunk_x, chunk_z)
+					if not terrain_system.chunks.has(cursor_chunk_coords):
+						continue
+					var chunk : MarchingSquaresTerrainChunk = terrain_system.chunks[cursor_chunk_coords]
+
+					var cell_range : Dictionary = BrushPatternCalculator.get_cell_range_for_chunk(cursor_chunk_coords, bounds, terrain_system)
+
+					for z in range(cell_range.z_min, cell_range.z_max):
+						for x in range(cell_range.x_min, cell_range.x_max):
+							cursor_cell_coords = Vector2i(x, z)
+							var world_pos : Vector2 = BrushPatternCalculator.cell_to_world_pos(cursor_chunk_coords, cursor_cell_coords, terrain_system)
+
+							var sample : float = BrushPatternCalculator.calculate_falloff_sample(
+								world_pos, brush_pos, terrain_plugin.brush_size, terrain_plugin.current_brush_index,
+								max_distance, terrain_plugin.falloff, terrain_plugin.falloff_curve
+							)
+
+							if sample < 0:
+								continue  # Outside brush
+
+							var y : float
+							if not terrain_plugin.current_draw_pattern.is_empty() and terrain_plugin.flatten:
+								y = terrain_plugin.draw_height
+							else:
+								y = chunk.height_map[z][x]
+
+							var draw_position := Vector3(world_pos.x, y, world_pos.y)
+							var draw_transform := Transform3D(Vector3.RIGHT*sample, Vector3.UP*sample, Vector3.BACK*sample, draw_position)
+							# Only draw ground brush squares if NOT in wall paint mode
+							if not is_wall_painting:
+								add_mesh(terrain_plugin.BRUSH_VISUAL, brush_material, draw_transform)
+
+							# Draw to current pattern
+							if terrain_plugin.is_drawing:
+								if not terrain_plugin.current_draw_pattern.has(cursor_chunk_coords):
+									terrain_plugin.current_draw_pattern[cursor_chunk_coords] = {}
+								if terrain_plugin.current_draw_pattern[cursor_chunk_coords].has(cursor_cell_coords):
+									var prev_sample = terrain_plugin.current_draw_pattern[cursor_chunk_coords][cursor_cell_coords]
+									if sample > prev_sample:
+										terrain_plugin.current_draw_pattern[cursor_chunk_coords][cursor_cell_coords] = sample
+								else:
+									terrain_plugin.current_draw_pattern[cursor_chunk_coords][cursor_cell_coords] = sample
+		else:
+			pos = terrain_plugin.brush_position
+
+			var brush_hexes : Dictionary = BrushPatternCalculator.hexes_in_brush(
+				terrain_system, pos, terrain_plugin.brush_size, terrain_plugin.current_brush_index,
+				terrain_plugin.falloff, terrain_plugin.falloff_curve
+			)
+
+			for brush_chunk_coords : Vector2i in brush_hexes:
+				var chunk : MarchingSquaresTerrainChunk = terrain_system.chunks[brush_chunk_coords]
+				var center := MSTHexMath.chunk_center(brush_chunk_coords.x, brush_chunk_coords.y, terrain_system.chunk_radius)
+				var chunk_dict : Dictionary = brush_hexes[brush_chunk_coords]
+
+				for local_hex : Vector2i in chunk_dict:
+					var sample : float = chunk_dict[local_hex]
+					var world_xz := MSTHexMath.hex_to_world(center.x + local_hex.x, center.y + local_hex.y, terrain_system.hex_size)
+
+					var y : float
+					if not terrain_plugin.current_draw_pattern.is_empty() and terrain_plugin.flatten:
+						y = terrain_plugin.draw_height
 					else:
-						terrain_plugin.current_draw_pattern[brush_chunk_coords][local_hex] = sample
+						y = chunk.get_elevation(local_hex) * terrain_system.level_height
+
+					hex_scale_basis = Basis().scaled(Vector3(sample, sample, sample))
+					var draw_transform := Transform3D(hex_scale_basis, Vector3(world_xz.x, y, world_xz.y))
+					# Only draw ground brush hexes if NOT in wall paint mode
+					if not is_wall_painting:
+						add_mesh(hex_mesh, brush_material, draw_transform)
+
+					# Draw to current pattern
+					if terrain_plugin.is_drawing:
+						if not terrain_plugin.current_draw_pattern.has(brush_chunk_coords):
+							terrain_plugin.current_draw_pattern[brush_chunk_coords] = {}
+						if terrain_plugin.current_draw_pattern[brush_chunk_coords].has(local_hex):
+							var prev_sample = terrain_plugin.current_draw_pattern[brush_chunk_coords][local_hex]
+							if sample > prev_sample:
+								terrain_plugin.current_draw_pattern[brush_chunk_coords][local_hex] = sample
+						else:
+							terrain_plugin.current_draw_pattern[brush_chunk_coords][local_hex] = sample
 	
 	var height_diff : float
 	if terrain_plugin.is_setting and terrain_plugin.draw_height_set:
 		height_diff = terrain_plugin.brush_position.y - terrain_plugin.draw_height
 	
 	if not terrain_plugin.current_draw_pattern.is_empty():
-		for draw_chunk_coords : Vector2i in terrain_plugin.current_draw_pattern:
-			var chunk = terrain_system.chunks[draw_chunk_coords]
-			var center := MSTHexMath.chunk_center(draw_chunk_coords.x, draw_chunk_coords.y, terrain_system.chunk_radius)
-			var draw_chunk_dict : Dictionary = terrain_plugin.current_draw_pattern[draw_chunk_coords]
-			for draw_coords: Vector2i in draw_chunk_dict:
-				var world_xz := MSTHexMath.hex_to_world(center.x + draw_coords.x, center.y + draw_coords.y, terrain_system.hex_size)
-				var draw_y = terrain_plugin.draw_height if terrain_plugin.flatten else chunk.get_elevation(draw_coords) * terrain_system.level_height
-				
-				var sample : float = draw_chunk_dict[draw_coords]
-				hex_scale_basis = Basis().scaled(Vector3(sample, sample, sample))
-				
-				# If setting, also show a hex at the height to set to
-				if terrain_plugin.is_setting and terrain_plugin.draw_height_set:
-					var draw_position := Vector3(world_xz.x, draw_y + height_diff * sample, world_xz.y)
-					var draw_transform := Transform3D(hex_scale_basis, draw_position)
-					if not is_wall_painting:
-						add_mesh(hex_mesh, null, draw_transform)
-				else:
-					var draw_position := Vector3(world_xz.x, draw_y, world_xz.y)
-					var draw_transform := Transform3D(hex_scale_basis, draw_position)
-					if not is_wall_painting:
-						add_mesh(hex_mesh, null, draw_transform)
+		if terrain_system.grid_mode == 0:
+			for draw_chunk_coords : Vector2i in terrain_plugin.current_draw_pattern:
+				var chunk = terrain_system.chunks[draw_chunk_coords]
+				var draw_chunk_dict : Dictionary = terrain_plugin.current_draw_pattern[draw_chunk_coords]
+				for draw_coords: Vector2i in draw_chunk_dict:
+					var draw_x := (draw_chunk_coords.x * (terrain_system.dimensions.x - 1) + draw_coords.x) * terrain_system.cell_size.x
+					var draw_z := (draw_chunk_coords.y * (terrain_system.dimensions.z - 1) + draw_coords.y) * terrain_system.cell_size.y
+					var draw_y = terrain_plugin.draw_height if terrain_plugin.flatten else chunk.height_map[draw_coords.y][draw_coords.x]
+
+					var sample : float = draw_chunk_dict[draw_coords]
+
+					# If setting, also show a square at the height to set to
+					if terrain_plugin.is_setting and terrain_plugin.draw_height_set:
+						var draw_position := Vector3(draw_x, draw_y + height_diff * sample, draw_z)
+						var draw_transform := Transform3D(Vector3.RIGHT*sample, Vector3.UP*sample, Vector3.BACK*sample, draw_position)
+						if not is_wall_painting:
+							add_mesh(terrain_plugin.BRUSH_VISUAL, null, draw_transform)
+					else:
+						var draw_position := Vector3(draw_x, draw_y, draw_z)
+						var draw_transform := Transform3D(Vector3.RIGHT*sample, Vector3.UP*sample, Vector3.BACK*sample, draw_position)
+						if not is_wall_painting:
+							add_mesh(terrain_plugin.BRUSH_VISUAL, null, draw_transform)
+		else:
+			for draw_chunk_coords : Vector2i in terrain_plugin.current_draw_pattern:
+				var chunk = terrain_system.chunks[draw_chunk_coords]
+				var center := MSTHexMath.chunk_center(draw_chunk_coords.x, draw_chunk_coords.y, terrain_system.chunk_radius)
+				var draw_chunk_dict : Dictionary = terrain_plugin.current_draw_pattern[draw_chunk_coords]
+				for draw_coords: Vector2i in draw_chunk_dict:
+					var world_xz := MSTHexMath.hex_to_world(center.x + draw_coords.x, center.y + draw_coords.y, terrain_system.hex_size)
+					var draw_y = terrain_plugin.draw_height if terrain_plugin.flatten else chunk.get_elevation(draw_coords) * terrain_system.level_height
+
+					var sample : float = draw_chunk_dict[draw_coords]
+					hex_scale_basis = Basis().scaled(Vector3(sample, sample, sample))
+
+					# If setting, also show a hex at the height to set to
+					if terrain_plugin.is_setting and terrain_plugin.draw_height_set:
+						var draw_position := Vector3(world_xz.x, draw_y + height_diff * sample, world_xz.y)
+						var draw_transform := Transform3D(hex_scale_basis, draw_position)
+						if not is_wall_painting:
+							add_mesh(hex_mesh, null, draw_transform)
+					else:
+						var draw_position := Vector3(world_xz.x, draw_y, world_xz.y)
+						var draw_transform := Transform3D(hex_scale_basis, draw_position)
+						if not is_wall_painting:
+							add_mesh(hex_mesh, null, draw_transform)
 
 
 func _create_brush_basis(normal: Vector3, brush_size: float) -> Basis:
@@ -243,10 +344,11 @@ func try_add_chunk(terrain_system: MarchingSquaresTerrain, coords: Vector2i):
 		add_chunk_lines(terrain_system, coords, removechunk_material) 
 
 
-# Draw chunk ui lines inside and around a chunk.
-# The chunk outline is the hexagon through the outer corners of the chunk's hex shape:
-# its corners sit at (2 * chunk_radius + 1) * hex_size from the chunk center.
+# Draw chunk ui lines inside and around a chunk (branches on grid mode).
 func add_chunk_lines(terrain_system: MarchingSquaresTerrain, coords: Vector2i, material: Material):
+	if terrain_system.grid_mode == 0:
+		_add_chunk_lines_squares(terrain_system, coords, material)
+		return
 	var center_hex := MSTHexMath.chunk_center(coords.x, coords.y, terrain_system.chunk_radius)
 	var center_xz := MSTHexMath.hex_to_world(center_hex.x, center_hex.y, terrain_system.hex_size)
 	var center := Vector3(center_xz.x, 0.0, center_xz.y)
@@ -286,5 +388,54 @@ func add_chunk_lines(terrain_system: MarchingSquaresTerrain, coords: Vector2i, m
 			lines.append(corners[dir].lerp(corners[posmod(dir - 1, 6)], 0.15))
 			lines.append(corners[dir])
 			lines.append(corners[dir].lerp(corners[(dir + 1) % 6], 0.15))
+	
+	add_lines(lines, material, false)
+
+
+# Draw chunk ui lines inside and around a chunk
+func _add_chunk_lines_squares(terrain_system: MarchingSquaresTerrain, coords: Vector2i, material: Material):
+	var dx := (terrain_system.dimensions.x - 1) * terrain_system.cell_size.x
+	var dz := (terrain_system.dimensions.z - 1) * terrain_system.cell_size.y
+	var x := coords.x * dx
+	var z := coords.y * dz
+	dx += x
+	dz += z
+	
+	lines.clear()
+	if not terrain_system.chunks.has(Vector2i(coords.x, coords.y-1)):
+		lines.append(Vector3(x,0,z))
+		lines.append(Vector3(dx,0,z))
+	if not terrain_system.chunks.has(Vector2i(coords.x+1, coords.y)):
+		lines.append(Vector3(dx,0,z))
+		lines.append(Vector3(dx,0,dz))
+	if not terrain_system.chunks.has(Vector2i(coords.x, coords.y+1)):
+		lines.append(Vector3(dx,0,dz))
+		lines.append(Vector3(x,0,dz))
+	if not terrain_system.chunks.has(Vector2i(coords.x-1, coords.y)):
+		lines.append(Vector3(x,0,dz))
+		lines.append(Vector3(x,0,z))
+	
+	if material == removechunk_material:
+		lines.append(Vector3(x,0,z))
+		lines.append(Vector3(dx,0,dz))
+		lines.append(Vector3(dx,0,z))
+		lines.append(Vector3(x,0,dz))
+	
+	if material == addchunk_material:
+		lines.append(Vector3(lerp(x, dx, 0.25), 0, lerp(z, dz, 0.5)))
+		lines.append(Vector3(lerp(x, dx, 0.75), 0, lerp(z, dz, 0.5)))
+		lines.append(Vector3(lerp(x, dx, 0.5), 0, lerp(z, dz, 0.25)))
+		lines.append(Vector3(lerp(x, dx, 0.5), 0, lerp(z, dz, 0.75)))
+	
+	if material == highlightchunk_material:
+		lines.append(Vector3(lerp(x, dx, 0.25), 0, lerp(z, dz, 0.25)))
+		lines.append(Vector3(lerp(x, dx, 0.75), 0, lerp(z, dz, 0.25)))
+		lines.append(Vector3(lerp(x, dx, 0.25), 0, lerp(z, dz, 0.25)))
+		lines.append(Vector3(lerp(x, dx, 0.25), 0, lerp(z, dz, 0.75)))
+		
+		lines.append(Vector3(lerp(x, dx, 0.75), 0, lerp(z, dz, 0.25)))
+		lines.append(Vector3(lerp(x, dx, 0.75), 0, lerp(z, dz, 0.75)))
+		lines.append(Vector3(lerp(x, dx, 0.25), 0, lerp(z, dz, 0.75)))
+		lines.append(Vector3(lerp(x, dx, 0.75), 0, lerp(z, dz, 0.75)))
 	
 	add_lines(lines, material, false)

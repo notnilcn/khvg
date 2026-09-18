@@ -1,0 +1,35 @@
+{
+	"nodes": [
+		{
+			"id": "d609e10403785530",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/claims_subfolder/claims_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "02cb56c63df73908",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "355c8f3b0d77f72c",
+			"fromNode": "d609e10403785530",
+			"fromSide": "bottom",
+			"toNode": "02cb56c63df73908",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		}
+	]
+}

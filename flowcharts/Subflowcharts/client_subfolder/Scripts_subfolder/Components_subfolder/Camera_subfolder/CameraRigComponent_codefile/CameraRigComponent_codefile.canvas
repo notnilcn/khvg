@@ -151,11 +151,21 @@
 			"height": 400
 		},
 		{
+			"id": "2c4109cfd324d628",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/PivotHeightOffset_symbol.canvas",
+			"color": "5",
+			"x": 6900,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "781040d5873f8c02",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/YawSpeed_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7360,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +175,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/ZoomReferenceDistance_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Camera_subfolder/CameraRigComponent_codefile/ZoomStep_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400

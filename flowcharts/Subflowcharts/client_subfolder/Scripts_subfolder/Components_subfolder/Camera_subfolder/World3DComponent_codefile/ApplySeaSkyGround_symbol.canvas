@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "d5756c11c62deb10",
+			"type": "file",
+			"file": "client/Scripts/Components/Camera/World3DComponent.cs",
+			"subpath": "#ApplySeaSkyGround",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -13,13 +13,17 @@ whenToUse: When playtesting, verifying, or driving the running game — entering
 
 **The `spacetime` CLI is for server-side setup and inspection around that playtest**: claiming admin, spawning/despawning enemies, giving items, seeding chests, reading tables with SQL, and checking module logs. Use it to arrange the scenario, then verify the result in the running client via the Godot tools (or via SQL when the check is purely server-side state).
 
-Typical combined flow: `spacetime call bullethell claim_admin` → `spawn_enemy`/`give_item` to set up → `godot_game play` (auto-enters the world) → verify via `godot_exec eval` on live nodes and/or `spacetime sql`.
+Typical combined flow: `spacetime --server khvg-proxy call bullethell claim_admin` → `spawn_enemy`/`give_item` to set up → `godot_game play` (auto-enters the world) → verify via `godot_exec eval` on live nodes and/or `spacetime sql`.
 
-# Part 1 — Godot MCP playtest recipes
+# Part 1 — Godot MCP playtest recipes (project-specific)
 
-Every UI element's position is authored in the `.tscn` files, so **do not take a screenshot to find buttons**. Resolve the authored node path to live coordinates with `godot_exec eval` + `get_global_rect().get_center()` and inject input there. Screenshots are a fallback for when a recipe fails, or for final visual verification — never for navigation.
+Generic UI-driving mechanics (CLICK/HOVER/DRAG/PRESS/HOLD/TYPE exact tool calls, coordinate rules, eval pitfalls, stall diagnosis, failure checklist) live in the MCP itself — **follow them, don't re-derive here**:
 
-The full node-path tables are in `${KIMI_SKILL_DIR}/references/ui-map.md` — read it when you need a path not quoted in a recipe below.
+- `playtest` MCP prompt — the full interactive + deterministic workflow, including exact CLICK/DRAG JSON.
+- `Docs/03-Realtime-Testing/Interactive-Playtest.md` in `Open-Godot-MCP/` — the long-form version (primitives, standing rules, 3D attribution patterns).
+- Tool descriptions on `godot_input` / `godot_exec` / `godot_game` / `godot_game_time` / `godot_screenshot` / `godot_runtime_state` — short reminders at the call site.
+
+What this file adds on top: **this project's** entry point, launch args, node paths, key bindings, and game-logic effects. `<root>` below is the gameplay scene root — always `game`. Full node-path tables are in `${KIMI_SKILL_DIR}/references/ui-map.md` — read it when you need a path not quoted in a recipe.
 
 ## Session start
 
@@ -27,68 +31,26 @@ The full node-path tables are in `${KIMI_SKILL_DIR}/references/ui-map.md` — re
    ```bash
    "/c/Users/Clinton/g/Godot/Godot-stable_mono_win64_console.exe" -e --path "C:/Users/Clinton/g/main/client"
    ```
+   Under PowerShell (which is what the `bash` tool runs here) use `Start-Process -FilePath "C:\Users\Clinton\g\Godot\Godot-stable_mono_win64_console.exe" -ArgumentList "-e", "--path", "C:\Users\Clinton\g\main\client"` instead — it returns immediately while the editor keeps running.
    Wait ~20 s, then `godot_instance list` → the instance appears already adopted; `godot_health check` to verify the bridge (port 6970).
 2. **Always run from `main_menu.tscn`** — the project's main scene and the only correct entry point. `godot_editor_edit open_scene res://Scenes/main_menu.tscn`, then `godot_game play` **with `scene: "res://Scenes/main_menu.tscn"` passed explicitly** — never run whatever scene happens to be open in the editor, and never start from `game.tscn` directly (that's the gameplay scene).
-3. **Entering the world is automatic.** Each instance's launch args (saved in the editor's per-instance debug options) do the whole menu flow: `--2D`/`--3D` picks the visual mode on the main menu and `--charN` joins the Nth character profile (the last profile when fewer than N exist), so a played instance lands directly in the world with no menu clicking. Verify with the **in-world check**: eval `get_node("/root/game/UI/LobbyComponent").visible == false` **and** `get_node("/root/game/LocalPlayer")` exists (pid-stamped per the standing rule). If the lobby stays visible instead, the instance's identity has no profiles — see recipe 1.
-4. Logs: `godot_log get` / `godot_log errors`. Eval is the escape hatch for any live node (`find_child`, signal lists, `get(...)` exports).
+3. **Entering the world is automatic.** Each instance's launch args (saved in the editor's per-instance debug options) do the whole menu flow: `--2D`/`--3D` picks the visual mode on the main menu and `--charN` joins the Nth character profile (the last profile when fewer than N exist), so a played instance lands directly in the world with no menu clicking. Verify with the **in-world check**: eval `get_node("/root/game/UI/LobbyComponent").visible == false` **and** `get_node("/root/game/LocalPlayer")` exists (pid-stamped — see project rules). If the lobby stays visible instead, the instance's identity has no profiles — see recipe 1.
+4. Logs: `godot_log get` / `godot_log errors` (game entries are tagged per instance).
 
-## Standing rules
+## Project standing rules
 
-- **The editor runs 2 game instances by default** (Debug → Run Multiple Instances; instance 1 gets `--p1 --3D --char1`, instance 2 gets `--p2 --3D --char1`). Every runtime tool (`godot_exec`/`godot_input`/`godot_runtime_state`/`godot_screenshot`/`godot_game_time`/`godot_profiler`) targets **instance 1** unless you pass `"instance": <n>` in `params` — verified end-to-end for `eval`, `input sequence`, and `screenshot`; each instance is driven fully independently (own scene tree, own SpacetimeDB connection). `godot_game` action `instances` lists them (pid, launch args, ready). All recipes below work unchanged per instance — just add `instance` when you mean the second one. Both instances run the same window size, so resolved coordinates are usually identical across instances — still resolve per instance, never hardcode. `godot_log get` accepts `instance` too (game entries are tagged).
-- **Prove which instance answered with a pid stamp** — include `"pid": OS.get_process_id()` in verification evals and compare against `godot_game instances`. Two identical-looking lobbies can make a silently misrouted call look successful; the pid cannot lie. Don't trust the OS windows either: a minimized instance shows a stale preview, and injected input hits the in-engine viewport regardless of window state.
-- **Sequence timeouts = check the frame loop, not the plugin.** `input sequence` awaits `process_frame` between steps, so a stalled game loop times out while plain `eval` still answers (the debugger channel is serviced separately). Diagnose: read `Engine.get_process_frames()` twice — no advance = stalled. Known cause: the client's "Connection lost" state can freeze the main loop; the only fix is `godot_game stop` + `play` (fresh instances), then redo the flow. `frame_delay: 0` skips the await but press+release land in the same frame and clicks don't register — it's a probe, not a workaround.
+- **The editor runs 2 game instances by default** (Debug → Run Multiple Instances; instance 1 gets `--p1 --3D --char1`, instance 2 gets `--p2 --3D --char1`). Every runtime tool targets **instance 1** unless you pass `"instance": <n>` in `params` — verified end-to-end for `eval`, `input sequence`, and `screenshot`; each instance is driven fully independently (own scene tree, own SpacetimeDB connection). All recipes below work unchanged per instance — just add `instance` when you mean the second one. Both instances run the same window size, so resolved coordinates are usually identical across instances — still resolve per instance, never hardcode.
+- **Pid-stamp every verification eval** (`"pid": OS.get_process_id()`, compare against `godot_game instances`). Two identical-looking lobbies can make a silently misrouted call look successful. Don't trust the OS windows either: a minimized instance shows a stale preview, and injected input hits the in-engine viewport regardless of window state.
+- **If a pid stamp changes across calls, re-establish every assumed state** (camera pose, pitch, zoom, player position) before interpreting the next result.
+- **Known project cause of a stalled frame loop:** the client's "Connection lost" state can freeze the main loop (generic diagnosis is in the MCP docs — `Engine.get_process_frames()` twice; fix is `godot_game stop` + `play`). See "Connection lost" below.
 
-- **No `for`/`while` loops in eval bodies** — they time out. Use `map`/`filter` or single-node access.
-- Injected input dispatches on the **next frame** — check hover/drag/visibility state in a follow-up call, never in the same one.
-- Always pass `coords: "viewport"` with coordinates from `get_global_rect()` so window-size/stretch mismatches can't move the click.
-- Verify hover with `get_tree().root.gui_get_hovered_control()` — **never** `get_viewport().get_mouse_position()`, which reads the real OS cursor.
-- Node names contain spaces (e.g. `"Weapon - 0"`) — quote them in `get_node()`.
-- `"Weapon - 0"` exists **twice** (Hotbar and Equipment) — always use full container paths, never a bare recursive `find_child`.
+## Key bindings (game effects — mechanics in the MCP prompt)
 
-## Core primitives
-
-`<path>` below is a runtime node path like `/root/<root>/UI/LobbyComponent/Panel/Create`. `<root>` is the gameplay scene root — always `game`.
-
-**Tool-call shape:** every MCP tool takes an `action` string and a `params` object — e.g. `godot_input` with `action: "sequence"`, `params: {"steps": [...]}`. The recipes below spell out both parts in full; follow them verbatim.
-
-### CLICK `<path>`
-
-Exactly two tool calls. Do not improvise variations — this exact pair is what works:
-
-1. `godot_exec`, `action: "eval"`:
-   ```
-   params: {"code": "var p = (get_node(\"<path>\") as Control).get_global_rect().get_center(); return {\"x\": int(p.x), \"y\": int(p.y)}"}
-   ```
-   For non-Control nodes use `(n as Node2D).get_global_position()` instead. **Return a flat `{"x", "y"}` dict, never a raw `Vector2`** — Vector2 does not survive the bridge encoding reliably, which silently corrupts the coordinates. Never guess or hardcode coordinates; always use the eval-resolved center.
-2. `godot_input`, `action: "sequence"` — a **single** call that presses and releases (the default `frame_delay: 1` between steps is what makes it land like a real click), with X/Y from step 1:
-   ```json
-   params: {"steps": [
-     {"type": "mouse_button", "params": {"button": "MOUSE_BUTTON_LEFT", "pressed": true,  "position": {"x": X, "y": Y}, "coords": "viewport"}},
-     {"type": "mouse_button", "params": {"button": "MOUSE_BUTTON_LEFT", "pressed": false, "position": {"x": X, "y": Y}, "coords": "viewport"}}
-   ]}
-   ```
-   Do **not** split the click into separate press and release `mouse_button` calls — use the one `sequence` call above.
-
-### HOVER `<path>`
-
-`godot_input mouse_motion` to the rect center → next call, eval `get_tree().root.gui_get_hovered_control()` and confirm it's the target (or its child — the slot `TextureRect` icons are `mouse_filter = Ignore`, so hover lands on the slot Panel itself).
-
-### DRAG `<pathA>` → `<pathB>`
-
-1. `mouse_motion` to A's center.
-2. `mouse_button` left **press** at A.
-3. `mouse_motion` to B's center **with `button_mask: ["MOUSE_BUTTON_LEFT"]`** — the button mask on the motion is what crosses the engine's drag-start threshold. Verify with eval `get_tree().root.gui_is_dragging()`.
-4. `mouse_button` left **release** at B.
-
-### PRESS `<key>`
-
-`godot_input key` press + release. Key names are plain names like `Tab`, `T`, `E` — **not** Godot enum constants (`KEY_TAB` silently no-ops). Relevant keys: `Tab` = toggle inventory menu, `T` = cycle weapon toggle, `Shift+E` = chest interact, `R` (hold) = self-slow, WASD = movement, `Ctrl+scroll` = speed scale.
-
-### TYPE `<path>` `<text>`
-
-Eval `get_node("<path>").grab_focus()` → `godot_input text` with the text. (Or set `.text` directly by eval if injection is flaky — but prefer injection when testing the real input path.)
+`Tab` = toggle inventory menu, `T` = cycle weapon toggle, `Shift+E` = chest interact, `R` (hold) = self-slow, WASD = movement, `Ctrl+scroll` = speed scale, `X` = reset camera pitch to default, `Z` = reset camera yaw. Arrow keys are `Up`/`Down`/`Left`/`Right` (arcball pitch/yaw).
 
 ## Recipes
+
+CLICK/HOVER/DRAG/PRESS/HOLD/TYPE mechanics: see the MCP `playtest` prompt (exact JSON). Below is only the game logic around them.
 
 ### 1. Create a profile (only when the lobby is showing)
 
@@ -111,6 +73,7 @@ DRAG from the source slot to the target slot (paths in `references/ui-map.md`; e
 - **Empty slots can't start a drag** (`Icon.Texture == null`) — check the icon first if a drag doesn't start.
 - Fires the `SwapSlots(from, to)` reducer; verify via the target slot's `Icon.Texture` becoming non-null or via `InventoryChanged`-driven state.
 - Right-click (press) a **backpack** slot with an item = `DropItem`. Left-click (press) an ability slot (32–37) = activate ability.
+- Slot-node quirks that bite: `"Weapon - 0"` exists **twice** (Hotbar and Equipment) — always use full container paths. Slot `TextureRect` icons are `mouse_filter = Ignore`, so hover lands on the slot Panel itself.
 
 ### 4. Allocate a stat point
 
@@ -125,19 +88,39 @@ With the menu open (Tab), CLICK `/root/<root>/LocalPlayer/InventoryCanvas/Invent
 
 ### 6. Two players in one world (multi-instance)
 
-Play starts both instances and each auto-joins the world on its own (`--p1`/`--p2` give them distinct identities, each with its own `--charN` profile pick) — this is the standard setup for testing multiplayer sync (remote-player rendering, combat between players, shared chests/loot). Verify with the in-world check on **each** instance (pid-stamped per the standing rule, `"instance": 2` in `params` for the second), then confirm each instance sees the other's player as a `NonLocalPlayer` node under `/root/<root>`. Run the two instances **sequentially** — don't fire runtime calls at both in the same batch.
+Play starts both instances and each auto-joins the world on its own (`--p1`/`--p2` give them distinct identities, each with its own `--charN` profile pick) — this is the standard setup for testing multiplayer sync (remote-player rendering, combat between players, shared chests/loot). Verify with the in-world check on **each** instance (pid-stamped, `"instance": 2` in `params` for the second), then confirm each instance sees the other's player as a `NonLocalPlayer` node under `/root/<root>`. Run the two instances **sequentially** — don't fire runtime calls at both in the same batch.
+
+### 7. Drive and verify the 3D camera (pitch/zoom/render attribution)
+
+Generic pose/attribution patterns (center-ray as source of truth, A-B toggle at same pose, PIL comparison, live-loop check) are in `Interactive-Playtest.md` §5 — this recipe is the project bindings:
+
+1. Read the pose: eval the Camera3D's `global_transform.origin` plus `project_ray_normal()` at the viewport center (`Vector2(640, 360)` at 1280x720) — pitch = `asin(-dir.y)`. The rig's C# props ARE reachable from GDScript eval via `get()`/`set()` — direct `rig.PitchDegrees` syntax fails, while `rig.get("PitchDegrees")` and `rig.set("PitchDegrees", -55.0)` work (same for `Distance`). Prefer exact `set()` over HOLDs for camera work: rate-based holds overshoot because MCP round-trip latency (seconds) dominates the hold duration — even back-to-back press/release calls can swing 60–90°. The game clamps pitch to its configured range, so `set()` outside it just clamps.
+2. Manual driving still works: HOLD `Up`/`Down` to arcball the pitch (Zoom_In/Out are scroll actions); `X` resets pitch to default, `Z` resets yaw. Zoom wheel steps need explicit `pressed: true` + `pressed: false` pairs — one tick per pair; bare press steps without `pressed` latch and swallow subsequent ticks. Tap-style press+release pairs for pitch are unreliable at high fps (both can land in the same frame → zero movement); prefer HOLD or exact `set()`. Re-read the pose after every drive — closed-loop, never assumed. (`Engine.time_scale` is also settable via eval for slow-motion inspection, but it does not fix hold overshoot — latency, not game speed, is the problem.)
+3. To attribute a visual bug, toggle ONE variable between screenshots at the SAME pose: `camera.projection` (ORTHOGONAL↔PERSECTIVE isolates projection/frustum causes) or the render addon's master flag (e.g. the pixel-art pipeline's `enabled` isolates compositor/material causes). Screenshots land on disk — compare with PIL, not eyeballs: pixel-identical on control regions is the bar for "no change"; for small artifacts, `crop((x0,y0,x1,y1)).resize((w*3, h*3), Image.NEAREST)` before reading. TIME-animated water/clouds mean any two genuinely fresh frames always differ somewhere. Uniform (77,77,77) is the main-viewport clear color showing through the transparent 3D SubViewport, i.e. nothing rasterized there, not even sky. Restore every toggled flag afterwards — never leave one behind.
+
+### 8. Attribute a 3D pixel with a physics raycast (what surface is really there)
+
+When a screenshot pixel is ambiguous (water vs sky vs hole in the world), cast the camera's own ray through it and see what it hits (generic pattern in `Interactive-Playtest.md` §5; project camera path below):
+
+```
+params: {"code": "var cam = get_node(\"/root/game/3D/SubViewportContainer/SubViewport/World3DComponent/Camera3D\"); var o = cam.project_ray_origin(Vector2(X, Y)); var d = cam.project_ray_normal(Vector2(X, Y)); var hit = cam.get_world_3d().direct_space_state.intersect_ray(PhysicsRayQueryParameters3D.create(o, o + d * 5000.0)); return {\"pid\": OS.get_process_id(), \"oy\": o.y, \"hit\": hit}"}
+```
+
+The load-bearing asymmetry: MST terrain chunks carry trimesh `StaticBody3D` collision, but water tiles, the backing ocean, and the sky-cloud sheet are visual-only (no collision) — so a ray that renders water yet hits NOTHING is seeing through to non-collidable geometry (backing/tiles/sky), while a ray that hits a chunk is terminated by real terrain. Strongest form: combine with the recipe-7 visibility toggle — if suspect pixels render pixel-identical with the terrain node hidden, the terrain contributes zero pixels there and the sightline provably misses it.
 
 ## When a recipe fails
 
-Check in order: (1) is the target `visible` and is the parent chain visible (menu open/closed state); (2) did the click land — `gui_get_hovered_control()` after a motion to the same point; (3) `godot_log errors` for reducer or script errors; (4) only then `godot_screenshot game` and read the PNG to see what's actually on screen.
+Generic checklist (visible chain → hover check → `godot_log errors` → screenshot last) is in the MCP docs — run it first.
 
-**"Connection lost" state:** if the SpacetimeDB connection drops, the game shows `/root/<root>/UI/ConnectionLostComponent` with a `CenterContainer/Panel/VBoxContainer/Reconnect` button and all player nodes despawn — a joined instance can look like it "went back to the menu". Reconnect = CLICK that button; it returns through `main_menu.tscn`, where the launch args carry it straight back into the world — confirm with the in-world check. If the frame loop has also stalled (sequence timeouts; see the standing rule), skip the button and just `godot_game stop` + `play`. First confirm the server is actually up (`spacetime server ping https://khvgames.com/server`) or reconnect will fail again.
+**"Connection lost" state:** if the SpacetimeDB connection drops, the game shows `/root/<root>/UI/ConnectionLostComponent` with a `CenterContainer/Panel/VBoxContainer/Reconnect` button and all player nodes despawn — a joined instance can look like it "went back to the menu". Reconnect = CLICK that button; it returns through `main_menu.tscn`, where the launch args carry it straight back into the world — confirm with the in-world check. If the frame loop has also stalled (sequence timeouts), skip the button and just `godot_game stop` + `play`. First confirm the server is actually up (`spacetime server ping https://khvgames.com/server`) or reconnect will fail again.
 
 # Part 2 — SpacetimeDB CLI (`bullethell` module)
 
-Server-side setup and inspection. Module name: `bullethell`, server: `https://khvgames.com/server` — the project default from `server/spacetime.json`, so `spacetime` commands run from `server/` hit it automatically (no local server involved). Remember the routing rule at the top: **don't drive gameplay from here** — use the Godot recipes for anything a player does.
+Server-side setup and inspection. Module name: `bullethell`. The target server is the `khvg-proxy` nickname (`https://khvgames.com/server`, from `server/spacetime.json`) — pass `--server khvg-proxy` on EVERY command (`spacetime server list` shows nicknames). Without it the CLI defaults to local `127.0.0.1:3000` and fails to connect. Remember the routing rule at the top: **don't drive gameplay from here** — use the Godot recipes for anything a player does.
 
 ## Core commands
+
+(All commands below need `--server khvg-proxy` inserted after `spacetime` — omitted for brevity.)
 
 ```bash
 spacetime call bullethell <reducer> [args...]   # invoke a reducer
@@ -217,6 +200,8 @@ SELECT * FROM item                    -- catalog item_ids for give_item
 
 ## Gotchas
 
+- **`spacetime sql` is a small SQL subset**: `SELECT a, b FROM t WHERE x > 0 LIMIT n` works, but `BETWEEN` and `ORDER BY` are rejected (400 Bad Request). Keep reads to plain `SELECT … LIMIT` with simple `WHERE`.
+- **The `bash` tool here is Windows PowerShell**: `head`/`tail` don't exist — pipe to `Select-Object -First N` instead, or capture full output and search it.
 - **Every publish wipes the database** (`server/build.sh` uses `--delete-data`); seeds re-run from `main/seeds.rs`. Don't expect rows to survive a republish — and any connected game client drops with the wipe.
 - **A newly added reducer doesn't exist until you republish** — if `spacetime call` reports the reducer is unknown (or it's missing from `spacetime describe bullethell`), run `server/build.sh` first; `cargo check` alone doesn't publish.
 - A reducer returning `Ok` proves the call landed, not that the *effect* you wanted happened — verify via `spacetime sql` or the subscribed client.

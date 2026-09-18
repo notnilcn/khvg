@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "2594b5bfd436215c",
+			"type": "file",
+			"file": "client/Scripts/Components/PixelArt/WaterComponent3D.cs",
+			"subpath": "#BuildAbyssOcean",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

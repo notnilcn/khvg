@@ -228,3 +228,33 @@ pub struct PlayerHitRate {
     pub outgoing: u32,
     pub incoming: u32,
 }
+
+/// Discovery / knowledge gating (Phase 1 — BitCraft `knowledge_secondary_state`
+/// pattern, translated). One row per profile: `discovered` fills automatically on
+/// pickup/observe, `acquired` fills via the explicit unlock reducer. Unknown items
+/// render as ??? client-side until discovered.
+#[table(accessor = player_knowledge, public)]
+#[derive(Clone)]
+pub struct PlayerKnowledge {
+    #[primary_key]
+    pub profile_id: u64,
+    pub discovered: Vec<String>,
+    pub acquired: Vec<String>,
+}
+
+/// Survival sim state (Phase 2 — BitCraft `player_regen`/`starving` pattern).
+/// One row per profile, stamped on every hit via `intercept_incoming` and read by
+/// the regen pass: regen only applies after REGEN_DELAY_SECONDS without damage;
+/// `attrition_ticks` counts consecutive ticks without relief — past
+/// ATTRITION_GRACE_TICKS the pressure row deals ATTRITION_DAMAGE_PER_TICK via the
+/// shared damage sink (never direct HP writes). Skipped when logged out (rows are
+/// only ticked for `LoggedInPlayer` profiles).
+#[table(accessor = player_survival)]
+#[derive(Clone)]
+pub struct PlayerSurvival {
+    #[primary_key]
+    pub profile_id: u64,
+    pub last_damage_at: Option<Timestamp>,
+    pub attrition_ticks: u32,
+    pub last_regen_at: Option<Timestamp>,
+}

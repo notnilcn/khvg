@@ -11,13 +11,13 @@ using System.Collections.Generic;
 /// signals wired in the editor); row callbacks only set a dirty flag, and one rebuild per frame
 /// collapses burst chunk crossings.
 ///
-/// This component owns the shared caches (wedge/decor meshes, textures) and the per-hex
+/// This component owns the shared caches (hex/decor meshes, textures) and the per-hex
 /// wrap-near-camera + cull math; the TileComponents own the actual MultiMesh batch leaves. Mesh
-/// geometry only depends on (TriIndex, Rotation, TextureId), never on which chunk or layer draws
+/// geometry only depends on (Rotation, TextureId), never on which chunk or layer draws
 /// it, so one cache serves every chunk.
 ///
 /// Performance note: batching per chunk duplicates a leaf when two chunks share the same
-/// (TriIndex, Rotation, TextureId) key, but biome coherence keeps the key count per chunk small.
+/// (Rotation, TextureId) key, but biome coherence keeps the key count per chunk small.
 /// If that ever regresses against the old global batching, the fallback is one AOI-wide
 /// TileComponent — Populate/Clear take whole grouped dictionaries and make no per-chunk
 /// assumptions, so only the grouping loop below would change.
@@ -45,13 +45,13 @@ public partial class TerrainComponent : Node2DComponent
     private float _outerRadius = DefaultHexOuterRadius;
     private int _chunkHexRadius = DefaultChunkHexRadius;
 
-    private readonly Dictionary<ulong, TriangleTile> _tilesById = new();
-    private readonly Dictionary<(int Q, int R), List<TriangleTile>> _tilesByHex = new();
+    private readonly Dictionary<ulong, HexTile> _tilesById = new();
+    private readonly Dictionary<(int Q, int R), List<HexTile>> _tilesByHex = new();
     private readonly Dictionary<string, Texture2D> _textureCache = new();
-    private readonly Dictionary<(int TriIndex, int Rotation, string TextureId), ArrayMesh> _meshCache = new();
+    private readonly Dictionary<(int Rotation, string TextureId), ArrayMesh> _meshCache = new();
 
     private readonly Dictionary<ulong, HexDecor> _decorById = new();
-    // Decor is a plain rectangular sprite, not a UV-cropped wedge, so unlike _meshCache its mesh
+    // Decor is a plain rectangular sprite, not a UV-cropped hex, so unlike _meshCache its mesh
     // only depends on which texture it is — rotation/position are per-instance transforms, not
     // separate UVs.
     private readonly Dictionary<string, ArrayMesh> _decorMeshCache = new();
@@ -62,8 +62,8 @@ public partial class TerrainComponent : Node2DComponent
     // Rebuild grouping buffers, clear-and-reused across rebuilds: chunk keys, batch keys and
     // their lists stay allocated (bounded by the world's chunk count) and only their contents
     // reset, so a steady-state rebuild allocates nothing.
-    private readonly Dictionary<long, Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>>> _groundByChunk = new();
-    private readonly Dictionary<long, Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>>> _overlayByChunk = new();
+    private readonly Dictionary<long, Dictionary<(int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>>> _groundByChunk = new();
+    private readonly Dictionary<long, Dictionary<(int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>>> _overlayByChunk = new();
     private readonly Dictionary<long, Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>> _shadowByChunk = new();
     private readonly Dictionary<long, Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>>> _decorByChunk = new();
     private readonly HashSet<long> _presentChunks = new();
@@ -165,12 +165,12 @@ public partial class TerrainComponent : Node2DComponent
         InvalidateMeshes();
     }
 
-    private void AddTile(TriangleTile tile)
+    private void AddTile(HexTile tile)
     {
         _tilesById[tile.TileId] = tile;
         var key = (tile.HexQ, tile.HexR);
         if (!_tilesByHex.TryGetValue(key, out var list))
-            _tilesByHex[key] = list = new List<TriangleTile>();
+            _tilesByHex[key] = list = new List<HexTile>();
         list.Add(tile);
     }
 
@@ -187,20 +187,20 @@ public partial class TerrainComponent : Node2DComponent
 
     private void OnTileRowInserted()
     {
-        AddTile((TriangleTile)_terrainTilesBinder.LastRow!);
+        AddTile((HexTile)_terrainTilesBinder.LastRow!);
         _dirty = true;
     }
 
     private void OnTileRowUpdated()
     {
-        RemoveTile(((TriangleTile)_terrainTilesBinder.LastOldRow!).TileId);
-        AddTile((TriangleTile)_terrainTilesBinder.LastRow!);
+        RemoveTile(((HexTile)_terrainTilesBinder.LastOldRow!).TileId);
+        AddTile((HexTile)_terrainTilesBinder.LastRow!);
         _dirty = true;
     }
 
     private void OnTileRowDeleted()
     {
-        RemoveTile(((TriangleTile)_terrainTilesBinder.LastDeletedRow!).TileId);
+        RemoveTile(((HexTile)_terrainTilesBinder.LastDeletedRow!).TileId);
         _dirty = true;
     }
 
@@ -306,14 +306,14 @@ public partial class TerrainComponent : Node2DComponent
             foreach (var tile in tiles)
             {
                 var ground = GetChunkGroup(_groundByChunk, tile.ChunkIndex);
-                var key = (tile.TriIndex, tile.Rotation, tile.TextureId);
+                var key = ((int)tile.Rotation, tile.TextureId);
                 if (!ground.TryGetValue(key, out var positions))
                     ground[key] = positions = new List<(Vector2, Color)>();
                 positions.Add((center, tint));
 
                 if (string.IsNullOrEmpty(tile.OverlayTextureId)) continue;
                 var overlay = GetChunkGroup(_overlayByChunk, tile.ChunkIndex);
-                var overlayKey = (tile.TriIndex, tile.OverlayRotation, tile.OverlayTextureId);
+                var overlayKey = ((int)tile.OverlayRotation, tile.OverlayTextureId);
                 if (!overlay.TryGetValue(overlayKey, out var overlayPositions))
                     overlay[overlayKey] = overlayPositions = new List<(Vector2, float, Color)>();
                 overlayPositions.Add((center, tile.OverlayScale, tint));
@@ -367,8 +367,8 @@ public partial class TerrainComponent : Node2DComponent
 
     private readonly List<long> _releaseBuffer = new();
 
-    private static readonly Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>> EmptyGround = new();
-    private static readonly Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>> EmptyOverlay = new();
+    private static readonly Dictionary<(int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>> EmptyGround = new();
+    private static readonly Dictionary<(int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>> EmptyOverlay = new();
     private static readonly Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>> EmptyDecor = new();
 
     private static Dictionary<TKey, List<TValue>> GetChunkGroup<TKey, TValue>(Dictionary<long, Dictionary<TKey, List<TValue>>> byChunk, long chunkIndex) where TKey : notnull
@@ -410,12 +410,12 @@ public partial class TerrainComponent : Node2DComponent
         list.Add((position, rotationRadians, hexR));
     }
 
-    /// Mesh + texture for one wedge batch key, from the shared caches (used by the ground and
+    /// Mesh + texture for one hex batch key, from the shared caches (used by the ground and
     /// overlay layers of every TileComponent).
-    public (ArrayMesh Mesh, Texture2D? Texture) GetWedgeMeshAndTexture(int triIndex, int rotation, string textureId)
+    public (ArrayMesh Mesh, Texture2D? Texture) GetHexMeshAndTexture(int rotation, string textureId)
     {
         var (baseTexture, uvRegion) = ResolveTexture(GetTexture(textureId));
-        return (GetOrBuildMesh(triIndex, rotation, textureId, uvRegion), baseTexture);
+        return (GetOrBuildMesh(rotation, textureId, uvRegion), baseTexture);
     }
 
     /// Mesh + texture for one decor batch key, from the shared caches (used by both decor layers).
@@ -426,7 +426,7 @@ public partial class TerrainComponent : Node2DComponent
         return (GetOrBuildDecorMesh(textureId, rawTexture?.GetSize() ?? Vector2.Zero, uvRegion), resolvedTexture);
     }
 
-    // Decor is a plain rectangular sprite (not a UV-cropped wedge), anchored bottom-center — the
+    // Decor is a plain rectangular sprite (not a UV-cropped hex), anchored bottom-center — the
     // prop's "feet" — rather than its geometric center, so a placement's rotation swings the
     // sprite around its ground-contact point and a tall canopy doesn't appear to float off the
     // hex center it's planted at.
@@ -460,65 +460,62 @@ public partial class TerrainComponent : Node2DComponent
         return mesh;
     }
 
-    // The mesh's local origin (Vector2.Zero) is the hex center, not the wedge's own centroid —
-    // fine for the base layer (always full scale), but scaling an overlay around the hex center
-    // would shrink it toward one corner instead of staying centered in its own triangle.
-    private (Vector2 A, Vector2 B) GetWedgeVertices(int triIndex)
+    // The mesh's local origin (Vector2.Zero) is the hex center, so the whole hex (ground or
+    // overlay) scales and rotates around its own center.
+    private ArrayMesh GetOrBuildMesh(int rotation, string textureId, Rect2 uvRegion)
     {
-        float angleA = Mathf.DegToRad(30f + 60f * triIndex);
-        float angleB = Mathf.DegToRad(30f + 60f * ((triIndex + 1) % 6));
-        return (_outerRadius * new Vector2(Mathf.Cos(angleA), Mathf.Sin(angleA)),
-            _outerRadius * new Vector2(Mathf.Cos(angleB), Mathf.Sin(angleB)));
-    }
-
-    public Vector2 GetWedgeCentroid(int triIndex)
-    {
-        var (vA, vB) = GetWedgeVertices(triIndex);
-        return (vA + vB) / 3f; // third vertex (hex center) is the local origin, Vector2.Zero
-    }
-
-    private ArrayMesh GetOrBuildMesh(int triIndex, int rotation, string textureId, Rect2 uvRegion)
-    {
-        var key = (triIndex, rotation, textureId);
+        var key = (rotation, textureId);
         if (_meshCache.TryGetValue(key, out var cached))
             return cached;
 
-        var (vA, vB) = GetWedgeVertices(triIndex);
-        var localVerts = new[] { Vector2.Zero, vA, vB };
+        // Pointy-top hexagon: one center vertex plus six corners at 30° + 60°·i, matching
+        // HexMath's vertex layout.
+        var corners = new Vector2[6];
+        for (var i = 0; i < 6; i++)
+        {
+            var angle = Mathf.DegToRad(30f + 60f * i);
+            corners[i] = _outerRadius * new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+        }
 
-        // Fit the texture to THIS wedge's own bounding box, not the whole hex, so the wedge crops
-        // into its own full-image fit instead of a thin pie-slice shared across all 6 wedges. A
-        // triangle only has 3 vertices to a square's 4 corners, so at most half the image is ever
-        // reachable this way (the other diagonal half just isn't addressable by 3 UV points) — but
-        // that's still far more than the old hex-wide slice. Trade-off: a whole hex now shows this
-        // same crop repeated/rotated 6 times instead of one continuous image — intentional, per
-        // Teo's call to prioritize more-texture-per-wedge over hex-wide continuity.
-        var boxMin = new Vector2(Mathf.Min(localVerts[0].X, Mathf.Min(localVerts[1].X, localVerts[2].X)), Mathf.Min(localVerts[0].Y, Mathf.Min(localVerts[1].Y, localVerts[2].Y)));
-        var boxMax = new Vector2(Mathf.Max(localVerts[0].X, Mathf.Max(localVerts[1].X, localVerts[2].X)), Mathf.Max(localVerts[0].Y, Mathf.Max(localVerts[1].Y, localVerts[2].Y)));
-        var boxCenter = (boxMin + boxMax) * 0.5f;
-        var boxHalfSize = (boxMax - boxMin) * 0.5f;
-
-        // `rotation` (0/1/2 = 0/120/240 deg) spins which portion of the texture lands in the
-        // wedge, to vary the look from one shared texture instead of always showing the same crop.
+        // Fit the texture to the hex's own bounding box (pointy-top: half-width = R·cos30°,
+        // half-height = R). `rotation` (0/1/2 = 0/120/240 deg) rotates the sampled point before
+        // the fit; because the hex has 120° rotational symmetry this just permutes which texture
+        // region appears, and keeps every UV inside [0,1].
+        var boxHalfSize = new Vector2(_outerRadius * Mathf.Cos(Mathf.DegToRad(30f)), _outerRadius);
         float rotOffset = Mathf.DegToRad(120f * rotation);
         Vector2 UvFor(Vector2 point)
         {
-            var boxRelative = (point - boxCenter) / boxHalfSize; // -1..1 within the wedge's box
-            var rotated = boxRelative.Rotated(rotOffset);
-            return new Vector2(0.5f, 0.5f) + 0.5f * rotated;
+            var boxRelative = point.Rotated(-rotOffset) / boxHalfSize; // -1..1 within the hex's box
+            return new Vector2(0.5f, 0.5f) + 0.5f * boxRelative;
         }
         // AtlasTexture's region crop isn't honored by MultiMeshInstance2D's raw mesh UVs (only
         // Sprite2D/draw_polygon-style paths remap for it), so we bake the crop into the UVs
         // ourselves and bind the underlying sheet instead of the AtlasTexture wrapper.
         Vector2 RemapUv(Vector2 local) => uvRegion.Position + local * uvRegion.Size;
 
-        var vertices = new[] { Vector3.Zero, new Vector3(vA.X, vA.Y, 0f), new Vector3(vB.X, vB.Y, 0f) };
-        var uvs = new[] { RemapUv(UvFor(localVerts[0])), RemapUv(UvFor(localVerts[1])), RemapUv(UvFor(localVerts[2])) };
+        var vertices = new Vector3[7];
+        var uvs = new Vector2[7];
+        vertices[0] = Vector3.Zero;
+        uvs[0] = RemapUv(UvFor(Vector2.Zero));
+        for (var i = 0; i < 6; i++)
+        {
+            vertices[i + 1] = new Vector3(corners[i].X, corners[i].Y, 0f);
+            uvs[i + 1] = RemapUv(UvFor(corners[i]));
+        }
+
+        var indices = new int[18];
+        for (var i = 0; i < 6; i++)
+        {
+            indices[i * 3] = 0;
+            indices[i * 3 + 1] = i + 1;
+            indices[i * 3 + 2] = ((i + 1) % 6) + 1;
+        }
 
         var arrays = new Godot.Collections.Array();
         arrays.Resize((int)Mesh.ArrayType.Max);
         arrays[(int)Mesh.ArrayType.Vertex] = vertices;
         arrays[(int)Mesh.ArrayType.TexUV] = uvs;
+        arrays[(int)Mesh.ArrayType.Index] = indices;
 
         var mesh = new ArrayMesh();
         mesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, arrays);

@@ -1,0 +1,81 @@
+# 14 Trade
+
+## 1. Assumed knowledge
+
+Read [[docs/Technical Design Docs/Description/00 Table Map.md|00 Table Map]] (the `# Trade` section holds this doc's only table entry, `^table-trade-session`), [[docs/Technical Design Docs/Description/01 Roadmap.md|01 Roadmap]] (conventions, reading order), [[docs/Technical Design Docs/Description/03 Connection, Subscriptions & Views.md|03 Connection, Subscriptions & Views]] (reducers-are-transactional, the `BaseTables`/`LobbyTables`/`GameTables` subscription waves, the one-binder-per-table pattern), and [[docs/Technical Design Docs/Description/12 Player Tables.md|12 Player]] (the `PlayerInventorySlot` rows the swap moves, `transfer_item_to_inventory` as the single acquire path, `LoggedInPlayer` as the in-world proof). Maintainer jump-off points, not authority: [[server/AGENTS.md|server AGENTS.md]], [[client/AGENTS.md|client AGENTS.md]]. A *reducer* is a server function a client calls by name that runs transactionally and returns no data — clients learn outcomes only through table/subscription updates. A *view* is a named parameterized server query the client subscribes to instead of raw tables.
+
+## 2. The 30-second version
+
+Trade owns exactly one table, `TradeSession`: one row per two-party trade holding each side's offer as a pocket list of inventory slot references plus a dual-accept status. Five reducers walk the lifecycle — `trade_initiate`, `trade_add_item`/`trade_remove_item`, `trade_accept` (whose second accept runs the atomic `confirm_swap`), `trade_decline` — and the 1 Hz cleanup pass sweeps timeouts, logouts, range breaks, and combat starts via `tick_trade_sessions`, deleting resolved rows. Both parties read through the per-caller `local_trade_session` view in the `GameTables` wave, which is subscribed but has no binder and no UI behind it, so there is currently no visible end.
+
+## 3. Find it fast
+
+| Question / concept | Table | Where |
+|---|---|---|
+| How do I start a trade with another player? | `TradeSession` | [[#TradeSession\|TradeSession]] — Changers (`trade_initiate` gates) |
+| How do items get offered / unoffered? | `TradeSession` | [[#TradeSession\|TradeSession]] — Changers (`trade_add_item`, `trade_remove_item`) |
+| How does accepting work — who accepts when? | `TradeSession` | [[#TradeSession\|TradeSession]] — Changers (`trade_accept` dual-accept) |
+| How is a partial swap (I pay, they don't) impossible? | `TradeSession` | [[#Cross-table flows\|Cross-table flows]] (atomic swap) |
+| What cancels or times out a session? | `TradeSession` | [[#TradeSession\|TradeSession]] — Changers (sweep) |
+| Where is the trade window on screen? | `TradeSession` | [[#TradeSession\|TradeSession]] — Readers ***Client*** (no visible end — unwired) |
+| Where do the traded items land? | `PlayerInventorySlot` in ^table-player-inventory-slot | [[#Cross-table flows\|Cross-table flows]] |
+| What stops trading while fighting / far apart? | `TradeSession` | [[#TradeSession\|TradeSession]] — Readers ***Server*** (`in_combat`, `parties_in_range`) |
+
+## 4. Flowcharts
+
+- [[flowcharts/main-trade.canvas]] — the composed trade flow (recompose pending at write time, so this link may stay unresolved until the Obsidian "Regenerate all flowcharts" run; see `01 Roadmap.md` phase-0 notes).
+- [[flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/trade_subfolder/trade_subfolder.canvas]] — server-side deep dive (the whole module is one file).
+- [[flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Inventory_subfolder/Inventory_subfolder.canvas]] — client-side deep dive (the inventory/UI area the future trade panel will live beside; nothing there consumes trade rows yet).
+
+## 6. Tables
+
+### TradeSession
+
+```sync
+![[00 Table Map#^table-trade-session{seamless:true,title:false,marker:01.}]]
+```
+
+#### Shape
+
+One row is one two-party negotiation: auto-increment `session_id` primary key, btree-indexed `initiator_profile_id` and `acceptor_profile_id` (the two `profile_id` entity keys joining every per-character row, per [[docs/Technical Design Docs/Description/12 Player Tables.md|12 Player]]), a `status` (`Offered` → `InitiatorAccepted`/`AcceptorAccepted` → `Resolved`), one offer vec per side, `updated_at` (the timeout clock), and `resolution_message` (why the session ended: completed, declined, timed out, logged out, moved apart, combat started). Each offer entry is a [[server/spacetimedb/src/trade/mod.rs#TradePocket|TradePocket]] — an `item_id` plus the offering player's inventory `slot_index` (`qty` is always stamped 1 and is informational, because slots hold one item each and the swap moves slot contents). The shape is pockets-by-reference rather than pockets-by-value *because* the swap must move the live slot rows (item plus socketed enchantments, cooldown, charges) rather than minting copies — verification at swap time re-reads the referenced slots.
+
+#### Changers
+
+Insert happens in exactly one place: [[server/spacetimedb/src/trade/mod.rs#trade_initiate|trade_initiate]] inserts the row with empty offers, status `Offered`, and `updated_at` at the caller's timestamp — but only after five guards, each returning `Err` (reducers never panic on expected failures): the caller must be in the world via [[server/spacetimedb/src/player/methods.rs#require_in_world|require_in_world]]; initiator and acceptor must differ; the acceptor must hold a ^table-logged-in-player row; [[server/spacetimedb/src/trade/mod.rs#active_session_for|active_session_for]] must find no unresolved session touching either profile (one session per player — a full scan with an early-out, fine at co-op scale); the initiator must not be [[server/spacetimedb/src/trade/mod.rs#in_combat|in_combat]]; and [[server/spacetimedb/src/trade/mod.rs#parties_in_range|parties_in_range]] must pass (`MAX_TRADE_DISTANCE` = `INTERACT_RADIUS` × 2 = 256.0, wrap-aware via `wrapped_distance_sq` over both parties' ^table-player-position rows).
+
+[[server/spacetimedb/src/trade/mod.rs#trade_add_item|trade_add_item]] appends one pocket to the caller's own side (resolved by [[server/spacetimedb/src/trade/mod.rs#offer_mut|offer_mut]], which rejects non-parties): the slot must exist and be non-empty via `get_slot`, span follower cells (`occupied_by.is_some()`) are rejected so a head can never be orphaned from its followers, the side is capped at `MAX_TRADED_POCKETS` (8), and the same slot can't be offered twice. [[server/spacetimedb/src/trade/mod.rs#trade_remove_item|trade_remove_item]] retains out one pocket by `slot_index`, erroring when it wasn't offered. Both restamp `status` to `Offered` and bump `updated_at` *because* any offer edit must void the other party's earlier accept — there is no accept-then-swap-races window.
+
+[[server/spacetimedb/src/trade/mod.rs#trade_accept|trade_accept]] records one accept per side: the first accept sets `InitiatorAccepted`/`AcceptorAccepted` for the caller's side, and the second accept — either side accepting while the other side's accept is already recorded — calls [[server/spacetimedb/src/trade/mod.rs#confirm_swap|confirm_swap]] instead of writing a status. Before either path it re-checks `parties_in_range`, and on failure resolves the session ("parties moved apart") and returns `Err`, so walking away mid-accept cancels rather than swaps. [[server/spacetimedb/src/trade/mod.rs#confirm_swap|confirm_swap]] is the atomic core (see [[#Cross-table flows\|Cross-table flows]]): it snapshots both sides' offered slots, verifies each still holds the offered `item_id` ("offer changed" aborts), rejects multi-slot Ability items (`slot_cost` > 1) to avoid orphaning followers, clears all source slots via `update_slot`, then places each item cross-wise through [[server/spacetimedb/src/player/methods.rs#transfer_item_to_inventory|transfer_item_to_inventory]] — all inside the one calling reducer's transaction, so a failure anywhere rolls back everything and partial swaps are impossible. Success marks the session `Resolved` with "Trade completed."
+
+[[server/spacetimedb/src/trade/mod.rs#trade_decline|trade_decline]] resolves with "Trade declined" — callable by either party or by an admin via [[server/spacetimedb/src/player/methods.rs#is_admin|is_admin]].
+
+The sweep [[server/spacetimedb/src/trade/mod.rs#tick_trade_sessions|tick_trade_sessions]] runs inside [[server/spacetimedb/src/main/agents.rs#tick_cleanup|tick_cleanup]] on the 1 Hz agent tick (gated by `should_run` off the `AgentConfig` master switch): it deletes already-`Resolved` rows outright, and resolves live rows whose 45 s `TRADE_SESSION_TIMEOUT_SECS` window elapsed, whose either party left ^table-logged-in-player, whose parties drifted past `MAX_TRADE_DISTANCE`, or whose either party entered combat — each with its own `resolution_message`. Nothing else writes this table: no seeds, no admin upserts, no lifecycle-hook purges.
+
+#### Readers
+
+***Client*** — Via the [[server/spacetimedb/src/trade/mod.rs#local_trade_session|local_trade_session]] per-caller view (rows where either party column equals the caller's profile, resolved from `LoggedInPlayer` by sender identity; logged-out callers get a deliberately unmatchable `session_id == u64::MAX` sentinel query) → the [[client/sstdbsdk/TableSubscriber.cs#TableSubscriber|GameTables]] wave (`"LocalTradeSession"`, commented "drives the trade offer panel") → **subscribed but no binder consumes it yet, so no visible end** (trade offer panel planned). Verified end-to-end: no `TableBinderComponent` in any live scene names this table (grep over `game.tscn`/`local_player.tscn`/`non_local_player.tscn` finds no trade string — the `pointers.md` `game.tscn` entry is the shared game-wave subscription, not a trade node), no non-generated client script references `TradeSession`/`TradePocket`/`TradeStatus` outside `module_bindings/` (which is generated and never hand-read), and no client code calls the `TradeInitiate`/`TradeAddItem`/`TradeRemoveItem`/`TradeAccept`/`TradeDecline` reducer stubs — the full five-step feature path stops at step 3 (subscription) with step 4 (client calls the reducer) unwired.
+
+***Server*** — `active_session_for` scans unresolved sessions to enforce one-session-per-player at initiate time. `parties_in_range` reads both parties' ^table-player-position rows plus `MapConfig::load` lap vectors for the wrap-aware distance check. `in_combat` reads the trader's position row and probes [[server/spacetimedb/src/enemy/methods.rs#enemies_near_point|enemies_near_point]] within 300.0 — any live enemy near the trader blocks initiation and cancels live sessions on sweep. `confirm_swap` reads the offered `PlayerInventorySlot` rows and the `Item` catalog rows, then writes slots through `update_slot` (clears) and `transfer_item_to_inventory` (places, which also runs `recompute_stats` per item). The sweep reads `LoggedInPlayer` per party per tick for the logout check.
+
+## 7. Files — pointer deep dive
+
+The module is a single file (verified by listing `server/spacetimedb/src/trade/` — only `mod.rs` plus the generated `pointers.md`/`pointers-symbols.md`), so this section has one entry. Per-file order follows [[server/spacetimedb/src/trade/pointers.md|pointers]], whose only external-subscriber entries are the `local_trade_session` view's two consumers: [[client/sstdbsdk/TableSubscriber.cs#TableSubscriber|TableSubscriber]] (the `GameTables` name list) and `client/Scenes/game.tscn` (the scene hosting the game-wave subscription machinery — it declares no trade-specific node).
+
+### mod.rs
+
+Owns the table, the view, and the whole lifecycle. **Types:** `TradeSession` (the `#[table(accessor = trade_session, public)]` row), `TradePocket` (offer entry struct), `TradeStatus` (four-state enum). **Guards/helpers (all private, called only from inside):** `active_session_for` (unresolved-session scan for one side's profile — called by `trade_initiate` for both parties); `parties_in_range` (position-row lookup for both profiles, `MapConfig::load`, `wrapped_distance_sq` ≤ `MAX_TRADE_DISTANCE²` — called by `trade_initiate`, `trade_accept`, and the sweep); `in_combat` (position lookup + `enemies_near_point` 300.0 probe — called by `trade_initiate` and the sweep); `offer_mut` (side selection + non-party rejection — called by add/remove); `confirm_swap` (snapshot → verify → span-reject → clear → cross-place → resolve — called only by `trade_accept`'s second-accept arm). **Reducers (client-callable, all `require_in_world`-gated):** `trade_initiate(acceptor_profile_id)`, `trade_add_item(session_id, slot_index)`, `trade_remove_item(session_id, slot_index)`, `trade_accept(session_id)`, `trade_decline(session_id)` (party-or-admin). **Agent pass:** `tick_trade_sessions` (not a reducer itself — called from `tick_cleanup` in `main/agents.rs`, which the 1 Hz `ConsumableEffectSchedule` tick dispatches). **View:** `local_trade_session` (per-caller, `public`). Tunables live in [[server/spacetimedb/src/main/global.rs#MAX_TRADE_DISTANCE|global.rs]] (`MAX_TRADE_DISTANCE`, `TRADE_SESSION_TIMEOUT_SECS`, `MAX_TRADED_POCKETS`). Data passed across the module boundary on every swap: slot rows in, catalog `Item` rows consulted, `update_slot`/`transfer_item_to_inventory` writes out.
+
+## 8. Cross-table flows
+
+**Atomic swap.** The swap spans three table groups in one transaction: `TradeSession` (status → `Resolved`, message, timestamp), `PlayerInventorySlot` (source slots cleared via `update_slot` with emptied item/enchant/cooldown/charges fields, destination slots filled via `transfer_item_to_inventory`), and transitively `PlayerData`/`PlayerStats` (each `transfer_item_to_inventory` call re-runs `recompute_stats`, so both parties' resolved stats settle before the transaction commits). Because SpacetimeDB reducers are atomic, any mid-swap `Err` — offer changed underfoot, item row missing, multi-slot span — discards every write including the clears, which is why the code can clear-then-place without a two-phase commit. Offer pockets reference slots rather than copying items for exactly this reason: the pre-write snapshot comparison (`slot.item_id` vs `pocket.item_id`) is the optimistic-concurrency check.
+
+## 9. Known gaps / stubs
+
+- **No trade UI (unwired read path).** `LocalTradeSession` is subscribed in the `GameTables` wave but no binder consumes it and no client code calls any of the five trade reducers (verified by grep over `client/Scripts`, `client/sstdbsdk`, `client/Scenes` excluding generated `module_bindings/`). The `TableSubscriber.cs` comment names the intended consumer ("drives the trade offer panel"), which does not exist yet. Server lifecycle is fully implemented and testable via `spacetime call`, but no player can reach it from the game.
+- **`resolution_message` has no reader.** Every terminal path writes a human-readable reason (completed/declined/timed-out/logged-out/moved-apart/combat), but with no UI bound to the view no message ever surfaces — and resolved rows are deleted on the very next cleanup tick, so even a future panel must read the message within one tick of resolution.
+- **No eager session cleanup on logout/death/exit.** `leave_world`, `client_disconnected`, and `teardown_profile` purge statuses and zones but never touch `TradeSession` (verified — no trade reference in `player/methods.rs`, `player/reducers.rs` outside a comment, or `main/lifecycle.rs`); a leaver's session lingers until the next 1 Hz sweep resolves it via the `logged_out` check. Harmless but worth knowing when reading the lifecycle code.
+- **Late span rejection.** A multi-slot Ability head *can* be offered (only follower cells are rejected at offer time); the `slot_cost > 1` rejection fires in `confirm_swap`, i.e. after both parties already accepted. The swap then fails safe (transaction rolls back, session stays live) but the UX dead-ends with an error instead of an up-front refusal.
+
+## 10. Where to go next
+
+Read [[docs/Technical Design Docs/Description/12 Player Tables.md|12 Player]] for the inventory-slot rows the swap moves and [[docs/Technical Design Docs/Description/03 Connection, Subscriptions & Views.md|03 Connection, Subscriptions & Views]] for the view→wave→binder pattern this system's client path stops short of; the combat consult (`enemies_near_point`) is detailed in the Enemy doc.

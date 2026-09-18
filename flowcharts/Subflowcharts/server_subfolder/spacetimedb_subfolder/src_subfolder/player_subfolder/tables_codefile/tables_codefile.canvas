@@ -101,11 +101,21 @@
 			"height": 400
 		},
 		{
+			"id": "4c65df6abd711a90",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerKnowledge_symbol.canvas",
+			"color": "5",
+			"x": 4600,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "a600fe9819360610",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerMovementState_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerPosition_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -125,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerProfile_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerRotation_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerStatAllocation_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +165,17 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerStats_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "35e8c10e33254c58",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/PlayerSurvival_symbol.canvas",
+			"color": "5",
+			"x": 7820,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +185,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/SlotRole_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400

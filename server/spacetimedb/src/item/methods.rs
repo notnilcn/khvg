@@ -5,7 +5,7 @@
 //! EffectiveWeaponResolver mirrors resolve_effective_weapon exactly — fold order (slot
 //! index ascending, innate before socketed) is load-bearing on both sides.
 
-use spacetimedb::{ReducerContext, Table};
+use spacetimedb::ReducerContext;
 use crate::item::tables::*;
 use crate::player::tables::{player_inventory_slot, PlayerInventorySlot, SlotRole};
 

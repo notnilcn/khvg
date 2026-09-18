@@ -4,6 +4,7 @@ use crate::world::hex::{chunk_center_hex, hex_area, hex_to_world, inv_hexmod, sp
 use crate::world::wrap::wrap_world_pos;
 use crate::world::terrain::{internal_generate_world_manual, internal_generate_world_proc};
 use crate::world::tables::{animation_entry, building_tile, map_config, texture_entry, AnimationEntry, BuildingTile, MapConfig, TextureEntry, TextureKind};
+use crate::world::building::{building_state, footprint_tile, project_site};
 use crate::world::def_tables::{biome_def, biome_region_def, world_def, BiomeDef, BiomeRegionDef, ManualBiomeInput, WorldDef};
 use crate::player::tables::*;
 use crate::player::methods::*;
@@ -302,6 +303,18 @@ pub fn clear_chunks(ctx: &ReducerContext) -> Result<(), String> {
     let count = ctx.db.building_tile().iter().count();
     for tile in ctx.db.building_tile().iter() {
         ctx.db.building_tile().tile_id().delete(&tile.tile_id);
+    }
+    // BitCraft cascade mirror: wiping the hex grid orphans footprints/sites, so clear
+    // the building records alongside the tiles (same reason delete_footprint deletes
+    // both tables).
+    for fp in ctx.db.footprint_tile().iter() {
+        ctx.db.footprint_tile().footprint_id().delete(&fp.footprint_id);
+    }
+    for b in ctx.db.building_state().iter() {
+        ctx.db.building_state().building_entity_id().delete(&b.building_entity_id);
+    }
+    for s in ctx.db.project_site().iter() {
+        ctx.db.project_site().site_id().delete(&s.site_id);
     }
     log::info!("clear_chunks: {} tiles deleted.", count);
     Ok(())

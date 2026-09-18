@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "0236311789daa0dc",
+			"type": "file",
+			"file": "client/Scripts/Components/PixelArt/PixelArtPipelineComponent.cs",
+			"subpath": "#OrthoSizePerDistance",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

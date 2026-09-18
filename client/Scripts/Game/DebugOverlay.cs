@@ -83,7 +83,6 @@ public partial class DebugOverlay : CanvasLayer
 			var outerRadius = elevationMap?.OuterRadius ?? DefaultHexOuterRadius;
 			var hex = HexMath.WorldToHex(pos.X, pos.Y, outerRadius);
 			var elevation = elevationMap?.GetElevation(hex.X, hex.Y) ?? 0;
-			var yaw = player.Rotation;
 
 			var chunk = "n/a (no MapConfig)";
 			var cfg = conn?.Db.MapConfig.Iter().FirstOrDefault();
@@ -97,11 +96,24 @@ public partial class DebugOverlay : CanvasLayer
 				$"Position: ({pos.X:0.0}, {pos.Y:0.0})  Velocity: ({player.Velocity.X:0.0}, {player.Velocity.Y:0.0})\n" +
 				$"Hex: ({hex.X}, {hex.Y})  Elevation: {elevation}\n" +
 				$"Chunk: {chunk}\n" + 
-				$"Yaw: {yaw:0.00}";
+				$"Player Rotation: {player.Rotation:0.00}\n" +
+				CameraInfo();
+
+		}
+
+		// Camera yaw/pitch from the shared rig (the single source of truth that drives
+		// Camera3D in world_3d.tscn). The 2D presenter ignores pitch (top-down), so
+		// report straight-down -90 there.
+		static string CameraInfo()
+		{
+			var rig = GameManager.CameraRig;
+			float yawDeg = rig != null ? Mathf.Wrap(Mathf.RadToDeg(rig.Yaw), -180f, 180f) : 0f;
+			float pitchDeg = !GameVisuals.Is3D ? -90f : rig?.PitchDegrees ?? -90f;
+			return $"Camera Yaw: {yawDeg:0.0}  Pitch: {pitchDeg:0.0}";
 		}
 	}
 
-	// ── 3dpixelart tweak panel ──────────────────────────────────────────────
+	// ── Pixelizer3D tweak panel ─────────────────────────────────────────────
 
 	private void OnPixelArtButtonPressed()
 	{
@@ -194,7 +206,7 @@ public partial class DebugOverlay : CanvasLayer
 		}
 
 		Header("Pipeline");
-		Slider("Debug View", 0, 3, 1, () => p.DebugView, v => p.DebugView = (int)v);
+		Slider("Debug View", 0, 9, 1, () => p.DebugView, v => p.DebugView = (int)v);
 
 		Header("Pixelization");
 		Slider("Pixel Size", 1, 5, 1, () => p.PixelSize, v => p.PixelSize = (int)v);

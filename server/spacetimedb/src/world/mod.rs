@@ -12,6 +12,7 @@
 //! - `aoi` — area-of-interest chunk selection
 
 pub mod aoi;
+pub mod building;
 pub mod def_tables;
 pub mod hex;
 pub mod instance_tables;

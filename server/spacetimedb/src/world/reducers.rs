@@ -1,6 +1,7 @@
 use spacetimedb::ReducerContext;
 use crate::world::tables::*;
 use crate::player::methods::*;
+use crate::player::tables::logged_in_player;
 
 /// Elevation level of one hex, default 0 when no tile row exists (i.e. before add_chunks).
 /// Same hex_q-btree + hex_r-find lookup place_building uses.
@@ -24,6 +25,22 @@ pub fn place_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32, building_typ
 
     if !tile.building_type.is_empty() { return Err("Tile already occupied.".to_string()); }
 
+    // BitCraft-mirrored footprint consult: the legacy single-hex stamp shares hexes
+    // with BuildingState footprints / project sites — keep both stores consistent.
+    if crate::world::building::hex_occupied(ctx, hex_q, hex_r) {
+        return Err("Tile already occupied.".to_string());
+    }
+
+    // Territory build-permission consult (Phase 4): placing inside a claim needs
+    // Build permission; admins placing world-authoring content bypass via is_admin.
+    if !is_admin(ctx) {
+        if let Some(login) = ctx.db.logged_in_player().player_id().find(ctx.sender()) {
+            let cfg = MapConfig::load(ctx, 0, 0);
+            let (wx, wy) = crate::world::hex::hex_to_world(hex_q, hex_r, cfg.hex_outer_radius);
+            crate::claims::check_build(ctx, login.profile_id, wx, wy)?;
+        }
+    }
+
     ctx.db.building_tile().tile_id().update(BuildingTile { building_type, owner_id: Some(ctx.sender()), ..tile });
     Ok(())
 }
@@ -35,7 +52,13 @@ pub fn remove_building(ctx: &ReducerContext, hex_q: i32, hex_r: i32) -> Result<(
         .find(|t| t.hex_r == hex_r)
         .ok_or("Tile not found.")?;
 
-    if tile.building_type.is_empty() { return Ok(()); }
+    if tile.building_type.is_empty() {
+        // No legacy stamp — but a BitCraft-mirrored footprint may still own this hex.
+        if crate::world::building::hex_occupied(ctx, hex_q, hex_r) {
+            return Err("Tile occupied by a building footprint — use demolish_building.".to_string());
+        }
+        return Ok(());
+    }
 
     if tile.owner_id != Some(ctx.sender()) && !is_admin(ctx) {
         return Err("Not the owner.".to_string());

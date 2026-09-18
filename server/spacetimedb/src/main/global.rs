@@ -250,3 +250,76 @@ pub const ROTATION_REPORT_EPSILON: f32 = 0.0087;
 // Safety bound for compute_level's loop. u64 xp_for_level math already prevents the old
 // u32 overflow (~level 2930); the bound just keeps a corrupt xp value from spinning.
 pub const MAX_LEVEL: u32 = 10_000;
+
+// ===== Agent tick framework (0A — BitCraft agents/mod.rs pattern) =====
+
+// Default master switch for background agents (seeded into AgentConfig on init).
+pub const AGENTS_ENABLED_DEFAULT: bool = true;
+// Per-concern tick periods (seconds). Mirror BitCraft's parameters_desc.*_tick_millis:
+// each concern gets its own cadence even though all ticks currently hang off the
+// single 1 Hz ConsumableEffectSchedule dispatcher.
+pub const AGENT_REGEN_TICK_SECONDS: f32 = 1.0;
+pub const AGENT_ZONE_TICK_SECONDS: f32 = 1.0;
+pub const AGENT_CLEANUP_TICK_SECONDS: f32 = 5.0;
+pub const AGENT_TRADE_TICK_SECONDS: f32 = 5.0;
+pub const AGENT_CHAT_CLEANUP_TICK_SECONDS: f32 = 60.0;
+
+// ===== Move validation strikes (Phase 1 — BitCraft move_validation_helpers) =====
+
+// Window (seconds) over which move-validation failures accumulate.
+pub const STRIKE_WINDOW_SECS: f32 = 10.0;
+// Failures within the window before a report is rejected + resync scheduled.
+pub const STRIKES_BEFORE_REJECT: u32 = 5;
+// Past tolerance (seconds) for movement-report gaps: the displacement budget's dt is
+// clamped to this so a long absence (idle / suspended client) can't bank an enormous
+// budget and teleport across the map on return.
+pub const MOVE_TIMESTAMP_PAST_TOLERANCE_SECS: f32 = 5.0;
+
+// ===== Progressive / channeled actions (Phase 1) =====
+
+// Max active channeled actions per player (mirror BitCraft validate_slots: 1).
+pub const MAX_ACTIVE_CHANNELED_PER_PLAYER: usize = 1;
+// Max concurrent channelers on one target (mirror per-building slot limits).
+pub const MAX_CHANNELED_PER_TARGET: usize = 4;
+// Default channel duration when the caller passes required <= 0.
+pub const CHANNELED_DEFAULT_REQUIRED: f32 = 3.0;
+
+// ===== Survival sim (Phase 2 — BitCraft player_regen/starving/day_night) =====
+
+// Seconds without taking damage before passive regen applies (BitCraft
+// min_seconds_to_passive_regen_health).
+pub const REGEN_DELAY_SECONDS: f32 = 5.0;
+// Passive HP per tick once the delay has elapsed.
+pub const PASSIVE_REGEN_PER_TICK: u32 = 2;
+// Attrition (hunger-like pressure) damage per tick when starving.
+pub const ATTRITION_DAMAGE_PER_TICK: u32 = 3;
+// Ticks of missed attrition before the pressure row starts dealing damage.
+pub const ATTRITION_GRACE_TICKS: u32 = 3;
+
+// ===== Trade + economy (Phase 3 — BitCraft trade_initiate_session) =====
+
+// Max distance between trade parties (defaults to interaction range; see scoping Q(a)).
+pub const MAX_TRADE_DISTANCE: f32 = INTERACT_RADIUS * 2.0;
+// Seconds before an unconfirmed trade session times out (BitCraft: 45 s).
+pub const TRADE_SESSION_TIMEOUT_SECS: f32 = 45.0;
+// Max distinct item pockets per side (BitCraft max_traded_items + 1 pockets).
+pub const MAX_TRADED_POCKETS: usize = 8;
+
+// ===== Claims / permissions lite (Phase 4) =====
+
+// Max tiles per territory claim.
+pub const MAX_TERRITORY_TILES: usize = 64;
+// Upkeep cost per upkeep tick per tile; unpaid → territory dissolves.
+pub const TERRITORY_UPKEEP_PER_TILE: u32 = 1;
+// Seconds between upkeep charges.
+pub const TERRITORY_UPKEEP_INTERVAL_SECS: f32 = 300.0;
+
+// ===== Chat + moderation (Phase 5) =====
+
+// Max chat message length (mirror user_text_input_helpers length cap).
+pub const CHAT_MAX_MESSAGE_LEN: usize = 280;
+// Per-player chat rate limit: posts per window.
+pub const CHAT_RATE_WINDOW_SECS: f32 = 5.0;
+pub const CHAT_RATE_MAX_POSTS: u32 = 5;
+// Hours of chat history retained by the cleanup agent.
+pub const CHAT_RETENTION_HOURS: f32 = 24.0;

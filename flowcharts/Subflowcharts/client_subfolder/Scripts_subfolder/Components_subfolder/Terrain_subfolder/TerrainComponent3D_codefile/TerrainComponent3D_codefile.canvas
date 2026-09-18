@@ -121,11 +121,21 @@
 			"height": 400
 		},
 		{
+			"id": "2c4b8d044d40cc40",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/_shellMaterial_symbol.canvas",
+			"color": "5",
+			"x": 5520,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "19323926a8b7d860",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/_terrain_symbol.canvas",
 			"color": "5",
-			"x": 5520,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -135,7 +145,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/ChunkNeighborOffsets_symbol.canvas",
 			"color": "5",
-			"x": 5980,
+			"x": 6440,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -145,7 +155,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/OnElevationChanged_symbol.canvas",
 			"color": "5",
-			"x": 6440,
+			"x": 6900,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -155,7 +165,27 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/OnMapConfigRow_symbol.canvas",
 			"color": "5",
-			"x": 6900,
+			"x": 7360,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "62af354ec3b5f974",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/RefreshShells_symbol.canvas",
+			"color": "5",
+			"x": 7820,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8154721de526a906",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/ShellDrop_symbol.canvas",
+			"color": "5",
+			"x": 8280,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -165,7 +195,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/SyncElevation_symbol.canvas",
 			"color": "5",
-			"x": 7360,
+			"x": 8740,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -175,7 +205,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Terrain_subfolder/TerrainComponent3D_codefile/TerrainComponent3D (class)_symbol.canvas",
 			"color": "5",
-			"x": 7820,
+			"x": 9200,
 			"y": 0,
 			"width": 400,
 			"height": 400

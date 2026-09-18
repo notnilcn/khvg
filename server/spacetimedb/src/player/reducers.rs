@@ -171,9 +171,38 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     // their own wrap-aware direction, not rejected — rejecting would rubber-band legit
     // lag. teleport_player is exempt (it writes the row directly and restamps the clock).
     let budget = state.as_ref()
-        .map(|s| speed_cap * crate::main::time::seconds_since(ctx, s.last_report) * MOVE_SLACK)
+        .map(|s| {
+            // Clamp the gap so idle time can't bank a cross-map budget (past-tolerance
+            // window); negative gaps (clock anomaly) floor to zero → MIN displacement.
+            let dt = crate::main::time::seconds_since(ctx, s.last_report)
+                .clamp(0.0, MOVE_TIMESTAMP_PAST_TOLERANCE_SECS);
+            speed_cap * dt * MOVE_SLACK
+        })
         .unwrap_or(0.0)
         .max(MIN_REPORT_DISPLACEMENT);
+    // Move-validation strikes (Phase 1 — BitCraft move_validation_helpers pattern):
+    // timestamp monotonicity (server clock behind the last report = anomaly) and gross
+    // origin-speed violations (>2× budget, beyond lag slack) record a strike. Strikes
+    // ALLOW (clamp along the vector, current behavior) until STRIKES_BEFORE_REJECT
+    // within STRIKE_WINDOW_SECS, then reject + schedule a resync (teleport restamp =
+    // BitCraft's reset_mobile_entity_timer). Admins bypass (mirror has_role_no_dev GM).
+    if !is_admin(ctx) {
+        let monotonic_ok = state.as_ref().map(|s| ctx.timestamp >= s.last_report).unwrap_or(true);
+        let gross_violation = dist > budget * 2.0 && fall_delta == 0 && !grapple_active;
+        if !monotonic_ok || gross_violation {
+            let strikes = crate::anticheat::record_move_strike(ctx, profile_id);
+            if strikes >= STRIKES_BEFORE_REJECT {
+                // Reject + resync: restamp the clock and snap the client back by
+                // re-asserting the stored position (authoritative echo on next tick).
+                match &state {
+                    Some(s) => { ctx.db.player_movement_state().profile_id().update(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: s.falling_until }); }
+                    None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: None }); }
+                }
+                log::warn!("move validation: rejecting report for profile {} after {} strikes", profile_id, strikes);
+                return Ok(());
+            }
+        }
+    }
     let (x, y) = if dist > budget {
         if fall_delta > 0 && dist <= MAX_FALL_DISPLACEMENT {
             // Downhill fall: exempt from the displacement budget up to
@@ -341,19 +370,22 @@ pub fn pickup_drop(ctx: &ReducerContext, drop_id: u64) -> Result<(), String> {
         return Err("Drop has expired.".to_string());
     }
     if drop.item_id.is_empty() { return Ok(()); }
-    // Wrap-aware range check against the caller's position row — no picking up drops
-    // across the map.
-    let pos = ctx.db.player_position().profile_id().find(&profile_id).ok_or("Position not found.")?;
-    let cfg = MapConfig::load(ctx, 0, 0);
-    let dist_sq = wrapped_distance_sq(pos.x, pos.y, drop.x, drop.y, (cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
-    if dist_sq > INTERACT_RADIUS * INTERACT_RADIUS {
-        return Err("Drop is too far away.".to_string());
-    }
+    // Shared interaction gate (Phase 0C validate_interact): wrap-aware range check +
+    // territory inventory-permission consult — no picking up drops across the map.
+    validate_interact(ctx, profile_id, drop.x, drop.y).map_err(|e| {
+        if e == "Target is too far away." { "Drop is too far away.".to_string() } else { e }
+    })?;
     let item = ctx.db.item().item_id().find(&drop.item_id).ok_or("Item not found.")?;
 
     // Runtime state travels with the item: a dropped ability's residual cooldown/charges
     // restore onto the destination slot (a different player picking it up inherits them).
     transfer_item_to_inventory(ctx, profile_id, &item, drop.enchantment_ids.clone(), drop.cooldown_until, drop.charges)?;
+
+    // Discovery (Phase 1 — BitCraft discover_item_stack): picking up auto-discovers
+    // the item and its enchantments.
+    let mut ids = vec![item.item_id.clone()];
+    ids.extend(drop.enchantment_ids.clone());
+    discover_ids(ctx, profile_id, ids);
 
     ctx.db.loot_drop().drop_id().delete(&drop_id);
     Ok(())
@@ -368,6 +400,10 @@ pub fn drop_item(ctx: &ReducerContext, slot_index: u32) -> Result<(), String> {
     // Dropping a follower cell drops the whole span.
     if let Some(head) = slot.occupied_by {
         slot = get_slot(ctx, profile_id, head).ok_or("Span head not found.")?;
+    }
+    // Storage-category gate (Phase 0C): empty/blank ids are never storable.
+    if !is_storable(&slot.item_id) {
+        return Err("Slot is empty.".to_string());
     }
     let item_id = slot.item_id.clone().ok_or("Slot is empty.")?;
     let enchantment_ids = slot.enchantment_ids.clone();
@@ -541,9 +577,11 @@ pub fn swap_slots(ctx: &ReducerContext, from_index: u32, to_index: u32) -> Resul
     Ok(())
 }
 
-/// The single 1 Hz status tick (renamed from tick_active_consumable_effects): today it only
-/// expires consumable buff rows; the status module (P1b+) adds bleed-pool drains, regen,
-/// purge/wager evaluation, charge timeouts, zone ticks, and stagger decay to this same tick.
+/// The single 1 Hz status tick (renamed from tick_active_consumable_effects):
+/// per-concern dispatcher (Phase 0A agent framework): regen pass → zone pass → core
+/// status tick (consumable expiry + bleed/charge/enemy/zone) → cleanup pass (trade
+/// timeouts, chat retention, upkeep, strike sweeps). Every pass early-returns on the
+/// agent master switch except the core consumable-expiry scan below.
 #[spacetimedb::reducer]
 pub fn tick_status_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule) {
     let mut affected_profiles = Vec::new();
@@ -580,7 +618,10 @@ pub fn tick_status_effects(ctx: &ReducerContext, _job: ConsumableEffectSchedule)
             ctx.db.loot_drop().drop_id().delete(&drop.drop_id);
         }
     }
+    crate::main::agents::tick_regen(ctx);
+    crate::main::agents::tick_zones(ctx);
     crate::status::methods::tick(ctx);
+    crate::main::agents::tick_cleanup(ctx);
 }
 
 #[spacetimedb::reducer]
@@ -1055,6 +1096,21 @@ pub fn activate_ability(ctx: &ReducerContext, slot_index: u32, target_x: f32, ta
     let profile_id = player.profile_id;
 
     let (slot, ability) = resolve_ability_slot(ctx, profile_id, slot_index)?;
+    // Knowledge gate (Phase 1 — BitCraft required_knowledges): the slot's item may
+    // carry required knowledge ids; all must be acquired. No row = no gate.
+    if let Some(item_id) = slot.item_id.as_ref() {
+        if let Some(req) = ctx.db.ability_knowledge_requirement().item_id().find(item_id) {
+            if !req.required_ids.is_empty() {
+                // blocking_knowledges early-out via knowledge_state (2 = acquired).
+                let missing: Vec<&String> = req.required_ids.iter()
+                    .filter(|id| knowledge_state(ctx, profile_id, id) < 2)
+                    .collect();
+                if !missing.is_empty() {
+                    return Err(format!("Missing required knowledge: {}", missing.into_iter().map(|s| s.as_str()).collect::<Vec<_>>().join(", ")));
+                }
+            }
+        }
+    }
     // Charge-capable abilities (P4) go through begin/release_ability_charge — activating
     // one directly would bypass the charge (and its SelfSlow) at full effect.
     if ability_is_charge_capable(&ability) {
@@ -1152,5 +1208,62 @@ pub fn remove_enchantment(ctx: &ReducerContext, slot_index: u32, enchantment_id:
     enchantment_ids.retain(|id| id != &enchantment_id);
     update_slot(ctx, PlayerInventorySlot { enchantment_ids, ..slot });
     recompute_stats(ctx, profile_id);
+    Ok(())
+}
+
+// ===== Discovery / knowledge (Phase 1 — BitCraft discover/acquire pattern) =====
+
+/// Explicit discover (observe without acquiring): marks ids as seen. Pickup and
+/// chest takes auto-discover; this covers "seen in the world" flows.
+#[spacetimedb::reducer]
+pub fn discover_knowledge(ctx: &ReducerContext, ids: Vec<String>) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    if ids.is_empty() || ids.len() > 32 {
+        return Err("Provide 1-32 ids.".to_string());
+    }
+    discover_ids(ctx, player.profile_id, ids);
+    Ok(())
+}
+
+/// Explicit unlock (BitCraft `acquire_*`): moves ids from discovered to acquired.
+/// Acquiring an undiscovered id discovers it first (idempotent).
+#[spacetimedb::reducer]
+pub fn acquire_knowledge(ctx: &ReducerContext, ids: Vec<String>) -> Result<(), String> {
+    let player = require_in_world(ctx)?;
+    if ids.is_empty() || ids.len() > 32 {
+        return Err("Provide 1-32 ids.".to_string());
+    }
+    discover_ids(ctx, player.profile_id, ids.clone());
+    if let Some(row) = ctx.db.player_knowledge().profile_id().find(&player.profile_id) {
+        let mut acquired = row.acquired.clone();
+        for id in ids {
+            if !acquired.iter().any(|a| a == &id) {
+                acquired.push(id);
+            }
+        }
+        ctx.db.player_knowledge().profile_id().update(PlayerKnowledge { acquired, ..row });
+    }
+    Ok(())
+}
+
+/// Admin: set the knowledge gate for an ability item (empty = no gate).
+#[spacetimedb::reducer]
+pub fn set_ability_knowledge(ctx: &ReducerContext, item_id: String, required_ids: Vec<String>) -> Result<(), String> {
+    if !is_admin(ctx) {
+        return Err("Admin only.".to_string());
+    }
+    ctx.db.item().item_id().find(&item_id).ok_or("Item not found.")?;
+    match ctx.db.ability_knowledge_requirement().item_id().find(&item_id) {
+        Some(row) => {
+            ctx.db.ability_knowledge_requirement().item_id().update(
+                crate::item::tables::AbilityKnowledgeRequirement { required_ids, ..row },
+            );
+        }
+        None => {
+            ctx.db.ability_knowledge_requirement().insert(
+                crate::item::tables::AbilityKnowledgeRequirement { item_id, required_ids },
+            );
+        }
+    }
     Ok(())
 }

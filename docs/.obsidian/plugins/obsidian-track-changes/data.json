@@ -1,0 +1,18 @@
+{
+  "readingShowComments": true,
+  "revealMarkupOnCommentJump": false,
+  "clickMarksToOpenPanel": false,
+  "confirmBeforeDelete": true,
+  "highlightChangedChars": true,
+  "markupDisplayMode": "full",
+  "commentMarkerSize": "normal",
+  "localAuthorName": "notnilcn",
+  "replyDateStyle": "date",
+  "finalize": {
+    "additions": "accept",
+    "deletions": "reject",
+    "substitutions": "reject",
+    "stripHighlights": true,
+    "stripAiText": true
+  }
+}

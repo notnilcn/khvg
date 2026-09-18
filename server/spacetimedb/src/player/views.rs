@@ -146,6 +146,14 @@ fn nearby_remote_players_profiles(ctx: &ViewContext) -> impl Query<PlayerProfile
         .build()
 }
 
+#[spacetimedb::view(accessor = local_player_knowledge, public)]
+fn local_player_knowledge(ctx: &ViewContext) -> impl Query<PlayerKnowledge> {
+    let profile_id = ctx.db.logged_in_player().player_id().find(ctx.sender())
+        .map(|p| p.profile_id)
+        .unwrap_or(u64::MAX);
+    ctx.from.player_knowledge().r#where(move |k| k.profile_id.eq(profile_id)).build()
+}
+
 #[spacetimedb::view(accessor = nearby_loot_drops, public)]
 fn nearby_loot_drops(ctx: &ViewContext) -> impl Query<LootDrop> {
     let empty = ctx.from.loot_drop().r#where(|d| d.drop_id.eq(u64::MAX)).build();

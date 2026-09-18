@@ -33,7 +33,7 @@ pub struct GroundTextureConfig {
     // Compatibility tags (e.g. "soft", "delicate"). Consumed by LayeringRule to decide which
     // overlays are allowed on this ground texture, in this biome.
     pub tags: Vec<String>,
-    // Which of the 3 triangle rotations (0/1/2) this texture looks correct at, in this biome.
+    // Which of the 6 hex rotations (0-5) this texture looks correct at, in this biome.
     // Empty = all allowed. Base and overlay each pick their rotation independently.
     pub allowed_rotations: Vec<u8>,
 }
@@ -55,9 +55,9 @@ pub struct OverlayTextureConfig {
 }
 
 // Per-hex decor (trees, rocks, ...) — same shape/chance model as ground/overlay configs, just
-// scoped to a whole hex instead of a wedge. `shadow_texture_id` is a separate paired sprite
-// (rotates together with texture_id as one unit) rather than derived by naming convention, since
-// it's data-driven like everything else here.
+// for optional props rather than the hex's own ground: at most one decor row per hex.
+// `shadow_texture_id` is a separate paired sprite (rotates together with texture_id as one
+// unit) rather than derived by naming convention, since it's data-driven like everything else.
 #[derive(SpacetimeType, Clone)]
 pub struct DecorConfig {
     pub texture_id: String,
@@ -76,10 +76,10 @@ pub struct BiomeDef {
     pub region_weights: Vec<RegionWeight>,
     // Spatial frequency for the noise field that drives ground-texture clustering (see
     // value_noise2d in world::noise) — lower scale means larger patches. <= 0 disables
-    // clustering and falls back to a plain per-wedge random pick.
+    // clustering and falls back to a plain per-hex random pick.
     pub ground_noise_scale: f32,
     // Same idea as ground_noise_scale, but for overlay presence+type — clusters debris into
-    // denser/sparser regions instead of an independent roll per wedge. Uses a different noise
+    // denser/sparser regions instead of an independent roll per hex. Uses a different noise
     // field than ground_noise_scale (see OVERLAY_NOISE_SEED_OFFSET) so debris patches don't just
     // trace the ground-texture boundary. <= 0 disables clustering.
     pub overlay_noise_scale: f32,

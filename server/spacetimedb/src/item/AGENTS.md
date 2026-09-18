@@ -7,24 +7,23 @@ for **adding abilities** (the most common task touching this module).
 
 ## The recipe
 
-**Reusing an existing `AbilityEffect`** (`Heal`, `Buff`, `DeleteBullets`, `SplitBullets`,
-`AttractBullets`, `DeleteBulletsInRect`, the status effects — `MarkBleed`, `MarkStore`,
-`StoreIncoming`, `Invulnerable`, `DamageShield`, `ReduceDamage`, `RedirectToCaster`,
-`RegenAura` — the P2 enemy-side effects — `Curse`, `Bash`, `Slash`, `Wall` — the P3
-ground-zone effect — `CastZone(ZoneParams)` — and the P4 movement effects —
-`Teleport(TeleportParams)`, `Grapple` — and the P5
-`Spell(SpellParams)` shape-damage spells): seed-only.
+**Reusing an existing `AbilityEffect`** — self/ally effects (`Heal`, `Buff`), bullet-control
+(`DeleteBullets`, `SplitBullets`, `AttractBullets`, `DeleteBulletsInRect`), status effects
+(`MarkBleed`, `MarkStore`, `StoreIncoming`, `Invulnerable`, `DamageShield`, `ReduceDamage`,
+`RedirectToCaster`, `RegenAura`), enemy-side effects (`Curse`, `Bash`, `Slash`, `Wall`),
+ground-zone effects (`CastZone(ZoneParams)`), movement (`Teleport(TeleportParams)`,
+`Grapple`), and shape-damage spells (`Spell(SpellParams)`): seed-only.
 
 1. `seeds.rs::seed_world_items` — new `Item::seed` entry: `equip_slot: EquipSlot::Ability`,
    one `ItemBehavior::Ability(AbilityBehavior { effect, potency, duration,
    cooldown_seconds, max_charges })` (`max_charges: 0` = unlimited), and the class gate:
-   `stat_requirements` is one of the `REQ_*` consts at the top of `seeds.rs` (P6 —
-   primary stat ≥ 15, secondary ≥ 12 per the doc's class headers; `NO_REQUIREMENTS` for
-   generic gear). Single-effect ability seeds go through the `ability_item` helper,
+   `stat_requirements` is one of the `REQ_*` consts at the top of `seeds.rs` (primary
+   stat ≥ 15, secondary ≥ 12 per the doc's class headers; `NO_REQUIREMENTS` for generic
+   gear). Single-effect ability seeds go through the `ability_item` helper,
    which takes the gate as its last parameter.
 2. `main/seeds.rs::seed_default_textures` — a `TextureEntry` if the `texture_id` is new
    (missing entry = blank icon, no error).
-3. `cargo check` → `server/build.sh` (regens bindings, publishes, wipes + reseeds the DB).
+3. `cargo check`, then the build/publish flow in `server/AGENTS.md` (Commands).
 
 **New effect type** — additionally:
 
@@ -34,11 +33,10 @@ ground-zone effect — `CastZone(ZoneParams)` — and the P4 movement effects �
    `Serialize`/`Deserialize` cascade.
 2. `player/reducers.rs` — arm in `scale_ability_effect` (multiply every scalable dim by
    the position multiplier) and in `apply_ability_effect` (the shared dispatch both
-   `activate_ability` and the P4 charge release call). Self effects delegate to
+   `activate_ability` and the charge release call). Self effects delegate to
    `apply_consumable_effect`; bullet-control effects append a `BulletControlEvent`
-   (`enemy/instance_tables.rs`, already subscribed by every client). If the effect is
-   charge-capable (hold-to-charge), decide that in `ability_is_charge_capable` — the
-   client mirrors it (`LocalPlayerInventoryComponent.IsChargeCapable`).
+   (`enemy/instance_tables.rs`). If the effect is charge-capable (hold-to-charge),
+   decide that in `ability_is_charge_capable` (client mirror noted in `server/AGENTS.md`).
 3. `enemy/instance_tables.rs` — new `BulletControlKind` variant if bullet-control. Prefer
    encoding geometry into the existing event fields (encodings listed in `enemy/AGENTS.md`)
    over new columns; document the encoding in the table's doc comment.
@@ -47,36 +45,19 @@ ground-zone effect — `CastZone(ZoneParams)` — and the P4 movement effects �
    optimistic arm in `LocalPlayerInventoryComponent.TryActivateAbility`, display line in
    `ItemSidebarComponent.FormatAbility`. Server-side fallbacks (zero-length direction,
    range clamp) must match the client's optimistic apply exactly.
-5. Same build/publish flow.
 
 The full contributor-facing tutorial is
 `docs/Technical Design Docs/Workflows/Adding an Ability (Ability Authoring Workflow).md`.
 
 ## Rules that bite here
 
-- **Capability is behavior, not slot.** Look up with `ability_behavior(&item)` /
-  `consumable_behavior(&item)` in `item/methods.rs`, never by inspecting `equip_slot`.
-- **Slot indices are load-bearing on both sides:** 0 weapon, 1–4 hotbar, 5 accessory,
-  6 armor, 7–30 general, 31 bag, 32–37 ability (`ABILITY_SLOT_START`/`COUNT`). Ability
-  items span `slot_cost` contiguous cells; the head holds the item, followers get
-  `occupied_by`. Backpack stores ability items loose in one cell.
-- **`ABILITY_POSITION_MULTIPLIERS` is mirrored client-side**
-  (`client/Scripts/World/ServerConstants.cs` — the single home for all client mirrors of
-  `main/global.rs` constants, each naming its server counterpart) — change both together.
-- **Items are not consumed** — runtime state (cooldown/charges) lives on the
-  `PlayerInventorySlot` row, never the `Item` row. The catalog is shared/static. The
-  state travels with the item: `drop_item` stamps it onto the `LootDrop` row and
-  `pickup_drop` restores it (the picker-upper inherits any residual cooldown).
-- **Content = seeds.** Every publish wipes the DB; anything not seeded does not exist.
-  `Item::seed`/`Enchantment::seed` upsert by primary key, so reseeding is idempotent.
+- Seeds upsert by primary key (`Item::seed`/`Enchantment::seed`), so reseeding is idempotent.
 - Pre-equip for testing via `place_span` in `player/methods.rs::try_scaffold_profile`
   (see the Skull/Tome entries) rather than inventing new machinery.
 
 ## Commands
 
 ```bash
-cargo check --manifest-path server/spacetimedb/Cargo.toml   # compile gate
-server/build.sh                                             # bindings + publish (DB wipe + reseed)
 spacetime sql bullethell "SELECT item_id, equip_slot, slot_cost FROM item"   # inspect the catalog
 spacetime call bullethell give_item <username> <profile_name> "Delete Orb"   # hand an item out (admin)
 ```

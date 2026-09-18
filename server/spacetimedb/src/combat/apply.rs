@@ -4,7 +4,7 @@
 //! combat never touches them directly), while an enemy kill despawns through the enemy
 //! archetype helper plus the status kill hook here, since both are enemy-domain.
 
-use spacetimedb::{ReducerContext, Identity, Table};
+use spacetimedb::{ReducerContext, Identity};
 use std::time::Duration;
 use super::{DamageRequest, IncomingDamageOptions, DEFAULT_INCOMING_OPTIONS};
 use super::calc::{compute_incoming_damage, compute_player_damage};

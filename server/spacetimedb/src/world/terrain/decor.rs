@@ -1,6 +1,6 @@
 // Decor pass: at most one decor prop per hex, rolled once per cell right after the ground and
-// overlay passes for that same cell — decor's ground/overlay check reads that hex's own 6
-// wedges, which those passes just finished deciding.
+// overlay passes for that same cell — decor's ground/overlay check reads that hex's own
+// decided tags, which those passes just finished writing.
 
 use hexx::Hex;
 use spacetimedb::{ReducerContext, Table};
@@ -15,14 +15,12 @@ use super::rules::{decor_ground_conflict, NeighborTagMap};
 pub(super) fn place_decor(ctx: &ReducerContext, cell: &HexCell, biome_id: &str, region_id: u64, decor_configs: &[DecorConfig], decor_noise_scale: f32, decor_min_separation: i32, seed: u64, draw: &mut u64, neighbor_tags: &NeighborTagMap, decided_decor: &mut std::collections::HashSet<(i32, i32)>) {
     if decor_configs.is_empty() { return; }
 
-    // Union of ground+overlay tags across all 6 of this hex's wedges — every tri_index is already
-    // decided by the ground/overlay passes that just ran for this same cell.
+    // Ground+overlay tags decided for this hex by the ground/overlay passes that just ran
+    // for this same cell.
     let mut hex_tags: Vec<String> = Vec::new();
-    for tri in 0..6u8 {
-        if let Some(d) = neighbor_tags.get(&(cell.hex_q, cell.hex_r, tri)) {
-            for t in d.ground_tags.iter().chain(d.overlay_tags.iter()) {
-                if !hex_tags.contains(t) { hex_tags.push(t.clone()); }
-            }
+    if let Some(d) = neighbor_tags.get(&(cell.hex_q, cell.hex_r)) {
+        for t in d.ground_tags.iter().chain(d.overlay_tags.iter()) {
+            if !hex_tags.contains(t) { hex_tags.push(t.clone()); }
         }
     }
 

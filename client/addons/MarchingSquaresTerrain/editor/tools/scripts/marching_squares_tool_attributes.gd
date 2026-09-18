@@ -23,11 +23,15 @@ enum SettingType {
 }
 
 var terrain_settings_data : Dictionary = {
+	"grid_mode": "OptionButton",
+	"dimensions": "Vector3i",
+	"cell_size": "Vector2",
 	"hex_size": "EditorSpinSlider",
 	"level_height": "EditorSpinSlider",
 	"chunk_radius": "SpinBox",
 	"default_transition": "OptionButton",
 	"blend_mode": "OptionButton",
+	"noise_hmap": "EditorResourcePicker",
 	"default_wall_texture": "OptionButton",
 	"extra_collision_layer": "OptionButton",
 	# Grass settings
@@ -385,13 +389,49 @@ func add_setting(p_params: Dictionary) -> void:
 				selected_chunk = plugin.selected_chunk
 			
 			chunk_button.set_flat(true)
-			chunk_button.item_selected.connect(func(chunk): _on_chunk_selected(chunk_button.get_item_text(chunk)))
 			chunk_button.set_custom_minimum_size(Vector2(65, 35))
 			
 			cont = CenterContainer.new()
 			cont.set_custom_minimum_size(Vector2(65, 35))
 			cont.add_child(chunk_button, true)
 			hbox_container.add_child(cont, true)
+
+			# Squares mode: per-chunk merge mode controls the marching-squares mesher.
+			# Hex mode: chunk shape is fixed, so these controls are hidden.
+			if plugin.current_terrain_node.get("grid_mode") == 0:
+				var option_button := OptionButton.new()
+				option_button.set_flat(true)
+				option_button.set_custom_minimum_size(Vector2(65, 35))
+				for mode in MarchingSquaresTerrainChunk.Mode:
+					option_button.add_item(_format_constant_string(mode))
+				option_button.selected = plugin.selected_chunk.merge_mode if not current_available_chunks.is_empty() and plugin.selected_chunk and "merge_mode" in plugin.selected_chunk else -1
+				option_button.item_selected.connect(_on_chunk_mode_changed)
+				
+				chunk_button.item_selected.connect(func(chunk): _on_chunk_selected(option_button, chunk_button.get_item_text(chunk)))
+				
+				var mult_apply_button := Button.new()
+				mult_apply_button.set_custom_minimum_size(Vector2(65, 30))
+				mult_apply_button.pressed.connect(_apply_mode_to_all_chunks)
+				mult_apply_button.text = "Apply mode to all chunks"
+				
+				var v_sep := VSeparator.new()
+				hbox_container.add_child(v_sep, true)
+				
+				cont = CenterContainer.new()
+				cont.set_custom_minimum_size(Vector2(65, 35))
+				cont.add_child(option_button, true)
+				hbox_container.add_child(cont, true)
+				
+				v_sep = VSeparator.new()
+				hbox_container.add_child(v_sep, true)
+				
+				cont = MarginContainer.new()
+				cont.set_custom_minimum_size(Vector2(65, 35))
+				cont.add_theme_constant_override("margin_bottom", 3)
+				cont.add_child(mult_apply_button, true)
+				hbox_container.add_child(cont, true)
+			else:
+				chunk_button.item_selected.connect(func(chunk): _on_chunk_selected(chunk_button.get_item_text(chunk)))
 		SettingType.TERRAIN:
 			var vbox := VBoxContainer.new()
 			for setting in terrain_settings_data:
@@ -511,6 +551,9 @@ func add_setting(p_params: Dictionary) -> void:
 							# Populate with texture names from the shared texture names resource
 							for tex_name in attribute_list.vp_tex_names.texture_names:
 								option_button.add_item(tex_name)
+						elif setting == "grid_mode":
+							option_button.add_item("Squares")
+							option_button.add_item("Hexes")
 						elif setting == "default_transition":
 							option_button.add_item("Cliff")
 							option_button.add_item("Terrace")
@@ -666,13 +709,49 @@ func _on_terrain_setting_changed(p_setting_name: String, p_value: Variant) -> vo
 	emit_signal("terrain_setting_changed", p_setting_name, p_value)
 
 
-func _on_chunk_selected(p_chunk: String) -> void:
+func _on_chunk_selected(p_arg1, p_arg2: String = "") -> void:
 	var terrain := plugin.current_terrain_node
+	var p_chunk: String = p_arg2 if p_arg2 != "" else p_arg1
+	var option_button: OptionButton = p_arg1 if p_arg1 is OptionButton else null
+	if option_button != null:
+		var chunk : MarchingSquaresTerrainChunk = terrain.find_child(p_chunk)
+		if chunk and "merge_mode" in chunk:
+			option_button.selected = chunk.merge_mode
 	
 	selected_chunk = plugin.current_terrain_node.find_child(p_chunk)
 	plugin.selected_chunk = selected_chunk
 	
 	plugin.gizmo_plugin.trigger_redraw(terrain)
+
+
+func _apply_mode_to_all_chunks() -> void:
+	if selected_chunk == null or not ("merge_mode" in selected_chunk):
+		return
+	for child in plugin.current_terrain_node.get_children():
+		if child is MarchingSquaresTerrainChunk:
+			_change_chunk_mode(child, selected_chunk.merge_mode)
+
+
+func _on_chunk_mode_changed(m_mode: int) -> void:
+	if selected_chunk == null:
+		return
+	_change_chunk_mode(selected_chunk, m_mode)
+
+
+func _change_chunk_mode(_chunk: MarchingSquaresTerrainChunk, m_mode: int) -> void:
+	if not ("merge_mode" in _chunk):
+		return
+	match MarchingSquaresTerrainChunk.Mode.find_key(m_mode):
+		"CUBIC":
+			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.CUBIC
+		"POLYHEDRON":
+			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.POLYHEDRON
+		"ROUNDED_POLYHEDRON":
+			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.ROUNDED_POLYHEDRON
+		"SEMI_ROUND":
+			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.SEMI_ROUND
+		"SPHERICAL":
+			_chunk.merge_mode = MarchingSquaresTerrainChunk.Mode.SPHERICAL
 
 #endregion
 

@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "88969d46d0cf38fc",
+			"type": "file",
+			"file": "server/spacetimedb/src/anticheat/tables.rs",
+			"subpath": "#MoveValidationStrikes",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

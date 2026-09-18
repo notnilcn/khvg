@@ -43,6 +43,7 @@ var current_brush_index : int = 0
 
 var brush_position : Vector3
 
+var BRUSH_VISUAL : Mesh = preload("uid://ch6cb07rh0m3l")
 var BRUSH_RADIUS_VISUAL : Mesh = preload("uid://cg3lvmu68oaaa")
 var BRUSH_RADIUS_MATERIAL : ShaderMaterial = preload("uid://dtevocyixqsgv")
 @onready var falloff_curve : Curve = preload("uid://c0bexjsfvvcxb")
@@ -108,7 +109,12 @@ var paint_mode : int = 0
 # Edge kind written by transition painting (matches MarchingSquaresTerrainChunk.EdgeKind)
 var transition_kind : int = 0
 
-var vertex_color_idx : int = 0
+var vertex_color_idx : int = 0:
+	set(vc_idx):
+		vertex_color_idx = vc_idx
+		_set_vertex_colors(vc_idx)
+var vertex_color_0 : Color = Color(1.0, 0.0, 0.0, 0.0)
+var vertex_color_1 : Color = Color(1.0, 0.0, 0.0, 0.0)
 #endregion
 
 #region draw-related vars
@@ -238,6 +244,9 @@ func _queue_raycast(origin: Vector3, dir: Vector3, cam: Camera3D) -> void:
 	raycast_queued = true
 
 
+func _on_chunk_dimensions_changed(value: Vector3i):
+	brush_size *= ((value.x / 33) + (value.y / 33)) / 2.0
+
 func _physics_process(delta: float) -> void:
 	# Raycast inside the physics process function to prevent
 	# crashes when "run physics on a different thread" is enabled.
@@ -271,6 +280,9 @@ func _edit(object: Object) -> void:
 			
 			# Sync plugin's preset from the selected terrain's saved preset
 			# This ensures each terrain keeps its own preset on selection/reload
+			if not current_terrain_node.chunk_dimensions_changed.is_connected(_on_chunk_dimensions_changed):
+				current_terrain_node.chunk_dimensions_changed.connect(_on_chunk_dimensions_changed)
+			
 			_syncing_from_terrain = true
 			current_texture_preset = object.current_texture_preset
 			_syncing_from_terrain = false
@@ -376,8 +388,14 @@ func handle_mouse(camera: Camera3D, event: InputEvent) -> int:
 		# Check for terrain collision
 		if draw_area_hovered:
 			terrain_hovered = true
-			var draw_hex := MSTHexMath.world_to_hex(draw_position.x, draw_position.z, terrain.hex_size)
-			var chunk_coords := MSTHexMath.world_to_chunk(draw_hex.x, draw_hex.y, terrain.chunk_radius)
+			var chunk_coords : Vector2i
+			if terrain.grid_mode == 0:
+				var chunk_x : int = floor(draw_position.x / (terrain.dimensions.x * terrain.cell_size.x))
+				var chunk_z : int = floor(draw_position.z / (terrain.dimensions.z * terrain.cell_size.y))
+				chunk_coords = Vector2i(chunk_x, chunk_z)
+			else:
+				var draw_hex := MSTHexMath.world_to_hex(draw_position.x, draw_position.z, terrain.hex_size)
+				chunk_coords = MSTHexMath.world_to_chunk(draw_hex.x, draw_hex.y, terrain.chunk_radius)
 			
 			is_chunk_plane_hovered = true
 			current_hovered_chunk = chunk_coords
@@ -396,7 +414,10 @@ func handle_mouse(camera: Camera3D, event: InputEvent) -> int:
 				if (mode == TerrainToolMode.GRASS_MASK or mode == TerrainToolMode.VERTEX_PAINTING or mode == TerrainToolMode.DEBUG_BRUSH) and flatten == true:
 					flatten = false
 				if mode == TerrainToolMode.LEVEL and Input.is_key_pressed(KEY_CTRL):
-					height = round(brush_position.y / terrain.level_height)
+					if terrain.grid_mode == 0:
+						height = brush_position.y
+					else:
+						height = round(brush_position.y / terrain.level_height)
 				elif Input.is_key_pressed(KEY_SHIFT):
 					is_drawing = true
 					brush_position = draw_position
@@ -426,7 +447,13 @@ func handle_mouse(camera: Camera3D, event: InputEvent) -> int:
 		
 		# Adjust brush size
 		if event is InputEventMouseButton and Input.is_key_pressed(KEY_SHIFT):
-			var size_scale_factor : float = clamp(terrain.hex_size / 2.0, 0.3, 1.0)
+			var size_scale_factor : float
+			if terrain.grid_mode == 0:
+				var cell_scale_factor := clamp(((terrain.cell_size.x + terrain.cell_size.y) / 4.0), 0.3, 1.0)
+				var dimensions_scale_factor := clamp((((terrain.dimensions.x / 33) + (terrain.dimensions.z / 33)) / 2.0), 0.5, 2.0)
+				size_scale_factor = dimensions_scale_factor * cell_scale_factor
+			else:
+				size_scale_factor = clamp(terrain.hex_size / 2.0, 0.3, 1.0)
 			var factor : float = event.factor if event.factor else 1
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 				brush_size += (0.5 * size_scale_factor) * factor
@@ -455,8 +482,14 @@ func handle_mouse(camera: Camera3D, event: InputEvent) -> int:
 	var intersection := chunk_plane.intersects_ray(_ray_origin, _ray_dir)
 	
 	if intersection:
-		var hover_hex := MSTHexMath.world_to_hex(intersection.x, intersection.z, terrain.hex_size)
-		var chunk_coords := MSTHexMath.world_to_chunk(hover_hex.x, hover_hex.y, terrain.chunk_radius)
+		var chunk_coords : Vector2i
+		if terrain.grid_mode == 0:
+			var chunk_x : int = floor(intersection.x / ((terrain.dimensions.x - 1) * terrain.cell_size.x))
+			var chunk_z : int = floor(intersection.z / ((terrain.dimensions.z - 1) * terrain.cell_size.y))
+			chunk_coords = Vector2i(chunk_x, chunk_z)
+		else:
+			var hover_hex := MSTHexMath.world_to_hex(intersection.x, intersection.z, terrain.hex_size)
+			chunk_coords = MSTHexMath.world_to_chunk(hover_hex.x, hover_hex.y, terrain.chunk_radius)
 		var chunk = terrain.chunks.get(chunk_coords)
 		
 		current_hovered_chunk = chunk_coords
@@ -483,12 +516,16 @@ func handle_mouse(camera: Camera3D, event: InputEvent) -> int:
 			elif not chunk:
 				# Can add a new chunk here if there is a neighbouring non-empty chunk
 				# Also add if there are no chunks at all in the current terrain system
-				var can_add_empty : bool = terrain.chunks.is_empty()
-				for dir in range(6):
-					if can_add_empty:
-						break
-					var neighbor := chunk_coords + MSTHexMath.neighbor_offset(dir)
-					can_add_empty = terrain.has_chunk(neighbor.x, neighbor.y)
+				var can_add_empty : bool
+				if terrain.grid_mode == 0:
+					can_add_empty = terrain.chunks.is_empty() or terrain.has_chunk(chunk_coords.x - 1, chunk_coords.y) or terrain.has_chunk(chunk_coords.x + 1, chunk_coords.y) or terrain.has_chunk(chunk_coords.x, chunk_coords.y - 1) or terrain.has_chunk(chunk_coords.x, chunk_coords.y + 1)
+				else:
+					can_add_empty = terrain.chunks.is_empty()
+					for dir in range(6):
+						if can_add_empty:
+							break
+						var neighbor := chunk_coords + MSTHexMath.neighbor_offset(dir)
+						can_add_empty = terrain.has_chunk(neighbor.x, neighbor.y)
 				if can_add_empty:
 					get_undo_redo().create_action("add chunk")
 					get_undo_redo().add_do_method(terrain, "add_new_chunk", chunk_coords.x, chunk_coords.y, self)
@@ -512,6 +549,9 @@ func handle_mouse(camera: Camera3D, event: InputEvent) -> int:
 
 # Calculates brush pattern and updates current_draw_pattern
 func update_draw_pattern(b_pos: Vector3):
+	if current_terrain_node and current_terrain_node.grid_mode == 0:
+		_update_draw_pattern_squares(b_pos)
+		return
 	var terrain_system : MarchingSquaresTerrain = current_terrain_node
 	
 	var brush_hexes : Dictionary = BrushPatternCalculator.hexes_in_brush(
@@ -563,6 +603,9 @@ func _get_transition_edge(terrain: MarchingSquaresTerrain, chunk_coords: Vector2
 
 
 func draw_pattern(terrain: MarchingSquaresTerrain):
+	if terrain.grid_mode == 0:
+		_draw_pattern_squares(terrain)
+		return
 	var undo_redo := MarchingSquaresTerrainPlugin.instance.get_undo_redo()
 	
 	var pattern := {}
@@ -757,8 +800,12 @@ func draw_height_pattern_action(terrain: MarchingSquaresTerrain, pattern: Dictio
 	for draw_chunk_coords: Vector2i in pattern:
 		var draw_chunk_dict = pattern[draw_chunk_coords]
 		var chunk : MarchingSquaresTerrainChunk = terrain.chunks[draw_chunk_coords]
-		for draw_hex_coords: Vector2i in draw_chunk_dict:
-			chunk.draw_elevation(draw_hex_coords, draw_chunk_dict[draw_hex_coords])
+		for draw_coords: Vector2i in draw_chunk_dict:
+			var v = draw_chunk_dict[draw_coords]
+			if terrain.grid_mode == 0 or v is float:
+				chunk.draw_height(draw_coords.x, draw_coords.y, float(v))
+			else:
+				chunk.draw_elevation(draw_coords, int(v))
 		chunk.regenerate_mesh()
 
 
@@ -766,8 +813,12 @@ func draw_grass_mask_pattern_action(terrain: MarchingSquaresTerrain, pattern: Di
 	for draw_chunk_coords: Vector2i in pattern:
 		var draw_chunk_dict = pattern[draw_chunk_coords]
 		var chunk : MarchingSquaresTerrainChunk = terrain.chunks[draw_chunk_coords]
-		for draw_hex_coords: Vector2i in draw_chunk_dict:
-			chunk.draw_grass(draw_hex_coords, draw_chunk_dict[draw_hex_coords])
+		for draw_coords: Vector2i in draw_chunk_dict:
+			var v = draw_chunk_dict[draw_coords]
+			if v is Color:
+				chunk.draw_grass_mask(draw_coords.x, draw_coords.y, v)
+			else:
+				chunk.draw_grass(draw_coords, bool(v))
 		chunk.regenerate_mesh()
 
 
@@ -779,7 +830,24 @@ func apply_composite_pattern_action(terrain: MarchingSquaresTerrain, patterns: D
 	if mode == TerrainToolMode.SMOOTH and current_quick_paint == null:
 		composite_disabled = true
 	
-	# Apply wall slots FIRST (before height changes that create cliffs)
+	# Apply wall colors FIRST (squares mode, before height changes that create ridge vertices)
+	if patterns.has("wall_color_0") and not composite_disabled:
+		for chunk_coords: Vector2i in patterns.wall_color_0:
+			var chunk : MarchingSquaresTerrainChunk = terrain.chunks.get(chunk_coords)
+			if chunk:
+				affected_chunks[chunk_coords] = chunk
+				for cell_coords: Vector2i in patterns.wall_color_0[chunk_coords]:
+					chunk.draw_wall_color_0(cell_coords.x, cell_coords.y, patterns.wall_color_0[chunk_coords][cell_coords])
+	
+	if patterns.has("wall_color_1") and not composite_disabled:
+		for chunk_coords: Vector2i in patterns.wall_color_1:
+			var chunk : MarchingSquaresTerrainChunk = terrain.chunks.get(chunk_coords)
+			if chunk:
+				affected_chunks[chunk_coords] = chunk
+				for cell_coords: Vector2i in patterns.wall_color_1[chunk_coords]:
+					chunk.draw_wall_color_1(cell_coords.x, cell_coords.y, patterns.wall_color_1[chunk_coords][cell_coords])
+	
+	# Apply wall slots FIRST (hex mode, before height changes that create cliffs)
 	if patterns.has("wall_slot") and not composite_disabled:
 		for chunk_coords: Vector2i in patterns.wall_slot:
 			var chunk : MarchingSquaresTerrainChunk = terrain.chunks.get(chunk_coords)
@@ -815,7 +883,24 @@ func apply_composite_pattern_action(terrain: MarchingSquaresTerrain, patterns: D
 				for hex_coords: Vector2i in patterns.edges[chunk_coords]:
 					chunk.draw_edge_transitions(hex_coords, patterns.edges[chunk_coords][hex_coords])
 	
-	# Apply ground slots LAST
+	# Apply ground colors LAST (squares mode)
+	if patterns.has("color_0") and not composite_disabled:
+		for chunk_coords: Vector2i in patterns.color_0:
+			var chunk : MarchingSquaresTerrainChunk = terrain.chunks.get(chunk_coords)
+			if chunk:
+				affected_chunks[chunk_coords] = chunk
+				for cell_coords: Vector2i in patterns.color_0[chunk_coords]:
+					chunk.draw_color_0(cell_coords.x, cell_coords.y, patterns.color_0[chunk_coords][cell_coords])
+	
+	if patterns.has("color_1") and not composite_disabled:
+		for chunk_coords: Vector2i in patterns.color_1:
+			var chunk : MarchingSquaresTerrainChunk = terrain.chunks.get(chunk_coords)
+			if chunk:
+				affected_chunks[chunk_coords] = chunk
+				for cell_coords: Vector2i in patterns.color_1[chunk_coords]:
+					chunk.draw_color_1(cell_coords.x, cell_coords.y, patterns.color_1[chunk_coords][cell_coords])
+	
+	# Apply ground slots LAST (hex mode)
 	if patterns.has("ground_slot") and not composite_disabled:
 		for chunk_coords: Vector2i in patterns.ground_slot:
 			var chunk : MarchingSquaresTerrainChunk = terrain.chunks.get(chunk_coords)
@@ -976,5 +1061,616 @@ func _set_new_textures(_preset: MarchingSquaresTexturePreset) -> void:
 	
 	# Ensure the Editor is updated live (trick it to redraw - There might be an easier way but this works)
 	EditorInterface.inspect_object(current_terrain_node)
+
+#endregion
+
+
+#region SQUARES mode brush logic (merged from original)
+## Original marching-squares brush pipeline, used when terrain.grid_mode == SQUARES.
+
+func _update_draw_pattern_squares(b_pos: Vector3):
+	var terrain_system : MarchingSquaresTerrain = current_terrain_node
+	
+	var bounds := BrushPatternCalculator.calculate_bounds_squares(b_pos, brush_size, terrain_system)
+	var max_distance : float = BrushPatternCalculator.calculate_max_distance(brush_size, current_brush_index)
+	var brush_pos : Vector2 = Vector2(b_pos.x, b_pos.z)
+	
+	for chunk_z in range(bounds.chunk_tl.y, bounds.chunk_br.y + 1):
+		for chunk_x in range(bounds.chunk_tl.x, bounds.chunk_br.x + 1):
+			var cursor_chunk_coords : Vector2i = Vector2i(chunk_x, chunk_z)
+			if not terrain_system.chunks.has(cursor_chunk_coords):
+				continue
+			
+			var cell_range : Dictionary = BrushPatternCalculator.get_cell_range_for_chunk(cursor_chunk_coords, bounds, terrain_system)
+			
+			for z in range(cell_range.z_min, cell_range.z_max):
+				for x in range(cell_range.x_min, cell_range.x_max):
+					var cursor_cell_coords : Vector2i = Vector2i(x, z)
+					var world_pos : Vector2 = BrushPatternCalculator.cell_to_world_pos(cursor_chunk_coords, cursor_cell_coords, terrain_system)
+					
+					var sample : float = BrushPatternCalculator.calculate_falloff_sample(
+						world_pos, brush_pos, brush_size, current_brush_index,
+						max_distance, falloff, falloff_curve
+					)
+					
+					if sample < 0:
+						continue  # Outside brush
+					
+					# Store largest sample
+					if not current_draw_pattern.has(cursor_chunk_coords):
+						current_draw_pattern[cursor_chunk_coords] = {}
+					if current_draw_pattern[cursor_chunk_coords].has(cursor_cell_coords):
+						var prev_sample = current_draw_pattern[cursor_chunk_coords][cursor_cell_coords]
+						if sample > prev_sample:
+							current_draw_pattern[cursor_chunk_coords][cursor_cell_coords] = sample
+					else:
+						current_draw_pattern[cursor_chunk_coords][cursor_cell_coords] = sample
+
+
+
+func _draw_pattern_squares(terrain: MarchingSquaresTerrain):
+	var undo_redo := MarchingSquaresTerrainPlugin.instance.get_undo_redo()
+	
+	var pattern := {}
+	var pattern_cc := {}
+	var restore_pattern := {}
+	var restore_pattern_cc := {}
+	
+	# Ensure points on both sides of chunk borders are updated
+	var first_chunk = null
+	for draw_chunk_coords: Vector2i in current_draw_pattern.keys():
+		if first_chunk == null:
+			first_chunk = draw_chunk_coords
+		pattern[draw_chunk_coords] = {}
+		restore_pattern[draw_chunk_coords] = {}
+		pattern_cc[draw_chunk_coords] = {}
+		restore_pattern_cc[draw_chunk_coords] = {}
+		var draw_chunk_dict = current_draw_pattern[draw_chunk_coords]
+		for draw_cell_coords: Vector2i in draw_chunk_dict:
+			var chunk : MarchingSquaresTerrainChunk = terrain.chunks[draw_chunk_coords]
+			var sample : float = clamp(draw_chunk_dict[draw_cell_coords], 0.001, 0.999)
+			var restore_value
+			var draw_value
+			var restore_value_cc
+			var draw_value_cc
+			if mode == TerrainToolMode.GRASS_MASK:
+				restore_value = chunk.get_grass_mask(draw_cell_coords)
+				draw_value = Color(0.0, 0.0, 0.0, 0.0) if should_mask_grass else Color(1.0, 0.0, 0.0, 0.0)
+			elif mode == TerrainToolMode.LEVEL:
+				restore_value = chunk.get_height(draw_cell_coords)
+				draw_value = lerp(restore_value, height, sample)
+			elif mode == TerrainToolMode.SMOOTH:
+				var heights : Array[float] = []
+				var global_cells : Array[Vector2i] = []
+				
+				for chunk_coords in current_draw_pattern.keys():
+					var chunk_dict = current_draw_pattern[chunk_coords]
+					for cell_coords in chunk_dict.keys():
+						var global_x = chunk_coords.x * terrain.dimensions.x + cell_coords.x
+						var global_y = chunk_coords.y * terrain.dimensions.z + cell_coords.y
+						global_cells.append(Vector2i(global_x, global_y))
+				
+				for global_cell in global_cells:
+					var current_chunk_coords := Vector2i(floor(float(global_cell.x) / terrain.dimensions.x), floor(float(global_cell.y) / terrain.dimensions.z))
+					if not terrain.chunks.has(current_chunk_coords):
+						continue
+					var current_chunk = terrain.chunks[current_chunk_coords]
+					var local_cell := Vector2i(posmod(global_cell.x, terrain.dimensions.x), posmod(global_cell.y, terrain.dimensions.z))
+					heights.append(current_chunk.get_height(local_cell))
+				
+				var avg_height := 0.0
+				for h in heights:
+					avg_height += h
+				avg_height /= heights.size()
+				
+				for global_cell in global_cells:
+					var current_chunk_coords := Vector2i(floor(float(global_cell.x) / terrain.dimensions.x), floor(float(global_cell.y) / terrain.dimensions.z))
+					if not terrain.chunks.has(current_chunk_coords):
+						continue
+					var current_chunk = terrain.chunks[current_chunk_coords]
+					var local_cell := Vector2i(posmod(global_cell.x, terrain.dimensions.x), posmod(global_cell.y, terrain.dimensions.z))
+					
+					if not restore_pattern.has(current_chunk_coords):
+						restore_pattern[current_chunk_coords] = {}
+					if not pattern.has(current_chunk_coords):
+						pattern[current_chunk_coords] = {}
+					
+					# Overwrite sample var with neighbouring chunks' data included
+					sample = clamp(current_draw_pattern.get(current_chunk_coords, {}).get(local_cell, sample), 0.001, 0.999)
+					restore_value = current_chunk.get_height(local_cell)
+					draw_value = lerp(restore_value, avg_height, sample * strength)
+					
+					restore_pattern[current_chunk_coords][local_cell] = restore_value
+					pattern[current_chunk_coords][local_cell] = draw_value
+			elif mode == TerrainToolMode.BRIDGE:
+				var b_end := Vector2(brush_position.x, brush_position.z)
+				var b_start := Vector2(bridge_start_pos.x, bridge_start_pos.z)
+				var bridge_length := (b_end - b_start).length()
+				if bridge_length < 0.5 or draw_chunk_dict.size() < 3: # Skip small bridges so the terrain doesn't glitch
+					return
+				
+				# Convert cell to world-space
+				var global_cell := Vector2(
+					(draw_chunk_coords.x * terrain.dimensions.x + draw_cell_coords.x) * terrain.cell_size.x,
+					(draw_chunk_coords.y * terrain.dimensions.z + draw_cell_coords.y) * terrain.cell_size.y)
+				
+				if draw_chunk_coords != first_chunk:
+					global_cell.x += (first_chunk.x - draw_chunk_coords.x) * terrain.cell_size.x
+				if draw_chunk_coords != first_chunk:
+					global_cell.y += (first_chunk.y - draw_chunk_coords.y) * terrain.cell_size.y
+				
+				# Calculate the 2D bridge direction vector
+				var bridge_dir := (b_end - b_start) / bridge_length
+				var cell_vec := global_cell - b_start
+				var linear_offset := cell_vec.dot(bridge_dir)
+				var progress := clamp(linear_offset / bridge_length, 0.0, 1.0)
+				
+				if ease_value != -1.0:
+					progress = ease(progress, ease_value)
+				var bridge_height := lerpf(bridge_start_pos.y, brush_position.y, progress)
+				
+				restore_value = chunk.get_height(draw_cell_coords)
+				draw_value = bridge_height
+			elif mode == TerrainToolMode.VERTEX_PAINTING:
+				if paint_walls_mode:
+					restore_value = chunk.get_wall_color_0(draw_cell_coords)
+					restore_value_cc = chunk.get_wall_color_1(draw_cell_coords)
+				else:
+					restore_value = chunk.get_color_0(draw_cell_coords)
+					restore_value_cc = chunk.get_color_1(draw_cell_coords)
+				draw_value = vertex_color_0
+				draw_value_cc = vertex_color_1
+			elif mode == TerrainToolMode.DEBUG_BRUSH:
+				var g_pos := chunk.to_global(Vector3(float(draw_cell_coords.x), chunk.get_height(draw_cell_coords), float(draw_cell_coords.y)))
+				var normal := get_cell_normal(chunk, draw_cell_coords)
+				print("DEBUG INFO: global pos = " + str(g_pos) +
+					", color id = " + str(chunk.get_color_0(draw_cell_coords)) + " " + str(chunk.get_color_1(draw_cell_coords)) +
+					", normal = " + str(normal))
+				continue
+			else: # Brush tool
+				restore_value = chunk.get_height(draw_cell_coords)
+				if flatten:
+					draw_value = lerp(restore_value, brush_position.y, sample)
+				else:
+					var height_diff := brush_position.y - draw_height
+					draw_value = lerp(restore_value, restore_value + height_diff, sample)
+			
+			restore_pattern[draw_chunk_coords][draw_cell_coords] = restore_value
+			pattern[draw_chunk_coords][draw_cell_coords] = draw_value
+			if mode == TerrainToolMode.VERTEX_PAINTING:
+				restore_pattern_cc[draw_chunk_coords][draw_cell_coords] = restore_value_cc
+				pattern_cc[draw_chunk_coords][draw_cell_coords] = draw_value_cc
+	if mode == TerrainToolMode.DEBUG_BRUSH:
+		return
+	for draw_chunk_coords: Vector2i in current_draw_pattern.keys():
+		var draw_chunk_dict = current_draw_pattern[draw_chunk_coords]
+		for draw_cell_coords: Vector2i in draw_chunk_dict:
+			var sample : float = clamp(draw_chunk_dict[draw_cell_coords], 0.001, 0.999)
+			for cx in range(-1, 2):
+				for cz in range(-1, 2):
+					if (cx == 0 and cz == 0):
+						continue
+					
+					var adjacent_chunk_coords = Vector2i(draw_chunk_coords.x + cx, draw_chunk_coords.y + cz)
+					if not terrain.chunks.has(adjacent_chunk_coords):
+						continue
+					
+					var x : int = draw_cell_coords.x
+					var z : int = draw_cell_coords.y
+					
+					if cx == -1:
+						if x == 0: x = terrain.dimensions.x-1
+						else: continue
+					elif cx == 1:
+						if x == terrain.dimensions.x-1: x = 0
+						else: continue
+					
+					if cz == -1:
+						if z == 0: z = terrain.dimensions.z-1
+						else: continue
+					elif cz == 1:
+						if z == terrain.dimensions.z-1: z = 0
+						else: continue
+					
+					var adjacent_cell_coords := Vector2i(x, z)
+					
+					if not pattern.has(adjacent_chunk_coords):
+						pattern[adjacent_chunk_coords] = {}
+					if not restore_pattern.has(adjacent_chunk_coords):
+						restore_pattern[adjacent_chunk_coords] = {}
+					
+					var draw_value_cc
+					var restore_value_cc
+					if mode == TerrainToolMode.VERTEX_PAINTING:
+						if not pattern_cc.has(adjacent_chunk_coords):
+							pattern_cc[adjacent_chunk_coords] = {}
+						if not restore_pattern_cc.has(adjacent_chunk_coords):
+							restore_pattern_cc[adjacent_chunk_coords] = {}
+						draw_value_cc = pattern_cc[draw_chunk_coords][draw_cell_coords]
+						restore_value_cc = restore_pattern_cc[draw_chunk_coords][draw_cell_coords]
+					
+					var draw_value = pattern[draw_chunk_coords][draw_cell_coords]
+					var restore_value = restore_pattern[draw_chunk_coords][draw_cell_coords]
+					
+					var adj_draw_value
+					var adj_draw_value_cc
+					if current_draw_pattern.has(adjacent_chunk_coords) and current_draw_pattern[adjacent_chunk_coords].has(adjacent_cell_coords) and current_draw_pattern[adjacent_chunk_coords][adjacent_cell_coords] > sample:
+						adj_draw_value = pattern[adjacent_chunk_coords][adjacent_cell_coords]
+						if mode == TerrainToolMode.VERTEX_PAINTING:
+							adj_draw_value_cc = pattern_cc[adjacent_chunk_coords][adjacent_cell_coords]
+					else:
+						adj_draw_value = draw_value
+						if mode == TerrainToolMode.VERTEX_PAINTING:
+							adj_draw_value_cc = draw_value_cc
+					
+					pattern[adjacent_chunk_coords][adjacent_cell_coords] = adj_draw_value
+					restore_pattern[adjacent_chunk_coords][adjacent_cell_coords] = restore_value
+					if mode == TerrainToolMode.VERTEX_PAINTING:
+						pattern_cc[adjacent_chunk_coords][adjacent_cell_coords] = adj_draw_value_cc
+						restore_pattern_cc[adjacent_chunk_coords][adjacent_cell_coords] = restore_value_cc
+	
+	if mode == TerrainToolMode.VERTEX_PAINTING:
+		# Standard 2D painting (ground or walls)
+		# Create ONE composite action instead of 2 separate actions
+		# Use wall_color keys when painting walls, color keys when painting ground
+		var color_key_0 := "wall_color_0" if paint_walls_mode else "color_0"
+		var color_key_1 := "wall_color_1" if paint_walls_mode else "color_1"
+		var do_patterns := {
+			color_key_0: pattern,
+			color_key_1: pattern_cc
+		}
+		var undo_patterns := {
+			color_key_0: restore_pattern,
+			color_key_1: restore_pattern_cc
+		}
+		
+		var action_name := "terrain wall paint" if paint_walls_mode else "terrain vertex paint"
+		undo_redo.create_action(action_name)
+		undo_redo.add_do_method(self, "apply_composite_pattern_action", terrain, do_patterns)
+		undo_redo.add_undo_method(self, "apply_composite_pattern_action", terrain, undo_patterns)
+		undo_redo.commit_action()
+	elif mode == TerrainToolMode.GRASS_MASK:
+		undo_redo.create_action("terrain grass mask draw")
+		undo_redo.add_do_method(self, "draw_grass_mask_pattern_action", terrain, pattern)
+		undo_redo.add_undo_method(self, "draw_grass_mask_pattern_action", terrain, restore_pattern)
+		undo_redo.commit_action()
+	else:
+		# Handle BRUSH, LEVEL, SMOOTH, BRIDGE modes
+		if current_quick_paint:
+			# QUICK PAINT MODE: Apply all changes as ONE atomic undo/redo action
+			# This fixes the issue where 6 separate actions are created
+			_set_vertex_colors(current_quick_paint.wall_texture_slot)
+			
+			var wall_color_pattern := {}
+			var wall_color_pattern_cc := {}
+			var wall_color_restore := {}
+			var wall_color_restore_cc := {}
+			
+			# First pass: collect all cells in the pattern
+			for chunk_coords in pattern:
+				wall_color_pattern[chunk_coords] = {}
+				wall_color_pattern_cc[chunk_coords] = {}
+				wall_color_restore[chunk_coords] = {}
+				wall_color_restore_cc[chunk_coords] = {}
+				var chunk : MarchingSquaresTerrainChunk = terrain.chunks[chunk_coords]
+				for cell_coords in pattern[chunk_coords]:
+					wall_color_restore[chunk_coords][cell_coords] = chunk.get_wall_color_0(cell_coords)
+					wall_color_restore_cc[chunk_coords][cell_coords] = chunk.get_wall_color_1(cell_coords)
+					wall_color_pattern[chunk_coords][cell_coords] = vertex_color_0
+					wall_color_pattern_cc[chunk_coords][cell_coords] = vertex_color_1
+			
+			# Second pass: expand to adjacent cells (walls appear at boundaries between cells)
+			# This ensures uniform wall color by painting adjacent cells that share wall corners
+			for chunk_coords in pattern:
+				for cell_coords in pattern[chunk_coords]:
+					# Check all 8 adjacent cells
+					for dx in range(-1, 2):
+						for dz in range(-1, 2):
+							if dx == 0 and dz == 0:
+								continue
+							
+							var adj_x : int = cell_coords.x + dx
+							var adj_z : int = cell_coords.y + dz
+							var adj_chunk_coords : Vector2i = chunk_coords
+							
+							# Handle chunk boundary crossings
+							if adj_x < 0:
+								adj_chunk_coords = Vector2i(chunk_coords.x - 1, chunk_coords.y)
+								adj_x = terrain.dimensions.x - 1
+							elif adj_x >= terrain.dimensions.x:
+								adj_chunk_coords = Vector2i(chunk_coords.x + 1, chunk_coords.y)
+								adj_x = 0
+							
+							if adj_z < 0:
+								adj_chunk_coords = Vector2i(adj_chunk_coords.x, chunk_coords.y - 1)
+								adj_z = terrain.dimensions.z - 1
+							elif adj_z >= terrain.dimensions.z:
+								adj_chunk_coords = Vector2i(adj_chunk_coords.x, chunk_coords.y + 1)
+								adj_z = 0
+							
+							# Skip if chunk doesn't exist
+							if not terrain.chunks.has(adj_chunk_coords):
+								continue
+							
+							var adj_cell := Vector2i(adj_x, adj_z)
+							
+							# Skip if already in pattern
+							if wall_color_pattern.has(adj_chunk_coords) and wall_color_pattern[adj_chunk_coords].has(adj_cell):
+								continue
+							
+							# Add adjacent cell
+							if not wall_color_pattern.has(adj_chunk_coords):
+								wall_color_pattern[adj_chunk_coords] = {}
+								wall_color_pattern_cc[adj_chunk_coords] = {}
+								wall_color_restore[adj_chunk_coords] = {}
+								wall_color_restore_cc[adj_chunk_coords] = {}
+							
+							var adj_chunk : MarchingSquaresTerrainChunk = terrain.chunks[adj_chunk_coords]
+							wall_color_restore[adj_chunk_coords][adj_cell] = adj_chunk.get_wall_color_0(adj_cell)
+							wall_color_restore_cc[adj_chunk_coords][adj_cell] = adj_chunk.get_wall_color_1(adj_cell)
+							wall_color_pattern[adj_chunk_coords][adj_cell] = vertex_color_0
+							wall_color_pattern_cc[adj_chunk_coords][adj_cell] = vertex_color_1
+			
+			# Build grass mask patterns
+			var grass_pattern := {}
+			var grass_restore := {}
+			for chunk_coords in pattern:
+				grass_pattern[chunk_coords] = {}
+				grass_restore[chunk_coords] = {}
+				var chunk : MarchingSquaresTerrainChunk = terrain.chunks[chunk_coords]
+				for cell_coords in pattern[chunk_coords]:
+					grass_restore[chunk_coords][cell_coords] = chunk.get_grass_mask(cell_coords)
+					if current_quick_paint.has_grass:
+						grass_pattern[chunk_coords][cell_coords] = Color(1, 1, 0, 0)
+					else:
+						grass_pattern[chunk_coords][cell_coords] = Color(0, 0, 0, 0)
+			
+			# Build ground color patterns
+			_set_vertex_colors(current_quick_paint.ground_texture_slot)
+			
+			var color_pattern := {}
+			var color_pattern_cc := {}
+			var color_restore := {}
+			var color_restore_cc := {}
+			
+			for chunk_coords in pattern:
+				color_pattern[chunk_coords] = {}
+				color_pattern_cc[chunk_coords] = {}
+				color_restore[chunk_coords] = {}
+				color_restore_cc[chunk_coords] = {}
+				var chunk : MarchingSquaresTerrainChunk = terrain.chunks[chunk_coords]
+				for cell_coords in pattern[chunk_coords]:
+					color_restore[chunk_coords][cell_coords] = chunk.get_color_0(cell_coords)
+					color_restore_cc[chunk_coords][cell_coords] = chunk.get_color_1(cell_coords)
+					color_pattern[chunk_coords][cell_coords] = vertex_color_0
+					color_pattern_cc[chunk_coords][cell_coords] = vertex_color_1
+			
+			# Create ONE composite action instead of 6 separate actions
+			var do_patterns := {
+				"height": pattern,
+				"wall_color_0": wall_color_pattern,
+				"wall_color_1": wall_color_pattern_cc,
+				"grass_mask": grass_pattern,
+				"color_0": color_pattern,
+				"color_1": color_pattern_cc
+			}
+			var undo_patterns := {
+				"height": restore_pattern,
+				"wall_color_0": wall_color_restore,
+				"wall_color_1": wall_color_restore_cc,
+				"grass_mask": grass_restore,
+				"color_0": color_restore,
+				"color_1": color_restore_cc
+			}
+			
+			undo_redo.create_action("terrain brush with quick paint")
+			undo_redo.add_do_method(self, "apply_composite_pattern_action", terrain, do_patterns)
+			undo_redo.add_undo_method(self, "apply_composite_pattern_action", terrain, undo_patterns)
+			undo_redo.commit_action()
+		else:
+			# NON-QUICK PAINT MODE: Apply height + default wall texture
+			# Use the terrain's default_wall_texture for wall colors
+			_set_vertex_colors(terrain.default_wall_texture)
+			
+			var wall_color_pattern := {}
+			var wall_color_pattern_cc := {}
+			var wall_color_restore := {}
+			var wall_color_restore_cc := {}
+			
+			# First pass: collect all cells in the pattern
+			for chunk_coords in pattern:
+				wall_color_pattern[chunk_coords] = {}
+				wall_color_pattern_cc[chunk_coords] = {}
+				wall_color_restore[chunk_coords] = {}
+				wall_color_restore_cc[chunk_coords] = {}
+				var chunk : MarchingSquaresTerrainChunk = terrain.chunks[chunk_coords]
+				for cell_coords in pattern[chunk_coords]:
+					wall_color_restore[chunk_coords][cell_coords] = chunk.get_wall_color_0(cell_coords)
+					wall_color_restore_cc[chunk_coords][cell_coords] = chunk.get_wall_color_1(cell_coords)
+					wall_color_pattern[chunk_coords][cell_coords] = vertex_color_0
+					wall_color_pattern_cc[chunk_coords][cell_coords] = vertex_color_1
+			
+			# Second pass: expand to adjacent cells (walls appear at boundaries between cells)
+			for chunk_coords in pattern:
+				for cell_coords in pattern[chunk_coords]:
+					for dx in range(-1, 2):
+						for dz in range(-1, 2):
+							if dx == 0 and dz == 0:
+								continue
+							
+							var adj_x : int = cell_coords.x + dx
+							var adj_z : int = cell_coords.y + dz
+							var adj_chunk_coords : Vector2i = chunk_coords
+							
+							if adj_x < 0:
+								adj_chunk_coords = Vector2i(chunk_coords.x - 1, chunk_coords.y)
+								adj_x = terrain.dimensions.x - 1
+							elif adj_x >= terrain.dimensions.x:
+								adj_chunk_coords = Vector2i(chunk_coords.x + 1, chunk_coords.y)
+								adj_x = 0
+							
+							if adj_z < 0:
+								adj_chunk_coords = Vector2i(adj_chunk_coords.x, chunk_coords.y - 1)
+								adj_z = terrain.dimensions.z - 1
+							elif adj_z >= terrain.dimensions.z:
+								adj_chunk_coords = Vector2i(adj_chunk_coords.x, chunk_coords.y + 1)
+								adj_z = 0
+							
+							if not terrain.chunks.has(adj_chunk_coords):
+								continue
+							
+							var adj_cell := Vector2i(adj_x, adj_z)
+							
+							if wall_color_pattern.has(adj_chunk_coords) and wall_color_pattern[adj_chunk_coords].has(adj_cell):
+								continue
+							
+							if not wall_color_pattern.has(adj_chunk_coords):
+								wall_color_pattern[adj_chunk_coords] = {}
+								wall_color_pattern_cc[adj_chunk_coords] = {}
+								wall_color_restore[adj_chunk_coords] = {}
+								wall_color_restore_cc[adj_chunk_coords] = {}
+							
+							var adj_chunk : MarchingSquaresTerrainChunk = terrain.chunks[adj_chunk_coords]
+							wall_color_restore[adj_chunk_coords][adj_cell] = adj_chunk.get_wall_color_0(adj_cell)
+							wall_color_restore_cc[adj_chunk_coords][adj_cell] = adj_chunk.get_wall_color_1(adj_cell)
+							wall_color_pattern[adj_chunk_coords][adj_cell] = vertex_color_0
+							wall_color_pattern_cc[adj_chunk_coords][adj_cell] = vertex_color_1
+			
+			# Create composite action with height + wall colors
+			var do_patterns := {
+				"height": pattern,
+				"wall_color_0": wall_color_pattern,
+				"wall_color_1": wall_color_pattern_cc
+			}
+			var undo_patterns := {
+				"height": restore_pattern,
+				"wall_color_0": wall_color_restore,
+				"wall_color_1": wall_color_restore_cc
+			}
+			
+			undo_redo.create_action("terrain height draw")
+			undo_redo.add_do_method(self, "apply_composite_pattern_action", terrain, do_patterns)
+			undo_redo.add_undo_method(self, "apply_composite_pattern_action", terrain, undo_patterns)
+			undo_redo.commit_action()
+
+
+# For each cell in pattern, raise/lower by y delta
+
+func draw_color_0_pattern_action(terrain: MarchingSquaresTerrain, pattern: Dictionary):
+	for draw_chunk_coords: Vector2i in pattern:
+		var draw_chunk_dict = pattern[draw_chunk_coords]
+		var chunk : MarchingSquaresTerrainChunk = terrain.chunks[draw_chunk_coords]
+		for draw_cell_coords: Vector2i in draw_chunk_dict:
+			var color : Color = draw_chunk_dict[draw_cell_coords]
+			chunk.draw_color_0(draw_cell_coords.x, draw_cell_coords.y, color)
+		chunk.regenerate_mesh()
+
+
+func draw_color_1_pattern_action(terrain: MarchingSquaresTerrain, pattern: Dictionary):
+	for draw_chunk_coords: Vector2i in pattern:
+		var draw_chunk_dict = pattern[draw_chunk_coords]
+		var chunk : MarchingSquaresTerrainChunk = terrain.chunks[draw_chunk_coords]
+		for draw_cell_coords: Vector2i in draw_chunk_dict:
+			var color : Color = draw_chunk_dict[draw_cell_coords]
+			chunk.draw_color_1(draw_cell_coords.x, draw_cell_coords.y, color)
+		chunk.regenerate_mesh()
+
+
+
+func draw_wall_color_0_pattern_action(terrain: MarchingSquaresTerrain, pattern: Dictionary):
+	for draw_chunk_coords: Vector2i in pattern:
+		var draw_chunk_dict = pattern[draw_chunk_coords]
+		var chunk : MarchingSquaresTerrainChunk = terrain.chunks[draw_chunk_coords]
+		for draw_cell_coords: Vector2i in draw_chunk_dict:
+			var color : Color = draw_chunk_dict[draw_cell_coords]
+			chunk.draw_wall_color_0(draw_cell_coords.x, draw_cell_coords.y, color)
+		chunk.regenerate_mesh()
+
+
+func draw_wall_color_1_pattern_action(terrain: MarchingSquaresTerrain, pattern: Dictionary):
+	for draw_chunk_coords: Vector2i in pattern:
+		var draw_chunk_dict = pattern[draw_chunk_coords]
+		var chunk : MarchingSquaresTerrainChunk = terrain.chunks[draw_chunk_coords]
+		for draw_cell_coords: Vector2i in draw_chunk_dict:
+			var color : Color = draw_chunk_dict[draw_cell_coords]
+			chunk.draw_wall_color_1(draw_cell_coords.x, draw_cell_coords.y, color)
+		chunk.regenerate_mesh()
+
+
+# Applies all terrain patterns  (for quick paint brush and vertex painting operations)
+
+func _set_vertex_colors(vc_idx: int) -> void:
+	match vc_idx:
+		0: #rr
+			vertex_color_0 = Color(1.0, 0.0, 0.0, 0.0)
+			vertex_color_1 = Color(1.0, 0.0, 0.0, 0.0)
+		1: #rg
+			vertex_color_0 = Color(1.0, 0.0, 0.0, 0.0)
+			vertex_color_1 = Color(0.0, 1.0, 0.0, 0.0)
+		2: #rb
+			vertex_color_0 = Color(1.0, 0.0, 0.0, 0.0)
+			vertex_color_1 = Color(0.0, 0.0, 1.0, 0.0)
+		3: #ra
+			vertex_color_0 = Color(1.0, 0.0, 0.0, 0.0)
+			vertex_color_1 = Color(0.0, 0.0, 0.0, 1.0)
+		4: #gr
+			vertex_color_0 = Color(0.0, 1.0, 0.0, 0.0)
+			vertex_color_1 = Color(1.0, 0.0, 0.0, 0.0)
+		5: #gg
+			vertex_color_0 = Color(0.0, 1.0, 0.0, 0.0)
+			vertex_color_1 = Color(0.0, 1.0, 0.0, 0.0)
+		6: #gb
+			vertex_color_0 = Color(0.0, 1.0, 0.0, 0.0)
+			vertex_color_1 = Color(0.0, 0.0, 1.0, 0.0)
+		7: #ga
+			vertex_color_0 = Color(0.0, 1.0, 0.0, 0.0)
+			vertex_color_1 = Color(0.0, 0.0, 0.0, 1.0)
+		8: #br
+			vertex_color_0 = Color(0.0, 0.0, 1.0, 0.0)
+			vertex_color_1 = Color(1.0, 0.0, 0.0, 0.0)
+		9: #bg
+			vertex_color_0 = Color(0.0, 0.0, 1.0, 0.0)
+			vertex_color_1 = Color(0.0, 1.0, 0.0, 0.0)
+		10: #bb
+			vertex_color_0 = Color(0.0, 0.0, 1.0, 0.0)
+			vertex_color_1 = Color(0.0, 0.0, 1.0, 0.0)
+		11: #ba
+			vertex_color_0 = Color(0.0, 0.0, 1.0, 0.0)
+			vertex_color_1 = Color(0.0, 0.0, 0.0, 1.0)
+		12: #ar
+			vertex_color_0 = Color(0.0, 0.0, 0.0, 1.0)
+			vertex_color_1 = Color(1.0, 0.0, 0.0, 0.0)
+		13: #ag
+			vertex_color_0 = Color(0.0, 0.0, 0.0, 1.0)
+			vertex_color_1 = Color(0.0, 1.0, 0.0, 0.0)
+		14: #ab
+			vertex_color_0 = Color(0.0, 0.0, 0.0, 1.0)
+			vertex_color_1 = Color(0.0, 0.0, 1.0, 0.0)
+		15: #aa
+			vertex_color_0 = Color(0.0, 0.0, 0.0, 1.0)
+			vertex_color_1 = Color(0.0, 0.0, 0.0, 1.0)
+
+
+
+func get_cell_normal(chunk: MarchingSquaresTerrainChunk, cell: Vector2i) -> Vector3:
+	var h_c := chunk.get_height(cell)
+	
+	var x0 := max(cell.x - 1, 0)
+	var x1 := min(cell.x + 1, chunk.dimensions.x - 1)
+	var y0 := max(cell.y - 1, 0)
+	var y1 := min(cell.y + 1, chunk.dimensions.y - 1)
+	
+	var h_left := chunk.get_height(Vector2i(x0, cell.y))
+	var h_right := chunk.get_height(Vector2i(x1, cell.y))
+	var h_below := chunk.get_height(Vector2i(cell.x, y0))
+	var h_above := chunk.get_height(Vector2i(cell.x, y1))
+	
+	var sx := (h_right - h_left) / (2.0 * current_terrain_node.cell_size.x)
+	var sz := (h_above - h_below) / (2.0 * current_terrain_node.cell_size.y)
+	
+	var normal := Vector3(-sx, 1.0, -sz).normalized()
+	return normal
+
+#endregion
 
 #endregion

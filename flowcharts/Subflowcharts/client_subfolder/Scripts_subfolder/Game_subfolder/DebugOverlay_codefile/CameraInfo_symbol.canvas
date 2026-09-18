@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "25abfe3a81b0b328",
+			"type": "file",
+			"file": "client/Scripts/Game/DebugOverlay.cs",
+			"subpath": "#CameraInfo",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

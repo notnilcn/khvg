@@ -1,4 +1,4 @@
-// Overlay pass: pick at most one overlay per wedge, tag-compatible with the ground texture the
+// Overlay pass: pick at most one overlay per hex, tag-compatible with the ground texture the
 // ground pass just chose. Same noise-clustering + retry-on-conflict shape as the ground pass,
 // but on its own decorrelated noise field and with "pick nothing" as a real outcome.
 
@@ -8,7 +8,7 @@ use crate::world::hex::HexCell;
 use crate::world::noise::{value_noise2d, OVERLAY_NOISE_SEED_OFFSET};
 use crate::world::prng::{next_unit, weighted_pick_with_remainder, weighted_pick_with_remainder_from_unit};
 use super::pick_rotation;
-use super::rules::{overlay_compatible_with_base, overlay_tags_conflict, DecidedWedgeTags};
+use super::rules::{overlay_compatible_with_base, overlay_tags_conflict, DecidedHexTags};
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn choose_overlay(
@@ -19,7 +19,7 @@ pub(super) fn choose_overlay(
     ground_tags: &[String],
     seed: u64,
     draw: &mut u64,
-    neighbors: &[&DecidedWedgeTags],
+    neighbors: &[&DecidedHexTags],
 ) -> (Option<String>, u8, f32, Vec<String>) {
     // Eligible: tag-compatible with the ground texture actually chosen above (LayeringRule).
     // A base with fewer compatible overlays naturally ends up with a lower overall overlay

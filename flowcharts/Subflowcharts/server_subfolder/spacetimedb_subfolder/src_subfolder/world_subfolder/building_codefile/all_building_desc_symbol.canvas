@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "baf69b5f4041c928",
+			"type": "file",
+			"file": "server/spacetimedb/src/world/building.rs",
+			"subpath": "#all_building_desc",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

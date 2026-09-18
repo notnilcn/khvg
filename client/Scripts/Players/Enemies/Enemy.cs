@@ -82,7 +82,7 @@ public partial class Enemy : CharacterBody2D, IEntity
         {
             var resPath3D = GameManager.GetResPath3D(template.TextureId);
             if (resPath3D != null)
-                _model3D = new CharacterModel3D(GD.Load<PackedScene>(resPath3D), GlobalPosition, world3D);
+                _model3D = new CharacterModel3D(GD.Load<PackedScene>(resPath3D), GlobalPosition, world3D.CharacterRoot ?? world3D);
         }
         // The server defines the component values: max_hp from the template, hp from the live row.
         maxHp = template?.MaxHp ?? row.Hp;

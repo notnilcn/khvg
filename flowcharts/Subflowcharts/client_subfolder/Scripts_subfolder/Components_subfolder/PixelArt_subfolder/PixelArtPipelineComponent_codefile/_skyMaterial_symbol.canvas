@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "bdd7a9c9d8e38098",
+			"type": "file",
+			"file": "client/Scripts/Components/PixelArt/PixelArtPipelineComponent.cs",
+			"subpath": "#_skyMaterial",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

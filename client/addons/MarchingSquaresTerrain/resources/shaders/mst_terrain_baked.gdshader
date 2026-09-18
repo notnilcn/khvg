@@ -1,5 +1,7 @@
 shader_type spatial;
-render_mode diffuse_toon, depth_draw_opaque, cull_disabled;
+// cull_back, same reason as mst_terrain.gdshader: keep it in sync (baking is
+// currently off at runtime, but the baked path renders the same meshes).
+render_mode diffuse_toon, depth_draw_opaque, cull_back;
 
 uniform sampler2D texture_albedo : source_color, filter_linear_mipmap, repeat_enable;
 

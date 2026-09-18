@@ -7,15 +7,15 @@
 //! 1. resolve biome seeds and bucket every world hex under its nearest seed (`voronoi`)
 //! 2. per biome: resolve region seeds, insert `BiomeRegion` rows
 //! 3. per hex: ground pass (`ground`) → overlay pass (`overlay`) → decor pass (`decor`),
-//!    with adjacency/layering rules checked against already-written neighbors (`rules`)
+//!    with adjacency/layering rules checked against already-written neighbor hexes (`rules`)
 //!
-//! The emitted `TriangleTile`/`HexDecor` rows are the server-side payload that populates the
-//! client's per-chunk `TileComponent` scenes (ground/overlay wedges, decor props).
+//! The emitted `HexTile`/`HexDecor` rows are the server-side payload that populates the
+//! client's per-chunk tile scenes (ground/overlay hexes, decor props).
 
 use std::collections::{HashMap, HashSet};
 use spacetimedb::{ReducerContext, Table};
 use crate::world::def_tables::{biome_def, biome_region_def, world_def, DecorConfig, GroundTextureConfig, ManualBiomeInput, OverlayTextureConfig, RegionWeight};
-use crate::world::instance_tables::{biome_region, hex_decor, triangle_tile, BiomeRegion, TriangleTile};
+use crate::world::instance_tables::{biome_region, hex_decor, hex_tile, BiomeRegion, HexTile};
 use crate::world::hex::{enumerate_world_hexes, hex_to_world, HexCell};
 use crate::world::noise::{value_noise2d, ELEVATION_NOISE_SEED_OFFSET};
 use crate::world::prng::pick_index;
@@ -31,11 +31,13 @@ mod voronoi;
 use decor::place_decor;
 use ground::choose_ground;
 use overlay::choose_overlay;
-use rules::{decided_neighbor_tags, DecidedWedgeTags, NeighborTagMap};
+use rules::{decided_neighbor_tags, DecidedHexTags, NeighborTagMap};
 use voronoi::{combine_biome_weights, distribute_biome_seeds, group_cells_by_seeds, nearest_seed_index, validate_weights_sum_100};
 
 fn pick_rotation(allowed_rotations: &[u8], seed: u64, draw: &mut u64) -> u8 {
-    if allowed_rotations.is_empty() { pick_index(3, seed, draw) as u8 }
+    // Hex tiles have 6 orientations (60-degree steps); an explicit allow-list (a subset
+    // of 0-5) still wins when content provides one.
+    if allowed_rotations.is_empty() { pick_index(6, seed, draw) as u8 }
     else { allowed_rotations[pick_index(allowed_rotations.len(), seed, draw)] }
 }
 
@@ -43,34 +45,32 @@ fn clear_world_geometry(ctx: &ReducerContext) {
     for region in ctx.db.biome_region().iter() {
         ctx.db.biome_region().region_id().delete(region.region_id);
     }
-    for tile in ctx.db.triangle_tile().iter() {
-        ctx.db.triangle_tile().tile_id().delete(tile.tile_id);
+    for tile in ctx.db.hex_tile().iter() {
+        ctx.db.hex_tile().tile_id().delete(tile.tile_id);
     }
     for decor in ctx.db.hex_decor().iter() {
         ctx.db.hex_decor().decor_id().delete(decor.decor_id);
     }
 }
 
-// One wedge: run the ground pass, then the overlay pass on top of the ground pick, record the
-// decided tags for not-yet-written neighbors, and emit the TriangleTile row.
+// One hex: run the ground pass, then the overlay pass on top of the ground pick, record the
+// decided tags for not-yet-written neighbor hexes, and emit the HexTile row.
 #[allow(clippy::too_many_arguments)]
-fn write_triangle_tiles(ctx: &ReducerContext, cell: &HexCell, biome_id: &str, region_id: u64, ground_textures: &[GroundTextureConfig], overlay_textures: &[OverlayTextureConfig], ground_noise_scale: f32, overlay_noise_scale: f32, seed: u64, draw: &mut u64, neighbor_tags: &mut NeighborTagMap) {
+fn write_hex_tile(ctx: &ReducerContext, cell: &HexCell, biome_id: &str, region_id: u64, ground_textures: &[GroundTextureConfig], overlay_textures: &[OverlayTextureConfig], ground_noise_scale: f32, overlay_noise_scale: f32, seed: u64, draw: &mut u64, neighbor_tags: &mut NeighborTagMap) {
     if ground_textures.is_empty() { return; }
     let ground_chances: Vec<f32> = ground_textures.iter().map(|g| g.chance).collect();
 
-    for tri_index in 0..6u8 {
-        let neighbors = decided_neighbor_tags(neighbor_tags, cell.hex_q, cell.hex_r, tri_index);
-        let (texture_id, rotation, ground_tags) = choose_ground(ctx, cell, ground_textures, &ground_chances, ground_noise_scale, seed, draw, &neighbors);
-        let (overlay_texture_id, overlay_rotation, overlay_scale, overlay_tags) = choose_overlay(ctx, cell, overlay_textures, overlay_noise_scale, &ground_tags, seed, draw, &neighbors);
+    let neighbors = decided_neighbor_tags(neighbor_tags, cell.hex_q, cell.hex_r);
+    let (texture_id, rotation, ground_tags) = choose_ground(ctx, cell, ground_textures, &ground_chances, ground_noise_scale, seed, draw, &neighbors);
+    let (overlay_texture_id, overlay_rotation, overlay_scale, overlay_tags) = choose_overlay(ctx, cell, overlay_textures, overlay_noise_scale, &ground_tags, seed, draw, &neighbors);
 
-        neighbor_tags.insert((cell.hex_q, cell.hex_r, tri_index), DecidedWedgeTags { ground_tags, overlay_tags });
+    neighbor_tags.insert((cell.hex_q, cell.hex_r), DecidedHexTags { ground_tags, overlay_tags });
 
-        ctx.db.triangle_tile().insert(TriangleTile {
-            tile_id: 0, hex_q: cell.hex_q, hex_r: cell.hex_r, tri_index, chunk_index: cell.chunk_index,
-            texture_id, rotation, overlay_texture_id, overlay_rotation, overlay_scale,
-            biome_id: biome_id.to_string(), region_id,
-        });
-    }
+    ctx.db.hex_tile().insert(HexTile {
+        tile_id: 0, hex_q: cell.hex_q, hex_r: cell.hex_r, chunk_index: cell.chunk_index,
+        texture_id, rotation, overlay_texture_id, overlay_rotation, overlay_scale,
+        biome_id: biome_id.to_string(), region_id,
+    });
 }
 
 // One fully-resolved region: where its Voronoi seed sits plus everything needed to insert its
@@ -200,7 +200,7 @@ fn run_generation(ctx: &ReducerContext, cfg: &MapConfig, cells: Vec<HexCell>, se
 
         for cell in biome_cells {
             let idx = nearest_seed_index(cell.world_x, cell.world_y, &region_seed_positions, lap_q, lap_r);
-            write_triangle_tiles(ctx, cell, &biome.biome_id, region_ids[idx], &biome.ground_textures, &biome.overlay_textures, biome.ground_noise_scale, biome.overlay_noise_scale, seed, &mut draw, &mut neighbor_tags);
+            write_hex_tile(ctx, cell, &biome.biome_id, region_ids[idx], &biome.ground_textures, &biome.overlay_textures, biome.ground_noise_scale, biome.overlay_noise_scale, seed, &mut draw, &mut neighbor_tags);
             place_decor(ctx, cell, &biome.biome_id, region_ids[idx], &biome.decor_configs, biome.decor_noise_scale, biome.decor_min_separation, seed, &mut draw, &neighbor_tags, &mut decided_decor);
         }
     }

@@ -15,13 +15,13 @@ fn all_animations(ctx: &AnonymousViewContext) -> impl Query<AnimationEntry> {
 }
 
 #[spacetimedb::view(accessor = nearby_terrain_tiles, public)]
-fn nearby_terrain_tiles(ctx: &ViewContext) -> impl Query<TriangleTile> {
-    let empty = ctx.from.triangle_tile().r#where(|t| t.tile_id.eq(u64::MAX)).build();
+fn nearby_terrain_tiles(ctx: &ViewContext) -> impl Query<HexTile> {
+    let empty = ctx.from.hex_tile().r#where(|t| t.tile_id.eq(u64::MAX)).build();
     let indices = match nearby_indices_from_chunk(ctx, DEFAULT_TERRAIN_AOI_CHUNK_RADIUS) {
         Some(i) if !i.is_empty() => i,
         _ => return empty,
     };
-    ctx.from.triangle_tile()
+    ctx.from.hex_tile()
         .r#where(move |t| {
             let mut cond = t.chunk_index.eq(indices[0]);
             for &idx in &indices[1..] { cond = cond.or(t.chunk_index.eq(idx)); }

@@ -974,6 +974,12 @@
 .canvas-node.ac-node-contents-hidden .canvas-node-label {
   display: none;
 }
+.canvas-node.ac-text-wrap-around .ac-text-wrap-spacer {
+  pointer-events: none;
+}
+.canvas-node.ac-text-wrap-around[data-text-align=center] .markdown-preview-view .markdown-preview-section {
+  display: block;
+}
 .canvas-wrapper.presentation-mode .canvas-controls {
   visibility: hidden;
 }

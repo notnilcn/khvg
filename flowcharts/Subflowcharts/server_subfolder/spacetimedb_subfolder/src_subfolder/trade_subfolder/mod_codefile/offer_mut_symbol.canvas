@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "6b3ed828af636a20",
+			"type": "file",
+			"file": "server/spacetimedb/src/trade/mod.rs",
+			"subpath": "#offer_mut",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -27,7 +27,7 @@ pub use apply::{
     apply_damage_to_enemy, deal_damage_to_enemy, deal_damage_to_enemy_bonus,
     deal_damage_to_player, deal_damage_to_player_opts, heal_player,
 };
-pub use calc::{compute_incoming_damage, compute_player_damage, ComputedDamage};
+pub use calc::compute_incoming_damage;
 
 /// Single damage policy for the enemy damage path: what mitigation applies and which
 /// outgoing consults run. One struct, one apply path, named constructors for the three

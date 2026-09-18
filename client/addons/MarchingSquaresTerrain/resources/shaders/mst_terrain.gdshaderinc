@@ -82,9 +82,9 @@ uniform float shadow_intensity : hint_range(-1.0, 0.5, 0.05) = 0.00;
 group_uniforms;
 
 group_uniforms Effects.Cloud_Shadows;
-// Banded cloud shadows, pushed at runtime by the 3dpixelart PixelArtPipeline3D
+// Banded cloud shadows, pushed at runtime by the Pixelizer3D PixelizerManager3D
 // (register_cloud_material on the shared terrain_material): same uniform names
-// and coverage shaping as pixel_art_object.gdshader. Off by default.
+// and coverage shaping as the addon's cloud_fbm.gdshaderinc. Off by default.
 uniform bool clouds_enabled = false;
 uniform sampler2D cloud_noise : filter_nearest, repeat_enable;
 uniform vec3 cloud_sun_dir = vec3(0.0, -1.0, 0.0); // world, direction light travels
@@ -103,7 +103,7 @@ uniform float cloud_shadow_levels = 3.0;
 uniform float cloud_shadow_softness : hint_range(0.0, 1.0) = 0.4;
 group_uniforms;
 
-#include "res://addons/3dpixelart/shaders/cloud_fbm.gdshaderinc"
+#include "cloud_fbm.gdshaderinc"
 
 // Fraction of sun blocked by clouds (0 = clear), written in fragment().
 varying float cloud_coverage;
@@ -334,7 +334,7 @@ float get_world_noise(vec3 world_position, float tile_size) {
 	return texture(rl_noise_texture, noise_uv).r;
 }
 
-// Cloud shadow shaping (mirror of pixel_art_object.gdshader): coverage ramps
+// Cloud shadow shaping (mirror of Pixelizer3D's cloud_fbm.gdshaderinc): coverage ramps
 // from 0 to 1 across [threshold - softness, threshold], so the widest
 // faintest band borders the clear sky and the core above the threshold is
 // uniformly darkest; banding quantizes the ramp into discrete levels.

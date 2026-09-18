@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "b4c013816d53a9a8",
+			"type": "file",
+			"file": "client/Scripts/Components/PixelArt/WaterComponent3D.cs",
+			"subpath": "#BackingSize",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

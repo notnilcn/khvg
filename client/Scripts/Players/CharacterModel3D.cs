@@ -27,8 +27,6 @@ public class CharacterModel3D : IDisposable
             animPlayer = new AnimationPlayer { Name = "AnimationPlayer" };
             Node.AddChild(animPlayer);
         }
-        if (PixelArtPipelineComponent.Instance is { PixelizeCharacters: true } pipeline)
-            pipeline.PixelizeObject(Node);
     }
 
     public void SyncFrom2D(Vector2 pos, float yaw2D, float groundY = 0f)

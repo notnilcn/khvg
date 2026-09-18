@@ -1,45 +1,9 @@
 {
-	"nodes":[
-		{"id":"ac10f3386d809cd1","type":"group","x":-670,"y":-960,"width":2390,"height":1920,"label":"Untitled group"},
-		{"id":"35ed343937420ce4","type":"group","x":-860,"y":-1860,"width":300,"height":300,"label":"Untitled group"},
-		{"id":"c5b5d341ad64574c","type":"file","file":"client/addons/3dpixelart/AGENTS.md","x":-1820,"y":-1820,"width":480,"height":480},
-		{"id":"df77805018fd996e","type":"file","file":"client/addons/3dpixelart/README.md","x":-1260,"y":-960,"width":480,"height":480},
-		{"id":"d1674c42af4e5b4c","type":"file","file":"docs/Technical Design Docs/Description/AGENTS.md","x":-1580,"y":-160,"width":480,"height":480},
-		{"id":"a7412ad765bea95e","type":"file","file":"Untitled.canvas","slideFilter":"filter-immediately-connected-nodes","x":-2200,"y":-860,"width":480,"height":480}
-	],
-	"edges":[
-		{
-			"id":"dfadd1d04c6940af",
-			"styleAttributes":{},
-			"toFloating":false,
-			"fromNode":"35ed343937420ce4",
-			"fromSide":"bottom",
-			"toNode":"ac10f3386d809cd1",
-			"toSide":"top"
-		},
-		{
-			"id":"695fcceebca5bb10",
-			"styleAttributes":{},
-			"toFloating":false,
-			"fromNode":"a7412ad765bea95e",
-			"fromSide":"bottom",
-			"toNode":"d1674c42af4e5b4c",
-			"toSide":"top"
-		},
-		{
-			"id":"138973efd399d63e",
-			"styleAttributes":{},
-			"toFloating":false,
-			"fromFloating":false,
-			"fromNode":"a7412ad765bea95e",
-			"fromSide":"top",
-			"toNode":"ac10f3386d809cd1",
-			"toSide":"top"
-		}
-	],
+	"nodes":[],
+	"edges":[],
 	"metadata":{
 		"version":"1.0-1.0",
 		"frontmatter":{},
-		"startNode":"35ed343937420ce4"
+		"startNode":"7a07868432b0b402"
 	}
 }

@@ -22,8 +22,8 @@
   "defaultEdgeWidth": "3",
   "defaultArrowSize": "2",
   "cardNodePadding": [
-    0,
-    0
+    16,
+    8
   ],
   "connectEdgesToArrowBase": true,
   "defaultNodeBorder": "default",
@@ -31,8 +31,8 @@
   "nodeOutlineBlack": false,
   "nodeOutlineWhite": false,
   "nodeOutlineWidth": 3,
-  "edgeOutlineBlack": true,
-  "edgeOutlineWhite": true,
+  "edgeOutlineBlack": false,
+  "edgeOutlineWhite": false,
   "edgeOutlineWidth": 1,
   "canvasMetadataCompatibilityEnabled": true,
   "enableSingleNodeLinks": true,
@@ -59,6 +59,7 @@
   "aspectRatioControlFeatureEnabled": true,
   "nodeRotationFeatureEnabled": true,
   "hideNodeContentsFeatureEnabled": true,
+  "textWrapAroundFeatureEnabled": true,
   "commandsFeatureEnabled": true,
   "zoomToClonedNode": true,
   "cloneNodeMargin": 20,
@@ -80,7 +81,7 @@
   "autoResizeNodeEnabledByDefault": false,
   "autoResizeNodeMaxHeight": -1,
   "autoResizeNodeSnapToGrid": true,
-  "collapsibleGroupsFeatureEnabled": true,
+  "collapsibleGroupsFeatureEnabled": false,
   "collapsedGroupPreviewOnDrag": true,
   "focusModeFeatureEnabled": false,
   "canvasFilterFeatureEnabled": true,

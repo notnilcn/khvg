@@ -9,9 +9,48 @@
 			"y": 0,
 			"width": 400,
 			"height": 400
+		},
+		{
+			"id": "fa2011d46509e7a8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/reducers_codefile/live_strike_count_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "88eccedb6a52e39e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/reducers_codefile/record_move_strike_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "32c8cc9d8280f4c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/reducers_codefile/sweep_strikes_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
 		}
 	],
-	"edges": [],
+	"edges": [
+		{
+			"id": "95e2465f84b999ba",
+			"fromNode": "32c8cc9d8280f4c0",
+			"fromSide": "bottom",
+			"toNode": "fa2011d46509e7a8",
+			"toSide": "top",
+			"toEnd": "arrow"
+		}
+	],
 	"metadata": {
 		"frontmatter": {
 			"tags": [
@@ -33,7 +72,17 @@
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
-				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write"
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/anticheat/tables-_dot_-rs-_hashtag_-MoveValidationStrikes-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/anticheat_subfolder/anticheat_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/anticheat/tables-_dot_-rs-_hashtag_-MoveValidationStrikes",
+				"edge-_colon_-server/spacetimedb/src/anticheat/tables-_dot_-rs-_hashtag_-MoveValidationStrikes-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/anticheat/reducers-_dot_-rs-_hashtag_-live_strike_count"
 			]
 		}
 	}

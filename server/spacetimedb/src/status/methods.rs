@@ -191,6 +191,20 @@ fn share_zone_damage(ctx: &ReducerContext, profile_id: u64, source_enemy_id: Opt
 /// conversion% to the pool, the rest proceeds). Every hit — even fully absorbed — stamps
 /// the player's window rows (counter / last_event_at): a hit is a hit.
 pub fn intercept_incoming(ctx: &ReducerContext, profile_id: u64, source_enemy_id: Option<u64>, base_damage: u32, skip_redirect: bool) -> IncomingVerdict {
+    // Survival sim stamp (Phase 2 — BitCraft last_health_decrease_timestamp pattern):
+    // every hit — even fully absorbed — restamps the regen delay clock.
+    match ctx.db.player_survival().profile_id().find(&profile_id) {
+        Some(row) => {
+            ctx.db.player_survival().profile_id().update(crate::player::tables::PlayerSurvival {
+                last_damage_at: Some(ctx.timestamp), attrition_ticks: 0, ..row
+            });
+        }
+        None => {
+            ctx.db.player_survival().insert(crate::player::tables::PlayerSurvival {
+                profile_id, last_damage_at: Some(ctx.timestamp), attrition_ticks: 0, last_regen_at: None,
+            });
+        }
+    }
     let rows: Vec<ActiveStatusEffect> = ctx.db.active_status_effect().profile_id().filter(&profile_id).collect();
     if rows.is_empty() {
         // No carried statuses — but DamageShare is positional (zone membership), not a row.
@@ -341,11 +355,15 @@ pub fn on_enemy_killed(ctx: &ReducerContext, enemy_id: u64) {
 /// Lifecycle purge — teardown_profile (death/profile delete), leave_world, and
 /// client_disconnected all route here so no status can kill or tick a logged-out player.
 /// A held ability charge (P4) vanishes with the session too — no cooldown is spent.
+/// Channeled actions (Phase 1) cancel the same way.
 pub fn purge_profile_statuses(ctx: &ReducerContext, profile_id: u64) {
     for row in ctx.db.active_status_effect().profile_id().filter(&profile_id).collect::<Vec<_>>() {
         ctx.db.active_status_effect().effect_id().delete(&row.effect_id);
     }
     ctx.db.ability_charge().profile_id().delete(&profile_id);
+    for action in ctx.db.channeled_action().profile_id().filter(&profile_id).collect::<Vec<_>>() {
+        ctx.db.channeled_action().action_id().delete(&action.action_id);
+    }
 }
 
 /// Zone purge, sibling to purge_profile_statuses: a caster's ground zones die with them.
@@ -590,5 +608,129 @@ pub fn tick(ctx: &ReducerContext) {
             _ => {}
         }
         ctx.db.ground_zone().zone_id().delete(&zone.zone_id);
+    }
+}
+
+// ===== Survival sim passes (Phase 2 — BitCraft player_regen / starving /
+// teleportation_energy_regen / environment_debuff / day_night agents, translated).
+// Called from the agent dispatcher (main/agents.rs), NOT from tick() — the 1 Hz
+// dispatcher runs regen-pass + zones-pass + tick() + cleanup-pass in order. =====
+
+/// Regen-with-delay pass (BitCraft `player_regen_agent`): passive regen only after
+/// REGEN_DELAY_SECONDS without damage (stamped in intercept_incoming), skipped when
+/// logged out. Attrition pressure (BitCraft `starving_agent`): ticks accumulate on
+/// the survival row; past ATTRITION_GRACE_TICKS the row deals flat damage through
+/// the shared sink (never direct HP writes).
+pub fn tick_regen(ctx: &ReducerContext) {
+    for login in ctx.db.logged_in_player().iter().collect::<Vec<_>>() {
+        let profile_id = login.profile_id;
+        let Some(survival) = ctx.db.player_survival().profile_id().find(&profile_id) else { continue };
+        let since_hit = survival.last_damage_at
+            .map(|t| seconds_since(ctx, t))
+            .unwrap_or(f32::MAX);
+        if since_hit >= REGEN_DELAY_SECONDS {
+            // Out-of-combat delay elapsed — apply passive regen via the shared heal
+            // sink (clamped to max_hp inside heal_player).
+            heal_player(ctx, profile_id, PASSIVE_REGEN_PER_TICK);
+            ctx.db.player_survival().profile_id().update(crate::player::tables::PlayerSurvival {
+                last_regen_at: Some(ctx.timestamp), ..survival.clone()
+            });
+            // Relief resets the attrition clock (BitCraft skips logged-out players;
+            // here the loop itself only visits logged-in ones).
+            if survival.attrition_ticks != 0 {
+                if let Some(row) = ctx.db.player_survival().profile_id().find(&profile_id) {
+                    ctx.db.player_survival().profile_id().update(crate::player::tables::PlayerSurvival {
+                        attrition_ticks: 0, ..row
+                    });
+                }
+            }
+        } else {
+            // Under pressure: accumulate attrition ticks, then deal flat damage via
+            // the shared sink (death cleanup + HpFloor still apply).
+            let ticks = survival.attrition_ticks + 1;
+            if ticks > ATTRITION_GRACE_TICKS {
+                let _ = deal_damage_to_player_opts(
+                    ctx, &login, None, ATTRITION_DAMAGE_PER_TICK,
+                    crate::combat::BLEED_DRAIN_OPTIONS,
+                );
+                if ctx.db.logged_in_player().profile_id().find(&profile_id).is_none() {
+                    continue;
+                }
+            }
+            if let Some(row) = ctx.db.player_survival().profile_id().find(&profile_id) {
+                ctx.db.player_survival().profile_id().update(crate::player::tables::PlayerSurvival {
+                    attrition_ticks: ticks, ..row
+                });
+            }
+        }
+    }
+    // Channeled-action progress + timeout auto-release (Phase 1 — mirror the charge
+    // MAX_CHARGE_SECONDS path). Completion dispatches to the existing effect helpers.
+    tick_channeled(ctx);
+}
+
+/// Environment / day-night pass (BitCraft `environment_debuff_agent` +
+/// `day_night_agent`): elevation-based buff/debuff. Players standing on high
+/// elevation (top band) get a small heal (thin-air vigor is a buff here, lava
+/// unimplemented without a lava tile kind); players at the lowest band take flat
+/// chip damage via the shared sink. Logged-out players are never touched.
+pub fn tick_zones(ctx: &ReducerContext) {
+    for login in ctx.db.logged_in_player().iter().collect::<Vec<_>>() {
+        let profile_id = login.profile_id;
+        let Some(pos) = ctx.db.player_position().profile_id().find(&profile_id) else { continue };
+        let cfg = MapConfig::load(ctx, 0, 0);
+        let (q, r) = crate::world::hex::world_to_hex(pos.x, pos.y, cfg.hex_outer_radius);
+        let elevation = crate::world::reducers::hex_elevation(ctx, q, r);
+        if elevation >= ELEVATION_LEVELS - 1 {
+            heal_player(ctx, profile_id, 1);
+        } else if elevation <= 0 {
+            let _ = deal_damage_to_player_opts(
+                ctx, &login, None, 1,
+                crate::combat::BLEED_DRAIN_OPTIONS,
+            );
+        }
+    }
+}
+
+/// Channeled-action progress sweep: advance progress, complete (dispatch + delete),
+/// or auto-release expired locks. Runs inside the regen pass slot.
+fn tick_channeled(ctx: &ReducerContext) {
+    for action in ctx.db.channeled_action().iter().collect::<Vec<_>>() {
+        if ctx.timestamp >= action.lock_expires_at {
+            ctx.db.channeled_action().action_id().delete(&action.action_id);
+            continue;
+        }
+        // Caster must stay in range of the target point (AOI-style leash).
+        let caster_near = ctx.db.player_position().profile_id().find(&action.profile_id)
+            .map(|pos| {
+                let dx = pos.x - action.target_x;
+                let dy = pos.y - action.target_y;
+                dx * dx + dy * dy <= INTERACT_RADIUS * INTERACT_RADIUS * 4.0
+            })
+            .unwrap_or(false);
+        if !caster_near {
+            ctx.db.channeled_action().action_id().delete(&action.action_id);
+            continue;
+        }
+        let progress = action.progress + CONSUMABLE_EFFECT_TICK_SECONDS;
+        if progress >= action.required {
+            complete_channeled(ctx, &action);
+            ctx.db.channeled_action().action_id().delete(&action.action_id);
+        } else {
+            ctx.db.channeled_action().action_id().update(ChanneledAction { progress, ..action });
+        }
+    }
+}
+
+/// Completion dispatch: Revive heals the target, Capture/ChannelCast heal-or-buff
+/// through the existing shared helpers (never direct HP writes).
+fn complete_channeled(ctx: &ReducerContext, action: &ChanneledAction) {
+    match action.kind {
+        ChanneledActionKind::Revive => {
+            heal_player(ctx, action.target_id, 50);
+        }
+        ChanneledActionKind::Capture | ChanneledActionKind::ChannelCast => {
+            heal_player(ctx, action.profile_id, 10);
+        }
     }
 }

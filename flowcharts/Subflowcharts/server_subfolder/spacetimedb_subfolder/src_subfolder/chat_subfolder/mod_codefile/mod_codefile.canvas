@@ -1,0 +1,414 @@
+{
+	"nodes": [
+		{
+			"id": "0e168a648d8cde28",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/all_chat_channels_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d1d2ca13dd62d13a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/chat_ban_symbol.canvas",
+			"color": "5",
+			"x": 3260,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a1e0774440f95218",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/chat_create_symbol.canvas",
+			"color": "5",
+			"x": 2310,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "677e9a294c0bdd20",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/chat_invite_symbol.canvas",
+			"color": "5",
+			"x": 1850,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "54546438ad023f20",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/chat_join_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "82e67989242ca912",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/chat_leave_symbol.canvas",
+			"color": "5",
+			"x": 920,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b7215d42a1992a18",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/chat_post_symbol.canvas",
+			"color": "5",
+			"x": 2800,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ee555ff00b8566c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/chat_rate_allow_symbol.canvas",
+			"color": "5",
+			"x": 3060,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ad8859ca91c9af50",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/chat_unban_symbol.canvas",
+			"color": "5",
+			"x": 460,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d4638c46d57b2830",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/ChatChannel_symbol.canvas",
+			"color": "5",
+			"x": 2080,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "79a7a0701cda77c0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/ChatChannelMember_symbol.canvas",
+			"color": "5",
+			"x": 1620,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8e1f812a32ef4de0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/ChatMessage_symbol.canvas",
+			"color": "5",
+			"x": 4450,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "21228c7fb001927a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/ChatRate_symbol.canvas",
+			"color": "5",
+			"x": 3060,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "11e514675b8b1a2e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/ChatReport_symbol.canvas",
+			"color": "5",
+			"x": 5110,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "aa2e481d6ae0ae9a",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/check_text_symbol.canvas",
+			"color": "5",
+			"x": 2600,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "fc9c3c2c37910370",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/local_chat_messages_symbol.canvas",
+			"color": "5",
+			"x": 3720,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ec7610ce0f1d54a4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/moderate_delete_message_symbol.canvas",
+			"color": "5",
+			"x": 4640,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d5a199d2a5d4b534",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/report_chat_message_symbol.canvas",
+			"color": "5",
+			"x": 5110,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "5efd0f20be9fb980",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/mod_codefile/tick_chat_cleanup_symbol.canvas",
+			"color": "5",
+			"x": 4180,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "28547a1025af0780",
+			"fromNode": "d1d2ca13dd62d13a",
+			"fromSide": "bottom",
+			"toNode": "d4638c46d57b2830",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "28aedd80d4719000",
+			"fromNode": "d1d2ca13dd62d13a",
+			"fromSide": "bottom",
+			"toNode": "79a7a0701cda77c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "23b6603f831a14f0",
+			"fromNode": "a1e0774440f95218",
+			"fromSide": "bottom",
+			"toNode": "d4638c46d57b2830",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "0af09564310cce28",
+			"fromNode": "a1e0774440f95218",
+			"fromSide": "bottom",
+			"toNode": "79a7a0701cda77c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "87313641a5cf1e46",
+			"fromNode": "677e9a294c0bdd20",
+			"fromSide": "bottom",
+			"toNode": "d4638c46d57b2830",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "8aa437977baacc50",
+			"fromNode": "677e9a294c0bdd20",
+			"fromSide": "bottom",
+			"toNode": "79a7a0701cda77c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "c3db38797d684cde",
+			"fromNode": "54546438ad023f20",
+			"fromSide": "bottom",
+			"toNode": "d4638c46d57b2830",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "a41e617f5c8f315c",
+			"fromNode": "54546438ad023f20",
+			"fromSide": "bottom",
+			"toNode": "79a7a0701cda77c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "88e995ac9bd4a348",
+			"fromNode": "82e67989242ca912",
+			"fromSide": "bottom",
+			"toNode": "d4638c46d57b2830",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "3cdc541c32c9e718",
+			"fromNode": "82e67989242ca912",
+			"fromSide": "bottom",
+			"toNode": "79a7a0701cda77c0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "04974ed9ec132a2e",
+			"fromNode": "b7215d42a1992a18",
+			"fromSide": "bottom",
+			"toNode": "ee555ff00b8566c0",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "c92b440aef4f5874",
+			"fromNode": "b7215d42a1992a18",
+			"fromSide": "bottom",
+			"toNode": "aa2e481d6ae0ae9a",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "601f0545da811e1a",
+			"fromNode": "b7215d42a1992a18",
+			"fromSide": "bottom",
+			"toNode": "d4638c46d57b2830",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "c62aabf64a723094",
+			"fromNode": "b7215d42a1992a18",
+			"fromSide": "bottom",
+			"toNode": "8e1f812a32ef4de0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "8bc5c223e7510b7a",
+			"fromNode": "ee555ff00b8566c0",
+			"fromSide": "bottom",
+			"toNode": "21228c7fb001927a",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "678028df16986c9a",
+			"fromNode": "ad8859ca91c9af50",
+			"fromSide": "bottom",
+			"toNode": "d4638c46d57b2830",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "d3fd4929d6961e16",
+			"fromNode": "ec7610ce0f1d54a4",
+			"fromSide": "bottom",
+			"toNode": "8e1f812a32ef4de0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "6c75667fc280d47e",
+			"fromNode": "d5a199d2a5d4b534",
+			"fromSide": "bottom",
+			"toNode": "8e1f812a32ef4de0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "6574086f2f579588",
+			"fromNode": "d5a199d2a5d4b534",
+			"fromSide": "bottom",
+			"toNode": "11e514675b8b1a2e",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "0cdf8aa554dde27e",
+			"fromNode": "5efd0f20be9fb980",
+			"fromSide": "bottom",
+			"toNode": "8e1f812a32ef4de0",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
+				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-is_admin",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-ChatChannel-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-ChatChannel-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-ChatChannelMember-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/methods_codefile/methods_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/chat_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/chat_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-chat_rate_allow",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-check_text",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-ChatMessage-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/chat_subfolder/chat_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-ChatRate-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-ChatRate-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-LoggedInPlayer-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-ChatMessage-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/chat/mod-_dot_-rs-_hashtag_-ChatReport-_colon_-write"
+			]
+		}
+	}
+}

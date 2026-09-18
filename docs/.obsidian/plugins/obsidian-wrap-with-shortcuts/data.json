@@ -1,0 +1,34 @@
+{
+  "wrapperTags": [
+    {
+      "id": "w1784252904876",
+      "name": "track-changes-add",
+      "startTag": "{author=\"notnilcn\"++",
+      "endTag": "++}"
+    },
+    {
+      "id": "w1784253158430",
+      "name": "track-changes-comment",
+      "startTag": "{author=\"notnilcn\">>",
+      "endTag": "<<}"
+    },
+    {
+      "id": "w1784252865364",
+      "name": "track-changes-delete",
+      "startTag": "{author=\"notnilcn\"--",
+      "endTag": "--}"
+    },
+    {
+      "id": "w1785493796156",
+      "name": "track-changes-highlight",
+      "startTag": "{author=\"notnilcn\"==",
+      "endTag": "==}"
+    },
+    {
+      "id": "w1784253011596",
+      "name": "track-changes-replace",
+      "startTag": "{author=\"notnilcn\"~~",
+      "endTag": "~> ~~}"
+    }
+  ]
+}

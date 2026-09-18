@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 /// <summary>
 /// Per-chunk terrain scaffolding: the entity root of tile_component.tscn, holding the four layer
-/// components (Ground/Overlay/DecorShadow/Decor) the server's TriangleTile/HexDecor rows populate.
+/// components (Ground/Overlay/DecorShadow/Decor) the server's HexTile/HexDecor rows populate.
 /// Instances are pooled by the TerrainComponent — one per visible chunk — which is why they are
 /// created in code; everything inside the chunk is declared in the scene. Populate() distributes
-/// one chunk's batched wedge/decor instances into the layers.
+/// one chunk's batched hex/decor instances into the layers.
 /// </summary>
 public partial class TileComponent : Node2D, IEntity
 {
@@ -27,8 +27,8 @@ public partial class TileComponent : Node2D, IEntity
 
     public void Populate(
         long chunkIndex,
-        Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>> ground,
-        Dictionary<(int TriIndex, int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>> overlay,
+        Dictionary<(int Rotation, string TextureId), List<(Vector2 Position, Color Tint)>> ground,
+        Dictionary<(int Rotation, string TextureId), List<(Vector2 Position, float Scale, Color Tint)>> overlay,
         Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>> decorShadow,
         Dictionary<string, List<(Vector2 Position, float RotationRadians, int HexR)>> decor)
     {

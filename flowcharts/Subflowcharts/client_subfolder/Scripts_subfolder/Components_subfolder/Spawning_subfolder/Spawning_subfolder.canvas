@@ -1,12 +1,23 @@
 {
-	"nodes":[
-		{"id":"3157277658364e98","type":"file","file":"flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/EntitySpawnerComponent_codefile.canvas","color":"5","x":0,"y":0,"width":400,"height":400}
+	"nodes": [
+		{
+			"id": "3157277658364e98",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/client_subfolder/Scripts_subfolder/Components_subfolder/Spawning_subfolder/EntitySpawnerComponent_codefile/EntitySpawnerComponent_codefile.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
 	],
-	"edges":[],
-	"metadata":{
-		"frontmatter":{
-			"tags":["includeInAggregateFlowchart","subfolder"]
-		},
-		"version":"1.0-1.0"
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"subfolder"
+			]
+		}
 	}
 }

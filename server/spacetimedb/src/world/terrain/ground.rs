@@ -1,6 +1,6 @@
-// Ground pass: pick one ground texture per wedge. First pick follows the biome's noise field
-// (so wedges cluster into patches); on an adjacency conflict with an already-decided neighbor,
-// retry plain-random among the remaining candidates until one fits or the wedge is left blank.
+// Ground pass: pick one ground texture per hex. First pick follows the biome's noise field
+// (so hexes cluster into patches); on an adjacency conflict with an already-decided neighbor,
+// retry plain-random among the remaining candidates until one fits or the hex is left blank.
 
 use spacetimedb::ReducerContext;
 use crate::world::def_tables::GroundTextureConfig;
@@ -8,7 +8,7 @@ use crate::world::hex::HexCell;
 use crate::world::noise::value_noise2d;
 use crate::world::prng::{next_unit, weighted_pick_index, weighted_pick_index_from_unit};
 use super::pick_rotation;
-use super::rules::{base_tags_conflict, DecidedWedgeTags};
+use super::rules::{base_tags_conflict, DecidedHexTags};
 
 #[allow(clippy::too_many_arguments)]
 pub(super) fn choose_ground(
@@ -19,11 +19,11 @@ pub(super) fn choose_ground(
     ground_noise_scale: f32,
     seed: u64,
     draw: &mut u64,
-    neighbors: &[&DecidedWedgeTags],
+    neighbors: &[&DecidedHexTags],
 ) -> (String, u8, Vec<String>) {
-    // First pick is noise-driven (when ground_noise_scale > 0) so nearby wedges land in the
+    // First pick is noise-driven (when ground_noise_scale > 0) so nearby hexes land in the
     // same noise band and cluster into patches; a non-positive scale opts back into the old
-    // pure per-wedge randomness.
+    // pure per-hex randomness.
     let first_unit = if ground_noise_scale > 0.0 { value_noise2d(cell.world_x, cell.world_y, ground_noise_scale, seed) } else { next_unit(seed, draw) };
     let first_index = weighted_pick_index_from_unit(ground_chances, first_unit);
 

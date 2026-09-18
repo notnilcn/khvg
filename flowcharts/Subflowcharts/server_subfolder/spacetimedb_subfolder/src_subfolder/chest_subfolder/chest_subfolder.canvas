@@ -49,14 +49,10 @@
 				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_indices",
 				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-require_in_world",
-				"edge-_colon_-server/spacetimedb/src/world/wrap-_dot_-rs-_hashtag_-wrapped_distance_sq",
 				"edge-_colon_-server/spacetimedb/src/player/methods-_dot_-rs-_hashtag_-transfer_item_to_inventory",
 				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-ChestItem-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/player/tables-_dot_-rs-_hashtag_-PlayerPosition-_colon_-read",
 				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-ChestTakeCooldown-_colon_-read",
-				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-ChestTakeCooldown-_colon_-write",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
-				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas-_colon_-read"
+				"edge-_colon_-server/spacetimedb/src/chest/mod-_dot_-rs-_hashtag_-ChestTakeCooldown-_colon_-write"
 			]
 		}
 	}

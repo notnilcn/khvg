@@ -175,7 +175,8 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 
 	private CharacterModel3D CreateModel3D(string path)
 	{
-		var model = new CharacterModel3D(GD.Load<PackedScene>(path), GlobalPosition, world3D!,
+		var model = new CharacterModel3D(GD.Load<PackedScene>(path), GlobalPosition,
+			world3D!.CharacterRoot ?? (Node3D)world3D,
 			groundY: elevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
 		GraftCatalogAnimations(model);
 		return model;

@@ -6,28 +6,61 @@ using System.Collections.Generic;
 /// <summary>
 /// Hex ocean (3D), child in world_3d.tscn: any hex with NO server terrain rows gets a
 /// water tile — land is the set of hexes present in NearbyTerrainTiles (via a child
-/// binder, replay on — persistent view table; hexes are ref-counted because a hex has
-/// several wedge rows). Water tiles are pooled MeshInstance3Ds of one shared
-/// code-generated subdivided hexagon mesh (the subdivision feeds the shader's vertex
-/// waves), refreshed in a ring around the local player — the HexGridOverlay3DComponent
-/// pattern. Hexes beyond the AOI read as missing, so the ring edge is open ocean.
+/// binder, replay on — persistent view table; hexes are ref-counted on their single
+/// ground row). Tiles are pooled around the player in a ring — the
+/// HexGridOverlay3DComponent pattern. Hexes beyond the AOI read as missing, so the
+/// ring edge is open ocean.
 ///
-/// The material runs a coastal-banded derivative of the 3dpixelart addon's demo water
-/// shader (Assets/Shaders/water.gdshader — the addon ships no water node). The shader
-/// is deliberately OPAQUE: pixelized objects only write depth at anchor fragments, so
-/// any transparent surface between the camera and a character draws over it and
-/// "dissolves" it into anchor dots. The demo's depth-texture fade/foam is replaced by
-/// a per-tile `coast` instance uniform (1.0 = touches land, 0.5 = one hex away, 0 =
-/// open ocean) computed from the land set — the underwater terrain is flat level-0
-/// everywhere, so a depth readout carries nothing the coast rings don't carry better.
+/// Tiles are the addon's PixelizerWater3D nodes (one shared ShaderMaterial built
+/// from res://addons/pixelizer_3d/shaders/water.gdshader), each given a per-tile
+/// `coast` instance uniform (1.0 = touches land, 0.5 = one hex away, 0 = open ocean)
+/// and a deterministic `wave_phase`. The addon shader is deliberately OPAQUE:
+/// pixelized objects only write depth at anchor fragments, so any transparent
+/// surface between the camera and a character draws over it and "dissolves" it into
+/// anchor dots. The addon node registers the shared material with the manager, so
+/// cloud shadows continue across the coastline.
+///
+/// Note: PixelizerWater3D builds a square PlaneMesh, so tiles are square (sized to
+/// cover their hex plus overlap) rather than hex-shaped — the accepted trade of
+/// adopting the addon water node.
+///
 /// Tiles float at WaterLevel above the level-0 terrain surface (MST renders missing
-/// hexes flat at y=0, so the water must sit above it to be seen).
+/// hexes flat at y=0, so the water must sit above it to be seen). A large BackingOcean
+/// quad (plus a deep AbyssOcean catcher) shares the same material so the horizon is
+/// always water and shallow-pitch below-world rays land on ocean instead of the sky.
 /// </summary>
 public partial class WaterComponent3D : Node3DComponent
 {
     /// Same fallback as ElevationMapComponent before the first MapConfig row arrives.
     private const float DefaultHexOuterRadius = 96.0f;
-    private const string WaterShaderPath = "res://Assets/Shaders/water.gdshader";
+    private const string AddonWaterScriptPath = "res://addons/pixelizer_3d/effects/pixelizer_water_3d.gd";
+    private const string AddonWaterShaderPath = "res://addons/pixelizer_3d/shaders/water.gdshader";
+
+    // Static open-ocean quad under the whole world (far beyond the tile ring and the
+    // terrain lap), so the horizon is always water — never sky/void past a hard edge.
+    // Shares the tile material (its `coast` instance uniform defaults to 0 = open
+    // ocean) so cloud shadows register onto it for free. One flat quad: no vertex
+    // waves matter at this scale, and the near-field ring tiles cover it.
+    private const float BackingSize = 30000f;
+    // The tile shader's vertex waves dip 0.15 below WaterLevel, so the backing
+    // must sit deeper than the trough bottoms or it pokes through as dark dots.
+    private const float BackingDrop = 0.3f;
+
+    // Second catcher below the backing — a safety net behind World3DComponent's
+    // VOffset window shift, which already keeps the frustum's bottom edge above
+    // the surface at every legal rig pose. If a ray ever still slips under the
+    // backing (rig exports widened past the bounds derived here, or the shift
+    // disabled), this plane is what it lands on: the rig's shallowest legal
+    // view (CameraRigComponent PitchMax −10°, DistanceMax 1200, World3DComponent's
+    // Size = Distance × 1.5347) puts the frustum's bottom-edge ray origin at
+    // pivot + 1200·sin(10°) − (1.5347·1200/2)·cos(10°) ≈ pivot − 685, and the
+    // pivot never sits below the level-0 terrain tops (y=0). Rays that start
+    // under a plane can never descend into it, so without a catcher those
+    // rays fly under the backing, under the terrain lap, and render the sky's
+    // ground half as a flat dead band. Sunk 800 (115 below the worst origin)
+    // so they land on open ocean instead. Same size/material as the backing
+    // (`coast` also defaults to 0).
+    private const float AbyssDrop = 800f;
 
     // Axial hex deltas (same table as TerrainComponent3D.ChunkNeighborOffsets) for
     // ring 1 and ring 2 — the coast rings a water tile checks for land.
@@ -48,10 +81,11 @@ public partial class WaterComponent3D : Node3DComponent
     /// World Y of the water surface. Level-0 terrain tops at y=0, so this must be
     /// above 0 to be visible; raised hexes (16/level) tower out of the water.
     [Export] public float WaterLevel { get; set; } = 0.6f;
-    /// Fraction of the hex footprint the tile covers, hiding seams between neighbors.
-    [Export(PropertyHint.Range, "0.9,1.0")] public float TileInset { get; set; } = 0.995f;
-    /// Concentric subdivision rings of the shared hex mesh (vertex-wave resolution).
-    [Export(PropertyHint.Range, "1,24")] public int HexSubdivisions { get; set; } = 12;
+    /// Square tile edge as a multiple of the hex circumradius (2.0 covers the hex
+    /// with overlap to hide seams between neighbours).
+    [Export(PropertyHint.Range, "1.5,3.0")] public float TileSizeMultiplier { get; set; } = 2.0f;
+    /// Plane subdivisions per tile (vertex-wave resolution).
+    [Export(PropertyHint.Range, "1,24")] public int HexSubdivisions { get; set; } = 8;
     /// Noise texture; null generates the addon demo's default (Perlin 0.08, seed 3).
     [Export] public Texture2D? WaterNoise { get; set; }
 
@@ -59,6 +93,8 @@ public partial class WaterComponent3D : Node3DComponent
     [Export] public Color ShallowColor { get; set; } = new(0.35f, 0.75f, 0.80f);
     [Export] public Color DeepColor { get; set; } = new(0.08f, 0.25f, 0.45f);
     [Export] public Color FoamColor { get; set; } = new(0.90f, 0.97f, 1.00f);
+    /// Quantisation of the deep→shallow ramp (hard bands, pixel-art style).
+    [Export] public float DepthLevels { get; set; } = 4f;
 
     [ExportGroup("Waves")]
     [Export] public float WaveHeight { get; set; } = 0.15f;
@@ -81,12 +117,9 @@ public partial class WaterComponent3D : Node3DComponent
 
     private TableBinderComponent _terrainTilesBinder = null!;
     private TableBinderComponent _mapConfigBinder = null!;
-    private ShaderMaterial _material = null!;
-    private ArrayMesh _mesh = null!;
-
-    /// The shared water material, null until BuildMaterial runs in _Ready.
-    /// PixelArtPipelineComponent registers it for cloud-shadow uniforms.
-    public ShaderMaterial? WaterMaterial => _material;
+    private GDScript _waterScript = null!;
+    private ShaderMaterial _sharedMaterial = null!;
+    private Node? _manager;
 
     private float _outerRadius = DefaultHexOuterRadius;
     private Vector2I _lastCenterHex = new(int.MaxValue, int.MaxValue);
@@ -98,13 +131,16 @@ public partial class WaterComponent3D : Node3DComponent
         _terrainTilesBinder = GetNode<TableBinderComponent>("NearbyTerrainTilesBinder");
         _mapConfigBinder = GetNode<TableBinderComponent>("MapConfigBinder");
         if (!WaterEnabled) return;
-        BuildMaterial();
-        BuildMesh();
+        _waterScript = GD.Load<GDScript>(AddonWaterScriptPath);
+        _manager = GetNodeOrNull("../PixelizerManager3D");
+        BuildSharedMaterial();
+        BuildBackingOcean();
+        BuildAbyssOcean();
     }
 
     public override void _Process(double _delta)
     {
-        if (!WaterEnabled || _material == null) return;
+        if (!WaterEnabled || _waterScript == null) return;
         var player = LocalPlayer.Local;
         if (player == null) return;
 
@@ -126,24 +162,24 @@ public partial class WaterComponent3D : Node3DComponent
         _dirty = true;
     }
 
-    private void OnTerrainTileRowInserted() => AddLand((TriangleTile)_terrainTilesBinder.LastRow!);
+    private void OnTerrainTileRowInserted() => AddLand((HexTile)_terrainTilesBinder.LastRow!);
 
     private void OnTerrainTileRowUpdated()
     {
-        RemoveLand((TriangleTile)_terrainTilesBinder.LastOldRow!);
-        AddLand((TriangleTile)_terrainTilesBinder.LastRow!);
+        RemoveLand((HexTile)_terrainTilesBinder.LastOldRow!);
+        AddLand((HexTile)_terrainTilesBinder.LastRow!);
     }
 
-    private void OnTerrainTileRowDeleted() => RemoveLand((TriangleTile)_terrainTilesBinder.LastDeletedRow!);
+    private void OnTerrainTileRowDeleted() => RemoveLand((HexTile)_terrainTilesBinder.LastDeletedRow!);
 
-    private void AddLand(TriangleTile tile)
+    private void AddLand(HexTile tile)
     {
         var key = (tile.HexQ, tile.HexR);
         _landRowCounts[key] = _landRowCounts.GetValueOrDefault(key) + 1;
         if (_landRowCounts[key] == 1) _dirty = true; // hex became land: may lose a water tile
     }
 
-    private void RemoveLand(TriangleTile tile)
+    private void RemoveLand(HexTile tile)
     {
         var key = (tile.HexQ, tile.HexR);
         if (!_landRowCounts.TryGetValue(key, out int count)) return;
@@ -204,16 +240,12 @@ public partial class WaterComponent3D : Node3DComponent
     private void SpawnTile(int q, int r)
     {
         var pos = HexMath.HexToWorld3D(q, r, _outerRadius);
-        float s = _outerRadius * TileInset;
-        var tile = new MeshInstance3D
-        {
-            Mesh = _mesh,
-            MaterialOverride = _material,
-            CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
-            Position = new Vector3(pos.X, WaterLevel, pos.Z),
-            Scale = new Vector3(s, 1f, s),
-        };
-        tile.SetInstanceShaderParameter("coast", ComputeCoast(q, r));
+        var tile = CreateWaterNode(
+            new Vector3(pos.X, WaterLevel, pos.Z),
+            _outerRadius * TileSizeMultiplier,
+            HexSubdivisions,
+            ComputeCoast(q, r),
+            WavePhase(q, r));
         AddChild(tile);
         _tiles[new Vector2I(q, r)] = tile;
     }
@@ -225,71 +257,63 @@ public partial class WaterComponent3D : Node3DComponent
         _lastCenterHex = new Vector2I(int.MaxValue, int.MaxValue);
     }
 
-    // ── Material + mesh ───────────────────────────────────────────────────────
+    // ── Addon water nodes ─────────────────────────────────────────────────────
 
-    private void BuildMaterial()
+    // Instantiate a PixelizerWater3D (GDScript) as an untyped MeshInstance3D. Its
+    // exports are read in _ready, so every property (especially shared_material,
+    // size, coast, wave_phase) is set before AddChild.
+    private MeshInstance3D CreateWaterNode(Vector3 position, float size, int subdivisions, float coast, float wavePhase)
     {
-        _material = new ShaderMaterial { Shader = GD.Load<Shader>(WaterShaderPath) };
-        _material.SetShaderParameter("water_noise", WaterNoise ?? GenerateNoiseTexture());
-        _material.SetShaderParameter("shallow_color", ShallowColor);
-        _material.SetShaderParameter("deep_color", DeepColor);
-        _material.SetShaderParameter("foam_color", FoamColor);
-        _material.SetShaderParameter("wave_height", WaveHeight);
-        _material.SetShaderParameter("wave_frequency", WaveFrequency);
-        _material.SetShaderParameter("wave_speed", WaveSpeed);
-        _material.SetShaderParameter("foam_amount", FoamAmount);
-        _material.SetShaderParameter("foam_noise_scale", FoamNoiseScale);
-        _material.SetShaderParameter("foam_scroll", FoamScroll);
-        _material.SetShaderParameter("cap_threshold", CapThreshold);
-        _material.SetShaderParameter("cap_noise_scale", CapNoiseScale);
-        _material.SetShaderParameter("cap_scroll", CapScroll);
+        var node = (MeshInstance3D)_waterScript.New();
+        node.Position = position;
+        node.Set("shared_material", _sharedMaterial);
+        if (_manager != null) node.Set("manager", _manager);
+        node.Set("size", size);
+        node.Set("subdivisions", subdivisions);
+        node.Set("coast", coast);
+        node.Set("wave_phase", wavePhase);
+        return node;
     }
 
-    // Shared unit-hexagon mesh (outer radius 1, pointy-top matching HexMath), subdivided
-    // into HexSubdivisions concentric rings so the water shader's vertex waves have
-    // geometry to move. Built as six triangular sectors on an (a, b) lattice; sector
-    // borders duplicate vertices, but identical world positions displace identically,
-    // so no cracks open up.
-    private void BuildMesh()
-    {
-        int n = Mathf.Max(HexSubdivisions, 1);
-        var corners = new Vector3[6];
-        for (int k = 0; k < 6; k++)
-        {
-            float angle = Mathf.DegToRad(30f + 60f * k);
-            corners[k] = new Vector3(Mathf.Cos(angle), 0f, Mathf.Sin(angle));
-        }
+    // Deterministic per-hex animation offset so neighbouring tiles do not move in
+    // lockstep (the addon's own demo uses random phases).
+    private static float WavePhase(int q, int r) => ((q * 13 + r * 7) % 100) / 100f * Mathf.Tau;
 
-        var st = new SurfaceTool();
-        st.Begin(Mesh.PrimitiveType.Triangles);
-        int vertexCount = 0;
-        for (int s = 0; s < 6; s++)
-        {
-            var c0 = corners[s];
-            var c1 = corners[(s + 1) % 6];
-            // Lattice points P(a, b) = (a*c0 + b*c1) / n, a >= 0, b >= 0, a+b <= n.
-            var idx = new int[n + 1][];
-            for (int a = 0; a <= n; a++)
-            {
-                idx[a] = new int[n + 1 - a];
-                for (int b = 0; b <= n - a; b++)
-                {
-                    idx[a][b] = vertexCount++;
-                    st.SetNormal(Vector3.Up);
-                    st.AddVertex((c0 * a + c1 * b) / n);
-                }
-            }
-            for (int a = 0; a < n; a++)
-                for (int b = 0; b < n - a; b++)
-                {
-                    st.AddIndex(idx[a][b]); st.AddIndex(idx[a][b + 1]); st.AddIndex(idx[a + 1][b]);
-                    if (b < n - a - 1)
-                    {
-                        st.AddIndex(idx[a + 1][b]); st.AddIndex(idx[a][b + 1]); st.AddIndex(idx[a + 1][b + 1]);
-                    }
-                }
-        }
-        _mesh = st.Commit();
+    private void BuildSharedMaterial()
+    {
+        _sharedMaterial = new ShaderMaterial { Shader = GD.Load<Shader>(AddonWaterShaderPath) };
+        _sharedMaterial.SetShaderParameter("water_noise", WaterNoise ?? GenerateNoiseTexture());
+        _sharedMaterial.SetShaderParameter("shallow_color", ShallowColor);
+        _sharedMaterial.SetShaderParameter("deep_color", DeepColor);
+        _sharedMaterial.SetShaderParameter("foam_color", FoamColor);
+        _sharedMaterial.SetShaderParameter("depth_levels", DepthLevels);
+        _sharedMaterial.SetShaderParameter("wave_height", WaveHeight);
+        _sharedMaterial.SetShaderParameter("wave_frequency", WaveFrequency);
+        _sharedMaterial.SetShaderParameter("wave_speed", WaveSpeed);
+        _sharedMaterial.SetShaderParameter("foam_amount", FoamAmount);
+        _sharedMaterial.SetShaderParameter("foam_noise_scale", FoamNoiseScale);
+        _sharedMaterial.SetShaderParameter("foam_scroll", FoamScroll);
+        _sharedMaterial.SetShaderParameter("cap_threshold", CapThreshold);
+        _sharedMaterial.SetShaderParameter("cap_noise_scale", CapNoiseScale);
+        _sharedMaterial.SetShaderParameter("cap_scroll", CapScroll);
+    }
+
+    private void BuildBackingOcean()
+    {
+        var backing = CreateWaterNode(
+            new Vector3(0f, WaterLevel - BackingDrop, 0f), BackingSize, 1, 0f, 0f);
+        backing.Name = "BackingOcean";
+        AddChild(backing);
+    }
+
+    // See AbyssDrop: below-world rays at shallow pitches land here (open ocean
+    // via the same material) instead of the sky's ground half.
+    private void BuildAbyssOcean()
+    {
+        var abyss = CreateWaterNode(
+            new Vector3(0f, WaterLevel - AbyssDrop, 0f), BackingSize, 1, 0f, 0f);
+        abyss.Name = "AbyssOcean";
+        AddChild(abyss);
     }
 
     private static ImageTexture GenerateNoiseTexture()

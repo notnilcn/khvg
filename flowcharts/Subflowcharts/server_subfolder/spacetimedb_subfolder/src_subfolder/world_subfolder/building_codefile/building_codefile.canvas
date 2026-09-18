@@ -1,0 +1,694 @@
+{
+	"nodes": [
+		{
+			"id": "127148bf5db520f6",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/advance_project_site_symbol.canvas",
+			"color": "5",
+			"x": 1070,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "bbb509fd91dd42b4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/all_building_desc_symbol.canvas",
+			"color": "5",
+			"x": 1710,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "045530f2f483f760",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/building_tile_at_symbol.canvas",
+			"color": "5",
+			"x": 3700,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "be28089843ba6b00",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/BuildingDesc_symbol.canvas",
+			"color": "5",
+			"x": 2560,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c9ba54249e93ade8",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/BuildingState_symbol.canvas",
+			"color": "5",
+			"x": 2040,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "30810997931c60a0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/cancel_project_site_symbol.canvas",
+			"color": "5",
+			"x": 0,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7ed21bb17104b8ba",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/check_build_perm_for_cells_symbol.canvas",
+			"color": "5",
+			"x": 3220,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "9fcebad33809d698",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/check_footprint_tiles_exist_symbol.canvas",
+			"color": "5",
+			"x": 3700,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e80d99a9af971906",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/clear_legacy_stamp_if_free_symbol.canvas",
+			"color": "5",
+			"x": 960,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b21f410655305568",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/complete_site_symbol.canvas",
+			"color": "5",
+			"x": 2390,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "2186c68dbeb7abbc",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/demolish_building_symbol.canvas",
+			"color": "5",
+			"x": 1310,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "0e3306c056e00980",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/footprint_cells_symbol.canvas",
+			"color": "5",
+			"x": 5070,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "15befa3908ce2b52",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/footprint_occupied_symbol.canvas",
+			"color": "5",
+			"x": 5280,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "d67b5709bf8c8f2c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/FootprintOffset_symbol.canvas",
+			"color": "5",
+			"x": 2170,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "1362a141f2406e06",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/FootprintTileState_symbol.canvas",
+			"color": "5",
+			"x": 1370,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "00690b7ee478d2c4",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/FootprintType_symbol.canvas",
+			"color": "5",
+			"x": 2630,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "50d1cf03ecda3986",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/hex_occupied_symbol.canvas",
+			"color": "5",
+			"x": 5280,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "e504ff34724802f0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/nearby_buildings_symbol.canvas",
+			"color": "5",
+			"x": 3090,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "a6e4a1e4d257c198",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/nearby_footprint_tiles_symbol.canvas",
+			"color": "5",
+			"x": 3550,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "ddeefc6b7f581852",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/nearby_project_sites_symbol.canvas",
+			"color": "5",
+			"x": 4010,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "c24670345c6cf110",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/normalize_direction_symbol.canvas",
+			"color": "5",
+			"x": 5010,
+			"y": 2500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "79576030190269e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/place_project_site_symbol.canvas",
+			"color": "5",
+			"x": 4470,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "80af15064f5de04c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/ProjectSiteState_symbol.canvas",
+			"color": "5",
+			"x": 2100,
+			"y": 1500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "95df4bb3760ebed2",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/rotate_offset_cw_symbol.canvas",
+			"color": "5",
+			"x": 5650,
+			"y": 2500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "13e7cce6a8d9663c",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/rotate_offset_symbol.canvas",
+			"color": "5",
+			"x": 5070,
+			"y": 2000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "7a1be9cc9c3132e0",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/seed_default_buildings_symbol.canvas",
+			"color": "5",
+			"x": 500,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "b95a28a4327a9410",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/stamp_legacy_tiles_symbol.canvas",
+			"color": "5",
+			"x": 2500,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "20ba41968dab1584",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/territory_under_footprint_symbol.canvas",
+			"color": "5",
+			"x": 4180,
+			"y": 500,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "8956c0a54307da1e",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/building_codefile/upsert_building_desc_symbol.canvas",
+			"color": "5",
+			"x": 1420,
+			"y": 1000,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [
+		{
+			"id": "e19c74c74a2d8822",
+			"fromNode": "127148bf5db520f6",
+			"fromSide": "bottom",
+			"toNode": "0e3306c056e00980",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "912746f19ce01646",
+			"fromNode": "127148bf5db520f6",
+			"fromSide": "bottom",
+			"toNode": "045530f2f483f760",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "32d35868443d6f40",
+			"fromNode": "127148bf5db520f6",
+			"fromSide": "bottom",
+			"toNode": "9fcebad33809d698",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "42bd57e107642566",
+			"fromNode": "127148bf5db520f6",
+			"fromSide": "bottom",
+			"toNode": "7ed21bb17104b8ba",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a3b043f99b6c8f86",
+			"fromNode": "127148bf5db520f6",
+			"fromSide": "bottom",
+			"toNode": "b21f410655305568",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "d3e0680cd573a3a0",
+			"fromNode": "127148bf5db520f6",
+			"fromSide": "bottom",
+			"toNode": "80af15064f5de04c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "eeb5d0326f4b02d4",
+			"fromNode": "127148bf5db520f6",
+			"fromSide": "bottom",
+			"toNode": "be28089843ba6b00",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "5b9e0b828f022058",
+			"fromNode": "127148bf5db520f6",
+			"fromSide": "bottom",
+			"toNode": "1362a141f2406e06",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "4a647cfb93f6a63a",
+			"fromNode": "30810997931c60a0",
+			"fromSide": "bottom",
+			"toNode": "80af15064f5de04c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "40abe5868fd17730",
+			"fromNode": "9fcebad33809d698",
+			"fromSide": "bottom",
+			"toNode": "045530f2f483f760",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "fb8e5c347cb45608",
+			"fromNode": "e80d99a9af971906",
+			"fromSide": "bottom",
+			"toNode": "045530f2f483f760",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "46b09eeb51ff73f2",
+			"fromNode": "e80d99a9af971906",
+			"fromSide": "bottom",
+			"toNode": "1362a141f2406e06",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "d9b2d3a9b4ca4052",
+			"fromNode": "b21f410655305568",
+			"fromSide": "bottom",
+			"toNode": "b95a28a4327a9410",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "ddb55ef96c527a50",
+			"fromNode": "b21f410655305568",
+			"fromSide": "bottom",
+			"toNode": "c9ba54249e93ade8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "e02201ab2f3e9664",
+			"fromNode": "b21f410655305568",
+			"fromSide": "bottom",
+			"toNode": "1362a141f2406e06",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "c3143801fbaec334",
+			"fromNode": "b21f410655305568",
+			"fromSide": "bottom",
+			"toNode": "80af15064f5de04c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "49867c5d26fde76a",
+			"fromNode": "2186c68dbeb7abbc",
+			"fromSide": "bottom",
+			"toNode": "e80d99a9af971906",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "fdff05eb847d3146",
+			"fromNode": "2186c68dbeb7abbc",
+			"fromSide": "bottom",
+			"toNode": "c9ba54249e93ade8",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "049a49952ccc8d36",
+			"fromNode": "2186c68dbeb7abbc",
+			"fromSide": "bottom",
+			"toNode": "1362a141f2406e06",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "b08c1cf736f6ac66",
+			"fromNode": "0e3306c056e00980",
+			"fromSide": "bottom",
+			"toNode": "13e7cce6a8d9663c",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "8400edadf826dca2",
+			"fromNode": "15befa3908ce2b52",
+			"fromSide": "bottom",
+			"toNode": "50d1cf03ecda3986",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5db1d5959ff7c426",
+			"fromNode": "50d1cf03ecda3986",
+			"fromSide": "bottom",
+			"toNode": "0e3306c056e00980",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "43ec8bab50ee8b2e",
+			"fromNode": "50d1cf03ecda3986",
+			"fromSide": "bottom",
+			"toNode": "045530f2f483f760",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a1bb058c97d767c0",
+			"fromNode": "50d1cf03ecda3986",
+			"fromSide": "bottom",
+			"toNode": "1362a141f2406e06",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "6336b51a9fab3efc",
+			"fromNode": "50d1cf03ecda3986",
+			"fromSide": "bottom",
+			"toNode": "80af15064f5de04c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "44afbc0899bde360",
+			"fromNode": "50d1cf03ecda3986",
+			"fromSide": "bottom",
+			"toNode": "be28089843ba6b00",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "d4ef0a50f755d000",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "c24670345c6cf110",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "a019ef7b18160b2e",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "0e3306c056e00980",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "4372ef25a8f23522",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "045530f2f483f760",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "f760493f12a87a9a",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "15befa3908ce2b52",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "77a4f1f626196418",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "20ba41968dab1584",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "563d4cccfe7cb210",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "9fcebad33809d698",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "4d9b48250817fb22",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "7ed21bb17104b8ba",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "686d0e3543770702",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "b21f410655305568",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "5102cd361a200de4",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "be28089843ba6b00",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "read"
+		},
+		{
+			"id": "003fd96b84cca638",
+			"fromNode": "79576030190269e0",
+			"fromSide": "bottom",
+			"toNode": "80af15064f5de04c",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "bf5595ece4688078",
+			"fromNode": "13e7cce6a8d9663c",
+			"fromSide": "bottom",
+			"toNode": "c24670345c6cf110",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "e57ee660e928e040",
+			"fromNode": "13e7cce6a8d9663c",
+			"fromSide": "bottom",
+			"toNode": "95df4bb3760ebed2",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "03dbede39684b380",
+			"fromNode": "7a1be9cc9c3132e0",
+			"fromSide": "bottom",
+			"toNode": "be28089843ba6b00",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		},
+		{
+			"id": "48ac08ed60035d62",
+			"fromNode": "b95a28a4327a9410",
+			"fromSide": "bottom",
+			"toNode": "045530f2f483f760",
+			"toSide": "top",
+			"toEnd": "arrow"
+		},
+		{
+			"id": "66efb7ec5a8dbbe8",
+			"fromNode": "8956c0a54307da1e",
+			"fromSide": "bottom",
+			"toNode": "be28089843ba6b00",
+			"toSide": "top",
+			"toEnd": "arrow",
+			"label": "write"
+		}
+	],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"includeInAggregateFlowchart",
+				"codefile",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-footprint_cells",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-building_tile_at",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-check_footprint_tiles_exist",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-check_build_perm_for_cells",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-complete_site",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-ProjectSiteState-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-BuildingDesc-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-FootprintTileState-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-ProjectSiteState-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/world_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/src_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/spacetimedb_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/server_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/root_subfolder-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-BuildingTile-_colon_-read",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-MapConfig",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/tables-_dot_-rs-_hashtag_-BuildingTile-_colon_-write",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/world_subfolder/tables_codefile/tables_codefile-_dot_-canvas-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-stamp_legacy_tiles",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-BuildingState-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-FootprintTileState-_colon_-write",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-clear_legacy_stamp_if_free",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-BuildingState-_colon_-read",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-rotate_offset",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-hex_occupied",
+				"edge-_colon_-server/spacetimedb/src/player/views-_dot_-rs-_hashtag_-nearby_indices_from_chunk",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/views_codefile/views_codefile-_dot_-canvas",
+				"edge-_colon_-flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/player_subfolder/player_subfolder-_dot_-canvas",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-normalize_direction",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-footprint_occupied",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-territory_under_footprint",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-rotate_offset_cw",
+				"edge-_colon_-server/spacetimedb/src/world/building-_dot_-rs-_hashtag_-BuildingDesc-_colon_-write"
+			]
+		}
+	}
+}

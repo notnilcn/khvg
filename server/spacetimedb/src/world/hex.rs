@@ -54,24 +54,12 @@ pub fn world_to_chunk(wx: f32, wy: f32, chunk_hex_radius: i32, hex_outer_radius:
 
 // Axial deltas for the 6 hex neighbor directions, indexed 0-5, where direction D's hex_to_world
 // offset has angle 60*D degrees (standard axial-coordinate neighbor set).
-const HEX_NEIGHBOR_DELTAS: [(i32, i32); 6] = [(1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1), (1, -1)];
+pub const HEX_NEIGHBOR_DELTAS: [(i32, i32); 6] = [(1, 0), (0, 1), (-1, 1), (-1, 0), (0, -1), (1, -1)];
 
-// A wedge's same-hex neighbors are always the two adjacent tri_index values — wedges tile the hex
-// with no gaps (TerrainManager.cs's GetWedgeVertices: wedge N's second vertex is wedge N+1's first),
-// so wedge N borders wedge N-1 and wedge N+1 within the same hex.
-pub fn same_hex_neighbor_indices(tri_index: u8) -> [u8; 2] {
-    [(tri_index + 5) % 6, (tri_index + 1) % 6]
-}
-
-// A wedge's outer edge (the one opposite the hex center) points in hex-direction (tri_index+1)%6:
-// TerrainManager.cs's wedge vertices sit at angles 30+60*triIndex / 30+60*(triIndex+1), so the
-// outer edge's midpoint angle is 60*(triIndex+1) — exactly direction (triIndex+1)%6's offset angle
-// in the table above. Crossing that edge lands on the wedge that shares it from the neighbor hex's
-// side: directions 180 degrees apart differ by 3 in this 6-direction scheme, so that wedge is
-// (tri_index+3)%6 of the neighbor hex.
-pub fn cross_hex_neighbor(hex_q: i32, hex_r: i32, tri_index: u8) -> (i32, i32, u8) {
-    let (dq, dr) = HEX_NEIGHBOR_DELTAS[((tri_index + 1) % 6) as usize];
-    (hex_q + dq, hex_r + dr, (tri_index + 3) % 6)
+// The 6 laterally neighboring hexes of (hex_q, hex_r) — the adjacency neighborhood for
+// per-hex terrain generation (ground/overlay tag conflicts are checked hex-to-hex).
+pub fn hex_neighbors(hex_q: i32, hex_r: i32) -> [(i32, i32); 6] {
+    HEX_NEIGHBOR_DELTAS.map(|(dq, dr)| (hex_q + dq, hex_r + dr))
 }
 
 pub struct HexCell {

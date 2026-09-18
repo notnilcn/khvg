@@ -31,11 +31,31 @@
 			"height": 400
 		},
 		{
+			"id": "aed16612f69f9eac",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/ChanneledAction_symbol.canvas",
+			"color": "5",
+			"x": 1380,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
+			"id": "be7827c4296b2600",
+			"type": "file",
+			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/ChanneledActionKind_symbol.canvas",
+			"color": "5",
+			"x": 1840,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		},
+		{
 			"id": "9aa399661f1b89b0",
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/EnemyStatusKind_symbol.canvas",
 			"color": "5",
-			"x": 1380,
+			"x": 2300,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -45,7 +65,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/GroundZone_symbol.canvas",
 			"color": "5",
-			"x": 1840,
+			"x": 2760,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -55,7 +75,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/none_symbol.canvas",
 			"color": "5",
-			"x": 2300,
+			"x": 3220,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -65,7 +85,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/PurgeKind_symbol.canvas",
 			"color": "5",
-			"x": 2760,
+			"x": 3680,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -75,7 +95,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/ReleaseKind_symbol.canvas",
 			"color": "5",
-			"x": 3220,
+			"x": 4140,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -85,7 +105,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/StatusEffectKind_symbol.canvas",
 			"color": "5",
-			"x": 3680,
+			"x": 4600,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -95,7 +115,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/StatusParams_symbol.canvas",
 			"color": "5",
-			"x": 4140,
+			"x": 5060,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -105,7 +125,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/WagerKind_symbol.canvas",
 			"color": "5",
-			"x": 4600,
+			"x": 5520,
 			"y": 0,
 			"width": 400,
 			"height": 400
@@ -115,7 +135,7 @@
 			"type": "file",
 			"file": "flowcharts/Subflowcharts/server_subfolder/spacetimedb_subfolder/src_subfolder/status_subfolder/tables_codefile/ZoneKind_symbol.canvas",
 			"color": "5",
-			"x": 5060,
+			"x": 5980,
 			"y": 0,
 			"width": 400,
 			"height": 400

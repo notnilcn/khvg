@@ -13,6 +13,9 @@ var _chunk : MarchingSquaresTerrainChunk
 var terrain_system : MarchingSquaresTerrain
 
 
+var _setup_grid_mode : int = -1
+
+
 func setup(chunk: MarchingSquaresTerrainChunk, redo: bool = true):
 	_chunk = chunk
 	terrain_system = _chunk.terrain_system
@@ -27,16 +30,32 @@ func setup(chunk: MarchingSquaresTerrainChunk, redo: bool = true):
 	
 	multimesh.transform_format = MultiMesh.TRANSFORM_3D
 	multimesh.use_custom_data = true
-	var hex_count : int = 3 * terrain_system.chunk_radius * (terrain_system.chunk_radius + 1) + 1
-	multimesh.instance_count = hex_count * terrain_system.grass_subdivisions * terrain_system.grass_subdivisions
+	if terrain_system.get("grid_mode") == 0:
+		multimesh.instance_count = (_chunk.dimensions.x - 1) * (_chunk.dimensions.z - 1) * terrain_system.grass_subdivisions * terrain_system.grass_subdivisions
+	else:
+		var hex_count : int = 3 * terrain_system.chunk_radius * (terrain_system.chunk_radius + 1) + 1
+		multimesh.instance_count = hex_count * terrain_system.grass_subdivisions * terrain_system.grass_subdivisions
 	if terrain_system.grass_mesh:
 		multimesh.mesh = terrain_system.grass_mesh
 	else:
 		multimesh.mesh = QuadMesh.new() # Create a temporary quad
-	multimesh.mesh.size = terrain_system.grass_size * terrain_system.hex_size / 2.0
-	multimesh.mesh.center_offset.y = multimesh.mesh.size.y / 2.0
+	if terrain_system.get("grid_mode") == 0:
+		multimesh.mesh.size = terrain_system.grass_size * (terrain_system.cell_size.x + terrain_system.cell_size.y) / 4.0
+	else:
+		multimesh.mesh.size = terrain_system.grass_size * terrain_system.hex_size / 2.0
+		multimesh.mesh.center_offset.y = multimesh.mesh.size.y / 2.0
 	
 	cast_shadow = SHADOW_CASTING_SETTING_OFF
+	_setup_grid_mode = terrain_system.get("grid_mode") if terrain_system else -1
+
+
+## Rebuild the grass scatter when the grid mode changed since the last setup
+## (instance counts differ between square cells and hexes).
+func _ensure_setup_mode() -> void:
+	if not terrain_system or not _chunk:
+		return
+	if _setup_grid_mode != terrain_system.get("grid_mode"):
+		setup(_chunk)
 
 
 ## Regenerate all grass instances of the chunk from its hex records.
@@ -52,6 +71,8 @@ func regenerate_grass() -> void:
 	if not terrain_system:
 		push_error("terrain_system not set while regenerating grass")
 		return
+	_ensure_setup_mode()
+	
 	
 	if not multimesh:
 		setup(_chunk)
@@ -135,7 +156,9 @@ func _get_terrain_image(texture_id: int) -> Image:
 
 
 ## Checks if the given texture ID (1-16) should have grass placed on it.
-func _has_grass_for_texture(texture_id: int) -> bool:
+func _has_grass_for_texture(texture_id: int, force_grass_on: bool = false) -> bool:
+	if force_grass_on:
+		return true
 	if texture_id == 1:
 		return true  # Base grass always has grass
 	if texture_id < 2 or texture_id > 6:
@@ -178,10 +201,18 @@ func _sample_terrain_texture_color(world_pos: Vector3, texture_id: int, tex_scal
 	if not terrain_image:
 		return Color.WHITE
 	
-	# The terrain shader tiles textures at 1 world unit, scaled per texture
-	var uv := Vector2(world_pos.x, world_pos.z) * tex_scale
-	uv.x = fposmod(uv.x, 1.0)
-	uv.y = fposmod(uv.y, 1.0)
+	var uv := Vector2.ZERO
+	if terrain_system.get("grid_mode") == 0:
+		var uv_x : float = clamp(world_pos.x / ((terrain_system.dimensions.x - 1) * terrain_system.cell_size.x), 0.0, 1.0)
+		var uv_y : float = clamp(world_pos.z / ((terrain_system.dimensions.z - 1) * terrain_system.cell_size.y), 0.0, 1.0)
+		uv_x = abs(fmod(uv_x * tex_scale, 1.0))
+		uv_y = abs(fmod(uv_y * tex_scale, 1.0))
+		uv = Vector2(uv_x, uv_y)
+	else:
+		# The terrain shader tiles textures at 1 world unit, scaled per texture
+		uv = Vector2(world_pos.x, world_pos.z) * tex_scale
+		uv.x = fposmod(uv.x, 1.0)
+		uv.y = fposmod(uv.y, 1.0)
 	
 	var px := int(uv.x * (terrain_image.get_width() - 1))
 	var py := int(uv.y * (terrain_image.get_height() - 1))
@@ -230,5 +261,218 @@ func _create_grass_instance(index: int, local_pos: Vector3, world_pos: Vector3, 
 ## Hides a grass instance by scaling it to zero.
 func _hide_grass_instance(index: int) -> void:
 	multimesh.set_instance_transform(index, Transform3D(Basis.from_scale(Vector3.ZERO), Vector3.ZERO))
+
+#endregion
+
+
+#region SQUARES mode (merged from original)
+## Original marching-squares grass scatter, used when grid_mode == SQUARES.
+
+func regenerate_all_cells() -> void:
+	if terrain_system and terrain_system.get("grid_mode") != 0:
+		regenerate_grass()
+		return
+	_ensure_setup_mode()
+	# Safety checks
+	if not _chunk:
+		push_error("_chunk not set while regenerating cells")
+		return
+	
+	if not terrain_system:
+		push_error("terrain_system not set while regenerating cells")
+		return
+	
+	if not multimesh:
+		setup(_chunk)
+	
+	if not _chunk.cell_geometry:
+		_chunk.regenerate_mesh()
+	
+	for z in range(terrain_system.dimensions.z-1):
+		for x in range(terrain_system.dimensions.x-1):
+			generate_grass_on_cell(Vector2i(x, z))
+
+
+func generate_grass_on_cell(cell_coords: Vector2i) -> void:
+	# Safety checks
+	if not _chunk:
+		push_error("Couldn't find a reference to _chunk")
+		return
+	
+	if not terrain_system:
+		push_error("Couldn't find a reference to terrain_system")
+		return
+	
+	if not _chunk.cell_geometry:
+		push_error("Couldn't find a reference to cell_geometry")
+		return
+	
+	if not _chunk.cell_geometry.has(cell_coords):
+		push_error("Couldn't find a reference to cell_coords")
+		return
+	
+	_ensure_setup_mode()
+	
+	var cell_geometry = _chunk.cell_geometry[cell_coords]
+	
+	if not cell_geometry.has("verts") or not cell_geometry.has("uvs") or not cell_geometry.has("color_0s") or not cell_geometry.has("color_1s") or not cell_geometry.has("custom_1_values") or not cell_geometry.has("is_floor"):
+		push_error("cell_geometry doesn't have one of the following required data: 1) verts, 2) uvs, 3) colors, 4) custom_1_values, 5) is_floor")
+		return
+	
+	var points : PackedVector2Array = []
+	var count = terrain_system.grass_subdivisions * terrain_system.grass_subdivisions
+	
+	for z in range(terrain_system.grass_subdivisions):
+		for x in range(terrain_system.grass_subdivisions):
+			points.append(Vector2(
+				(cell_coords.x + (x + randf_range(0, 1)) / terrain_system.grass_subdivisions) * terrain_system.cell_size.x,
+				(cell_coords.y + (z + randf_range(0, 1)) / terrain_system.grass_subdivisions) * terrain_system.cell_size.y
+			))
+	
+	var index : int = (cell_coords.y * (_chunk.dimensions.x-1) + cell_coords.x) * count
+	var end_index : int = index + count
+	
+	var verts : PackedVector3Array = cell_geometry["verts"]
+	var uvs : PackedVector2Array = cell_geometry["uvs"]
+	var color_0s : PackedColorArray = cell_geometry["color_0s"]
+	var color_1s : PackedColorArray = cell_geometry["color_1s"]
+	var custom_1_values : PackedColorArray = cell_geometry["custom_1_values"]
+	var is_floor : Array = cell_geometry["is_floor"]
+	
+	for i in range(0, len(verts), 3):
+		if i+2 >= len(verts):
+			continue # Skip incomplete triangle
+		# Only place grass on floors
+		if not is_floor[i]:
+			continue
+		
+		var a := verts[i]
+		var b := verts[i+1]
+		var c := verts[i+2]
+		
+		var v0 := Vector2(c.x - a.x, c.z - a.z)
+		var v1 := Vector2(b.x - a.x, b.z - a.z)
+		
+		var dot00 := v0.dot(v0)
+		var dot01 := v0.dot(v1)
+		var dot11 := v1.dot(v1)
+		var invDenom := 1.0/(dot00 * dot11 - dot01 * dot01)
+		
+		var point_index := 0
+		while (point_index < len(points)):
+			var v2 = Vector2(points[point_index].x - a.x, points[point_index].y - a.z)
+			var dot02 := v0.dot(v2)
+			var dot12 := v1.dot(v2)
+			
+			var u := (dot11 * dot02 - dot01 * dot12) * invDenom
+			if u < 0:
+				point_index += 1
+				continue
+			
+			var v := (dot00 * dot12 - dot01 * dot02) * invDenom
+			if v < 0:
+				point_index += 1
+				continue
+			
+			if u + v <= 1:
+				# Point is inside triangle, won't be inside any other floor triangle
+				points.remove_at(point_index)
+				var p := a*(1-u-v) + b*u + c*v
+				
+				# Don't place grass on ledges or ridges
+				var uv := uvs[i]*u + uvs[i+1]*v + uvs[i+2]*(1-u-v)
+				var on_ledge_or_ridge : bool = uv.y > 0.0 or uv.x > 0.5
+				
+				var color_0 := MarchingSquaresTerrainVertexColorHelper.get_dominant_color(color_0s[i]*u + color_0s[i+1]*v + color_0s[i+2]*(1-u-v))
+				var color_1 := MarchingSquaresTerrainVertexColorHelper.get_dominant_color(color_1s[i]*u + color_1s[i+1]*v + color_1s[i+2]*(1-u-v))
+				
+				# Check grass mask first - green channel forces grass ON, red channel masks grass OFF
+				var mask := custom_1_values[i]*u + custom_1_values[i+1]*v + custom_1_values[i+2]*(1-u-v)
+				var is_masked : bool = mask.r < 0.9999
+				var force_grass_on : bool = mask.g >= 0.9999  # Preset override: force grass regardless of texture
+				
+				var texture_id := _get_texture_id(color_0, color_1)
+				var on_grass_tex := _has_grass_for_texture(texture_id, force_grass_on)
+				
+				if on_grass_tex and not on_ledge_or_ridge and not is_masked:
+					_create_grass_instance_on_triangle(index, p, a, b, c, texture_id)
+				else:
+					_hide_grass_instance(index)
+				index += 1
+			else:
+				point_index += 1
+	
+	# Fill remaining points with hidden instances
+	while index < end_index:
+		if index >= multimesh.instance_count:
+			return
+		_hide_grass_instance(index)
+		index += 1
+
+#region grass property getters
+
+func _get_texture_id(vc_col_0: Color, vc_col_1: Color) -> int:
+	var id : int = 1;
+	if vc_col_0.r > 0.9999:
+		if vc_col_1.r > 0.9999:
+			id = 1;
+		elif vc_col_1.g > 0.9999:
+			id = 2;
+		elif vc_col_1.b > 0.9999:
+			id = 3;
+		elif vc_col_1.a > 0.9999:
+			id = 4;
+	elif vc_col_0.g > 0.9999:
+		if vc_col_1.r > 0.9999:
+			id = 5;
+		elif vc_col_1.g > 0.9999:
+			id = 6;
+		elif vc_col_1.b > 0.9999:
+			id = 7;
+		elif vc_col_1.a > 0.9999:
+			id = 8;
+	elif vc_col_0.b > 0.9999:
+		if vc_col_1.r > 0.9999:
+			id = 9;
+		elif vc_col_1.g > 0.9999:
+			id = 10;
+		elif vc_col_1.b > 0.9999:
+			id = 11;
+		elif vc_col_1.a > 0.9999:
+			id = 12;
+	elif vc_col_0.a > 0.9999:
+		if vc_col_1.r > 0.9999:
+			id = 13;
+		elif vc_col_1.g > 0.9999:
+			id = 14;
+		elif vc_col_1.b > 0.9999:
+			id = 15;
+		elif vc_col_1.a > 0.9999:
+			id = 16;
+	return id;
+
+
+## Checks if the given texture ID should have grass placed on it.
+
+func _create_grass_instance_on_triangle(index: int, world_pos: Vector3, a: Vector3, b: Vector3, c: Vector3, texture_id: int) -> void:
+	var edge1 := b - a
+	var edge2 := c - a
+	var normal := edge1.cross(edge2).normalized()
+	
+	var right := Vector3.FORWARD.cross(normal).normalized()
+	var forward := normal.cross(Vector3.RIGHT).normalized()
+	var instance_basis := Basis(right, forward, -normal)
+	
+	multimesh.set_instance_transform(index, Transform3D(instance_basis, world_pos))
+	multimesh.mesh.center_offset.y = multimesh.mesh.size.y / 2
+	
+	var tex_scale := _get_texture_scale(texture_id)
+	var instance_color := _sample_terrain_texture_color(world_pos, texture_id, tex_scale)
+	instance_color.a = _get_grass_alpha(texture_id)
+	
+	multimesh.set_instance_custom_data(index, instance_color)
+
+
+## Hides a grass instance by scaling it to zero.
 
 #endregion

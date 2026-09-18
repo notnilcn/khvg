@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "bd24f77cad3be2c8",
+			"type": "file",
+			"file": "client/Scripts/Components/PixelArt/WaterComponent3D.cs",
+			"subpath": "#AbyssDrop",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

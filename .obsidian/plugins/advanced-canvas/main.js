@@ -3089,6 +3089,8 @@ var DEFAULT_SETTINGS_VALUES = {
   // Added by an LLM agent
   hideNodeContentsFeatureEnabled: true,
   // Added by an LLM agent
+  textWrapAroundFeatureEnabled: true,
+  // Added by an LLM agent
   commandsFeatureEnabled: true,
   zoomToClonedNode: true,
   cloneNodeMargin: 20,
@@ -3715,6 +3717,12 @@ var SETTINGS = {
     // Added by an LLM agent
     label: "Hide node contents",
     description: `Adds a "Hide node contents" option to the node context menu (right click) that hides everything inside the node's borders, leaving an empty node frame. Not available for group nodes.`,
+    children: {}
+  },
+  textWrapAroundFeatureEnabled: {
+    // Added by an LLM agent
+    label: "Text wrap-around",
+    description: 'Adds a "Wrap text around overlapping nodes" option to the node context menu (right click) and the node popup menu. When enabled on a note or card node, its text reflows around nodes stacked on top of it instead of being hidden behind them. Only nodes connected to it by a bidirectional edge pointing into it count as obstacles (keeps large canvases fast). Not available for group and link nodes.',
     children: {}
   },
   variableBreakpointFeatureEnabled: {
@@ -10839,6 +10847,364 @@ var HideNodeContentsCanvasExtension = class extends CanvasExtension {
   }
 };
 
+// src/canvas-extensions/text-wrap-around-canvas-extension.ts
+var TEXT_WRAP_AROUND_CLASS = "ac-text-wrap-around";
+var TEXT_WRAP_AROUND_SPACER_CLASS = "ac-text-wrap-spacer";
+var WRAP_GAP_PX = 8;
+var WRAPPABLE_NODE_TYPES = ["text", "file"];
+var TextWrapAroundCanvasExtension = class extends CanvasExtension {
+  constructor() {
+    super(...arguments);
+    /** Canvases with a recompute queued for the next animation frame */
+    this.pendingCanvases = /* @__PURE__ */ new Set();
+    this.rafScheduled = false;
+    /** Capture-phase scroll listeners, one per canvas (removed on canvas unload / dispose) */
+    this.scrollCleanups = /* @__PURE__ */ new Map();
+  }
+  isEnabled() {
+    return "textWrapAroundFeatureEnabled";
+  }
+  init() {
+    const refreshEvents = [
+      "advanced-canvas:node-rendered",
+      "advanced-canvas:node-moved",
+      "advanced-canvas:node-resized",
+      "advanced-canvas:node-added",
+      "advanced-canvas:node-changed",
+      "advanced-canvas:node-removed",
+      "advanced-canvas:node-text-content-changed",
+      "advanced-canvas:node-editing-state-changed",
+      "advanced-canvas:node-breakpoint-changed"
+    ];
+    for (const event of refreshEvents) {
+      this.plugin.registerEvent(this.plugin.app.workspace.on(
+        event,
+        // Rest params: these events carry extra payloads (node, update, ...) that the
+        // refresh does not need - one handler shape fits the whole overload union.
+        (canvas, ..._rest) => this.schedule(canvas)
+      ));
+    }
+    for (const event of ["advanced-canvas:data-loaded:after", "advanced-canvas:canvas-changed", "advanced-canvas:undo", "advanced-canvas:redo", "advanced-canvas:viewport-changed:after", "advanced-canvas:edge-added", "advanced-canvas:edge-changed", "advanced-canvas:edge-removed"]) {
+      this.plugin.registerEvent(this.plugin.app.workspace.on(
+        event,
+        (canvas) => this.schedule(canvas)
+      ));
+    }
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:canvas-view-unloaded:before",
+      (view) => this.removeScrollListener(view.canvas)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "canvas:node-menu",
+      (menu, node) => this.addMenuItems(node.canvas, [node], menu)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "canvas:selection-menu",
+      (menu, canvas) => this.addMenuItems(canvas, this.getSelectedNodes(canvas), menu)
+    ));
+    this.plugin.registerEvent(this.plugin.app.workspace.on(
+      "advanced-canvas:popup-menu-created",
+      (canvas) => this.onPopupMenuCreated(canvas)
+    ));
+  }
+  dispose() {
+    this.pendingCanvases.clear();
+    for (const cleanup of this.scrollCleanups.values()) {
+      try {
+        cleanup();
+      } catch (e) {
+      }
+    }
+    this.scrollCleanups.clear();
+    for (const canvas of this.plugin.getCanvases()) this.clearCanvas(canvas);
+  }
+  onSettingsEnabled() {
+    for (const canvas of this.plugin.getCanvases()) this.schedule(canvas);
+  }
+  getSelectedNodes(canvas) {
+    return canvas.getSelectionData().nodes.map((nodeData) => canvas.nodes.get(nodeData.id)).filter((node) => node !== void 0);
+  }
+  isWrappable(node) {
+    return WRAPPABLE_NODE_TYPES.includes(node.getData().type);
+  }
+  isWrapEnabled(node) {
+    return node.getData().textWrapAround === true;
+  }
+  // #region Menus
+  addMenuItems(canvas, nodes, menu) {
+    if (!this.isActive() || canvas.readonly) return;
+    nodes = nodes.filter((node) => this.isWrappable(node));
+    if (nodes.length === 0) return;
+    const allEnabled = nodes.every((node) => this.isWrapEnabled(node));
+    menu.addItem((item) => {
+      item.setTitle("Wrap text around overlapping nodes");
+      item.setIcon("wrap-text");
+      item.setChecked(allEnabled);
+      item.onClick(() => this.setNodesWrap(canvas, nodes, !allEnabled));
+    });
+  }
+  onPopupMenuCreated(canvas) {
+    if (!this.isActive() || canvas.readonly) return;
+    const nodes = this.getSelectedNodes(canvas).filter((node) => this.isWrappable(node));
+    if (nodes.length === 0) return;
+    const allEnabled = nodes.every((node) => this.isWrapEnabled(node));
+    const button = CanvasHelper.createPopupMenuOption({
+      id: "ac-text-wrap-around",
+      label: "Wrap text around overlapping nodes",
+      icon: "wrap-text",
+      callback: () => {
+        const next = !nodes.every((node) => this.isWrapEnabled(node));
+        this.setNodesWrap(canvas, nodes, next);
+        button.classList.toggle("is-active", next);
+      }
+    });
+    button.classList.toggle("is-active", allEnabled);
+    CanvasHelper.addPopupMenuOption(canvas, button);
+  }
+  setNodesWrap(canvas, nodes, enabled) {
+    for (const node of nodes) {
+      node.setData({
+        ...node.getData(),
+        textWrapAround: enabled ? true : void 0
+        // Keep the canvas JSON clean
+      });
+    }
+    canvas.pushHistory(canvas.getData());
+    this.schedule(canvas);
+  }
+  // #endregion
+  // #region Scheduling
+  schedule(canvas) {
+    if (!this.isActive() || !canvas) return;
+    this.pendingCanvases.add(canvas);
+    this.ensureScrollListener(canvas);
+    if (this.rafScheduled) return;
+    this.rafScheduled = true;
+    window.requestAnimationFrame(() => {
+      this.rafScheduled = false;
+      const canvases = [...this.pendingCanvases];
+      this.pendingCanvases.clear();
+      for (const pending of canvases) {
+        try {
+          this.refreshCanvas(pending);
+        } catch (e) {
+          console.error("Advanced Canvas: text wrap-around refresh failed:", e);
+        }
+      }
+    });
+  }
+  /** Content scrolling moves overlaps relative to the in-flow spacers - recompute on scroll */
+  ensureScrollListener(canvas) {
+    if (this.scrollCleanups.has(canvas) || !canvas.canvasEl) return;
+    const onScroll = () => this.schedule(canvas);
+    canvas.canvasEl.addEventListener("scroll", onScroll, true);
+    this.scrollCleanups.set(canvas, () => canvas.canvasEl.removeEventListener("scroll", onScroll, true));
+  }
+  removeScrollListener(canvas) {
+    const cleanup = this.scrollCleanups.get(canvas);
+    if (!cleanup) return;
+    this.scrollCleanups.delete(canvas);
+    try {
+      cleanup();
+    } catch (e) {
+    }
+  }
+  // #endregion
+  // #region Refresh
+  refreshCanvas(canvas) {
+    if (!this.isActive()) {
+      this.clearCanvas(canvas);
+      return;
+    }
+    const linkedObstacles = this.buildLinkedObstacleMap(canvas);
+    for (const node of canvas.nodes.values()) {
+      const enabled = this.isWrappable(node) && this.isWrapEnabled(node);
+      node.nodeEl.classList.toggle(TEXT_WRAP_AROUND_CLASS, enabled);
+      if (!enabled) {
+        this.clearSpacers(node);
+        continue;
+      }
+      this.updateNode(canvas, node, linkedObstacles.get(node.id));
+    }
+  }
+  clearCanvas(canvas) {
+    for (const node of canvas.nodes.values()) {
+      node.nodeEl.classList.remove(TEXT_WRAP_AROUND_CLASS);
+      this.clearSpacers(node);
+    }
+  }
+  clearSpacers(node) {
+    if (!node.contentEl) return;
+    node.contentEl.querySelectorAll(`:scope .${TEXT_WRAP_AROUND_SPACER_CLASS}`).forEach((spacer) => spacer.remove());
+  }
+  findMarkdownContainer(node) {
+    return node.contentEl.querySelector(":scope .markdown-preview-view .markdown-preview-section");
+  }
+  updateNode(canvas, node, linkedObstacleIds) {
+    var _a, _b;
+    if (!node.contentEl) return;
+    const container = this.findMarkdownContainer(node);
+    if (!container) {
+      this.clearSpacers(node);
+      return;
+    }
+    if (!linkedObstacleIds || linkedObstacleIds.size === 0) {
+      this.clearSpacers(node);
+      return;
+    }
+    const nodeRect = node.nodeEl.getBoundingClientRect();
+    if (node.width <= 0 || nodeRect.width <= 0) {
+      this.clearSpacers(node);
+      return;
+    }
+    const scale = nodeRect.width / node.width;
+    const containerRect = container.getBoundingClientRect();
+    if (containerRect.width <= 0 || containerRect.height <= 0) {
+      this.clearSpacers(node);
+      return;
+    }
+    const visible = this.visibleSectionRect(container, node, scale);
+    if (!visible) return;
+    const computed = window.getComputedStyle(container);
+    const padLeft = parseFloat(computed.paddingLeft) || 0;
+    const padTop = parseFloat(computed.paddingTop) || 0;
+    const originX = containerRect.left + padLeft * scale;
+    const originY = containerRect.top + padTop * scale;
+    const contentWidth = container.clientWidth - padLeft - (parseFloat(computed.paddingRight) || 0);
+    this.clearSpacers(node);
+    const contentHeight = container.scrollHeight - padTop - (parseFloat(computed.paddingBottom) || 0);
+    if (contentWidth <= 0 || contentHeight <= 0) return;
+    const bands = this.computeBands(canvas, node, { originX, originY, scale, contentWidth, contentHeight, visible }, linkedObstacleIds);
+    if (bands.length === 0) return;
+    const childBottoms = Array.from(container.children).filter((child) => !child.classList.contains(TEXT_WRAP_AROUND_SPACER_CLASS)).map((child) => ({ child, bottom: (child.getBoundingClientRect().bottom - originY) / scale }));
+    for (const band of bands) {
+      const spacer = activeDocument.createElement("div");
+      spacer.classList.add(TEXT_WRAP_AROUND_SPACER_CLASS);
+      const height = band.y1 - band.y0;
+      const useLeftSide = band.x0 >= contentWidth - band.x1;
+      if (useLeftSide) {
+        spacer.style.float = "right";
+        spacer.style.width = `${Math.max(0, contentWidth - band.x0)}px`;
+        spacer.style.marginLeft = `${WRAP_GAP_PX}px`;
+      } else {
+        spacer.style.float = "left";
+        spacer.style.width = `${Math.max(0, band.x1)}px`;
+        spacer.style.marginRight = `${WRAP_GAP_PX}px`;
+      }
+      spacer.style.height = `${height}px`;
+      const anchor = (_b = (_a = childBottoms.find(({ bottom }) => bottom > band.y0 + 1)) == null ? void 0 : _a.child) != null ? _b : null;
+      container.insertBefore(spacer, anchor);
+    }
+  }
+  /**
+   * The section's box clipped to every clipping ancestor up to the node frame, in screen
+   * px. Returns null when nothing of the section is visible.
+   *
+   * Added by an LLM agent: `clientWidth`/`clientHeight`/`clientLeft`/`clientTop` are
+   * layout px (unaffected by the canvas zoom transform) while every rect and the
+   * accumulated region are screen px, so the client metrics must be scaled - unscaled,
+   * the visible region inflates by 1/scale (verified live: at 0.38x zoom the bottom
+   * edge overshot by ~430 screen px, forging phantom bands from nodes far below and
+   * beside the wrap node).
+   */
+  visibleSectionRect(section, node, scale) {
+    const r = section.getBoundingClientRect();
+    const region = { left: r.left, top: r.top, right: r.right, bottom: r.bottom };
+    let el = section.parentElement;
+    while (el) {
+      const style = window.getComputedStyle(el);
+      if (style.overflowX !== "visible" || style.overflowY !== "visible") {
+        const b = el.getBoundingClientRect();
+        const left = b.left + el.clientLeft * scale;
+        const top = b.top + el.clientTop * scale;
+        region.left = Math.max(region.left, left);
+        region.top = Math.max(region.top, top);
+        region.right = Math.min(region.right, left + el.clientWidth * scale);
+        region.bottom = Math.min(region.bottom, top + el.clientHeight * scale);
+        if (region.right <= region.left || region.bottom <= region.top) return null;
+      }
+      if (el === node.nodeEl) break;
+      el = el.parentElement;
+    }
+    return region;
+  }
+  /**
+   * Added by an LLM agent: nodes allowed to act as wrap obstacles for each wrap node,
+   * keyed by wrap node id. Only nodes with a bidirectional edge going INTO the wrap
+   * node count: an edge whose `toNode` is the wrap node and whose `fromEnd` is
+   * `'arrow'`; the node at the edge's start (`fromNode`) is the obstacle.
+   */
+  buildLinkedObstacleMap(canvas) {
+    const map = /* @__PURE__ */ new Map();
+    for (const edge of canvas.edges.values()) {
+      const data = edge.getData();
+      if (data.fromEnd !== "arrow" || !data.fromNode || !data.toNode) continue;
+      let set = map.get(data.toNode);
+      if (!set) {
+        set = /* @__PURE__ */ new Set();
+        map.set(data.toNode, set);
+      }
+      set.add(data.fromNode);
+    }
+    return map;
+  }
+  /**
+   * Overlaps of nodes painting above `node`, merged into disjoint Y bands in the node's
+   * local content-box px. Each band's X span is the min..max union of its overlaps.
+   * Only edge-linked obstacles (see buildLinkedObstacleMap) are measured - every other
+   * node is skipped before any geometry read. Overlaps are clipped to the section's
+   * visible region, so only obstacles covering on-screen text produce bands.
+   */
+  computeBands(canvas, node, geometry, linkedObstacleIds) {
+    const { originX, originY, scale, contentWidth, contentHeight, visible } = geometry;
+    const overlaps = [];
+    for (const other of canvas.nodes.values()) {
+      if (other === node || !linkedObstacleIds.has(other.id) || !this.isOnTop(other, node)) continue;
+      const otherRect = other.nodeEl.getBoundingClientRect();
+      const x0 = Math.max(otherRect.left, visible.left);
+      const x1 = Math.min(otherRect.right, visible.right);
+      const y0 = Math.max(otherRect.top, visible.top);
+      const y1 = Math.min(otherRect.bottom, visible.bottom);
+      const local = {
+        x0: Math.max(0, (x0 - originX) / scale),
+        x1: Math.min(contentWidth, (x1 - originX) / scale),
+        y0: Math.max(0, (y0 - originY) / scale),
+        y1: Math.min(contentHeight, (y1 - originY) / scale)
+      };
+      if (local.x1 - local.x0 < 1 || local.y1 - local.y0 < 1) continue;
+      overlaps.push(local);
+    }
+    overlaps.sort((a, b) => a.y0 - b.y0 || a.x0 - b.x0);
+    const bands = [];
+    for (const overlap of overlaps) {
+      const current = bands[bands.length - 1];
+      if (current && overlap.y0 <= current.y1) {
+        current.y1 = Math.max(current.y1, overlap.y1);
+        current.x0 = Math.min(current.x0, overlap.x0);
+        current.x1 = Math.max(current.x1, overlap.x1);
+      } else {
+        bands.push({ ...overlap });
+      }
+    }
+    return bands;
+  }
+  /**
+   * Whether `obstacle` paints above `background`: rendered z-index first, live zIndex
+   * counter second, DOM order last (later siblings paint on top at equal z-index).
+   */
+  isOnTop(obstacle, background) {
+    const obstacleZ = parseFloat(obstacle.nodeEl.style.zIndex);
+    const backgroundZ = parseFloat(background.nodeEl.style.zIndex);
+    if (!Number.isNaN(obstacleZ) && !Number.isNaN(backgroundZ) && obstacleZ !== backgroundZ)
+      return obstacleZ > backgroundZ;
+    if (obstacle.zIndex !== background.zIndex) return obstacle.zIndex > background.zIndex;
+    const position = background.nodeEl.compareDocumentPosition(obstacle.nodeEl);
+    if (position & Node.DOCUMENT_POSITION_DISCONNECTED) return false;
+    return !!(position & Node.DOCUMENT_POSITION_FOLLOWING);
+  }
+  // #endregion
+};
+
 // src/canvas-extensions/presentation-filter-canvas-extension.ts
 var import_obsidian27 = require("obsidian");
 var NO_FILTER = "none";
@@ -11311,6 +11677,8 @@ var CANVAS_EXTENSIONS = [
   RotateNodeCanvasExtension,
   // Added by an LLM agent
   HideNodeContentsCanvasExtension,
+  // Added by an LLM agent
+  TextWrapAroundCanvasExtension,
   // Added by an LLM agent
   PresentationFilterCanvasExtension
   // Added by an LLM agent

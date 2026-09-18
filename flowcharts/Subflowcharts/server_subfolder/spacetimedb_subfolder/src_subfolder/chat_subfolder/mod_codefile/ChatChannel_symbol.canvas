@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "b57e02f2844b4c88",
+			"type": "file",
+			"file": "server/spacetimedb/src/chat/mod.rs",
+			"subpath": "#ChatChannel",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

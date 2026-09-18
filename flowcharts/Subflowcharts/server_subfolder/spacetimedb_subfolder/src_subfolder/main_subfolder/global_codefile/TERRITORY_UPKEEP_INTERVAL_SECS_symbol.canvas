@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "63f3b57d5b5488fc",
+			"type": "file",
+			"file": "server/spacetimedb/src/main/global.rs",
+			"subpath": "#TERRITORY_UPKEEP_INTERVAL_SECS",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

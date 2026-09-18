@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// Base for the four terrain layer components inside a TileComponent (Ground/Overlay/
 /// DecorShadow/Decor). Owns the layer's pooled MultiMeshInstance2D batch leaves. The leaves are
-/// created in code because which (TriIndex, Rotation, TextureId) batches exist is data-driven by
+/// created in code because which (Rotation, TextureId) batches exist is data-driven by
 /// the server's terrain rows — everything else about the layer (the node, its ZIndex relative to
 /// the other layers) is declared in tile_component.tscn. Leaves that go inactive are zeroed, not
 /// freed, so chunk crossings reuse them instead of reallocating every pass.

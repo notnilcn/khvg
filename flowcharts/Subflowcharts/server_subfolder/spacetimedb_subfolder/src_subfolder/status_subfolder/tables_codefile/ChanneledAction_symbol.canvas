@@ -1,0 +1,23 @@
+{
+	"nodes": [
+		{
+			"id": "530238d6c8db7154",
+			"type": "file",
+			"file": "server/spacetimedb/src/status/tables.rs",
+			"subpath": "#ChanneledAction",
+			"x": 0,
+			"y": 0,
+			"width": 400,
+			"height": 400
+		}
+	],
+	"edges": [],
+	"metadata": {
+		"frontmatter": {
+			"tags": [
+				"symbol",
+				"includeInAggregateFlowchart"
+			]
+		}
+	}
+}

@@ -7,7 +7,29 @@ extends Resource
 ## Chunk coordinates in the chunk grid
 @export var chunk_coords : Vector2i
 
-## Hexes from the chunk center to its edge at save time
+## Merge mode setting (squares mode)
+@export var merge_mode : int
+
+## Height values as 2D array (squares mode)
+@export var height_map : Array
+
+## Ground texture indices (squares mode)
+@export var ground_texture_idx : PackedByteArray
+
+## Wall texture indices (squares mode)
+@export var wall_texture_idx : PackedByteArray
+
+## Grass mask (squares mode)
+@export var grass_mask : PackedByteArray
+
+# Legacy format (V1.1) for backward compatibility during migration
+@export var color_map_0 : PackedColorArray
+@export var color_map_1 : PackedColorArray
+@export var wall_color_map_0 : PackedColorArray
+@export var wall_color_map_1 : PackedColorArray
+@export var grass_mask_map : PackedColorArray
+
+## Hexes from the chunk center to its edge at save time (hex mode)
 @export var chunk_radius : int
 
 ## Local axial offsets of each stored hex, interleaved q, r
@@ -49,6 +71,11 @@ func get_collision_shape() -> ConcavePolygonShape3D:
 	return shape
 
 
-## Check if this is V3 hex format. V2 square-grid data is not migrated (hard format break).
+## Check if this is V3 hex format.
 func is_v3_format() -> bool:
 	return local_offsets.size() == elevations.size() * 2
+
+
+## Check if this carries V2 square-grid data (compact byte arrays) vs V1 legacy (color arrays).
+func is_v2_format() -> bool:
+	return not ground_texture_idx.is_empty()
