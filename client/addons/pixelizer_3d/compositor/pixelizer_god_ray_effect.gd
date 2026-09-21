@@ -4,49 +4,46 @@ extends PixelizerEffectBase
 ## God rays through the banded cloud layer, marched per pixel and poured
 ## through the coverage gaps.
 ##
-## Runs FIRST in the manager's PRE_TRANSPARENT compositor array, before
-## the snapshot pass, and writes additively into the scene colour layer, so the rays
-## are part of the image the anchor-map/apply passes replicate into macro-pixels.
+## The pass is owned by `PixelizerGodRays3D`, which inserts it before the
+## snapshot pass and removes it when the node is disabled or freed. Every pixel
+## it writes therefore joins the image the apply pass replicates into macro
+## pixels.
 ##
-## The cloud field is pushed by the manager from the same `Effects.Cloud_Shadows`
-## parameters the shadow materials use (cloud_fbm.gdshaderinc contract), so the
-## rays pour through the same gaps the ground shadows come from.
-##
-## Tuning property names (ray_steps … ray_distance_falloff) are the main-client
-## contract: PixelArtPipelineComponent fetches this object via
-## `manager.get_god_ray_pass()` and `Set()`s them untyped. Do not rename.
+## The tuning fields below mirror the provider node's exports. The node syncs
+## them from the main thread (`apply_provider`), so the render callback only
+## reads plain fields. Cloud uniforms come from the manager's cloud field
+## (`set_cloud_params`), the same dictionary the shadow materials receive, so
+## the rays pour through the same gaps the ground shadows come from.
 
-## Master toggle; the pass early-outs when false. Owned by PixelizerManager3D
-## (`ray_pass`); `PixelizerGodRays3D` toggles it, and it can be tuned directly
-## through `manager.get_god_ray_pass()`.
-@export var rays_enabled := false
-@export_range(1, 128) var ray_steps := 24
-@export var ray_max_distance := 600.0
-@export var ray_intensity := 0.5
+var ray_steps := 24
+var ray_max_distance := 600.0
+var ray_intensity := 0.5
 ## Exponential decay of the accumulation along the normalized march.
-@export var ray_decay := 2.0
+var ray_decay := 2.0
 ## Quantize the ray intensity to this many bands (<= 1 disables).
-@export var ray_quantize_bands := 4.0
+var ray_quantize_bands := 4.0
 ## How strongly a second, slower high-threshold noise modulates the shafts.
-@export_range(0.0, 1.0) var ray_dust_strength := 0.15
+var ray_dust_strength := 0.15
 ## Distance along the ray where the near fade-in starts (world units).
-@export var ray_near_fade_start := 0.0
+var ray_near_fade_start := 0.0
 ## Fade-in range past the start; 0 disables the near fade.
-@export var ray_near_fade_range := 0.0
+var ray_near_fade_range := 0.0
 ## Near fade curve exponent.
-@export var ray_near_fade_power := 1.0
+var ray_near_fade_power := 1.0
 ## Kill rays past this distance; 0 disables the cutoff.
-@export var ray_depth_cutoff := 0.0
+var ray_depth_cutoff := 0.0
 ## Fade within this distance of the surface hit; 0 disables.
-@export var ray_surface_fade := 0.0
+var ray_surface_fade := 0.0
 ## Clamp applied after `ray_quantum` scales the accumulation; 0 disables.
-@export var ray_max_stack := 10.0
+var ray_max_stack := 10.0
 ## Scale applied to the accumulation before the max-stack clamp; <= 0 -> 1.
-@export var ray_quantum := 0.0
+var ray_quantum := 0.0
 ## Exponential falloff per world unit along the march; 0 disables.
-@export var ray_distance_falloff := 0.0
+var ray_distance_falloff := 0.0
+## Ray colour; the provider pushes the sun's light colour (warm fallback).
+var ray_tint := Color(1.0, 0.96, 0.85)
 
-# ── Cloud field (pushed by PixelizerManager3D; cloud_fbm.gdshaderinc parity) ──
+# ── Cloud field (cloud_fbm.gdshaderinc parity) ───────────────────────────────
 var cloud_noise: Texture2D
 var cloud_sun_dir := Vector3(0.0, -1.0, 0.0)
 var cloud_height := 10.0
@@ -61,8 +58,6 @@ var cloud_shadow_strength := 0.6
 var cloud_shadow_banding_enabled := true
 var cloud_shadow_levels := 3.0
 var cloud_shadow_softness := 0.4
-## Ray colour; the manager pushes the sun's light colour (warm fallback).
-var ray_tint := Color(1.0, 0.96, 0.85)
 ## Cloud-field phase in seconds. < 0 uses the wall clock; >= 0 pins the phase so
 ## ray captures are reproducible (the demo pins 0 for `--capture`).
 var time_override := -1.0
@@ -102,7 +97,27 @@ func _on_render_thread_ready() -> void:
 	_values.resize(PARAMS_SIZE / 4)
 
 
-## Copy the manager's cloud parameter dictionary (Effects.Cloud_Shadows keys).
+## Copy the provider node's tuning exports. Called from the provider's `_process`
+## on the main thread; the render callback then reads only these fields.
+func apply_provider(provider: PixelizerGodRays3D) -> void:
+	ray_steps = provider.ray_steps
+	ray_max_distance = provider.ray_max_distance
+	ray_intensity = provider.ray_intensity
+	ray_decay = provider.ray_decay
+	ray_quantize_bands = provider.ray_quantize_bands
+	ray_dust_strength = provider.ray_dust_strength
+	ray_near_fade_start = provider.ray_near_fade_start
+	ray_near_fade_range = provider.ray_near_fade_range
+	ray_near_fade_power = provider.ray_near_fade_power
+	ray_depth_cutoff = provider.ray_depth_cutoff
+	ray_surface_fade = provider.ray_surface_fade
+	ray_max_stack = provider.ray_max_stack
+	ray_quantum = provider.ray_quantum
+	ray_distance_falloff = provider.ray_distance_falloff
+	time_override = provider.time_override
+
+
+## Copy the manager's cloud parameter dictionary (the shadow materials' keys).
 func set_cloud_params(params: Dictionary) -> void:
 	if params.has("cloud_noise"):
 		cloud_noise = params["cloud_noise"]
@@ -135,14 +150,12 @@ func set_cloud_params(params: Dictionary) -> void:
 
 
 func _render_callback(p_callback_type: int, p_render_data: RenderData) -> void:
-	if p_callback_type != effect_callback_type or not _initialized or manager == null:
-		return
-	if not rays_enabled:
+	if p_callback_type != effect_callback_type or not _initialized:
 		return
 	if cloud_noise == null:
 		if not _warned_no_noise:
 			_warned_no_noise = true
-			push_warning("PixelizerGodRayEffect: rays_enabled but no cloud noise assigned; pass is inert.")
+			push_warning("PixelizerGodRayEffect: no cloud noise assigned; pass is inert.")
 		return
 	var buffers := p_render_data.get_render_scene_buffers() as RenderSceneBuffersRD
 	if buffers == null or buffers.get_view_count() > 1:
@@ -208,10 +221,17 @@ func _render_callback(p_callback_type: int, p_render_data: RenderData) -> void:
 	_dispatch(uniform_set, size)
 
 
+## Frees only the RIDs this class owns. The base class's `_notification` runs
+## separately (Godot calls `_notification` on every script in the chain), so do
+## not call `super._notification()` here.
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_PREDELETE and rd != null:
-		if _noise_sampler.is_valid():
-			rd.free_rid(_noise_sampler)
-		if _params_buffer.is_valid():
-			rd.free_rid(_params_buffer)
-	super._notification(what)
+	if what != NOTIFICATION_PREDELETE:
+		return
+	if not is_instance_valid(rd):
+		return
+	if _noise_sampler.is_valid():
+		rd.free_rid(_noise_sampler)
+		_noise_sampler = RID()
+	if _params_buffer.is_valid():
+		rd.free_rid(_params_buffer)
+		_params_buffer = RID()

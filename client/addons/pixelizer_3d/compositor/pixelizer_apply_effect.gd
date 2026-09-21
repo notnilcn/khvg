@@ -175,12 +175,20 @@ func _get_framebuffer(color_rid: RID, depth_rid: RID) -> RID:
 	return _framebuffer
 
 
+## Frees only the RIDs this class owns. The base class's `_notification` runs
+## separately (Godot calls `_notification` on every script in the chain), so do
+## not call `super._notification()` here.
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_PREDELETE and rd != null:
-		if _framebuffer.is_valid() and rd.framebuffer_is_valid(_framebuffer):
-			rd.free_rid(_framebuffer)
-		if _render_pipeline.is_valid() and rd.render_pipeline_is_valid(_render_pipeline):
-			rd.free_rid(_render_pipeline)
-		if _vertex_buffer.is_valid():
-			rd.free_rid(_vertex_buffer)
-	super._notification(what)
+	if what != NOTIFICATION_PREDELETE:
+		return
+	if not is_instance_valid(rd):
+		return
+	if _framebuffer.is_valid() and rd.framebuffer_is_valid(_framebuffer):
+		rd.free_rid(_framebuffer)
+		_framebuffer = RID()
+	if _render_pipeline.is_valid() and rd.render_pipeline_is_valid(_render_pipeline):
+		rd.free_rid(_render_pipeline)
+		_render_pipeline = RID()
+	if _vertex_buffer.is_valid():
+		rd.free_rid(_vertex_buffer)
+		_vertex_buffer = RID()

@@ -22,84 +22,83 @@ repository `CREDITS.md` for the full inspiration list).
 | Path | What lives there |
 |---|---|
 | `plugin.cfg`, `plugin.gd` | Addon registration; adds the **Bake PaletteLUT to PNG** tool-menu item and builds the shader-bridge dock. |
-| `nodes/` | The core runtime/config nodes: `PixelizerManager3D`, `PixelizerApplier3D`, `PixelizerObject3D` and `PixelizerDiagnosticsOverlay`. See below. |
-| `effects/` | Optional per-scene effect nodes (`water`, `sky_clouds`, `point_light_volume`, `fireflies`, `day_night`, `camera_controller`). Place only the effects a scene needs. |
+| `nodes/` | The core runtime/config nodes: `PixelizerManager3D`, `PixelizerApplier3D` and `PixelizerDiagnosticsOverlay`, plus the `PixelizerObjectProfile` per-object override resource (`core/`). See below. |
+| `effects/` | Optional per-scene effect nodes (`water`, `sky_clouds`, `point_light_volume`, `fireflies`, `day_night`). Place only the effects a scene needs. |
 | `compositor/` | The `CompositorEffect` subclasses that drive the render passes (`*_effect.gd`). |
 | `shaders/` | Runtime spatial shaders (`.gdshader`) and shared includes (`.gdshaderinc`). |
 | `shaders/compute/` | The GLSL compute/ raster passes used by the compositor effects (`*.glsl`). |
-| `core/` | Palette LUT, dither matrix, outline palette, material factory and the shader-bridge data types. |
+| `core/` | Pipeline helpers (camera binding, cloud field, outline registry, focus, low-res view), per-object geometry state, palette LUT, dither matrix, outline palette, material factory and the shader-bridge data types. |
 | `editor/` | Editor-only tooling: the bridge dock/plugin and the palette baker. |
 
 ## Quick start
 
 ```gdscript
-# 1. World setup: one manager + a sun. The manager auto-follows the viewport's
-#    current Camera3D, so there is no camera to wire (use set_target_camera()
-#    to pin one explicitly).
+# 1. Place ONE PixelizerManager3D in the scene, named exactly
+#    "PixelizerManager3D" (the addon never creates one). Appliers and effects
+#    resolve it explicitly: top-level -> the sibling named PixelizerManager3D,
+#    nested -> the parent applier's manager. No manager means a configuration
+#    warning and no pixelization.
 var manager := PixelizerManager3D.new()
-manager.sun = sun
-manager.pixel_size = 3
+manager.sun = sun              # optional: defaults to a sibling DirectionalLight3D
 add_child(manager)
 
-# 2. Wrap content in an applier; everything under it is pixelized
-#    (subtree watcher catches runtime spawns too). Applier properties left at
-#    -1 inherit from the parent applier / manager.
+# 2. Wrap content in an applier; everything under it is pixelized (subtree
+#    watcher catches runtime spawns too). Applier properties left at
+#    PixelizerInherit.INHERIT (-1) fall through to the parent applier / manager.
 var applier := PixelizerApplier3D.new()
 applier.pixel_size = 3
-applier.anchor_mode = PixelizerObject3D.AnchorMode.UNIFIED  # one lattice for the group
-applier.dither_enabled = 1
-add_child(applier)
+applier.anchor_mode = 1        # UNIFIED (one lattice for the group)
+add_child(applier)             # must be a sibling of the manager
 applier.add_child(my_model)
 
 # 3. Custom spatial shaders opt in with the macros header:
 #    #include "res://addons/pixelizer_3d/shaders/anchor_macros.gdshaderinc"
-manager.register_pixelized_material(my_water_material)
+applier.manager.register_pixelized_material(my_water_material)
 
 # 4. Optional: snap moving objects onto the pixel lattice in the vertex stage
-#    (the scene transform is never touched). manager.register_mover() sets the
+#    (the scene transform is never touched). Registering sets the
 #    `anchor_mover_snap` instance uniform on a GeometryInstance3D, so the mesh
-#    must run a pixelizer material.
-manager.register_mover(my_moving_object)   # or applier.mover_snap = 1
+#    must run a pixelizer material. Orthographic cameras only (reported).
+applier.manager.register_mover(my_moving_object)   # or applier.mover_snap = 1
 
 # 5. Optional effects are self-contained scene nodes — add only what the scene
-#    needs. Each registers itself with the manager in _ready and unregisters in
-#    _exit_tree, so effects are composable per scene:
+#    needs. Each resolves the manager explicitly and has an optional `manager`
+#    override:
 #      PixelizerSkyClouds3D      # cloud shadows + optional deck (deck_enabled)
-#      PixelizerGodRays3D        # god rays (toggles the manager's ray pass)
+#      PixelizerGodRays3D        # god rays (owns its pass; `enabled` toggles it)
 #      PixelizerWater3D          # cloud-shadow-receiving water tile
 #      PixelizerFireflies3D      # MultiMesh firefly swarm
 #      PixelizerDayNight3D       # sun + environment rig
 #      PixelizerPointLightVolume3D
-#      PixelizerCameraController3D
-#    With no cloud node the manager pushes neutral cloud params; the manager's
-#    ray pass stays disabled until a PixelizerGodRays3D enables it
-#    (get_god_ray_pass() is always valid for external tuning).
 ```
 
-`PixelizerObject3D` is a **manual-only** per-object override: place one as a
-child of a supported geometry node (the applier no longer creates them). It
-exposes live setters (`pixel_size`, `outline_id`, `outline_color`,
-`outline_enabled`, `palette_enabled`, `anchor_mode`, `dither_enabled`), so
-runtime changes reach objects that already bound. Without one, per-object state
-lives in a `PixelizerGeometryState` owned by the applier/manager.
+`PixelizerObjectProfile` is the per-object override: a `Resource` in the
+manager's `object_profiles` array that targets a geometry node (`target_path`,
+relative to the manager, or `manager.register_object_profile(profile, geometry)`).
+Fields left at the inherit sentinel fall through to the owning applier;
+`outline_id_mode` separates inherit / auto-allocate / explicit.
 `outline_color` overrides **both** the silhouette and inner-edge (depth-edge)
-rows of the tag's outline palette; `outline_enabled = false` (applier or object)
-hides that tag's outline entirely (its palette rows get opacity 0, which the
-apply pass composites as `mix(scene, outline_rgb, opacity)`). The applier inherits
-`outline_enabled` like the other `-1` properties. `anchor_mode` `UNIFIED` anchors the
+rows of the tag's outline palette, with the colour's alpha as the row opacity
+(`alpha = 0` hides the outline, `1` replaces the scene colour);
+`outline_enabled = false` hides that tag's outline entirely
+(its palette rows get opacity 0, which the apply pass composites as
+`mix(scene, outline_rgb, opacity)`). `anchor_mode` `UNIFIED` anchors the
 macro blocks to the world origin (a common lattice for a group) instead of each
 object's own pivot.
 
+The manager's `editor_preview` toggle runs the pipeline live in the editor 3D
+viewport; preview binds are restored before the scene is saved.
+
 See `nodes/pixelizer_manager_3d.gd` for the full export set and the generic
-`register_*` slots (`register_multimesh`, `register_particles`, `pixelize_node`,
-`register_cloud_provider`, `register_cloud_material`,
-`register_pixelized_material`). The god-ray pass is manager-owned
-(`PixelizerManager3D.ray_pass`) and fixed at compositor index 0.
+`register_*` slots (`register_cloud_provider`, `register_cloud_material`,
+`register_pixelized_material`, `register_mover`, `register_object_profile`). The
+god-ray pass is owned by `PixelizerGodRays3D` and inserted through
+`manager.add_pre_pixelization_effect()`; no node means no pass.
 
 ## Composition model
 
-The manager exposes shared services only; every visual effect is an optional
-`effects/` node that registers itself. Add only the effects a scene needs:
+Every effect is an optional `effects/` node that resolves the manager explicitly
+(no viewport-group fallback). Add only the effects a scene needs:
 
 | Scene wants | Nodes to place |
 |---|---|
@@ -111,9 +110,9 @@ The manager exposes shared services only; every visual effect is an optional
 
 Cloud shadows/rays without a deck: `PixelizerSkyClouds3D` with
 `deck_enabled = false`. A scene with no cloud node renders cloud-free (the
-manager pushes neutral params). The manager's ray pass stays disabled until a
-`PixelizerGodRays3D` enables it; `manager.get_god_ray_pass()` is always valid
-for external tuning.
+manager pushes neutral params). The ray look is authored on the
+`PixelizerGodRays3D` node, which inserts and removes its own compositor pass
+(`enabled` toggles it); with no node there is no pass.
 
 ## Nodes
 
@@ -122,17 +121,16 @@ The core runtime/config nodes live in `nodes/`; the optional effects in
 
 | Node | Role |
 |---|---|
-| `PixelizerManager3D` | One per viewport. Owns the metadata `SubViewport` + camera, attaches the compositor effects to the active `Camera3D` (auto-follow; `set_target_camera()` to pin), and keeps the metadata camera in sync. No effect settings — the effect nodes own theirs. |
-| `PixelizerApplier3D` | Subtree pixelizer. Every supported geometry node under it is bound through a `PixelizerGeometryState` (no auto-created nodes). Watches `SceneTree.node_added` so runtime spawns are picked up. `-1` properties inherit from the parent applier, then the manager. |
-| `PixelizerObject3D` | **Manual-only** per-object override: place one as a child of a supported geometry node. Runtime-only; exposes live `pixel_size` / `outline_*` / `palette_enabled` / `anchor_mode` / `dither_enabled` / `disable_shadows`. |
-| `PixelizerDiagnosticsOverlay` | Optional HUD-only status readout (pipeline state, FPS, draw calls). Toggle key defaults to `Tab`; live tuning is done through Godot's remote inspector. |
+| `PixelizerApplier3D` | The entry point. Binds supported geometry in its subtree through a `PixelizerGeometryState` (no auto-created nodes) and watches `SceneTree.node_added` so runtime spawns are picked up. Resolves the manager explicitly (sibling `PixelizerManager3D` at top level, parent applier's manager when nested); a `-1`/sentinel property inherits from the parent applier, then the manager. |
+| `PixelizerManager3D` | One per viewport. Owns the metadata `SubViewport` + camera, attaches the compositor effects to the active `Camera3D` (auto-follow; `set_target_camera()` to pin), keeps the metadata camera in sync, resolves the sun and holds the object profiles. **Must be placed explicitly and named `PixelizerManager3D`** (the addon never creates one). |
+| `PixelizerObjectProfile` | Per-object override `Resource` in the manager's `object_profiles` array, targeting a geometry node (`target_path` or `register_object_profile`). Sentinels inherit from the applier; `outline_id_mode` picks inherit / auto-allocate / explicit. |
+| `PixelizerDiagnosticsOverlay` | HUD status readout plus a runtime tuner: one foldable panel per manager export group and per scene-effect node, and a "Select Object" click-to-pick inspector for `PixelizerObjectProfile` / parent-applier parameters (`PixelizerApplier3D` is never pickable). Toggle key defaults to `Tab`. |
 | `PixelizerSkyClouds3D` | Cloud **provider** (owns the 15 cloud-field params + noise) and optional visible deck. `enabled` = node on/off, `deck_enabled` = visible sheet, `clouds_enabled` = shader master toggle. |
-| `PixelizerGodRays3D` | God-ray toggle node; writes `manager.get_god_ray_pass().rays_enabled`. The pass itself is manager-owned and fixed at compositor index 0. |
+| `PixelizerGodRays3D` | God-ray node: owns the ray tuning exports and its `PixelizerGodRayEffect`, inserted before the snapshot pass. `enabled = false` removes the pass. |
 | `PixelizerWater3D` | Opaque banded water tile (`water.gdshader`); registers its material for cloud-shadow uniforms. |
 | `PixelizerPointLightVolume3D` | Additive, banded point-light volume with a view-ray halo and depth-tested occlusion. |
 | `PixelizerFireflies3D` | Deterministic emissive firefly swarm (seed-stable positions) rendered as two `MultiMeshInstance3D` draw calls (bodies + camera-facing additive glow quads from `firefly_glow.gdshader`), with depth-tested glow occlusion. |
-| `PixelizerDayNight3D` | Drives a `DirectionalLight3D` and the `WorldEnvironment` (ambient/sky/fog) from a normalized `time_of_day`. |
-| `PixelizerCameraController3D` | Input-agnostic orbit / yaw-step / zoom controller; zoom goes through the manager's `view_zoom`. |
+| `PixelizerDayNight3D` | Drives a `DirectionalLight3D` and a `WorldEnvironment` (ambient/sky/fog) from a normalized `time_of_day`. Resolves the manager, sun and environment explicitly (sibling defaults). |
 
 Supported pixelization targets: `MeshInstance3D`, `MultiMeshInstance3D`,
 `GPUParticles3D` and `CPUParticles3D`. Instance uniforms are per node, so a
@@ -231,8 +229,8 @@ native `ANCHOR_*` entry points, which is the vocabulary the bridge injects.
 `PixelizerManager3D.bridge_manifests` names the manifests the manager trusts
 (no global singleton). On `_ready` (and whenever the list changes) it builds a
 `PixelizerBridgeRegistry` mapping `source_path -> output_path`. In
-`PixelizerObject3D._apply()` each unregistered custom `ShaderMaterial` gets one
-`registry.apply(mat)` call: a lookup, and at most one in-place
+`PixelizerGeometryState.bind()` each unregistered custom `ShaderMaterial` gets
+one `registry.apply(mat)` call: a lookup, and at most one in-place
 `material.shader = generated`. There is **no** `Shader.new().code = ...`, no
 runtime source generation, no source-file I/O and no hashing anywhere in the game
 path. The in-place swap is safe

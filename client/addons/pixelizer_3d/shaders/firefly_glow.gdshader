@@ -2,8 +2,7 @@ shader_type spatial;
 render_mode blend_add, unshaded, cull_disabled, depth_draw_never, depth_test_disabled, shadows_disabled, fog_disabled;
 
 // Pixelizer3D firefly glow — one camera-facing additive quad per firefly in a
-// MultiMesh. Replaces the old per-firefly PixelizerPointLightVolume3D node (the
-// fly swarm is now two draw calls: bodies + glows).
+// MultiMesh. The swarm is two draw calls: bodies + glows.
 //
 // The per-instance transform only carries translation and a uniform pulse
 // scale; the shader billboards the quad at that world position and uses the

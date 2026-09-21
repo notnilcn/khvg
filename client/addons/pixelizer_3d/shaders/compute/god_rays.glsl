@@ -14,8 +14,8 @@
 //
 // The cloud field mirrors `cloud_fbm.gdshaderinc` (cloud_noise_at +
 // cloud_coverage_from_noise) so rays pour through the same gaps the cloud
-// shadows come from. The engine depth target is y-flipped relative to colour
-// (see copy_scene.glsl); the depth sample is unflipped here.
+// shadows come from. The depth target shares the colour target's orientation
+// (see copy_scene.glsl), so sampling at `uv` addresses the same screen pixel.
 
 layout(local_size_x = 8, local_size_y = 8, local_size_z = 1) in;
 
@@ -104,7 +104,7 @@ void main() {
 	}
 
 	vec2 uv = (vec2(pixel) + 0.5) / vec2(size);
-	float depth = textureLod(scene_depth, vec2(uv.x, 1.0 - uv.y), 0.0).r;
+	float depth = textureLod(scene_depth, uv, 0.0).r;
 
 	// Reversed-Z reconstruction (near = 1, far = 0); the inverse matrix
 	// handles the Z mapping, sky reconstructs at the far plane.

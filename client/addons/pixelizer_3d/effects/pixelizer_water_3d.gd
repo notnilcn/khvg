@@ -1,3 +1,4 @@
+@tool
 class_name PixelizerWater3D
 extends MeshInstance3D
 
@@ -56,10 +57,33 @@ func _ready() -> void:
 	set_instance_shader_parameter("coast", coast)
 	set_instance_shader_parameter("wave_phase", wave_phase)
 
+	# Deferred: an owning PixelizerApplier3D may create the manager in its own
+	# `_ready`, which runs after this node's.
+	call_deferred("_register_material")
+
+
+func _register_material() -> void:
+	if Engine.is_editor_hint() and not _editor_preview():
+		return
+	if _material == null:
+		return
 	if manager == null:
-		manager = PixelizerManager3D.resolve_manager(self)
+		manager = PixelizerManager3D.resolve_manager_explicit(self)
 	if manager != null:
 		manager.register_cloud_material(_material)
+	else:
+		push_error("Pixelizer3D: PixelizerWater3D at '%s' found no PixelizerManager3D; the water is not a cloud receiver." % get_path())
+
+
+func _editor_preview() -> bool:
+	return manager != null and is_instance_valid(manager) and manager.editor_preview
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	if PixelizerManager3D.resolve_manager_explicit(self) == null:
+		warnings.append("No PixelizerManager3D resolved; water is not registered as a cloud receiver.")
+	return warnings
 
 
 func _exit_tree() -> void:

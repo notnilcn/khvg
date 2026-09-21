@@ -357,12 +357,12 @@
   --ac-card-padding-h: 0px;
   --ac-card-padding-v: 0px;
 }
+.canvas-node[data-card-padding][data-card-padding="1,1"] {
+  --ac-card-padding-h: 1px;
+  --ac-card-padding-v: 1px;
+}
 .canvas-node[data-card-padding][data-card-padding="8,8"] {
   --ac-card-padding-h: 8px;
-  --ac-card-padding-v: 8px;
-}
-.canvas-node[data-card-padding][data-card-padding="16,8"] {
-  --ac-card-padding-h: 16px;
   --ac-card-padding-v: 8px;
 }
 .canvas-node[data-card-padding][data-card-padding="16,16"] {

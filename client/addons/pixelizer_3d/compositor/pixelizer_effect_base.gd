@@ -85,11 +85,23 @@ func _dispatch(p_uniform_set: RID, p_size: Vector2i, p_push: PackedFloat32Array 
 	rd.compute_list_end()
 
 
+## Godot invokes `_notification` on **every script in the inheritance chain**
+## (it is not virtual), so a subclass must not call `super._notification()`:
+## the engine already runs this method, and calling it again would free these
+## RIDs twice ("Attempted to free invalid ID"). Each class frees only the RIDs
+## it created.
 func _notification(what: int) -> void:
-	if what == NOTIFICATION_PREDELETE and rd != null:
-		if _sampler.is_valid():
-			rd.free_rid(_sampler)
-		if _pipeline.is_valid():
-			rd.free_rid(_pipeline)
-		if _shader.is_valid():
-			rd.free_rid(_shader)
+	if what != NOTIFICATION_PREDELETE:
+		return
+	# At shutdown the RenderingDevice may already be gone; its RIDs went with it.
+	if not is_instance_valid(rd):
+		return
+	if _sampler.is_valid():
+		rd.free_rid(_sampler)
+		_sampler = RID()
+	if _pipeline.is_valid():
+		rd.free_rid(_pipeline)
+		_pipeline = RID()
+	if _shader.is_valid():
+		rd.free_rid(_shader)
+		_shader = RID()

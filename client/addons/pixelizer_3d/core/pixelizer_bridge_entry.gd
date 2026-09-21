@@ -26,5 +26,5 @@ extends Resource
 @export var output_path := ""
 ## sha256 (hex) of the generated file bytes.
 @export var generated_hash := ""
-## INJECTION_RULES_VERSION used to generate `output_path`.
+## INJECTION_RULES_VERSION that generated `output_path`.
 @export var rules_version := 0

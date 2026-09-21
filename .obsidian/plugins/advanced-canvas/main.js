@@ -1555,13 +1555,13 @@ var BUILTIN_NODE_STYLE_ATTRIBUTES = [
       },
       {
         icon: "square",
-        label: "Small (8, 8)",
-        value: "8,8"
+        label: "Small (1, 1)",
+        value: "1,1"
       },
       {
         icon: "box",
-        label: "Medium (16, 8)",
-        value: "16,8"
+        label: "Medium (8, 8)",
+        value: "8,8"
       },
       {
         icon: "boxes",

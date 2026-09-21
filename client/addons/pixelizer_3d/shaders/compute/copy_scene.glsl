@@ -21,7 +21,8 @@ void main() {
 	}
 	vec2 uv = (vec2(pos) + vec2(0.5)) / vec2(size);
 	imageStore(destination_color, pos, texture(source_color, uv));
-	// The engine depth target is y-flipped relative to colour; the copy is
-	// stored colour-oriented so downstream passes can use plain UVs.
-	imageStore(destination_depth, pos, vec4(texture(depth_texture, vec2(uv.x, 1.0 - uv.y)).r, 0.0, 0.0, 0.0));
+	// The depth target shares the colour target's orientation (the engine's own
+	// depth copies use plain UVs too), so sample straight across: downstream
+	// passes then address the depth of the same screen pixel.
+	imageStore(destination_depth, pos, vec4(texture(depth_texture, uv).r, 0.0, 0.0, 0.0));
 }

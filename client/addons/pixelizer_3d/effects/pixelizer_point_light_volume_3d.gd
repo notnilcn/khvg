@@ -1,3 +1,4 @@
+@tool
 class_name PixelizerPointLightVolume3D
 extends MeshInstance3D
 
@@ -55,10 +56,33 @@ func _ready() -> void:
 	material_override = _material
 	_push_params()
 
+	# Deferred: an owning PixelizerApplier3D may create the manager in its own
+	# `_ready`, which runs after this node's.
+	call_deferred("_register_material")
+
+
+func _register_material() -> void:
+	if Engine.is_editor_hint() and not _editor_preview():
+		return
+	if _material == null:
+		return
 	if manager == null:
-		manager = PixelizerManager3D.resolve_manager(self)
+		manager = PixelizerManager3D.resolve_manager_explicit(self)
 	if manager != null:
 		manager.register_pixelized_material(_material)
+	else:
+		push_error("Pixelizer3D: PixelizerPointLightVolume3D at '%s' found no PixelizerManager3D; the volume is not pixelizer-registered." % get_path())
+
+
+func _editor_preview() -> bool:
+	return manager != null and is_instance_valid(manager) and manager.editor_preview
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	if PixelizerManager3D.resolve_manager_explicit(self) == null:
+		warnings.append("No PixelizerManager3D resolved; the volume is not registered with the pixelizer.")
+	return warnings
 
 
 func _exit_tree() -> void:

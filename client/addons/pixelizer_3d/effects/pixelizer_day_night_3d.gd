@@ -1,3 +1,4 @@
+@tool
 class_name PixelizerDayNight3D
 extends Node3D
 
@@ -34,13 +35,12 @@ extends Node3D
 @export var fast_forward_speed := 60.0
 
 @export_group("Wiring")
-## Manager whose sun/cloud/ray path follows this rig. Found from the
-## "pixelizer_manager" group when unset.
+## Manager whose sun/cloud/ray path follows this rig. Resolved explicitly
+## (ancestor applier -> manager ancestor -> sibling `PixelizerManager3D`).
 @export var manager: PixelizerManager3D
-## Sun to drive; defaults to `manager.sun`, then a "Sun" node in the tree.
+## Sun to drive; defaults to `manager.sun`.
 @export var sun: DirectionalLight3D
-## Environment to drive; defaults to the first node in the "world_environment"
-## group, then the manager's viewport environment.
+## Environment to drive; defaults to a sibling `WorldEnvironment`.
 @export var world_environment: WorldEnvironment
 
 @export_group("Sun arc")
@@ -77,7 +77,9 @@ extends Node3D
 
 
 func _ready() -> void:
-	_apply()
+	# Deferred: an owning PixelizerApplier3D may create the manager in its own
+	# `_ready`; `_apply` resolves the manager, sun and environment.
+	call_deferred("_apply")
 
 
 func _process(delta: float) -> void:
@@ -170,18 +172,51 @@ func _apply_environment(env: Environment, t: float) -> void:
 
 func _resolve_refs() -> void:
 	if manager == null or not is_instance_valid(manager):
-		manager = PixelizerManager3D.resolve_manager(self)
+		manager = PixelizerManager3D.resolve_manager_explicit(self)
+	if manager == null and not Engine.is_editor_hint():
+		push_error("Pixelizer3D: PixelizerDayNight3D at '%s' found no PixelizerManager3D; the rig is inert." % get_path())
 	if sun == null or not is_instance_valid(sun):
 		if manager != null and manager.sun != null:
 			sun = manager.sun
-		else:
-			sun = get_tree().get_root().find_child("Sun", true, false) as DirectionalLight3D
 	if sun != null and manager != null and is_instance_valid(manager):
 		# The manager reads the sun node every frame; making sure they are the
 		# same object is the whole "wiring".
 		manager.sun = sun
+	if (sun == null or not is_instance_valid(sun)) and not Engine.is_editor_hint():
+		push_error("Pixelizer3D: PixelizerDayNight3D at '%s' has no sun: assign `sun`, set manager.sun, or add a sibling DirectionalLight3D." % get_path())
 	if world_environment == null or not is_instance_valid(world_environment):
-		world_environment = get_tree().get_first_node_in_group("world_environment") as WorldEnvironment
+		world_environment = _sibling_world_environment()
+	if world_environment == null and not Engine.is_editor_hint():
+		push_warning("Pixelizer3D: PixelizerDayNight3D at '%s' has no WorldEnvironment; sky/ambient/fog ramps are skipped." % get_path())
+
+
+func _sibling_world_environment() -> WorldEnvironment:
+	if not is_inside_tree():
+		return null
+	var parent := get_parent()
+	if parent == null:
+		return null
+	for child in parent.get_children():
+		if child is WorldEnvironment:
+			return child as WorldEnvironment
+	return null
+
+
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	var resolved := manager
+	if resolved == null or not is_instance_valid(resolved):
+		resolved = PixelizerManager3D.resolve_manager_explicit(self)
+	if resolved == null:
+		warnings.append("No PixelizerManager3D resolved; the day/night rig cannot drive cloud/ray settings.")
+	var resolved_sun := sun
+	if (resolved_sun == null or not is_instance_valid(resolved_sun)) and resolved != null:
+		resolved_sun = resolved.sun
+	if resolved_sun == null or not is_instance_valid(resolved_sun):
+		warnings.append("No sun: assign `sun`, set manager.sun, or add a sibling DirectionalLight3D.")
+	if world_environment == null and _sibling_world_environment() == null:
+		warnings.append("No WorldEnvironment: assign one or add a sibling WorldEnvironment; sky/ambient/fog ramps are skipped.")
+	return warnings
 
 
 # ── Default ramps (created lazily so the inspector shows authored values) ────

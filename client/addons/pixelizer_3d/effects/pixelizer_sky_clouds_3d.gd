@@ -1,3 +1,4 @@
+@tool
 class_name PixelizerSkyClouds3D
 extends MeshInstance3D
 
@@ -78,11 +79,22 @@ func _ready() -> void:
 	_material.set_shader_parameter("cloud_color", cloud_color)
 	_material.set_shader_parameter("edge_fade", edge_fade)
 	material_override = _material
+	# Deferred: an owning PixelizerApplier3D may create the manager in its own
+	# `_ready`, which runs after this node's.
+	call_deferred("_register")
+
+
+func _register() -> void:
+	if _material == null:
+		return
 	if manager == null:
-		manager = PixelizerManager3D.resolve_manager(self)
+		manager = PixelizerManager3D.resolve_manager_explicit(self)
 	if not _manager_valid():
-		push_warning("PixelizerSkyClouds3D: no PixelizerManager3D found; cloud deck is inert.")
+		if not Engine.is_editor_hint():
+			push_error("Pixelizer3D: PixelizerSkyClouds3D at '%s' found no PixelizerManager3D; the cloud deck is inert." % get_path())
 		visible = false
+		return
+	if Engine.is_editor_hint() and not manager.editor_preview:
 		return
 	if enabled:
 		manager.register_cloud_provider(self)
@@ -98,6 +110,8 @@ func _exit_tree() -> void:
 
 
 func _process(_delta: float) -> void:
+	if Engine.is_editor_hint() and not (manager != null and is_instance_valid(manager) and manager.editor_preview):
+		return
 	if not _manager_valid() or _material == null:
 		return
 	if follow_camera:
@@ -105,10 +119,22 @@ func _process(_delta: float) -> void:
 	_update_camera_frame()
 
 
+## The camera the deck follows: the manager's active camera when available (so an
+## explicitly pinned target camera is respected), else the viewport camera.
+func _active_camera() -> Camera3D:
+	if _manager_valid():
+		var cam := manager.get_active_camera()
+		if cam != null and is_instance_valid(cam):
+			return cam
+	if not is_inside_tree():
+		return null
+	return get_viewport().get_camera_3d()
+
+
 # ── Cloud provider ───────────────────────────────────────────────────────────
 
-## Build the shader uniform dictionary (same keys/defaults the manager used to
-## own). Duck-typed provider contract; called by the manager every frame.
+## Build the shader uniform dictionary (the `cloud_fbm.gdshaderinc` contract).
+## Duck-typed provider contract; called by the manager every frame.
 func build_cloud_params(sun: DirectionalLight3D) -> Dictionary:
 	var sun_dir := Vector3(0.0, -1.0, 0.0)
 	if sun != null and is_instance_valid(sun):
@@ -194,8 +220,15 @@ func _manager_valid() -> bool:
 	return manager != null and is_instance_valid(manager)
 
 
+func _get_configuration_warnings() -> PackedStringArray:
+	var warnings := PackedStringArray()
+	if PixelizerManager3D.resolve_manager_explicit(self) == null:
+		warnings.append("No PixelizerManager3D resolved; the cloud deck and cloud shadows are inert.")
+	return warnings
+
+
 func _update_transform() -> void:
-	var camera := get_viewport().get_camera_3d()
+	var camera := _active_camera()
 	var deck_y := height if height > 0.0 else cloud_height
 	if follow_camera and camera != null:
 		global_position = Vector3(camera.global_position.x, deck_y, camera.global_position.z)
@@ -205,7 +238,7 @@ func _update_transform() -> void:
 
 
 func _update_camera_frame() -> void:
-	var camera := get_viewport().get_camera_3d()
+	var camera := _active_camera()
 	_material.set_shader_parameter("cloud_color", cloud_color)
 	_material.set_shader_parameter("edge_fade", edge_fade)
 	# Mirror the manager-pushed noise into the mipmapped sampler (same texture;

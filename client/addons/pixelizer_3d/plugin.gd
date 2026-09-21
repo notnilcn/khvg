@@ -10,6 +10,7 @@ const BAKE_MENU_ITEM := "Bake PaletteLUT to PNG"
 
 
 func _enter_tree() -> void:
+	PixelizerGlobals.ensure()
 	add_tool_menu_item(BAKE_MENU_ITEM, _bake_palette)
 	build_bridge_dock()
 

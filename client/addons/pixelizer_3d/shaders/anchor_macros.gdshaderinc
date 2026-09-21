@@ -81,7 +81,7 @@ instance uniform int anchor_mode = 0;
 instance uniform int use_dither = 1;
 // Mover snap (1 = on): the vertex stage shifts the whole mesh so the projected
 // object pivot lands on a whole screen texel. Orthographic only; the scene
-// transform is never touched (the old CPU pre/post-draw swap is gone).
+// transform is never touched.
 instance uniform int anchor_mover_snap = 0;
 uniform bool use_vertex_color = false;
 uniform float alpha_scissor : hint_range(0.0, 1.0) = 0.0;

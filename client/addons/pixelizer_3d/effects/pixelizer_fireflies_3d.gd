@@ -72,8 +72,8 @@ func _process(delta: float) -> void:
 
 
 func _rebuild() -> void:
-	# Free the old nodes synchronously: queue_free() would leave stale children
-	# visible to same-frame probes.
+	# Free the previous nodes synchronously: queue_free() would leave stale
+	# children visible to same-frame probes.
 	if _bodies != null and is_instance_valid(_bodies):
 		_bodies.free()
 	_bodies = null
@@ -127,9 +127,9 @@ func _rebuild() -> void:
 	_glows.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_glows.visible = light_volume_enabled
 	add_child(_glows)
-	var manager := PixelizerManager3D.resolve_manager(self)
-	if manager != null:
-		manager.register_pixelized_material(_glow_material)
+	# Deferred: an owning PixelizerApplier3D may create the manager in its own
+	# `_ready`, which runs after this node's.
+	call_deferred("_register_glow_material")
 
 	_body_buffer.resize(firefly_count * 12)
 	_glow_buffer.resize(firefly_count * 12)
@@ -158,10 +158,18 @@ func _rebuild() -> void:
 	_apply_motion(_time)
 
 
+func _register_glow_material() -> void:
+	if _glow_material == null:
+		return
+	var manager := PixelizerManager3D.resolve_manager_explicit(self)
+	if manager != null:
+		manager.register_pixelized_material(_glow_material)
+
+
 func _unregister_glow_material() -> void:
 	if _glow_material == null:
 		return
-	var manager := PixelizerManager3D.resolve_manager(self)
+	var manager := PixelizerManager3D.resolve_manager_explicit(self)
 	if manager != null:
 		manager.unregister_pixelized_material(_glow_material)
 	_glow_material = null

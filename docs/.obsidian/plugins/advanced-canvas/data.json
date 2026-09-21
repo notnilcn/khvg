@@ -22,8 +22,8 @@
   "defaultEdgeWidth": "3",
   "defaultArrowSize": "2",
   "cardNodePadding": [
-    16,
-    8
+    8,
+    16
   ],
   "connectEdgesToArrowBase": true,
   "defaultNodeBorder": "default",
@@ -31,8 +31,8 @@
   "nodeOutlineBlack": false,
   "nodeOutlineWhite": false,
   "nodeOutlineWidth": 3,
-  "edgeOutlineBlack": false,
-  "edgeOutlineWhite": false,
+  "edgeOutlineBlack": true,
+  "edgeOutlineWhite": true,
   "edgeOutlineWidth": 1,
   "canvasMetadataCompatibilityEnabled": true,
   "enableSingleNodeLinks": true,

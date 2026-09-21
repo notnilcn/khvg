@@ -2,18 +2,26 @@ class_name PixelizerGeometryState
 extends RefCounted
 
 ## Per-object pixelizer state for one GeometryInstance3D, owned by
-## PixelizerApplier3D (or created explicitly by the manager registration APIs).
-## Replaces the old auto-created PixelizerObject3D config node: no extra Node3D,
-## no deferred `_apply` and no per-mesh `_process`.
+## PixelizerApplier3D (or bound directly by a manual PixelizerObject3D).
 ##
 ## All four supported node types are handled through one `_material_slots()`
-## iterator that yields `{source, apply, restore}` for every authored material
-## slot; `bind`, `unbind`, `collect_materials`, `uses_unsupported_custom_material`
-## and the bridge all iterate that one list.
+## iterator that yields a `Slot` (`source` + `apply`/`restore` callables) for
+## every authored material slot; `bind`, `unbind`, `collect_materials`, the
+## unsupported-material check and the bridge all iterate that one list.
 
-const _KIND_MULTIMESH := 0
-const _KIND_GPU_PARTICLES := 1
-const _KIND_CPU_PARTICLES := 2
+## One authored material slot on the target: the source material and the calls
+## that swap in / restore the converted material for that slot.
+class Slot:
+	extends RefCounted
+	var source: Material
+	var apply: Callable
+	var restore: Callable
+
+	func _init(p_source: Material, p_apply: Callable, p_restore: Callable) -> void:
+		source = p_source
+		apply = p_apply
+		restore = p_restore
+
 
 var target: GeometryInstance3D
 var manager_ref: PixelizerManager3D
@@ -31,7 +39,7 @@ var anchor_mode := 0
 var disable_shadows := true
 
 var _applied := false
-var _slots: Array = []
+var _slots: Array[Slot] = []
 var _original_layers := 0
 var _original_shadow_casting := GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 var _shadow_applied := false
@@ -56,14 +64,14 @@ func is_applied() -> bool:
 
 
 ## True when a bridge swap happened for this target (keeps the applier watchdog
-## armed, as in the old per-object watcher).
+## armed).
 func bridge_swapped() -> bool:
 	return _bridge_swapped
 
 
 ## True when there is nothing to inspect yet (MST chunks clear their mesh on save
 ## and rebuild at runtime). The applier keeps such targets watched.
-func has_no_material_info() -> bool:
+func has_no_materials() -> bool:
 	return _material_slots().is_empty()
 
 
@@ -72,7 +80,7 @@ func has_no_material_info() -> bool:
 func collect_materials() -> Array:
 	var out: Array = []
 	for slot in _material_slots():
-		out.append(slot["source"])
+		out.append(slot.source)
 	return out
 
 
@@ -81,7 +89,7 @@ func collect_materials() -> Array:
 ## camera is not polluted with un-encoded colours.
 func uses_unsupported_custom_material() -> bool:
 	for slot in _material_slots():
-		if _is_unsupported_custom_material(slot["source"]):
+		if _is_unsupported_custom_material(slot.source):
 			return true
 	return false
 
@@ -103,7 +111,7 @@ func bind(manager: PixelizerManager3D) -> bool:
 	# materials in place so they become recognized/convertible at runtime.
 	refresh_bridge(manager_ref)
 	for slot in slots:
-		if _is_unsupported_custom_material(slot["source"]):
+		if _is_unsupported_custom_material(slot.source):
 			return false
 	var factory := manager_ref.get_material_factory()
 	_original_layers = target.layers
@@ -112,13 +120,16 @@ func bind(manager: PixelizerManager3D) -> bool:
 	if outline_id < 0:
 		outline_id = manager_ref.allocate_outline_id()
 	for slot in slots:
-		var source: Material = slot["source"]
-		if _is_pixelizer_material(source, factory.shader):
+		if _is_pixelizer_material(slot.source, factory.shader):
 			continue
-		(slot["apply"] as Callable).call(factory.get_pixelizer_material(source))
+		slot.apply.call(factory.get_pixelizer_material(slot.source))
 	_slots = slots
-	push_instance_params()
+	# `_applied` must be true before the push: `push_instance_params` early-outs
+	# while the state is not applied, so calling it first silently dropped every
+	# per-subtree instance uniform (pixel size / anchor mode / outline palette
+	# registration) on the first bind.
 	_applied = true
+	push_instance_params()
 	return true
 
 
@@ -139,7 +150,7 @@ func unbind() -> void:
 		_slots = []
 		return
 	for slot in _slots:
-		(slot["restore"] as Callable).call()
+		slot.restore.call()
 	_slots = []
 	target.layers = _original_layers
 	if _shadow_applied:
@@ -178,7 +189,7 @@ func refresh_bridge(manager: PixelizerManager3D) -> bool:
 	var registry := manager.get_bridge_registry()
 	var swapped := false
 	for slot in _material_slots():
-		var material = slot["source"]
+		var material = slot.source
 		if not (material is ShaderMaterial):
 			continue
 		var shader_material := material as ShaderMaterial
@@ -204,17 +215,16 @@ func refresh_bridge(manager: PixelizerManager3D) -> bool:
 
 # ── Single material-slot iterator ───────────────────────────────────────────
 
-func _material_slots() -> Array:
-	var slots: Array = []
+func _material_slots() -> Array[Slot]:
+	var slots: Array[Slot] = []
 	if target == null or not is_instance_valid(target):
 		return slots
 	var override := target.material_override
 	if override != null:
-		slots.append({
-			"source": override,
-			"apply": Callable(self, "_apply_override").bind(target),
-			"restore": Callable(self, "_restore_override").bind(target, override),
-		})
+		slots.append(Slot.new(
+			override,
+			Callable(self, "_apply_override").bind(target),
+			Callable(self, "_restore_override").bind(target, override)))
 		return slots
 	if target is MeshInstance3D:
 		var mi := target as MeshInstance3D
@@ -223,43 +233,51 @@ func _material_slots() -> Array:
 			for i in mesh.get_surface_count():
 				var existing := mi.get_surface_override_material(i)
 				var source: Material = existing if existing != null else mesh.surface_get_material(i)
-				slots.append({
-					"source": source,
-					"apply": Callable(self, "_apply_surface").bind(mi, i),
-					"restore": Callable(self, "_restore_surface").bind(mi, i, existing),
-				})
+				slots.append(Slot.new(
+					source,
+					Callable(self, "_apply_surface").bind(mi, i),
+					Callable(self, "_restore_surface").bind(mi, i, existing)))
 		return slots
 	if target is MultiMeshInstance3D:
 		var mmi := target as MultiMeshInstance3D
 		if mmi.multimesh != null and mmi.multimesh.mesh != null:
-			slots = _duplicated_mesh_slots(mmi.multimesh.mesh, _KIND_MULTIMESH, mmi)
+			slots = _duplicated_mesh_slots(
+				mmi.multimesh.mesh,
+				mmi,
+				func(mesh: Mesh) -> void: mmi.multimesh.mesh = mesh)
 		return slots
 	if target is GPUParticles3D:
 		var particles := target as GPUParticles3D
 		# Only draw_pass_1: querying draw_pass_2..4 when unset logs an engine error.
 		if particles.draw_pass_1 != null:
-			slots = _duplicated_mesh_slots(particles.draw_pass_1, _KIND_GPU_PARTICLES, particles)
+			slots = _duplicated_mesh_slots(
+				particles.draw_pass_1,
+				particles,
+				func(mesh: Mesh) -> void: particles.draw_pass_1 = mesh)
 		return slots
 	if target is CPUParticles3D:
 		var cpu := target as CPUParticles3D
 		if cpu.mesh != null:
-			slots = _duplicated_mesh_slots(cpu.mesh, _KIND_CPU_PARTICLES, cpu)
+			slots = _duplicated_mesh_slots(
+				cpu.mesh,
+				cpu,
+				func(mesh: Mesh) -> void: cpu.mesh = mesh)
 		return slots
 	return slots
 
 
 ## Mesh-level types (MultiMesh/particles) have no surface override API: the mesh
-## is duplicated lazily on the first conversion and assigned back.
-func _duplicated_mesh_slots(original_mesh: Mesh, kind: int, owner: Node) -> Array:
-	var slots: Array = []
-	var holder := [null]
+## is duplicated lazily on the first conversion and assigned back with the
+## caller's `assign` callable.
+func _duplicated_mesh_slots(original_mesh: Mesh, owner: Node, assign: Callable) -> Array[Slot]:
+	var slots: Array[Slot] = []
+	var holder: Array = [null]
 	for i in original_mesh.get_surface_count():
 		var source: Material = original_mesh.surface_get_material(i)
-		slots.append({
-			"source": source,
-			"apply": Callable(self, "_apply_duplicated_surface").bind(holder, owner, kind, i, original_mesh),
-			"restore": Callable(self, "_restore_duplicated_mesh").bind(owner, kind, original_mesh),
-		})
+		slots.append(Slot.new(
+			source,
+			Callable(self, "_apply_duplicated_surface").bind(holder, owner, assign, i, original_mesh),
+			Callable(self, "_restore_duplicated_mesh").bind(owner, assign, original_mesh)))
 	return slots
 
 
@@ -285,27 +303,18 @@ func _restore_surface(mi: MeshInstance3D, index: int, original: Material) -> voi
 		mi.set_surface_override_material(index, original)
 
 
-func _apply_duplicated_surface(converted: Material, holder: Array, owner: Node, kind: int, index: int, original_mesh: Mesh) -> void:
+func _apply_duplicated_surface(converted: Material, holder: Array, owner: Node, assign: Callable, index: int, original_mesh: Mesh) -> void:
+	if not is_instance_valid(owner):
+		return
 	if holder[0] == null:
-		var duplicate: Mesh = original_mesh.duplicate()
-		holder[0] = duplicate
-		_assign_mesh(owner, kind, duplicate)
+		holder[0] = original_mesh.duplicate()
+		assign.call(holder[0])
 	(holder[0] as Mesh).surface_set_material(index, converted)
 
 
-func _restore_duplicated_mesh(owner: Node, kind: int, original_mesh: Mesh) -> void:
+func _restore_duplicated_mesh(owner: Node, assign: Callable, original_mesh: Mesh) -> void:
 	if is_instance_valid(owner):
-		_assign_mesh(owner, kind, original_mesh)
-
-
-func _assign_mesh(owner: Node, kind: int, mesh: Mesh) -> void:
-	match kind:
-		_KIND_MULTIMESH:
-			(owner as MultiMeshInstance3D).multimesh.mesh = mesh
-		_KIND_GPU_PARTICLES:
-			(owner as GPUParticles3D).draw_pass_1 = mesh
-		_KIND_CPU_PARTICLES:
-			(owner as CPUParticles3D).mesh = mesh
+		assign.call(original_mesh)
 
 
 # ── Helpers ─────────────────────────────────────────────────────────────────

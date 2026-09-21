@@ -41,18 +41,19 @@ AutoZoomAtShallowPitch = true
 
 [node name="PixelizerManager3D" type="Node3D" parent="." unique_id=2100000001]
 script = ExtResource("13_manager")
-snap_camera = false
 sun = NodePath("../DirectionalLight3D")
+snap_camera = false
 
 [node name="CharactersPixelApplier" type="Node3D" parent="PixelizerManager3D" unique_id=2100000002]
 script = ExtResource("12_applier")
 override_outline_color = true
 
-[node name="BulletsPixelApplier" type="Node3D" parent="PixelizerManager3D" unique_id=1581820700]
+[node name="PixelizerApplier3D" type="Node3D" parent="PixelizerManager3D" unique_id=493290460]
 script = ExtResource("12_applier")
-override_outline_color = true
+pixel_size = 4
+metadata/_custom_type_script = "uid://btdtpfyyn50j0"
 
-[node name="Bullets3DComponent" type="Node3D" parent="PixelizerManager3D/BulletsPixelApplier" unique_id=1581820701]
+[node name="Bullets3DComponent" type="Node3D" parent="PixelizerManager3D/PixelizerApplier3D" unique_id=1581820701]
 script = ExtResource("7_bullets3d")
 BulletScene = ExtResource("6_bullet")
 ModelYawOffset = 1.5699999999999998
@@ -66,7 +67,6 @@ plane_size = 16000.0
 
 [node name="PixelizerGodRays3D" type="Node3D" parent="." unique_id=2100000004]
 script = ExtResource("15_godrays")
-enabled = false
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1996365010]
 transform = Transform3D(0.86602527, 0.38302252, -0.32139382, 0, 0.64278734, 0.7660447, 0.50000024, -0.66341406, 0.55667007, 0, 0, 0)
