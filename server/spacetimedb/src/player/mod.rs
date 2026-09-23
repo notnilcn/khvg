@@ -1,3 +1,4 @@
+pub mod explored;
 pub mod methods;
 pub mod reducers;
 pub mod tables;

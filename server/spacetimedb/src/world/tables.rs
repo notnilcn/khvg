@@ -68,6 +68,11 @@ pub struct BuildingTile {
     // steeper is a cliff — too steep up blocks the move, too steep down is a fall (see
     // report_movement).
     pub elevation: i16,
+    // Ridge height field payload, stamped by world generation (world/heights.rs): 7 entries
+    // `[center, c0..c5]` in HEX_NEIGHBOR_DELTAS corner order, world-unit Y values (i16).
+    // Empty is allowed only before generation has run — after it, every generated hex carries
+    // all 7 samples. The client renders these heights; elevation is floor(center / 16).
+    pub heights: Vec<i16>,
 }
 
 #[table(accessor = texture_entry, public)]

@@ -258,3 +258,46 @@ pub struct PlayerSurvival {
     pub attrition_ticks: u32,
     pub last_regen_at: Option<Timestamp>,
 }
+
+/// One hex of a revealed chunk's render snapshot. Mirrors the `HexTile` fields the client's
+/// fog/map layer needs, plus `elevation` from the hex's `BuildingTile` row (0 when absent).
+#[derive(SpacetimeType, Clone)]
+pub struct ExploredHex {
+    pub hex_q: i32,
+    pub hex_r: i32,
+    pub texture_id: String,
+    pub rotation: u8,
+    pub overlay_texture_id: Option<String>,
+    pub overlay_rotation: u8,
+    pub overlay_scale: f32,
+    pub elevation: i16,
+    pub river_mask: u8,
+    pub road_mask: u8,
+    pub wall_mask: u8,
+}
+
+/// Per-profile explored map (PLAN §4.2). Reveal granularity is the terrain AOI disk: the
+/// player's chunk crossing reveals `DEFAULT_TERRAIN_AOI_CHUNK_RADIUS` chunk rings around the
+/// destination chunk at once, never a single hex or single chunk. Rows stay per chunk, so
+/// overlapping AOI disks do not duplicate payloads — a one-chunk move inserts only the newly
+/// entered outer ring (set-diffed against the profile's own rows, ≤ 19 today — a 2-ring disk).
+///
+/// `hexes` is a denormalized snapshot of the chunk's `HexTile` rows joined with
+/// `BuildingTile.elevation`, copied once at reveal time. World generation is static after
+/// `internal_generate_world`, so snapshots can never go stale — that is what lets distant
+/// explored chunks render without widening the `nearby_terrain_tiles` subscription. (An
+/// admin regeneration is the one exception: it rewrites the live rows but leaves the explored
+/// snapshots as the record of what that player saw.)
+#[table(accessor = player_explored_chunk, public)]
+#[derive(Clone)]
+pub struct PlayerExploredChunk {
+    #[primary_key] #[auto_inc]
+    pub explored_id: u64,
+    #[index(btree)]
+    pub profile_id: u64,
+    pub chunk_q: i32,
+    pub chunk_r: i32,
+    pub chunk_index: i64,
+    pub revealed_at: Timestamp,
+    pub hexes: Vec<ExploredHex>,
+}

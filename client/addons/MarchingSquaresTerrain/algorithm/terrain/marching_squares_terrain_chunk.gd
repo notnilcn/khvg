@@ -19,6 +19,17 @@ const EDGE_END_OVERLAP : float = 0.05 # Strip ends extend past the corners to mi
 const SLOPE_TOP_EPSILON : float = 0.001 # Fraction of level_height the slope inset line floats above the low fan
 const MAX_TERRACE_DELTA : int = 4 # Terraces beyond this many levels fall back to a cliff
 
+# Smooth-top heights. Lockstep with the server's world/heights.rs and BuildingTile.heights
+# (server/spacetimedb/src/world/tables.rs): every hex streams 7 world-unit heights
+# [center, corner c0..c5], corners in HEX_NEIGHBOR_DELTAS / MSTHexMath.neighbor_offset
+# order at MSTHexMath.hex_corner_offset(dir, size) (angle 60*dir - 30), and the C# feeder
+# calls chunk.Call("draw_hex_heights", new Vector2I(localQ, localR), packedHeights) with a
+# PackedInt32Array of exactly 7 ints (center first). All copies change together. Heights
+# are runtime-only (never persisted by MSTDataHandler/MSTJsonIO) because the server
+# re-streams them on every join; an empty payload falls back to the flat top fan.
+const HEIGHTS_PER_HEX : int = 7
+const SMOOTH_SUBDIV : int = 2 # Each corner-to-center top triangle splits into 4^SMOOTH_SUBDIV (96 triangles/hex at 2; 0 -> 1)
+
 # Fallbacks used when the chunk has no terrain system assigned yet.
 const DEFAULT_HEX_SIZE : float = 2.0
 const DEFAULT_LEVEL_HEIGHT : float = 2.0
@@ -29,8 +40,9 @@ const DEFAULT_CHUNK_RADIUS : int = 8
 @export var chunk_coords : Vector2i = Vector2i.ZERO
 
 # Per-hex records keyed by local axial offset from the chunk center hex.
-# Each record: {elevation: int, ground: int, wall: int, grass: bool, edges: int}
-# Persisted via MSTDataHandler, cleared from the scene file on save.
+# Each record: {elevation: int, ground: int, wall: int, grass: bool, edges: int, heights: PackedInt32Array}
+# "heights" is the runtime-only server payload (empty = flat fallback); everything else
+# is persisted via MSTDataHandler and cleared from the scene file on save.
 @export_storage var hex_data : Dictionary = {}
 
 var grass_planter : MarchingSquaresGrassPlanter
@@ -43,6 +55,8 @@ var st : SurfaceTool # The surfacetool used to construct the current terrain
 
 var _skip_save_on_exit : bool = false # Set to true when chunk is removed temporarily (undo/redo)
 var _data_dirty : bool = false # Set to true when source data changes, triggers save in MSTDataHandler
+var _has_smooth_tops : bool = false # Any hex built a smooth top this regen: weld the mesh with st.index()
+var _smooth_patterns : Dictionary = {} # subdiv -> {points: Array[Vector3i], tris: PackedInt32Array}, cached subdivision lattice
 
 #region temporary storage vars
 # Temporary storage for ephemeral resources during scene save
@@ -235,15 +249,22 @@ func get_chunk_radius() -> int:
 
 #region hex data accessors
 
-## Create a default hex record (flat ground at level 0).
-static func create_hex_record(elevation: int = 0, ground: int = 0, wall: int = 0, grass: bool = false, edges: int = 0) -> Dictionary:
+## Create a default hex record (flat ground at level 0, no height payload).
+static func create_hex_record(elevation: int = 0, ground: int = 0, wall: int = 0, grass: bool = false, edges: int = 0, heights: PackedInt32Array = PackedInt32Array()) -> Dictionary:
 	return {
 		"elevation": elevation,
 		"ground": ground,
 		"wall": wall,
 		"grass": grass,
 		"edges": edges,
+		"heights": heights,
 	}
+
+
+## Height payload of a record (the server's 7 world-unit samples, center first).
+## Empty when the hex has none: the flat fan is the fallback.
+static func get_record_heights(record: Dictionary) -> PackedInt32Array:
+	return record.get("heights", PackedInt32Array())
 
 
 ## Get the hex record at a local axial offset, or an empty Dictionary if untouched.
@@ -271,6 +292,18 @@ func get_elevation(lhex: Vector2i) -> int:
 
 func draw_elevation(lhex: Vector2i, level: int) -> void:
 	_get_or_create_hex(lhex)["elevation"] = level
+	mark_dirty()
+
+
+## Height payload of a hex (empty = flat fallback).
+func get_hex_heights(lhex: Vector2i) -> PackedInt32Array:
+	return get_record_heights(get_hex(lhex))
+
+
+## Store the server's 7-sample height payload of a hex (center first, corner samples
+## in neighbor-delta order). Empty payloads restore the flat fan.
+func draw_hex_heights(lhex: Vector2i, heights: PackedInt32Array) -> void:
+	_get_or_create_hex(lhex)["heights"] = heights
 	mark_dirty()
 
 
@@ -367,8 +400,14 @@ func regenerate_mesh(_use_threads: bool = false) -> void:
 	var hex_size := get_hex_size()
 	var level_height := get_level_height()
 	
+	_has_smooth_tops = false
 	for lhex in MSTHexMath.hex_range(get_chunk_radius()):
 		_build_hex_geometry(lhex, hex_size, level_height)
+	
+	# Smooth tops share spokes/corners/center between fans, so weld duplicate vertices.
+	# Flat chunks keep the unindexed mesh byte-identical to before smooth support.
+	if _has_smooth_tops:
+		st.index()
 	
 	mesh = st.commit()
 	
@@ -401,6 +440,8 @@ func _build_hex_geometry(lhex: Vector2i, hex_size: float, level_height: float) -
 	var has_grass : bool = record.get("grass", false)
 	var edges : int = record.get("edges", 0)
 	var top_y := elevation * level_height
+	var heights := get_record_heights(record)
+	var has_heights := heights.size() == HEIGHTS_PER_HEX
 	
 	var center_xz := MSTHexMath.hex_to_world(lhex.x, lhex.y, hex_size)
 	var hex_center := Vector3(center_xz.x, top_y, center_xz.y)
@@ -414,12 +455,18 @@ func _build_hex_geometry(lhex: Vector2i, hex_size: float, level_height: float) -
 		deltas.append(elevation - int(neighbor.get("elevation", 0)))
 	
 	if ground_slot != VOID_SLOT:
-		_build_top_fan(hex_center, hex_size, ground_slot, wall_slot, has_grass, deltas, neighbors)
+		if has_heights:
+			_build_smooth_top_fan(hex_center, hex_size, ground_slot, wall_slot, has_grass, deltas, neighbors, heights)
+		else:
+			_build_top_fan(hex_center, hex_size, ground_slot, wall_slot, has_grass, deltas, neighbors)
 	
 	for dir in range(6):
 		if deltas[dir] <= 0:
 			continue # Equal heights share a plane; higher neighbors build their own walls.
 		var kind := _resolve_edge_kind(record, dir, deltas[dir])
+		if has_heights:
+			_build_transition_heights(hex_center, dir, kind, deltas[dir], level_height, hex_size, ground_slot, wall_slot, heights, neighbors[dir])
+			continue
 		match kind:
 			EdgeKind.TERRACE:
 				if deltas[dir] <= MAX_TERRACE_DELTA:
@@ -466,6 +513,169 @@ func _build_top_fan(hex_center: Vector3, hex_size: float, ground_slot: int, wall
 		_add_vertex(corners[next_dir], Vector3.UP, corner_uvs[next_dir], _world_xz(corners[next_dir]), ground_colors[0], ground_colors[1], corner_custom_1[next_dir], mat_blend)
 
 
+# Smooth top: same corner flags/wall slots as _build_top_fan, but each corner triangle
+# (center, corner dir, corner dir+1) is subdivided into 4^SMOOTH_SUBDIV barycentric
+# sub-triangles whose vertices interpolate the server's 7 heights. Shared spokes,
+# corners and the center are built once from their first fan so the surface never
+# cracks; normals average the per-triangle cross products within this top (smooth
+# shading). Adjacent hexes compute their own rim normals - a documented approximation.
+func _build_smooth_top_fan(hex_center: Vector3, hex_size: float, ground_slot: int, wall_slot: int, has_grass: bool, deltas: Array[int], neighbors: Array[Dictionary], heights: PackedInt32Array) -> void:
+	var ground_colors := MSTHexMath.slot_to_color_pair(ground_slot)
+	var mat_blend := _slot_to_mat_blend(ground_slot)
+	var grass_value := 1.0 if has_grass else 0.0
+	
+	var corner_offsets : Array[Vector2] = []
+	var corner_uvs : Array[Vector2] = []
+	var corner_custom_1 : Array[Color] = []
+	for dir in range(6):
+		# Corner dir is shared by edge dir-1 and edge dir.
+		var prev_dir := posmod(dir - 1, 6)
+		var ridge := deltas[prev_dir] > 0 or deltas[dir] > 0
+		var ledge := deltas[prev_dir] < 0 or deltas[dir] < 0
+		var nearest_wall_slot := float(wall_slot)
+		if ledge and not ridge:
+			# The wall towering over this corner belongs to the higher neighbor.
+			var ledge_dir := prev_dir if deltas[prev_dir] < 0 else dir
+			nearest_wall_slot = float(int(neighbors[ledge_dir].get("wall", 0)))
+		corner_offsets.append(MSTHexMath.hex_corner_offset(dir, hex_size))
+		corner_uvs.append(Vector2(1.0 if ridge else 0.0, 1.0 if ledge else 0.0))
+		corner_custom_1.append(Color(grass_value, 1.0 if ridge else 0.0, 1.0 if ledge else 0.0, nearest_wall_slot))
+	
+	var center_custom_1 := Color(grass_value, 0.0, 0.0, float(wall_slot))
+	
+	var subdiv : int = maxi(SMOOTH_SUBDIV, 1)
+	var pattern : Dictionary = _get_smooth_pattern(subdiv)
+	var points : Array = pattern["points"]
+	var tris : PackedInt32Array = pattern["tris"]
+	@warning_ignore("integer_division")
+	var interior_count : int = (subdiv - 1) * (subdiv - 2) / 2
+	var vertex_count : int = 7 + 12 * (subdiv - 1) + 6 * interior_count
+	
+	var positions : Array[Vector3] = []
+	var normals : Array[Vector3] = []
+	var uvs : Array[Vector2] = []
+	var customs : Array[Color] = []
+	positions.resize(vertex_count)
+	normals.resize(vertex_count)
+	uvs.resize(vertex_count)
+	customs.resize(vertex_count)
+	var filled := PackedByteArray()
+	filled.resize(vertex_count)
+	
+	# Build each unique vertex once, from its barycentric weights in the first fan that
+	# references it: center = 0, corner dir = 1 + dir, corner dir+1 = 1 + (dir+1)%6,
+	# then spokes, outer edges and fan interiors (see _smooth_vertex_index).
+	for dir in range(6):
+		var next_dir := (dir + 1) % 6
+		var h0 := float(heights[0])
+		var h1 := float(heights[1 + dir])
+		var h2 := float(heights[1 + next_dir])
+		for point in points:
+			var vi := _smooth_vertex_index(dir, point, subdiv)
+			if filled[vi] != 0:
+				continue
+			filled[vi] = 1
+			var wa := float(point.x) / float(subdiv)
+			var wb := float(point.y) / float(subdiv)
+			var wc := float(point.z) / float(subdiv)
+			var offset := corner_offsets[dir] * wb + corner_offsets[next_dir] * wc
+			var pos := Vector3(hex_center.x + offset.x, wa * h0 + wb * h1 + wc * h2, hex_center.z + offset.y)
+			positions[vi] = pos
+			uvs[vi] = corner_uvs[dir] * wb + corner_uvs[next_dir] * wc
+			customs[vi] = center_custom_1 * wa + corner_custom_1[dir] * wb + corner_custom_1[next_dir] * wc
+	
+	# Normals: average the cross products of every emitted triangle touching a vertex.
+	for dir in range(6):
+		for tri_i in range(0, tris.size(), 3):
+			var vi_a := _smooth_vertex_index(dir, points[tris[tri_i]], subdiv)
+			var vi_b := _smooth_vertex_index(dir, points[tris[tri_i + 1]], subdiv)
+			var vi_c := _smooth_vertex_index(dir, points[tris[tri_i + 2]], subdiv)
+			var normal := (positions[vi_b] - positions[vi_a]).cross(positions[vi_c] - positions[vi_a])
+			if normal.y < 0.0:
+				normal = -normal
+			normals[vi_a] += normal
+			normals[vi_b] += normal
+			normals[vi_c] += normal
+	for vi in range(vertex_count):
+		var normal : Vector3 = normals[vi]
+		normals[vi] = normal.normalized() if normal.length_squared() > 0.0 else Vector3.UP
+	
+	# Emit in pattern order; _add_vertex keeps the exact vertex contract of _build_top_fan
+	# (UV2 = world XZ, CUSTOM0 = slot pair, CUSTOM1 = flags, CUSTOM2 = blend).
+	for dir in range(6):
+		for tri_i in range(0, tris.size(), 3):
+			for corner_i in range(3):
+				var vi := _smooth_vertex_index(dir, points[tris[tri_i + corner_i]], subdiv)
+				var pos : Vector3 = positions[vi]
+				_add_vertex(pos, normals[vi], uvs[vi], _world_xz(pos), ground_colors[0], ground_colors[1], customs[vi], mat_blend)
+	
+	_has_smooth_tops = true
+
+
+# Subdivision lattice of one corner triangle, cached per subdiv: points are Vector3i(a, b, c)
+# barycentric weights (a on the center, b on corner dir, c on corner dir+1, a+b+c = subdiv)
+# and tris are index triples into points, wound like the parent (center, dir, dir+1) triangle.
+func _get_smooth_pattern(subdiv: int) -> Dictionary:
+	if _smooth_patterns.has(subdiv):
+		return _smooth_patterns[subdiv]
+	var points : Array[Vector3i] = []
+	var lookup : Dictionary = {}
+	for a in range(subdiv + 1):
+		for b in range(subdiv - a + 1):
+			lookup[Vector2i(a, b)] = points.size()
+			points.append(Vector3i(a, b, subdiv - a - b))
+	var tris := PackedInt32Array()
+	for a in range(subdiv - 1):
+		for b in range(subdiv - 1 - a):
+			tris.append(lookup[Vector2i(a + 1, b)])
+			tris.append(lookup[Vector2i(a + 1, b + 1)])
+			tris.append(lookup[Vector2i(a, b + 1)])
+	for a in range(subdiv):
+		for b in range(subdiv - a):
+			tris.append(lookup[Vector2i(a + 1, b)])
+			tris.append(lookup[Vector2i(a, b + 1)])
+			tris.append(lookup[Vector2i(a, b)])
+	var pattern := {"points": points, "tris": tris}
+	_smooth_patterns[subdiv] = pattern
+	return pattern
+
+
+# Canonical per-hex vertex index of a lattice point in fan dir. Shared spokes/corners/center
+# map to ONE index, so welding merges them across fans: center = 0, corner dir = 1 + dir,
+# corner dir+1 = 1 + (dir+1)%6, spoke center->corner dir = 7 + dir*(subdiv-1) + (b-1),
+# spoke center->corner dir+1 = 7 + ((dir+1)%6)*(subdiv-1) + (c-1), outer edge (a = 0) =
+# 7 + 6*(subdiv-1) + dir*(subdiv-1) + (b-1), interior = 7 + 12*(subdiv-1) + dir*interior_count
+# + interior_index(a, b). Total = 7 + 12*(subdiv-1) + 6*interior_count.
+func _smooth_vertex_index(dir: int, point: Vector3i, subdiv: int) -> int:
+	var a := point.x
+	var b := point.y
+	var c := point.z
+	if a == subdiv:
+		return 0
+	if b == subdiv:
+		return 1 + dir
+	if c == subdiv:
+		return 1 + ((dir + 1) % 6)
+	if c == 0:
+		return 7 + dir * (subdiv - 1) + (b - 1)
+	if b == 0:
+		return 7 + ((dir + 1) % 6) * (subdiv - 1) + (c - 1)
+	if a == 0:
+		return 7 + 6 * (subdiv - 1) + dir * (subdiv - 1) + (b - 1)
+	@warning_ignore("integer_division")
+	var interior_count : int = (subdiv - 1) * (subdiv - 2) / 2
+	return 7 + 12 * (subdiv - 1) + dir * interior_count + _smooth_interior_index(a, b, subdiv)
+
+
+# Index of an interior lattice point (a >= 1, b >= 1, c >= 1) inside its fan, enumerating
+# a in 1..subdiv-2 and b in 1..subdiv-1-a in order.
+func _smooth_interior_index(a: int, b: int, subdiv: int) -> int:
+	var index := 0
+	for ia in range(1, a):
+		index += subdiv - 1 - ia
+	return index + b - 1
+
+
 # Vertical cliff quad on the edge toward a lower (or void) neighbor.
 func _build_cliff_wall(hex_center: Vector3, top_y: float, dir: int, delta: int, level_height: float, hex_size: float, wall_slot: int) -> void:
 	_build_riser(_edge_endpoints(hex_center, dir, hex_size), Vector2.ZERO, top_y, top_y - delta * level_height, dir, wall_slot)
@@ -509,10 +719,16 @@ func _build_slope(hex_center: Vector3, top_y: float, dir: int, delta: int, level
 # horizontal outward direction (angle 60*dir degrees, matching hex_to_world).
 # Wall slot on the wall channel contract.
 func _build_riser(ends: Array, offset: Vector2, top_y: float, bottom_y: float, dir: int, wall_slot: int) -> void:
-	var top_a := Vector3(ends[0].x + offset.x, top_y, ends[0].z + offset.y)
-	var top_b := Vector3(ends[1].x + offset.x, top_y, ends[1].z + offset.y)
-	var bottom_a := Vector3(top_a.x, bottom_y, top_a.z)
-	var bottom_b := Vector3(top_b.x, bottom_y, top_b.z)
+	_build_riser_profile(ends, offset, top_y, top_y, bottom_y, bottom_y, dir, wall_slot)
+
+
+# Riser profile: like _build_riser, but each end has its own top/bottom Y so walls can
+# meet sloped hex tops. Flat callers pass equal Ys and keep the exact same output.
+func _build_riser_profile(ends: Array, offset: Vector2, top_a_y: float, top_b_y: float, bottom_a_y: float, bottom_b_y: float, dir: int, wall_slot: int) -> void:
+	var top_a := Vector3(ends[0].x + offset.x, top_a_y, ends[0].z + offset.y)
+	var top_b := Vector3(ends[1].x + offset.x, top_b_y, ends[1].z + offset.y)
+	var bottom_a := Vector3(top_a.x, bottom_a_y, top_a.z)
+	var bottom_b := Vector3(top_b.x, bottom_b_y, top_b.z)
 	
 	var angle := deg_to_rad(60.0 * dir)
 	var normal := Vector3(cos(angle), 0.0, sin(angle))
@@ -535,10 +751,17 @@ func _build_riser(ends: Array, offset: Vector2, top_y: float, bottom_y: float, d
 # Normal is +Y for flat treads, the plane normal for slanted strips; ground slot on
 # the floor channel contract.
 func _build_strip(ends: Array, inner_offset: Vector2, outer_offset: Vector2, inner_y: float, outer_y: float, ground_slot: int) -> void:
-	var inner_a := Vector3(ends[0].x + inner_offset.x, inner_y, ends[0].z + inner_offset.y)
-	var inner_b := Vector3(ends[1].x + inner_offset.x, inner_y, ends[1].z + inner_offset.y)
-	var outer_a := Vector3(ends[0].x + outer_offset.x, outer_y, ends[0].z + outer_offset.y)
-	var outer_b := Vector3(ends[1].x + outer_offset.x, outer_y, ends[1].z + outer_offset.y)
+	_build_strip_profile(ends, inner_offset, outer_offset, inner_y, inner_y, outer_y, outer_y, ground_slot)
+
+
+# Strip profile: like _build_strip, but each end of the inner/outer lines has its own Y,
+# with the normal derived from the profile geometry and flipped to +Y. Flat callers pass
+# equal Ys and keep the exact same output.
+func _build_strip_profile(ends: Array, inner_offset: Vector2, outer_offset: Vector2, inner_a_y: float, inner_b_y: float, outer_a_y: float, outer_b_y: float, ground_slot: int) -> void:
+	var inner_a := Vector3(ends[0].x + inner_offset.x, inner_a_y, ends[0].z + inner_offset.y)
+	var inner_b := Vector3(ends[1].x + inner_offset.x, inner_b_y, ends[1].z + inner_offset.y)
+	var outer_a := Vector3(ends[0].x + outer_offset.x, outer_a_y, ends[0].z + outer_offset.y)
+	var outer_b := Vector3(ends[1].x + outer_offset.x, outer_b_y, ends[1].z + outer_offset.y)
 	
 	var normal := (inner_b - inner_a).cross(outer_a - inner_a)
 	if normal.y < 0.0:
@@ -556,6 +779,77 @@ func _build_strip(ends: Array, inner_offset: Vector2, outer_offset: Vector2, inn
 	_add_vertex(inner_b, normal, Vector2.ZERO, _world_xz(inner_b), ground_colors[0], ground_colors[1], custom_1, mat_blend)
 	_add_vertex(outer_a, normal, Vector2.ZERO, _world_xz(outer_a), ground_colors[0], ground_colors[1], custom_1, mat_blend)
 	_add_vertex(outer_b, normal, Vector2.ZERO, _world_xz(outer_b), ground_colors[0], ground_colors[1], custom_1, mat_blend)
+
+
+# Heights-aware transition for hexes with a 7-sample payload. The edge's two top
+# corners come from this hex's heights, the bottom corners from the neighbor's heights
+# (shared-edge corner mapping: this hex's corner dir is the neighbor's (dir+4)%6,
+# corner dir+1 is its (dir+3)%6). A neighbor without heights bottoms out at its level.
+func _build_transition_heights(hex_center: Vector3, dir: int, kind: int, delta: int, level_height: float, hex_size: float, ground_slot: int, wall_slot: int, heights: PackedInt32Array, neighbor: Dictionary) -> void:
+	var top_a := float(heights[1 + dir])
+	var top_b := float(heights[1 + ((dir + 1) % 6)])
+	var bottom_a := 0.0
+	var bottom_b := 0.0
+	var neighbor_heights := get_record_heights(neighbor)
+	if neighbor_heights.size() == HEIGHTS_PER_HEX:
+		bottom_a = float(neighbor_heights[1 + ((dir + 4) % 6)])
+		bottom_b = float(neighbor_heights[1 + ((dir + 3) % 6)])
+	else:
+		var bottom_level := float(int(neighbor.get("elevation", 0)) * level_height)
+		bottom_a = bottom_level
+		bottom_b = bottom_level
+	
+	match kind:
+		EdgeKind.TERRACE:
+			if delta <= MAX_TERRACE_DELTA:
+				_build_terrace_heights(hex_center, dir, top_a, top_b, bottom_a, bottom_b, delta, hex_size, ground_slot, wall_slot)
+			else:
+				_build_cliff_wall_heights(hex_center, dir, top_a, top_b, bottom_a, bottom_b, hex_size, wall_slot)
+		EdgeKind.SLOPE:
+			_build_slope_heights(hex_center, dir, top_a, top_b, bottom_a, bottom_b, level_height, hex_size, ground_slot)
+		_:
+			_build_cliff_wall_heights(hex_center, dir, top_a, top_b, bottom_a, bottom_b, hex_size, wall_slot)
+
+
+# Heights-aware cliff: a single riser profile from the top edge to the bottom edge.
+func _build_cliff_wall_heights(hex_center: Vector3, dir: int, top_a: float, top_b: float, bottom_a: float, bottom_b: float, hex_size: float, wall_slot: int) -> void:
+	_build_riser_profile(_edge_endpoints(hex_center, dir, hex_size), Vector2.ZERO, top_a, top_b, bottom_a, bottom_b, dir, wall_slot)
+
+
+# Heights-aware terrace. Approximation: every step interpolates uniformly between the
+# high corner profile (top) and the low one (bottom), so the treads run parallel to the
+# edge instead of following the true crossing of the two profiles. Delta 1 gets the same
+# half-level step as the flat terrace; delta >= 2 gets delta uniform full steps.
+func _build_terrace_heights(hex_center: Vector3, dir: int, top_a: float, top_b: float, bottom_a: float, bottom_b: float, delta: int, hex_size: float, ground_slot: int, wall_slot: int) -> void:
+	var ends := _edge_endpoints(hex_center, dir, hex_size)
+	var strip_ends := _edge_endpoints(hex_center, dir, hex_size, true)
+	var out_dir := _outward_direction(dir)
+	if delta == 1:
+		var mid_a := (top_a + bottom_a) * 0.5
+		var mid_b := (top_b + bottom_b) * 0.5
+		var inset := out_dir * (TERRACE_TREAD_DEPTH * hex_size)
+		_build_riser_profile(ends, Vector2.ZERO, top_a, top_b, mid_a, mid_b, dir, wall_slot)
+		_build_strip_profile(strip_ends, Vector2.ZERO, inset, mid_a, mid_b, mid_a, mid_b, ground_slot)
+		_build_riser_profile(ends, inset, mid_a, mid_b, bottom_a, bottom_b, dir, wall_slot)
+	else:
+		var tread_depth : float = minf(TERRACE_TREAD_DEPTH * hex_size, MAX_TERRACE_INSET * hex_size / delta)
+		for i in range(delta):
+			var step_top_a := lerpf(top_a, bottom_a, float(i) / float(delta))
+			var step_top_b := lerpf(top_b, bottom_b, float(i) / float(delta))
+			var step_bottom_a := lerpf(top_a, bottom_a, float(i + 1) / float(delta))
+			var step_bottom_b := lerpf(top_b, bottom_b, float(i + 1) / float(delta))
+			_build_riser_profile(ends, out_dir * (i * tread_depth), step_top_a, step_top_b, step_bottom_a, step_bottom_b, dir, wall_slot)
+			if i < delta - 1:
+				_build_strip_profile(strip_ends, out_dir * (i * tread_depth), out_dir * ((i + 1) * tread_depth), step_bottom_a, step_bottom_b, step_bottom_a, step_bottom_b, ground_slot)
+
+
+# Heights-aware slope: one strip profile from the top edge to an inset line inside the
+# low hex, floating a hair above the neighbor top so the two never coincide.
+func _build_slope_heights(hex_center: Vector3, dir: int, top_a: float, top_b: float, bottom_a: float, bottom_b: float, level_height: float, hex_size: float, ground_slot: int) -> void:
+	var ends := _edge_endpoints(hex_center, dir, hex_size, true)
+	var inset := _outward_direction(dir) * (SLOPE_INSET * hex_size)
+	var float_y := level_height * SLOPE_TOP_EPSILON
+	_build_strip_profile(ends, Vector2.ZERO, inset, top_a, top_b, bottom_a + float_y, bottom_b + float_y, ground_slot)
 
 
 # Endpoints of the edge facing direction dir (corner dir to corner dir+1, y = 0).

@@ -7,16 +7,24 @@
 //!
 //! - `prng` — deterministic SplitMix64 + weighted picks (shared with the client's math)
 //! - `noise` — deterministic value noise fields for texture clustering
+//! - `heights` — the deterministic ridge height field + elevation-level derivation (PLAN §4.6)
 //! - `hex` — hex/chunk grid math and world-hex enumeration
+//! - `hex_region` — cell ids and plane-bounded region iterators (wrap-aware variants)
+//! - `masks` — per-edge river/road/wall bit helpers
+//! - `pathing` — wrap-aware deterministic Dijkstra + the terrain step-cost model
 //! - `wrap` — torus wrapping for chunk coords, positions, and distances
 //! - `aoi` — area-of-interest chunk selection
 
 pub mod aoi;
 pub mod building;
 pub mod def_tables;
+pub mod heights;
 pub mod hex;
+pub mod hex_region;
 pub mod instance_tables;
+pub mod masks;
 pub mod noise;
+pub mod pathing;
 pub mod prng;
 pub mod reducers;
 pub mod tables;

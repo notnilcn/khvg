@@ -4,9 +4,10 @@ use crate::main::global::*;
 use crate::main::time::seconds_since;
 use crate::world::prng::{hash_to_unit, next_unit, splitmix64};
 use crate::world::hex::{hex_to_world, spiral_chunk_index, world_to_chunk, world_to_hex};
-use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
+use crate::world::pathing::{find_path, terrain_step_cost, HexCoord, HexTerrainSnapshot, PathDecision, StepCostConfig};
+use crate::world::wrap::{wrap_hex_coords, wrap_world_pos, wrapped_distance_sq, wrapped_hex_neighbors};
 use crate::world::aoi::{surrounding_chunk_indices, chunk_indices_covering};
-use crate::world::tables::MapConfig;
+use crate::world::tables::*;
 use crate::world::instance_tables::*;
 use crate::player::tables::*;
 use crate::enemy::def_tables::*;
@@ -184,6 +185,11 @@ pub fn build_enemy_behavior(ctx: &ReducerContext, template: &EnemyTemplate) -> E
         active_phase_index: 0,
         velocity_x: 0.0,
         velocity_y: 0.0,
+        path: Vec::new(),
+        path_next: 0,
+        path_goal_q: 0,
+        path_goal_r: 0,
+        path_tick: 0,
     });
 
     for (phase_index, phase_def) in template.phases.iter().enumerate() {
@@ -624,14 +630,193 @@ fn normalize_or_zero(x: f32, y: f32) -> (f32, f32) {
     (x / len, y / len)
 }
 
+// ===== Wrap-aware enemy pathfinding (world/pathing.rs, PLAN §4.3) =====
+// Layered on top of the steering: only AggroTarget goals whose target is in another chunk
+// route around terrain; same-chunk targets (and any goal with no route) keep the original
+// direct steering. The path only supplies the goal point — separation, cliff probing and
+// the argmax pick in apply_movement are untouched.
+
+// Builds the tick's shared terrain snapshot: elevation from BuildingTile, masks from
+// HexTile. Built lazily on the first path recompute of the tick and reused for every enemy
+// (two full-table scans per tick, not two per enemy); path queries never touch tables.
+fn build_terrain_snapshot(ctx: &ReducerContext) -> HexTerrainSnapshot {
+    let mut snapshot = HexTerrainSnapshot::new();
+    for tile in ctx.db.building_tile().iter() {
+        snapshot.entry((tile.hex_q, tile.hex_r)).or_default().elevation = tile.elevation;
+    }
+    for tile in ctx.db.hex_tile().iter() {
+        let terrain = snapshot.entry((tile.hex_q, tile.hex_r)).or_default();
+        terrain.river_mask = tile.river_mask;
+        terrain.road_mask = tile.road_mask;
+        terrain.wall_mask = tile.wall_mask;
+    }
+    snapshot
+}
+
+fn terrain_snapshot<'a>(ctx: &ReducerContext, slot: &'a mut Option<HexTerrainSnapshot>) -> &'a HexTerrainSnapshot {
+    slot.get_or_insert_with(|| build_terrain_snapshot(ctx))
+}
+
+// Enemies reuse the road cost knobs: the same elevation cliffs, rivers crossable at the
+// bridge surcharge, and a discount on existing roads (they path like a walker on the road
+// network). Walls are impassable in terrain_step_cost itself.
+fn enemy_path_cost_config() -> StepCostConfig {
+    StepCostConfig {
+        base_step_cost: ROAD_BASE_STEP_COST,
+        elevation_step_cost: ROAD_ELEVATION_STEP_COST,
+        river_cross_cost: ROAD_RIVER_CROSS_COST,
+        road_discount: ROAD_EXISTING_DISCOUNT,
+        max_walkable_up_delta: MAX_WALKABLE_UP_DELTA,
+        max_walkable_down_delta: MAX_WALKABLE_DOWN_DELTA,
+    }
+}
+
+/// Whether this tick should follow the stored path, recompute it, or steer directly at the
+/// target. An empty path only recomputes on the first attempt or after the cadence has
+/// elapsed — a failed find_path must not retry Dijkstra every tick (the enemy steers
+/// straight in the meantime). An exhausted non-empty path recomputes immediately, and a
+/// changed goal hex bypasses the cadence. Pure so it is unit-tested standalone.
+pub fn path_decision(path_len: u32, path_next: u32, goal_changed: bool, path_tick: u32, recompute_ticks: u32) -> PathDecision {
+    let usable = path_next < path_len;
+    let exhausted = path_len > 0 && path_next >= path_len;
+    if usable && !goal_changed && path_tick < recompute_ticks {
+        PathDecision::Follow
+    } else if goal_changed || exhausted || path_tick >= recompute_ticks || (path_len == 0 && path_tick == 0) {
+        PathDecision::Recompute
+    } else {
+        PathDecision::Direct
+    }
+}
+
+/// Advances `path_next` past every waypoint within `radius` (world units, nearest lap copy —
+/// the canonical path can jump a lap at a seam, so raw coordinates would mis-measure).
+/// Pure (no ctx), so it is unit-tested standalone.
+pub fn advance_path_next(
+    path: &[EnemyPathWaypoint],
+    mut path_next: u32,
+    enemy_x: f32,
+    enemy_y: f32,
+    radius: f32,
+    hex_outer_radius: f32,
+    lap_q: (f32, f32),
+    lap_r: (f32, f32),
+) -> u32 {
+    while let Some(waypoint) = path.get(path_next as usize) {
+        let (wx, wy) = hex_to_world(waypoint.q, waypoint.r, hex_outer_radius);
+        let (wx, wy) = crate::player::methods::nearest_lap_copy(wx, wy, enemy_x, enemy_y, lap_q, lap_r);
+        let (dx, dy) = (wx - enemy_x, wy - enemy_y);
+        if dx * dx + dy * dy > radius * radius { break; }
+        path_next = path_next.saturating_add(1);
+    }
+    path_next
+}
+
+// Steers at the current waypoint after consuming any already-reached ones. None when the
+// path is exhausted (the caller falls back to direct steering the same tick).
+fn follow_path_waypoint(enemy: &Enemy, behavior: &mut EnemyBehavior, cfg: &MapConfig, lap_q: (f32, f32), lap_r: (f32, f32)) -> Option<(f32, f32)> {
+    behavior.path_next = advance_path_next(
+        &behavior.path, behavior.path_next, enemy.x, enemy.y, ENEMY_PATH_WAYPOINT_RADIUS, cfg.hex_outer_radius, lap_q, lap_r,
+    );
+    let waypoint = behavior.path.get(behavior.path_next as usize)?;
+    let (wx, wy) = hex_to_world(waypoint.q, waypoint.r, cfg.hex_outer_radius);
+    Some(crate::player::methods::nearest_lap_copy(wx, wy, enemy.x, enemy.y, lap_q, lap_r))
+}
+
+// AggroTarget goal resolution, path-aware: same chunk as the target → direct steering;
+// otherwise follow/recompute the wrap-aware route. Falls back to the nearest-lap direct
+// goal whenever no route exists, and the recompute cadence covers unreachable targets.
+fn resolve_aggro_goal(
+    ctx: &ReducerContext,
+    enemy: &Enemy,
+    behavior: &mut EnemyBehavior,
+    cfg: &MapConfig,
+    lap_q: (f32, f32),
+    lap_r: (f32, f32),
+    snapshot_slot: &mut Option<HexTerrainSnapshot>,
+) -> Option<(f32, f32)> {
+    let target = behavior.aggro_target?;
+    let (px, py) = find_player_pos_by_id(ctx, target)?;
+    let direct_goal = crate::player::methods::nearest_lap_copy(px, py, enemy.x, enemy.y, lap_q, lap_r);
+
+    let enemy_chunk = world_to_chunk(enemy.x, enemy.y, cfg.chunk_hex_radius, cfg.hex_outer_radius);
+    let target_chunk = world_to_chunk(px, py, cfg.chunk_hex_radius, cfg.hex_outer_radius);
+    if enemy_chunk == target_chunk {
+        // Target is in the same chunk: direct steering is close enough. Drop any path kept
+        // from when the target was further away so it can't be mistaken for fresh.
+        if !behavior.path.is_empty() {
+            behavior.path.clear();
+            behavior.path_next = 0;
+        }
+        return Some(direct_goal);
+    }
+
+    let (goal_q, goal_r) = {
+        let (q, r) = world_to_hex(px, py, cfg.hex_outer_radius);
+        wrap_hex_coords(q, r, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows)
+    };
+    let goal_changed = behavior.path_goal_q != goal_q || behavior.path_goal_r != goal_r;
+    let decision = path_decision(
+        behavior.path.len() as u32, behavior.path_next, goal_changed, behavior.path_tick, ENEMY_PATH_RECOMPUTE_TICKS,
+    );
+
+    let path_goal = match decision {
+        PathDecision::Follow => follow_path_waypoint(enemy, behavior, cfg, lap_q, lap_r),
+        PathDecision::Direct => None,
+        PathDecision::Recompute => {
+            // Remember the attempted goal even on failure, so the cadence — not a permanent
+            // "goal changed" — gates the next attempt.
+            behavior.path_goal_q = goal_q;
+            behavior.path_goal_r = goal_r;
+            behavior.path_tick = 0;
+            let (start_q, start_r) = {
+                let (q, r) = world_to_hex(enemy.x, enemy.y, cfg.hex_outer_radius);
+                wrap_hex_coords(q, r, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows)
+            };
+            let snapshot = terrain_snapshot(ctx, snapshot_slot);
+            let cost_cfg = enemy_path_cost_config();
+            let neighbors = |(q, r): HexCoord| wrapped_hex_neighbors(q, r, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows);
+            let path = find_path((start_q, start_r), (goal_q, goal_r), neighbors, |from, to, direction| {
+                terrain_step_cost(snapshot.get(&from).copied().unwrap_or_default(), snapshot.get(&to).copied().unwrap_or_default(), direction, &cost_cfg)
+            });
+            match path {
+                Some(cells) if cells.len() >= 2 => {
+                    // cells[0] is the enemy's own hex — store only the cells it must still reach.
+                    behavior.path = cells[1..].iter().map(|&(q, r)| EnemyPathWaypoint { q, r }).collect();
+                    behavior.path_next = 0;
+                    follow_path_waypoint(enemy, behavior, cfg, lap_q, lap_r)
+                }
+                _ => {
+                    behavior.path.clear();
+                    behavior.path_next = 0;
+                    None
+                }
+            }
+        }
+    };
+    // Cadence clock: only the routing branch reaches this point, so path_tick advances on
+    // ticks where an attempt could happen — while the target shares the enemy's chunk the
+    // path is unused and the counter pauses (incrementing it there would rewrite the
+    // delta-checked row every tick for a counter nothing reads).
+    behavior.path_tick = behavior.path_tick.saturating_add(1);
+    path_goal.or(Some(direct_goal))
+}
+
 /// Per-tick movement for one enemy. Returns (new_x, new_y, heading_x, heading_y,
 /// movement_direction, movement_speed): the new position, the unit heading memory
 /// persisted on the behavior row (Meander's swaying heading; every other pattern's last
 /// chosen direction), and the movement angle + speed scalar written to the Enemy row for
 /// client dead reckoning (speed 0 when standing — same convention as PlayerPosition).
-/// Movement is local steering, not pathfinding — enemies slide along blocked
-/// directions but won't route around a wall.
-pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehavior, phase: &EnemyPhase, stun_behavior: &StunBehavior) -> (f32, f32, f32, f32, f32, f32) {
+/// Movement is local steering: enemies slide along blocked directions. An AggroTarget in a
+/// different chunk additionally gets a wrap-aware path (resolve_aggro_goal) whose current
+/// waypoint replaces the direct goal — the steering itself is unchanged.
+pub fn apply_movement(
+    ctx: &ReducerContext,
+    enemy: &Enemy,
+    behavior: &mut EnemyBehavior,
+    phase: &EnemyPhase,
+    stun_behavior: &StunBehavior,
+    snapshot_slot: &mut Option<HexTerrainSnapshot>,
+) -> (f32, f32, f32, f32, f32, f32) {
     let dt = BEHAVIOR_TICK_DT;
     let idle = (enemy.x, enemy.y, behavior.velocity_x, behavior.velocity_y, enemy.movement_direction, 0.0);
     // Enemy-status consult: Slow scales displacement ×(1−magnitude); a Stunned row counts as
@@ -654,12 +839,17 @@ pub fn apply_movement(ctx: &ReducerContext, enemy: &Enemy, behavior: &EnemyBehav
 
     // Step 1: resolve the goal position (nearest lap copy, so deltas on a torus never
     // point the long way around). Patterns that need a goal stand when it can't resolve
-    // (e.g. AggroTarget with no live target); Meander never does.
+    // (e.g. AggroTarget with no live target); Meander never does. AggroTarget goals may
+    // resolve to a path waypoint instead (wrap-aware route, see resolve_aggro_goal).
+    if movement.goal != MoveGoal::AggroTarget && !behavior.path.is_empty() {
+        // Path state is AggroTarget-only scratch: drop it when another goal drives this
+        // phase so a later switch back can't steer along a stale route.
+        behavior.path.clear();
+        behavior.path_next = 0;
+    }
     let goal_pos: Option<(f32, f32)> = match movement.goal {
         MoveGoal::Idle => None,
-        MoveGoal::AggroTarget => behavior.aggro_target
-            .and_then(|id| find_player_pos_by_id(ctx, id))
-            .map(|(px, py)| crate::player::methods::nearest_lap_copy(px, py, enemy.x, enemy.y, lap_q, lap_r)),
+        MoveGoal::AggroTarget => resolve_aggro_goal(ctx, enemy, behavior, &cfg, lap_q, lap_r, snapshot_slot),
         MoveGoal::SpawnPoint => Some(crate::player::methods::nearest_lap_copy(enemy.spawn_x, enemy.spawn_y, enemy.x, enemy.y, lap_q, lap_r)),
         MoveGoal::FixedPoint(p) => Some(crate::player::methods::nearest_lap_copy(p.x, p.y, enemy.x, enemy.y, lap_q, lap_r)),
     };
@@ -855,5 +1045,47 @@ pub fn spawn_from_biome_regions(ctx: &ReducerContext) {
         live_enemies += 1;
         spawned_this_tick += 1;
         if live_enemies >= MAX_LIVE_ENEMIES { break; }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn path_decision_follows_then_recomputes_on_cadence() {
+        assert_eq!(path_decision(3, 0, false, 0, 10), PathDecision::Follow);
+        assert_eq!(path_decision(3, 0, false, 9, 10), PathDecision::Follow);
+        assert_eq!(path_decision(3, 0, false, 10, 10), PathDecision::Recompute, "cadence elapsed must re-route");
+        assert_eq!(path_decision(3, 1, true, 1, 10), PathDecision::Recompute, "goal change must re-route immediately");
+        assert_eq!(path_decision(3, 3, false, 1, 10), PathDecision::Recompute, "exhausted path must re-route immediately");
+        assert_eq!(path_decision(3, 2, false, 1, 10), PathDecision::Follow, "a partially consumed path keeps following");
+    }
+
+    #[test]
+    fn path_decision_never_retries_a_failed_path_every_tick() {
+        // Fresh enemy: one attempt.
+        assert_eq!(path_decision(0, 0, false, 0, 10), PathDecision::Recompute);
+        // Failed attempt (path stays empty; path_tick counts ticks since it): steer directly
+        // until the cadence elapses — no per-tick Dijkstra retry storm.
+        for tick in 1..10 {
+            assert_eq!(path_decision(0, 0, false, tick, 10), PathDecision::Direct, "retry storm at tick {tick}");
+        }
+        assert_eq!(path_decision(0, 0, false, 10, 10), PathDecision::Recompute, "failed path retries once per cadence");
+        // A moved goal bypasses the cadence.
+        assert_eq!(path_decision(0, 0, true, 3, 10), PathDecision::Recompute);
+    }
+
+    #[test]
+    fn advance_path_next_consumes_waypoints_in_range() {
+        let path = [EnemyPathWaypoint { q: 1, r: 0 }, EnemyPathWaypoint { q: 2, r: 0 }];
+        let (w0x, w0y) = hex_to_world(1, 0, 48.0);
+        let (w1x, w1y) = hex_to_world(2, 0, 48.0);
+        // Zero lap vectors: only the raw distance matters for this test.
+        let laps = ((0.0, 0.0), (0.0, 0.0));
+        assert_eq!(advance_path_next(&path, 0, w0x, w0y, 48.0, 48.0, laps.0, laps.1), 1);
+        assert_eq!(advance_path_next(&path, 0, w0x + 10_000.0, w0y, 48.0, 48.0, laps.0, laps.1), 0, "waypoint out of range must not be consumed");
+        assert_eq!(advance_path_next(&path, 1, w1x, w1y, 48.0, 48.0, laps.0, laps.1), 2, "consuming the last waypoint exhausts the path");
+        assert_eq!(advance_path_next(&path, 2, w1x, w1y, 48.0, 48.0, laps.0, laps.1), 2, "advancing past the end is a no-op");
     }
 }

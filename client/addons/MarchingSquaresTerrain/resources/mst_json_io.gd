@@ -20,6 +20,8 @@ static func export_to_json(terrain: MarchingSquaresTerrain, path: String, chunk_
 		
 		var hexes_array : Array = []
 		for local_hex in chunk.hex_data:
+			# The runtime-only "heights" key is intentionally excluded from this fixed
+			# editor schema; the server re-streams heights on every join.
 			var record : Dictionary = chunk.hex_data[local_hex]
 			var hex_dict : Dictionary = {}
 			# Absolute axial coords, stable key order

@@ -9,8 +9,8 @@ File index (generated — regenerate, never hand-edit): [[server/spacetimedb/src
 | File | Role | Edit it when |
 |---|---|---|
 | `def_tables.rs` | Static template data: `EnemyTemplate` (+ `PhaseDef`/`AttackSequence`/`SequenceStepDef`/`StunBehavior`), the four step-def tables, `PatternType` + param structs, the `SteeringMovement`/`MoveGoal`/`MovePattern` steering model, `EnemyTarget` | Adding a primitive the content needs (a new field/pattern), not for new enemies |
-| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, schedules, server-only `BulletFireAttestation` (one row per fired `BulletPatternEvent`: pellet pool + TTL, consumed by `report_hit` — stamped by `attest_bullet_fire`, swept in `tick_status_effects`), and the event tables: `BulletPatternEvent` (`damage` resolved at insert), `BulletControlEvent` (rect kinds encode origin (x, y) + far end (target_x, target_y) + width (radius); Attract `duration` = linger, 0 = one-shot; SlashRect `duration` = damage threshold as f32 bits; WallRect `duration` = linger seconds), `AbilityVisualEvent` (spell flashes; per-kind encoding documented on the table) | Rarely — schema changes |
-| `methods.rs` | Pure logic: archetype helpers, behavior-tree build/teardown, `tick_phase`/`tick_sequence`, movement, biome spawning | Changing *how* enemies simulate |
+| `instance_tables.rs` | Runtime rows: `Enemy`, `EnemyBehavior`, `EnemyPhase`, `EnemyAttack`, `EnemySequenceStep`, `RepeatStepInstance`, schedules, server-only `BulletFireAttestation` (one row per fired `BulletPatternEvent`: pellet pool + TTL, consumed by `report_hit` — stamped by `attest_bullet_fire`, swept in `tick_status_effects`), and the event tables: `BulletPatternEvent` (`damage` resolved at insert), `BulletControlEvent` (rect kinds encode origin (x, y) + far end (target_x, target_y) + width (radius); Attract `duration` = linger, 0 = one-shot; SlashRect `duration` = damage threshold as f32 bits; WallRect `duration` = linger seconds), `AbilityVisualEvent` (spell flashes; per-kind encoding documented on the table). `EnemyBehavior` also carries the path-scratch fields (`path: Vec<EnemyPathWaypoint>` + `path_next`/`path_goal_q`/`path_goal_r`/`path_tick`) used by AggroTarget routing | Rarely — schema changes |
+| `methods.rs` | Pure logic: archetype helpers, behavior-tree build/teardown, `tick_phase`/`tick_sequence`, movement (steering + the AggroTarget path layer), biome spawning | Changing *how* enemies simulate |
 | `reducers.rs` | `tick_enemy_spawn`/`tick_enemy_behavior` (scheduled), `report_enemy_hit` (rate-limited + range-checked, see below) | Wiring, not content |
 | `emitters.rs` | **Authoring vocabulary**: `Emitter` builder + `Difficulty`/`DifficultySteps`; `compile()` lowers an emitter to an `AttackSequence` | Extending the vocabulary (e.g. a new builder) |
 | `defs/` | **Enemy content lives here.** `mod.rs` = raw step helpers + module declarations; one file per enemy/boss (`gorgon_boss.rs` is the reference) | Adding/changing enemies — usually the only place |
@@ -41,14 +41,32 @@ fixed set of `STEERING_DIRECTIONS` (12) candidate directions in an *interest map
 offset, anti-jitter) and cliff probing (`world_to_hex` + `hex_elevation` vs the
 `MAX_WALKABLE_*_DELTA` constants; steep down is blocked too — enemies have no fall
 mechanic) — and moves along the argmax. Blocked directions fall to the next best instead
-of cancelling out, so enemies slide along cliffs and don't clump; it is local steering,
-not pathfinding. `EnemyBehavior.velocity_x/y` is the **unit heading memory** (Meander's
+of cancelling out, so enemies slide along cliffs and don't clump; the steering itself is
+local, not pathfinding — AggroTarget routing is layered on top (next subsection). `EnemyBehavior.velocity_x/y` is the **unit heading memory** (Meander's
 persistent noise-swayed heading; other patterns' last chosen direction), server-only.
 The `Enemy` row additionally carries `spawn_x`/`spawn_y` (Meander's leash anchor)
 and `movement_direction`/`movement_speed` — movement as an **angle + scalar** (speed 0
 when standing, same convention as `PlayerPosition`); clients reconstruct the velocity for
 dead reckoning (`Enemy.cs` → `InterpolationComponent.SetTarget`). All angles in the
 movement layer are **radians**; bullet angles stay degrees.
+
+### Wrap-aware pathfinding (AggroTarget only)
+
+An `AggroTarget` goal whose target is in a **different chunk** is routed, not just steered:
+`resolve_aggro_goal` canonicalizes both the enemy's and the target's hex (`wrap_hex_coords`)
+and runs `world/pathing.rs::find_path` over `wrapped_hex_neighbors` with the road cost knobs
+(`ROAD_*`: elevation delta, bridge surcharge on river edges, existing-road discount; walls
+block). The path is stored on `EnemyBehavior` as `path` (the cells still to reach, never the
+enemy's own hex) + `path_next`/`path_goal_q/r`/`path_tick`; the current waypoint replaces the
+direct goal, and the context-steering layer above is otherwise untouched (separation/cliff
+probing still apply). `path_decision` gates the cadence: follow while usable, recompute on
+goal change, an exhausted path, or every `ENEMY_PATH_RECOMPUTE_TICKS` (1 s) — a failed
+`find_path` steers directly and retries only on the cadence, never every tick. Waypoints are
+consumed within `ENEMY_PATH_WAYPOINT_RADIUS` of their nearest lap copy. Same-chunk targets
+skip all of it and clear any stale path; any non-AggroTarget phase does the same. The
+`HexTerrainSnapshot` (elevation + masks, two full-table scans) is built lazily once per tick
+and shared by every enemy's recompute. `path_decision`/`advance_path_next` are pure and
+unit-tested.
 
 ## Semantics that will bite you
 
@@ -119,7 +137,9 @@ Full tutorial: `docs/Technical Design Docs/Workflows/Adding a Boss (Enemy Author
 ## Verification
 
 `cargo check --manifest-path server/spacetimedb/Cargo.toml` is the only automated gate on
-this side (publish flow: `server/AGENTS.md` Commands). Row-level sanity:
+this side (publish flow: `server/AGENTS.md` Commands). `cargo check --tests` typechecks the
+pure `#[cfg(test)]` helpers (`path_decision`, `advance_path_next`) but they cannot be linked
+or run in place — a SpacetimeDB module has no test harness. Row-level sanity:
 `spacetime sql bullethell "SELECT … FROM enemy_template / repeat_step_def /
 movement_def"`. Anything past that (patterns looking right, phase pacing,
 multiplayer) is verified by the user in-game — describe spawn steps per variant and stop.

@@ -265,7 +265,8 @@ static func export_chunk_data(chunk: MarchingSquaresTerrainChunk) -> MSTChunkDat
 			data.wall_texture_idx[i] = _colors_to_texture_idx(chunk.wall_color_map_0[i], chunk.wall_color_map_1[i])
 			data.grass_mask[i] = 1 if chunk.grass_mask_map[i].r > 0.5 else 0
 	
-	# Source data (hex mode)
+	# Source data (hex mode). The runtime-only "heights" key is intentionally excluded
+	# from this fixed editor schema; the server re-streams heights on every join.
 	var hex_count : int = chunk.hex_data.size()
 	data.local_offsets.resize(hex_count * 2)
 	data.elevations.resize(hex_count)

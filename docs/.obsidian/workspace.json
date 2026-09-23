@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Game Design Docs/Items/Items.md",
+                "file": "Technical Design Docs/todo (stupid).md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Items"
+              "title": "todo (stupid)"
             }
           }
         ]
@@ -183,8 +183,8 @@
             "state": {
               "type": "tc-review-panel",
               "state": {},
-              "icon": "message-square",
-              "title": "CriticMarkup review"
+              "icon": "lucide-ghost",
+              "title": "tc-review-panel"
             }
           }
         ],
@@ -210,19 +210,22 @@
   },
   "active": "918b12cfbf1973ca",
   "lastOpenFiles": [
+    "Technical Design Docs/todo.md",
+    "Technical Design Docs/todo (stupid).md",
+    "Game Design Docs/One Page Doc.md",
+    "Game Design Docs/05 Biomes.md",
     "Game Design Docs/01 Executive Summary.md",
-    "Game Design Docs/Items/Items.md",
-    "Game Design Docs/03 Class system, Item system, and Equipment system.md",
     "Game Design Docs/04 Lore.md",
+    "Game Design Docs/02 Gameplay.md",
+    "Game Design Docs/03 Class system, Item system, and Equipment system.md",
+    "Game Design Docs/Inspirations, research, and new things to add.md",
+    "Game Design Docs/Items/Items.md",
     "Game Design Docs/Art/Art style 2D.md",
     "Game Design Docs/Art/Hollow Knight References.md",
     "Game Design Docs/Art/Art style 3D.md",
     "Game Design Docs/Art/Mood board task.md",
-    "Game Design Docs/Inspirations, research, and new things to add.md",
-    "Game Design Docs/05 Biomes.md",
     "Technical Design Docs/Description/00 End-to-End Timeline Flowchart.md",
     "Game Design Docs/00.canvas",
-    "Game Design Docs/02 Gameplay.md",
     "Game Design Docs/Untitled.canvas",
     "Rotating_earth_(large).gif",
     "fire-flames-transparent.gif",
@@ -250,9 +253,6 @@
     "workflows",
     "scripts",
     "discord_sync",
-    "Game Design Docs/CLAUDE.md",
-    "Game Design Docs/Classes/ART/gatherer (str) & (art).md",
-    "Game Design Docs/Classes/ART/crafter (dex) & (str) & (art).md",
     "Game Design Docs/Classes/Balancing details",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/zflpdhs2u7lg1.jpeg",
     "Game Design Docs/attachments/game info rotmg/build specialisation/How to perma the +150atk on battle god seal(Info in comments) _ r_RotMG_files/profileIcon_xwfwyccwkz6a1.jpg",

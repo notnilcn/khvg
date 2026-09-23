@@ -1,5 +1,5 @@
-i dont really give a shit about any of this shit tbh since i'm a solo dev.
-i wanted to hire a bunch of people but i got a fuck ton of scammers and bots so idc anymore.
+yeah nah i dont really give a shit about any of this shit tbh i'm just a guy.
+a lot of this was written by ai but i corrected it because i wanted to game myself because i know i'm the type of person who falls to that one talking point about how if you want to ask a question and have it answered quickly and correctly then what youre supposed to do is you ask the question and then make an alt account and answer it wrongly so that some autistic nerd (me) does the "erm ackshually" thing and corrects the incorrect answer.
 
 # High Concept
 Wizards tried to implement world-wide long range teleportation gates but they fucked it up and caused 75% of the planet to be patchwork-merged with other worlds which have monsters and stuff. Kinda post apocalyptic.

@@ -38,6 +38,10 @@ public partial class TableSubscriber : Component
 		// AOI chest views — NearbyChests drives chest spawning, NearbyChestItems the open
 		// chest panel's contents (both persistent view tables: binder replay OK).
 		"NearbyChests", "NearbyChestItems",
+		// Per-caller explored-map snapshots (PLAN §4.2) — one row per revealed terrain AOI
+		// chunk, carrying the chunk's hex payload; drives ExploredMapComponent3D's memory
+		// layer. Persistent view table: binder replay OK.
+		"LocalPlayerExplored",
 		"BulletPatternEvent", "BulletControlEvent", "MapConfig",
 		// Raw/unfiltered spell-visual event table (P5) — same known scaling debt as the
 		// other event tables; drives SpellVisualComponent. Event table: replay stays OFF.

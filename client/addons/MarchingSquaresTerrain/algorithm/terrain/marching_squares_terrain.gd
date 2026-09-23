@@ -123,6 +123,11 @@ enum StorageMode {
 		chunk_radius = value
 		if grid_mode == GridMode.HEXES:
 			_reposition_and_regenerate_chunks()
+## Canonical lap size in chunks along the q axis (0 = off). Set by the game from MapConfig;
+## when both sizes are positive, global hex lookups canonicalize into the lap first.
+@export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var wrap_chunk_cols : int = 0
+## Canonical lap size in chunks along the r axis (0 = off). See wrap_chunk_cols.
+@export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var wrap_chunk_rows : int = 0
 @export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var default_transition : int = 0: # Derived edge kind for unauthored edges (0 = cliff, 1 = terrace)
 	set(value):
 		default_transition = value
@@ -766,9 +771,14 @@ func _chunk_position(coords: Vector2i) -> Vector3:
 
 
 ## Regenerate the meshes of the 6 chunks neighboring chunk_coords (border walls change).
+## With wrapping enabled the neighbor chunk key is canonicalized first, so seam chunks
+## rebuild against their true wrapped partner instead of the nonexistent one.
 func _regenerate_neighbor_chunks(coords: Vector2i) -> void:
 	for dir in range(6):
-		var neighbor : MarchingSquaresTerrainChunk = chunks.get(coords + MSTHexMath.neighbor_offset(dir))
+		var neighbor_coords := coords + MSTHexMath.neighbor_offset(dir)
+		if wrap_chunk_cols > 0 and wrap_chunk_rows > 0:
+			neighbor_coords = MSTHexMath.wrap_chunk(neighbor_coords.x, neighbor_coords.y, wrap_chunk_cols, wrap_chunk_rows)
+		var neighbor : MarchingSquaresTerrainChunk = chunks.get(neighbor_coords)
 		if neighbor:
 			neighbor.regenerate_mesh()
 
@@ -780,17 +790,21 @@ func _reposition_and_regenerate_chunks() -> void:
 		chunk.regenerate_mesh()
 
 
-## Hex record for global axial coords, resolved across chunk borders.
-## Returns an empty Dictionary for hexes in chunks that don't exist (void):
-## walls facing void drop to the level 0 baseline. Untouched hexes inside an
-## existing chunk return a default record, so border walls and ledge coloring
+## Hex record for global axial coords, resolved across chunk borders. With wrapping enabled
+## (wrap_chunk_cols/rows > 0) the coords are canonicalized into the lap first, so seam hexes
+## read their true wrapped neighbor instead of void. Returns an empty Dictionary for hexes in
+## chunks that don't exist (void): walls facing void drop to the level 0 baseline. Untouched
+## hexes inside an existing chunk return a default record, so border walls and ledge coloring
 ## see sensible defaults instead of nothing.
 func get_hex_global(q: int, r: int) -> Dictionary:
-	var chunk_coords := MSTHexMath.world_to_chunk(q, r, chunk_radius)
+	var wrapped := Vector2i(q, r)
+	if wrap_chunk_cols > 0 and wrap_chunk_rows > 0:
+		wrapped = MSTHexMath.wrap_hex(q, r, chunk_radius, wrap_chunk_cols, wrap_chunk_rows)
+	var chunk_coords := MSTHexMath.world_to_chunk(wrapped.x, wrapped.y, chunk_radius)
 	var chunk : MarchingSquaresTerrainChunk = chunks.get(chunk_coords)
 	if not chunk:
 		return {}
-	var local := MSTHexMath.hex_to_local(q, r, chunk_radius)
+	var local := MSTHexMath.hex_to_local(wrapped.x, wrapped.y, chunk_radius)
 	if chunk.hex_data.has(local):
 		return chunk.hex_data[local]
 	return {
@@ -799,6 +813,7 @@ func get_hex_global(q: int, r: int) -> Dictionary:
 		"wall": default_wall_texture,
 		"grass": false,
 		"edges": 0,
+		"heights": PackedInt32Array(),
 	}
 
 

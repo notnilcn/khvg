@@ -52,3 +52,5 @@ flowcharts/Subflowcharts/client_subfolder/addons_subfolder/
 .obsidian/workspace.json
 .kimi-code/
 .opencode/
+*.uid
+*.import

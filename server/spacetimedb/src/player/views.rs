@@ -154,6 +154,16 @@ fn local_player_knowledge(ctx: &ViewContext) -> impl Query<PlayerKnowledge> {
     ctx.from.player_knowledge().r#where(move |k| k.profile_id.eq(profile_id)).build()
 }
 
+// The caller's explored-map snapshots (PLAN §4.2) — one row per chunk they have revealed,
+// each carrying the denormalized hex payload. Subscribed with the game wave.
+#[spacetimedb::view(accessor = local_player_explored, public)]
+fn local_player_explored(ctx: &ViewContext) -> impl Query<PlayerExploredChunk> {
+    let profile_id = ctx.db.logged_in_player().player_id().find(ctx.sender())
+        .map(|p| p.profile_id)
+        .unwrap_or(u64::MAX);
+    ctx.from.player_explored_chunk().r#where(move |c| c.profile_id.eq(profile_id)).build()
+}
+
 #[spacetimedb::view(accessor = nearby_loot_drops, public)]
 fn nearby_loot_drops(ctx: &ViewContext) -> impl Query<LootDrop> {
     let empty = ctx.from.loot_drop().r#where(|d| d.drop_id.eq(u64::MAX)).build();

@@ -30,6 +30,14 @@ pub struct HexTile {
     pub overlay_scale: f32,
     pub biome_id: String,
     pub region_id: u64,
+    // Per-edge terrain masks, one bit per edge in HEX_NEIGHBOR_DELTAS order (world/hex.rs).
+    // Both hexes sharing an edge carry the bit, at mirrored indices ((d + 3) % 6) — world
+    // generation always sets both sides. river_mask/road_mask are written by the terrain
+    // pipeline (rivers weighted downhill, roads connecting BiomeRegion centers); wall_mask is
+    // reserved for future settlement walls and is always 0 today.
+    pub river_mask: u8,
+    pub road_mask: u8,
+    pub wall_mask: u8,
 }
 
 // One decor prop per hex, at most — separation rules mean two decor can never be close enough

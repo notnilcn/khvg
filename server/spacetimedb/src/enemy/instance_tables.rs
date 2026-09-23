@@ -72,6 +72,12 @@ pub struct EnemyPhase {
     pub move_cycle_started_at: Timestamp,
 }
 
+#[derive(SpacetimeType, Clone, PartialEq)]
+pub struct EnemyPathWaypoint {
+    pub q: i32,
+    pub r: i32,
+}
+
 #[table(accessor = enemy_behavior, public)]
 pub struct EnemyBehavior {
     #[primary_key] #[auto_inc]
@@ -85,6 +91,18 @@ pub struct EnemyBehavior {
     // (angle + speed scalar) lives on the Enemy row (movement_direction/movement_speed).
     pub velocity_x: f32,
     pub velocity_y: f32,
+    // Wrap-aware path scratch (server-only). Only AggroTarget goals use it: when the aggro
+    // target is in another chunk, `path` holds the remaining waypoints from the last
+    // recompute (always non-empty while following), `path_next` indexes the waypoint the
+    // enemy is heading to, `path_goal_q/r` remembers the (wrapped) goal hex the path was
+    // computed for, and `path_tick` counts ticks since the last recompute attempt (the
+    // cadence gate that stops an unreachable target from re-running Dijkstra every tick).
+    // Same chunk = direct steering and an empty path.
+    pub path: Vec<EnemyPathWaypoint>,
+    pub path_next: u32,
+    pub path_goal_q: i32,
+    pub path_goal_r: i32,
+    pub path_tick: u32,
 }
 
 #[table(accessor = enemy, public)]

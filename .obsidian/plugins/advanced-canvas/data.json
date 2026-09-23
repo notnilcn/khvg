@@ -22,7 +22,7 @@
   "defaultEdgeWidth": "3",
   "defaultArrowSize": "2",
   "cardNodePadding": [
-    8,
+    16,
     16
   ],
   "connectEdgesToArrowBase": true,

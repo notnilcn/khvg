@@ -27,11 +27,11 @@ What this file adds on top: **this project's** entry point, launch args, node pa
 
 ## Session start
 
-1. **If `godot_health check` says BRIDGE_NOT_CONNECTED, launch the editor yourself** — the MCP bridge auto-loads with the editor. Run in the background (it never exits):
-   ```bash
-   "/c/Users/Clinton/g/Godot/Godot-stable_mono_win64_console.exe" -e --path "C:/Users/Clinton/g/main/client"
+1. **If `godot_health check` says BRIDGE_NOT_CONNECTED, launch the editor yourself** — the MCP bridge auto-loads with the editor. The Godot binary is on `PATH` as `Godot-stable_mono_win64_console` (resolves to `C:\Users\Clinton\g\Godot\Godot-stable_mono_win64_console.exe`), so call it by name — no absolute path. Run in the background (it never exits):
+   ```powershell
+   Start-Process -FilePath "Godot-stable_mono_win64_console" -ArgumentList "-e", "--path", "C:\Users\Clinton\g\main\client"
    ```
-   Under PowerShell (which is what the `bash` tool runs here) use `Start-Process -FilePath "C:\Users\Clinton\g\Godot\Godot-stable_mono_win64_console.exe" -ArgumentList "-e", "--path", "C:\Users\Clinton\g\main\client"` instead — it returns immediately while the editor keeps running.
+   `Start-Process` returns immediately while the editor keeps running (the `bash` tool here is Windows PowerShell). To launch it directly instead, run `Godot-stable_mono_win64_console -e --path "C:/Users/Clinton/g/main/client"`.
    Wait ~20 s, then `godot_instance list` → the instance appears already adopted; `godot_health check` to verify the bridge (port 6970).
 2. **Always run from `main_menu.tscn`** — the project's main scene and the only correct entry point. `godot_editor_edit open_scene res://Scenes/main_menu.tscn`, then `godot_game play` **with `scene: "res://Scenes/main_menu.tscn"` passed explicitly** — never run whatever scene happens to be open in the editor, and never start from `game.tscn` directly (that's the gameplay scene).
 3. **Entering the world is automatic.** Each instance's launch args (saved in the editor's per-instance debug options) do the whole menu flow: `--2D`/`--3D` picks the visual mode on the main menu and `--charN` joins the Nth character profile (the last profile when fewer than N exist), so a played instance lands directly in the world with no menu clicking. Verify with the **in-world check**: eval `get_node("/root/game/UI/LobbyComponent").visible == false` **and** `get_node("/root/game/LocalPlayer")` exists (pid-stamped — see project rules). If the lobby stays visible instead, the instance's identity has no profiles — see recipe 1.

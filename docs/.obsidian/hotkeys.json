@@ -1,1 +1,156 @@
-C:/Users/Clinton/OneDrive/g/main/.obsidian/hotkeys.json
+{
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1777375816179": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "C"
+    }
+  ],
+  "command-palette:open": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "C"
+    }
+  ],
+  "block-link-plus:file-outliner-toggle-task-status": [],
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1778961479631": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "B"
+    }
+  ],
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1784521375943": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod"
+      ],
+      "key": "S"
+    }
+  ],
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1784252904876": [
+    {
+      "modifiers": [
+        "Alt",
+        "Shift"
+      ],
+      "key": "A"
+    }
+  ],
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1784253158430": [
+    {
+      "modifiers": [
+        "Alt",
+        "Shift"
+      ],
+      "key": "C"
+    }
+  ],
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1784252865364": [
+    {
+      "modifiers": [
+        "Alt",
+        "Shift"
+      ],
+      "key": "D"
+    }
+  ],
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1784253011596": [
+    {
+      "modifiers": [
+        "Alt",
+        "Shift"
+      ],
+      "key": "R"
+    }
+  ],
+  "obsidian-wrap-with-shortcuts:wrap-with-shortcut-w1785493796156": [
+    {
+      "modifiers": [
+        "Alt",
+        "Shift"
+      ],
+      "key": "H"
+    }
+  ],
+  "track-changes:toggle-minimal-markup": [
+    {
+      "modifiers": [
+        "Mod",
+        "Shift"
+      ],
+      "key": "C"
+    }
+  ],
+  "sync-embeds:toggle-fold-selected-headings": [
+    {
+      "modifiers": [
+        "Alt",
+        "Shift"
+      ],
+      "key": "F"
+    }
+  ],
+  "editor:toggle-fold": [
+    {
+      "modifiers": [
+        "Alt"
+      ],
+      "key": "F"
+    }
+  ],
+  "track-changes:delete-selected-markup": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "D"
+    }
+  ],
+  "advanced-canvas:filter-immediately-connected-nodes": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod"
+      ],
+      "key": "A"
+    }
+  ],
+  "advanced-canvas:filter-immediately-connected-outgoing-nodes": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod"
+      ],
+      "key": "W"
+    }
+  ],
+  "advanced-canvas:filter-immediately-connected-incoming-nodes": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod"
+      ],
+      "key": "S"
+    }
+  ],
+  "advanced-canvas:reset-filter": [
+    {
+      "modifiers": [
+        "Alt",
+        "Mod",
+        "Shift"
+      ],
+      "key": "A"
+    }
+  ]
+}

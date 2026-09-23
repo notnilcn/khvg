@@ -8,23 +8,28 @@
 //! 2. per biome: resolve region seeds, insert `BiomeRegion` rows
 //! 3. per hex: ground pass (`ground`) → overlay pass (`overlay`) → decor pass (`decor`),
 //!    with adjacency/layering rules checked against already-written neighbor hexes (`rules`)
+//! 4. rivers over the written hexes (`rivers`) — weighted downhill walks
+//! 5. roads between the inserted region centers (`roads`) — wrap-aware Dijkstra
 //!
 //! The emitted `HexTile`/`HexDecor` rows are the server-side payload that populates the
-//! client's per-chunk tile scenes (ground/overlay hexes, decor props).
+//! client's per-chunk tile scenes (ground/overlay hexes, decor props). HexTile also carries
+//! the per-edge river/road masks passes 4-5 write — each edge is stamped on both of its hexes
+//! (masks.rs invariant).
 
 use std::collections::{HashMap, HashSet};
 use spacetimedb::{ReducerContext, Table};
 use crate::world::def_tables::{biome_def, biome_region_def, world_def, DecorConfig, GroundTextureConfig, ManualBiomeInput, OverlayTextureConfig, RegionWeight};
 use crate::world::instance_tables::{biome_region, hex_decor, hex_tile, BiomeRegion, HexTile};
+use crate::world::heights;
 use crate::world::hex::{enumerate_world_hexes, hex_to_world, HexCell};
-use crate::world::noise::{value_noise2d, ELEVATION_NOISE_SEED_OFFSET};
 use crate::world::prng::pick_index;
 use crate::world::tables::{building_tile, map_config, BuildingTile, MapConfig};
-use crate::main::global::{ELEVATION_LEVELS, ELEVATION_NOISE_SCALE};
 
 mod decor;
 mod ground;
 mod overlay;
+mod rivers;
+mod roads;
 mod rules;
 mod voronoi;
 
@@ -54,23 +59,25 @@ fn clear_world_geometry(ctx: &ReducerContext) {
 }
 
 // One hex: run the ground pass, then the overlay pass on top of the ground pick, record the
-// decided tags for not-yet-written neighbor hexes, and emit the HexTile row.
+// decided tags for not-yet-written neighbor hexes, and emit the HexTile row. Returns None when
+// the biome has no ground content (the cell gets no HexTile row at all, as before).
 #[allow(clippy::too_many_arguments)]
-fn write_hex_tile(ctx: &ReducerContext, cell: &HexCell, biome_id: &str, region_id: u64, ground_textures: &[GroundTextureConfig], overlay_textures: &[OverlayTextureConfig], ground_noise_scale: f32, overlay_noise_scale: f32, seed: u64, draw: &mut u64, neighbor_tags: &mut NeighborTagMap) {
-    if ground_textures.is_empty() { return; }
+fn write_hex_tile(ctx: &ReducerContext, cfg: &MapConfig, cell: &HexCell, biome_id: &str, region_id: u64, ground_textures: &[GroundTextureConfig], overlay_textures: &[OverlayTextureConfig], ground_noise_scale: f32, overlay_noise_scale: f32, seed: u64, draw: &mut u64, neighbor_tags: &mut NeighborTagMap) -> Option<HexTile> {
+    if ground_textures.is_empty() { return None; }
     let ground_chances: Vec<f32> = ground_textures.iter().map(|g| g.chance).collect();
 
-    let neighbors = decided_neighbor_tags(neighbor_tags, cell.hex_q, cell.hex_r);
+    let neighbors = decided_neighbor_tags(neighbor_tags, cell.hex_q, cell.hex_r, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows);
     let (texture_id, rotation, ground_tags) = choose_ground(ctx, cell, ground_textures, &ground_chances, ground_noise_scale, seed, draw, &neighbors);
     let (overlay_texture_id, overlay_rotation, overlay_scale, overlay_tags) = choose_overlay(ctx, cell, overlay_textures, overlay_noise_scale, &ground_tags, seed, draw, &neighbors);
 
     neighbor_tags.insert((cell.hex_q, cell.hex_r), DecidedHexTags { ground_tags, overlay_tags });
 
-    ctx.db.hex_tile().insert(HexTile {
+    Some(ctx.db.hex_tile().insert(HexTile {
         tile_id: 0, hex_q: cell.hex_q, hex_r: cell.hex_r, chunk_index: cell.chunk_index,
         texture_id, rotation, overlay_texture_id, overlay_rotation, overlay_scale,
         biome_id: biome_id.to_string(), region_id,
-    });
+        river_mask: 0, road_mask: 0, wall_mask: 0,
+    }))
 }
 
 // One fully-resolved region: where its Voronoi seed sits plus everything needed to insert its
@@ -133,20 +140,42 @@ fn run_generation(ctx: &ReducerContext, cfg: &MapConfig, cells: Vec<HexCell>, se
 
     clear_world_geometry(ctx);
 
-    // Elevation pass: quantize a dedicated noise field into ELEVATION_LEVELS discrete levels
-    // and stamp them onto the per-hex BuildingTile rows (clear_world_geometry never touches
-    // building_tile). A pure function of the seed — consumes no PRNG draws, so the
-    // deterministic draw order below is untouched.
-    let elevation_seed = seed ^ ELEVATION_NOISE_SEED_OFFSET;
+    // Height/elevation pass (world/heights.rs): sample a deterministic, crack-free ridge
+    // height field — one center + 6 corner samples per hex in HEX_NEIGHBOR_DELTAS corner
+    // order, world-unit i16 — and derive each hex's integer elevation level from its stored
+    // center height, stamping both onto the per-hex BuildingTile rows (clear_world_geometry
+    // never touches building_tile). A pure function of the seed: the ridge walk draws from a
+    // LOCAL counter threaded from `seed`, not the generation pipeline's shared `draw`, so the
+    // deterministic pass order below is untouched. The levels are also collected into a lookup
+    // map for the river/road mask passes at the end.
+    let cell_coords: Vec<(i32, i32)> = cells.iter().map(|c| (c.hex_q, c.hex_r)).collect();
+    let heightfield = heights::generate_heightfield(
+        &cell_coords,
+        &heights::HeightfieldConfig {
+            chunk_hex_radius: cfg.chunk_hex_radius,
+            chunk_cols: cfg.chunk_cols,
+            chunk_rows: cfg.chunk_rows,
+            hex_outer_radius: cfg.hex_outer_radius,
+        },
+        seed,
+    );
+    let mut elevation_by_hex: HashMap<(i32, i32), i16> = HashMap::new();
     for tile in ctx.db.building_tile().iter() {
-        let (wx, wy) = hex_to_world(tile.hex_q, tile.hex_r, cfg.hex_outer_radius);
-        let elevation = ((value_noise2d(wx, wy, ELEVATION_NOISE_SCALE, elevation_seed) * ELEVATION_LEVELS as f32) as i16)
-            .clamp(0, ELEVATION_LEVELS - 1);
-        ctx.db.building_tile().tile_id().update(BuildingTile { elevation, ..tile });
+        let (elevation, payload) = match heightfield.get(&(tile.hex_q, tile.hex_r)) {
+            Some(samples) => (heights::elevation_level(samples[0]), samples.clone()),
+            // A building tile outside the generated cell set (cannot happen right after
+            // add_chunks, but the pass must not panic on stale rows): keep the flat defaults.
+            None => (0, Vec::new()),
+        };
+        elevation_by_hex.insert((tile.hex_q, tile.hex_r), elevation);
+        ctx.db.building_tile().tile_id().update(BuildingTile { elevation, heights: payload, ..tile });
     }
 
     let mut neighbor_tags: NeighborTagMap = HashMap::new();
     let mut decided_decor: HashSet<(i32, i32)> = HashSet::new();
+    // In-memory output rows for the mask passes; persisted after all passes run.
+    let mut tiles: HashMap<(i32, i32), HexTile> = HashMap::with_capacity(cells.len());
+    let mut region_centers: Vec<(u64, i32, i32)> = Vec::new();
 
     let seed_positions_per_biome: Vec<Vec<(f32, f32)>> = biomes.iter().map(|b| b.seed_positions.clone()).collect();
     let cells_by_biome = group_cells_by_seeds(&cells, &seed_positions_per_biome, lap_q, lap_r);
@@ -194,14 +223,30 @@ fn run_generation(ctx: &ReducerContext, cfg: &MapConfig, cells: Vec<HexCell>, se
                 enemy_template_ids: plan.enemy_template_ids.clone(),
                 max_enemies: plan.max_enemies, spawn_radius: plan.spawn_radius,
             });
+            region_centers.push((inserted.region_id, plan.center_hex_q, plan.center_hex_r));
             region_seed_positions.push(plan.seed_position);
             region_ids.push(inserted.region_id);
         }
 
         for cell in biome_cells {
             let idx = nearest_seed_index(cell.world_x, cell.world_y, &region_seed_positions, lap_q, lap_r);
-            write_hex_tile(ctx, cell, &biome.biome_id, region_ids[idx], &biome.ground_textures, &biome.overlay_textures, biome.ground_noise_scale, biome.overlay_noise_scale, seed, &mut draw, &mut neighbor_tags);
+            if let Some(tile) = write_hex_tile(ctx, cfg, cell, &biome.biome_id, region_ids[idx], &biome.ground_textures, &biome.overlay_textures, biome.ground_noise_scale, biome.overlay_noise_scale, seed, &mut draw, &mut neighbor_tags) {
+                tiles.insert((cell.hex_q, cell.hex_r), tile);
+            }
             place_decor(ctx, cell, &biome.biome_id, region_ids[idx], &biome.decor_configs, biome.decor_noise_scale, biome.decor_min_separation, seed, &mut draw, &neighbor_tags, &mut decided_decor);
+        }
+    }
+
+    // Mask passes, after every hex row exists: rivers first (roads bridge them), then roads
+    // between the region centers. Both only touch the in-memory rows; the changed rows are
+    // persisted once, in enumerate_world_hexes order.
+    rivers::generate_rivers(&mut tiles, &cells, &elevation_by_hex, cfg, seed, &mut draw);
+    roads::generate_roads(&mut tiles, &elevation_by_hex, &region_centers, cfg);
+    for cell in &cells {
+        if let Some(tile) = tiles.remove(&(cell.hex_q, cell.hex_r)) {
+            if tile.river_mask != 0 || tile.road_mask != 0 || tile.wall_mask != 0 {
+                ctx.db.hex_tile().tile_id().update(tile);
+            }
         }
     }
 

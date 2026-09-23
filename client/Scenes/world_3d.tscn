@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="5_30yqp"]
 [ext_resource type="PackedScene" uid="uid://r8xdalncce6g" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_grey.tscn" id="5_oqa53"]
 [ext_resource type="PackedScene" uid="uid://bvgcsih5ik5ny" path="res://Assets/3D/KayKit_Medieval_Hexagon_Pack/tiles/base/hex_bullet.tscn" id="6_bullet"]
+[ext_resource type="Shader" uid="uid://dr4hogpv55lpw" path="res://addons/pixelizer_3d/shaders/sky_clouds.gdshader" id="6_glemo"]
 [ext_resource type="Script" uid="uid://cn5lkrknhfvqp" path="res://Scripts/Components/Bullets/Bullets3DComponent.cs" id="7_bullets3d"]
 [ext_resource type="Script" uid="uid://tj5jvmbahdrh" path="res://Scripts/Components/Terrain/TerrainComponent3D.cs" id="8_terrain3d"]
 [ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="9_mst"]
@@ -19,6 +20,40 @@
 [ext_resource type="Script" uid="uid://kg625atl872n" path="res://addons/pixelizer_3d/nodes/pixelizer_manager_3d.gd" id="13_manager"]
 [ext_resource type="Script" uid="uid://b3jprkygkht3l" path="res://addons/pixelizer_3d/effects/pixelizer_sky_clouds_3d.gd" id="14_skyclouds"]
 [ext_resource type="Script" uid="uid://cpyhokopcry0s" path="res://addons/pixelizer_3d/effects/pixelizer_god_rays_3d.gd" id="15_godrays"]
+[ext_resource type="Script" uid="uid://b225yl3l6idd2" path="res://Scripts/Components/Visual/AbilityPreview3DComponent.cs" id="21_qkafu"]
+[ext_resource type="Script" uid="uid://c5v8k2mqv7x3z" path="res://Scripts/Components/Terrain/TerrainRoadsComponent3D.cs" id="22_roads3d"]
+[ext_resource type="Script" path="res://Scripts/Components/Terrain/ExploredMapComponent3D.cs" id="23_explored"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qkafu"]
+render_priority = 0
+shader = ExtResource("6_glemo")
+shader_parameter/clouds_enabled = false
+shader_parameter/cloud_sun_dir = Vector3(0, -1, 0)
+shader_parameter/cloud_height = 10.0
+shader_parameter/cloud_noise_scale = 0.05
+shader_parameter/cloud_threshold = 0.5
+shader_parameter/cloud_bands = 3.0
+shader_parameter/cloud_tightness = 1.0
+shader_parameter/cloud_octave_drop = 0.5
+shader_parameter/cloud_gap_erosion = 0.0
+shader_parameter/cloud_detail_strength = 0.0
+shader_parameter/cloud_wind = Vector2(0.02, 0)
+shader_parameter/cloud_shadow_strength = 0.6
+shader_parameter/cloud_shadow_banding_enabled = true
+shader_parameter/cloud_shadow_levels = 3.0
+shader_parameter/cloud_shadow_softness = 0.4
+shader_parameter/cloud_color = Color(1, 1, 1, 1)
+shader_parameter/edge_fade = 0.15
+shader_parameter/cam_pos = Vector3(0, 0, 0)
+shader_parameter/cam_up = Vector3(0, 1, 0)
+shader_parameter/cam_fwd = Vector3(0, 0, -1)
+shader_parameter/half_h = 1000000.0
+shader_parameter/bound_on = -1000000.0
+shader_parameter/edge_width = 0.1
+shader_parameter/edge_wiggle = 0.09
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_laey5"]
+size = Vector2(16000, 16000)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kqqpj"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -41,7 +76,6 @@ AutoZoomAtShallowPitch = true
 
 [node name="PixelizerManager3D" type="Node3D" parent="." unique_id=2100000001]
 script = ExtResource("13_manager")
-sun = NodePath("../DirectionalLight3D")
 snap_camera = false
 
 [node name="CharactersPixelApplier" type="Node3D" parent="PixelizerManager3D" unique_id=2100000002]
@@ -59,11 +93,17 @@ BulletScene = ExtResource("6_bullet")
 ModelYawOffset = 1.5699999999999998
 ModelRollOffset = 0.0
 
-[node name="PixelizerSkyClouds3D" type="MeshInstance3D" parent="." unique_id=2100000003]
+[node name="PixelizerSkyClouds3D" type="MeshInstance3D" parent="." unique_id=2100000003 node_paths=PackedStringArray("manager")]
+top_level = true
+material_override = SubResource("ShaderMaterial_qkafu")
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_laey5")
 script = ExtResource("14_skyclouds")
 manager = NodePath("../PixelizerManager3D")
 clouds_enabled = true
+cloud_height = 1200.0
 plane_size = 16000.0
+height = 1200.0
 
 [node name="PixelizerGodRays3D" type="Node3D" parent="." unique_id=2100000004]
 script = ExtResource("15_godrays")
@@ -124,6 +164,51 @@ script = ExtResource("4_binder")
 ReplayExistingRows = true
 TableName = "MapConfig"
 
+[node name="NearbyBuildingTilesBinder" type="Node" parent="TerrainComponent3D" unique_id=353003389]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "NearbyBuildingTiles"
+
+[node name="TerrainRoadsComponent3D" type="Node3D" parent="." unique_id=1211000001]
+script = ExtResource("22_roads3d")
+
+[node name="RiverStrips" type="MeshInstance3D" parent="TerrainRoadsComponent3D" unique_id=1211000002]
+cast_shadow = 0
+
+[node name="RoadStrips" type="MeshInstance3D" parent="TerrainRoadsComponent3D" unique_id=1211000003]
+cast_shadow = 0
+
+[node name="NearbyTerrainTilesBinder" type="Node" parent="TerrainRoadsComponent3D" unique_id=1211000004]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "NearbyTerrainTiles"
+
+[node name="MapConfigBinder" type="Node" parent="TerrainRoadsComponent3D" unique_id=1211000005]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "MapConfig"
+
+[node name="ExploredMapComponent3D" type="Node3D" parent="." unique_id=1311000001]
+script = ExtResource("23_explored")
+
+[node name="MemoryTiles" type="MeshInstance3D" parent="ExploredMapComponent3D" unique_id=1311000002]
+cast_shadow = 0
+
+[node name="LocalPlayerExploredBinder" type="Node" parent="ExploredMapComponent3D" unique_id=1311000003]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "LocalPlayerExplored"
+
+[node name="NearbyTerrainTilesBinder" type="Node" parent="ExploredMapComponent3D" unique_id=1311000004]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "NearbyTerrainTiles"
+
+[node name="MapConfigBinder" type="Node" parent="ExploredMapComponent3D" unique_id=1311000005]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "MapConfig"
+
 [node name="PhantomCamera3D" type="Node3D" parent="." unique_id=526330480]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 200, 0)
@@ -150,6 +235,14 @@ script = ExtResource("5_30yqp")
 host_layers = 2
 metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
+[node name="AbilityPreview3DComponent" type="Node3D" parent="." unique_id=1852579297]
+script = ExtResource("21_qkafu")
+
+[node name="MapConfigBinder" type="Node" parent="AbilityPreview3DComponent" unique_id=265122895]
+script = ExtResource("4_binder")
+ReplayExistingRows = true
+TableName = "MapConfig"
+
 [connection signal="RowDeleted" from="WaterComponent3D/NearbyTerrainTilesBinder" to="WaterComponent3D" method="OnTerrainTileRowDeleted"]
 [connection signal="RowInserted" from="WaterComponent3D/NearbyTerrainTilesBinder" to="WaterComponent3D" method="OnTerrainTileRowInserted"]
 [connection signal="RowUpdated" from="WaterComponent3D/NearbyTerrainTilesBinder" to="WaterComponent3D" method="OnTerrainTileRowUpdated"]
@@ -159,3 +252,21 @@ metadata/_custom_type_script = "uid://bd046eokvcnu2"
 [connection signal="RowUpdated" from="HexGridOverlay3DComponent/MapConfigBinder" to="HexGridOverlay3DComponent" method="OnMapConfigRow"]
 [connection signal="RowInserted" from="TerrainComponent3D/MapConfigBinder" to="TerrainComponent3D" method="OnMapConfigRow"]
 [connection signal="RowUpdated" from="TerrainComponent3D/MapConfigBinder" to="TerrainComponent3D" method="OnMapConfigRow"]
+[connection signal="RowDeleted" from="TerrainComponent3D/NearbyBuildingTilesBinder" to="TerrainComponent3D" method="OnBuildingTileRowDeleted"]
+[connection signal="RowInserted" from="TerrainComponent3D/NearbyBuildingTilesBinder" to="TerrainComponent3D" method="OnBuildingTileRowInserted"]
+[connection signal="RowUpdated" from="TerrainComponent3D/NearbyBuildingTilesBinder" to="TerrainComponent3D" method="OnBuildingTileRowUpdated"]
+[connection signal="RowDeleted" from="TerrainRoadsComponent3D/NearbyTerrainTilesBinder" to="TerrainRoadsComponent3D" method="OnTerrainTileRowDeleted"]
+[connection signal="RowInserted" from="TerrainRoadsComponent3D/NearbyTerrainTilesBinder" to="TerrainRoadsComponent3D" method="OnTerrainTileRowInserted"]
+[connection signal="RowUpdated" from="TerrainRoadsComponent3D/NearbyTerrainTilesBinder" to="TerrainRoadsComponent3D" method="OnTerrainTileRowUpdated"]
+[connection signal="RowInserted" from="TerrainRoadsComponent3D/MapConfigBinder" to="TerrainRoadsComponent3D" method="OnMapConfigRow"]
+[connection signal="RowUpdated" from="TerrainRoadsComponent3D/MapConfigBinder" to="TerrainRoadsComponent3D" method="OnMapConfigRow"]
+[connection signal="RowInserted" from="AbilityPreview3DComponent/MapConfigBinder" to="AbilityPreview3DComponent" method="OnMapConfigRow"]
+[connection signal="RowUpdated" from="AbilityPreview3DComponent/MapConfigBinder" to="AbilityPreview3DComponent" method="OnMapConfigRow"]
+[connection signal="RowDeleted" from="ExploredMapComponent3D/LocalPlayerExploredBinder" to="ExploredMapComponent3D" method="OnExploredRowDeleted"]
+[connection signal="RowInserted" from="ExploredMapComponent3D/LocalPlayerExploredBinder" to="ExploredMapComponent3D" method="OnExploredRowInserted"]
+[connection signal="RowUpdated" from="ExploredMapComponent3D/LocalPlayerExploredBinder" to="ExploredMapComponent3D" method="OnExploredRowUpdated"]
+[connection signal="RowDeleted" from="ExploredMapComponent3D/NearbyTerrainTilesBinder" to="ExploredMapComponent3D" method="OnTerrainTileRowDeleted"]
+[connection signal="RowInserted" from="ExploredMapComponent3D/NearbyTerrainTilesBinder" to="ExploredMapComponent3D" method="OnTerrainTileRowInserted"]
+[connection signal="RowUpdated" from="ExploredMapComponent3D/NearbyTerrainTilesBinder" to="ExploredMapComponent3D" method="OnTerrainTileRowUpdated"]
+[connection signal="RowInserted" from="ExploredMapComponent3D/MapConfigBinder" to="ExploredMapComponent3D" method="OnMapConfigRow"]
+[connection signal="RowUpdated" from="ExploredMapComponent3D/MapConfigBinder" to="ExploredMapComponent3D" method="OnMapConfigRow"]

@@ -122,6 +122,9 @@ public partial class WaterComponent3D : Node3DComponent
     private Node? _manager;
 
     private float _outerRadius = DefaultHexOuterRadius;
+    private int _chunkHexRadius;
+    private int _chunkCols;
+    private int _chunkRows;
     private Vector2I _lastCenterHex = new(int.MaxValue, int.MaxValue);
     private bool _dirty = true;
 
@@ -157,7 +160,11 @@ public partial class WaterComponent3D : Node3DComponent
 
     private void OnMapConfigRow()
     {
-        _outerRadius = ((MapConfig)_mapConfigBinder.LastRow!).HexOuterRadius;
+        var cfg = (MapConfig)_mapConfigBinder.LastRow!;
+        _outerRadius = cfg.HexOuterRadius;
+        _chunkHexRadius = cfg.ChunkHexRadius;
+        _chunkCols = cfg.ChunkCols;
+        _chunkRows = cfg.ChunkRows;
         ClearTiles();
         _dirty = true;
     }
@@ -198,13 +205,16 @@ public partial class WaterComponent3D : Node3DComponent
         int R = ViewRadiusHexes;
 
         // The set of water hexes that should be visible: the hex ring around the
-        // player, minus every hex the server says exists.
+        // player, minus every hex the server says exists. The ring is generated in
+        // node space (tile positions stay node-space so the ring follows the player),
+        // but land rows are canonical — wrap each hex before the membership test.
         var needed = new HashSet<Vector2I>();
         for (int dq = -R; dq <= R; dq++)
             for (int dr = Mathf.Max(-R, -dq - R); dr <= Mathf.Min(R, -dq + R); dr++)
             {
                 var hex = new Vector2I(center.X + dq, center.Y + dr);
-                if (!_landRowCounts.ContainsKey((hex.X, hex.Y)))
+                var canonical = CanonicalHex(hex);
+                if (!_landRowCounts.ContainsKey((canonical.X, canonical.Y)))
                     needed.Add(hex);
             }
 
@@ -228,14 +238,21 @@ public partial class WaterComponent3D : Node3DComponent
     }
 
     // 1.0 when a ring-1 neighbor is land, 0.5 when only ring-2 reaches land, else 0.
+    // q,r is a node-space hex; the land rows are canonical, so wrap before looking up.
     private float ComputeCoast(int q, int r)
     {
+        var canonical = CanonicalHex(new Vector2I(q, r));
         foreach (var d in Ring1Offsets)
-            if (_landRowCounts.ContainsKey((q + d.X, r + d.Y))) return 1.0f;
+            if (_landRowCounts.ContainsKey((canonical.X + d.X, canonical.Y + d.Y))) return 1.0f;
         foreach (var d in Ring2Offsets)
-            if (_landRowCounts.ContainsKey((q + d.X, r + d.Y))) return 0.5f;
+            if (_landRowCounts.ContainsKey((canonical.X + d.X, canonical.Y + d.Y))) return 0.5f;
         return 0.0f;
     }
+
+    // Map a node-space hex into the canonical lap for lookups against server (canonical)
+    // land rows. Tile positions and dictionary keys stay node-space.
+    private Vector2I CanonicalHex(Vector2I hex) =>
+        HexMath.WrapHex(hex.X, hex.Y, _chunkHexRadius, _chunkCols, _chunkRows);
 
     private void SpawnTile(int q, int r)
     {

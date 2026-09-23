@@ -18,6 +18,8 @@ pub fn seed_default_textures(ctx: &ReducerContext) {
     TextureEntry::seed(ctx, texture("Hat", "res://Textures/Items/Accesories/Hat.tres", "", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Skull", "res://Textures/Items/Artifacts/Skull.tres", "", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Orb", "res://Textures/Items/Artifacts/Orb.tres", "", TextureKind::Item));
+	TextureEntry::seed(ctx, texture("Tome", "res://Textures/Items/Artifacts/Tome.tres", "", TextureKind::Item));
+	TextureEntry::seed(ctx, texture("Scripture", "res://Textures/Items/Artifacts/Scripture.tres", "", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Bag", "res://Textures/Items/Bags/Bag.tres", "res://Assets/3D/accesiories/quiver.fbx", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Bread", "res://Textures/Items/Consumables/Bread.tres", "res://Assets/3D/accesiories/mug_full.fbx", TextureKind::Item));
     TextureEntry::seed(ctx, texture("Bow", "res://Textures/Items/Weapons/Bow.tres", "res://Assets/3D/accesiories/bow_withString.fbx", TextureKind::Item));

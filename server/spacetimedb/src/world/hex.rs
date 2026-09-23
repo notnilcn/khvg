@@ -46,10 +46,18 @@ pub fn spiral_chunk_index(cq: i32, cr: i32) -> i64 {
     b + arm * rho as i64 + step
 }
 
+// Chunk owning a fine hex (hexx to_lower_res, the inverse of chunk_center_hex). Lockstep
+// siblings: client HexMath.ToLowerRes (client/Scripts/World/HexMath.cs) and
+// MSTHexMath.world_to_chunk (client/addons/MarchingSquaresTerrain/algorithm/terrain/mst_hex_math.gd)
+// — all copies must change together.
+pub fn hex_to_chunk(q: i32, r: i32, hex_radius: i32) -> (i32, i32) {
+    let chunk = Hex::new(q, r).to_lower_res(hex_radius as u32);
+    (chunk.x, chunk.y)
+}
+
 pub fn world_to_chunk(wx: f32, wy: f32, chunk_hex_radius: i32, hex_outer_radius: f32) -> (i32, i32) {
     let (hq, hr) = world_to_hex(wx, wy, hex_outer_radius);
-    let chunk = Hex::new(hq, hr).to_lower_res(chunk_hex_radius as u32);
-    (chunk.x, chunk.y)
+    hex_to_chunk(hq, hr, chunk_hex_radius)
 }
 
 // Axial deltas for the 6 hex neighbor directions, indexed 0-5, where direction D's hex_to_world

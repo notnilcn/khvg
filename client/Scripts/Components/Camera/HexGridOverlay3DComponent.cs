@@ -37,6 +37,8 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 
 	private float _outerRadius = DefaultHexOuterRadius;
 	private int _chunkRadius = DefaultChunkHexRadius;
+	private int _chunkCols;
+	private int _chunkRows;
 
 	private readonly Dictionary<Vector2I, Node3D> _tiles = new();
 	private readonly Dictionary<Vector2I, Label3D> _labels = new();
@@ -97,6 +99,8 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 		var cfg = (MapConfig)_mapConfigBinder.LastRow!;
 		_chunkRadius = cfg.ChunkHexRadius;
 		_outerRadius = cfg.HexOuterRadius;
+		_chunkCols = cfg.ChunkCols;
+		_chunkRows = cfg.ChunkRows;
 		ClearAll();
 	}
 
@@ -166,7 +170,11 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 	// by the extra height instead, keeping the base fixed and raising the top face.
 	private void ApplyElevation(int q, int r, Node3D tile, Label3D? label)
 	{
-		int level = GameManager.ElevationMap?.GetElevation(q, r) ?? 0;
+		// q,r is the raw node-space hex (tile position and keys stay node-space so the ring
+		// follows the player); elevation rows and chunk ids are server-canonical — wrap for
+		// both the lookup and the label text.
+		var canonical = HexMath.WrapHex(q, r, _chunkRadius, _chunkCols, _chunkRows);
+		int level = GameManager.ElevationMap?.GetElevation(canonical.X, canonical.Y) ?? 0;
 		float s = _outerRadius * TileScaleMultiplier;
 		float yScale = 1f + level * HeightScalePerLevel;
 
@@ -181,8 +189,8 @@ public partial class HexGridOverlay3DComponent : Node3DComponent
 		tile.Position = basePos + new Vector3(0f, lift, 0f);
 
 		if (label == null) return;
-		var chunk = HexMath.ToLowerRes(q, r, _chunkRadius);
-		label.Text = $"({q},{r})\nc({chunk.X},{chunk.Y}) i={HexMath.SpiralIndex(chunk.X, chunk.Y)} e={level}";
+		var chunk = HexMath.ToLowerRes(canonical.X, canonical.Y, _chunkRadius);
+		label.Text = $"({canonical.X},{canonical.Y})\nc({chunk.X},{chunk.Y}) i={HexMath.SpiralIndex(chunk.X, chunk.Y)} e={level}";
 		float topY = lift + localBox.End.Y * yScale;
 		label.Position = basePos + new Vector3(0f, topY + 0.15f, 0f);
 	}

@@ -100,12 +100,22 @@ func regenerate_grass() -> void:
 		var rng := RandomNumberGenerator.new()
 		rng.seed = _hex_seed(local_hex)
 		
+		# Smooth-topped hexes: sample the server heights at the point instead of using
+		# the flat level plane, and tilt the blade basis along the sampled normal.
+		var heights : PackedInt32Array = MarchingSquaresTerrainChunk.get_record_heights(record)
+		var has_heights : bool = heights.size() == MarchingSquaresTerrainChunk.HEIGHTS_PER_HEX
+		
 		for i in range(per_hex):
 			if index >= multimesh.instance_count:
 				return
 			if record.get("grass", false) and _has_grass_for_texture(texture_id):
 				var local_point := hex_top + _random_point_in_hex(rng, hex_size * GRASS_BORDER_INSET)
-				_create_grass_instance(index, local_point, chunk_origin + local_point, texture_id)
+				if has_heights:
+					var offset_xz := Vector2(local_point.x - hex_top.x, local_point.z - hex_top.z)
+					local_point.y = MSTHexMath.smooth_hex_height(heights, hex_size, offset_xz)
+					_create_grass_instance(index, local_point, chunk_origin + local_point, texture_id, MSTHexMath.smooth_hex_normal(heights, hex_size, offset_xz))
+				else:
+					_create_grass_instance(index, local_point, chunk_origin + local_point, texture_id)
 			else:
 				_hide_grass_instance(index)
 			index += 1
@@ -240,14 +250,15 @@ func _format_needs_conversion(fmt: Image.Format) -> bool:
 #region grass placement helpers
 
 ## Creates a grass instance at the given position with proper transform and color.
-## Hex tops are flat, so the instance normal is always up. The shader rebuilds the
-## blade position from the camera (spherical billboarding) and only reads the
-## instance origin, but it discards blades whose world normal points away from up -
-## so the basis z axis must be UP, not DOWN.
-func _create_grass_instance(index: int, local_pos: Vector3, world_pos: Vector3, texture_id: int) -> void:
-	var right := Vector3.FORWARD.cross(Vector3.UP).normalized()
-	var forward := Vector3.UP.cross(Vector3.RIGHT).normalized()
-	var instance_basis := Basis(right, forward, Vector3.UP)
+## Flat hex tops leave the normal at UP; smooth-topped hexes pass the sampled terrain
+## normal so the blades tilt with the surface. The shader rebuilds the blade position
+## from the camera (spherical billboarding) and only reads the instance origin, but it
+## discards blades whose world normal points away from up - so the basis z axis must
+## be the terrain normal (UP gives the exact identity basis as before).
+func _create_grass_instance(index: int, local_pos: Vector3, world_pos: Vector3, texture_id: int, normal := Vector3.UP) -> void:
+	var right := Vector3.FORWARD.cross(normal).normalized()
+	var forward := normal.cross(right)
+	var instance_basis := Basis(right, forward, normal)
 	
 	multimesh.set_instance_transform(index, Transform3D(instance_basis, local_pos))
 	

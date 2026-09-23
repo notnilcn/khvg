@@ -1,7 +1,9 @@
 use spacetimedb::{ReducerContext, Table};
+use std::collections::HashMap;
 use crate::main::global::*;
 use crate::world::aoi::surrounding_chunk_indices;
 use crate::world::hex::{spiral_chunk_index, world_to_chunk};
+use crate::world::pathing::HexTerrain;
 use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
 use crate::world::tables::MapConfig;
 use crate::player::methods::*;
@@ -52,6 +54,11 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         candidates.truncate(BEHAVIOR_TICK_ENEMY_BUDGET);
     }
 
+    // Terrain snapshot shared by every path recompute this tick (elevation + edge masks):
+    // built lazily on the first recompute, then reused, so the two full-table scans happen
+    // at most once per tick instead of once per path. Terrain is static between ticks.
+    let mut terrain_snapshot: Option<HashMap<(i32, i32), HexTerrain>> = None;
+
     for enemy in candidates {
         let mut behavior = match ctx.db.enemy_behavior().behavior_id().find(&enemy.behavior_id) {
             Some(b) => b,
@@ -61,6 +68,7 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         let behavior_snapshot = (
             behavior.aggro_target, behavior.aggro_locked_until, behavior.was_simulating,
             behavior.active_phase_index, behavior.velocity_x, behavior.velocity_y,
+            behavior.path.clone(), behavior.path_next, behavior.path_goal_q, behavior.path_goal_r, behavior.path_tick,
         );
         let template = match ctx.db.enemy_template().template_id().find(&enemy.template_id) {
             Some(t) => t,
@@ -153,7 +161,7 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
             }
         }
 
-        let (new_x, new_y, new_dir_x, new_dir_y, new_move_dir, new_move_speed) = apply_movement(ctx, &enemy, &behavior, &phase, &template.stun_behavior);
+        let (new_x, new_y, new_dir_x, new_dir_y, new_move_dir, new_move_speed) = apply_movement(ctx, &enemy, &mut behavior, &phase, &template.stun_behavior, &mut terrain_snapshot);
         let (new_x, new_y) = wrap_world_pos(new_x, new_y, chunk_hex_radius, chunk_cols, chunk_rows, hex_outer_radius);
         let (cq, cr) = world_to_chunk(new_x, new_y, chunk_hex_radius, hex_outer_radius);
         let chunk_index = spiral_chunk_index(cq, cr);
@@ -165,6 +173,7 @@ pub fn tick_enemy_behavior(ctx: &ReducerContext, _job: EnemyBehaviorSchedule) {
         if (
             behavior.aggro_target, behavior.aggro_locked_until, behavior.was_simulating,
             active_phase_index, new_dir_x, new_dir_y,
+            behavior.path.clone(), behavior.path_next, behavior.path_goal_q, behavior.path_goal_r, behavior.path_tick,
         ) != behavior_snapshot {
             ctx.db.enemy_behavior().behavior_id().update(EnemyBehavior {
                 active_phase_index, velocity_x: new_dir_x, velocity_y: new_dir_y,

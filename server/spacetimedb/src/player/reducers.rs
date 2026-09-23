@@ -60,6 +60,11 @@ pub fn delete_profile(ctx: &ReducerContext, profile_id: u64) -> Result<(), Strin
         return Err("Not your profile.".to_string());
     }
     teardown_profile(ctx, profile_id);
+    // Explored-map snapshots are deliberately NOT part of teardown_profile — death must not
+    // erase the map — so a deleted profile's rows are removed explicitly here.
+    for explored in ctx.db.player_explored_chunk().profile_id().filter(&profile_id).collect::<Vec<_>>() {
+        ctx.db.player_explored_chunk().explored_id().delete(&explored.explored_id);
+    }
     ctx.db.player_profile().profile_id().delete(&profile_id);
     Ok(())
 }
@@ -275,6 +280,9 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     if let Some(chunk) = ctx.db.player_chunk().profile_id().find(&profile_id) {
         if (chunk.chunk_q, chunk.chunk_r) != (cq, cr) {
             ctx.db.player_chunk().profile_id().update(PlayerChunk { chunk_q: cq, chunk_r: cr, ..chunk });
+            // A real chunk crossing reveals the destination AOI disk (PLAN §4.2). No-op
+            // (one ≤37-row set-diff read) when every chunk in the disk is already revealed.
+            crate::player::explored::reveal_aoi(ctx, profile_id, cq, cr);
         }
     }
 

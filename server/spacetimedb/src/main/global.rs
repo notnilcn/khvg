@@ -24,8 +24,14 @@ pub const BIOME_VORONOI_SEED_BUDGET: usize = 16;
 // Discrete elevation levels stamped per hex (BuildingTile.elevation) by world generation.
 // The client mirrors this for its per-hex tint.
 pub const ELEVATION_LEVELS: i16 = 8;
-// Spatial frequency of the elevation noise field — low enough that plateaus span many hexes.
-pub const ELEVATION_NOISE_SCALE: f32 = 0.004;
+// World-unit height of one elevation level: elevation = floor(center height / this). The client
+// MST terrain builds each hex top at elevation × this value, so the two are a lockstep pair —
+// client ElevationMapComponent.WorldHeightPerLevel
+// (client/Scripts/Components/Terrain/ElevationMapComponent.cs:28) must change together.
+pub const WORLD_HEIGHT_PER_LEVEL: f32 = 16.0;
+// Spatial frequency of the terrain-class noise field that buckets hexes into plain/hill/
+// mountain for the ridge height field (world/heights.rs). Low scale = larger class regions.
+pub const TERRAIN_CLASS_NOISE_SCALE: f32 = 0.004;
 // Walkable deltas: a player may walk onto a hex up to this many levels above/below their
 // current hex with no block and no fall. Anything steeper is a cliff: rising more than
 // MAX_WALKABLE_UP_DELTA blocks the move; dropping more than MAX_WALKABLE_DOWN_DELTA is a fall.
@@ -49,6 +55,25 @@ pub const MAX_FALL_DISPLACEMENT: f32 = DEFAULT_HEX_OUTER_RADIUS * 2.5;
 pub const BULLET_ELEVATION_CLIMB: i16 = 1;
 #[allow(dead_code)]
 pub const BULLET_ELEVATION_DROP: i16 = 2;
+
+// ===== Rivers & Roads (Phase 3 terrain masks) =====
+
+// Total river budget, as a percent of world hexes, converted to laid edge segments (mirrors
+// hex_map_godot's river_percentage = 10). A river stops when it merges into another river or
+// reaches a local minimum — there is no water level in main, so rivers never pool into lakes.
+pub const RIVER_SEGMENT_PERCENT: usize = 10;
+// Spatial frequency of the pseudo-moisture noise field that weights river origins — lower
+// scale means larger, farther-apart wet basins.
+pub const RIVER_MOISTURE_NOISE_SCALE: f32 = 0.0025;
+// Road Dijkstra step costs (world generation, not player movement): base cost per hex step,
+// plus this per elevation level of |delta|, plus a bridge surcharge for crossing an edge that
+// carries a river, minus a discount for using an edge that already carries a road. Cliffs
+// block the road path outright (road_steps must stay player-walkable), and a road never
+// shares an edge with a river — crossing it is the bridge.
+pub const ROAD_BASE_STEP_COST: u32 = 10;
+pub const ROAD_ELEVATION_STEP_COST: u32 = 8;
+pub const ROAD_RIVER_CROSS_COST: u32 = 40;
+pub const ROAD_EXISTING_DISCOUNT: u32 = 6;
 
 // ===== Area of Interest (AOI) & Camera View =====
 
@@ -156,6 +181,14 @@ pub const MEANDER_MAX_TURN_RATE: f32 = 1.2;
 // Seed offset decorrelating the meander sway noise field from the other value_noise2d
 // users (worldgen fields in world/noise.rs).
 pub const MEANDER_NOISE_SEED_OFFSET: u64 = 0xA24BAED4963EE407;
+
+// Wrap-aware enemy pathfinding (world/pathing.rs), layered on the steering above. Only
+// AggroTarget goals whose target sits in another chunk route; recompute at most once every
+// ENEMY_PATH_RECOMPUTE_TICKS (100 ms ticks → 1 s, so a moving target gets a fresh route
+// ~1/s instead of Dijkstra every tick) and consume a waypoint once within
+// ENEMY_PATH_WAYPOINT_RADIUS of its hex center — the steering layer covers the last stretch.
+pub const ENEMY_PATH_RECOMPUTE_TICKS: u32 = 10;
+pub const ENEMY_PATH_WAYPOINT_RADIUS: f32 = DEFAULT_HEX_OUTER_RADIUS;
 
 // ===== World Timers =====
 

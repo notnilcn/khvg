@@ -1,9 +1,11 @@
+# Portions derived from hex_map_godot (135dc75) - MIT. See THIRD_PARTY_NOTICES.md.
 @tool
 extends RefCounted
 class_name MSTHexMath
 ## Pointy-top axial hex math shared by the terrain chunk, editor tools and JSON IO.
 ## Ports of client/Scripts/World/HexMath.cs and server/spacetimedb/src/world/hex.rs
-## (vendored hexx 0.24.0 semantics) — all copies must change together.
+## (vendored hexx 0.24.0 semantics), including the canonical-lap wrap helpers (wrap_hex/
+## wrap_chunk, mirroring the server's wrap_hex_coords) — all copies must change together.
 
 
 const SQRT3 : float = 1.7320508075688772
@@ -61,6 +63,29 @@ static func world_to_chunk(q: int, r: int, radius: int) -> Vector2i:
 static func hex_to_local(q: int, r: int, radius: int) -> Vector2i:
 	var chunk := world_to_chunk(q, r, radius)
 	return Vector2i(q, r) - chunk_center(chunk.x, chunk.y, radius)
+
+
+## Wrap a chunk coordinate into the canonical lap (0 .. cols-1, 0 .. rows-1) with positive
+## modulo. Mirrors the server's wrap_chunk_coords; a non-positive grid size passes through.
+static func wrap_chunk(cq: int, cr: int, cols: int, rows: int) -> Vector2i:
+	if cols <= 0 or rows <= 0:
+		return Vector2i(cq, cr)
+	return Vector2i(posmod(cq, cols), posmod(cr, rows))
+
+
+## Map an arbitrary hex back into the canonical lap: the chunk coords wrap and the local offset
+## inside the chunk is preserved, so the wrapped hex is the same point on the torus. Port of
+## HexMath.WrapHex (client/Scripts/World/HexMath.cs) and the server's world/wrap.rs
+## wrap_hex_coords — all copies must change together.
+static func wrap_hex(q: int, r: int, radius: int, cols: int, rows: int) -> Vector2i:
+	if cols <= 0 or rows <= 0:
+		return Vector2i(q, r)
+	var chunk := world_to_chunk(q, r, radius)
+	var wrapped_chunk := wrap_chunk(chunk.x, chunk.y, cols, rows)
+	if wrapped_chunk == chunk:
+		return Vector2i(q, r)
+	var center := chunk_center(wrapped_chunk.x, wrapped_chunk.y, radius)
+	return center + hex_to_local(q, r, radius)
 
 
 ## All local axial offsets inside a hex-shaped chunk (3R(R+1)+1 hexes).
@@ -124,5 +149,63 @@ static func color_pair_to_slot(c0: Color, c1: Color) -> int:
 	if c1.a > c1_max: c1_idx = 3
 	
 	return c0_idx * 4 + c1_idx
+
+#endregion
+
+#region smooth hex heights
+
+## Smooth-top height sampling. Lockstep with the server's world/heights.rs: the 7
+## world-unit samples are [center, corner c0..c5] with the corners at
+## hex_corner_offset(dir, size) (angle 60*dir - 30) in neighbor-delta order, matching
+## the chunk's smooth fan lattice and the C# feeder's draw_hex_heights payload -
+## all copies change together.
+
+## Fan triangle containing a local XZ offset: [dir, w_center, w_corner_dir,
+## w_corner_dir+1], the barycentric weights on (center, corner dir, corner dir+1).
+## Points outside the hex use the closest triangle's linear extension.
+static func hex_fan_coords(local_xz: Vector2, size: float) -> Array:
+	var best_dir := 0
+	var best_weights := Vector3.ZERO
+	var best_min := -INF
+	for dir in range(6):
+		var b := hex_corner_offset(dir, size)
+		var c := hex_corner_offset(dir + 1, size)
+		var weights := _triangle_barycentric(local_xz, b, c)
+		var min_weight : float = minf(minf(weights.x, weights.y), weights.z)
+		if min_weight > best_min:
+			best_min = min_weight
+			best_dir = dir
+			best_weights = weights
+	return [best_dir, best_weights.x, best_weights.y, best_weights.z]
+
+
+## Barycentric weights (on (0,0), b, c) of a point p in the triangle (0,0), b, c.
+static func _triangle_barycentric(p: Vector2, b: Vector2, c: Vector2) -> Vector3:
+	var denom := b.x * c.y - c.x * b.y
+	if is_zero_approx(denom):
+		return Vector3(1.0, 0.0, 0.0)
+	var w_b := (p.x * c.y - c.x * p.y) / denom
+	var w_c := (b.x * p.y - p.x * b.y) / denom
+	return Vector3(1.0 - w_b - w_c, w_b, w_c)
+
+
+## Barycentric interpolation of the 7 server heights at a local XZ offset from the
+## hex center (closest fan's linear extension outside the hex).
+static func smooth_hex_height(heights: PackedInt32Array, size: float, local_xz: Vector2) -> float:
+	var fan := hex_fan_coords(local_xz, size)
+	var dir : int = fan[0]
+	var h0 := float(heights[0])
+	var h1 := float(heights[1 + dir])
+	var h2 := float(heights[1 + ((dir + 1) % 6)])
+	return float(fan[1]) * h0 + float(fan[2]) * h1 + float(fan[3]) * h2
+
+
+## Surface normal of the sampled smooth top: central differences of smooth_hex_height
+## with the given probe distance (default size * 0.25), as (-dx, 1, -dz) normalized.
+static func smooth_hex_normal(heights: PackedInt32Array, size: float, local_xz: Vector2, probe: float = -1.0) -> Vector3:
+	var h : float = probe if probe > 0.0 else size * 0.25
+	var dx := (smooth_hex_height(heights, size, local_xz + Vector2(h, 0.0)) - smooth_hex_height(heights, size, local_xz - Vector2(h, 0.0))) / (2.0 * h)
+	var dz := (smooth_hex_height(heights, size, local_xz + Vector2(0.0, h)) - smooth_hex_height(heights, size, local_xz - Vector2(0.0, h))) / (2.0 * h)
+	return Vector3(-dx, 1.0, -dz).normalized()
 
 #endregion

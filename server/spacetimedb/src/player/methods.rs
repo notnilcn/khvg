@@ -227,6 +227,9 @@ pub fn teleport_player(ctx: &ReducerContext, profile_id: u64, x: f32, y: f32) ->
     if let Some(chunk) = ctx.db.player_chunk().profile_id().find(&profile_id) {
         if (chunk.chunk_q, chunk.chunk_r) != (cq, cr) {
             ctx.db.player_chunk().profile_id().update(PlayerChunk { chunk_q: cq, chunk_r: cr, ..chunk });
+            // Teleport across chunks reveals the destination AOI disk (PLAN §4.2), same as a
+            // report_movement crossing.
+            crate::player::explored::reveal_aoi(ctx, profile_id, cq, cr);
         }
     }
     // Teleports are exempt from report_movement's displacement clamp; restamp the report
@@ -428,6 +431,10 @@ pub fn try_scaffold_profile(ctx: &ReducerContext, profile_id: u64) {
     } else {
         ctx.db.player_chunk().insert(PlayerChunk { profile_id, chunk_q: spawn_cq, chunk_r: spawn_cr });
     }
+
+    // join_world reveals the spawn AOI disk (PLAN §4.2) — the first thing an explored map
+    // needs, and the only reveal a player who never crosses a chunk boundary would get.
+    crate::player::explored::reveal_aoi(ctx, profile_id, spawn_cq, spawn_cr);
 }
 
 /// Tears down every per-profile row — the inverse of try_scaffold_profile, plus PlayerStats

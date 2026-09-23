@@ -1,3 +1,4 @@
+// Portions derived from hex_map_godot (135dc75) - MIT. See THIRD_PARTY_NOTICES.md.
 #nullable enable
 using Godot;
 using System;
@@ -70,6 +71,25 @@ public static class HexMath
 		var chunk = ToLowerRes(q, r, radius);
 		var center = ChunkCenterHex(chunk.X, chunk.Y, radius);
 		return new Vector2I(q - center.X, r - center.Y);
+	}
+
+	// Map an arbitrary fine hex back into the canonical lap: the hex's chunk coords wrap, and
+	// its local offset inside the chunk is preserved, so the wrapped hex is the same point on
+	// the torus (positive modulo, like the server's rem_euclid). Lockstep siblings: server
+	// wrap_hex_coords (server/spacetimedb/src/world/wrap.rs) and MSTHexMath.wrap_hex
+	// (client/addons/MarchingSquaresTerrain/algorithm/terrain/mst_hex_math.gd) — all copies
+	// must change together.
+	public static Vector2I WrapHex(int q, int r, int radius, int cols, int rows)
+	{
+		if (cols <= 0 || rows <= 0) return new Vector2I(q, r);
+		var chunk = ToLowerRes(q, r, radius);
+		var wrapped = new Vector2I(
+			((chunk.X % cols) + cols) % cols,
+			((chunk.Y % rows) + rows) % rows);
+		if (chunk == wrapped) return new Vector2I(q, r);
+		var center = ChunkCenterHex(chunk.X, chunk.Y, radius);
+		var wrappedCenter = ChunkCenterHex(wrapped.X, wrapped.Y, radius);
+		return new Vector2I(wrappedCenter.X + (q - center.X), wrappedCenter.Y + (r - center.Y));
 	}
 
 	// Bijection Z² → ℕ using hex spiral order. Lockstep sibling of the server's
