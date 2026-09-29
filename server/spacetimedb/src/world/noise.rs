@@ -12,15 +12,9 @@ pub const DECOR_NOISE_SEED_OFFSET: u64 = 0xC2B2AE3D27D4EB4F;
 // (terrain/rivers.rs) — independent of the elevation field it is multiplied with.
 pub const RIVER_NOISE_SEED_OFFSET: u64 = 0xA1B2C3D4E5F60718;
 
-// Ridge height field (world/heights.rs) seed offsets. Each field is a separate value_noise2d
-// instance keyed on the world seed, so they need distinct offsets for the same reason as the
-// offsets above: terrain classes, the two base-height octaves, the ridge erosion field and the
-// hill bump must not trace each other.
-pub const TERRAIN_CLASS_NOISE_SEED_OFFSET: u64 = 0x8F51B2C3D4E5F607;
-pub const HEIGHT_NOISE_SEED_OFFSET: u64 = 0xB7E151628AED2A6B;
-pub const HEIGHT_NOISE_OCTAVE2_SEED_OFFSET: u64 = 0x165667B19E3779F9;
-pub const RIDGE_NOISE_SEED_OFFSET: u64 = 0x27D4EB2F165667C5;
-pub const HEIGHT_HILL_NOISE_SEED_OFFSET: u64 = 0x94D049BB133111EB;
+// Same decorrelation purpose again, for the elevation field stamped onto BuildingTile rows
+// during world generation.
+pub const ELEVATION_NOISE_SEED_OFFSET: u64 = 0xD6E8FEB86659FD93;
 
 // Hash a lattice point to [0,1) — same hash family as the PRNG above, but keyed by integer grid
 // coordinates instead of a draw counter, so the same (seed, x, y) always reproduces the same value.

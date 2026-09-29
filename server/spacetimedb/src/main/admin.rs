@@ -272,9 +272,9 @@ pub fn internal_add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_co
                 ctx.db.building_tile().insert(BuildingTile {
                     tile_id: 0, hex_q: cx + rx, hex_r: cz + rz,
                     chunk_q: cq, chunk_r: cr, local_index: m, chunk_index: cidx,
-                    building_type: String::new(), owner_id: None, elevation: 0,
-                    // Filled by the generation height/elevation pass (world/heights.rs).
-                    heights: Vec::new(),
+                    building_type: String::new(), owner_id: None,
+                    // Filled by the generation elevation pass (terrain::run_generation).
+                    height: 0,
                 });
             }
         }

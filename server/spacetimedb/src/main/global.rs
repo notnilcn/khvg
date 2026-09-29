@@ -21,17 +21,19 @@ pub const BIOME_VORONOI_SEED_BUDGET: usize = 16;
 
 // ===== Elevation =====
 
-// Discrete elevation levels stamped per hex (BuildingTile.elevation) by world generation.
-// The client mirrors this for its per-hex tint.
+// Number of elevation levels the height field is scaled to (BuildingTile.height spans
+// [0, ELEVATION_LEVELS × WORLD_HEIGHT_PER_LEVEL)). Gameplay still thinks in levels: the level
+// is derived from the stored height as floor(height / WORLD_HEIGHT_PER_LEVEL)
+// (world::reducers::height_to_level). The client mirrors this for its per-hex tint and stores.
 pub const ELEVATION_LEVELS: i16 = 8;
-// World-unit height of one elevation level: elevation = floor(center height / this). The client
-// MST terrain builds each hex top at elevation × this value, so the two are a lockstep pair —
-// client ElevationMapComponent.WorldHeightPerLevel
-// (client/Scripts/Components/Terrain/ElevationMapComponent.cs:28) must change together.
+// World-unit height of one elevation level. The server scales the noise field by
+// ELEVATION_LEVELS × this, and derives the gameplay level as floor(height / this). The client
+// renders the raw height and mirrors this constant for fall tweens and bullet bands —
+// ElevationMapComponent.WorldHeightPerLevel (client/Scripts/Components/Terrain/
+// ElevationMapComponent.cs) must change together.
 pub const WORLD_HEIGHT_PER_LEVEL: f32 = 16.0;
-// Spatial frequency of the terrain-class noise field that buckets hexes into plain/hill/
-// mountain for the ridge height field (world/heights.rs). Low scale = larger class regions.
-pub const TERRAIN_CLASS_NOISE_SCALE: f32 = 0.004;
+// Spatial frequency of the elevation noise field — low enough that plateaus span many hexes.
+pub const ELEVATION_NOISE_SCALE: f32 = 0.004;
 // Walkable deltas: a player may walk onto a hex up to this many levels above/below their
 // current hex with no block and no fall. Anything steeper is a cliff: rising more than
 // MAX_WALKABLE_UP_DELTA blocks the move; dropping more than MAX_WALKABLE_DOWN_DELTA is a fall.

@@ -4,7 +4,7 @@
 //!
 //! - Each river is a downhill walk over the canonical lap, one edge per step, laid into
 //!   `HexTile.river_mask` on BOTH hexes of every edge (masks.rs invariant).
-//! - main has no water level and no lakes, so `BuildingTile.elevation` is never mutated. A walk
+//! - main has no water level and no lakes, so `BuildingTile.height` is never mutated. A walk
 //!   ends when it merges into an existing river (the neighbor has an outgoing river) or when it
 //!   reaches a local minimum (no downhill candidate left).
 //! - Origin density is a pseudo-moisture field times normalized elevation above the world's

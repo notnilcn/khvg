@@ -636,13 +636,15 @@ fn normalize_or_zero(x: f32, y: f32) -> (f32, f32) {
 // direct steering. The path only supplies the goal point — separation, cliff probing and
 // the argmax pick in apply_movement are untouched.
 
-// Builds the tick's shared terrain snapshot: elevation from BuildingTile, masks from
-// HexTile. Built lazily on the first path recompute of the tick and reused for every enemy
-// (two full-table scans per tick, not two per enemy); path queries never touch tables.
+// Builds the tick's shared terrain snapshot: elevation (derived from the stored height) from
+// BuildingTile, masks from HexTile. Built lazily on the first path recompute of the tick and
+// reused for every enemy (two full-table scans per tick, not two per enemy); path queries
+// never touch tables.
 fn build_terrain_snapshot(ctx: &ReducerContext) -> HexTerrainSnapshot {
     let mut snapshot = HexTerrainSnapshot::new();
     for tile in ctx.db.building_tile().iter() {
-        snapshot.entry((tile.hex_q, tile.hex_r)).or_default().elevation = tile.elevation;
+        snapshot.entry((tile.hex_q, tile.hex_r)).or_default().elevation =
+            crate::world::reducers::height_to_level(tile.height);
     }
     for tile in ctx.db.hex_tile().iter() {
         let terrain = snapshot.entry((tile.hex_q, tile.hex_r)).or_default();

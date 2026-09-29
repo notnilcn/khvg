@@ -19,10 +19,12 @@
 use std::collections::{HashMap, HashSet};
 use spacetimedb::{ReducerContext, Table};
 use crate::world::def_tables::{biome_def, biome_region_def, world_def, DecorConfig, GroundTextureConfig, ManualBiomeInput, OverlayTextureConfig, RegionWeight};
+use crate::main::global::{ELEVATION_LEVELS, ELEVATION_NOISE_SCALE, WORLD_HEIGHT_PER_LEVEL};
 use crate::world::instance_tables::{biome_region, hex_decor, hex_tile, BiomeRegion, HexTile};
-use crate::world::heights;
 use crate::world::hex::{enumerate_world_hexes, hex_to_world, HexCell};
+use crate::world::noise::{value_noise2d, ELEVATION_NOISE_SEED_OFFSET};
 use crate::world::prng::pick_index;
+use crate::world::reducers::height_to_level;
 use crate::world::tables::{building_tile, map_config, BuildingTile, MapConfig};
 
 mod decor;
@@ -140,35 +142,20 @@ fn run_generation(ctx: &ReducerContext, cfg: &MapConfig, cells: Vec<HexCell>, se
 
     clear_world_geometry(ctx);
 
-    // Height/elevation pass (world/heights.rs): sample a deterministic, crack-free ridge
-    // height field — one center + 6 corner samples per hex in HEX_NEIGHBOR_DELTAS corner
-    // order, world-unit i16 — and derive each hex's integer elevation level from its stored
-    // center height, stamping both onto the per-hex BuildingTile rows (clear_world_geometry
-    // never touches building_tile). A pure function of the seed: the ridge walk draws from a
-    // LOCAL counter threaded from `seed`, not the generation pipeline's shared `draw`, so the
-    // deterministic pass order below is untouched. The levels are also collected into a lookup
-    // map for the river/road mask passes at the end.
-    let cell_coords: Vec<(i32, i32)> = cells.iter().map(|c| (c.hex_q, c.hex_r)).collect();
-    let heightfield = heights::generate_heightfield(
-        &cell_coords,
-        &heights::HeightfieldConfig {
-            chunk_hex_radius: cfg.chunk_hex_radius,
-            chunk_cols: cfg.chunk_cols,
-            chunk_rows: cfg.chunk_rows,
-            hex_outer_radius: cfg.hex_outer_radius,
-        },
-        seed,
-    );
+    // Elevation pass: sample a dedicated value-noise field as a world-unit height (the addon's
+    // `height_map` value, unclamped) and stamp it onto every BuildingTile row
+    // (clear_world_geometry never touches building_tile). The gameplay elevation level is
+    // derived from the height and collected into a lookup map for the river/road mask passes
+    // at the end. A pure function of the seed — consumes no PRNG draws, so the deterministic
+    // pass order below is untouched.
+    let elevation_seed = seed ^ ELEVATION_NOISE_SEED_OFFSET;
     let mut elevation_by_hex: HashMap<(i32, i32), i16> = HashMap::new();
     for tile in ctx.db.building_tile().iter() {
-        let (elevation, payload) = match heightfield.get(&(tile.hex_q, tile.hex_r)) {
-            Some(samples) => (heights::elevation_level(samples[0]), samples.clone()),
-            // A building tile outside the generated cell set (cannot happen right after
-            // add_chunks, but the pass must not panic on stale rows): keep the flat defaults.
-            None => (0, Vec::new()),
-        };
-        elevation_by_hex.insert((tile.hex_q, tile.hex_r), elevation);
-        ctx.db.building_tile().tile_id().update(BuildingTile { elevation, heights: payload, ..tile });
+        let (wx, wy) = hex_to_world(tile.hex_q, tile.hex_r, cfg.hex_outer_radius);
+        let height = (value_noise2d(wx, wy, ELEVATION_NOISE_SCALE, elevation_seed)
+            * ELEVATION_LEVELS as f32 * WORLD_HEIGHT_PER_LEVEL) as i16;
+        elevation_by_hex.insert((tile.hex_q, tile.hex_r), height_to_level(height));
+        ctx.db.building_tile().tile_id().update(BuildingTile { height, ..tile });
     }
 
     let mut neighbor_tags: NeighborTagMap = HashMap::new();

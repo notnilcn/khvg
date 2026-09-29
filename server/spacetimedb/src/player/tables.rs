@@ -260,7 +260,7 @@ pub struct PlayerSurvival {
 }
 
 /// One hex of a revealed chunk's render snapshot. Mirrors the `HexTile` fields the client's
-/// fog/map layer needs, plus `elevation` from the hex's `BuildingTile` row (0 when absent).
+/// fog/map layer needs, plus `height` from the hex's `BuildingTile` row (0 when absent).
 #[derive(SpacetimeType, Clone)]
 pub struct ExploredHex {
     pub hex_q: i32,
@@ -270,7 +270,7 @@ pub struct ExploredHex {
     pub overlay_texture_id: Option<String>,
     pub overlay_rotation: u8,
     pub overlay_scale: f32,
-    pub elevation: i16,
+    pub height: i16,
     pub river_mask: u8,
     pub road_mask: u8,
     pub wall_mask: u8,
@@ -283,7 +283,7 @@ pub struct ExploredHex {
 /// entered outer ring (set-diffed against the profile's own rows, ≤ 19 today — a 2-ring disk).
 ///
 /// `hexes` is a denormalized snapshot of the chunk's `HexTile` rows joined with
-/// `BuildingTile.elevation`, copied once at reveal time. World generation is static after
+/// `BuildingTile.height`, copied once at reveal time. World generation is static after
 /// `internal_generate_world`, so snapshots can never go stale — that is what lets distant
 /// explored chunks render without widening the `nearby_terrain_tiles` subscription. (An
 /// admin regeneration is the one exception: it rewrites the live rows but leaves the explored

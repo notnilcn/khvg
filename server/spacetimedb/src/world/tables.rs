@@ -63,16 +63,14 @@ pub struct BuildingTile {
     pub chunk_index: i64,
     pub building_type: String,
     pub owner_id: Option<Identity>,
-    // Integer elevation level of this hex (0 = lowest), stamped by world generation
-    // (terrain::run_generation). Deltas within ±MAX_WALKABLE_*_DELTA are walkable; anything
-    // steeper is a cliff — too steep up blocks the move, too steep down is a fall (see
+    // World-unit Y height of this hex's cell top, stamped by world generation
+    // (terrain::run_generation). This is the addon's `height_map` value: the client passes it
+    // straight to MarchingSquaresCellChunk.draw_height, and the addon's merge modes turn small
+    // deltas into ramps. Unclamped. Gameplay derives the integer elevation level as
+    // floor(height / WORLD_HEIGHT_PER_LEVEL) (world::reducers::height_to_level); deltas within
+    // ±MAX_WALKABLE_*_DELTA levels are walkable, anything steeper is a cliff (see
     // report_movement).
-    pub elevation: i16,
-    // Ridge height field payload, stamped by world generation (world/heights.rs): 7 entries
-    // `[center, c0..c5]` in HEX_NEIGHBOR_DELTAS corner order, world-unit Y values (i16).
-    // Empty is allowed only before generation has run — after it, every generated hex carries
-    // all 7 samples. The client renders these heights; elevation is floor(center / 16).
-    pub heights: Vec<i16>,
+    pub height: i16,
 }
 
 #[table(accessor = texture_entry, public)]

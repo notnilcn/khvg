@@ -3,12 +3,19 @@ use crate::world::tables::*;
 use crate::player::methods::*;
 use crate::player::tables::logged_in_player;
 
-/// Elevation level of one hex, default 0 when no tile row exists (i.e. before add_chunks).
-/// Same hex_q-btree + hex_r-find lookup place_building uses.
+/// Gameplay elevation level derived from a hex's stored world-unit height:
+/// `floor(height / WORLD_HEIGHT_PER_LEVEL)`. Heights are stored unclamped, so this is the
+/// single place the raw render height is quantized for movement/pathing rules.
+pub fn height_to_level(height: i16) -> i16 {
+    (height as f32 / crate::main::global::WORLD_HEIGHT_PER_LEVEL).floor() as i16
+}
+
+/// Elevation level of one hex (derived from its height), default 0 when no tile row exists
+/// (i.e. before add_chunks). Same hex_q-btree + hex_r-find lookup place_building uses.
 pub fn hex_elevation(ctx: &ReducerContext, hex_q: i32, hex_r: i32) -> i16 {
     ctx.db.building_tile().hex_q().filter(&hex_q)
         .find(|t| t.hex_r == hex_r)
-        .map(|t| t.elevation)
+        .map(|t| height_to_level(t.height))
         .unwrap_or(0)
 }
 
