@@ -47,8 +47,8 @@ public partial class ExploredMapComponent3D : Node3DComponent
 	// still shows the tile from the camera's shallow pitch.
 	private const float MemoryTileDepth = 1.5f;
 
-	// Lift above the hex's true elevation surface (MST level_height is
-	// WorldHeightPerLevel), so the flat tops don't z-fight the terrain at level 0.
+	// Lift above the hex's true surface (the raw stored height), so the flat memory
+	// tops don't z-fight the live terrain.
 	private const float MemoryLift = 0.35f;
 
 	// Skirt tint multiplier on the elevation-ramped top tint.
@@ -213,8 +213,8 @@ public partial class ExploredMapComponent3D : Node3DComponent
 			{
 				var center = HexMath.HexToWorld3D(hex.HexQ, hex.HexR, _outerRadius);
 				var placed = TorusMath.NearestCandidate(new Vector2(center.X, center.Z), reference, lapQ, lapR);
-				float y = hex.Elevation * ElevationMapComponent.WorldHeightPerLevel + MemoryLift;
-				float level = Mathf.Clamp(hex.Elevation / maxLevel, 0f, 1f);
+				float y = hex.Height + MemoryLift;
+				float level = Mathf.Clamp(hex.Height / (maxLevel * ElevationMapComponent.WorldHeightPerLevel), 0f, 1f);
 				AddTile(placed.X, y, placed.Y, 0.85f + 0.35f * level, origin);
 			}
 		}

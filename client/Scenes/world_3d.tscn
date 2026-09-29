@@ -21,10 +21,10 @@
 [ext_resource type="Script" uid="uid://b3jprkygkht3l" path="res://addons/pixelizer_3d/effects/pixelizer_sky_clouds_3d.gd" id="14_skyclouds"]
 [ext_resource type="Script" uid="uid://cpyhokopcry0s" path="res://addons/pixelizer_3d/effects/pixelizer_god_rays_3d.gd" id="15_godrays"]
 [ext_resource type="Script" uid="uid://b225yl3l6idd2" path="res://Scripts/Components/Visual/AbilityPreview3DComponent.cs" id="21_qkafu"]
-[ext_resource type="Script" uid="uid://c5v8k2mqv7x3z" path="res://Scripts/Components/Terrain/TerrainRoadsComponent3D.cs" id="22_roads3d"]
-[ext_resource type="Script" path="res://Scripts/Components/Terrain/ExploredMapComponent3D.cs" id="23_explored"]
+[ext_resource type="Script" uid="uid://c5v8k2mqv7x30" path="res://Scripts/Components/Terrain/TerrainRoadsComponent3D.cs" id="22_roads3d"]
+[ext_resource type="Script" uid="uid://dsw1d5mgq17a7" path="res://Scripts/Components/Terrain/ExploredMapComponent3D.cs" id="23_explored"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_qkafu"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_j7031"]
 render_priority = 0
 shader = ExtResource("6_glemo")
 shader_parameter/clouds_enabled = false
@@ -52,7 +52,7 @@ shader_parameter/bound_on = -1000000.0
 shader_parameter/edge_width = 0.1
 shader_parameter/edge_wiggle = 0.09
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_laey5"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_y06vk"]
 size = Vector2(16000, 16000)
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_kqqpj"]
@@ -95,9 +95,9 @@ ModelRollOffset = 0.0
 
 [node name="PixelizerSkyClouds3D" type="MeshInstance3D" parent="." unique_id=2100000003 node_paths=PackedStringArray("manager")]
 top_level = true
-material_override = SubResource("ShaderMaterial_qkafu")
+material_override = SubResource("ShaderMaterial_j7031")
 cast_shadow = 0
-mesh = SubResource("PlaneMesh_laey5")
+mesh = SubResource("PlaneMesh_y06vk")
 script = ExtResource("14_skyclouds")
 manager = NodePath("../PixelizerManager3D")
 clouds_enabled = true
@@ -155,9 +155,7 @@ script = ExtResource("8_terrain3d")
 [node name="MarchingSquaresTerrain" type="Node3D" parent="TerrainComponent3D" unique_id=1461797051]
 script = ExtResource("9_mst")
 storage_mode = 1
-data_directory = "res://Scenes/world_3d_TerrainData/MarchingSquaresTerrain_bb6778ab"
 enable_runtime_texture_baking = false
-_storage_initialized = true
 
 [node name="MapConfigBinder" type="Node" parent="TerrainComponent3D" unique_id=353003388]
 script = ExtResource("4_binder")
@@ -260,8 +258,6 @@ TableName = "MapConfig"
 [connection signal="RowUpdated" from="TerrainRoadsComponent3D/NearbyTerrainTilesBinder" to="TerrainRoadsComponent3D" method="OnTerrainTileRowUpdated"]
 [connection signal="RowInserted" from="TerrainRoadsComponent3D/MapConfigBinder" to="TerrainRoadsComponent3D" method="OnMapConfigRow"]
 [connection signal="RowUpdated" from="TerrainRoadsComponent3D/MapConfigBinder" to="TerrainRoadsComponent3D" method="OnMapConfigRow"]
-[connection signal="RowInserted" from="AbilityPreview3DComponent/MapConfigBinder" to="AbilityPreview3DComponent" method="OnMapConfigRow"]
-[connection signal="RowUpdated" from="AbilityPreview3DComponent/MapConfigBinder" to="AbilityPreview3DComponent" method="OnMapConfigRow"]
 [connection signal="RowDeleted" from="ExploredMapComponent3D/LocalPlayerExploredBinder" to="ExploredMapComponent3D" method="OnExploredRowDeleted"]
 [connection signal="RowInserted" from="ExploredMapComponent3D/LocalPlayerExploredBinder" to="ExploredMapComponent3D" method="OnExploredRowInserted"]
 [connection signal="RowUpdated" from="ExploredMapComponent3D/LocalPlayerExploredBinder" to="ExploredMapComponent3D" method="OnExploredRowUpdated"]
@@ -270,3 +266,5 @@ TableName = "MapConfig"
 [connection signal="RowUpdated" from="ExploredMapComponent3D/NearbyTerrainTilesBinder" to="ExploredMapComponent3D" method="OnTerrainTileRowUpdated"]
 [connection signal="RowInserted" from="ExploredMapComponent3D/MapConfigBinder" to="ExploredMapComponent3D" method="OnMapConfigRow"]
 [connection signal="RowUpdated" from="ExploredMapComponent3D/MapConfigBinder" to="ExploredMapComponent3D" method="OnMapConfigRow"]
+[connection signal="RowInserted" from="AbilityPreview3DComponent/MapConfigBinder" to="AbilityPreview3DComponent" method="OnMapConfigRow"]
+[connection signal="RowUpdated" from="AbilityPreview3DComponent/MapConfigBinder" to="AbilityPreview3DComponent" method="OnMapConfigRow"]

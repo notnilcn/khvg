@@ -5,59 +5,57 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// Runtime hex terrain (3D), child in world_3d.tscn. Builds the whole canonical lap of
-/// MarchingSquaresTerrain chunks (ChunkCols × ChunkRows from the MapConfig row, via a
-/// child binder — the HexGridOverlay3DComponent pattern) and feeds per-hex elevation
-/// levels from the GameManager.ElevationMap facade into chunk.draw_elevation, so raised
-/// hexes render as stepped columns with cliff walls. level_height is locked to
-/// ElevationMapComponent.WorldHeightPerLevel, so mesh tops land exactly where
-/// GetWorldHeightAt puts characters and cursor raycasts.
+/// Runtime hex terrain (3D), child in world_3d.tscn. The MST child is switched to the fork's
+/// HEX_RINGS grid type: one MarchingSquaresTerrain chunk per server chunk, each a low-res hex
+/// owning its disk of micro-hexes (the server hexmod layout). Wrap is enabled from MapConfig
+/// (wrap_chunk_cols/rows), so seam cell lookups read the opposite edge's cells and chunk meshes
+/// are seamless across the torus seam; the ChunkAprons mirror pool extends the rendered lap
+/// around the camera (whole chunk meshes translated by lap vectors).
 ///
-/// A second replaying binder consumes the same NearbyBuildingTiles rows for their 7
-/// world-unit height samples [center, c0..c5] and pushes them via chunk.draw_hex_heights
-/// (empty payload = the fork's flat fallback); elevation levels keep going to
-/// draw_elevation in the same sync pass because walls/levels still need them.
-///
-/// The terrain's hex_size/level_height/chunk_radius are storage-only properties whose
-/// setters regen existing chunks (a no-op while empty), so they are set before any chunk
-/// is added. add_new_chunk's plugin arg is null-safe (add_chunk guards on it). Chunks
-/// are marked data-dirty on add, which makes the terrain's _deferred_enter_tree skip its
-/// force_batch_update (the texture shader params) — so we call force_batch_update
-/// ourselves after building the grid.
+/// Heights: the NearbyBuildingTiles rows carry the per-hex world-unit height
+/// (BuildingTile.height — the addon's height_map value). A replaying binder caches them and the
+/// dirty-flag sync pushes changed heights into the owning chunks via
+/// chunk.draw_height(local_x, local_y, height), then regenerates only the chunks whose cells
+/// changed plus their axial neighbours (walls read the neighbour chunk's cells). Chunks use
+/// merge_mode SPHERICAL, so small height deltas render as ramps instead of walls.
 ///
 /// Known limitations:
-/// - Only the canonical lap (0..cols × 0..rows chunks) is built. Seam reads are wrap-aware
-///   (wrap_chunk_cols/rows from MapConfig) and the ChunkAprons pool mirrors the lap around
-///   the camera, but mirrors are visual-only — gameplay stays in canonical space.
-/// - Elevation rows are AOI-filtered (NearbyBuildingTiles, 2-chunk ring): distant chunks
-///   render flat at level 0 until the player approaches — same data scope as the 2D
-///   terrain.
-/// - Server HexTile ground/overlay textures are a per-hex 2D sprite system with
-///   no 1:1 mapping onto MST texture slots; the terrain uses the plugin's default
-///   ground texture for now.
-/// - River/road edge masks (HexTile.river_mask/road_mask) are not drawn here — the sibling
-///   TerrainRoadsComponent3D renders them as flat strips; wall_mask is always 0 today.
+/// - Height rows are AOI-filtered (NearbyBuildingTiles, 2-chunk ring): distant chunks render
+///   flat at 0 until the player approaches — same data scope as the 2D terrain.
+/// - Server HexTile ground/overlay textures are a per-hex 2D sprite system with no 1:1 mapping
+///   onto MST texture slots; the terrain uses the plugin's default ground texture for now.
+/// - River/road edge masks are not drawn here — the sibling TerrainRoadsComponent3D renders
+///   them as flat strips; wall_mask is always 0 today.
 /// </summary>
 public partial class TerrainComponent3D : Node3DComponent
 {
-	// Axial chunk-neighbor deltas (server neighbor-delta order, same table as
-	// MSTHexMath.NEIGHBOR_OFFSETS) — border walls read the neighbor chunk's hex_data.
+	// Axial chunk-neighbor deltas (server HEX_NEIGHBOR_DELTAS order, same table as the addon's
+	// MarchingSquaresHexRingsGrid.NEIGHBOR_OFFSETS) — a cell change and the chunks whose walls
+	// read it must regenerate.
 	private static readonly Vector2I[] ChunkNeighborOffsets =
 	{
 		new(1, 0), new(0, 1), new(-1, 1), new(-1, 0), new(0, -1), new(1, -1),
 	};
+
+	// The addon's MarchingSquaresTerrain.GridType.HEX_RINGS (4th enum value).
+	private const int GridTypeHexRings = 3;
+	// The addon's MarchingSquaresCellChunk.Mode.SPHERICAL (threshold 20 world units): steps up
+	// to 20 become 45-degree ramps, anything steeper stays a wall.
+	private const int MergeModeSpherical = 4;
+	// dimensions.y is only a shader hint (the cell count comes from chunk_hex_radius).
+	private const int DimensionsHeightHint = 32;
+
+	private static readonly float Sqrt3 = Mathf.Sqrt(3f);
 
 	private Node3D _terrain = null!; // the MarchingSquaresTerrain child (GDScript, untyped interop)
 	private TableBinderComponent _mapConfigBinder = null!;
 	private TableBinderComponent _buildingTilesBinder = null!;
 
 	private readonly Dictionary<Vector2I, Node3D> _chunkNodes = new();
+	// Server height rows by canonical hex (world units), mirrored from the binder.
+	private readonly Dictionary<(int Q, int R), int> _heights = new();
+	// Last height pushed per canonical hex — the draw_height analogue of _applied.
 	private readonly Dictionary<(int Q, int R), int> _applied = new();
-	// Server height payloads by canonical hex: 7 world-unit Y samples [center, c0..c5] in
-	// MST corner order. Empty/absent payloads are simply missing keys (fork falls back flat).
-	private readonly Dictionary<(int Q, int R), int[]> _heights = new();
-	// Last payload pushed per hex — the draw_hex_heights analogue of _applied.
-	private readonly Dictionary<(int Q, int R), int[]> _appliedHeights = new();
 	private bool _chunksBuilt;
 	private bool _elevationDirty;
 
@@ -111,8 +109,8 @@ public partial class TerrainComponent3D : Node3DComponent
 	private void OnElevationChanged() => _elevationDirty = true;
 
 	// --- TableBinderComponent signal handlers (wired in world_3d.tscn) ---
-	// The binder has ReplayExistingRows on, so a row already in the client cache comes
-	// through the same insert path — no separate Id.Find() replay here.
+	// The binder has ReplayExistingRows on, so rows already in the client cache come through
+	// the same insert path — no separate Id.Find() replay here.
 
 	private void OnMapConfigRow()
 	{
@@ -131,15 +129,17 @@ public partial class TerrainComponent3D : Node3DComponent
 		// Clear a previous grid (config changed mid-session).
 		foreach (var chunk in _chunkNodes.Values) chunk.QueueFree();
 		_chunkNodes.Clear();
-		_applied.Clear();
-		_appliedHeights.Clear(); // row cache _heights survives; every rebuilt chunk re-pushes
+		_applied.Clear(); // row cache _heights survives; every rebuilt chunk re-pushes
 		_terrain.Set("chunks", new Godot.Collections.Dictionary());
 
-		// Global settings before any chunk exists (the setters regen all chunks; empty = no-op).
-		_terrain.Set("hex_size", cfg.HexOuterRadius);
-		_terrain.Set("level_height", ElevationMapComponent.WorldHeightPerLevel);
-		_terrain.Set("chunk_radius", cfg.ChunkHexRadius);
-		// Torus lap sizes: seam hex lookups canonicalize into the lap (server wrap semantics).
+		// Global settings before any chunk exists. One MST chunk per server chunk (hex-ring
+		// lattice): the cell count comes from chunk_hex_radius, cell_size.x is the hex center
+		// spacing (sqrt(3) * outer radius), and wrap_chunk_cols/rows make seam lookups
+		// canonicalize into the lap.
+		_terrain.Set("grid_type", GridTypeHexRings);
+		_terrain.Set("chunk_hex_radius", _chunkRadius);
+		_terrain.Set("cell_size", new Vector2(cfg.HexOuterRadius * Sqrt3, cfg.HexOuterRadius * Sqrt3));
+		_terrain.Set("dimensions", new Vector3I(2 * _chunkRadius + 1, DimensionsHeightHint, 2 * _chunkRadius + 1));
 		_terrain.Set("wrap_chunk_cols", cfg.ChunkCols);
 		_terrain.Set("wrap_chunk_rows", cfg.ChunkRows);
 
@@ -147,21 +147,25 @@ public partial class TerrainComponent3D : Node3DComponent
 			for (int cr = 0; cr < _chunkRows; cr++)
 				_terrain.Call("add_new_chunk", cq, cr, default(Variant)); // null plugin arg
 
-		// Snapshot the terrain's chunks dictionary (Vector2i coords → chunk node).
+		// Snapshot the terrain's chunks dictionary (chunk coords → chunk node).
 		foreach (var kv in (Godot.Collections.Dictionary)_terrain.Get("chunks"))
 			_chunkNodes[(Vector2I)kv.Key] = (Node3D)kv.Value.AsGodotObject();
 
-		// add_new_chunk marks chunks data-dirty, which makes _deferred_enter_tree return
-		// before its own force_batch_update — apply the texture shader params ourselves.
+		// Ramp small height steps instead of stepping walls.
+		foreach (var chunk in _chunkNodes.Values)
+			chunk.Set("merge_mode", MergeModeSpherical);
+
+		// add_new_chunk marks chunks data-dirty, which makes the terrain's deferred enter-tree
+		// skip its own force_batch_update — apply the texture shader params ourselves.
 		_terrain.Call("force_batch_update");
 
 		_chunksBuilt = true;
-		_elevationDirty = true; // full sync: _applied is empty, so every hex differs
+		_elevationDirty = true; // full sync: _applied is empty, so every cell differs
 	}
 
-	private void OnBuildingTileRowInserted() => SetHeights((BuildingTile)_buildingTilesBinder.LastRow!);
+	private void OnBuildingTileRowInserted() => SetHeight((BuildingTile)_buildingTilesBinder.LastRow!);
 
-	private void OnBuildingTileRowUpdated() => SetHeights((BuildingTile)_buildingTilesBinder.LastRow!);
+	private void OnBuildingTileRowUpdated() => SetHeight((BuildingTile)_buildingTilesBinder.LastRow!);
 
 	private void OnBuildingTileRowDeleted()
 	{
@@ -170,20 +174,9 @@ public partial class TerrainComponent3D : Node3DComponent
 			_elevationDirty = true;
 	}
 
-	// Copies a row's 7 world-unit height samples (center + 6 corners, MST corner order) into
-	// the cache; a payload of any other length is treated as absent (fork falls back flat).
-	private void SetHeights(BuildingTile tile)
+	private void SetHeight(BuildingTile tile)
 	{
-		if (tile.Heights is { Count: 7 })
-		{
-			var samples = new int[7];
-			for (int i = 0; i < 7; i++) samples[i] = tile.Heights[i];
-			_heights[(tile.HexQ, tile.HexR)] = samples;
-		}
-		else
-		{
-			_heights.Remove((tile.HexQ, tile.HexR));
-		}
+		_heights[(tile.HexQ, tile.HexR)] = tile.Height;
 		_elevationDirty = true;
 	}
 
@@ -192,7 +185,7 @@ public partial class TerrainComponent3D : Node3DComponent
 		if (_elevationDirty && _chunksBuilt)
 		{
 			_elevationDirty = false;
-			SyncElevation();
+			SyncHeights();
 		}
 
 		if (GetViewport()?.GetCamera3D() is { } camera
@@ -200,57 +193,35 @@ public partial class TerrainComponent3D : Node3DComponent
 			RefreshAprons();
 	}
 
-	// Pushes the ElevationMap's per-hex levels and the cached height payloads into every
-	// chunk in one pass. Only hexes whose level or 7 samples changed since the last sync
-	// are written — levels to draw_elevation (walls/levels stay stepped), samples to
-	// draw_hex_heights (the smooth ridge tops) — and each written hex dirties its chunk
-	// plus the in-grid axial chunk-neighbors (border walls read neighbor hex_data), and
-	// every dirty chunk regenerates its mesh once.
-	private void SyncElevation()
+	// Pushes the cached per-hex heights into every chunk in one pass. Only cells whose height
+	// changed since the last sync are written (draw_height), each written cell dirties its chunk
+	// plus the axial chunk-neighbours (their walls read this chunk's cells), and every dirty
+	// chunk regenerates its mesh once.
+	private void SyncHeights()
 	{
-		var map = GameManager.ElevationMap;
 		var dirtyChunks = new HashSet<Vector2I>();
-		int R = _chunkRadius;
+		int r = _chunkRadius;
+		int side = 2 * r + 1;
 
 		foreach (var (chunkCoords, chunk) in _chunkNodes)
 		{
-			var center = HexMath.ChunkCenterHex(chunkCoords.X, chunkCoords.Y, R);
-			for (int dq = -R; dq <= R; dq++)
-				for (int dr = Mathf.Max(-R, -dq - R); dr <= Mathf.Min(R, -dq + R); dr++)
+			for (int lz = 0; lz < side; lz++)
+				for (int lx = 0; lx < side; lx++)
 				{
-					int gq = center.X + dq, gr = center.Y + dr;
-					bool changed = false;
+					if (!HasLocal(lx, lz, r)) continue; // bounding-box corners are not cells
+					var global = GlobalOfLocal(chunkCoords, lx, lz, r);
+					// Hexes outside the AOI have no row yet: flat 0 (same as before).
+					int height = _heights.TryGetValue((global.X, global.Y), out int cached) ? cached : 0;
+					if (_applied.TryGetValue((global.X, global.Y), out int prev) && prev == height) continue;
+					_applied[(global.X, global.Y)] = height;
+					chunk.Call("draw_height", lx, lz, (float)height);
 
-					int level = map?.GetElevation(gq, gr) ?? 0; // 0 outside the AOI
-					if (!_applied.TryGetValue((gq, gr), out int prev) || prev != level)
-					{
-						_applied[(gq, gr)] = level;
-						chunk.Call("draw_elevation", new Vector2I(dq, dr), level);
-						changed = true;
-					}
-
-					// A 7-value int[] marshals to the fork's PackedInt32Array; an empty array
-					// clears a hex that lost its payload back to the flat fallback, while a hex
-					// that never had one is skipped entirely.
-					_heights.TryGetValue((gq, gr), out var heights);
-					_appliedHeights.TryGetValue((gq, gr), out var appliedHeights);
-					if (!HeightsEqual(appliedHeights, heights))
-					{
-						if (heights is null)
-							_appliedHeights.Remove((gq, gr));
-						else
-							_appliedHeights[(gq, gr)] = (int[])heights.Clone();
-						chunk.Call("draw_hex_heights", new Vector2I(dq, dr), heights ?? Array.Empty<int>());
-						changed = true;
-					}
-
-					if (!changed) continue;
 					dirtyChunks.Add(chunkCoords);
 					foreach (var offset in ChunkNeighborOffsets)
 					{
 						var neighborCoords = chunkCoords + offset;
-						// A seam-adjacent hex change must dirty the wrapped partner chunk too:
-						// its border wall reads this hex through the wrapped get_hex_global.
+						// A seam-adjacent cell change must dirty the wrapped partner chunk
+						// too: its walls read this cell through the wrapped lookup.
 						if (_chunkCols > 0 && _chunkRows > 0)
 							neighborCoords = new Vector2I(PosMod(neighborCoords.X, _chunkCols), PosMod(neighborCoords.Y, _chunkRows));
 						dirtyChunks.Add(neighborCoords);
@@ -266,12 +237,21 @@ public partial class TerrainComponent3D : Node3DComponent
 		RefreshAprons();
 	}
 
-	// Element-wise comparison of two 7-sample payloads; both null is equal, one null is not.
-	private static bool HeightsEqual(int[]? a, int[]? b)
+	// Bounding-box local cell test, lockstep with the addon's
+	// MarchingSquaresHexRingsGrid.has_local (a chunk hex disk excludes the box corners).
+	private static bool HasLocal(int lx, int lz, int radius)
 	{
-		if (ReferenceEquals(a, b)) return true;
-		if (a is null || b is null) return false;
-		return a.AsSpan().SequenceEqual(b.AsSpan());
+		int dq = lx - radius;
+		int dr = lz - radius;
+		return Math.Abs(dq) <= radius && Math.Abs(dr) <= radius && Math.Abs(dq + dr) <= radius;
+	}
+
+	// Global axial hex of a chunk-local bbox cell, using the shared ChunkCenterHex mirror
+	// (server world/hex.rs::chunk_center_hex).
+	private static Vector2I GlobalOfLocal(Vector2I chunkCoords, int lx, int lz, int radius)
+	{
+		var center = HexMath.ChunkCenterHex(chunkCoords.X, chunkCoords.Y, radius);
+		return new Vector2I(center.X + lx - radius, center.Y + lz - radius);
 	}
 
 	// Every chunk mesh is a hollow shell (tops + cliff walls, no interior or
@@ -312,15 +292,17 @@ public partial class TerrainComponent3D : Node3DComponent
 		}
 	}
 
-	// The canonical MST lap only contains 0..cols × 0..rows chunks, while the local player's
-	// node can drift up to a lap past it before the server wraps the stored position. This
-	// pool extends the rendered lap around the camera: for every canonical chunk, each of the
-	// 8 non-zero lap offsets (a*lapQ + b*lapR) is a candidate mirror position, and the pool's
-	// nearest N candidates win. Mirrors share the canonical chunk's Mesh (re-assigned on every
-	// refresh, so regenerate_mesh is picked up for free) and each carries an UnderShell copy
-	// like RefreshShells. They are visual-only: no collision, no gameplay queries, and they
-	// live under a ChunkAprons child of this component, never in terrain.chunks. The canonical
-	// chunk node itself is the unshifted (0, 0) copy.
+	// The canonical MST lap only contains the cols × rows server chunks, while the local
+	// player's node can drift up to a lap past it before the server wraps the stored position.
+	// This pool extends the rendered lap around the camera: for every canonical chunk, each of
+	// the 8 non-zero lap offsets (a*lapQ + b*lapR) is a candidate mirror position, and the
+	// pool's nearest N candidates win. Mirrors share the canonical chunk's Mesh (re-assigned on
+	// every refresh, so regenerate_mesh is picked up for free) and each carries an UnderShell
+	// copy like RefreshShells. They are visual-only: no collision, no gameplay queries, and
+	// they live under a ChunkAprons child of this component, never in terrain.chunks. Ring
+	// chunks are the server's low-res chunk hexes, so a chunk mesh translated by a lap vector
+	// is exactly the terrain at that periodic position. The canonical chunk node itself is the
+	// unshifted (0, 0) copy.
 	private void RefreshAprons()
 	{
 		if (!_chunksBuilt || _chunkCols <= 0 || _chunkRows <= 0)
@@ -409,6 +391,6 @@ public partial class TerrainComponent3D : Node3DComponent
 		foreach (var apron in _aprons) apron.Visible = false;
 	}
 
-	// Positive modulo for wrapping, matching server wrap_chunk_coords / MSTHexMath.wrap_chunk.
+	// Positive modulo for wrapping, matching server wrap_chunk_coords / the addon's wrap_chunk.
 	private static int PosMod(int value, int modulus) => ((value % modulus) + modulus) % modulus;
 }

@@ -148,10 +148,10 @@ public partial class AbilityPreview3DComponent : Node3DComponent
 		_nextTile = 0;
 		foreach (var cell in cells.Wrapped(_chunkHexRadius, _chunkCols, _chunkRows))
 		{
-			int level = GameManager.ElevationMap?.GetElevation(cell.Q, cell.R) ?? 0;
+			int height = GameManager.ElevationMap?.GetHeight(cell.Q, cell.R) ?? 0;
 			var canonical = HexMath.HexToWorld(cell.Q, cell.R, _outerRadius);
 			var lifted = TorusMath.NearestCandidate(canonical, origin, GameManager.LapQ, GameManager.LapR);
-			AcquireTile().Position = new Vector3(lifted.X, level * ElevationMapComponent.WorldHeightPerLevel + SurfaceOffset, lifted.Y);
+			AcquireTile().Position = new Vector3(lifted.X, height + SurfaceOffset, lifted.Y);
 		}
 		for (int i = _nextTile; i < _tiles.Count; i++) _tiles[i].Visible = false;
 		_showing = true;

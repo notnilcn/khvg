@@ -18,12 +18,11 @@ using System.Collections.Generic;
 /// outerRadius/2 (the side length of a regular pointy-top hex). Both hexes carry the bit,
 /// so edge direction d is only drawn by the d &lt; 3 owner; when that owner is outside the
 /// AOI (neighbor missing from the cache) the d ≥ 3 side draws it instead. Every edge is
-/// drawn exactly once and AOI holes still seal. Y is the smooth surface height at the
-/// midpoint when the hexes carry height payloads (ElevationMapComponent
-/// .TryGetSurfaceHeightAt), otherwise the average of both hexes' elevations (missing
-/// neighbor: this hex's level) times WorldHeightPerLevel — plus a small lift above the
-/// chunk-mesh tops; a road rides slightly higher than a river so a crossing stays
-/// visible. Strips are placed with TorusMath.NearestCandidate against the camera (the
+/// drawn exactly once and AOI holes still seal. Y is the average of both hexes' stored
+/// heights (ElevationMapComponent.GetHeight; missing neighbor: this hex's height),
+/// falling back to the average of both derived levels times WorldHeightPerLevel — plus a
+/// small lift above the chunk-mesh tops; a road rides slightly higher than a river so a
+/// crossing stays visible. Strips are placed with TorusMath.NearestCandidate against the camera (the
 /// ChunkAprons reference), so they follow whichever torus copy the terrain is drawing.
 ///
 /// Visual-only: one reused MeshInstance3D per surface (ArrayMesh rebuilt on change),
@@ -212,12 +211,12 @@ public partial class TerrainRoadsComponent3D : Node3DComponent
 				var midCanonical = new Vector2(center.X, center.Z) + dir * (Sqrt3 * 0.5f * _outerRadius);
 				var mid = TorusMath.NearestCandidate(midCanonical, reference, lapQ, lapR);
 
-				// Seat the midpoint on the smooth surface when the hexes have height payloads;
-				// otherwise fall back to the average stepped level (the pre-heights behavior).
-				float baseY = GameManager.ElevationMap is { } elevationMap
-					&& elevationMap.TryGetSurfaceHeightAt(midCanonical, out float surfaceY)
-						? surfaceY
-						: (elevationA + elevationB) * 0.5f * ElevationMapComponent.WorldHeightPerLevel;
+				// Seat the midpoint on the average of both hexes' stored heights (the merge
+				// ramp visually bridges the step; the strip sits mid-way with its lift);
+				// fall back to the average stepped level when no height map exists.
+				float baseY = GameManager.ElevationMap is { } heightMap
+					? (heightMap.GetHeight(q, r) + heightMap.GetHeight(neighbor.X, neighbor.Y)) * 0.5f
+					: (elevationA + elevationB) * 0.5f * ElevationMapComponent.WorldHeightPerLevel;
 				float halfLength = _outerRadius * 0.5f;
 
 				if (hasRiver)
