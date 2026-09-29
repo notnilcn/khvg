@@ -6,7 +6,7 @@ var brush_type : Dictionary = {
 	"name": "brush_type",
 	"type": "option",
 	"label": "Brush Type",
-	"options": ["Round", "Square"],
+	"options": ["Round", "Square", "Hexagon", "Hexagon30", "Triangle", "Triangle180"],
 	"default": 0,
 }
 
@@ -30,7 +30,7 @@ var height : Dictionary = {
 	"name": "height",
 	"type": "slider",
 	"label": "Height",
-	"range": Vector3(0.0, 16.0, 1.0),
+	"range": Vector3(-50.0, 50.0, 0.1),
 	"default": 0.0,
 }
 
@@ -56,6 +56,22 @@ var falloff : Dictionary = {
 	"default": true,
 }
 
+var grid_aligned : Dictionary = {
+	"name": "grid_aligned",
+	"type": "checkbox",
+	"label": "Grid Aligned",
+	"default": false,
+}
+
+var grid_size : Dictionary = {
+	"name": "grid_size",
+	"type": "slider",
+	"label": "Grid Size",
+	"range": Vector3(0.0, 20.0, 1.0),
+	"default": 1.0,
+	"tooltip": "Hexagon/Hexagon30 radius in cells (hex terrain) / hexagon side in triangles (minimum 1) - only used when Grid Aligned is on.",
+}
+
 var mask_mode : Dictionary = {
 	"name": "mask_mode",
 	"type": "checkbox",
@@ -63,7 +79,7 @@ var mask_mode : Dictionary = {
 	"default": true,
 }
 
-var vp_tex_names : MarchingSquaresTextureNames = preload("uid://dd7fens03aosa")
+var vp_tex_names : MarchingSquaresTextureNames = preload("res://addons/MarchingSquaresTerrain/resources/texture_names.tres")
 
 var material : Dictionary = {
 	"name": "material",
@@ -101,22 +117,6 @@ var paint_walls : Dictionary = {
 	"default": false,
 }
 
-var paint_mode : Dictionary = {
-	"name": "paint_mode",
-	"type": "option",
-	"label": "Paint Mode",
-	"options": ["Ground", "Walls", "Transitions"],
-	"default": 0,
-}
-
-var transition_kind : Dictionary = {
-	"name": "transition_kind",
-	"type": "option",
-	"label": "Transition",
-	"options": ["Default", "Cliff", "Terrace", "Slope"],
-	"default": 0,
-}
-
 var chunk_management : Dictionary = {
 	"name": "chunk_management",
 	"type": "chunk",
@@ -127,32 +127,6 @@ var terrain_settings : Dictionary = {
 	"name": "terrain_settings",
 	"type": "terrain",
 	"label": "Terrain Settings",
-}
-
-var export_path : Dictionary = {
-	"name": "export_path",
-	"type": "text",
-	"label": "Export Path",
-	"default": "res://terrain_export.json",
-}
-
-var import_path : Dictionary = {
-	"name": "import_path",
-	"type": "text",
-	"label": "Import Path",
-	"default": "res://terrain_export.json",
-}
-
-var export_button : Dictionary = {
-	"name": "export_button",
-	"type": "button",
-	"label": "Export",
-}
-
-var import_button : Dictionary = {
-	"name": "import_button",
-	"type": "button",
-	"label": "Import",
 }
 
 """

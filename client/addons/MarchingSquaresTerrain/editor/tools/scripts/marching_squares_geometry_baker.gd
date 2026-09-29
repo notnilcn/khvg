@@ -18,15 +18,7 @@ func bake_geometry_texture(inst: MeshInstance3D, scene_tree: SceneTree) -> void:
 	var arrays := mesh.surface_get_arrays(0)
 	
 	var verts : PackedVector3Array = arrays[Mesh.ARRAY_VERTEX]
-	var indices : PackedInt32Array
-	if arrays[Mesh.ARRAY_INDEX] != null:
-		indices = arrays[Mesh.ARRAY_INDEX]
-	else:
-		# SurfaceTool meshes committed without index() have no index array
-		indices = PackedInt32Array()
-		indices.resize(verts.size())
-		for i in verts.size():
-			indices[i] = i
+	var indices : PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
 	var normals : PackedVector3Array = arrays[Mesh.ARRAY_NORMAL]
 	var c0 : PackedColorArray = _to_color_array(arrays[Mesh.ARRAY_CUSTOM0])
 	var c1 : PackedColorArray = _to_color_array(arrays[Mesh.ARRAY_CUSTOM1])
@@ -241,7 +233,7 @@ func bake_geometry_texture(inst: MeshInstance3D, scene_tree: SceneTree) -> void:
 		| Mesh.ARRAY_FORMAT_CUSTOM3 
 		| (Mesh.ARRAY_CUSTOM_RGB_FLOAT << Mesh.ARRAY_FORMAT_CUSTOM3_SHIFT))
 	var mat := ShaderMaterial.new()
-	mat.shader = load("uid://b32t80p1iesdd") as Shader
+	mat.shader = load("res://addons/MarchingSquaresTerrain/resources/shaders/mst_terrain_bake.gdshader") as Shader
 	_transfer_shader_props(mesh.surface_get_material(0), mat)
 	bake_mesh.surface_set_material(0, mat)
 	
