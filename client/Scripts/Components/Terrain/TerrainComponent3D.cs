@@ -13,11 +13,16 @@ using System.Collections.Generic;
 /// around the camera (whole chunk meshes translated by lap vectors).
 ///
 /// Heights: the NearbyBuildingTiles rows carry the per-hex world-unit height
-/// (BuildingTile.height — the addon's height_map value). A replaying binder caches them and the
-/// dirty-flag sync pushes changed heights into the owning chunks via
-/// chunk.draw_height(local_x, local_y, height), then regenerates only the chunks whose cells
-/// changed plus their axial neighbours (walls read the neighbour chunk's cells). Chunks use
-/// merge_mode SPHERICAL, so small height deltas render as ramps instead of walls.
+/// (BuildingTile.height — the addon's height_map value) plus the addon's per-cell smooth flag
+/// (BuildingTile.smooth — its smooth_map value). A replaying binder caches them and the
+/// dirty-flag sync pushes changed cells into the owning chunks via
+/// chunk.draw_height(local_x, local_y, height) and chunk.draw_smooth(local_x, local_y, smooth),
+/// then regenerates only the chunks whose cells changed plus their axial neighbours (walls and
+/// smooth corner heights read the neighbour chunk's cells). Chunks use merge_mode CUBIC with
+/// the threshold scaled by the fixture height ratio (TerrainComponent3D.FixtureHeightScale,
+/// mirroring the server's world/terrain/mst_test.rs), so an authored MST scene reproduces in
+/// game: steps above the threshold stay walls, smaller steps become 45-degree ramps, and smooth
+/// cells blend their tops across cells.
 ///
 /// Known limitations:
 /// - Height rows are AOI-filtered (NearbyBuildingTiles, 2-chunk ring): distant chunks render
@@ -39,23 +44,38 @@ public partial class TerrainComponent3D : Node3DComponent
 
 	// The addon's MarchingSquaresTerrain.GridType.HEX_RINGS (4th enum value).
 	private const int GridTypeHexRings = 3;
-	// The addon's MarchingSquaresCellChunk.Mode.SPHERICAL (threshold 20 world units): steps up
-	// to 20 become 45-degree ramps, anything steeper stays a wall.
-	private const int MergeModeSpherical = 4;
+	// The addon's MarchingSquaresCellChunk.Mode.CUBIC — the authoring default and the mode the
+	// MST test fixture scene uses: steps above the threshold stay walls, smaller steps become
+	// 45-degree ramps, and smooth-flagged cells blend across either way.
+	private const int MergeModeCubic = 0;
+	// The addon's MarchingSquaresCellChunk.MERGE_MODE[Mode.CUBIC] threshold, in world units at
+	// the fixture scene's cell_size 2.0. Server fixture heights are scene height ×
+	// FixtureHeightScale, so the threshold scales identically to keep the same ramp/wall split.
+	private const float MergeCubicThreshold = 0.6f;
+	// The MST fixture scene's cell_size (MarchingSquaresTerrain's 2.0 default, unchanged in
+	// mst_test.tscn). The server derives the same height scale from it
+	// (world/terrain/mst_test.rs::height_scale) — both copies change together.
+	private const float MstTestCellSize = 2.0f;
 	// dimensions.y is only a shader hint (the cell count comes from chunk_hex_radius).
 	private const int DimensionsHeightHint = 32;
 
 	private static readonly float Sqrt3 = Mathf.Sqrt(3f);
+
+	// Scene-units → game-units ratio for fixture-authored heights: in-game hex spacing over the
+	// scene's cell size. Mirrors world/terrain/mst_test.rs::height_scale.
+	private static float FixtureHeightScale(float hexOuterRadius) => Sqrt3 * hexOuterRadius / MstTestCellSize;
 
 	private Node3D _terrain = null!; // the MarchingSquaresTerrain child (GDScript, untyped interop)
 	private TableBinderComponent _mapConfigBinder = null!;
 	private TableBinderComponent _buildingTilesBinder = null!;
 
 	private readonly Dictionary<Vector2I, Node3D> _chunkNodes = new();
-	// Server height rows by canonical hex (world units), mirrored from the binder.
-	private readonly Dictionary<(int Q, int R), int> _heights = new();
-	// Last height pushed per canonical hex — the draw_height analogue of _applied.
-	private readonly Dictionary<(int Q, int R), int> _applied = new();
+	// Server terrain cells by canonical hex, mirrored from the binder: world-unit height plus
+	// the addon's smooth (bridge-blended top) flag.
+	private readonly Dictionary<(int Q, int R), (int Height, bool Smooth)> _cells = new();
+	// Last height/smooth pushed per canonical hex — the draw_height/draw_smooth analogue of
+	// _applied.
+	private readonly Dictionary<(int Q, int R), (int Height, bool Smooth)> _applied = new();
 	private bool _chunksBuilt;
 	private bool _elevationDirty;
 
@@ -129,7 +149,7 @@ public partial class TerrainComponent3D : Node3DComponent
 		// Clear a previous grid (config changed mid-session).
 		foreach (var chunk in _chunkNodes.Values) chunk.QueueFree();
 		_chunkNodes.Clear();
-		_applied.Clear(); // row cache _heights survives; every rebuilt chunk re-pushes
+		_applied.Clear(); // row cache _cells survives; every rebuilt chunk re-pushes
 		_terrain.Set("chunks", new Godot.Collections.Dictionary());
 
 		// Global settings before any chunk exists. One MST chunk per server chunk (hex-ring
@@ -151,9 +171,16 @@ public partial class TerrainComponent3D : Node3DComponent
 		foreach (var kv in (Godot.Collections.Dictionary)_terrain.Get("chunks"))
 			_chunkNodes[(Vector2I)kv.Key] = (Node3D)kv.Value.AsGodotObject();
 
-		// Ramp small height steps instead of stepping walls.
+		// Faithful authoring semantics (the addon's default mode): CUBIC merge with the
+		// threshold scaled by the same ratio the server fixture scales heights by, so
+		// authored MST scenes reproduce 1:1 (modulo the discrete heights). Set merge_mode
+		// first — its setter resets merge_threshold to the enum default.
+		var mergeThreshold = MergeCubicThreshold * FixtureHeightScale(cfg.HexOuterRadius);
 		foreach (var chunk in _chunkNodes.Values)
-			chunk.Set("merge_mode", MergeModeSpherical);
+		{
+			chunk.Set("merge_mode", MergeModeCubic);
+			chunk.Set("merge_threshold", mergeThreshold);
+		}
 
 		// add_new_chunk marks chunks data-dirty, which makes the terrain's deferred enter-tree
 		// skip its own force_batch_update — apply the texture shader params ourselves.
@@ -163,20 +190,20 @@ public partial class TerrainComponent3D : Node3DComponent
 		_elevationDirty = true; // full sync: _applied is empty, so every cell differs
 	}
 
-	private void OnBuildingTileRowInserted() => SetHeight((BuildingTile)_buildingTilesBinder.LastRow!);
+	private void OnBuildingTileRowInserted() => SetCell((BuildingTile)_buildingTilesBinder.LastRow!);
 
-	private void OnBuildingTileRowUpdated() => SetHeight((BuildingTile)_buildingTilesBinder.LastRow!);
+	private void OnBuildingTileRowUpdated() => SetCell((BuildingTile)_buildingTilesBinder.LastRow!);
 
 	private void OnBuildingTileRowDeleted()
 	{
 		var tile = (BuildingTile)_buildingTilesBinder.LastDeletedRow!;
-		if (_heights.Remove((tile.HexQ, tile.HexR)))
+		if (_cells.Remove((tile.HexQ, tile.HexR)))
 			_elevationDirty = true;
 	}
 
-	private void SetHeight(BuildingTile tile)
+	private void SetCell(BuildingTile tile)
 	{
-		_heights[(tile.HexQ, tile.HexR)] = tile.Height;
+		_cells[(tile.HexQ, tile.HexR)] = (tile.Height, tile.Smooth);
 		_elevationDirty = true;
 	}
 
@@ -185,7 +212,7 @@ public partial class TerrainComponent3D : Node3DComponent
 		if (_elevationDirty && _chunksBuilt)
 		{
 			_elevationDirty = false;
-			SyncHeights();
+			SyncTerrain();
 		}
 
 		if (GetViewport()?.GetCamera3D() is { } camera
@@ -193,11 +220,12 @@ public partial class TerrainComponent3D : Node3DComponent
 			RefreshAprons();
 	}
 
-	// Pushes the cached per-hex heights into every chunk in one pass. Only cells whose height
-	// changed since the last sync are written (draw_height), each written cell dirties its chunk
-	// plus the axial chunk-neighbours (their walls read this chunk's cells), and every dirty
-	// chunk regenerates its mesh once.
-	private void SyncHeights()
+	// Pushes the cached per-hex heights and smooth flags into every chunk in one pass. Only
+	// cells whose height or smooth flag changed since the last sync are written
+	// (draw_height/draw_smooth), each written cell dirties its chunk plus the axial
+	// chunk-neighbours (their walls read this chunk's cells, and their smooth corner heights
+	// average the cells around a corner), and every dirty chunk regenerates its mesh once.
+	private void SyncTerrain()
 	{
 		var dirtyChunks = new HashSet<Vector2I>();
 		int r = _chunkRadius;
@@ -210,11 +238,12 @@ public partial class TerrainComponent3D : Node3DComponent
 				{
 					if (!HasLocal(lx, lz, r)) continue; // bounding-box corners are not cells
 					var global = GlobalOfLocal(chunkCoords, lx, lz, r);
-					// Hexes outside the AOI have no row yet: flat 0 (same as before).
-					int height = _heights.TryGetValue((global.X, global.Y), out int cached) ? cached : 0;
-					if (_applied.TryGetValue((global.X, global.Y), out int prev) && prev == height) continue;
-					_applied[(global.X, global.Y)] = height;
-					chunk.Call("draw_height", lx, lz, (float)height);
+					// Hexes outside the AOI have no row yet: flat 0, no smooth (same as before).
+					var cell = _cells.TryGetValue((global.X, global.Y), out var cached) ? cached : default;
+					if (_applied.TryGetValue((global.X, global.Y), out var prev) && prev == cell) continue;
+					_applied[(global.X, global.Y)] = cell;
+					chunk.Call("draw_height", lx, lz, (float)cell.Height);
+					chunk.Call("draw_smooth", lx, lz, cell.Smooth);
 
 					dirtyChunks.Add(chunkCoords);
 					foreach (var offset in ChunkNeighborOffsets)

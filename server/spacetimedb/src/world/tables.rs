@@ -71,6 +71,12 @@ pub struct BuildingTile {
     // ±MAX_WALKABLE_*_DELTA levels are walkable, anything steeper is a cliff (see
     // report_movement).
     pub height: i16,
+    // The addon's per-cell `smooth_map` flag (MarchingSquaresCellChunk.draw_smooth/get_smooth):
+    // when set, the cell's top is not flat — each top corner is the average of the surrounding
+    // smooth cells' heights, so a smoothed region reads as a continuous slanted surface instead
+    // of flat steps. The client pushes it via chunk.draw_smooth next to draw_height. Server
+    // generation marks cells smooth where the authored MST data did (world/terrain/mst_test.rs).
+    pub smooth: bool,
 }
 
 #[table(accessor = texture_entry, public)]

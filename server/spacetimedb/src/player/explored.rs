@@ -15,27 +15,31 @@ use crate::world::tables::*;
 use super::tables::*;
 
 /// Pure payload assembly for one chunk: maps the chunk's `HexTile` rows through the
-/// `(hex_q, hex_r) -> height` lookup and sorts by `(hex_q, hex_r)`, so a reveal's row
+/// `(hex_q, hex_r) -> (height, smooth)` lookup and sorts by `(hex_q, hex_r)`, so a reveal's row
 /// contents depend only on the world rows, never on scan/iteration order. Hexes with no
-/// `HexTile` row are absent by construction; a hex with no `BuildingTile` row (or one with
-/// no indexed height) defaults to height 0.
+/// `HexTile` row are absent by construction; a hex with no `BuildingTile` row (or one with no
+/// indexed height) defaults to height 0 / smooth false.
 fn assemble_explored_hexes(
     tiles: impl Iterator<Item = HexTile>,
-    heights: &HashMap<(i32, i32), i16>,
+    cells: &HashMap<(i32, i32), (i16, bool)>,
 ) -> Vec<ExploredHex> {
     let mut hexes: Vec<ExploredHex> = tiles
-        .map(|tile| ExploredHex {
-            hex_q: tile.hex_q,
-            hex_r: tile.hex_r,
-            texture_id: tile.texture_id,
-            rotation: tile.rotation,
-            overlay_texture_id: tile.overlay_texture_id,
-            overlay_rotation: tile.overlay_rotation,
-            overlay_scale: tile.overlay_scale,
-            height: heights.get(&(tile.hex_q, tile.hex_r)).copied().unwrap_or(0),
-            river_mask: tile.river_mask,
-            road_mask: tile.road_mask,
-            wall_mask: tile.wall_mask,
+        .map(|tile| {
+            let (height, smooth) = cells.get(&(tile.hex_q, tile.hex_r)).copied().unwrap_or((0, false));
+            ExploredHex {
+                hex_q: tile.hex_q,
+                hex_r: tile.hex_r,
+                texture_id: tile.texture_id,
+                rotation: tile.rotation,
+                overlay_texture_id: tile.overlay_texture_id,
+                overlay_rotation: tile.overlay_rotation,
+                overlay_scale: tile.overlay_scale,
+                height,
+                smooth,
+                river_mask: tile.river_mask,
+                road_mask: tile.road_mask,
+                wall_mask: tile.wall_mask,
+            }
         })
         .collect();
     hexes.sort_unstable_by_key(|hex| (hex.hex_q, hex.hex_r));
@@ -57,14 +61,14 @@ pub fn reveal_aoi(ctx: &ReducerContext, profile_id: u64, chunk_q: i32, chunk_r: 
 
     for (cq, cr, chunk_index) in aoi {
         if revealed.contains(&chunk_index) { continue; }
-        // HexTile is the render payload, BuildingTile the per-hex height. Both are keyed
-        // by chunk_index (btree), so a reveal reads only the chunks it is inserting.
-        let heights: HashMap<(i32, i32), i16> = ctx.db.building_tile().chunk_index().filter(&chunk_index)
-            .map(|tile| ((tile.hex_q, tile.hex_r), tile.height))
+        // HexTile is the render payload, BuildingTile the per-hex height+smooth. Both are
+        // keyed by chunk_index (btree), so a reveal reads only the chunks it is inserting.
+        let cells: HashMap<(i32, i32), (i16, bool)> = ctx.db.building_tile().chunk_index().filter(&chunk_index)
+            .map(|tile| ((tile.hex_q, tile.hex_r), (tile.height, tile.smooth)))
             .collect();
         let hexes = assemble_explored_hexes(
             ctx.db.hex_tile().chunk_index().filter(&chunk_index),
-            &heights,
+            &cells,
         );
         ctx.db.player_explored_chunk().insert(PlayerExploredChunk {
             explored_id: 0,
@@ -105,16 +109,19 @@ mod tests {
     fn payload_is_sorted_with_defaulted_height() {
         // Deliberately unordered input (a table scan order the caller doesn't control).
         let tiles = vec![tile_at(2, 0, "b"), tile_at(0, 1, "a"), tile_at(1, -1, "c")];
-        let mut heights = HashMap::new();
-        heights.insert((2, 0), 80);
-        heights.insert((0, 1), 48);
+        let mut cells = HashMap::new();
+        cells.insert((2, 0), (80, true));
+        cells.insert((0, 1), (48, false));
 
-        let hexes = assemble_explored_hexes(tiles.into_iter(), &heights);
+        let hexes = assemble_explored_hexes(tiles.into_iter(), &cells);
         let keys: Vec<(i32, i32)> = hexes.iter().map(|h| (h.hex_q, h.hex_r)).collect();
         assert_eq!(keys, vec![(0, 1), (1, -1), (2, 0)]);
-        let height = |q: i32, r: i32| hexes.iter().find(|h| (h.hex_q, h.hex_r) == (q, r)).unwrap().height;
-        assert_eq!(height(0, 1), 48);
-        assert_eq!(height(2, 0), 80);
-        assert_eq!(height(1, -1), 0); // no BuildingTile row
+        let cell = |q: i32, r: i32| hexes.iter().find(|h| (h.hex_q, h.hex_r) == (q, r)).unwrap();
+        assert_eq!(cell(0, 1).height, 48);
+        assert!(!cell(0, 1).smooth);
+        assert_eq!(cell(2, 0).height, 80);
+        assert!(cell(2, 0).smooth);
+        assert_eq!(cell(1, -1).height, 0); // no BuildingTile row
+        assert!(!cell(1, -1).smooth);
     }
 }

@@ -274,7 +274,7 @@ pub fn internal_add_chunks(ctx: &ReducerContext, chunk_hex_radius: i32, chunk_co
                     chunk_q: cq, chunk_r: cr, local_index: m, chunk_index: cidx,
                     building_type: String::new(), owner_id: None,
                     // Filled by the generation elevation pass (terrain::run_generation).
-                    height: 0,
+                    height: 0, smooth: false,
                 });
             }
         }

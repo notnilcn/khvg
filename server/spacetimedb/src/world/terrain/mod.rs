@@ -29,6 +29,7 @@ use crate::world::tables::{building_tile, map_config, BuildingTile, MapConfig};
 
 mod decor;
 mod ground;
+mod mst_test;
 mod overlay;
 mod rivers;
 mod roads;
@@ -147,15 +148,23 @@ fn run_generation(ctx: &ReducerContext, cfg: &MapConfig, cells: Vec<HexCell>, se
     // (clear_world_geometry never touches building_tile). The gameplay elevation level is
     // derived from the height and collected into a lookup map for the river/road mask passes
     // at the end. A pure function of the seed — consumes no PRNG draws, so the deterministic
-    // pass order below is untouched.
+    // pass order below is untouched. Hexes covered by the MST test fixture (chunks (0, 0) and
+    // (0, 1), mst_test) use the authored scene data instead — scaled to game units, quantized
+    // to whole units, and carrying the addon's per-cell smooth flag.
     let elevation_seed = seed ^ ELEVATION_NOISE_SEED_OFFSET;
     let mut elevation_by_hex: HashMap<(i32, i32), i16> = HashMap::new();
     for tile in ctx.db.building_tile().iter() {
-        let (wx, wy) = hex_to_world(tile.hex_q, tile.hex_r, cfg.hex_outer_radius);
-        let height = (value_noise2d(wx, wy, ELEVATION_NOISE_SCALE, elevation_seed)
-            * ELEVATION_LEVELS as f32 * WORLD_HEIGHT_PER_LEVEL) as i16;
+        let (height, smooth) = match mst_test::cell_at(tile.hex_q, tile.hex_r, cfg) {
+            Some(cell) => (cell.height, cell.smooth),
+            None => {
+                let (wx, wy) = hex_to_world(tile.hex_q, tile.hex_r, cfg.hex_outer_radius);
+                let height = (value_noise2d(wx, wy, ELEVATION_NOISE_SCALE, elevation_seed)
+                    * ELEVATION_LEVELS as f32 * WORLD_HEIGHT_PER_LEVEL) as i16;
+                (height, false)
+            }
+        };
         elevation_by_hex.insert((tile.hex_q, tile.hex_r), height_to_level(height));
-        ctx.db.building_tile().tile_id().update(BuildingTile { height, ..tile });
+        ctx.db.building_tile().tile_id().update(BuildingTile { height, smooth, ..tile });
     }
 
     let mut neighbor_tags: NeighborTagMap = HashMap::new();
@@ -229,6 +238,9 @@ fn run_generation(ctx: &ReducerContext, cfg: &MapConfig, cells: Vec<HexCell>, se
     // persisted once, in enumerate_world_hexes order.
     rivers::generate_rivers(&mut tiles, &cells, &elevation_by_hex, cfg, seed, &mut draw);
     roads::generate_roads(&mut tiles, &elevation_by_hex, &region_centers, cfg);
+    // The MST fixture scene is bare terrain: strip any generated river/road masks on and
+    // around the fixture hexes (both sides of each incident edge) so no strips render there.
+    mst_test::strip_edge_masks(&mut tiles, cfg);
     for cell in &cells {
         if let Some(tile) = tiles.remove(&(cell.hex_q, cell.hex_r)) {
             if tile.river_mask != 0 || tile.road_mask != 0 || tile.wall_mask != 0 {

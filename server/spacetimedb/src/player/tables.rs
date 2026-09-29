@@ -260,7 +260,8 @@ pub struct PlayerSurvival {
 }
 
 /// One hex of a revealed chunk's render snapshot. Mirrors the `HexTile` fields the client's
-/// fog/map layer needs, plus `height` from the hex's `BuildingTile` row (0 when absent).
+/// fog/map layer needs, plus `height` and `smooth` from the hex's `BuildingTile` row (height 0
+/// / smooth false when absent).
 #[derive(SpacetimeType, Clone)]
 pub struct ExploredHex {
     pub hex_q: i32,
@@ -271,6 +272,7 @@ pub struct ExploredHex {
     pub overlay_rotation: u8,
     pub overlay_scale: f32,
     pub height: i16,
+    pub smooth: bool,
     pub river_mask: u8,
     pub road_mask: u8,
     pub wall_mask: u8,
