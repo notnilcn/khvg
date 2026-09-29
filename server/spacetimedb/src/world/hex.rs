@@ -48,7 +48,8 @@ pub fn spiral_chunk_index(cq: i32, cr: i32) -> i64 {
 
 // Chunk owning a fine hex (hexx to_lower_res, the inverse of chunk_center_hex). Lockstep
 // siblings: client HexMath.ToLowerRes (client/Scripts/World/HexMath.cs) and
-// MSTHexMath.world_to_chunk (client/addons/MarchingSquaresTerrain/algorithm/terrain/mst_hex_math.gd)
+// MarchingSquaresHexRingsGrid.to_lower_res (client/addons/MarchingSquaresTerrain/algorithm/
+// hex_rings/marching_squares_hex_rings_grid.gd)
 // — all copies must change together.
 pub fn hex_to_chunk(q: i32, r: i32, hex_radius: i32) -> (i32, i32) {
     let chunk = Hex::new(q, r).to_lower_res(hex_radius as u32);

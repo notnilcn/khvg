@@ -9,7 +9,8 @@ pub fn wrap_chunk_coords(cq: i32, cr: i32, chunk_cols: i32, chunk_rows: i32) -> 
 // offset inside the chunk is preserved, so the wrapped hex is the same point on the torus. A
 // non-positive grid size is not a torus — the input passes through unchanged.
 // Lockstep siblings: client HexMath.WrapHex (client/Scripts/World/HexMath.cs) and
-// MSTHexMath.wrap_hex (client/addons/MarchingSquaresTerrain/algorithm/terrain/mst_hex_math.gd)
+// MarchingSquaresHexRingsGrid.wrap_cell (client/addons/MarchingSquaresTerrain/algorithm/
+// hex_rings/marching_squares_hex_rings_grid.gd)
 // — all copies must change together.
 pub fn wrap_hex_coords(q: i32, r: i32, chunk_hex_radius: i32, chunk_cols: i32, chunk_rows: i32) -> (i32, i32) {
     if chunk_cols <= 0 || chunk_rows <= 0 { return (q, r); }
