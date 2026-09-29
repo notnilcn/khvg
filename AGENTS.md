@@ -18,7 +18,7 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 | Enemy AI, phases, attack sequences, bullet patterns | `enemy/` | `Players/Enemies/Enemy.cs`, `Game/BulletManager.cs` |
 | Damage & healing math (the only place damage is computed) | `combat/mod.rs` | `Components/Combat/`, `Components/Weapon/` |
 | World/hex grid, terrain generation, buildings | `world/` | `Components/Terrain/`, `Components/Camera/HexGridOverlay*Component.cs` |
-| Terrain masks (rivers/roads/walls) + wrap-aware pathfinding | `world/masks.rs`, `world/pathing.rs`, `world/terrain/rivers.rs`/`roads.rs`, `world/heights.rs` | `Components/Terrain/TerrainRoadsComponent3D.cs` |
+| Terrain masks (rivers/roads/walls) + wrap-aware pathfinding | `world/masks.rs`, `world/pathing.rs`, `world/terrain/rivers.rs`/`roads.rs` | `Components/Terrain/TerrainRoadsComponent3D.cs` |
 | Per-profile explored map (fog of war) | `player/explored.rs` (`PlayerExploredChunk`) | `Components/Terrain/ExploredMapComponent3D.cs` |
 | Hex region / auto-tile library, AoE preview | `world/hex_region.rs` | `World/HexRegion.cs`, `World/HexAutoTile.cs`, `Components/Visual/AbilityPreview3DComponent.cs` |
 | Item/enchantment catalog, equipping, inventory UI | `item/` | `Components/Catalog/`, `Components/Inventory/` |
@@ -29,7 +29,7 @@ Most tasks span a server module and one or more client scripts. Use this map to 
 
 - `server/AGENTS.md` — per-module server breakdown **plus the SpacetimeDB Rust rules**. Read it before writing any Rust here.
 - `client/AGENTS.md` — per-file client breakdown plus the component naming convention.
-- `PLAN.md` — the (now largely implemented) plan for porting the hex/world tech from the reference repos: wrapping, rivers/roads, explored map, pathfinding, region/auto-tile library, Sota heights. `THIRD_PARTY_NOTICES.md` — attribution for those MIT projects + the credit-header convention; every ported file starts with a `Portions derived from …` line.
+- `PLAN.md` — the (now largely implemented) plan for porting the hex/world tech from the reference repos: wrapping, rivers/roads, explored map, pathfinding, region/auto-tile library (the Sota ridge-height experiment was implemented and then reverted in favour of raw per-hex heights rendered by the MST fork's hex-rings mode). `THIRD_PARTY_NOTICES.md` — attribution for those MIT projects + the credit-header convention; every ported file starts with a `Portions derived from …` line.
 
 ## Folders to skip
 

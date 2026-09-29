@@ -16,7 +16,7 @@ This plan covers everything worth taking from the three reference repos and how 
 | 4 | Fog-of-war / explored | **Per-profile explored map; reveal granularity = the AOI chunk disk** | New work package §4.2 (Phase 4) |
 | 5 | Enemy pathfinding | **Add wrap-aware hex A*/Dijkstra** | New work package §4.3 (Phase 4) |
 | 6 | Attribution | **`THIRD_PARTY_NOTICES.md` + per-file credit headers** | §6 cross-cutting; Phase 0 task |
-| 7 | Sota terrain quality | **Ridge-based height field wanted eventually** | §4.6 (Phase 5), not dropped |
+| 7 | Sota terrain quality | **Ridge-based height field wanted eventually** → implemented, then **reverted 2026-09-29**: the MST fork's hex-rings mode slants raw per-hex heights natively | §4.6 kept as reference, marked reverted |
 | 8 | Auto-tile rules | **Client-side visual variants** from server-owned types; server owns gameplay-relevant masks only | §4.5 (Phase 3 support) |
 | 9 | Backlog order | **Order confirmed** (wrapping → hex library → content → optional systems → Sota) | §7 phasing table |
 
@@ -65,7 +65,7 @@ Client (`client/Scripts/`):
 - 2D terrain: `TerrainComponent` + `TileComponent` + 4 layer components, `MultiMeshInstance2D` batches per chunk, per-hex rows from `NearbyTerrainTiles` / `NearbyHexDecor`.
 - 3D terrain: tracked fork `client/addons/MarchingSquaresTerrain/` (MST, hex stepped terrain, own `AGENTS.md`); data model = per-chunk `hex_data` (elevation, ground/wall slots, grass, per-edge transition kinds), mesh rebuilt from records, `get_hex_global` resolves neighbor records.
 - Water: `WaterComponent3D` (3D ring of ocean tiles around the player) + `BackingOcean`.
-- Elevation: server `BuildingTile.elevation` from noise; client `ElevationMapComponent` exposes `GetElevation`/`GetWorldHeightAt`.
+- Elevation: server `BuildingTile.height` (raw per-hex noise height, unclamped) with a derived integer level; client `ElevationMapComponent` exposes `GetHeight`/`GetWorldHeightAt` (raw) plus derived `GetElevation`/`GetElevationAt`.
 - Ability shapes (circle/line/cone/rect) are bespoke code in `player/reducers.rs` + `BulletControllerComponent`.
 
 ---
@@ -89,7 +89,7 @@ pub fn wrap_hex_coords(q: i32, r: i32, chunk_hex_radius: i32, chunk_cols: i32, c
 }
 ```
 
-Mirror it as `HexMath.WrapHex(q, r, radius, cols, rows)` in `client/Scripts/World/HexMath.cs` and `MSTHexMath.wrap_hex(...)` in the MST fork, following the existing lockstep-comment convention used by `SpiralIndex`/`spiral_chunk_index` (all copies must change together). Also add a `TorusMath.WrapPosition(Vector2, lapQ, lapR)` client mirror of `wrap_world_pos` for G4 (position → canonical before hex lookups).
+Mirror it as `HexMath.WrapHex(q, r, radius, cols, rows)` in `client/Scripts/World/HexMath.cs` and `MarchingSquaresHexRingsGrid.wrap_cell(...)` in the MST fork, following the existing lockstep-comment convention used by `SpiralIndex`/`spiral_chunk_index` (all copies must change together). Also add a `TorusMath.WrapPosition(Vector2, lapQ, lapR)` client mirror of `wrap_world_pos` for G4 (position → canonical before hex lookups).
 
 Properties to assert in review/tests: idempotence; `wrap_hex_coords` preserves the 6-neighborhood (each canonical neighbor maps to the canonical rep of that neighbor); world position of the wrapped hex differs from the original by an integer combination of the lap vectors.
 
@@ -173,6 +173,8 @@ Rejected hex_map_godot ideas here, with reasons: **noise seam blending** (`HexMe
 
 ### 4.6 Sota ridge-based terrain — Phase 5 (decision §0.7)
 
+> **Reverted 2026-09-29.** Implemented as `world/heights.rs` + `BuildingTile.heights` (7 samples/hex: center + corners) and then removed: the MST fork's hex-rings mode slants raw per-hex heights natively (merge ramps), so the server now stores only `BuildingTile.height` (noise-quantized, unclamped) and derives levels. Keep this section as the reference if smooth ridge terrain is ever revisited.
+
 - Goal: replace flat stepped hex tops with smooth, seamless hills/mountains/water (Sota's look) while keeping MST's stepped cliffs if desired, or moving to vertex heights.
 - Reference: `ridge_set.cpp` (ridge polylines per connected same-biome group), `general_utility.cpp:98-156` (distance-to-border blending, corner wavefront distances, noise term), `plain/hill/mountain/water_mesh.cpp` (per-biome final-height curves), DSU grouping (`algo/dsu.h`, `ridge_hex_grid.cpp:624-654`), and `Terraformer`/`ridge_group.cpp:68-134` for incremental edits.
 - Server-side for determinism: heights (or ridge data) generated in Rust from the world seed and streamed; client renders. Expect a new `HexTile`/`BuildingTile` height representation and a client mesh path that consumes it.
@@ -195,8 +197,8 @@ Rejected hex_map_godot ideas here, with reasons: **noise seam blending** (`HexMe
 
 ## 6. Cross-cutting concerns
 
-- **Server authority / determinism.** Anything that changes world state (rivers, roads, walls, explored snapshots, pathfinding costs, ridge heights, DSU grouping) is computed in Rust from the world seed; the client mirrors and renders. Client-only ports must not feed gameplay decisions.
-- **Lockstep copies.** `spiral_chunk_index` ↔ `HexMath.SpiralIndex` is the existing precedent; extend the convention and comments to `wrap_hex_coords`, `MSTHexMath.wrap_hex`, and the region library. Every pair needs a comment naming the other file(s).
+- **Server authority / determinism.** Anything that changes world state (rivers, roads, walls, explored snapshots, pathfinding costs, per-hex heights, region grouping) is computed in Rust from the world seed; the client mirrors and renders. Client-only ports must not feed gameplay decisions.
+- **Lockstep copies.** `spiral_chunk_index` ↔ `HexMath.SpiralIndex` is the existing precedent; extend the convention and comments to `wrap_hex_coords`, `MarchingSquaresHexRingsGrid.wrap_cell`, and the region library. Every pair needs a comment naming the other file(s).
 - **Attribution (approved).** Phase 0: create `THIRD_PARTY_NOTICES.md` at the repo root (the three projects, their commits, full MIT texts, and a list of ported files/derivatives) and a one-line credit header in each ported file — including ported shaders, which are near-verbatim copies.
 - **Verification loop.** `cargo check` + `dotnet build` for compile; playtest skill for runtime (MCP for gameplay, `spacetime` CLI for setup/inspection only). MST fork changes get a headless `--import` parse check per that folder's AGENTS.md.
 
@@ -211,7 +213,7 @@ Rejected hex_map_godot ideas here, with reasons: **noise seam blending** (`HexMe
 | 2 | Hex region library (cell id + plane iterators + wrapped variants) in C#/Rust; adopt in ability shapes/AoE preview | Phase 1 |
 | 3 | Rivers/roads/walls: `HexTile` masks + generation, client variant resolver, rendering + shaders | Phase 1, Phase 2 (resolver) |
 | 4 | Per-profile explored map; wrap-aware enemy A*; feature placement; terrain polish | Phase 1, Phase 3 (costs/masks) |
-| 5 | Sota ridge height field + smooth normals + DSU/Terraformer edit pattern | Phase 4 (3D terrain design freeze) |
+| 5 | ~~Sota ridge height field~~ (reverted 2026-09-29) + smooth normals + DSU/Terraformer edit pattern | Phase 4 (3D terrain design freeze) |
 
 ---
 
@@ -219,7 +221,7 @@ Rejected hex_map_godot ideas here, with reasons: **noise seam blending** (`HexMe
 
 | Source | Feature | Main target | Status |
 |---|---|---|---|
-| hex_map_godot | Wrapped hex coords/distance/neighbors | `world/wrap.rs`, `HexMath.cs`, `TorusMath.cs`, MST `MSTHexMath` | Phase 1 |
+| hex_map_godot | Wrapped hex coords/distance/neighbors | `world/wrap.rs`, `HexMath.cs`, `TorusMath.cs`, MST `MarchingSquaresHexRingsGrid` | Phase 1 |
 | hex_map_godot | Chunk seam mesh shifts, camera column recycling | reference for `TerrainComponent3D` chunk apron | Phase 1 (reference) |
 | hex_map_godot | Noise seam blending | not ported (periodic generation) | rejected |
 | hex_map_godot | Rivers/roads/walls/water/estuaries + shaders | `HexTile` masks, `world/terrain/`, client mesh layer, `Assets/Shaders` | Phase 3 |
@@ -229,9 +231,9 @@ Rejected hex_map_godot ideas here, with reasons: **noise seam blending** (`HexMe
 | godot-hex-map | Cell id + plane iterators | `World/HexRegion.cs` + Rust mirror | Phase 2 |
 | godot-hex-map | Auto-tile rule engine | deterministic C# client variant resolver | Phase 3 |
 | godot-hex-map | Quad selection, edit plane/cursor | MST authoring reference | backlog |
-| Sota | DSU | Rust world/region helpers | Phase 5 (and Phase 3 if useful) |
+| Sota | DSU | Rust world/region helpers | not present — the private DSU lived in the reverted `heights.rs` |
 | Sota | Recursive tessellation + smooth normals | MST mesh builder | Phase 5 |
-| Sota | Ridge height field | server terrain heights + client mesh path | Phase 5 |
+| Sota | Ridge height field | server terrain heights + client mesh path | implemented then **reverted 2026-09-29** (fork hex-rings mode slants raw per-hex heights) |
 | Sota | Honeycomb levels | resource-node table | backlog |
 
 ## Appendix B — AGENTS.md files added with this plan

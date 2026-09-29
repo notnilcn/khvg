@@ -8,6 +8,8 @@ The porting plan, including per-feature phases, is `PLAN.md` (see §6 and Append
 
 ## Sota
 
+> **Note (2026-09-29):** nothing from this project remains in the codebase — the ridge height-field port was reverted (see the derivative-works table). The entry and license text are retained as the record of the attempt.
+
 - **Copyright:** `Copyright (c) 2024 Roman Ardazishvili and Contributors.`
 - **License:** MIT License
 - **Source snapshot:** commit `16f3de6`
@@ -145,7 +147,7 @@ This section lists the files and areas that are ports or reimplementations of th
 | `server/spacetimedb/src/world/wrap.rs` — `wrap_hex_coords` | Canonical hex wrap helper; reimplementation of the source's wrapped hex coords/distance/neighbors | 1 (W1) | Present — implemented together with `wrapped_hex_neighbors`; `#[cfg(test)]` covers idempotence, neighborhood preservation and lap displacement |
 | `client/Scripts/World/HexMath.cs` — `WrapHex` | Client mirror of `wrap_hex_coords` (lockstep copy) | 1 (W1) | Present — lockstep copy; consumed by Water/GridOverlay/TerrainRoads/AbilityPreview components |
 | `client/Scripts/World/TorusMath.cs` — `WrapPosition` | Client mirror of server `wrap_world_pos` for position → canonical before hex lookups | 1 (W1/W4) | Present — lockstep copy; `ElevationMapComponent` is the main consumer |
-| `client/addons/MarchingSquaresTerrain/algorithm/terrain/mst_hex_math.gd` — `MSTHexMath.wrap_hex` | MST fork mirror of `wrap_hex_coords` | 1 (W1/W3) | Present — plus `wrap_chunk`, consumed by the fork's `get_hex_global`/`_regenerate_neighbor_chunks` |
+| `client/addons/MarchingSquaresTerrain/algorithm/hex_rings/marching_squares_hex_rings_grid.gd` — `MarchingSquaresHexRingsGrid.wrap_cell` | MST fork mirror of `wrap_hex_coords` (the pre-2026-09 Sota-era `mst_hex_math.gd` was replaced by the hex-rings grid math) | 1 (W1/W3) | Present — consumed by the fork's `chunk_for_cell`/`local_cell` seam canonicalization |
 | `server/spacetimedb/src/world/terrain/` seam-aware generation (e.g. `rules.rs` wrap-aware neighbor lookup) | Wrapped-neighbor walk used by the source's grid neighbor logic | 1 (W2) | Present — `decided_neighbor_tags` canonicalizes through `wrapped_hex_neighbors` |
 | `client/Scripts/Components/Terrain/TerrainComponent3D.cs` chunk apron | Chunk seam mesh shifts and camera column recycling are the reference for the 3D chunk apron (mirrors, not whole-node recentering) | 1 (W3, reference only) | Present — visual-only `ChunkAprons` mirror pool sharing canonical chunk meshes/shells; no source code copied |
 | `server/spacetimedb/src/world/terrain/` river/road/wall generation; `HexTile` per-edge masks | Ports `_create_rivers` (incoming-direction/estuary bookkeeping), road placement, and wall placement from the source generator/cell code | 3 | Partial — `world/masks.rs` + `terrain/rivers.rs`/`roads.rs` are in; **wall generation is not implemented** (`wall_mask` is reserved and always 0) |
@@ -167,9 +169,9 @@ This section lists the files and areas that are ports or reimplementations of th
 
 | Target in this repository | What is derived | Phase | Status |
 |---|---|---|---|
-| Server terrain heights + client mesh path (ridge height field) | Ridge polylines per connected same-biome group, distance-to-border blending, per-biome final-height curves | 5 | Present — `world/heights.rs` produces the field (`BuildingTile.heights` + derived `elevation`); the client renders smooth tops via `draw_hex_heights` + `MSTHexMath.smooth_hex_height` and interpolates them in `ElevationMapComponent.TryGetSurfaceHeightAt` |
-| Rust world/region helpers (DSU) | Disjoint-set grouping used by the ridge/region code | 5 (and Phase 3 if useful) | Present (narrow) — a private DSU inside `heights.rs` groups same-class hexes; not factored into a shared `world/` helper |
-| MST mesh builder (recursive tessellation + smooth normals) | Recursive tessellation path and discretized shared-vertex normals; the iterative tessellation path is not to be reused | 5 | Not ported as such — the fork's smooth top is a barycentric subdivision of the server payload (`SMOOTH_SUBDIV`) with averaged per-triangle normals; Sota's recursive tessellation and discretized shared vertices are not used |
+| Server terrain heights + client mesh path (ridge height field) | Ridge polylines per connected same-biome group, distance-to-border blending, per-biome final-height curves | 5 | **Reverted 2026-09-29** — `world/heights.rs` and `BuildingTile.heights` were implemented and then removed; the server now stores a single noise-quantized `BuildingTile.height` per hex, and the MST fork's hex-rings mode renders slants from it (merge ramps), so no Sota-derived code remains |
+| Rust world/region helpers (DSU) | Disjoint-set grouping used by the ridge/region code | 5 (and Phase 3 if useful) | **Removed** with the reverted `heights.rs` (the private DSU lived there); not factored into a shared `world/` helper |
+| MST mesh builder (recursive tessellation + smooth normals) | Recursive tessellation path and discretized shared-vertex normals; the iterative tessellation path is not to be reused | 5 | Not ported — Sota's recursive tessellation and discretized shared vertices were not used, and the Sota-era fork's barycentric smooth-top mesh went with the 2026-09 revert |
 | Resource-node table (honeycomb levels) | Honeycomb resource-level model | Backlog | Not scheduled |
 
 ---
