@@ -19,10 +19,9 @@ using System.Collections.Generic;
 /// chunk.draw_height(local_x, local_y, height) and chunk.draw_smooth(local_x, local_y, smooth),
 /// then regenerates only the chunks whose cells changed plus their axial neighbours (walls and
 /// smooth corner heights read the neighbour chunk's cells). Chunks use merge_mode CUBIC with
-/// the threshold scaled by the fixture height ratio (TerrainComponent3D.FixtureHeightScale,
-/// mirroring the server's world/terrain/mst_test.rs), so an authored MST scene reproduces in
-/// game: steps above the threshold stay walls, smaller steps become 45-degree ramps, and smooth
-/// cells blend their tops across cells.
+/// merge_threshold 0, so the addon's ramp branch never fires: every height difference between
+/// non-smooth cells renders as a vertical wall between flat cell tops. Slopes come only from
+/// the smooth-flagged cells' corner blending.
 ///
 /// Known limitations:
 /// - Height rows are AOI-filtered (NearbyBuildingTiles, 2-chunk ring): distant chunks render
@@ -44,26 +43,18 @@ public partial class TerrainComponent3D : Node3DComponent
 
 	// The addon's MarchingSquaresTerrain.GridType.HEX_RINGS (4th enum value).
 	private const int GridTypeHexRings = 3;
-	// The addon's MarchingSquaresCellChunk.Mode.CUBIC — the authoring default and the mode the
-	// MST test fixture scene uses: steps above the threshold stay walls, smaller steps become
-	// 45-degree ramps, and smooth-flagged cells blend across either way.
+	// The addon's MarchingSquaresCellChunk.Mode.CUBIC (only its default threshold would matter,
+	// and we override that below).
 	private const int MergeModeCubic = 0;
-	// The addon's MarchingSquaresCellChunk.MERGE_MODE[Mode.CUBIC] threshold, in world units at
-	// the fixture scene's cell_size 2.0. Server fixture heights are scene height ×
-	// FixtureHeightScale, so the threshold scales identically to keep the same ramp/wall split.
-	private const float MergeCubicThreshold = 0.6f;
-	// The MST fixture scene's cell_size (MarchingSquaresTerrain's 2.0 default, unchanged in
-	// mst_test.tscn). The server derives the same height scale from it
-	// (world/terrain/mst_test.rs::height_scale) — both copies change together.
-	private const float MstTestCellSize = 2.0f;
+	// The addon's merge branch is `step <= merge_threshold` -> 45-degree ramp, else wall.
+	// Pinned to 0 so every positive step is a wall: flat-topped hexes with crisp vertical
+	// steps, no skirt slants along small height differences. Smooth-flagged cells blend via
+	// their corner heights regardless of this. Raise it to re-enable ramps up to that height.
+	private const float MergeRampThreshold = 0f;
 	// dimensions.y is only a shader hint (the cell count comes from chunk_hex_radius).
 	private const int DimensionsHeightHint = 32;
 
 	private static readonly float Sqrt3 = Mathf.Sqrt(3f);
-
-	// Scene-units → game-units ratio for fixture-authored heights: in-game hex spacing over the
-	// scene's cell size. Mirrors world/terrain/mst_test.rs::height_scale.
-	private static float FixtureHeightScale(float hexOuterRadius) => Sqrt3 * hexOuterRadius / MstTestCellSize;
 
 	private Node3D _terrain = null!; // the MarchingSquaresTerrain child (GDScript, untyped interop)
 	private TableBinderComponent _mapConfigBinder = null!;
@@ -171,15 +162,13 @@ public partial class TerrainComponent3D : Node3DComponent
 		foreach (var kv in (Godot.Collections.Dictionary)_terrain.Get("chunks"))
 			_chunkNodes[(Vector2I)kv.Key] = (Node3D)kv.Value.AsGodotObject();
 
-		// Faithful authoring semantics (the addon's default mode): CUBIC merge with the
-		// threshold scaled by the same ratio the server fixture scales heights by, so
-		// authored MST scenes reproduce 1:1 (modulo the discrete heights). Set merge_mode
-		// first — its setter resets merge_threshold to the enum default.
-		var mergeThreshold = MergeCubicThreshold * FixtureHeightScale(cfg.HexOuterRadius);
+		// Flat-topped cells with vertical walls: merge_threshold 0 disables the addon's
+		// 45-degree ramp branch, so no small height difference gets a slant skirt. Set
+		// merge_mode first — its setter resets merge_threshold to the enum default.
 		foreach (var chunk in _chunkNodes.Values)
 		{
 			chunk.Set("merge_mode", MergeModeCubic);
-			chunk.Set("merge_threshold", mergeThreshold);
+			chunk.Set("merge_threshold", MergeRampThreshold);
 		}
 
 		// add_new_chunk marks chunks data-dirty, which makes the terrain's deferred enter-tree

@@ -11,8 +11,8 @@
 //! every stored height is a discrete whole world unit. The editor height is first scaled by the
 //! ratio of the in-game hex spacing to the scene's cell size (sqrt(3) × hex_outer_radius /
 //! MST_TEST_CELL_SIZE — the client sets the runtime MST cell_size.x to sqrt(3) × outer radius)
-//! and then rounded. The client mirrors the same ratio as `TerrainComponent3D.FixtureHeightScale`
-//! (which scales the chunk merge threshold) — the two copies change together.
+//! and then rounded. The client renders exactly the heights and smooth flags it receives (its
+//! chunk merge threshold is pinned to 0, so no 45-degree merge ramps are added on top).
 
 use std::collections::HashMap;
 use crate::world::hex::{chunk_center_hex, HEX_NEIGHBOR_DELTAS};
