@@ -74,9 +74,9 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	// allocatable). The 100f fallback only applies before the first data row arrives.
 	public float BaseSpeed => DataComponent?.BaseSpeed ?? 100f;
 
-	/// P4 grapple / elevation falls: while an external mover (the grapple or fall tween)
-	/// owns the position, input movement is suspended and velocity pinned to zero so
-	/// MoveAndSlide doesn't fight the externally-set position.
+	/// P4 grapple / falls: while an external mover (the grapple or fall tween) owns the
+	/// position, input movement is suspended and velocity pinned to zero so MoveAndSlide
+	/// doesn't fight the externally-set position.
 	public bool ExternalMovementActive { get; set; }
 
 	private CharacterModel3D? _model3D;
@@ -177,7 +177,7 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 	{
 		var model = new CharacterModel3D(GD.Load<PackedScene>(path), GlobalPosition,
 			world3D!.CharacterRoot ?? (Node3D)world3D,
-			groundY: elevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
+			groundY: SampleSurfaceHeight(GlobalPosition));
 		GraftCatalogAnimations(model);
 		return model;
 	}
@@ -222,10 +222,10 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 		if (world3D == null || elevationMap == null)
 			return GetGlobalMousePosition();
 
-		var hit = world3D.CursorGroundIntersection(elevationMap.GetWorldHeightAt(GlobalPosition));
+		var hit = world3D.CursorGroundIntersection(SampleSurfaceHeight(GlobalPosition));
 		if (hit == null) return GetGlobalMousePosition();
-		// Re-intersect at the elevation of the hex actually under the cursor.
-		return world3D.CursorGroundIntersection(elevationMap.GetWorldHeightAt(hit.Value)) ?? hit.Value;
+		// Re-intersect at the surface height actually under the cursor.
+		return world3D.CursorGroundIntersection(SampleSurfaceHeight(hit.Value)) ?? hit.Value;
 	}
 
 	public override void _PhysicsProcess(double delta)
@@ -249,10 +249,10 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 
 		Velocity = ExternalMovementActive ? Vector2.Zero : input * (positionSync?.CurrentSpeed ?? BaseSpeed);
 
-		ApplyElevationPrediction(delta);
+		ApplyTerrainCollision(delta);
 
 		MoveAndSlide();
-		_model3D?.SyncFrom2D(GlobalPosition, Rotation, elevationMap?.GetWorldHeightAt(GlobalPosition) ?? 0f);
+		_model3D?.SyncFrom2D(GlobalPosition, Rotation, SampleSurfaceHeight(GlobalPosition));
 
 		// HasAnimation: in 3D mode the placeholder frames never load (hidden sprite), and
 		// in 2D mode the profile frames arrive after the first physics frames.
@@ -268,26 +268,31 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 			PlayCharacterAnimation(InteractAnimation);
 	}
 
-	// Per-hex elevation prediction (server re-validates in report_movement — uphill
-	// rejects are anti-cheat enforcement; this keeps the honest path from ever sending
-	// one). Skipped entirely while an external mover owns the position. Steps within
-	// ±MAX_WALKABLE_*_DELTA are walked normally; only steeper deltas block or fall.
-	private void ApplyElevationPrediction(double delta)
+	// Client-owned terrain collision. Samples the rendered terrain surface — the 3D mesh
+	// collision, the same geometry the pixelizer demo slides a CharacterBody3D on — instead
+	// of the flat per-hex heights, so smooth MST cells are walked up and down as the slopes
+	// they render as. Steps steeper than ±MAX_WALKABLE_*_DELTA levels block (axis-separated
+	// slide) or start a fall; the server no longer validates player elevation claims, it only
+	// keeps the speed/displacement checks. Skipped entirely while an external mover owns the
+	// position.
+	private void ApplyTerrainCollision(double delta)
 	{
 		if (ExternalMovementActive || elevationMap == null || Velocity == Vector2.Zero) return;
 
 		var pos = GlobalPosition;
-		int e0 = elevationMap.GetElevationAt(pos);
+		float h0 = SampleSurfaceHeight(pos);
 		var next = pos + Velocity * (float)delta;
-		int e1 = elevationMap.GetElevationAt(next);
+		float h1 = SampleSurfaceHeight(next);
+		float upLimit = ServerConstants.MaxWalkableUpDelta * ElevationMapComponent.WorldHeightPerLevel;
+		float downLimit = ServerConstants.MaxWalkableDownDelta * ElevationMapComponent.WorldHeightPerLevel;
 
-		if (e1 - e0 > ServerConstants.MaxWalkableUpDelta)
+		if (h1 - h0 > upLimit)
 		{
 			// Uphill cliff: blocked. Axis-separated slide — keep each velocity component
 			// whose own step stays within the walkable rise, zero the rest, so the
 			// player slides along the cliff face instead of stopping dead.
-			bool keepX = elevationMap.GetElevationAt(new Vector2(next.X, pos.Y)) - e0 <= ServerConstants.MaxWalkableUpDelta;
-			bool keepY = elevationMap.GetElevationAt(new Vector2(pos.X, next.Y)) - e0 <= ServerConstants.MaxWalkableUpDelta;
+			bool keepX = SampleSurfaceHeight(new Vector2(next.X, pos.Y)) - h0 <= upLimit;
+			bool keepY = SampleSurfaceHeight(new Vector2(pos.X, next.Y)) - h0 <= upLimit;
 			if (keepX && keepY)
 			{
 				// Corner case: both single-axis steps are legal but the combined diagonal
@@ -298,24 +303,40 @@ public partial class LocalPlayer : CharacterBody2D, IEntity
 			}
 			Velocity = new Vector2(keepX ? Velocity.X : 0f, keepY ? Velocity.Y : 0f);
 		}
-		else if (e0 - e1 > ServerConstants.MaxWalkableDownDelta)
+		else if (h0 - h1 > downLimit)
 		{
-			StartFallTween(e0 - e1);
+			StartFallTween(h0 - h1);
 		}
 	}
 
-	/// Walking off a cliff (a drop steeper than MAX_WALKABLE_DOWN_DELTA): tween ~0.75 hex
-	/// past the boundary along the current velocity over FALL_SECONDS_PER_LEVEL per level
-	/// dropped (mirrored in ServerConstants; the server applies the fall damage — only
-	/// when the drop exceeds FALL_SAFE_DROP — and enforces the same lockout via
-	/// falling_until).
+	/// Rendered terrain surface Y at a world 2D position: the 3D terrain's mesh collision
+	/// when available (smooth slopes and walls included), else the flat per-hex height (2D
+	/// mode, or before the chunks finish building). The position is canonicalized first —
+	/// the node can drift up to a lap, and only the canonical lap's chunks carry collision
+	/// (the aprons are visual-only).
+	private float SampleSurfaceHeight(Vector2 worldPos)
+	{
+		if (world3D != null && elevationMap != null)
+		{
+			var surface = world3D.SurfaceHeightAt(elevationMap.WrapPosition(worldPos));
+			if (surface.HasValue) return surface.Value;
+		}
+		return elevationMap?.GetWorldHeightAt(worldPos) ?? 0f;
+	}
+
+	/// Walking off a cliff (a surface drop steeper than MAX_WALKABLE_DOWN_DELTA levels):
+	/// tween ~0.75 hex past the boundary along the current velocity over
+	/// FALL_SECONDS_PER_LEVEL per level dropped. Client-owned — the server trusts the
+	/// landing report like any other movement claim (the displacement budget's time
+	/// component covers the tween).
 	/// Same external-mover pattern as the grapple tween in LocalPlayerInventoryComponent:
 	/// input movement is suspended and the landing position is reported only at the end
 	/// (timed reports are suppressed while ExternalMovementActive).
-	private void StartFallTween(int levels)
+	private void StartFallTween(float drop)
 	{
 		var origin = GlobalPosition;
 		var destination = origin + Velocity.Normalized() * (elevationMap!.OuterRadius * 0.75f);
+		float levels = drop / ElevationMapComponent.WorldHeightPerLevel;
 		float duration = ServerConstants.FallSecondsPerLevel * levels;
 
 		var sync = positionSync;

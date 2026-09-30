@@ -1,8 +1,7 @@
 use std::time::Duration;
 use spacetimedb::{ReducerContext, Table};
 use crate::main::global::*;
-use crate::world::hex::{spiral_chunk_index, world_to_chunk, world_to_hex};
-use crate::world::reducers::hex_elevation;
+use crate::world::hex::{spiral_chunk_index, world_to_chunk};
 use crate::world::wrap::{wrap_world_pos, wrapped_distance_sq};
 use crate::world::tables::MapConfig;
 use crate::player::tables::*;
@@ -106,13 +105,11 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     let (lap_q, lap_r) = ((cfg.lap_q_x, cfg.lap_q_y), (cfg.lap_r_x, cfg.lap_r_y));
     let (x, y) = wrap_world_pos(x, y, cfg.chunk_hex_radius, cfg.chunk_cols, cfg.chunk_rows, cfg.hex_outer_radius);
 
-    // Elevation rules (per-hex levels on BuildingTile, stamped by world generation): a move
-    // within ±MAX_WALKABLE_*_DELTA levels is normal walking; rising more than
-    // MAX_WALKABLE_UP_DELTA is blocked; dropping more than MAX_WALKABLE_DOWN_DELTA is a fall
-    // with a movement lockout proportional to the drop, plus damage once the drop exceeds
-    // FALL_SAFE_DROP. A live Grapple displacement allowance exempts the report entirely
-    // (grappling across cliffs is a feature); teleport_player never goes through
-    // report_movement at all.
+    // Terrain collision (cliffs/walls, and falls off them) is client-owned: the client
+    // predicts against the rendered surface (smooth MST slopes included) and the server
+    // trusts the claim. What remains here is the speed/displacement validation — the
+    // reported speed clamp and the wrap-aware displacement budget — plus the grapple
+    // allowance. teleport_player never goes through report_movement at all.
     let state = ctx.db.player_movement_state().profile_id().find(&profile_id);
     let (nx, ny) = nearest_lap_copy(x, y, pos.x, pos.y, lap_q, lap_r);
     let (dx, dy) = (nx - pos.x, ny - pos.y);
@@ -121,40 +118,6 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
         ctx.db.player_displacement_allowance().profile_id().find(&profile_id),
         Some(a) if ctx.timestamp < a.expires_at && dist <= a.max_distance
     );
-    let mut fall_delta: i16 = 0;
-    if !grapple_active {
-        if let Some(s) = &state {
-            if let Some(until) = s.falling_until {
-                if ctx.timestamp < until {
-                    // Mid-fall: the client is tweening to the landing point and movement is
-                    // locked, so position claims are ignored until the fall ends. Restamp
-                    // the report clock so the first post-fall report's displacement budget
-                    // doesn't absorb the fall duration.
-                    ctx.db.player_movement_state().profile_id().update(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: s.falling_until });
-                    return Ok(());
-                }
-            }
-        }
-        let (q0, r0) = world_to_hex(pos.x, pos.y, cfg.hex_outer_radius);
-        let (q1, r1) = world_to_hex(x, y, cfg.hex_outer_radius);
-        let e0 = hex_elevation(ctx, q0, r0);
-        let e1 = hex_elevation(ctx, q1, r1);
-        let rising = e1 - e0;
-        if rising > MAX_WALKABLE_UP_DELTA {
-            // Too steep to climb: reject the position claim. Honest clients predict the
-            // block and never send this — this is the anti-cheat belt. The report clock
-            // still restamps so the budget doesn't balloon while pushing into the cliff.
-            match &state {
-                Some(s) => { ctx.db.player_movement_state().profile_id().update(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: s.falling_until }); }
-                None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: None }); }
-            }
-            return Ok(());
-        }
-        let drop = e0 - e1;
-        if drop > MAX_WALKABLE_DOWN_DELTA {
-            fall_delta = drop;
-        }
-    }
 
     // Clamp reported speed into [0, resolved base_speed] (gear/buffs included) — clients
     // should never exceed base_speed, so anything over is a cheat or a bug. While any
@@ -193,15 +156,15 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     // BitCraft's reset_mobile_entity_timer). Admins bypass (mirror has_role_no_dev GM).
     if !is_admin(ctx) {
         let monotonic_ok = state.as_ref().map(|s| ctx.timestamp >= s.last_report).unwrap_or(true);
-        let gross_violation = dist > budget * 2.0 && fall_delta == 0 && !grapple_active;
+        let gross_violation = dist > budget * 2.0 && !grapple_active;
         if !monotonic_ok || gross_violation {
             let strikes = crate::anticheat::record_move_strike(ctx, profile_id);
             if strikes >= STRIKES_BEFORE_REJECT {
                 // Reject + resync: restamp the clock and snap the client back by
                 // re-asserting the stored position (authoritative echo on next tick).
                 match &state {
-                    Some(s) => { ctx.db.player_movement_state().profile_id().update(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: s.falling_until }); }
-                    None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: None }); }
+                    Some(_) => { ctx.db.player_movement_state().profile_id().update(PlayerMovementState { profile_id, last_report: ctx.timestamp }); }
+                    None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp }); }
                 }
                 log::warn!("move validation: rejecting report for profile {} after {} strikes", profile_id, strikes);
                 return Ok(());
@@ -209,16 +172,11 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
         }
     }
     let (x, y) = if dist > budget {
-        if fall_delta > 0 && dist <= MAX_FALL_DISPLACEMENT {
-            // Downhill fall: exempt from the displacement budget up to
-            // MAX_FALL_DISPLACEMENT — the client tweens the landing like a grapple.
-            // Beyond that bound the report falls through to the normal clamp.
-            (x, y)
-        } else {
         // Grapple (P4) is client-tweened: a cast stamps a one-shot displacement
         // allowance (see apply_ability_effect), and one oversized report up to the
         // grapple range consumes it instead of being clamped. Expired rows are swept
-        // on contact.
+        // on contact. Falls are ordinary movement now (client-owned) — the budget's
+        // time component covers a tween's displacement.
         match ctx.db.player_displacement_allowance().profile_id().find(&profile_id) {
             Some(a) if ctx.timestamp < a.expires_at && dist <= a.max_distance => {
                 ctx.db.player_displacement_allowance().profile_id().delete(&profile_id);
@@ -229,7 +187,6 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
                 (pos.x + dx / dist * budget, pos.y + dy / dist * budget)
             }
             None => (pos.x + dx / dist * budget, pos.y + dy / dist * budget),
-        }
         }
     } else {
         (x, y)
@@ -249,18 +206,9 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
     }
 
     // Restamp the report clock — the next report's displacement budget measures from here.
-    // A fall started by this report also stamps its movement lockout (falling_until).
-    let fall_until = if fall_delta > 0 {
-        Some(ctx.timestamp + Duration::from_secs_f64(FALL_SECONDS_PER_LEVEL * fall_delta as f64))
-    } else {
-        None
-    };
     match state {
-        Some(s) => {
-            let falling_until = fall_until.or(s.falling_until);
-            ctx.db.player_movement_state().profile_id().update(PlayerMovementState { last_report: ctx.timestamp, falling_until, ..s });
-        }
-        None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: fall_until }); }
+        Some(s) => { ctx.db.player_movement_state().profile_id().update(PlayerMovementState { last_report: ctx.timestamp, ..s }); }
+        None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp }); }
     }
 
     // Radius-exit stamping for active radius wagers (stamped from movement reports, NOT
@@ -286,13 +234,6 @@ pub fn report_movement(ctx: &ReducerContext, x: f32, y: f32, movement_direction:
         }
     }
 
-    // Fall damage, proportional to the drop — only past FALL_SAFE_DROP; smaller falls still
-    // got the lockout and displacement exemption above but land unharmed. Applied last
-    // because it can kill: teardown_profile then deletes the rows written above and nothing
-    // follows it.
-    if fall_delta > FALL_SAFE_DROP {
-        deal_damage_to_player(ctx, &player, None, FALL_DAMAGE_PER_LEVEL * fall_delta as u32)?;
-    }
     Ok(())
 }
 

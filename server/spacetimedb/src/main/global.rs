@@ -34,20 +34,23 @@ pub const ELEVATION_LEVELS: i16 = 8;
 pub const WORLD_HEIGHT_PER_LEVEL: f32 = 16.0;
 // Spatial frequency of the elevation noise field — low enough that plateaus span many hexes.
 pub const ELEVATION_NOISE_SCALE: f32 = 0.004;
-// Walkable deltas: a player may walk onto a hex up to this many levels above/below their
-// current hex with no block and no fall. Anything steeper is a cliff: rising more than
-// MAX_WALKABLE_UP_DELTA blocks the move; dropping more than MAX_WALKABLE_DOWN_DELTA is a fall.
+// Walkable deltas: the terrain-step vocabulary used by world-gen road costs and enemy
+// pathing (and mirrored client-side for the local walkable-rise check). Player wall
+// collision is client-owned — report_movement no longer blocks or classifies player moves
+// by elevation (2026-09-30), so these are not player-movement validation anymore.
 pub const MAX_WALKABLE_UP_DELTA: i16 = 1;
 pub const MAX_WALKABLE_DOWN_DELTA: i16 = 1;
-// A drop larger than this deals fall damage; drops of (MAX_WALKABLE_DOWN_DELTA,
-// FALL_SAFE_DROP] are still falls (lockout + displacement exemption) but deal zero damage.
+// Fall tuning is client-owned now: the client tweens falls against the rendered terrain
+// surface; the server no longer classifies drops or applies fall damage. Kept as the single
+// home for the numbers the client mirrors (ServerConstants.FallSecondsPerLevel /
+// FallSafeDrop) — re-wire authoritative fall damage here if that is ever wanted again.
+#[allow(dead_code)]
 pub const FALL_SAFE_DROP: i16 = 2;
-// Fall damage per elevation level dropped.
+#[allow(dead_code)]
 pub const FALL_DAMAGE_PER_LEVEL: u32 = 15;
-// Movement lockout (seconds) per level dropped — the client mirrors this for its fall tween.
+#[allow(dead_code)]
 pub const FALL_SECONDS_PER_LEVEL: f64 = 0.35;
-// Max wrap-aware displacement a downhill-fall report may claim while staying exempt from
-// report_movement's displacement budget (~2.5 hexes — a bounded grapple-style exemption).
+#[allow(dead_code)]
 pub const MAX_FALL_DISPLACEMENT: f32 = DEFAULT_HEX_OUTER_RADIUS * 2.5;
 // Bullet elevation tolerances, relative to the bullet's origin-hex band: a bullet survives
 // entering a hex up to BULLET_ELEVATION_CLIMB levels above its band, and can hit entities up

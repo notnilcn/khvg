@@ -67,9 +67,9 @@ pub struct BuildingTile {
     // (terrain::run_generation). This is the addon's `height_map` value: the client passes it
     // straight to MarchingSquaresCellChunk.draw_height, and the addon's merge modes turn small
     // deltas into ramps. Unclamped. Gameplay derives the integer elevation level as
-    // floor(height / WORLD_HEIGHT_PER_LEVEL) (world::reducers::height_to_level); deltas within
-    // ±MAX_WALKABLE_*_DELTA levels are walkable, anything steeper is a cliff (see
-    // report_movement).
+    // floor(height / WORLD_HEIGHT_PER_LEVEL) (world::reducers::height_to_level) for bands and
+    // tint; player wall collision is client-owned and samples the rendered surface, so no
+    // server rule blocks movement by these deltas.
     pub height: i16,
     // The addon's per-cell `smooth_map` flag (MarchingSquaresCellChunk.draw_smooth/get_smooth):
     // when set, the cell's top is not flat — each top corner is the average of the surrounding

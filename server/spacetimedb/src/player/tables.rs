@@ -189,7 +189,6 @@ pub struct LootDrop {
 
 // Server-only movement-report bookkeeping behind report_movement's displacement clamp:
 // when the last report arrived, so the per-report budget is base_speed × dt × MOVE_SLACK.
-// falling_until locks movement while a downhill-fall tween plays out (see report_movement).
 // Not public — clients never read it. teleport_player restamps it (teleports are exempt
 // from the clamp); teardown_profile deletes it.
 #[table(accessor = player_movement_state)]
@@ -197,9 +196,6 @@ pub struct PlayerMovementState {
     #[primary_key]
     pub profile_id: u64,
     pub last_report: Timestamp,
-    // While in the future, report_movement ignores position claims — the client is
-    // tweening a downhill fall and movement is locked. None = not falling.
-    pub falling_until: Option<Timestamp>,
 }
 
 /// Server-only Grapple coordination (P4): Grapple's pull is client-tweened, so a cast

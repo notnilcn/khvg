@@ -17,8 +17,10 @@ using System.Collections.Generic;
 /// Gameplay still thinks in discrete elevation levels: GetElevation derives
 /// floor(height / WorldHeightPerLevel), lockstep with the server's
 /// world::reducers::height_to_level. GetWorldHeightAt returns the raw stored height — the
-/// cell top characters and cursor raycasts stand on (the addon's merge ramps are visual only).
-/// Top-level reads the derived level (bullet bands, walkability, tint).
+/// fallback ground used when the 3D mesh can't be sampled (2D mode, chunks still building).
+/// LocalPlayer's client-owned collision samples the rendered surface (Merge ramps and smooth
+/// slopes included) via World3DComponent.SurfaceHeightAt instead.
+/// Top-level reads the derived level (bullet bands, tint).
 /// </summary>
 public partial class ElevationMapComponent : Component
 {
@@ -67,7 +69,7 @@ public partial class ElevationMapComponent : Component
     /// MapConfig) before the hex lookup — the height keys are server-canonical.
     public int GetHeightAt(Vector2 worldPos)
     {
-        var canonical = TorusMath.WrapPosition(worldPos, _chunkHexRadius, _chunkCols, _chunkRows, _outerRadius, GameManager.LapQ, GameManager.LapR);
+        var canonical = WrapPosition(worldPos);
         var hex = HexMath.WorldToHex(canonical.X, canonical.Y, _outerRadius);
         return GetHeight(hex.X, hex.Y);
     }
@@ -75,13 +77,19 @@ public partial class ElevationMapComponent : Component
     /// Elevation level of the hex containing a world position (the wrapped lookup above).
     public int GetElevationAt(Vector2 worldPos)
     {
-        var canonical = TorusMath.WrapPosition(worldPos, _chunkHexRadius, _chunkCols, _chunkRows, _outerRadius, GameManager.LapQ, GameManager.LapR);
+        var canonical = WrapPosition(worldPos);
         var hex = HexMath.WorldToHex(canonical.X, canonical.Y, _outerRadius);
         return GetElevation(hex.X, hex.Y);
     }
 
     /// 3D world height of the terrain surface at a world position: the hex's stored height.
     public float GetWorldHeightAt(Vector2 worldPos) => GetHeightAt(worldPos);
+
+    /// Canonical (lap-wrapped) copy of a node-space world position, for lookups whose keys
+    /// are server-canonical (heights) or whose geometry only exists on the canonical lap
+    /// (the 3D terrain's mesh collision).
+    public Vector2 WrapPosition(Vector2 worldPos)
+        => TorusMath.WrapPosition(worldPos, _chunkHexRadius, _chunkCols, _chunkRows, _outerRadius, GameManager.LapQ, GameManager.LapR);
 
     // --- TableBinderComponent signal handlers (wired in game.tscn) ---
 

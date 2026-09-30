@@ -159,4 +159,29 @@ public partial class World3DComponent : Node3DComponent
         var hit = from + dir * t;
         return new Vector2(hit.X, hit.Z);
     }
+
+    // MST chunk StaticBody3D collision layers (the addon sets collision_layer = 17: layers 1
+    // and 5). Water/sky/backing planes and the visual-only chunk aprons carry no colliders,
+    // so a layer-filtered downward ray hits terrain or nothing.
+    private const uint TerrainCollisionMask = 17;
+    // The ray spans every possible terrain height (the elevation field tops out at
+    // ELEVATION_LEVELS × WORLD_HEIGHT_PER_LEVEL; unclamped stored heights sit far below this).
+    private const float SurfaceRayTopY = 20000f;
+    private const float SurfaceRayBottomY = -20000f;
+
+    /// World-space Y of the rendered terrain surface under a canonical world-2D position:
+    /// a downward ray against the MST chunk trimesh collision — the same geometry the
+    /// pixelizer demo's CharacterBody3D slides on, smooth slopes and walls included. Null
+    /// when no terrain collider is there yet (chunks still building) — callers fall back to
+    /// the per-hex height. Pass a canonical (lap-wrapped) position: only the canonical lap's
+    /// chunks carry collision, the aprons are visual-only.
+    public float? SurfaceHeightAt(Vector2 world2D)
+    {
+        var from = new Vector3(world2D.X, SurfaceRayTopY, world2D.Y);
+        var to = new Vector3(world2D.X, SurfaceRayBottomY, world2D.Y);
+        var hit = GetWorld3D().DirectSpaceState.IntersectRay(
+            PhysicsRayQueryParameters3D.Create(from, to, TerrainCollisionMask));
+        if (hit.Count == 0) return null;
+        return ((Vector3)hit["position"]).Y;
+    }
 }

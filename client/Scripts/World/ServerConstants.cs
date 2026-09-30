@@ -41,23 +41,24 @@ public static class ServerConstants
     /// world generation stamps onto BuildingTile rows (terrain tint range).
     public const int ElevationLevels = 8;
 
-    /// Mirror of FALL_SECONDS_PER_LEVEL — input-lockout seconds per level dropped when
-    /// walking off a cliff; the server enforces the same lockout via falling_until and
-    /// applies FALL_DAMAGE_PER_LEVEL on the landing report (damage stays server-side).
+    /// Mirror of FALL_SECONDS_PER_LEVEL — seconds per level of drop for the client-owned
+    /// fall tween. The server no longer classifies falls (walls/falls are client-owned); it
+    /// keeps only the speed/displacement validation, whose budget's time component covers
+    /// the tween.
     public const float FallSecondsPerLevel = 0.35f;
 
-    /// Mirror of MAX_WALKABLE_UP_DELTA — a step up of at most this many levels is
-    /// walked normally; anything steeper is blocked (client predicts the slide, the
-    /// server rejects the position claim).
+    /// Mirror of MAX_WALKABLE_UP_DELTA — a surface step up larger than this many levels
+    /// (× ElevationMapComponent.WorldHeightPerLevel in world units) blocks the move; the
+    /// client slides along the cliff face. Collision is client-owned — the server no longer
+    /// rejects the position claim.
     public const int MaxWalkableUpDelta = 1;
 
-    /// Mirror of MAX_WALKABLE_DOWN_DELTA — a step down of at most this many levels is
-    /// walked normally; anything steeper is a fall.
+    /// Mirror of MAX_WALKABLE_DOWN_DELTA — a surface step down larger than this many levels
+    /// starts the fall tween (client-owned, same as the rise block above).
     public const int MaxWalkableDownDelta = 1;
 
-    /// Mirror of FALL_SAFE_DROP — fall damage applies only when the drop exceeds this
-    /// many levels (a drop of exactly this is still a fall: tween + lockout, no damage).
-    /// The client never computes damage; mirrored here for completeness of the fall rule.
+    /// Mirror of FALL_SAFE_DROP — kept for completeness of the fall rule; no damage is
+    /// applied today (falls are a client-owned cosmetic tween).
     public const int FallSafeDrop = 2;
 
     /// Mirror of BULLET_ELEVATION_CLIMB — a bullet survives entering a hex up to this

@@ -236,7 +236,7 @@ pub fn teleport_player(ctx: &ReducerContext, profile_id: u64, x: f32, y: f32) ->
     // clock so the next report's budget measures from the teleport, not from before it.
     match ctx.db.player_movement_state().profile_id().find(&profile_id) {
         Some(state) => { ctx.db.player_movement_state().profile_id().update(PlayerMovementState { last_report: ctx.timestamp, ..state }); }
-        None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp, falling_until: None }); }
+        None => { ctx.db.player_movement_state().insert(PlayerMovementState { profile_id, last_report: ctx.timestamp }); }
     }
     Ok(())
 }
