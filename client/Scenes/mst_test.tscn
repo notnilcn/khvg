@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://ck1c4w0jnuded"]
 
 [ext_resource type="Script" uid="uid://cddg1xr5hye1d" path="res://addons/MarchingSquaresTerrain/algorithm/terrain/marching_squares_terrain.gd" id="1_b33st"]
-[ext_resource type="Script" uid="uid://b0t1ojtpvt58o" path="res://addons/MarchingSquaresTerrain/algorithm/hex/marching_squares_hex_chunk.gd" id="2_tpf6k"]
-[ext_resource type="Script" uid="uid://fgqy2qf4tl87" path="res://addons/MarchingSquaresTerrain/algorithm/cells/marching_squares_cell_grass_planter.gd" id="3_it7ot"]
+[ext_resource type="Script" uid="uid://b7k12vmffw5tb" path="res://addons/MarchingSquaresTerrain/algorithm/hex_rings/marching_squares_hex_rings_chunk.gd" id="2_b33st"]
+[ext_resource type="Script" uid="uid://fgqy2qf4tl87" path="res://addons/MarchingSquaresTerrain/algorithm/cells/marching_squares_cell_grass_planter.gd" id="3_tpf6k"]
 
 [node name="MstTest" type="Node3D" unique_id=477815342]
 
@@ -10,43 +10,25 @@
 script = ExtResource("1_b33st")
 data_directory = "res://Scenes/mst_test_TerrainData/MarchingSquaresTerrain_e224d986"
 _storage_initialized = true
-grid_type = 2
+grid_type = 3
+wrap_chunk_cols = 6
+wrap_chunk_rows = 6
 metadata/_custom_type_script = "uid://cddg1xr5hye1d"
 
-[node name="Chunk (-1, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=769594510 node_paths=PackedStringArray("terrain_system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, 0, 0)
-script = ExtResource("2_tpf6k")
-terrain_system = NodePath("..")
-chunk_coords = Vector2i(-1, 0)
-
-[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, 0)" unique_id=1206108518]
-cast_shadow = 0
-script = ExtResource("3_it7ot")
-
-[node name="Chunk (-1, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=632932041 node_paths=PackedStringArray("terrain_system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -65, 0, -57.157677)
-script = ExtResource("2_tpf6k")
-terrain_system = NodePath("..")
-chunk_coords = Vector2i(-1, -1)
-
-[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (-1, -1)" unique_id=305103141]
-cast_shadow = 0
-script = ExtResource("3_it7ot")
-
-[node name="Chunk (0, -1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=582126369 node_paths=PackedStringArray("terrain_system")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, -57.157677)
-script = ExtResource("2_tpf6k")
-terrain_system = NodePath("..")
-chunk_coords = Vector2i(0, -1)
-
-[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, -1)" unique_id=1816075171]
-cast_shadow = 0
-script = ExtResource("3_it7ot")
-
-[node name="Chunk (0, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1967937136 node_paths=PackedStringArray("terrain_system")]
-script = ExtResource("2_tpf6k")
+[node name="Chunk (0, 0)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1514846562 node_paths=PackedStringArray("terrain_system")]
+script = ExtResource("2_b33st")
 terrain_system = NodePath("..")
 
-[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, 0)" unique_id=627754815]
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, 0)" unique_id=787846368]
 cast_shadow = 0
-script = ExtResource("3_it7ot")
+script = ExtResource("3_tpf6k")
+
+[node name="Chunk (0, 1)" type="MeshInstance3D" parent="MarchingSquaresTerrain" unique_id=1917963077 node_paths=PackedStringArray("terrain_system")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 5.196152)
+script = ExtResource("2_b33st")
+terrain_system = NodePath("..")
+chunk_coords = Vector2i(0, 1)
+
+[node name="GrassPlanter" type="MultiMeshInstance3D" parent="MarchingSquaresTerrain/Chunk (0, 1)" unique_id=734520338]
+cast_shadow = 0
+script = ExtResource("3_tpf6k")

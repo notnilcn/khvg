@@ -155,7 +155,9 @@ script = ExtResource("8_terrain3d")
 [node name="MarchingSquaresTerrain" type="Node3D" parent="TerrainComponent3D" unique_id=1461797051]
 script = ExtResource("9_mst")
 storage_mode = 1
+data_directory = "res://Scenes/world_3d_TerrainData/MarchingSquaresTerrain_ff4e795f"
 enable_runtime_texture_baking = false
+_storage_initialized = true
 
 [node name="MapConfigBinder" type="Node" parent="TerrainComponent3D" unique_id=353003388]
 script = ExtResource("4_binder")

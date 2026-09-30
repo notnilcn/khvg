@@ -92,20 +92,39 @@ var _grid_type : GridType = GridType.SQUARE
 @export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var dimensions : Vector3i = Vector3i(33, 32, 33): # Total amount of height values in X and Z direction, and total height range
 	set(value):
 		dimensions = value
-		terrain_material.set_shader_parameter("chunk_size", value)
+		terrain_material.set_shader_parameter("chunk_size", _shader_chunk_size())
 		if EngineWrapper.is_editor():
 			emit_signal("chunk_dimensions_changed", value)
 ## Hex-ring mode (GridType.HEX_RINGS): hexes from a chunk's center to its edge. A chunk owns
 ## the disk of micro-hexes whose low-res owner is that chunk (server chunk_hex_radius).
 @export_custom(PROPERTY_HINT_RANGE, "1, 8", PROPERTY_USAGE_STORAGE) var chunk_hex_radius : int = 2:
 	set(value):
+		value = clampi(value, 1, 8)
+		if chunk_hex_radius == value:
+			return
+		if grid_type == GridType.HEX_RINGS and not chunks.is_empty():
+			# Changing the radius changes cell ownership, so rebuild the chunks
+			# from their fine-hex data instead of just regenerating meshes.
+			_remap_hex_ring_radius(value)
+			return
 		chunk_hex_radius = value
+		terrain_material.set_shader_parameter("chunk_size", _shader_chunk_size())
 		for chunk in chunks.values():
 			chunk.regenerate_mesh()
 ## Hex-ring mode: torus lap size in chunks (0 = wrapping off). Set from the server's
 ## MapConfig so seam cell lookups canonicalize into the lap (server wrap_chunk_coords).
-@export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var wrap_chunk_cols : int = 0
-@export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var wrap_chunk_rows : int = 0
+@export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var wrap_chunk_cols : int = 0:
+	set(value):
+		if wrap_chunk_cols == value:
+			return
+		wrap_chunk_cols = value
+		_regenerate_all_chunk_meshes()
+@export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var wrap_chunk_rows : int = 0:
+	set(value):
+		if wrap_chunk_rows == value:
+			return
+		wrap_chunk_rows = value
+		_regenerate_all_chunk_meshes()
 @export_custom(PROPERTY_HINT_NONE, "", PROPERTY_USAGE_STORAGE) var cell_size : Vector2 = Vector2(2.0, 2.0): # XZ Unit size of each cell
 	set(value):
 		cell_size = value
@@ -615,6 +634,21 @@ func cells_per_chunk() -> Vector2i:
 	return Vector2i.ZERO
 
 
+## Chunk size in cells fed to the terrain shader. Hex-ring chunks are (2R+1)
+## cells across and ignore dimensions, so keep the shader texture tiling in sync.
+func _shader_chunk_size() -> Vector3i:
+	if grid_type == GridType.HEX_RINGS:
+		var cells := MarchingSquaresHexRingsGrid.cells_per_chunk(chunk_hex_radius)
+		return Vector3i(cells.x, dimensions.y, cells.y)
+	return dimensions
+
+
+## Regenerate every chunk mesh (hex-ring layout changes may alter seam walls).
+func _regenerate_all_chunk_meshes() -> void:
+	for chunk in chunks.values():
+		chunk.regenerate_mesh()
+
+
 #region cell coordinate dispatch (per grid mode)
 
 ## Global cell coordinate from a chunk coordinate and local cell.
@@ -775,6 +809,88 @@ func _switch_grid_type(value: GridType):
 func _deferred_rebuild_chunks(_unused: bool) -> void:
 	for chunk in chunks.values():
 		chunk.initialize_terrain(true)
+
+
+## Rebuild hex-ring chunks for a new chunk_hex_radius. Fine-hex data is keyed by
+## global axial cell, so painted heights/colors/mask/smooth survive the change.
+func _remap_hex_ring_radius(new_radius: int) -> void:
+	var old_radius := chunk_hex_radius
+	var old_cells := MarchingSquaresHexRingsGrid.cells_per_chunk(old_radius)
+	
+	# Gather every real cell's data keyed by its global axial coordinate.
+	var gathered : Dictionary = {}
+	for chunk in chunks.values():
+		if not (chunk is MarchingSquaresHexRingsChunk):
+			continue
+		for r in range(old_cells.y):
+			for c in range(old_cells.x):
+				var local := Vector2i(c, r)
+				if not MarchingSquaresHexRingsGrid.has_local(local, old_radius):
+					continue
+				var global := MarchingSquaresHexRingsGrid.global_cell(chunk.chunk_coords, local, old_radius)
+				gathered[global] = [
+					chunk.get_height(local),
+					chunk.get_color_0(local),
+					chunk.get_color_1(local),
+					chunk.get_wall_color_0(local),
+					chunk.get_wall_color_1(local),
+					chunk.get_grass_mask(local),
+					chunk.get_smooth(local),
+				]
+	
+	# Free all chunks without saving: the gathered data is written back below and the
+	# rebuilt chunks are marked dirty, so the next save overwrites the old files.
+	for child in get_children():
+		if child is MarchingSquaresTerrainChunkBase:
+			child._skip_save_on_exit = true
+			child.owner = null
+			remove_child(child)
+			child.free()
+	chunks.clear()
+	
+	chunk_hex_radius = new_radius
+	terrain_material.set_shader_parameter("chunk_size", _shader_chunk_size())
+	
+	# Create one chunk per new owner, then restore the gathered cells.
+	for global in gathered.keys():
+		var owner := chunk_of_cell(global)
+		if not chunks.has(owner):
+			var new_chunk := make_chunk()
+			new_chunk.name = "Chunk " + str(owner)
+			add_chunk(owner, new_chunk, null, false)
+	
+	for global in gathered.keys():
+		var chunk : MarchingSquaresHexRingsChunk = chunks.get(chunk_of_cell(global))
+		if chunk == null:
+			continue
+		var local := local_cell(global)
+		var data : Array = gathered[global]
+		chunk.draw_height(local.x, local.y, data[0])
+		chunk.draw_color_0(local.x, local.y, data[1])
+		chunk.draw_color_1(local.x, local.y, data[2])
+		chunk.draw_wall_color_0(local.x, local.y, data[3])
+		chunk.draw_wall_color_1(local.x, local.y, data[4])
+		chunk.draw_grass_mask(local.x, local.y, data[5])
+		chunk.draw_smooth(local.x, local.y, data[6])
+	
+	for chunk in chunks.values():
+		if chunk is MarchingSquaresCellChunk:
+			chunk.refresh_smooth_flag()
+		chunk.regenerate_mesh()
+	
+	# The previous selection and undo history referenced the freed chunks.
+	var plugin := MarchingSquaresTerrainPlugin.instance
+	if plugin:
+		var undo_redo := plugin.get_undo_redo()
+		if undo_redo:
+			undo_redo.clear_history(false)
+		plugin.selected_chunk = null
+		for chunk in chunks.values():
+			plugin.selected_chunk = chunk
+			break
+	
+	if EngineWrapper.is_editor():
+		EditorInterface.mark_scene_as_unsaved()
 
 
 func add_new_chunk(chunk_x: int, chunk_z: int, plugin):
@@ -991,7 +1107,7 @@ func force_batch_update() -> void:
 	var grass_mat := grass_mesh.material as ShaderMaterial
 	
 	# TERRAIN MATERIAL - Core parameters
-	terrain_material.set_shader_parameter("chunk_size", dimensions)
+	terrain_material.set_shader_parameter("chunk_size", _shader_chunk_size())
 	terrain_material.set_shader_parameter("cell_size", cell_size)
 	
 	# TERRAIN MATERIAL - Ground Textures

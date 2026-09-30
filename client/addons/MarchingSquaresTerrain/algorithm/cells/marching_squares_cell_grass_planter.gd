@@ -257,6 +257,9 @@ func _terrain_world_extent() -> Vector2:
 			terrain_system.dimensions.x * terrain_system.cell_size.x,
 			terrain_system.dimensions.z * MarchingSquaresTriGrid.row_height(terrain_system.cell_size))
 	var spacing := MarchingSquaresHexGrid.spacing_for(terrain_system.cell_size)
+	if terrain_system.grid_type == MarchingSquaresTerrain.GridType.HEX_RINGS:
+		var cells := terrain_system.cells_per_chunk()
+		return Vector2(cells.x * spacing.x, cells.y * spacing.y)
 	return Vector2(
 		terrain_system.dimensions.x * spacing.x,
 		terrain_system.dimensions.z * spacing.y)
