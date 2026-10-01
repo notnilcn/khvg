@@ -80,9 +80,15 @@ public partial class TerrainComponent3D : Node3DComponent
 	private StandardMaterial3D? _shellMaterial;
 
 	// Chunk apron mirrors (see RefreshAprons): a pool of visual-only MeshInstance3D copies
-	// of canonical chunks placed at non-zero lap offsets around the camera.
-	private const int ApronPoolSize = 12;
+	// of canonical chunks placed at non-zero lap offsets around the camera. The pool grows
+	// on demand to cover every candidate inside the camera frustum; the cap only guards
+	// against pathological growth.
+	private const int ApronPoolLimit = 64;
 	private const float ApronCameraMoveThreshold = 16f;
+	// Conservative bounding-sphere radius of one chunk mirror for the coverage test: the
+	// hex disk spans ~208u and its tops reach the elevation ceiling, so 320u keeps the test
+	// from dropping a chunk whose mesh pokes into the frustum.
+	private const float ApronCullRadius = 320f;
 	// Lap-offset candidates in lap-vector units: every (a, b) in {-1, 0, 1}² except (0, 0) —
 	// the canonical chunk node itself supplies the unshifted copy.
 	private static readonly Vector2I[] ApronLapOffsets =
@@ -92,9 +98,16 @@ public partial class TerrainComponent3D : Node3DComponent
 	};
 
 	private readonly List<MeshInstance3D> _aprons = new();
-	private readonly List<(float DistSq, Vector3 Pos, MeshInstance3D Chunk)> _apronCandidates = new();
+	private readonly List<(float DistSq, Vector3 Pos, MeshInstance3D Chunk, (Vector2I Chunk, int Offset) Key)> _apronCandidates = new();
+	// Stable assignment: a candidate identity keeps its mirror across refreshes instead of
+	// being reshuffled by the distance sort; released mirrors wait on the free list.
+	private readonly Dictionary<(Vector2I Chunk, int Offset), MeshInstance3D> _apronByKey = new();
+	private readonly List<MeshInstance3D> _freeAprons = new();
+	private readonly HashSet<(Vector2I, int)> _apronKeep = new();
+	private readonly List<(Vector2I, int)> _staleApronKeys = new();
 	private Node3D? _apronsRoot;
 	private Vector3 _lastApronCameraPos;
+	private float _lastApronCameraSize = -1f;
 	private bool _apronsPlaced;
 
 	private int _chunkRadius;
@@ -205,7 +218,9 @@ public partial class TerrainComponent3D : Node3DComponent
 		}
 
 		if (GetViewport()?.GetCamera3D() is { } camera
-			&& (!_apronsPlaced || _lastApronCameraPos.DistanceSquaredTo(camera.GlobalPosition) > ApronCameraMoveThreshold * ApronCameraMoveThreshold))
+			&& (!_apronsPlaced
+				|| _lastApronCameraPos.DistanceSquaredTo(camera.GlobalPosition) > ApronCameraMoveThreshold * ApronCameraMoveThreshold
+				|| Mathf.Abs(_lastApronCameraSize - camera.Size) > 0.01f))
 			RefreshAprons();
 	}
 
@@ -287,13 +302,15 @@ public partial class TerrainComponent3D : Node3DComponent
 	// duplicates are visual-only (no collision), share each chunk's mesh (no
 	// extra geometry memory), and are runtime children of game-only nodes, so
 	// the editor never saves them.
+	// Shared unshaded soil material for the shells (created on first use).
+	private StandardMaterial3D ShellMaterial => _shellMaterial ??= new StandardMaterial3D
+	{
+		ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
+		AlbedoColor = new Color(0.15f, 0.13f, 0.09f),
+	};
+
 	private void RefreshShells()
 	{
-		_shellMaterial ??= new StandardMaterial3D
-		{
-			ShadingMode = BaseMaterial3D.ShadingModeEnum.Unshaded,
-			AlbedoColor = new Color(0.15f, 0.13f, 0.09f),
-		};
 		foreach (var (coords, chunk) in _chunkNodes)
 		{
 			if (chunk.GetNodeOrNull("UnderShell") is not MeshInstance3D shell)
@@ -307,20 +324,25 @@ public partial class TerrainComponent3D : Node3DComponent
 				chunk.AddChild(shell);
 			}
 			shell.Mesh = ((MeshInstance3D)chunk).Mesh;
+			shell.MaterialOverride = ShellMaterial;
 		}
 	}
 
 	// The canonical MST lap only contains the cols × rows server chunks, while the local
 	// player's node can drift up to a lap past it before the server wraps the stored position.
 	// This pool extends the rendered lap around the camera: for every canonical chunk, each of
-	// the 8 non-zero lap offsets (a*lapQ + b*lapR) is a candidate mirror position, and the
-	// pool's nearest N candidates win. Mirrors share the canonical chunk's Mesh (re-assigned on
-	// every refresh, so regenerate_mesh is picked up for free) and each carries an UnderShell
-	// copy like RefreshShells. They are visual-only: no collision, no gameplay queries, and
-	// they live under a ChunkAprons child of this component, never in terrain.chunks. Ring
-	// chunks are the server's low-res chunk hexes, so a chunk mesh translated by a lap vector
-	// is exactly the terrain at that periodic position. The canonical chunk node itself is the
-	// unshifted (0, 0) copy.
+	// the 8 non-zero lap offsets (a*lapQ + b*lapR) is a candidate mirror position, and every
+	// candidate whose chunk bounds intersect the camera frustum is mirrored. The earlier
+	// nearest-12-by-distance selection let visible images just outside the pool pop in and out
+	// as the camera orbited (the flickering-chunks bug), because some nearer candidates sat
+	// behind the camera and consumed slots; frustum coverage makes every visible image render.
+	// Mirrors share the canonical chunk's Mesh (re-assigned on every refresh, so
+	// regenerate_mesh is picked up for free) and each carries an UnderShell copy like
+	// RefreshShells. They are visual-only: no collision, no gameplay queries, and they live
+	// under a ChunkAprons child of this component, never in terrain.chunks. Ring chunks are
+	// the server's low-res chunk hexes, so a chunk mesh translated by a lap vector is exactly
+	// the terrain at that periodic position. The canonical chunk node itself is the unshifted
+	// (0, 0) copy.
 	private void RefreshAprons()
 	{
 		if (!_chunksBuilt || _chunkCols <= 0 || _chunkRows <= 0)
@@ -340,73 +362,125 @@ public partial class TerrainComponent3D : Node3DComponent
 		var lapQ3 = new Vector3(lapQ.X, 0f, lapQ.Y);
 		var lapR3 = new Vector3(lapR.X, 0f, lapR.Y);
 		var cameraPos = camera.GlobalPosition;
-
-		EnsureApronPool();
+		var frustum = camera.GetFrustum();
 
 		_apronCandidates.Clear();
-		foreach (var chunk in _chunkNodes.Values)
+		foreach (var (chunkCoords, chunk) in _chunkNodes)
 		{
 			var chunkPos = chunk.GlobalPosition;
 			var chunkMesh = (MeshInstance3D)chunk;
-			foreach (var offset in ApronLapOffsets)
+			for (int i = 0; i < ApronLapOffsets.Length; i++)
 			{
+				var offset = ApronLapOffsets[i];
 				var pos = chunkPos + lapQ3 * offset.X + lapR3 * offset.Y;
-				_apronCandidates.Add((cameraPos.DistanceSquaredTo(pos), pos, chunkMesh));
+				if (!InFrustum(frustum, pos)) continue;
+				_apronCandidates.Add((cameraPos.DistanceSquaredTo(pos), pos, chunkMesh, (chunkCoords, i)));
 			}
 		}
 		_apronCandidates.Sort(static (a, b) => a.DistSq.CompareTo(b.DistSq));
 
-		int used = 0;
-		foreach (var candidate in _apronCandidates)
+		_apronKeep.Clear();
+		int count = Mathf.Min(_apronCandidates.Count, ApronPoolLimit);
+		for (int i = 0; i < count; i++)
 		{
-			if (used == _aprons.Count) break;
-			var apron = _aprons[used++];
+			var candidate = _apronCandidates[i];
+			var apron = AcquireApron(candidate.Key);
+			if (apron is null) continue;
 			apron.Visible = true;
 			apron.GlobalPosition = candidate.Pos;
-			apron.Mesh = candidate.Chunk.Mesh;
+			if (apron.Mesh != candidate.Chunk.Mesh) apron.Mesh = candidate.Chunk.Mesh;
 			apron.CastShadow = candidate.Chunk.CastShadow;
-			apron.GetNode<MeshInstance3D>("UnderShell").Mesh = candidate.Chunk.Mesh;
+			var shell = apron.GetNode<MeshInstance3D>("UnderShell");
+			if (shell.Mesh != candidate.Chunk.Mesh) shell.Mesh = candidate.Chunk.Mesh;
+			_apronKeep.Add(candidate.Key);
 		}
-		for (; used < _aprons.Count; used++) _aprons[used].Visible = false;
+
+		// Release assignments that left the frustum (or the cap): hide and return to the pool.
+		_staleApronKeys.Clear();
+		foreach (var key in _apronByKey.Keys)
+			if (!_apronKeep.Contains(key)) _staleApronKeys.Add(key);
+		foreach (var key in _staleApronKeys)
+		{
+			var apron = _apronByKey[key];
+			apron.Visible = false;
+			_apronByKey.Remove(key);
+			_freeAprons.Add(apron);
+		}
 
 		_lastApronCameraPos = cameraPos;
+		_lastApronCameraSize = camera.Size;
 		_apronsPlaced = true;
 	}
 
-	// Lazily creates the apron root (a plain Node3D child of this component, NOT the MST node,
-	// so mirrors can never enter terrain.chunks or the chunk save/registration paths) and the
-	// mirror pool, each mirror holding an UnderShell child exactly like RefreshShells.
-	private void EnsureApronPool()
+	// Bounding-sphere coverage test against the camera frustum. Godot's frustum planes have
+	// outward normals (positive signed distance = outside), so a candidate is culled only
+	// when its sphere is fully outside a plane; Godot's own per-instance culling still
+	// applies to whatever the pool actually places.
+	private static bool InFrustum(Godot.Collections.Array<Plane> frustum, Vector3 pos)
+	{
+		foreach (var plane in frustum)
+			if (plane.DistanceTo(pos) > ApronCullRadius) return false;
+		return true;
+	}
+
+	// The mirror already assigned to `key` if it is still valid, else a free one, else a newly
+	// created one (up to the pool limit). Null when the pool is exhausted.
+	private MeshInstance3D? AcquireApron((Vector2I Chunk, int Offset) key)
+	{
+		if (_apronByKey.TryGetValue(key, out var existing) && GodotObject.IsInstanceValid(existing))
+			return existing;
+
+		MeshInstance3D? apron = null;
+		if (_freeAprons.Count > 0)
+		{
+			apron = _freeAprons[^1];
+			_freeAprons.RemoveAt(_freeAprons.Count - 1);
+		}
+		else if (_aprons.Count < ApronPoolLimit)
+		{
+			apron = CreateApron();
+		}
+		if (apron is null) return null;
+		_apronByKey[key] = apron;
+		return apron;
+	}
+
+	// Creates one mirror: a plain MeshInstance3D under the apron root (a plain Node3D child of
+	// this component, NOT the MST node, so mirrors can never enter terrain.chunks or the chunk
+	// save/registration paths), holding an UnderShell child exactly like RefreshShells.
+	private MeshInstance3D CreateApron()
 	{
 		if (_apronsRoot is null)
 		{
 			_apronsRoot = new Node3D { Name = "ChunkAprons" };
 			AddChild(_apronsRoot);
 		}
-		while (_aprons.Count < ApronPoolSize)
+		var apron = new MeshInstance3D
 		{
-			var apron = new MeshInstance3D
-			{
-				Name = $"ChunkApron{_aprons.Count}",
-				CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
-				Visible = false,
-			};
-			apron.AddChild(new MeshInstance3D
-			{
-				Name = "UnderShell",
-				CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
-				Position = new Vector3(0f, -ShellDrop, 0f),
-			});
-			_apronsRoot.AddChild(apron);
-			_aprons.Add(apron);
-		}
+			Name = $"ChunkApron{_aprons.Count}",
+			CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+			Visible = false,
+		};
+		apron.AddChild(new MeshInstance3D
+		{
+			Name = "UnderShell",
+			CastShadow = GeometryInstance3D.ShadowCastingSetting.Off,
+			Position = new Vector3(0f, -ShellDrop, 0f),
+			MaterialOverride = ShellMaterial,
+		});
+		_apronsRoot.AddChild(apron);
+		_aprons.Add(apron);
+		return apron;
 	}
 
 	// Hides every pool mirror (used when wrapping is off, lap vectors are unavailable, or the
-	// grid is being rebuilt); the pool itself is reused.
+	// grid is being rebuilt) and resets the stable assignments; the pool itself is reused.
 	private void HideAprons()
 	{
 		foreach (var apron in _aprons) apron.Visible = false;
+		_apronByKey.Clear();
+		_freeAprons.Clear();
+		_freeAprons.AddRange(_aprons);
 	}
 
 	// Positive modulo for wrapping, matching server wrap_chunk_coords / the addon's wrap_chunk.

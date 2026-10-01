@@ -70,3 +70,6 @@ func handle(tool: String, action: String, params: Dictionary) -> Dictionary:
 - Debugger session 0 is reused for the first game connection; a session counts as a game session only after its `started` signal. Don't skip index 0.
 - `input` forwarding renames the action key to `input_type` to avoid colliding with InputMap `params["action"]`. Keep that rename.
 - Export must never ship the autoload: test `strip_on_export` on/off after touching `export/` or the autoload registration.
+- **`Engine.get_process_frames()` alone is not a liveness probe.** Observed pinned at one value for minutes while the game kept processing — `Time.get_ticks_msec()` advanced between `godot_exec` evals and `Engine.get_frames_per_second()` reported ~165. Check a ticks delta across two evals first; treat `get_process_frames()` as corroboration only.
+- **`godot_screenshot burst` blocks its `call_runtime` round-trip for the whole burst plus per-frame capture cost**: `count: 8, duration_ms: 2400` exceeded the 15 s timeout. Keep bursts small (≈4 frames / ≤500 ms) or take individual `game` screenshots.
+- **A runtime `eval` that returns `null` with `ok: true` usually means the body errored mid-script** (e.g. a bad Variant access in a compound one-liner). Split heavy expressions into small evals; a body containing `for`/`while` loops also times out.
