@@ -5,8 +5,12 @@
 android/
 ios/
 Godot/
+
+
+
 code_examples/
-w.ps1
+.obsidian/workspace.json
+.obsidian/*data.json
 
 # Rust / SpacetimeDB server
 server/spacetimedb/target/
