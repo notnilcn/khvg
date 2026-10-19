@@ -63,6 +63,26 @@ func handle(tool: String, action: String, params: Dictionary) -> Dictionary:
 - GDScript side: no local unit runner here — verify live via `godot_health check` then the relevant tool (`godot_game status`, `godot_test` for `res://tests/` suites extending `OgmTestSuite`).
 - After touching the bridge/dispatcher/runtime channel, re-run a play/stop cycle plus one runtime round-trip (`digest` or `eval`) before calling it done.
 
+## Consuming-project call-chain ledger (recommended)
+
+Downstream projects should keep a ledger of proven MCP call sequences — for
+example a single machine-readable ledger file with one entry per flow (the
+Mindustry-Godot project uses `parity-ledger.json`) — and have their agents
+consult it before composing calls. Each entry records when the flow applies,
+its preconditions (including process-start environment such as `DISPLAY` for
+servers that need one), the exact tool calls, success signals, failure modes,
+and the last run that verified it. Treat seeded entries as claims and promote
+them to verified only with a run artifact.
+
+Keep that ledger in the consuming project. This addon and `Docs/` stay generic:
+they describe the tools, not any one project's flow. `README.md` carries the
+longer rationale.
+
+Start agent sessions inside the consuming project root: MCP config files such as
+`.mcp.json` are only picked up when the session starts in that directory (or from
+the client's global config) — a session launched from a parent directory silently
+sees no `godot_*` tools at all.
+
 ## Pitfalls
 
 - `EditorInterface` / `EditorDebuggerPlugin` exist **only in the editor**. `runtime_autoload.gd` must guard with `Engine.is_editor_hint()` and never assume editor APIs.
@@ -73,3 +93,9 @@ func handle(tool: String, action: String, params: Dictionary) -> Dictionary:
 - **`Engine.get_process_frames()` alone is not a liveness probe.** Observed pinned at one value for minutes while the game kept processing — `Time.get_ticks_msec()` advanced between `godot_exec` evals and `Engine.get_frames_per_second()` reported ~165. Check a ticks delta across two evals first; treat `get_process_frames()` as corroboration only.
 - **`godot_screenshot burst` blocks its `call_runtime` round-trip for the whole burst plus per-frame capture cost**: `count: 8, duration_ms: 2400` exceeded the 15 s timeout. Keep bursts small (≈4 frames / ≤500 ms) or take individual `game` screenshots.
 - **A runtime `eval` that returns `null` with `ok: true` usually means the body errored mid-script** (e.g. a bad Variant access in a compound one-liner). Split heavy expressions into small evals; a body containing `for`/`while` loops also times out.
+- **An eval that errors, times out, or calls a method the node/class does not expose trips the editor break-on-error and pins the frame loop** while plain evals still answer (`godot_debugger sessions` → `paused: true`). Recover with `godot_game stop` + `play`; `resume` re-breaks. Keep eval bodies single-statement where possible, keep `var` declarations at the top level, and never block the main thread inside eval (`OS.delay_msec` stops `_process` and the clock) — wait between calls instead. Only real autoload singletons resolve as bare identifiers; scene nodes need `get_node("/root/...")` (a bare node name raises and pins). Missing Dictionary keys, null derefs on guessed child paths, and `get_meta()` on a missing key all count as errors.
+- **Known-timeout eval bodies**: whole-state dumps parsed in eval (`JSON.parse_string(get_state_json())` + filter), `tile_blocks()`-style whole-grid walks, `campaign_views_json`/`section_json` payloads, for-loops over dialog children, filter/map lambdas over mixed rows. Query one known node per eval; stash multi-MB strings with `set_meta` and read slices later.
+- **A host facade call while it is mid-build can panic `Gd<T>::bind() failed, already bound`** — the mutable Rust bind is held during dialog build/close, and a reentrant callback into it wedges the UI until restart. Defer callbacks (`call_deferred`) or read the value in `_ready`; after opening/closing a runtime-built dialog, settle a beat before reading the host's stack state and probe the dialog node's `visible` instead.
+- **Synthetic `push_input` drives Control clicks but not every path** — world-placement/action paths that consume OS mouse input need real `godot_input`; before world input check no dialog lingers over the scene and the sim is not paused. Canvas/camera transforms update at frame end — read `tile_to_screen`-style coordinates in a call after the move.
+- **Byte-identical screenshots are not automatically stale** — a static scene encodes identically; prove the capture path is live by mutating a node the shell really draws (e.g. `modulate`) and re-capturing, or compare against structured state. A truly pinned render (`Engine.get_frames_drawn()` frozen while ticks advance) needs `godot_game stop` + `play`.
+- **Orphaned game processes survive `stop`/editor kills** and starve the editor/bridge (on software Vulkan they can take the editor down with a TDR). After a session, sweep `pgrep -f "godot --path"` and kill children whose `--editor-pid` is no longer alive.

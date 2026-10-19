@@ -74,7 +74,7 @@ New players are going to follow a story line so they aren't going to be directio
 
 [[<https://youtu.be/UuDYmAeUrDw&t=14>|RotMG - omo Full Skip Voids]]
 
-[[<https://www.youtube.com/watch?v=w0_A4fmIwJ8>|RotMG : Full Skip Lost Hall#1]]
+[[https://www.youtube.com/watch?v=w0_A4fmIwJ8|RotMG : Full Skip Lost Hall#1]]
 
 [[<https://www.youtube.com/watch?v=RHZxqIjksfc>|RotMG Lost Halls Void Speedrun ft. Marble Seal drop (08:52:01|[08:52:01)]]]]
 

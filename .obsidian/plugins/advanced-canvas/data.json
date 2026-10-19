@@ -95,7 +95,7 @@
   "resetViewportOnPresentationEnd": false,
   "useArrowKeysToChangeSlides": true,
   "usePgUpPgDownKeysToChangeSlides": true,
-  "zoomToSlideWithoutPadding": true,
+  "zoomToSlideWithoutPadding": false,
   "useUnclampedZoomWhilePresenting": false,
   "fullscreenPresentationEnabled": true,
   "slideTransitionAnimationDuration": 0.5,

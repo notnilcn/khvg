@@ -18,6 +18,9 @@ a lot of this was written by ai but i corrected it because i wanted to game myse
 - mark an enemy and buff self to store all the damage dealt by self within the next n seconds and double it if a condition is met or negates it to 0 if a different condition is met.
 	- I want there to be multiple conditions for the damage doubling/negation and I want you to create an ability for each condition. The conditions are: 1. No-hit wager (double if the player takes no hits during the window; released at normal if hit 1-2 times; lost entirely if hit 5+ times). 2. Stay within a radius of the marked enemy (doubled if staying within radius r1; normal if staying within r2; negated if you leave r2). 3. Dealing x damage (doubled if reaching x damage; normal if damage is between y and z; negated if below z).
 - enter a windup animation to do a short teleport.
+
+- self buff life steal in exchange for self bleed.
+
 ## Wizard (wis > 0) & (dps > 0)
 - Spell that spawns a beam of light that deals damage
 - Spell that summons bullets that converge on/from/around the player's cursor

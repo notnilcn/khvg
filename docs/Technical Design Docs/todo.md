@@ -3,9 +3,9 @@
   • P1: player movement/inventory/abilities/stats submodule carve-out; single chunk source of truth; static-vs-runtime inventory slot split; item/seeds.rs dead-tunable triage.
   • P2: bullet pooling + typed interop wrappers; oversized-component extraction (TerrainComponent, LocalPlayer, ItemSidebar); binder row-args signals starting with the bullet path; singletons out of hot paths; dirty-only overlay redraw.
 
-# mindustry mod
+# Disconnect vs delayed nexus
 
-make your entire game a mod for Mindustry.
+Just discourage people who abuse disconnecting cosmetically. Disconnecting should have the same function as instant nexus but make it so that it like makes the player's character name and items a different colour or something.
 
 # Friday Facts Factorio
 

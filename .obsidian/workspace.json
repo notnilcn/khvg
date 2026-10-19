@@ -8,20 +8,77 @@
         "type": "tabs",
         "children": [
           {
-            "id": "80e701ed4e7d8e2a",
+            "id": "811075e3c85940bd",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "server/spacetimedb/src/enemy/pointers.md",
+                "file": "Untitled.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "pointers"
+              "title": "Untitled"
+            }
+          },
+          {
+            "id": "cbf8506933c77227",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Technical Design Docs/todo.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "todo"
+            }
+          },
+          {
+            "id": "c6783a342dce2909",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Mindustry pivot.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Mindustry pivot"
+            }
+          },
+          {
+            "id": "727a70241eeaae0b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Game Design Docs/One Page Doc.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "One Page Doc"
+            }
+          },
+          {
+            "id": "ec6681e68cdd03e2",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Mindustry pivot.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Mindustry pivot"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -55,7 +112,7 @@
             "state": {
               "type": "search",
               "state": {
-                "query": "cheat",
+                "query": "buff",
                 "matchingCase": false,
                 "explainSearch": false,
                 "collapseAll": false,
@@ -214,29 +271,47 @@
       "vscode-editor:Create Code File": false
     }
   },
-  "active": "80e701ed4e7d8e2a",
+  "active": "ec6681e68cdd03e2",
   "lastOpenFiles": [
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmsexf1fam-1h66yac-working/dep-graph.part.bin",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmsexf1fam-1h66yac-working/query-cache.bin",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmsexf1fam-1h66yac-working/work-products.bin",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmsexf1fam-1h66yac-working/desktop.ini",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmsexf1fam-1h66yac-working/dep-graph.bin",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmsexf1fam-1h66yac-working",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmsexf1fam-1h66yac.lock",
-    "Screenshot 2026-09-30 084647.png",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmras656pa-06gu8k2-em4f4w8p94f2tyo6bbm0incus/work-products.bin",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmras656pa-06gu8k2-em4f4w8p94f2tyo6bbm0incus/query-cache.bin",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmras656pa-06gu8k2-em4f4w8p94f2tyo6bbm0incus/desktop.ini",
-    "server/spacetimedb/target/debug/incremental/BulletHell-342pnyg1mei05/s-hmras656pa-06gu8k2-em4f4w8p94f2tyo6bbm0incus/dep-graph.bin",
+    "Untitled 1.md",
+    "Untitled.md",
+    "Untitled.canvas",
+    "Mindustry pivot.md",
+    "PLAN.md",
+    "docs/Game Design Docs/Art/Art style 2D.md",
+    "flowcharts/Subflowcharts/client_subfolder/addons_subfolder/phantom_camera_subfolder/panel_subfolder/updater_subfolder/update_button_codefile/desktop.ini",
+    "docs/Game Design Docs/Art/Art style 3D.md",
+    "docs/Game Design Docs/One Page Doc.md",
+    "docs/Game Design Docs/One Page Doc (Integrated).md",
+    "docs/Game Design Docs/Items/Abilities/Abilities.md",
+    "docs/Game Design Docs/03 Class system, Item system, and Equipment system.md",
+    "docs/Technical Design Docs/Description/00 Table Map.md",
+    "docs/Youtube Transcripts and stuff/Transcripts and stuff/I Added Millions of Quantum Particles in Unity. They Only Exist When You Look at Them..txt",
+    "docs/Game Design Docs/Art/841317839_979616348524159_9200051256266655974_n.jpg",
+    "docs/Game Design Docs/Art/Unconfirmed 746467.crdownload",
+    "client/Scenes/world_3d_TerrainData/MarchingSquaresTerrain_bb6778ab/desktop.ini",
+    "docs/Game Design Docs/Art/833275391_1665630481803287_2786666740957368546_n.jpg",
+    "docs/Game Design Docs/Art/Unconfirmed 824077.crdownload",
+    "docs/Game Design Docs/01 Executive Summary.md",
+    "docs/Technical Design Docs/todo.md",
+    "docs/Game Design Docs/02 Gameplay.md",
+    "docs/Technical Design Docs/todo (stupid).md",
+    "AGENTS.md",
+    "client/project.godot6300016.tmp",
+    "client/addons/blastbullets2d/bin/windows/~blastbullets2d.windows.template_debug.x86_64.single.dll",
+    "docs/Game Design Docs/Art/Pasted image 20260530125508.png",
+    "docs/Game Design Docs/00.canvas",
+    "docs/Game Design Docs/Art/Pasted image 20260530125651.png",
+    "docs/Game Design Docs/Art/Pasted image 20260530130436.png",
     "docs/Game Design Docs/Art/825328398_4474828892770978_165110113936818095_n.jpg",
-    "docs/Game Design Docs/Art/819412188_27995809246768555_5197002168720912396_n.jpg",
-    "docs/Game Design Docs/Art/817390736_946431681850809_5600968726331872408_n (1).jpg",
-    "docs/Game Design Docs/Art/821486858_2341419499931513_1880685876547441369_n.jpg",
-    "docs/Game Design Docs/Art/819237128_1417127460347254_4408283780589822475_n.jpg",
-    "docs/Game Design Docs/Art/825281653_1450232056985740_3460315855613003447_n.jpg",
     "docs/Game Design Docs/Art/825340507_1077632318190853_4897941139160462022_n.jpg",
-    "Screenshot 2026-09-08 195603.png",
-    "Screenshot 2026-09-30 072252.png",
+    "docs/Game Design Docs/Art/825329992_1370861908148380_1559436228211909072_n.jpg",
+    "docs/Game Design Docs/Art/825281653_1450232056985740_3460315855613003447_n.jpg",
+    "docs/Game Design Docs/Art/821486858_2341419499931513_1880685876547441369_n.jpg",
+    "Attachments",
+    "docs/Game Design Docs/Art/Unconfirmed 809660.crdownload",
+    "code_examples/mindustry-godot/client/rust/target/debug/incremental/mind_core-08lo11n68mdep/s-hmspum5h7z-0w22fy6-working/56tooemm78efchmwtjvj7kpz6.o",
+    "server/spacetimedb/src/enemy/pointers.md",
     "client/addons/MarchingSquaresTerrain/documentation/documentation+/internal_tool_system.md",
     "client/addons/MarchingSquaresTerrain/documentation/documentation+/navmesh_guide.md",
     "client/addons/MarchingSquaresTerrain/documentation/documentation+/code_style_guide.md",
@@ -244,25 +319,8 @@
     "client/addons/MarchingSquaresTerrain/documentation/plugin_quick_guide.md",
     "client/addons/MarchingSquaresTerrain/documentation/credits.md",
     "client/addons/MarchingSquaresTerrain/AGENTS.md",
-    "docs/Technical Design Docs/todo.md",
-    "Untitled 1.md",
-    "Untitled.md",
     "docs/Game Design Docs/Art/Hollow Knight References.md",
     "client/addons/terrain_3d/README.md",
-    "docs/Technical Design Docs/todo (stupid).md",
-    "docs/Technical Design Docs/stupid todo.md",
-    "docs/Technical Design Docs/Untitled.md",
-    "docs/Game Design Docs/One Page Doc.md",
-    "docs/Game Design Docs/Untitled.md",
-    "docs/Game Design Docs/Art/Mood board task.md",
-    "docs/Game Design Docs/Art/Art style 2D.md",
-    "docs/Game Design Docs/Art/Art style 3D.md",
-    "docs/Game Design Docs/Items/Weapons/Weapons.md",
-    "docs/Game Design Docs/Items/Armors/Armors.md",
-    "docs/Game Design Docs/Items/Accessories/Accessories.md",
-    "docs/Game Design Docs/Items/Abilities/Abilities.md",
-    "docs/Game Design Docs/Items/Items.md",
-    "Untitled.canvas",
     "flowcharts/main-world.canvas",
     "flowcharts/main.canvas",
     "flowcharts/main-trade.canvas",
@@ -270,7 +328,6 @@
     "flowcharts/main-status.canvas",
     "flowcharts/main-player.canvas",
     "flowcharts/main-main-module.canvas",
-    "flowcharts/main-item.canvas",
-    "flowcharts/main-framework.canvas"
+    "flowcharts/main-item.canvas"
   ]
 }

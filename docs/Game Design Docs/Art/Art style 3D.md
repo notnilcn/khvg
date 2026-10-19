@@ -37,10 +37,10 @@ My game is definitely going to have a boss like the above
 ###### Hollow Knight
 I really like the vibe of hollow knight's environments. It's dark and desolate but not in a way that's inappropriate for children.
 A human + open world version of hollow knight would be awesome. Translating Hollow Knight's art style from stylized bugs to humans is going to be pretty hard though.
-![[Pasted image 20260530125508.png]]
-![[Pasted image 20260530125651.png]]
+![[docs/Game Design Docs/Art/Pasted image 20260530125508.png]]
+![[docs/Game Design Docs/Art/Pasted image 20260530125651.png]]
 ###### Hollow Knight: Silksong
-![[Pasted image 20260530130436.png]]
+![[docs/Game Design Docs/Art/Pasted image 20260530130436.png]]
 
 ##### Examples that aren't aligned but can still be used as inspiration
 ###### THERE IS NO LIGHT
